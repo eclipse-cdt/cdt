@@ -23,11 +23,35 @@ public interface IManagedBuildInfo {
 	public void addTarget(ITarget target);
 		
 	/**
+	 * Answers <code>true</code> if the build system knows how to 
+	 * build a file with the extension passed in the argument.
+	 *  
+	 * @param srcExt
+	 * @return
+	 */
+	public boolean buildsFileType(String srcExt);
+
+	/**
 	 * Returns the name of the artifact to build for the receiver.
 	 * 
 	 * @return
 	 */
 	public String getBuildArtifactName();
+
+	/**
+	 * Answers the command needed to remove files on the build machine
+	 * 
+	 * @return
+	 */
+	public String getCleanCommand();
+
+	/**
+	 * Answers the name of the default configuration, for example <code>Debug</code>  
+	 * or <code>Release</code>.
+	 * 
+	 * @return
+	 */
+	public String getConfigurationName();
 
 	/**
 	 * Get the default configuration associated with the receiver
@@ -53,6 +77,16 @@ public interface IManagedBuildInfo {
 	 */
 	public String getOutputExtension(String resourceExtension);
 	
+	/**
+	 * Answers the flag to be passed to the build tool to produce a specific output 
+	 * or an empty <code>String</code> if there is no special flag. For example, the
+	 * GCC tools use the -o flag to produce a named output, for example
+	 * 		gcc -c foo.c -o foo.o
+	 * 
+	 * @return
+	 */
+	public String getOutputFlag();
+
 	/**
 	 * Get the target specified in the argument.
 	 * 
@@ -89,6 +123,21 @@ public interface IManagedBuildInfo {
 	public String getFlagsForTarget(String extension);
 
 	/**
+	 * Answers a string array containing the arguments to be passed to
+	 * make. For example, if the user has selected a build that stops
+	 * at the first error, the array would contain {"k"}.
+	 * 
+	 * @return
+	 */
+	public String[] getMakeArguments();
+
+	/**
+	 * Answers a <code>String</code> containing the make command invocation 
+	 * for the default target/configuration.
+	 */
+	public String getMakeCommand();
+
+	/**
 	 * Returns a <code>String</code> containing the command-line invocation 
 	 * for the tool associated with the source extension.
 	 * 
@@ -120,5 +169,7 @@ public interface IManagedBuildInfo {
 	 * @param target
 	 */
 	public void setDefaultTarget(ITarget target);
+
+
 	
 }

@@ -328,25 +328,6 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 		getExtensionTargetMap().put(target.getId(), target);
 	}
 		
-	private static void loadExtensions() {
-		if (extensionTargetsLoaded)
-			return;
-		extensionTargetsLoaded = true;
-
-		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
-		IExtension[] extensions = extensionPoint.getExtensions();
-		for (int i = 0; i < extensions.length; ++i) {
-			IExtension extension = extensions[i];
-			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int j = 0; j < elements.length; ++j) {
-				IConfigurationElement element = elements[j];
-				if (element.getName().equals("target")) {
-					new Target(element);
-				}
-			}
-		}
-	}
-
 	private static ManagedBuildInfo loadBuildInfo(IProject project) {
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(FILE_NAME);
@@ -367,6 +348,58 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 		}
 
 		return buildInfo;
+	}
+
+	private static void loadExtensions() {
+		if (extensionTargetsLoaded)
+			return;
+		extensionTargetsLoaded = true;
+
+		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
+		IExtension[] extensions = extensionPoint.getExtensions();
+		for (int i = 0; i < extensions.length; ++i) {
+			IExtension extension = extensions[i];
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (int j = 0; j < elements.length; ++j) {
+				IConfigurationElement element = elements[j];
+				if (element.getName().equals("target")) {
+					new Target(element);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param project
+	 * @return
+	 */
+	public static boolean manages(IResource resource) {
+		// The managed build manager manages build information for the 
+		// resource IFF it it is a project and has a build file with the proper
+		// root element
+		IProject project = null;
+		if (resource instanceof IProject){
+			project = (IProject)resource;
+		} else if (resource instanceof IFile) {
+			project = ((IFile)resource).getProject();
+		} else {
+			return false;
+		}
+		IFile file = project.getFile(FILE_NAME);
+		if (file.exists()) {
+			try {
+				InputStream stream = file.getContents();
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document document = parser.parse(stream);
+				Node rootElement = document.getFirstChild();
+				if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
+					return true;
+				} 
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
@@ -417,6 +450,11 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 	 * Answers with an interface to the parse information that has been 
 	 * associated with the resource specified in the argument. 
 	 * 
+	 * NOTE: This method is not part of the registration interface. It has
+	 * been made public as a short-term workaround for the clients of the
+	 * scanner information until the redesign of the build information management
+	 * occurs.
+	 * 
 	 * @param resource
 	 * @return
 	 */
@@ -450,6 +488,9 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 		}
 	}
 
+	// TODO Remove all of the IScannerInfoProvider interface methods when
+	// the discovery mechanism is solidified
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#managesResource(org.eclipse.core.resources.IResource)
 	 */
@@ -503,5 +544,6 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 			map.put(project, list);
 		}
 	}
+
 
 }

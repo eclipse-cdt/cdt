@@ -88,12 +88,45 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#buildsFileType(java.lang.String)
+	 */
+	public boolean buildsFileType(String srcExt) {
+		// Check to see if there is a rule to build a file with this extension
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.buildsFileType(srcExt)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getBuildArtifactName()
 	 */
 	public String getBuildArtifactName() {
 		// Get the default target and use its value
 		String name = getDefaultTarget().getArtifactName();
 		return name == null ? new String() : name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getCleanCommand()
+	 */
+	public String getCleanCommand() {
+		// TODO Get from the model
+		return new String("rm -rf");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getConfigurationName()
+	 */
+	public String getConfigurationName() {
+		// Return the human-readable name of the default configuration
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		return config == null ? new String() : config.getName();
 	}
 
 	/* (non-Javadoc)
@@ -169,6 +202,51 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
+	 */
+	public String[] getIncludePaths() {
+		// Return the include paths for the default configuration
+		ArrayList paths = new ArrayList();
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			IOption[] opts = tool.getOptions();
+			for (int j = 0; j < opts.length; j++) {
+				IOption option = opts[j];
+				if (option.getValueType() == IOption.INCLUDE_PATH) {
+					try {
+						paths.addAll(Arrays.asList(option.getIncludePaths()));
+					} catch (BuildException e) {
+						// we should never get here
+						continue;
+					}
+				}
+			}
+		}
+		paths.trimToSize();
+		return (String[])paths.toArray(new String[paths.size()]); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeArguments()
+	 */
+	public String[] getMakeArguments() {
+		// TODO Stop hard-coding this
+		String[] args = {""}; 
+
+		return args;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeCommand()
+	 */
+	public String getMakeCommand() {
+		// TODO Don't hard-code this
+		return new String("make");
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String resourceExtension) {
@@ -183,6 +261,15 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
+	 */
+	public String getOutputFlag() {
+		// TODO Stop hard-coding this
+		String flag = new String("-o");
+		return flag;
 	}
 
 	public IResource getOwner() {
@@ -319,31 +406,5 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return symbols; 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-	 */
-	public String[] getIncludePaths() {
-		// Return the include paths for the default configuration
-		ArrayList paths = new ArrayList();
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
-		for (int i = 0; i < tools.length; i++) {
-			ITool tool = tools[i];
-			IOption[] opts = tool.getOptions();
-			for (int j = 0; j < opts.length; j++) {
-				IOption option = opts[j];
-				if (option.getValueType() == IOption.INCLUDE_PATH) {
-					try {
-						paths.addAll(Arrays.asList(option.getIncludePaths()));
-					} catch (BuildException e) {
-						// we should never get here
-						continue;
-					}
-				}
-			}
-		}
-		paths.trimToSize();
-		return (String[])paths.toArray(new String[paths.size()]); 
-	}
 
 }

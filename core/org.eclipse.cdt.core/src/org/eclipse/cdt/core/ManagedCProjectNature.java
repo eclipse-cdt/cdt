@@ -14,6 +14,7 @@ package org.eclipse.cdt.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
@@ -45,6 +46,22 @@ public class ManagedCProjectNature implements IProjectNature {
 		// Add the builder to the project
 		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
+
+		// TODO Remove this when the new StandardBuild nature adds the cbuilder
+		for (int i = 0; i < commands.length; i++) {
+			ICommand command = commands[i];
+			if (command.getBuilderName().equals("org.eclipse.cdt.core.cbuilder")) {
+				// Remove the command
+				Vector vec = new Vector(Arrays.asList(commands));
+				vec.removeElementAt(i);
+				vec.trimToSize();
+				ICommand[] tempCommands = (ICommand[]) vec.toArray(new ICommand[commands.length-1]); 
+				description.setBuildSpec(tempCommands);
+				break;
+			}
+		}
+		
+		commands = description.getBuildSpec();
 		boolean found = false;
 		// See if the builder is already there
 		for (int i = 0; i < commands.length; ++i) {
@@ -63,7 +80,7 @@ public class ManagedCProjectNature implements IProjectNature {
 		   newCommands[0] = command;
 		   description.setBuildSpec(newCommands);
 		   project.setDescription(description, null);
-		}
+		}		
 	}
 
 	/**

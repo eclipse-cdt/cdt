@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 import org.eclipse.cdt.core.build.managed.tests.AllBuildTests;
+import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.model.failedTests.CModelElementsFailedTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
@@ -77,6 +78,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 
 		// Add all success tests
 		suite.addTest(AllBuildTests.suite());
+		suite.addTest(StandardBuildTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(BinaryTests.suite());

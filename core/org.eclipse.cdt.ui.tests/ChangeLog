@@ -1,3 +1,8 @@
+2003-03-19 Alain Magloire
+	Patch from Amer Hoda, introducing a simple test for the core model.
+	* model/org/eclipse/cdt/core/model/tests/WorkingCopyTests.java
+	* model/org/eclipse/cdt/core/model/tests/resource/WorkingCopyTestStart.h
+
 2003-03-18 John Camelon
 	Updated DOMTests to validate simple case of a function declaration with multiple parameters.  
 	* parser/org/eclipse/cdt/core/parser/tests/DOMTests.java

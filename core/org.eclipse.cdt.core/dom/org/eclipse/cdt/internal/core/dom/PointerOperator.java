@@ -12,6 +12,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.Name;
+
 /**
  * @author jcamelon
  *
@@ -20,7 +22,8 @@ public class PointerOperator {
 
 	public final static int t_undefined = 0;
 	public final static int t_pointer = 1; 
-	public final static int t_reference = 2; 
+	public final static int t_reference = 2;
+    public final static int t_pointer_to_member = 3;  
 	private int type = t_undefined; 
 	
 	/**
@@ -83,5 +86,23 @@ public class PointerOperator {
 	public Declarator getOwnerDeclarator() {
 		return ownerDeclarator;
 	}
+    
 
+    // This is not a complete name, it is something like A::B::, i.e. ends with ::
+    private Name nameSpecifier = null;
+    
+    /**
+     * @return Class name specifier for pointers to members
+     */
+    public Name getNameSpecifier() {
+        return nameSpecifier;
+    }
+
+    /**
+     * Sets the class name specifier for pointers to members.
+     * @param name The name specifier to set
+     */
+    public void setNameSpecifier(Name name) {
+        this.nameSpecifier = name;
+    }
 }

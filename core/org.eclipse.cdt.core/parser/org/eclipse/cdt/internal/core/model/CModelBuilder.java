@@ -203,11 +203,11 @@ public class CModelBuilder {
 	}
 		
 	protected void createElement(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
+        ParameterDeclarationClause pdc = declarator.getParms();
 		// typedef
 		if(simpleDeclaration.getDeclSpecifier().isTypedef()){
-			createTypeDef(parent, declarator, simpleDeclaration);
+			createTypeDef(parent, declarator, simpleDeclaration, pdc);
 		} else {
-			ParameterDeclarationClause pdc = declarator.getParms();
 			// variable or field
 			if (pdc == null){	
 				createVariableSpecification(parent, simpleDeclaration, declarator, false); 
@@ -400,15 +400,40 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
+	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration, ParameterDeclarationClause pdc){
 		// create the element
 		Name domName = ( declarator.getDeclarator() != null ) ? declarator.getDeclarator().getName() : 
 			declarator.getName(); 
-		String declaratorName = domName.toString();		
-			
-		TypeDef element = new TypeDef( parent, declaratorName );
-		String type = getType(simpleDeclaration, declarator);
-		element.setTypeName(type);
+		String declaratorName = domName.toString();
+        
+        TypeDef element = new TypeDef( parent, declaratorName );
+        StringBuffer typeName = new StringBuffer(getType(simpleDeclaration, declarator));
+	
+        if (pdc != null) {
+            // getParameterTypes
+            List parameterList = pdc.getDeclarations();
+            String[] parameterTypes = new String[parameterList.size()];
+
+            for (int j = 0; j < parameterList.size(); ++j) {
+                ParameterDeclaration param = (ParameterDeclaration) parameterList.get(j);
+                parameterTypes[j] = new String(getType(param, (Declarator) param.getDeclarators().get(0)));
+            }
+
+            if (parameterTypes.length > 0) {
+                typeName.append("(");
+                int i = 0;
+                typeName.append(parameterTypes[i++]);
+                while (i < parameterTypes.length) {
+                    typeName.append(", ");
+                    typeName.append(parameterTypes[i++]);
+                }
+                typeName.append(")");
+            } else {
+                typeName.append("()");
+            }
+        }
+        
+		element.setTypeName(typeName.toString());
 		
 		// add to parent
 		parent.addChild((CElement)element);
@@ -427,6 +452,23 @@ public class CModelBuilder {
 		Name domName = ( declarator.getDeclarator() != null ) ? 
 			declarator.getDeclarator().getName() : 
 			declarator.getName(); 
+
+		if (domName == null) {
+			// TODO : improve errorhandling
+			// When parsing syntactically incorrect code, we might
+			// end up here. Most often, function/method declaration
+			// misses return type, and is neither a constructor nor
+			// a conversion operator. Like
+			// 	A::B() {}
+			// Parser sees A::B, understands that it is not a constructor
+			// /conversion, then considers it a declaration. So its
+			// type is read as A::B, no name, and a list of declarations
+			// in ().
+			// For now, we just ignore this scenario (and create no
+			// model elements), but in the future we can process this
+			// declaration as a function (with undefined/no type)
+			return null;
+		}  
 
 		String variableName = domName.toString();  
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
@@ -682,12 +724,22 @@ public class CModelBuilder {
 		StringBuffer type = new StringBuffer();
 		// get type from declaration
 		type.append(getDeclarationType(declaration));
-		// add pointerr or reference from declarator if any
-		type.append(getDeclaratorPointerOperation(declarator));
+		// add pointer or reference from declarator if any
+        String declaratorPointerOperation = getDeclaratorPointerOperation(declarator);
+        try  {
+            switch (declaratorPointerOperation.charAt(0)) {
+                case '*':
+                case '&':
+                    break; // pointer/reference
+                default:
+                    type.append(" "); // pointer to member
+            }
+        } catch (Exception e) {} // Empty/null strings
+		type.append(declaratorPointerOperation);
 		if(declarator.getDeclarator() != null){
 			// pointer to function or array of functions
 			type.append("(");
-			// add pointerr or reference from declarator if any
+			// add pointer or reference from declarator if any
 			type.append(getDeclaratorPointerOperation(declarator.getDeclarator()));
 			type.append(")");
 		}
@@ -763,6 +815,9 @@ public class CModelBuilder {
 			while(i.hasNext()){
 				PointerOperator po = (PointerOperator) i.next();
 				switch (po.getType()){
+					case PointerOperator.t_pointer_to_member:
+						pointerString.append(po.getNameSpecifier());
+					// Intentional fall-through
 					case PointerOperator.t_pointer:
 						pointerString.append("*");
 					break;

@@ -2082,4 +2082,81 @@ public class DOMTests extends BaseDOMTest {
 		parse("template <class A,B> X<A,C>::operator A*() { } \n");
 		parse("template <class A,B> X<A,C>::operator A&() { } \n");
 	}
+    
+    public void testBugSingleton192() throws Exception {
+        parse("int Test::* pMember_;" );
+    }
+    
+    public void testPointersToMembers() throws Exception {
+        // Parse and get the translaton unit
+        TranslationUnit translationUnit = parse("int A::* x = 0;");
+
+        List tudeclarations = translationUnit.getDeclarations();
+        assertEquals(1, tudeclarations.size());
+        SimpleDeclaration decl1 = (SimpleDeclaration) tudeclarations.get(0);
+        assertEquals(decl1.getDeclSpecifier().getType(), DeclSpecifier.t_int);
+
+        assertEquals(1, decl1.getDeclarators().size());
+
+        Declarator declarator1 = (Declarator) decl1.getDeclarators().get(0);
+        assertEquals(declarator1.getName().toString(), "x");
+        Expression initValue1 = declarator1.getExpression();
+        assertEquals(initValue1.elements().size(), 1);
+        List ptrOps1 = declarator1.getPointerOperators();
+        assertNotNull(ptrOps1);
+        assertEquals(1, ptrOps1.size());
+        PointerOperator po1 = (PointerOperator) ptrOps1.get(0);
+        assertNotNull(po1);
+        assertFalse(po1.isConst());
+        assertFalse(po1.isVolatile());
+        assertEquals(po1.getType(), PointerOperator.t_pointer_to_member);
+        assertEquals(po1.getNameSpecifier().toString(), "A::");
+    }
+    
+    public void testPointersToMemberFunctions() throws Exception
+    {
+        TranslationUnit tu = parse("void (A::*name)(void);");
+        assertEquals( tu.getDeclarations().size(), 1 );
+        SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+        assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_void );
+        assertEquals( declaration.getDeclarators().size(), 1);
+        assertNull( ((Declarator)declaration.getDeclarators().get(0)).getName() );
+        assertNotNull( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator() );
+        assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator().getName().toString(), "name" );
+        ParameterDeclarationClause clause = ((Declarator)declaration.getDeclarators().get(0)).getParms();
+        assertEquals( clause.getDeclarations().size(), 1 );
+        assertEquals( ((ParameterDeclaration)clause.getDeclarations().get(0)).getDeclarators().size(), 1 );  
+        assertNull( ((Declarator)((ParameterDeclaration)clause.getDeclarations().get(0)).getDeclarators().get(0)).getName() );
+        assertEquals( ((ParameterDeclaration)clause.getDeclarations().get(0)).getDeclSpecifier().getType(), DeclSpecifier.t_void );
+        
+        List ptrOps1 = ((Declarator)declaration.getDeclarators().get(0)).getDeclarator().getPointerOperators();
+        assertNotNull(ptrOps1);
+        assertEquals(1, ptrOps1.size());
+        PointerOperator po1 = (PointerOperator) ptrOps1.get(0);
+        assertNotNull(po1);
+        assertFalse(po1.isConst());
+        assertFalse(po1.isVolatile());
+        assertEquals(po1.getType(), PointerOperator.t_pointer_to_member);
+        assertEquals(po1.getNameSpecifier().toString(), "A::");
+    }
+    
+    public void testBug36290() throws Exception {
+        parse("typedef void ( A:: * pFunction ) ( void ); ");
+        parse("typedef void (boo) ( void ); ");
+        parse("typedef void boo (void); ");
+    }
+    
+    public void testBug36931() throws Exception {
+        parse("A::nested::nested(){}; ");
+        parse("int A::nested::foo() {} ");
+        parse("int A::nested::operator+() {} ");
+        parse("A::nested::operator int() {} ");
+        parse("static const int A::nested::i = 1; ");
+        
+        parse("template <class B,C> A<B>::nested::nested(){}; ");
+        parse("template <class B,C> int A::nested<B,D>::foo() {} ");
+        parse("template <class B,C> int A<B,C>::nested<C,B>::operator+() {} ");
+        parse("template <class B,C> A::nested::operator int() {} ");
+    }
+ 
 }

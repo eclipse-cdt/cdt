@@ -6,6 +6,11 @@
 	with skeleton classes based on the JDT search as a beginning for 
 	implementing C/CPP search.
 
+2003-06-14 Victor Mozgin
+	Added support for pointers to members to DOMBuilder.
+	Added new kind of pointer operator : t_pointer_to_member (PointerOperator).
+	Added nameSpecifier field and set/get operations to PointerOperator.
+
 2003-06-06 Sean Evoy
 
 	Added new interface, IResourceBuildInfo, so clients could

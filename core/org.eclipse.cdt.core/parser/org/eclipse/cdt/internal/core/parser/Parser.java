@@ -972,52 +972,70 @@ c, quickParse);
 	{
 		if (flags.isForParameterDeclaration()) return false;
 		if (LT(2) == IToken.tLPAREN && flags.isForConstructor()) return true;
+        
+        boolean continueProcessing = true;
+        
+        // Portions of qualified name
+        // ...::secondLastID<template-args>::lastID ...
+        int secondLastIDTokenPos = -1;
+        int lastIDTokenPos = 1;
 		
-		int posTokenAfterTemplateParameters = 2;
+		int tokenPos = 2;
 		
-		if (LT(posTokenAfterTemplateParameters) == IToken.tLT) {
-			// a case for template constructor, like CFoobar<A,B>::CFoobar
-			
-			posTokenAfterTemplateParameters++;
-		
-			// until we get all the names sorted out
-			int depth = 1;
-		
-			while (depth > 0) {
-				switch (LT(posTokenAfterTemplateParameters++)) {
-					case IToken.tGT :
-						--depth;
-						break;
-					case IToken.tLT :
-						++depth;
-						break;
-				}
-			}
-		}
+        do {
+            if (LT(tokenPos) == IToken.tLT) {
+                // a case for template instantiation, like CFoobar<A,B>::CFoobar
 
-         // for constructors
-		 return
-		 (
-			 ( 
-			  (LT(posTokenAfterTemplateParameters) == IToken.tCOLONCOLON)
-	         && 
-			  (
-				LA(posTokenAfterTemplateParameters+1).getImage().equals( LA(1).getImage() ) ||  
-				LT(posTokenAfterTemplateParameters+1) == IToken.tCOMPL
-			  )
-		 	 )
-		 ||
-			 (
-	           // for conversion operators   
-			  (LT(posTokenAfterTemplateParameters) == IToken.tCOLONCOLON)
-	         && 
-			  (
-				LT(posTokenAfterTemplateParameters+1) == IToken.t_operator
-			  )
-			 )
-		 );
- 	}
+                tokenPos++;
+
+                // until we get all the names sorted out
+                int depth = 1;
+
+                while (depth > 0) {
+                    switch (LT(tokenPos++)) {
+                        case IToken.tGT :
+                            --depth;
+                            break;
+                        case IToken.tLT :
+                            ++depth;
+                            break;
+                    }
+                }
+            }
+
+            if (LT(tokenPos) == IToken.tCOLONCOLON) {
+                tokenPos++;
+
+                switch (LT(tokenPos)) {
+                    case IToken.tCOMPL : // for destructors
+                    case IToken.t_operator : // for conversion operators
+                        return true;
+                    case IToken.tIDENTIFIER :
+                        secondLastIDTokenPos = lastIDTokenPos;
+                        lastIDTokenPos = tokenPos;
+                        tokenPos++;
+                        break;
+                    default :
+                        // Something unexpected after ::
+                        return false;
+                }
+            } else {
+                continueProcessing = false;
+            }
+        }
+        while (continueProcessing);
+
+        // for constructors
+        
+        if (secondLastIDTokenPos < 0) return false;
+        
+        String secondLastID = LA(secondLastIDTokenPos).getImage();
+        String lastID = LA(lastIDTokenPos).getImage();
+        
+        return secondLastID.equals(lastID);	
+    }
 	
+    
 	/**
 	 * @param flags			input flags that are used to make our decision 
 	 * @return				whether or not this looks like a a declarator follows
@@ -1772,7 +1790,7 @@ c, quickParse);
 	 * ptrOperator
 	 * : "*" (cvQualifier)*
 	 * | "&"
-	 * | name "*" (cvQualifier)*
+	 * | class-qualifier "*" (cvQualifier)*
 	 * 
 	 * @param owner 		Declarator that this pointer operator corresponds to.  
 	 * @throws Backtrack 	request a backtrack
@@ -1789,19 +1807,28 @@ c, quickParse);
 		}
 		
 		IToken mark = mark();
+        IToken tokenType = LA(1);
 		
 		boolean hasName = false; 
 		if (t == IToken.tIDENTIFIER || t == IToken.tCOLONCOLON)
 		{
+            callback.nameBegin(tokenType);
 			name();
+            callback.nameEnd(lastToken);
 			hasName = true; 
+            t = LT(1);
 		}
 
 		if (t == IToken.tSTAR) {
-			if( hasName )
+			if( hasName ) {
 				try{ callback.pointerOperatorName( ptrOp );} catch( Exception e ) {}
+                // just consume "*", so tokenType is left as "::" or Id
+                consume();
+            } else {
+                tokenType = consume(); // tokenType = "*"
+            }
 				
-			try{ callback.pointerOperatorType( ptrOp, consume());} catch( Exception e ) {}
+			try{ callback.pointerOperatorType(ptrOp, tokenType);} catch( Exception e ) {}
 
 			for (;;) {
 				try {

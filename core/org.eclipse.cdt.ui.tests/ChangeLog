@@ -1,3 +1,8 @@
+2003-06-14 Victor Mozgin
+	Moved testBugSingleton192() from LokiFailures to DOMTests.
+	Added testPointersToMembers() and testPointersToMemberFunctions() to DOMTests.
+	Added testBug36290() and testBug36931() to DOMTests.
+
 2003-06-13 John Camelon
 	Added Class/Base infrastructure to public interfaces & requestor callback. 
 	Moved many internal interfaces to external packages. 

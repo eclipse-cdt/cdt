@@ -25,10 +25,6 @@ public class LokiFailures extends BaseDOMTest  {
 		super(name);
 	}
 
-	public void testBugSingleton192() {
-		failTest("int Test::* pMember_;" );
-	}
-
     public void testBugTypeManip151()
     {
 		Writer code = new StringWriter();

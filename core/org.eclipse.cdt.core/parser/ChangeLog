@@ -1,3 +1,10 @@
+2003-06-14 Victor Mozgin
+	Fixed handling of parameter lists for typedefs for functions.
+	More errorhandling in CModelBuilder.
+	Added handling of pointers to members.
+	Added handling of declarations for nested scopes (like A::B::C).
+	This fixes PR 36290, 36931 and partially 38920.
+
 2003-06-13 John Camelon
 	Added Class/Base infrastructure to public interfaces & requestor callback. 
 	Moved many internal interfaces to external packages. 

@@ -446,7 +446,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
 	 */
 	public void pointerOperatorName(Object ptrOperator) {
-		// TODO Auto-generated method stub
+        ((PointerOperator)ptrOperator).setNameSpecifier(currName);
 	}
 
 	/* (non-Javadoc)
@@ -461,6 +461,10 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 				break;
 			case IToken.tAMPER:
 				ptrOp.setType( PointerOperator.t_reference );
+				break;
+			case IToken.tCOLONCOLON:
+			case IToken.tIDENTIFIER:
+				ptrOp.setType( PointerOperator.t_pointer_to_member );
 				break;
 			default:
 				break;

@@ -69,6 +69,22 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 			return instance;
 	}
 	
+	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
+		return _template.getTemplatedSymbol().isType( type, upperType );
+	}
+	
+	public TypeInfo.eType getType(){ 
+		return _template.getTemplatedSymbol().getType(); 
+	}
+
+	public boolean isType( TypeInfo.eType type ){
+		return _template.getTemplatedSymbol().isType( type ); 
+	}
+
+	public ISymbolASTExtension getASTExtension() {
+		return _template.getTemplatedSymbol().getASTExtension();
+	}
+	
 	private ITemplateSymbol _template;
 	private List			_arguments;
 }

@@ -79,13 +79,13 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			newSymbol.getParents().add( newWrapper );
 		}
 		
-		Iterator constructors = getConstructors().iterator();
-		newSymbol.getConstructors().clear();
-		IParameterizedSymbol constructor = null;
-		while( constructors.hasNext() ){
-			constructor = (IParameterizedSymbol) constructors.next();
-			newSymbol.getConstructors().add( constructor.instantiate( template, argMap ) );
-		}
+//		Iterator constructors = getConstructors().iterator();
+//		newSymbol.getConstructors().clear();
+//		IParameterizedSymbol constructor = null;
+//		while( constructors.hasNext() ){
+//			constructor = (IParameterizedSymbol) constructors.next();
+//			newSymbol.getConstructors().add( constructor.instantiate( template, argMap ) );
+//		}
 		
 		//TODO: friends
 		
@@ -156,6 +156,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		}
 		
 		constructor.setContainingSymbol( this );
+		constructor.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
+		
 		addThis( constructor );
 
 		getContents().add( constructor );

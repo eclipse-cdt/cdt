@@ -1,3 +1,11 @@
+2004-03-18 Andrew Niefer
+	parsing template-ids: enables clas template partial specializations and fixes 54778 indirectly
+	- add ITokenDuple.getTemplateIdArgLists
+	- Added ExpressionParser.templateArgumentList & ExpressionParser.consumeTemplateArguments
+	- modifications to ExpressionParser & Parser to parse template argument lists
+	- modified lookups to lookup with template-id if the token duple has argument lists
+	- modified TemplateFactory to handle partial specializations
+
 2004-03-17 Andrew Niefer
 	fix bug 55163 
 	- in for-init-statement, try expression-statement before simple-declaration since if it actually is a statement instead of a 

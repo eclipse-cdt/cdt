@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.token;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -31,8 +32,21 @@ public class TokenDuple implements ITokenDuple {
 //		assert ( first != null && last != null ) : this; 
 		firstToken = first; 
 		lastToken = last; 
+		argLists = null;
 	}
-	protected final IToken firstToken, lastToken; 
+	
+	public TokenDuple( IToken first, IToken last, List templateArgLists ){
+		firstToken = first;
+		lastToken = last;
+		if( templateArgLists != null && !templateArgLists.isEmpty() ){
+			argLists = (List[]) templateArgLists.toArray( new List [templateArgLists.size()] );
+		} else {
+			argLists = null;
+		}
+	}
+	
+	protected final IToken firstToken, lastToken;
+	protected final List [] argLists;
 	/**
 	 * @return
 	 */
@@ -208,5 +222,12 @@ public class TokenDuple implements ITokenDuple {
 	 */
 	public int getStartOffset() {
 		return getFirstToken().getOffset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getTemplateIdArgLists()
+	 */
+	public List[] getTemplateIdArgLists() {
+		return argLists;
 	}
 }

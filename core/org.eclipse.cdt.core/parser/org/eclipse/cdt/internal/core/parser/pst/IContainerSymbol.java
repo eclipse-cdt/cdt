@@ -37,6 +37,8 @@ public interface IContainerSymbol extends ISymbol {
 	 *                               hide the first symbol (3.3.7) or is not a valid function overload (3.4-1)
 	 */
 	public void addSymbol( ISymbol symbol ) throws ParserSymbolTableException;
+	
+	public void addTemplateId( ISymbol symbol, List args ) throws ParserSymbolTableException;
 
 	public boolean removeSymbol( ISymbol symbol );
 	
@@ -117,6 +119,7 @@ public interface IContainerSymbol extends ISymbol {
 	 *      r_BadTemplateArgument if (14.3.1, 14.3.2) a template argument is invalid
 	 */
 	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException;
+	public ISymbol lookupFunctionTemplateId( String name, List parameters, List arguments ) throws ParserSymbolTableException;
 	
 	public IContainerSymbol lookupTemplateIdForDefinition( String name, List arguments ) throws ParserSymbolTableException;
 	

@@ -51,6 +51,51 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		argMap.put( symbol, new LinkedList( args ) );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
+	 */
+	public void addTemplateId(ISymbol symbol, List args) throws ParserSymbolTableException {
+		ISymbol previous = findPreviousSymbol( symbol );
+		ITemplateSymbol origTemplate = (previous != null ) ? (ITemplateSymbol) previous.getContainingSymbol() : null;
+		
+		if( origTemplate == null ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+		}
+		
+		ITemplateSymbol template = (ITemplateSymbol) templates.get( templates.size() - 1 );
+		
+		List params = template.getParameterList();
+		if( params.size() == 0 ){
+			//explicit specialization
+			
+		} else {
+			//partial speciailization
+			ISpecializedSymbol spec = template.getSymbolTable().newSpecializedSymbol( symbol.getName() );
+			Iterator iter = params.iterator();
+			while( iter.hasNext() ){
+				spec.addTemplateParameter( (ISymbol) iter.next() );
+			}
+			iter = args.iterator();
+			while( iter.hasNext() ){
+				spec.addArgument( (TypeInfo) iter.next() );
+			}
+			
+			spec.addSymbol( symbol );
+			origTemplate.addSpecialization( spec );
+			
+			//replace the symbol attached to the AST node.
+			if( getASTExtension() != null ){
+				 TemplateSymbolExtension extension = (TemplateSymbolExtension) template.getASTExtension();
+				 extension.replaceSymbol( spec );
+				 ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
+				 templateDecl.releaseFactory();
+				 templateDecl.setSymbol( spec );
+			}
+		}
+		
+		
+	}
+	
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
 		lastSymbol = (IContainerSymbol) (( symbols.size() > 0 ) ? symbols.get( symbols.size() - 1) : null);
 		
@@ -804,4 +849,11 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
+	 */
+	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments) throws ParserSymbolTableException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

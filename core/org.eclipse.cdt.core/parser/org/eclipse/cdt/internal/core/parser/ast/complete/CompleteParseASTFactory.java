@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.parser.Enum;
@@ -91,6 +92,7 @@ import org.eclipse.cdt.internal.core.parser.pst.NamespaceSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
 
@@ -177,6 +179,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 	
 	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, LookupType lookupType ) throws ASTSemanticException {
+		return lookupElement( startingScope, name, type, parameters, null, lookupType );
+	}
+	
+	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, List arguments, LookupType lookupType ) throws ASTSemanticException {
 		ISymbol result = null;
 		if( startingScope == null ) return null;
 		try {
@@ -188,7 +194,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						result = startingDerivableScope.lookupConstructor( new LinkedList(parameters));
 					}
 					else {
-						if( lookupType == LookupType.QUALIFIED )
+						if( arguments != null )
+							result = startingScope.lookupFunctionTemplateId( name, new LinkedList( parameters), new LinkedList( arguments ) );
+						else if( lookupType == LookupType.QUALIFIED )
 							result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
 						else if( lookupType == LookupType.UNQUALIFIED || lookupType == LookupType.FORPARENTSCOPE)
 							result = startingScope.unqualifiedFunctionLookup( name, new LinkedList( parameters ) );
@@ -202,7 +210,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					result = null;
 			}else{
 				// looking for something else
-				if( lookupType == LookupType.QUALIFIED )
+				if( arguments != null )
+					result = startingScope.lookupTemplateId( name, arguments );
+				else if( lookupType == LookupType.QUALIFIED )
 					result = startingScope.qualifiedLookup(name, type);
 				else if( lookupType == LookupType.UNQUALIFIED || lookupType == LookupType.FORPARENTSCOPE )
 					result = startingScope.elaboratedLookup( type, name );
@@ -264,6 +274,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( name == null && throwOnError ) handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
 		else if( name == null ) return null;
 		
+		List [] templateArgLists = name.getTemplateIdArgLists();
+		int idx = 0;
 		switch( name.length() )
 		{
 			case 0: 
@@ -307,19 +319,37 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				while( iter.hasNext() )
 				{
 					IToken t = (IToken)iter.next();
-					if( t.getType() == IToken.tCOLONCOLON ) continue;
+					if( t.getType() == IToken.tCOLONCOLON ){
+						idx++;
+						continue;
+					}
 					if( t.isPointer() ) break;
+					
+					String image = t.getImage();
+					int offset = t.getOffset();
+					
+					if( templateArgLists != null && templateArgLists[ idx ] != null ){
+						t = consumeTemplateIdArguments( t, iter );
+					}
+					
 					try
 					{
 						if( t == name.getLastToken() ) 
-							result = lookupElement((IContainerSymbol)result, t.getImage(), type, parameters, ( lookup == LookupType.FORDEFINITION ) ? lookup : LookupType.QUALIFIED );
+							if( templateArgLists != null )
+								result = lookupElement((IContainerSymbol)result, image, type, parameters, getTemplateArgList( templateArgLists[idx] ), ( lookup == LookupType.FORDEFINITION ) ? lookup : LookupType.QUALIFIED );
+							else
+								result = lookupElement((IContainerSymbol)result, image, type, parameters, ( lookup == LookupType.FORDEFINITION ) ? lookup : LookupType.QUALIFIED );
 						else
-							result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
+							if( templateArgLists != null )
+								result = ((IContainerSymbol)result).lookupTemplateId( image, getTemplateArgList( templateArgLists[idx] ) );
+							else
+								result = ((IContainerSymbol)result).lookupNestedNameSpecifier( image );
+						
 						if( result != null ){
 		                	if( lookup == LookupType.FORPARENTSCOPE && startingScope instanceof ITemplateFactory ){
 		                		((ITemplateFactory)startingScope).pushSymbol( result );
 		                	}
-							addReference( references, createReference( result, t.getImage(), t.getOffset() ));
+							addReference( references, createReference( result, image, offset ));
 						}
 						else
 							break;
@@ -327,7 +357,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					catch( ParserSymbolTableException pste )
 					{
 						if ( throwOnError )
-							handleProblem( pste.createProblemID(), t.getImage() );
+							handleProblem( pste.createProblemID(), image );
 						return null;
 					}
 				}
@@ -335,7 +365,50 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return result;
 	}
 
-
+	protected IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
+	    IToken token = name;
+	    if( token.getNext().getType() == IToken.tLT )
+	    {
+	    	token = (IToken) iter.next();
+	    	Stack scopes = new Stack();
+	        scopes.push(new Integer(IToken.tLT));
+	        
+	        while (!scopes.empty())
+	        {
+	        	int top;
+	        	
+	        	token = (IToken) iter.next();
+	        	switch( token.getType() ){
+	        		case IToken.tGT:
+	        			if (((Integer)scopes.peek()).intValue() == IToken.tLT) {
+							scopes.pop();
+						}
+	                    break;
+	        		case IToken.tRBRACKET :
+						do {
+							top = ((Integer)scopes.pop()).intValue();
+						} while (!scopes.empty() && (top == IToken.tGT || top == IToken.tLT));
+						//if (top != IToken.tLBRACKET) throw backtrack;
+						break;
+	        		case IToken.tRPAREN :
+						do {
+							top = ((Integer)scopes.pop()).intValue();
+						} while (!scopes.empty() && (top == IToken.tGT || top == IToken.tLT));
+						//if (top != IToken.tLPAREN) throw backtrack;
+							
+						break;
+	                case IToken.tLT :
+					case IToken.tLBRACKET:
+					case IToken.tLPAREN:
+						scopes.push(new Integer(token.getType()));
+	                    break;
+					
+	        	}
+	        }
+	    }
+	   
+	    return token;
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDirective(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple, int, int)
      */
@@ -525,7 +598,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			{
 				extension = new ForewardDeclaredSymbolExtension( symbol, astSymbol );
 			}
-			else
+			else if( astSymbol instanceof IASTTemplateDeclaration ){
+				extension = new TemplateSymbolExtension( symbol, astSymbol );
+			}
+			else 
 			{
 				extension = new StandardSymbolExtension( symbol, astSymbol );
 			}
@@ -569,23 +645,37 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		List references = new ArrayList();
 
 		String newSymbolName = ""; //$NON-NLS-1$
+		List templateIdArgList = null;
+		boolean isTemplateId = false;
 		
 		if( name != null ){
 			IToken lastToken = name.getLastToken();
 			if( name.length() != 1 ) // qualified name 
 			{
-				 ITokenDuple containerSymbolName = 
-					name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
-				 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
-					containerSymbolName, references, true);
-				 if( currentScopeSymbol == null )
-				 	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, containerSymbolName.toString(), containerSymbolName.getFirstToken().getOffset(), containerSymbolName.getLastToken().getEndOffset(), containerSymbolName.getLastToken().getLineNumber() );
+				int idx = name.findLastTokenType( IToken.tCOLONCOLON );
+				if( idx != -1 ){
+					ITokenDuple containerSymbolName = 
+						name.getSubrange( 0, idx - 1 ); // -1 for index, -2 for last hop of qualified name
+					 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
+						containerSymbolName, references, true);
+					 if( currentScopeSymbol == null )
+					 	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, containerSymbolName.toString(), containerSymbolName.getFirstToken().getOffset(), containerSymbolName.getLastToken().getEndOffset(), containerSymbolName.getLastToken().getLineNumber() );	
+				} 
+				
+				//template-id
+				List [] array = name.getTemplateIdArgLists();
+				if( array != null ){
+					isTemplateId = true;
+					templateIdArgList = array[ array.length - 1 ];
+					lastToken = name.getToken( idx + 1);
+				}
+				 
 			}
 			newSymbolName = lastToken.getImage();
 		}
 		
 		ISymbol classSymbol = null;
-		if( !newSymbolName.equals("") ){ //$NON-NLS-1$
+		if( !newSymbolName.equals("") && !isTemplateId ){ //$NON-NLS-1$
 			try
 			{
 				classSymbol = currentScopeSymbol.lookupMemberForDefinition(newSymbolName);
@@ -607,9 +697,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( classSymbol != null )
 			classSymbol.setTypeSymbol( newSymbol );
 			
+		List args = null;
+		if( isTemplateId ){
+			args = getTemplateArgList( templateIdArgList );
+		}
 		try
         {
-            currentScopeSymbol.addSymbol( newSymbol );
+			if( !isTemplateId )
+				currentScopeSymbol.addSymbol( newSymbol );
+			else 
+				currentScopeSymbol.addTemplateId( newSymbol, args );
         }
         catch (ParserSymbolTableException e2)
         {
@@ -621,6 +718,25 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         return classSpecifier;
     }
     
+	private List getTemplateArgList( List args ){
+		if( args == null )
+			return null;
+		
+		List list = new LinkedList();
+		Iterator iter = args.iterator();
+		
+		ASTExpression exp;
+		while( iter.hasNext() )
+		{
+			exp = (ASTExpression) iter.next();
+			
+			TypeInfo info = exp.getResultType().getResult();;
+			
+			list.add( info );
+		}
+			
+		return list;
+	}
 	
     protected void handleProblem( int id, String attribute ) throws ASTSemanticException
 	{
@@ -692,8 +808,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         else
            	handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
-        	        	
-		IContainerSymbol symbol = (IContainerSymbol) lookupQualifiedName( classSymbol, parentClassName, references, true );
+        	 
+        //Its possible that the parent is not an IContainerSymbol if its a template parameter or some kinds of template instances
+		ISymbol symbol = (ISymbol) lookupQualifiedName( classSymbol, parentClassName, references, true );
 		classSymbol.addParent( symbol, isVirtual, visibility, parentClassName.getFirstToken().getOffset(), references );
 		 
     }
@@ -840,7 +957,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	if( idExpression != null )
     	{
     		logMessage.append( " idexpression=" ); //$NON-NLS-1$
-    		logMessage.append( "idExpression.toString()"); //$NON-NLS-1$
+    		logMessage.append( idExpression.toString()); //$NON-NLS-1$
     	}
     	else if( literal != null && !literal.equals( "" )) //$NON-NLS-1$
     	{
@@ -1091,7 +1208,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		ExpressionResult result = null;
 		TypeInfo info = new TypeInfo();
-		
+		if( literal != null && !literal.equals("") ){ //$NON-NLS-1$
+			info.setDefault( literal );
+		}
 		// types that resolve to void
 		if ((kind == IASTExpression.Kind.PRIMARY_EMPTY)
 		|| (kind == IASTExpression.Kind.THROWEXPRESSION) 
@@ -1574,26 +1693,42 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			
 			ISymbol typeSymbol = getScopeToSearchUpon( scope, first, i );
 						
+			List [] argLists = typeName.getTemplateIdArgLists();
+			int idx = 0;
+			
 			while( i.hasNext() )
 			{
 				IToken current = (IToken)i.next(); 
-				if( current.getType() == IToken.tCOLONCOLON ) continue;
+				
+				if( current.getType() == IToken.tCOLONCOLON ){
+					idx++;
+					continue;
+				}
+
+				String image = current.getImage();
+				int offset = current.getOffset();
+				
+				if( argLists != null && argLists[ idx ] != null ){
+					current = consumeTemplateIdArguments( current, i );
+				}
 				
 				try
                 {
-                	if( current != typeName.getLastToken() )
-                    	typeSymbol = ((IContainerSymbol)typeSymbol).lookupNestedNameSpecifier( current.getImage());
+					if( argLists != null && argLists[ idx ] != null )
+						typeSymbol = ((IContainerSymbol)typeSymbol).lookupTemplateId( image, getTemplateArgList( argLists[idx] ) );
+					else if( current != typeName.getLastToken() )
+                		typeSymbol = ((IContainerSymbol)typeSymbol).lookupNestedNameSpecifier( image );
                     else
-						typeSymbol = ((IContainerSymbol)typeSymbol).lookup( current.getImage());
+                    	typeSymbol = ((IContainerSymbol)typeSymbol).lookup( image );
 					
 					if( typeSymbol != null )	
-                    	addReference( references, createReference( typeSymbol, current.getImage(), current.getOffset() ));
+                    	addReference( references, createReference( typeSymbol, image, offset ));
                     else
-                    	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, current.getImage() );
+                    	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image );
                 }
                 catch (ParserSymbolTableException e)
                 {
-                	handleProblem( e.createProblemID(), current.getImage() );
+                	handleProblem( e.createProblemID(), image );
                 } 
 			}
 			s.setTypeSymbol( typeSymbol );
@@ -2472,7 +2607,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			try {
 				template.addTemplateParameter( param.getSymbol() );
 			} catch (ParserSymbolTableException e) {
-				handleProblem( e.createProblemID(), "", startingOffset, -1, startingLine ); 
+				handleProblem( e.createProblemID(), "", startingOffset, -1, startingLine );  //$NON-NLS-1$
 			}
 		}
 		
@@ -2492,21 +2627,23 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTParameterDeclaration parameter,
         List parms ) throws ASTSemanticException
     {
-    	ISymbol symbol = ( kind != ParamKind.PARAMETER ) ? pst.newSymbol( identifier, TypeInfo.t_templateParameter ) : null;
+    	ISymbol symbol = pst.newSymbol( identifier, TypeInfo.t_templateParameter );
     	if( kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
     		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_typeName );
     	} else if ( kind == ParamKind.TEMPLATE_LIST ){
     		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_template );
     	} else /*ParamKind.PARAMETER*/ {
-    		symbol = ((ASTParameterDeclaration)parameter).getSymbol();
+       		symbol.setName( parameter.getName() );
+    		symbol.setTypeInfo( ((ASTSimpleTypeSpecifier)parameter.getTypeSpecifier()).getSymbol().getTypeInfo() );
     		symbol.getTypeInfo().setTemplateParameterType( symbol.getType() );
     		symbol.setType( TypeInfo.t_templateParameter );
+    		
+    		setPointerOperators( symbol, parameter.getPointerOperators(), parameter.getArrayModifiers() );
     	}
 
     	ASTTemplateParameter ast = new ASTTemplateParameter( symbol, defaultValue,  parameter, parms );
     	
-   		//TODO what if the symbol was ParamKind.PARAMETER?
-        attachSymbolExtension( symbol, ast, false );
+   	    attachSymbolExtension( symbol, ast, false );
         
         return ast; 
     }
@@ -2544,7 +2681,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
     	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
     
-		ISymbol typeSymbol = cloneSimpleTypeSymbol( "", mapping, new ArrayList() );
+		ISymbol typeSymbol = cloneSimpleTypeSymbol( "", mapping, new ArrayList() ); //$NON-NLS-1$
 		setPointerOperators( typeSymbol, mapping.getPointerOperators(), mapping.getArrayModifiers() );
 		
 		newSymbol.setTypeSymbol( typeSymbol );

@@ -1,3 +1,13 @@
+2003-03-18 Andrew Niefer
+	parsing template-ids
+	- added    parser/org/eclipse/cdt/core/parser/tests/ScannerTestCase.test54778()
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseBaseTests.java
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testOverloadedFunctionTemplates()
+	- added    parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testOverloadedFunctionTemplates_2()
+	- added    parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateClassPartialSpecialization()
+	- added    parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateInstanceAsBaseClause()
+	- added    parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateParameterAsBaseClause()
+
 2004-03-18 Alain Magloire
 
 	Change in the hierarchy of the core Model:

@@ -733,7 +733,7 @@ public class CompleteParseBaseTest extends TestCase
     protected void assertReferences( 
     	ISourceElementCallbackDelegate element, 
     	int expectedDistinctReferenceCount, 
-    	boolean allowDuplicates )
+    	boolean allowDuplicates, boolean allowNameMatching )
     {
     	Set matches = new HashSet(); 
     	Iterator allReferences = callback.getReferences().iterator();
@@ -748,7 +748,8 @@ public class CompleteParseBaseTest extends TestCase
     		else
     		{
     			if( r.getReferencedElement() instanceof IASTQualifiedNameElement && 
-    				element instanceof IASTQualifiedNameElement )
+    				element instanceof IASTQualifiedNameElement &&
+					allowNameMatching )
     			{
 					if( qualifiedNamesEquals( 
 						((IASTQualifiedNameElement)r.getReferencedElement()).getFullyQualifiedName(),
@@ -770,16 +771,22 @@ public class CompleteParseBaseTest extends TestCase
     
     protected static class Task
     {
+    	private final boolean allowNameMatching;
     	private final boolean unique;
         private final int count;
         private final ISourceElementCallbackDelegate element;
     	
 
+        public Task( ISourceElementCallbackDelegate element, int referenceCount, boolean distinct, boolean matchNames ){
+        	this.element = element;
+    		this.count = referenceCount;
+    		this.unique = distinct;
+    		this.allowNameMatching = matchNames;
+        }
+        
         public Task( ISourceElementCallbackDelegate element, int referenceCount, boolean distinct )
     	{
-    		this.element = element;
-    		this.count = referenceCount;
-    		this.unique = distinct; 
+        	this( element, referenceCount, distinct, true );
     	}
     	
 		public Task( ISourceElementCallbackDelegate element, int referenceCount )
@@ -815,12 +822,16 @@ public class CompleteParseBaseTest extends TestCase
         {
             return unique;
         }
+        
+        public boolean allowNameMatching(){
+        	return allowNameMatching;
+        }
 
     }
     
     protected void assertReferenceTask( Task task )
     {
-		assertReferences( task.getElement(), task.getCount(), task.isUnique() );    	
+		assertReferences( task.getElement(), task.getCount(), task.isUnique(), task.allowNameMatching() );    	
     }
     
     protected void assertAllReferences( int count, List tasks )

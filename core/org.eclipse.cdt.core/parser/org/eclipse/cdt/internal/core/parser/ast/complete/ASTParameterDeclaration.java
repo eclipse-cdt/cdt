@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
@@ -114,6 +115,11 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     {
         return abstractDeclaration.getTypeSpecifier();
     }
+    
+    public IASTAbstractDeclaration getAbstractDeclaration(){
+    	return abstractDeclaration;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */

@@ -1455,6 +1455,76 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write( " }" );
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T1 = (IASTTemplateParameter) template1.getTemplateParameters().next();
+		
+		IASTFunction f1 = (IASTFunction) template1.getOwnedDeclaration();
+		
+		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
+		IASTFunction f2 = (IASTFunction) template2.getOwnedDeclaration();
+		IASTTemplateParameter T2 = (IASTTemplateParameter) template2.getTemplateParameters().next();
+		
+		IASTVariable p = (IASTVariable) i.next();
+		IASTFunction main = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		
+		assertAllReferences( 6, createTaskList( new Task( T1 ), 
+											    new Task( T2 ), 
+												new Task( f1, 1, false, false ), 
+												new Task( p, 2 ), 
+												new Task( f2, 1, false, false ) ) );
+		
+	}
+	
+	public void testOverloadedFunctionTemplates_2() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("template< class T > struct A {  };                 \n");
+		writer.write("template< class T > void h( const T & );	//#1     \n");
+		writer.write("template< class T > void h( A<T>& );		//#2     \n");
+		writer.write("void foo() {                                       \n");
+		writer.write("   A<int> z;                                       \n");
+		writer.write("   h( z );  //calls 2                              \n");
+		
+		writer.write("   const A<int> z2;                                \n");
+		writer.write("   h( z2 ); //calls 1 because 2 is not callable.   \n");
+		writer.write( "}                                                 \n");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration templateA = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateh1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateh2 = (IASTTemplateDeclaration) i.next();
+		
+		IASTClassSpecifier A = (IASTClassSpecifier) templateA.getOwnedDeclaration();
+		IASTFunction h1 = (IASTFunction) templateh1.getOwnedDeclaration();
+		IASTFunction h2 = (IASTFunction) templateh2.getOwnedDeclaration();
+		
+		IASTTemplateParameter T1 = (IASTTemplateParameter) templateA.getTemplateParameters().next();
+		IASTTemplateParameter T2 = (IASTTemplateParameter) templateh1.getTemplateParameters().next();
+		IASTTemplateParameter T3 = (IASTTemplateParameter) templateh2.getTemplateParameters().next();
+		
+		IASTFunction foo = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		
+		i = getDeclarations( foo );
+		IASTVariable z = (IASTVariable) i.next();
+		IASTVariable z2 = (IASTVariable) i.next();
+		assertFalse( i.hasNext() );
+		
+		assertEquals( ((IASTSimpleTypeSpecifier)z.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A );
+		assertEquals( ((IASTSimpleTypeSpecifier)z2.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A );
+		
+		assertAllReferences( 8 /*9*/, createTaskList( new Task( T2 ), 
+											    //new Task( T3 ), 
+												new Task( A, 3 ), 
+												new Task( z ), 
+												new Task( z2 ),
+												new Task( h1, 1, false, false ), 	
+												new Task( h2, 1, false, false ) ) );
+		
+		
 	}
 	public void testBug54639() throws Exception
 	{
@@ -1476,6 +1546,134 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		
 		assertFalse( i.hasNext() ); 
 	}
+	
+	public void testTemplateClassPartialSpecialization() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T1, class T2, int I > class A {};  //#1\n" );
+		writer.write( "template < class T, int I >            class A < T, T*, I >   {};  //#2\n");
+		writer.write( "template < class T1, class T2, int I > class A < T1*, T2, I > {};  //#3\n");
+		writer.write( "template < class T >                   class A < int, T*, 5 > {};  //#4\n");
+		writer.write( "template < class T1, class T2, int I > class A < T1, T2*, I > {};  //#5\n");
+
+		writer.write( "A <int, int, 1>   a1;		//uses #1 \n");
+		writer.write( "A <int, int*, 1>  a2;		//uses #2, T is int, I is 1 \n");
+		writer.write( "A <int, char*, 5> a4;		//uses #4, T is char \n");
+		writer.write( "A <int, char*, 1> a5;		//uses #5, T is int, T2 is char, I is1 \n");
+
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		writer.write( "  A <int*, int*, 2> amgiguous; //ambiguous, matches #3 & #5 \n");
+		
+		try{
+			//we expect this parse to fail because of the ambiguity in the last line
+			parse( writer.toString() );
+			assertFalse( true );
+		} catch ( ParserException e ){
+			assertEquals( e.getMessage(), "FAILURE" );
+		}
+	 
+		IASTTemplateDeclaration template1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration spec2 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration spec3 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration spec4 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration spec5 = (IASTTemplateDeclaration) i.next();
+		
+		IASTVariable a1 = (IASTVariable) i.next();
+		IASTVariable a2 = (IASTVariable) i.next();
+		IASTVariable a4 = (IASTVariable) i.next();
+		IASTVariable a5 = (IASTVariable) i.next();
+		
+		assertFalse( i.hasNext() );
+		
+		IASTClassSpecifier A1 = (IASTClassSpecifier)template1.getOwnedDeclaration();
+		IASTClassSpecifier A2 = (IASTClassSpecifier)spec2.getOwnedDeclaration();
+		IASTClassSpecifier A3 = (IASTClassSpecifier)spec3.getOwnedDeclaration();
+		IASTClassSpecifier A4 = (IASTClassSpecifier)spec4.getOwnedDeclaration();
+		IASTClassSpecifier A5 = (IASTClassSpecifier)spec5.getOwnedDeclaration();
+		
+		assertEquals( ((IASTSimpleTypeSpecifier)a1.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A1 );
+		assertEquals( ((IASTSimpleTypeSpecifier)a2.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A2 );
+		assertEquals( ((IASTSimpleTypeSpecifier)a4.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A4 );
+		assertEquals( ((IASTSimpleTypeSpecifier)a5.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A5 );
+		
+	}
+	
+	public void testTemplateInstanceAsBaseClause() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template< class T > class A { T t; };  \n" );
+		writer.write( "class B : public A< int > {};          \n" );
+		writer.write( "void f( int );                         \n" );
+		
+		writer.write( "void main(){                           \n" );
+		writer.write( "   B b;                                \n" );
+		writer.write( "   f( b.t );                           \n" );  //if this function call is good, it implies that b.t is type int
+		writer.write( "}                                      \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T = (IASTTemplateParameter) template.getTemplateParameters().next();
+		IASTClassSpecifier B = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTFunction f = (IASTFunction) i.next();
+		IASTFunction main = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		
+		IASTClassSpecifier A = (IASTClassSpecifier) template.getOwnedDeclaration();
+		i = getDeclarations( A );
+		IASTField t = (IASTField) i.next();
+		assertFalse( i.hasNext() );
+		
+		i = getDeclarations( main );
+		
+		IASTVariable b = (IASTVariable) i.next();
+		assertFalse( i.hasNext() );
+		
+		assertAllReferences( 6, createTaskList( new Task( T ), 
+											    new Task( A ), 
+												new Task( B ), 
+												new Task( b ),
+												new Task( t ), 	
+												new Task( f ) ) );
+	}
+	
+	public void testTemplateParameterAsBaseClause() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T > class A : public T {};  \n" );
+		writer.write( "class B { int i; };                           \n" );
+		writer.write( "void main() {                                \n" );
+		writer.write( "   A<B> a;                                   \n" );
+		writer.write( "   a.i;                                      \n" );
+		writer.write( "}                                            \n" );
+		writer.write( "\n" );
+		
+		Iterator iter = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) iter.next();
+		IASTTemplateParameter T = (IASTTemplateParameter) template.getTemplateParameters().next();
+		IASTClassSpecifier B = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)iter.next()).getTypeSpecifier();
+		IASTFunction main = (IASTFunction) iter.next();
+		assertFalse( iter.hasNext() );
+
+		IASTClassSpecifier A = (IASTClassSpecifier) template.getOwnedDeclaration();
+		
+		iter = getDeclarations( B );
+		IASTVariable i = (IASTVariable) iter.next();
+		
+		iter = getDeclarations( main );
+		IASTVariable a = (IASTVariable) iter.next();
+		
+		assertAllReferences( 4 /*5*/, createTaskList( new Task( T ), 
+											    new Task( A ), 
+												//new Task( B ), 
+												new Task( a ),
+												new Task( i ) ) ); 	
+		
+	}
+	
+	
 	
 	public void testBug55163() throws Exception
 	{

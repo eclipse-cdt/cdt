@@ -1063,6 +1063,21 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	private 	LinkedList	_contents;				//ordered list of all contents of this symbol
 	private		LinkedList	_usingDirectives;		//collection of nominated namespaces
 	private		Map 		_containedSymbols;		//declarations contained by us.
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
+	 */
+	public void addTemplateId(ISymbol symbol, List args) throws ParserSymbolTableException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
+	 */
+	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments) throws ParserSymbolTableException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }

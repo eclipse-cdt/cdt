@@ -1564,4 +1564,17 @@ public class ScannerTestCase extends BaseScannerTest
     	validateIdentifier( "Liﬂ‰");
     	validateEOF();
     }
+    public void test54778() throws ScannerException
+	{
+    	initializeScanner("#if 1 || 0 < 3 \n printf \n #endif\n");
+    	validateIdentifier("printf");
+    	validateEOF();
+    	initializeScanner("#if !defined FOO || FOO > 3\nprintf\n#endif\n");
+    	validateIdentifier("printf");
+    	validateEOF();
+    	initializeScanner("#if !defined FOO || FOO < 3\nprintf\n#endif\n");
+    	validateIdentifier("printf");
+    	validateEOF();
+
+    }
 }

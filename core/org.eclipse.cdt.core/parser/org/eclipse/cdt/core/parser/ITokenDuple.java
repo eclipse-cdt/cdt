@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -30,6 +31,7 @@ public interface ITokenDuple {
 	 */
 	public abstract IToken getLastToken();
 	
+	public List [] getTemplateIdArgLists();
 	
 	public abstract Iterator iterator();
 	public abstract String toString();

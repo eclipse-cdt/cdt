@@ -184,7 +184,7 @@ public class Util implements ICLogConstants {
 		if (CCorePlugin.getDefault().isDebugging() && isActive(client)) {
 			// Time stamp
 			if (addTimeStamp)
-				message = MessageFormat.format("[{0}] {1}", new Object[]{
+				message = MessageFormat.format("[{0}] {1}", new Object[]{ //$NON-NLS-1$
 						new Long(System.currentTimeMillis()), message}); //$NON-NLS-1$
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);

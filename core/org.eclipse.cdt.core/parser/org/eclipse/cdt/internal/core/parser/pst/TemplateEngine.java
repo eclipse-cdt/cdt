@@ -702,14 +702,13 @@ public final class TemplateEngine {
 			return -1;	
 		}
 		
-		Iterator iter = spec1.getContainedSymbols().keySet().iterator();
-		ISymbol decl = (ISymbol) spec1.getContainedSymbols().get( iter.next() );
+		ISymbol decl = (ISymbol) spec1.getTemplatedSymbol();
 		
 		//to order class template specializations, we need to transform them into function templates
 		ITemplateSymbol template1 = spec1;
 		ITemplateSymbol template2 = spec2;
 		
-		if( decl.isType( TypeInfo.t_class ) ) {
+		if( decl.isType( TypeInfo.t_class, TypeInfo.t_union ) ) {
 			template1 = classTemplateSpecializationToFunctionTemplate( spec1 );
 			template2 = classTemplateSpecializationToFunctionTemplate( spec2 );	
 		}

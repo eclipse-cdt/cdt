@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -1703,13 +1704,15 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected ITokenDuple className(IASTScope scope) throws EndOfFileException, BacktrackException
     {
-		ITokenDuple duple = name(scope, CompletionKind.USER_SPECIFIED_NAME );
-		IToken last = duple.getLastToken(); 
-        if (LT(1) == IToken.tLT) {
-			last = consumeTemplateParameters(duple.getLastToken());
-        }
-        
-		return new TokenDuple(duple.getFirstToken(), last);
+//		ITokenDuple duple = name(scope, CompletionKind.USER_SPECIFIED_NAME );
+//		IToken last = duple.getLastToken(); 
+//        if (LT(1) == IToken.tLT) {
+//			last = consumeTemplateParameters(duple.getLastToken());
+//        	//last = templateArgumentList( scope, duple.getLastToken() );
+//        }
+//        
+//		return new TokenDuple(duple.getFirstToken(), last);
+    	return name( scope, CompletionKind.USER_SPECIFIED_NAME );
     }
     
     /**
@@ -2196,7 +2199,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         throws EndOfFileException, BacktrackException
     {
         if (LT(1) == IToken.t_operator)
-            operatorId(d, null);
+            operatorId(d, null, null);
         else
         {
             try
@@ -2210,23 +2213,35 @@ public abstract class Parser extends ExpressionParser implements IParser
                 Declarator d1 = d;
                 Declarator d11 = d1;
                 IToken start = null;
+                
+                List argumentList = new LinkedList();
+                boolean hasTemplateId = false;
+                
                 IToken mark = mark();
                 if (LT(1) == IToken.tCOLONCOLON
                     || LT(1) == IToken.tIDENTIFIER)
                 {
                     start = consume();
                     IToken end = null;
-                    if (start.getType() == IToken.tIDENTIFIER)
-                        end = consumeTemplateParameters(end);
-                        while (LT(1) == IToken.tCOLONCOLON
-                            || LT(1) == IToken.tIDENTIFIER)
-                        {
-                            end = consume();
-                            if (end.getType() == IToken.tIDENTIFIER)
-                                end = consumeTemplateParameters(end);
+                    
+                    if (start.getType() == IToken.tIDENTIFIER){
+                      	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
+                    	if( end != null && end.getType() == IToken.tGT )
+                    		hasTemplateId = true;
+                    }
+                    
+                    while (LT(1) == IToken.tCOLONCOLON
+                        || LT(1) == IToken.tIDENTIFIER)
+                    {
+                        end = consume();
+                        if (end.getType() == IToken.tIDENTIFIER){
+                          	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
+                        	if( end.getType() == IToken.tGT )
+                        		hasTemplateId = true;
                         }
+                    }
                     if (LT(1) == IToken.t_operator)
-                        operatorId(d11, start);
+                        operatorId(d11, start, ( hasTemplateId ? argumentList : null ) );
                     else
                     {
                         backup(mark);

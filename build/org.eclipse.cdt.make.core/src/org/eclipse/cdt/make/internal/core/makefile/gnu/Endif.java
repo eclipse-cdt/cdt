@@ -21,5 +21,8 @@ public class Endif extends Terminal {
 	public boolean isEndif() {
 		return true;
 	}
-
+	
+    public String toString() {
+        return GNUMakefileConstants.TERMINAL_ENDIF;
+    }
 }

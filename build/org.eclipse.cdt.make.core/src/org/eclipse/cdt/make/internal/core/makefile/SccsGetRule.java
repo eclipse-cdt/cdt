@@ -22,7 +22,7 @@ import org.eclipse.cdt.make.core.makefile.ISccsGetRule;
 public class SccsGetRule extends SpecialRule implements ISccsGetRule {
 
 	public SccsGetRule(Directive parent, Command[] cmds) {
-		super(parent, new Target(".SCCS_GET"), new String[0], cmds); //$NON-NLS-1$
+		super(parent, new Target(MakeFileConstants.RULE_SCCS_GET), new String[0], cmds);
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.internal.core.makefile.posix;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.internal.core.makefile.MakeFileConstants;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
 
 /**
@@ -28,7 +29,7 @@ public class PosixMakefileUtil {
 		int space;
 		// Trim away trailing and prepending spaces.
 		line = line.trim();
-		while ((space = Util.indexOf(line, " \t")) != -1) {
+		while ((space = Util.indexOf(line, " \t")) != -1) { //$NON-NLS-1$
 			aList.add(line.substring(0, space).trim());
 			line = line.substring(space + 1).trim();
 		}
@@ -57,11 +58,11 @@ public class PosixMakefileUtil {
 
 	public static boolean isInferenceRule(String line) {
 		line = line.trim();
-		if (line.startsWith(".")) {
+		if (line.startsWith(".")) { //$NON-NLS-1$
 			int index = Util.indexOf(line, ':');
 			if (index > 1) {
 				line = line.substring(index + 1).trim();
-				if (line.length() == 0 || line.equals(";")) {
+				if (line.length() == 0 || line.equals(";")) { //$NON-NLS-1$
 					return true;
 				}
 			}
@@ -74,7 +75,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".DEFAULT");
+			return line.equals(MakeFileConstants.RULE_DEFAULT);
 		}
 		return false;
 	}
@@ -84,7 +85,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".IGNORE");
+			return line.equals(MakeFileConstants.RULE_IGNORE);
 		}
 		return false;
 	}
@@ -94,7 +95,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".POSIX");
+			return line.equals(MakeFileConstants.RULE_POSIX);
 		}
 		return false;
 	}
@@ -104,7 +105,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".PRECIOUS");
+			return line.equals(MakeFileConstants.RULE_PRECIOUS);
 		}
 		return false;
 	}
@@ -114,7 +115,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".SCCS_GET");
+			return line.equals(MakeFileConstants.RULE_SCCS_GET);
 		}
 		return false;
 	}
@@ -124,7 +125,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".SILENT");
+			return line.equals(MakeFileConstants.RULE_SILENT);
 		}
 		return false;
 	}
@@ -134,7 +135,7 @@ public class PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".SUFFIXES");
+			return line.equals(MakeFileConstants.RULE_SUFFIXES);
 		}
 		return false;
 	}

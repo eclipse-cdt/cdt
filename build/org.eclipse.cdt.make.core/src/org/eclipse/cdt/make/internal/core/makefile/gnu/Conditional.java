@@ -16,6 +16,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Parent;
 
 public abstract class Conditional extends Parent implements IConditional {
 
+    private static final String EMPTY = ""; //$NON-NLS-1$
 	String cond;
 	String arg1;
 	String arg2;
@@ -27,7 +28,7 @@ public abstract class Conditional extends Parent implements IConditional {
 	}
 
 	public Conditional(Directive parent) {
-		this(parent, "", "", "");
+		this(parent, EMPTY, EMPTY, EMPTY);
 	}
 
 	public Conditional(Directive parent, String conditional, String argument1, String argument2) {
@@ -88,7 +89,7 @@ public abstract class Conditional extends Parent implements IConditional {
 		char terminal = line.charAt(0) == '(' ? ',' : line.charAt(0);
  
 		if (line.length() < 5 && terminal != ',' && terminal != '"' && terminal != '\'') {
-			arg1 = arg2 = "";
+			arg1 = arg2 = EMPTY;
 			return;
 		}
  
@@ -125,7 +126,7 @@ public abstract class Conditional extends Parent implements IConditional {
  
 		terminal = terminal == ',' ? ')' : line.charAt(0);
 		if (terminal != ')' && terminal != '"' && terminal != '\'') {
-			arg2 = "";
+			arg2 = EMPTY;
 			return;
 		}
  

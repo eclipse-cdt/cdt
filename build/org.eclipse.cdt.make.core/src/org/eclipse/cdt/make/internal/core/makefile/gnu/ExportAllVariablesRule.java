@@ -24,7 +24,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class ExportAllVariablesRule extends SpecialRule implements IExportAllVariablesRule {
 
 	public ExportAllVariablesRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".EXPORT_ALL_VARIABLES"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_EXPORT_ALL_VARIABLES), reqs, new Command[0]);
 	}
 
 }

@@ -27,7 +27,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class NotParallelRule extends SpecialRule implements INotParallelRule {
 
 	public NotParallelRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".NOTPARALLEL"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_NOT_PARALLEL), reqs, new Command[0]);
 	}
 
 }

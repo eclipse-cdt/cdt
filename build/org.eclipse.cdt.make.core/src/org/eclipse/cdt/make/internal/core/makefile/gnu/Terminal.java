@@ -13,7 +13,7 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-public class Terminal extends Directive implements ITerminal {
+public abstract class Terminal extends Directive implements ITerminal {
 
 	public Terminal(Directive parent) {
 		super(parent);
@@ -28,11 +28,6 @@ public class Terminal extends Directive implements ITerminal {
 	}
 
 	public String toString() {
-		if (isEndif()) {
-			return "endif\n";
-		} else if (isEndef()){
-			return "endef\n";
-		}
-		return "\n";
+		return "\n"; //$NON-NLS-1$
 	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.make.core.makefile.IIgnoreRule;
 public class IgnoreRule extends SpecialRule implements IIgnoreRule {
 
 	public IgnoreRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".IGNORE"), reqs, new Command[0]); //$NON-NLS-1$
+		super(parent, new Target(MakeFileConstants.RULE_IGNORE), reqs, new Command[0]);
 	}
 
 }

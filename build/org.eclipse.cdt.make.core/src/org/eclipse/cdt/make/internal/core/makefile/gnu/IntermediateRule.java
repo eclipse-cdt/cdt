@@ -24,7 +24,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class IntermediateRule extends SpecialRule implements IIntermediateRule {
 
 	public IntermediateRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".INTERMEDIATE"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_INTERMEDIATE), reqs, new Command[0]);
 	}
 
 }

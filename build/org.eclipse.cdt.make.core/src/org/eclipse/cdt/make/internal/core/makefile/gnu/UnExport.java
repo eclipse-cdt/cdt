@@ -23,7 +23,7 @@ public class UnExport extends Directive implements IUnExport {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("unexport");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.DIRECTIVE_UNEXPORT);
 		sb.append(' ').append(variable);
 		return sb.toString();
 	}

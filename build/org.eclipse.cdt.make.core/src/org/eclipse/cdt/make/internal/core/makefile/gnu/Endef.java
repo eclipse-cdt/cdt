@@ -22,4 +22,8 @@ public class Endef extends Terminal {
 	public boolean isEndef() {
 		return true;
 	}
+	
+	public String toString() {
+       return GNUMakefileConstants.TERMINAL_ENDEF;
+    }
 }

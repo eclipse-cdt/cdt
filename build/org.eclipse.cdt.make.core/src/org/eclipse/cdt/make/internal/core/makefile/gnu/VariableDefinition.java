@@ -36,7 +36,7 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	}
 
 	public VariableDefinition(Directive parent, String name, StringBuffer value, int type) {
-		this(parent,  "", name, value, type);
+		this(parent,  "", name, value, type); //$NON-NLS-1$
 	}
 
 	public VariableDefinition(Directive parent, String target, String name, StringBuffer value, int type) {
@@ -51,29 +51,32 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		if (isTargetSpecific()) {
-			sb.append(getTarget()).append(": ");
+			sb.append(getTarget()).append(": "); //$NON-NLS-1$
 		}
 		if (isOverride()) {
-			sb.append("override ");
+			sb.append(GNUMakefileConstants.VARIABLE_OVERRIDE);
 		}
 		if (isMultiLine()) {
-			sb.append("define ");
+			sb.append(GNUMakefileConstants.VARIABLE_DEFINE);
+			sb.append(' ');
 			sb.append(getName()).append('\n');
 			sb.append(getValue()).append('\n');
-			sb.append("endef\n");
+			sb.append(GNUMakefileConstants.TERMINAL_ENDEF);
+			sb.append('\n');
 		} else {
 			if (isExport()) {
-				sb.append("export ");
+				sb.append(GNUMakefileConstants.VARIABLE_EXPORT);
+				sb.append(' ');
 			}
 			sb.append(getName());
 			if (isRecursivelyExpanded()) {
-				sb.append(" = ");
+				sb.append(" = "); //$NON-NLS-1$
 			} else if (isSimplyExpanded()) {
-				sb.append(" := ");
+				sb.append(" := "); //$NON-NLS-1$
 			} else if (isConditional()) {
-				sb.append(" ?= ");
+				sb.append(" ?= "); //$NON-NLS-1$
 			} else if (isAppend()) {
-				sb.append(" += ");
+				sb.append(" += "); //$NON-NLS-1$
 			}
 			sb.append(getValue()).append('\n');
 		}

@@ -24,7 +24,7 @@ public class Ifeq extends Conditional {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("ifeq");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.CONDITIONAL_IFEQ);
 		sb.append(' ').append(getConditional());
 		return sb.toString();
 	}

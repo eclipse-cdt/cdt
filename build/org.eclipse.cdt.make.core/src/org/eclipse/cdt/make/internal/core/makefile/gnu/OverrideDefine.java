@@ -20,10 +20,10 @@ public class OverrideDefine extends DefineVariable {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("override define ");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.VARIABLE_OVERRIDE + " " + GNUMakefileConstants.VARIABLE_DEFINE); //$NON-NLS-1$
 		sb.append(getName()).append('\n');
 		sb.append(getValue());
-		sb.append("endef");
+		sb.append(GNUMakefileConstants.TERMINAL_ENDEF);
 		return sb.toString();
 	}
 

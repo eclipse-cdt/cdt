@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.IDefaultRule;
 public class DefaultRule extends SpecialRule implements IDefaultRule {
 
 	public DefaultRule(Directive parent, Command[] cmds) {
-		super(parent, new Target(".DEFAULT"), new String[0], cmds); //$NON-NLS-1$
+		super(parent, new Target(MakeFileConstants.RULE_DEFAULT), new String[0], cmds);
 	}
 
 }

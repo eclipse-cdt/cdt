@@ -122,7 +122,7 @@ public class GNUMakefileChecker extends ACBuilder {
 
 	protected IFile[] getCandidateMakefiles(IProject proj) {
 		// FIXME: Find the candidate in the store somewhere.
-		IFile defaultMakefile = proj.getFile(new Path("Makefile"));
+		IFile defaultMakefile = proj.getFile(new Path("Makefile")); //$NON-NLS-1$
 		if (defaultMakefile.exists()) {
 			return new IFile[] {defaultMakefile};
 		}

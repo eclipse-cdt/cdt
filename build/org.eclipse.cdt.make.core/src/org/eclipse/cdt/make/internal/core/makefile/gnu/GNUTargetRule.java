@@ -55,7 +55,7 @@ public class GNUTargetRule extends TargetRule {
 		}
 		reqs = getOrderOnlyPrerequisites();
 		if (reqs.length > 0) {
-			buffer.append(" |");
+			buffer.append(" |"); //$NON-NLS-1$
 			for (int i = 0; i < reqs.length; i++) {
 				buffer.append(' ').append(reqs[i]);
 			}

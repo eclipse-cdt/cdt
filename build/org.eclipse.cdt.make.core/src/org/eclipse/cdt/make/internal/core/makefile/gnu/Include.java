@@ -29,7 +29,7 @@ public class Include extends Parent implements IInclude {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("include");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.DIRECTIVE_INCLUDE);
 		for (int i = 0; i < filenames.length; i++) {
 			sb.append(' ').append(filenames[i]);
 		}

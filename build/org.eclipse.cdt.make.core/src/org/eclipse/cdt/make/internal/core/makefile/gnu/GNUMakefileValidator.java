@@ -16,13 +16,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.make.core.makefile.*;
 import org.eclipse.cdt.make.core.makefile.IBadDirective;
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefileValidator;
 import org.eclipse.cdt.make.core.makefile.ISpecialRule;
 import org.eclipse.cdt.make.core.makefile.gnu.IConditional;
 import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
 import org.eclipse.cdt.make.core.makefile.gnu.IVariableDefinition;
+import org.eclipse.cdt.make.internal.core.makefile.MakefileMessages;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +49,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 			reporter = new IMarkerGenerator() {
 
 				public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-					String name = "Makefile";
+					String name = "Makefile"; //$NON-NLS-1$
 					if (file != null) {
 						name = file.getName();
 					}
@@ -66,15 +67,15 @@ public class GNUMakefileValidator implements IMakefileValidator {
 
 				public String getSeverity(int severity) {
 					if (severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
-						return "Error Build";
+						return MakefileMessages.getString("MakefileValidator.errorBuild"); //$NON-NLS-1$
 					} else if (severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
-						return "Error resource";
+						return MakefileMessages.getString("MakefileValidator.errorResource"); //$NON-NLS-1$
 					} else if (severity == IMarkerGenerator.SEVERITY_INFO) {
-						return "Warning info";
+						return MakefileMessages.getString("MakefileValidator.warningInfo"); //$NON-NLS-1$
 					} else if (severity == IMarkerGenerator.SEVERITY_WARNING) {
-						return "Warning";
+						return MakefileMessages.getString("MakefileValidator.warning"); //$NON-NLS-1$
 					}
-					return "unknown";
+					return MakefileMessages.getString("MakefileValidator.unknown"); //$NON-NLS-1$
 				}
 				
 			};
@@ -83,7 +84,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 	}
 	
 	public void checkFile(IFile file, IProgressMonitor monitor) {
-		String message = "Checking file : " + file.getFullPath().toString();
+		String message = MakefileMessages.getString("MakefileValidator.checkingFile") + file.getFullPath().toString(); //$NON-NLS-1$
 		monitor.subTask(message);
 		GNUMakefile gnu = new GNUMakefile();
 		InputStream stream = null;
@@ -102,7 +103,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 				}
 			}
 		}
-		monitor.subTask("File checked");
+		monitor.subTask(MakefileMessages.getString("MakefileValidator.fileChecked")); //$NON-NLS-1$
 		monitor.done();
 	}
 
@@ -124,7 +125,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					if (conditionCount == 0) {
 						// ERROR else missing conditon.
 						int startLine = condition.getStartLine();
-						String msg = "else missing if condition";
+						String msg = MakefileMessages.getString("MakefileValidator.error.elseMissingIfCondition"); //$NON-NLS-1$
 						int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 						String varName = condition.toString().trim();
 						marker.addMarker(res, startLine, msg, severity, varName);
@@ -136,7 +137,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					if (conditionCount == 0) {
 						// ERROR missing condition.
 						int startLine = terminal.getStartLine();
-						String msg = "Endif missing if/else condition";
+						String msg = MakefileMessages.getString("MakefileValidator.error.endifMissingIfElseCondition"); //$NON-NLS-1$
 						int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 						String varName = terminal.toString().trim();
 						marker.addMarker(res, startLine, msg, severity, varName);
@@ -147,7 +148,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					if (defineCount == 0) {
 						// ERROR missing define.
 						int startLine = terminal.getStartLine();
-						String msg = "endef missing [override] define";
+						String msg = MakefileMessages.getString("MakefileValidator.error.endefMissingOverrideDefine"); //$NON-NLS-1$
 						int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 						String varName = terminal.toString().trim();
 						marker.addMarker(res, startLine, msg, severity, varName);
@@ -163,7 +164,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 			} else if (directive instanceof IBadDirective) {
 				// ERROR unknow statement.
 				int startLine = directive.getStartLine();
-				String msg = "unknow directive";
+				String msg = MakefileMessages.getString("MakefileValidator.error.unknownDirective"); //$NON-NLS-1$
 				int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 				String varName = directive.toString().trim();
 				marker.addMarker(res, startLine, msg, severity, varName);
@@ -174,7 +175,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 		if (conditionCount > 0) {
 			// ERROR no matching endif for condition.
 			int startLine = 0;
-			String varName = "";
+			String varName = ""; //$NON-NLS-1$
 			int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			for (int i = directives.length - 1; i >= 0; i--) {
 				if (directives[i] instanceof IConditional) {
@@ -183,13 +184,13 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					break;
 				}
 			}
-			String msg = "No matching endif for condition";
+			String msg = MakefileMessages.getString("MakefileValidator.error.noMatchingEndifForCondition"); //$NON-NLS-1$
 			marker.addMarker(res, startLine, msg, severity, varName);
 		}
 		if (defineCount > 0) {
 			// ERROR no matching endef for define.
 			int startLine = 0;
-			String varName = "";
+			String varName = ""; //$NON-NLS-1$
 			int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			for (int i = directives.length - 1; i >= 0; i--) {
 				if (directives[i] instanceof IVariableDefinition) {
@@ -201,7 +202,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					}
 				}
 			}
-			String msg = "No matching endef for [override] define";
+			String msg = MakefileMessages.getString("MakefileValidator.error.noMatchingEndefForOverrideDefine"); //$NON-NLS-1$
 			marker.addMarker(res, startLine, msg, severity, varName);
 		}
 	}

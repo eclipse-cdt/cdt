@@ -29,6 +29,7 @@ import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.IgnoreRule;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
 import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
+import org.eclipse.cdt.make.internal.core.makefile.MakeFileConstants;
 import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
 import org.eclipse.cdt.make.internal.core.makefile.PosixRule;
 import org.eclipse.cdt.make.internal.core.makefile.PreciousRule;
@@ -199,7 +200,7 @@ public class PosixMakefile extends AbstractMakefile {
 	 */
 	public IDirective[] getBuiltins() {
 		if (builtins == null) {
-			String location =  "builtin" + File.separator + "posix.mk";
+			String location =  "builtin" + File.separator + "posix.mk"; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
 				PosixMakefile gnu = new PosixMakefile();
@@ -238,19 +239,19 @@ public class PosixMakefile extends AbstractMakefile {
 			keyword = line;
 			reqs = new String[0];
 		}
-		if (".IGNORE".equals(keyword)) {
+		if (keyword.equals(MakeFileConstants.RULE_IGNORE)) {
 			special = new IgnoreRule(this, reqs);
-		} else if (".POSIX".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_POSIX)) {
 			special = new PosixRule(this);
-		} else if (".PRECIOUS".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_PRECIOUS)) {
 			special = new PreciousRule(this, reqs);
-		} else if (".SILENT".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_SILENT)) {
 			special = new SilentRule(this, reqs);
-		} else if (".SUFFIXES".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_SUFFIXES)) {
 			special = new SuffixesRule(this, reqs);
-		} else if (".DEFAULT".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_DEFAULT)) {
 			special = new DefaultRule(this, new Command[0]);
-		} else if (".SCCS_GET".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_SCCS_GET)) {
 			special = new SccsGetRule(this, new Command[0]);
 		}
 		return special;
@@ -282,7 +283,7 @@ public class PosixMakefile extends AbstractMakefile {
 			value = line.substring(index + 1).trim();
 		} else {
 			name = line;
-			value = "";
+			value = ""; //$NON-NLS-1$
 		}
 		return new MacroDefinition(this, name, new StringBuffer(value));
 	}
@@ -328,7 +329,7 @@ public class PosixMakefile extends AbstractMakefile {
 
 	public static void main(String[] args) {
 		try {
-			String filename = "Makefile";
+			String filename = "Makefile"; //$NON-NLS-1$
 			if (args.length == 1) {
 				filename = args[0];
 			}

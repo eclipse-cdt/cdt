@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.IPreciousRule;
 public class PreciousRule extends SpecialRule implements IPreciousRule {
 
 	public PreciousRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".PRECIOUS"), reqs, new Command[0]); //$NON-NLS-1$
+		super(parent, new Target(MakeFileConstants.RULE_PRECIOUS), reqs, new Command[0]);
 	}
 
 }

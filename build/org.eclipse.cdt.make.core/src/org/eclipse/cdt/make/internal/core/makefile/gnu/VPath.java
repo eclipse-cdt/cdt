@@ -25,7 +25,7 @@ public class VPath extends Directive implements IVPath {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("vpath");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.DIRECTIVE_VPATH);
 		if (pattern != null && pattern.length() > 0) {
 			sb.append(' ').append(pattern);
 		}

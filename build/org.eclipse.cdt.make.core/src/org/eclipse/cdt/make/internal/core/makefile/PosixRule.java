@@ -20,6 +20,6 @@ import org.eclipse.cdt.make.core.makefile.IPosixRule;
 public class PosixRule extends SpecialRule implements IPosixRule {
 
 	public PosixRule(Directive parent) {
-		super(parent, new Target(".POSIX"), new String[0], new Command[0]); //$NON-NLS-1$
+		super(parent, new Target(MakeFileConstants.RULE_POSIX), new String[0], new Command[0]);
 	}
 }

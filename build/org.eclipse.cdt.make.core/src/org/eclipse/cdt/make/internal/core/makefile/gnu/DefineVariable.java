@@ -24,10 +24,10 @@ public class DefineVariable extends VariableDefinition {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("define");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.VARIABLE_DEFINE);
 		sb.append(getName()).append('\n');
 		sb.append(getValue());
-		sb.append("endef");
+		sb.append(GNUMakefileConstants.TERMINAL_ENDEF);
 		return sb.toString();
 	}
 }

@@ -27,7 +27,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class SecondaryRule extends SpecialRule implements ISecondaryRule {
 
 	public SecondaryRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".SECONDARY"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_SECONDARY), reqs, new Command[0]);
 	}
 
 }

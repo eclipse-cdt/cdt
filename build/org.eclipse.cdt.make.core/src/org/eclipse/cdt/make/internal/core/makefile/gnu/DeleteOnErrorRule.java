@@ -26,7 +26,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class DeleteOnErrorRule extends SpecialRule implements IDeleteOnErrorRule {
 
 	public DeleteOnErrorRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".DELETE_ON_ERROR"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_DELETE_ON_ERROR), reqs, new Command[0]);
 	}
 
 }

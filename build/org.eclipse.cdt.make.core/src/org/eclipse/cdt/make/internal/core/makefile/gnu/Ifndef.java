@@ -15,8 +15,9 @@ import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
 public class Ifndef extends Conditional {
 
+    private static final String EMPTY = ""; //$NON-NLS-1$
 	public Ifndef(Directive parent, String var) {
-		super(parent, var, "", "");
+		super(parent, var, EMPTY, EMPTY);
 	}
 
 	public boolean isIfndef() {
@@ -24,7 +25,7 @@ public class Ifndef extends Conditional {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("ifndef");
+		StringBuffer sb = new StringBuffer(GNUMakefileConstants.CONDITIONAL_IFNDEF);
 		sb.append(' ').append(getVariable());
 		return sb.toString();
 	}

@@ -25,7 +25,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class PhonyRule extends SpecialRule implements IPhonyRule {
 
 	public PhonyRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".PHONY"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_PHONY), reqs, new Command[0]);
 	}
 
 }

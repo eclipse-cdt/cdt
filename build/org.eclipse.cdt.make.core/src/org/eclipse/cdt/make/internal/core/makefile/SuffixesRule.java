@@ -21,7 +21,7 @@ import org.eclipse.cdt.make.core.makefile.ISuffixesRule;
 public class SuffixesRule extends SpecialRule implements ISuffixesRule {
 
 	public SuffixesRule(Directive parent, String[] suffixes) {
-		super(parent, new Target(".SUFFIXES"), suffixes, new Command[0]); //$NON-NLS-1$
+		super(parent, new Target(MakeFileConstants.RULE_SUFFIXES), suffixes, new Command[0]);
 	}
 
 }

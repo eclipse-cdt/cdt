@@ -20,75 +20,75 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 
 	public static boolean isInclude(String line) {
 		line = line.trim();
-		boolean isInclude = line.startsWith("include") && line.length() > 7 && Character.isWhitespace(line.charAt(7));
-		boolean isDashInclude = line.startsWith("-include") && line.length() > 8 && Character.isWhitespace(line.charAt(8));
-		boolean isSInclude = line.startsWith("sinclude") && line.length() > 8 && Character.isWhitespace(line.charAt(8));
+		boolean isInclude = line.startsWith(GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 7 && Character.isWhitespace(line.charAt(7));
+		boolean isDashInclude = line.startsWith("-" + GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 8 && Character.isWhitespace(line.charAt(8)); //$NON-NLS-1$
+		boolean isSInclude = line.startsWith("s" + GNUMakefileConstants.DIRECTIVE_INCLUDE) && line.length() > 8 && Character.isWhitespace(line.charAt(8)); //$NON-NLS-1$
 		return isInclude || isDashInclude || isSInclude;
 	}
 
 	public static boolean isVPath(String line) {
 		line = line.trim();
-		return line.equals("vpath") || line.startsWith("vpath") && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.equals(GNUMakefileConstants.DIRECTIVE_VPATH) || line.startsWith(GNUMakefileConstants.DIRECTIVE_VPATH) && line.length() > 5 && Character.isWhitespace(line.charAt(5));
 	}
 
 	public static boolean isExport(String line) {
 		line = line.trim();
-		return line.equals("export") || line.startsWith("export") && line.length() > 6 && Character.isWhitespace(line.charAt(6));
+		return line.equals(GNUMakefileConstants.VARIABLE_EXPORT) || line.startsWith(GNUMakefileConstants.VARIABLE_EXPORT) && line.length() > 6 && Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isUnExport(String line) {
 		line = line.trim();
-		return line.startsWith("unexport") && line.length() > 8 && Character.isWhitespace(line.charAt(8));
+		return line.startsWith(GNUMakefileConstants.DIRECTIVE_UNEXPORT) && line.length() > 8 && Character.isWhitespace(line.charAt(8));
 	}
 
 	public static boolean isDefine(String line) {
 		line = line.trim();
-		return line.startsWith("define") && line.length() > 6 && Character.isWhitespace(line.charAt(6));
+		return line.startsWith(GNUMakefileConstants.VARIABLE_DEFINE) && line.length() > 6 && Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isEndef(String line) {
-		return line.trim().equals("endef");
+		return line.trim().equals(GNUMakefileConstants.TERMINAL_ENDEF);
 	}
 
 	public static boolean isOverride(String line) {
 		line = line.trim();
-		return line.startsWith("override") && line.length() > 8 && Character.isWhitespace(line.charAt(8));
+		return line.startsWith(GNUMakefileConstants.VARIABLE_OVERRIDE) && line.length() > 8 && Character.isWhitespace(line.charAt(8));
 	}
 
 	public static boolean isIfeq(String line) {
 		line = line.trim();
-		return line.startsWith("ifeq") && line.length() > 4 && Character.isWhitespace(line.charAt(4));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFEQ) && line.length() > 4 && Character.isWhitespace(line.charAt(4));
 	}
 
 	public static boolean isIfneq(String line) {
 		line = line.trim();
-		return line.startsWith("ifneq") && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFNEQ) && line.length() > 5 && Character.isWhitespace(line.charAt(5));
 	}
 
 	public static boolean isIfdef(String line) {
 		line = line.trim();
-		return line.startsWith("ifdef") && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFDEF) && line.length() > 5 && Character.isWhitespace(line.charAt(5));
 	}
 
 	public static boolean isIfndef(String line) {
 		line = line.trim();
-		return line.startsWith("ifndef") && line.length() > 6 && Character.isWhitespace(line.charAt(6));
+		return line.startsWith(GNUMakefileConstants.CONDITIONAL_IFNDEF) && line.length() > 6 && Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isElse(String line) {
-		return line.trim().equals("else");
+		return line.trim().equals(GNUMakefileConstants.CONDITIONAL_ELSE);
 	}
 
 	public static boolean isEndif(String line) {
-		return line.trim().equals("endif");
+		return line.trim().equals(GNUMakefileConstants.TERMINAL_ENDIF);
 	}
 
 	public static boolean isOverrideDefine(String line) {
 		line = line.trim();
-		if (line.startsWith("override")) {
+		if (line.startsWith(GNUMakefileConstants.VARIABLE_OVERRIDE)) {
 			int i = 8;
 			for (; i < line.length() && Character.isWhitespace(line.charAt(i)); i++);
-			if (line.startsWith("define", i)) {
+			if (line.startsWith(GNUMakefileConstants.VARIABLE_DEFINE, i)) {
 				return true;
 			}
 		}
@@ -157,7 +157,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".PHONY");
+			return line.equals(GNUMakefileConstants.RULE_PHONY);
 		}
 		return false;
 	}
@@ -167,7 +167,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".INTERMEDIATE");
+			return line.equals(GNUMakefileConstants.RULE_INTERMEDIATE);
 		}
 		return false;
 	}
@@ -177,7 +177,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".SECONDARY");
+			return line.equals(GNUMakefileConstants.RULE_SECONDARY);
 		}
 		return false;
 	}
@@ -187,7 +187,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".DELETE_ON_ERROR");
+			return line.equals(GNUMakefileConstants.RULE_DELETE_ON_ERROR);
 		}
 		return false;
 	}
@@ -197,7 +197,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".LOW_RESOLUTION_TIME");
+			return line.equals(GNUMakefileConstants.RULE_LOW_RESOLUTION_TIME);
 		}
 		return false;
 	}
@@ -207,7 +207,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".EXPORT_ALL_VARIABLES");
+			return line.equals(GNUMakefileConstants.RULE_EXPORT_ALL_VARIABLES);
 		}
 		return false;
 	}
@@ -217,7 +217,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 0) {
 			line = line.substring(0, colon).trim();
-			return line.equals(".NOTPARALLEL");
+			return line.equals(GNUMakefileConstants.RULE_NOT_PARALLEL);
 		}
 		return false;
 	}

@@ -34,6 +34,7 @@ import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.IgnoreRule;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
 import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
+import org.eclipse.cdt.make.internal.core.makefile.MakeFileConstants;
 import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
 import org.eclipse.cdt.make.internal.core.makefile.PosixRule;
 import org.eclipse.cdt.make.internal.core.makefile.PreciousRule;
@@ -65,8 +66,8 @@ import org.eclipse.core.runtime.Path;
 
 public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
-	public static String PATH_SEPARATOR = System.getProperty("path.separator", ":");
-	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/");
+	public static String PATH_SEPARATOR = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	String[] includeDirectories = new String[0];
 	IDirective[] builtins = null;
@@ -392,33 +393,33 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			keyword = line;
 			reqs = new String[0];
 		}
-		if (".IGNORE".equals(keyword)) {
+		if (keyword.equals(MakeFileConstants.RULE_IGNORE)) {
 			special = new IgnoreRule(this, reqs);
-		} else if (".POSIX".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_POSIX)) {
 			special = new PosixRule(this);
-		} else if (".PRECIOUS".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_PRECIOUS)) {
 			special = new PreciousRule(this, reqs);
-		} else if (".SILENT".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_SILENT)) {
 			special = new SilentRule(this, reqs);
-		} else if (".SUFFIXES".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_SUFFIXES)) {
 			special = new SuffixesRule(this, reqs);
-		} else if (".DEFAULT".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_DEFAULT)) {
 			special = new DefaultRule(this, new Command[0]);
-		} else if (".SCCS_GET".equals(keyword)) {
+		} else if (keyword.equals(MakeFileConstants.RULE_SCCS_GET)) {
 			special = new SccsGetRule(this, new Command[0]);
-		} else if (".PHONY".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_PHONY)) {
 			special = new PhonyRule(this, reqs);
-		} else if (".INTERMEDIATE".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_INTERMEDIATE)) {
 			special = new IntermediateRule(this, reqs);
-		} else if (".SECONDARY".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_SECONDARY)) {
 			special = new SecondaryRule(this, reqs);
-		} else if (".DELETE_ON_ERROR".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_DELETE_ON_ERROR)) {
 			special = new DeleteOnErrorRule(this, reqs);
-		} else if (".LOW_RESOLUTION_TIME".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_LOW_RESOLUTION_TIME)) {
 			special = new LowResolutionTimeRule(this, reqs);
-		} else if (".EXPORT_ALL_VARIABLES".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_EXPORT_ALL_VARIABLES)) {
 			special = new ExportAllVariablesRule(this, reqs);
-		} else if (".NOTPARALLEL".equals(keyword)) {
+		} else if (keyword.equals(GNUMakefileConstants.RULE_NOT_PARALLEL)) {
 			special = new NotParallelRule(this, reqs);
 		}
 		return special;
@@ -449,15 +450,15 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		if (keyword == null) {
 			keyword = line;
 		}
-		if (keyword.equals("ifdef")) {
+		if (keyword.equals(GNUMakefileConstants.CONDITIONAL_IFDEF)) {
 			condition = new Ifdef(this, line);
-		} else if (keyword.equals("ifndef")) {
+		} else if (keyword.equals(GNUMakefileConstants.CONDITIONAL_IFNDEF)) {
 			condition = new Ifndef(this, line);
-		} else if (keyword.equals("ifeq")) {
+		} else if (keyword.equals(GNUMakefileConstants.CONDITIONAL_IFEQ)) {
 			condition = new Ifeq(this, line);
-		} else if (keyword.equals("ifneq")) {
+		} else if (keyword.equals(GNUMakefileConstants.CONDITIONAL_IFNEQ)) {
 			condition = new Ifneq(this, line);
-		} else if (keyword.equals("else")) {
+		} else if (keyword.equals(GNUMakefileConstants.CONDITIONAL_ELSE)) {
 			condition = new Else(this);
 		}
 		return condition;
@@ -516,7 +517,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				} else if (count == 1) {
 					pattern = st.nextToken();
 				} else if (count == 3) {
-					String delim = " \t\n\r\f" + GNUMakefile.PATH_SEPARATOR;
+					String delim = " \t\n\r\f" + GNUMakefile.PATH_SEPARATOR; //$NON-NLS-1$
 					dirs.add(st.nextToken(delim));
 				} else {
 					dirs.add(st.nextToken());
@@ -559,7 +560,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 			// Some TargetRule have "::" for separator
 			String req = line.substring(index + 1);
-			doubleColon = req.startsWith(":");
+			doubleColon = req.startsWith(":"); //$NON-NLS-1$
 			if (doubleColon) {
 				// move pass the second ':'
 				req = req.substring(1);
@@ -581,7 +582,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				orderReq = req.substring(pipe + 1);
 			} else {
 				normalReq = req;
-				orderReq = "";
+				orderReq = ""; //$NON-NLS-1$
 			}
 
 			normalReqs = GNUMakefileUtil.findPrerequisites(normalReq.trim());
@@ -612,7 +613,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		boolean isOverride = false;
 		boolean isTargetVariable = false;
 		boolean isExport = false;
-		String targetName = "";
+		String targetName = ""; //$NON-NLS-1$
 
 		String name;
 		StringBuffer value = new StringBuffer();
@@ -625,7 +626,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				targetName = line.substring(0, colon).trim();
 				line = line.substring(colon + 1).trim();
 			} else {
-				targetName = "";
+				targetName = ""; //$NON-NLS-1$
 			}
 		}
 
@@ -726,12 +727,12 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 					prereqPatterns[i] = st.nextToken();
 				}
 			} else {
-				targetPattern = "";
+				targetPattern = ""; //$NON-NLS-1$
 				prereqPatterns = new String[0];
 			}
 		} else {
 			targets = new String[0];
-			targetPattern = "";
+			targetPattern = ""; //$NON-NLS-1$
 			prereqPatterns = new String[0];
 		}
 
@@ -762,7 +763,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	 */
 	public IDirective[] getBuiltins() {
 		if (builtins == null) {
-			String location =  "builtin" + File.separator + "gnu.mk";
+			String location =  "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
 				GNUMakefile gnu = new GNUMakefile();
@@ -793,7 +794,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 	public static void main(String[] args) {
 		try {
-			String filename = "Makefile";
+			String filename = "Makefile"; //$NON-NLS-1$
 			if (args.length == 1) {
 				filename = args[0];
 			}

@@ -25,7 +25,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 public class LowResolutionTimeRule extends SpecialRule implements ILowResolutionTimeRule {
 
 	public LowResolutionTimeRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".LOW_RESOLUTION_TIME"), reqs, new Command[0]);
+		super(parent, new Target(GNUMakefileConstants.RULE_LOW_RESOLUTION_TIME), reqs, new Command[0]);
 	}
 
 }

@@ -24,6 +24,6 @@ public class Else extends Conditional {
 	}
 
 	public String toString() {
-		return "else";
+		return GNUMakefileConstants.CONDITIONAL_ELSE;
 	}
 }

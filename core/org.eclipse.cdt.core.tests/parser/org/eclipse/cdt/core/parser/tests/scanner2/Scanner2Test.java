@@ -1737,14 +1737,48 @@ public class Scanner2Test extends BaseScanner2Test
     	StringWriter writer = new StringWriter();
     	writer.write( "#define DoSuperMethodA IDoSuperMethodA\n" ); //$NON-NLS-1$
     	writer.write( "#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n" ); //$NON-NLS-1$
-		writer.write( "void hang(void)\n" ); //$NON-NLS-1$
-		writer.write( "{\n" ); //$NON-NLS-1$
 		writer.write( "DoSuperMethodA(0,0,0);\n" ); //$NON-NLS-1$
-		writer.write( "}\n" ); //$NON-NLS-1$
+
 		initializeScanner( writer.toString() );
-		fullyTokenize();
+		
+		validateIdentifier( "IIntuition" ); //$NON-NLS-1$
+		validateToken( IToken.tARROW );
+		validateIdentifier( "IDoSuperMethodA" ); //$NON-NLS-1$
+		validateToken( IToken.tLPAREN );
+		validateInteger( "0" ); //$NON-NLS-1$
+		validateToken( IToken.tCOMMA );
+		validateInteger( "0" ); //$NON-NLS-1$
+		validateToken( IToken.tCOMMA );
+		validateInteger( "0" ); //$NON-NLS-1$
+		validateToken( IToken.tRPAREN );
+		validateToken( IToken.tSEMI );
+		validateEOF();
 	}
     
+    public void testBug73652_2() throws Exception{
+        StringWriter writer = new StringWriter();
+    	writer.write( "#define DoSuperMethodA DoSuperMethodB //doobalie\n" ); //$NON-NLS-1$
+    	writer.write( "#define DoSuperMethodB DoSuperMethodC /*oogalie*/ \n" ); //$NON-NLS-1$
+    	writer.write( "#define DoSuperMethodC IDoSuperMethodA \\\n\n" ); //$NON-NLS-1$
+    	writer.write( "#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n" ); //$NON-NLS-1$
+		writer.write( "DoSuperMethodA  (0,0,0);\n" ); //$NON-NLS-1$
+
+		initializeScanner( writer.toString() );
+		
+		validateIdentifier( "IIntuition" ); //$NON-NLS-1$
+		validateToken( IToken.tARROW );
+		validateIdentifier( "IDoSuperMethodA" ); //$NON-NLS-1$
+		validateToken( IToken.tLPAREN );
+		validateInteger( "0" ); //$NON-NLS-1$
+		validateToken( IToken.tCOMMA );
+		validateInteger( "0" ); //$NON-NLS-1$
+		validateToken( IToken.tCOMMA );
+		validateInteger( "0" ); //$NON-NLS-1$
+		validateToken( IToken.tRPAREN );
+		validateToken( IToken.tSEMI );
+		validateEOF();
+        
+    }
     public void testBug72997() throws Exception
 	{
     	initializeScanner( "'\\\\'"); //$NON-NLS-1$

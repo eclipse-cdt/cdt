@@ -34,15 +34,20 @@ import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
@@ -51,9 +56,11 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
@@ -98,7 +105,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
-	public void acceptTypedef(IASTTypedefDeclaration typedef) 								{	}
+	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) 								{	}
 	public void acceptEnumerator(IASTEnumerator enumerator) 					{	}
 	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
 	public void acceptPointerToFunction(IASTPointerToFunction function) {}
@@ -119,7 +126,14 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}	
 	
 	public void acceptClassReference(IASTClassReference reference) {	}
-	public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec){  }
+	public void acceptTypedefReference( IASTTypedefReference reference ){	}
+	public void acceptNamespaceReference( IASTNamespaceReference reference ){	}
+	public void acceptEnumerationReference( IASTEnumerationReference reference ){	}
+	public void acceptVariableReference( IASTVariableReference reference ){	}
+	public void acceptFunctionReference( IASTFunctionReference reference ){	}
+	public void acceptFieldReference( IASTFieldReference reference ){	}
+	public void acceptMethodReference( IASTMethodReference reference ) {	}
+	
 	public void acceptMethodDeclaration(IASTMethod method) 						{	}
 	public void acceptField(IASTField field) 									{	}
 	
@@ -147,7 +161,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}
 	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
 	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
-	public void enterTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) {	}
+	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {	}
 	
 	public void enterMethodBody(IASTMethod method) {
 		pushScope( method );
@@ -297,9 +311,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				}
 			}
 			
-			IScanner scanner = ParserFactory.createScanner( reader, pathString, new ScannerInfo(), ParserMode.QUICK_PARSE );
-			IParser  parser  = ParserFactory.createParser( scanner, null, ParserMode.QUICK_PARSE );
-			parser.setRequestor( this );
+			IScanner scanner = ParserFactory.createScanner( reader, pathString, new ScannerInfo(), ParserMode.QUICK_PARSE, this );
+			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.QUICK_PARSE );
 			
 			parser.parse();
 		}

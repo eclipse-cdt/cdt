@@ -1,3 +1,7 @@
+2003-07-18  John Camelon
+	In the core, I updated ParserFactory.createScanner() to force the user to provide a callback and a ParserMode.
+	==> I had to update ComparatorModelBuilder.  
+
 2003-07-17  John Camelon
 	Partially converted DOM to ISourceElementRequestor (requires refactoring of CModelBuilder & StuctureComparator modules in near future).  
 

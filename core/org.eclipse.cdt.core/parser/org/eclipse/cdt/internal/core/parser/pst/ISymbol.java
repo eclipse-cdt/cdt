@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.eclipse.cdt.internal.core.parser.ast.full.IPSTSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 /**
@@ -26,8 +25,8 @@ public interface ISymbol {
 	
 	public Object clone();
 		
-	public IPSTSymbolExtension getASTNode(); 
-	public void setASTNode( IPSTSymbolExtension obj );
+	public ISymbolASTExtension getASTNode(); 
+	public void setASTNode( ISymbolASTExtension obj );
 
 	public String getName();
 	

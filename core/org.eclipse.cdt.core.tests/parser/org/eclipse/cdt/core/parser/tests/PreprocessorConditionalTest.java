@@ -15,10 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
@@ -28,9 +30,12 @@ import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 public class PreprocessorConditionalTest extends BaseScannerTest
 {
 
-	protected void initializeScanner(String input, Map definitions )
+	private ISourceElementRequestor nullSourceElementRequestor = new NullSourceElementRequestor();
+
+
+    protected void initializeScanner(String input, Map definitions )
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE, nullSourceElementRequestor );
 	}
 
 

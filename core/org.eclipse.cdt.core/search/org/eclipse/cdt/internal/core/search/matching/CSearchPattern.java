@@ -97,7 +97,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createNamespacePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		LinkedList list = scanForNames( scanner, null );
 		
 		char [] name = (char []) list.removeLast();
@@ -138,7 +138,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createFieldPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		LinkedList list = scanForNames( scanner, null );
 		
 		char [] name = (char []) list.removeLast();
@@ -167,7 +167,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createClassPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		
 		IToken token = null;
 		ASTClassKind kind = null;

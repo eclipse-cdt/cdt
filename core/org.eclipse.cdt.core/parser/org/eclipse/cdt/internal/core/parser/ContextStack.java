@@ -64,8 +64,7 @@ public class ContextStack {
 		{
 			if( !inclusions.add( context.getFilename() ) )
 				throw new ScannerException( "Inclusion " + context.getFilename() + " already encountered." );
-			if( requestor != null )
-				requestor.enterInclusion( context.getExtension() );
+			context.getExtension().enterScope( requestor );				
 
 		} else if( context.getKind() == IScannerContext.MACROEXPANSION )
 		{
@@ -90,8 +89,7 @@ public class ContextStack {
 		if( currentContext.getKind() == IScannerContext.INCLUSION )
 		{
 			inclusions.remove( currentContext.getFilename() );
-			if( requestor != null )
-				requestor.exitInclusion( currentContext.getExtension() );
+			currentContext.getExtension().exitScope( requestor );
 		} else if( currentContext.getKind() == IScannerContext.MACROEXPANSION )
 		{
 			defines.remove( currentContext.getFilename() );

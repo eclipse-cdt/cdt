@@ -14,8 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTClassReference
+public interface IASTClassReference extends IASTReference
 {
-	public IASTClassSpecifier getClassSpecifier(); 
-	public int                getOffset();
+	
 }

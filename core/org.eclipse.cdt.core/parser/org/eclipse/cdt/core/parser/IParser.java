@@ -65,6 +65,4 @@ public interface IParser {
 	public int getLastErrorOffset(); 
 	
 	
-	public void setRequestor( ISourceElementRequestor r );
-	
 }

@@ -10,12 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTInclusion extends IASTOffsetableNamedElement {
+public interface IASTInclusion extends IASTOffsetableNamedElement, ISourceElementCallbackDelegate {
 
 	public String getName();
 	

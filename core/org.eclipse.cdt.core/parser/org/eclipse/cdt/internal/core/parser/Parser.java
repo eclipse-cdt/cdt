@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -36,15 +37,10 @@ import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.core.parser.ast.IASTField;
-import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
-import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
@@ -52,10 +48,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
-import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -115,11 +109,9 @@ public class Parser implements IParser
         this.scanner = scanner;
         this.problemReporter = problemReporter;
         this.unitResult = unitResult;
-        if (callback instanceof ISourceElementRequestor)
-            setRequestor((ISourceElementRequestor)callback);
+        requestor = callback;
         this.mode = mode;
         astFactory = ParserFactory.createASTFactory(mode);
-        scanner.setMode(mode);
         scanner.setASTFactory(astFactory);
     }
     // counter that keeps track of the number of times Parser.parse() is called
@@ -157,8 +149,8 @@ public class Parser implements IParser
     {
         IASTCompilationUnit compilationUnit =
             astFactory.createCompilationUnit();
-            
-        requestor.enterCompilationUnit(compilationUnit);
+
+		compilationUnit.enterScope( requestor );            
         IToken lastBacktrack = null;
         IToken checkToken;
         while (true)
@@ -203,7 +195,7 @@ public class Parser implements IParser
                 // we've done the best we can
             }
         }
-        requestor.exitCompilationUnit(compilationUnit);
+        compilationUnit.exitScope( requestor );
     }
     /**
      * This function is called whenever we encounter and error that we cannot backtrack out of and we 
@@ -262,9 +254,18 @@ public class Parser implements IParser
             if (LT(1) == IToken.tSEMI)
             {
                 IToken last = consume(IToken.tSEMI);
-                IASTUsingDirective astUD =
-                    astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), last.getEndOffset());
-                requestor.acceptUsingDirective(astUD);
+                IASTUsingDirective astUD = null; 
+                
+                try
+                {
+                    astUD = astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), last.getEndOffset());
+                }
+                catch (ASTSemanticException e)
+                {
+                	//TODO add in IProblem stuff here
+                	failParse(); 
+                }
+                astUD.acceptElement(requestor);
                 return;
             }
             else
@@ -295,7 +296,7 @@ public class Parser implements IParser
                 IToken last = consume(IToken.tSEMI);
                 IASTUsingDeclaration declaration =
                     astFactory.createUsingDeclaration(scope, typeName, name, firstToken.getOffset(), last.getEndOffset());
-                requestor.acceptUsingDeclaration(declaration);
+                declaration.acceptElement( requestor );
             }
             else
             {
@@ -326,7 +327,8 @@ public class Parser implements IParser
             consume(IToken.tLBRACE);
             IASTLinkageSpecification linkage =
                 astFactory.createLinkageSpecification(scope, spec.getImage(), firstToken.getOffset());
-            requestor.enterLinkageSpecification(linkage);
+            
+            linkage.enterScope( requestor );    
             linkageDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
                 IToken checkToken = LA(1);
@@ -353,15 +355,15 @@ public class Parser implements IParser
             // consume the }
             IToken lastToken = consume();
             linkage.setEndingOffset(lastToken.getEndOffset());
-            requestor.exitLinkageSpecification(linkage);
+            linkage.exitScope( requestor );
         }
         else // single declaration
             {
             IASTLinkageSpecification linkage =
                 astFactory.createLinkageSpecification(scope, spec.getImage(), firstToken.getOffset());
-            requestor.enterLinkageSpecification(linkage);
+			linkage.enterScope( requestor );
             declaration(linkage, null);
-            requestor.exitLinkageSpecification(linkage);
+			linkage.exitScope( requestor );
         }
     }
     /**
@@ -396,10 +398,10 @@ public class Parser implements IParser
                 astFactory.createTemplateInstantiation(
                     scope,
                     firstToken.getOffset());
-            requestor.enterTemplateExplicitInstantiation(templateInstantiation);
+            templateInstantiation.enterScope( requestor );
             declaration(scope, templateInstantiation);
             templateInstantiation.setEndingOffset(lastToken.getEndOffset());
-            requestor.exitTemplateExplicitInstantiation(templateInstantiation);
+			templateInstantiation.exitScope( requestor );
  
             return;
         }
@@ -415,11 +417,11 @@ public class Parser implements IParser
                     astFactory.createTemplateSpecialization(
                         scope,
                         firstToken.getOffset());
-                requestor.enterTemplateSpecialization(templateSpecialization);
+				templateSpecialization.enterScope(requestor);
                 declaration(scope, templateSpecialization);
                 templateSpecialization.setEndingOffset(
                     lastToken.getEndOffset());
-                requestor.exitTemplateSpecialization(templateSpecialization);
+                templateSpecialization.exitScope(requestor);
                 return;
             }
         }
@@ -429,10 +431,9 @@ public class Parser implements IParser
             List parms = templateParameterList();
             consume(IToken.tGT);
             IASTTemplateDeclaration templateDecl = astFactory.createTemplateDeclaration( scope, parms, exported, firstToken.getOffset() );
-            requestor.enterTemplateDeclaration( templateDecl );
+            templateDecl.enterScope( requestor );
             declaration(scope, templateDecl );
-            templateDecl.setEndingOffset( lastToken.getEndOffset() );
-            requestor.exitTemplateDeclaration( templateDecl );
+			templateDecl.exitScope( requestor );
             
         }
         catch (Backtrack bt)
@@ -617,8 +618,7 @@ public class Parser implements IParser
                         last.getEndOffset());
                 // if we made it this far, then we have all we need 
                 // do the callback
- 
-                requestor.acceptASMDefinition(asmDefinition);
+ 				asmDefinition.acceptElement(requestor);
                 return;
             case IToken.t_namespace :
                 namespaceDefinition(scope);
@@ -690,7 +690,7 @@ public class Parser implements IParser
                     (identifier == null ? "" : identifier.getImage()),
                     first.getOffset(),
                     (identifier == null ? 0 : identifier.getOffset()));
-            requestor.enterNamespaceDefinition(namespaceDefinition);
+            namespaceDefinition.enterScope( requestor );
             namepsaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
                 IToken checkToken = LA(1);
@@ -719,7 +719,7 @@ public class Parser implements IParser
  
             namespaceDefinition.setEndingOffset(
                 last.getOffset() + last.getLength());
-            requestor.exitNamespaceDefinition(namespaceDefinition);
+            namespaceDefinition.exitScope( requestor );
         }
         else
         {
@@ -830,56 +830,30 @@ public class Parser implements IParser
                     IASTDeclaration declaration = (IASTDeclaration)i.next();
                     ((IASTOffsetableElement)declaration).setEndingOffset(
                         lastToken.getEndOffset());
-                    if (declaration instanceof IASTField)
-                        requestor.acceptField((IASTField)declaration);
-                    else if (declaration instanceof IASTVariable)
-                        requestor.acceptVariable((IASTVariable)declaration);
-                    else if (declaration instanceof IASTMethod)
-                        requestor.acceptMethodDeclaration(
-                            (IASTMethod)declaration);
-                    else if (declaration instanceof IASTFunction)
-                        requestor.acceptFunctionDeclaration(
-                            (IASTFunction)declaration);
-                    else if (declaration instanceof IASTTypedefDeclaration)
-                        requestor.acceptTypedef((IASTTypedefDeclaration)declaration);
-                    else if (declaration instanceof IASTPointerToFunction )
-                    	requestor.acceptPointerToFunction( (IASTPointerToFunction)declaration ); 
-					else if (declaration instanceof IASTPointerToMethod )
-						requestor.acceptPointerToMethod( (IASTPointerToMethod)declaration );                     
-                    else
-                    {
-                       failParse();
-                       throw backtrack; //TODO Should be an IProblem
-                    }
+                    declaration.acceptElement( requestor );
                 }
             }
             else
             {
                 IASTDeclaration declaration = (IASTDeclaration)i.next();
-                if (declaration instanceof IASTMethod)
-                    requestor.enterMethodBody((IASTMethod)declaration);
-                else if (declaration instanceof IASTFunction)
-                    requestor.enterFunctionBody((IASTFunction)declaration);
-                else
-                {
-                    if (hasFunctionBody && l.size() != 1)
-                    {
-                        failParse();
-                        throw backtrack; //TODO Should be an IProblem
-                    }
-                }
+                declaration.enterScope( requestor );
    
                 handleFunctionBody(declarator);
   
-                if (declaration instanceof IASTMethod)
-                    requestor.exitMethodBody((IASTMethod)declaration);
-                else if (declaration instanceof IASTFunction)
-                    requestor.exitFunctionBody((IASTFunction)declaration);
+  				declaration.exitScope( requestor );
             }
         }
         else
-        	requestor.acceptAbstractTypeSpecDeclaration( astFactory.createTypeSpecDeclaration(
-        		sdw.getScope(), sdw.getTypeSpecifier(), ownerTemplate, sdw.getStartingOffset(), lastToken.getEndOffset()) );
+        {
+            astFactory
+                .createTypeSpecDeclaration(
+                    sdw.getScope(),
+                    sdw.getTypeSpecifier(),
+                    ownerTemplate,
+                    sdw.getStartingOffset(),
+                    lastToken.getEndOffset())
+                .acceptElement(requestor);
+        }
         
     }
     protected void handleFunctionBody(Declarator d) throws Backtrack, EndOfFile
@@ -1458,8 +1432,6 @@ public class Parser implements IParser
                 t.getOffset(),
                 d.getLastToken().getEndOffset());
         sdw.setTypeSpecifier(elaboratedTypeSpec);
-        requestor.acceptElaboratedTypeSpecifier(elaboratedTypeSpec);
-
     }
     /**
      * Consumes template parameters.  
@@ -2185,7 +2157,7 @@ public class Parser implements IParser
             }
             IToken t = consume(IToken.tRBRACE);
             enumeration.setEndingOffset(t.getEndOffset());
-            requestor.acceptEnumerationSpecifier(enumeration);
+            enumeration.acceptElement( requestor );
             sdw.setTypeSpecifier(enumeration);
         }
         else
@@ -2263,7 +2235,7 @@ public class Parser implements IParser
         if (LT(1) == IToken.tLBRACE)
         {
             consume(IToken.tLBRACE);
-            requestor.enterClassSpecifier(astClassSpecifier);
+            astClassSpecifier.enterScope( requestor );
             memberDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
                 IToken checkToken = LA(1);
@@ -2306,7 +2278,7 @@ public class Parser implements IParser
             // consume the }
             IToken lastToken = consume(IToken.tRBRACE);
             astClassSpecifier.setEndingOffset(lastToken.getEndOffset());
-            requestor.exitClassSpecifier(astClassSpecifier);
+            astClassSpecifier.exitScope( requestor );
         }
     }
     /**
@@ -4068,13 +4040,5 @@ public class Parser implements IParser
     {
         return firstErrorOffset;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.IParser#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void setRequestor(ISourceElementRequestor r)
-    {
-        requestor = r;
-        if (scanner != null)
-            scanner.setRequestor(r);
-    }
+
 }

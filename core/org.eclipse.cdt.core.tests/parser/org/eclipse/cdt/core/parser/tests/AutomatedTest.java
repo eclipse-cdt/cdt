@@ -56,7 +56,7 @@ public class AutomatedTest extends AutomatedFramework {
 			FileInputStream stream = new FileInputStream( file );
 
 			String filePath = file.getCanonicalPath();
-			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, new ScannerInfo(), ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
+			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, new ScannerInfo(), ParserMode.QUICK_PARSE, nullCallback ), nullCallback, ParserMode.QUICK_PARSE);
 			parser.setCppNature( ((String)natures.get( filePath )).equalsIgnoreCase("cpp") );
 			
 			mapping = ParserFactory.createLineOffsetReconciler( new InputStreamReader( stream ) );

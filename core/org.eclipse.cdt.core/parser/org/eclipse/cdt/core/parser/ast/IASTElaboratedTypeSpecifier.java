@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser.ast;
 
 
+
 /**
  * @author jcamelon
  *

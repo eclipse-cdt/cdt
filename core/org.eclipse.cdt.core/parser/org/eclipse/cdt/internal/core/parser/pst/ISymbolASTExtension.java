@@ -8,14 +8,18 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
+package org.eclipse.cdt.internal.core.parser.pst;
 
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTFASMDefinition
-	extends org.eclipse.cdt.core.parser.ast.IASTASMDefinition, IPSTSymbolExtension {
-
+public interface ISymbolASTExtension extends ISymbolOwner
+{
+	public IASTDeclaration getDeclaration(); 
+	public IASTDeclaration getDefinition();
+	public void            setDefinition( IASTDeclaration definition ); 	
+	public boolean         hasBeenDefined(); 
 }

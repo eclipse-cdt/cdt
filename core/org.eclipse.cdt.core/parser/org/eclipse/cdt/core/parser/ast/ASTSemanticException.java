@@ -10,11 +10,32 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTNamespaceDefinition extends IASTOffsetableNamedElement, IASTScope, IASTDeclaration, IASTQualifiedNameElement {
+public class ASTSemanticException extends Exception
+{
+    private final IProblem theProblem;
+
+    /**
+     * 
+     */
+    public ASTSemanticException( IProblem reason )
+    {
+        super();
+        theProblem = reason;
+    }
+    
+    
+    /**
+     * @return
+     */
+    public IProblem getTheProblem()
+    {
+        return theProblem;
+    }
 
 }

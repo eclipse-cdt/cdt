@@ -57,7 +57,7 @@ public class ComparatorModelBuilder {
 	public void parse() {
 		DOMBuilder domBuilder = new DOMBuilder(); 
 		try {
-			IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE);
+			IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), "junk", new ScannerInfo(), ParserMode.QUICK_PARSE, domBuilder ), domBuilder, ParserMode.QUICK_PARSE);
 			parser.parse();
 		} catch (Exception e) {
 			callback.reportError(e);

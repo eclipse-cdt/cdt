@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.parser.ast.full.IPSTSymbolExtension;
 
 /**
  * @author aniefer
@@ -2035,7 +2034,7 @@ public class ParserSymbolTable {
 			_typeInfo = new TypeInfo();
 		}
 		
-		public BasicSymbol( String name, IPSTSymbolExtension obj ){
+		public BasicSymbol( String name, ISymbolASTExtension obj ){
 			super();
 			_name   = name;
 			_object = obj;
@@ -2068,8 +2067,8 @@ public class ParserSymbolTable {
 		public String getName() { return _name; }
 		public void setName(String name) { _name = name; }
 
-		public IPSTSymbolExtension getASTNode() { return _object; }
-		public void setASTNode( IPSTSymbolExtension obj ) { _object = obj; }
+		public ISymbolASTExtension getASTNode() { return _object; }
+		public void setASTNode( ISymbolASTExtension obj ) { _object = obj; }
 			
 		public IContainerSymbol getContainingSymbol() { return _containingScope; }
 		public void setContainingSymbol( IContainerSymbol scope ){ 
@@ -2165,7 +2164,7 @@ public class ParserSymbolTable {
 			return null;
 		}
 		private 	String 		_name;					//our name
-		private		IPSTSymbolExtension	_object;	//the object associated with us
+		private		ISymbolASTExtension	_object;	//the object associated with us
 		private		TypeInfo	_typeInfo;				//our type info
 		private		Declaration	_containingScope;		//the scope that contains us
 		private		int 		_depth;					//how far down the scope stack we are
@@ -2300,7 +2299,7 @@ public class ParserSymbolTable {
 			super( name );
 		}
 	
-		public Declaration( String name, IPSTSymbolExtension obj ){
+		public Declaration( String name, ISymbolASTExtension obj ){
 			super( name, obj );
 		}
 		

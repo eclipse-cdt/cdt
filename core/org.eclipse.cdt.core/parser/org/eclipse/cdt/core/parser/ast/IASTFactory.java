@@ -11,11 +11,11 @@
 package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 /**
  * @author jcamelon
  *
@@ -37,7 +37,7 @@ public interface IASTFactory
     public IASTUsingDirective createUsingDirective(
         IASTScope scope,
         ITokenDuple duple, int startingOffset, int endingOffset)
-        throws Backtrack;
+        throws ASTSemanticException;
     public IASTUsingDeclaration createUsingDeclaration(
         IASTScope scope,
         boolean isTypeName,
@@ -215,4 +215,6 @@ public interface IASTFactory
 		boolean isExplicit,
 		boolean isPureVirtual,
 		ASTAccessVisibility visibility, ASTPointerOperator pointerOperator);
+		
+	public ISymbolASTExtension createSymbolTableDeclarationExtension( IASTDeclaration declaration, IASTDeclaration definition ) throws ASTNotImplementedException;
 }

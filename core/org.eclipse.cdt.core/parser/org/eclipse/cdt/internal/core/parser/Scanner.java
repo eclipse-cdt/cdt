@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.core.parser.ast.IASTMacro;
 
 
 /**
@@ -52,7 +51,11 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 
 public class Scanner implements IScanner {
    
-	public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult) {
+	public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult, ISourceElementRequestor requestor, ParserMode parserMode ) {
+		this.requestor = requestor;
+		this.mode = parserMode;
+		astFactory = ParserFactory.createASTFactory( mode );
+		
 		try {
 			//this is a hack to get around a sudden EOF experience
 			contextStack.push(
@@ -381,11 +384,8 @@ public class Scanner implements IScanner {
 		tokenizingMacroReplacementList = mr;
 	}
 	
-	private ParserMode mode = ParserMode.COMPLETE_PARSE;
+	private final ParserMode mode;
 	
-	public void setMode(ParserMode mode) {
-		this.mode = mode;
-	}
 
 	private int getChar() throws ScannerException
 	{
@@ -1656,13 +1656,14 @@ public class Scanner implements IScanner {
 		}
 		else
 		{	
+			final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
 			IScanner trial =
 				ParserFactory.createScanner(
 					new StringReader(expression + ";"),
 						EXPRESSION,
 						new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
-						ParserMode.QUICK_PARSE );
-			IParser parser = ParserFactory.createParser(trial, new NullSourceElementRequestor(), ParserMode.QUICK_PARSE );
+						ParserMode.QUICK_PARSE, nullCallback );
+            IParser parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE );
  
 			try {
 				IASTExpression exp = parser.expression();
@@ -1812,9 +1813,9 @@ public class Scanner implements IScanner {
 			if( requestor != null )
 			{
 				IASTInclusion i = astFactory.createInclusion( f, "", !useIncludePath, beginningOffset, 
-					contextStack.getCurrentContext().getOffset(), offset ); 
-				requestor.enterInclusion(i);
-				requestor.exitInclusion(i);
+					contextStack.getCurrentContext().getOffset(), offset );
+				i.enterScope( requestor );
+				i.exitScope( requestor );					 
 			}
 		}
 		else
@@ -1894,7 +1895,7 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, problemReporter, translationResult );
+				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, new NullSourceElementRequestor(), problemReporter, translationResult );
 				helperScanner.setTokenizingMacroReplacementList( true );
 				IToken t = helperScanner.nextToken(false);
 	
@@ -1976,16 +1977,12 @@ public class Scanner implements IScanner {
 				throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset());
 		}
 		
-		if( requestor != null )
-		{
-			IASTMacro m = astFactory.createMacro( key, beginning, contextStack.getCurrentContext().getOffset(), offset ); 
-			requestor.acceptMacro(m);
-		}
+		astFactory.createMacro( key, beginning, contextStack.getCurrentContext().getOffset(), offset ).acceptElement( requestor ); 
 	}
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), mode, problemReporter, translationResult );
+        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), mode, new NullSourceElementRequestor(), problemReporter, translationResult );
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();
@@ -2204,16 +2201,8 @@ public class Scanner implements IScanner {
 	public void setCppNature(boolean value) {
 		cppNature = value; 
 	}
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.IScanner#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-	 */
-	public void setRequestor(ISourceElementRequestor r) {
-		requestor = r; 
-	}
 	
-	private ISourceElementRequestor requestor = null;
+	private final ISourceElementRequestor requestor;
 	private IASTFactory astFactory = null; 
 	
 	/* (non-Javadoc)

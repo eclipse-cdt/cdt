@@ -19,7 +19,9 @@ import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
@@ -35,9 +37,15 @@ public class BaseScannerTest extends TestCase {
 		super(x);
 	}
 
+	protected void initializeScanner( String input, ParserMode mode )
+	{
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, callback );
+	}
+
+
 	protected void initializeScanner(String input)
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), null );
+       initializeScanner( input, ParserMode.COMPLETE_PARSE );
 	}
 
 	public int fullyTokenize() throws Exception
@@ -194,6 +202,8 @@ public class BaseScannerTest extends TestCase {
 				+ "as we sent in bad preprocessor input to the scanner";
 
 	public static final boolean verbose = false;
+
+    protected NullSourceElementRequestor callback = new NullSourceElementRequestor();
 	
 
 }

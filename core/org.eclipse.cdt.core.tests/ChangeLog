@@ -1,4 +1,8 @@
 2003-07-18 John Camelon
+	Updated ParserSymbolTableTests to remove dependencies on parser.ast.full classes.
+	Updated Parser test suites for updates to ParserFactory.
+
+2003-07-18 John Camelon
 	Wrote new tests in QuickParseASTQualifiedNameTest.java and added it to ParserTestSuite's suite.
 
 2003-07-18 Peter Graves	

@@ -21,7 +21,7 @@ package org.eclipse.cdt.core.parser;
  * as constants on this interface. </li>
  * </ul>
  */
-public interface IProblem { 
+public interface IProblem extends ISourceElementCallbackDelegate { 
 	
 	/**
 	 * Answer back the original arguments recorded into the problem.

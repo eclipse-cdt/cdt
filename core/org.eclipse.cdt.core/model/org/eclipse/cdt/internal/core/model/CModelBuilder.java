@@ -94,8 +94,8 @@ public class CModelBuilder {
                                 translationUnit.getBuffer().getContents() 
                             ), 
                         null, new ScannerInfo(), ParserMode.QUICK_PARSE, 
-                        problemReporter, 
-                        unitResult 
+                        domBuilder, 
+                        problemReporter, unitResult 
                 ), 
                 domBuilder, 
                 ParserMode.QUICK_PARSE, 

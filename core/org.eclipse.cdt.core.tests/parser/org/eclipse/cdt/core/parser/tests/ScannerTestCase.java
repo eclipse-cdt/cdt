@@ -851,8 +851,7 @@ public class ScannerTestCase extends BaseScannerTest
 	{
 		try
 		{
-			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif" );
-			scanner.setMode( ParserMode.QUICK_PARSE );
+			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif", ParserMode.QUICK_PARSE );
 			validateToken( IToken.t_int ); 
 			validateIdentifier( "found" ); 
 			validateToken( IToken.tASSIGN ); 
@@ -869,7 +868,6 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner( "#if 0\n  int error = 666;\n#endif" ); 
-			scanner.setMode( ParserMode.COMPLETE_PARSE ); 
 			validateEOF(); 
 		}
 		catch( ScannerException se )

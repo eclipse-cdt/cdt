@@ -10,11 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTMethod extends IASTFunction, IASTMember {
+public interface IASTMethod extends  IASTFunction, IASTMember {
 
 	public boolean isVirtual();
 	public boolean isExplicit(); 

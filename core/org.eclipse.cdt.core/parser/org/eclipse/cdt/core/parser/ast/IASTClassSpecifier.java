@@ -13,12 +13,13 @@ package org.eclipse.cdt.core.parser.ast;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.Enum;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTScopedTypeSpecifier {
+public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTScopedTypeSpecifier, ISourceElementCallbackDelegate {
 
 	public class ClassNameType extends Enum {
 

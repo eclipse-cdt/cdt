@@ -19,15 +19,12 @@ public interface IScanner  {
 	public String[] getIncludePaths();
 	public void addIncludePath(String includePath); 
 	public void overwriteIncludePath( String [] newIncludePaths );
-	public void setRequestor( ISourceElementRequestor r );
 	
 	public IToken nextToken() throws ScannerException, EndOfFile;
 	public IToken nextToken( boolean next ) throws ScannerException, EndOfFile;
 	 
 	public void setCppNature( boolean value );
-	
-	public void setMode(ParserMode mode);
-	
+		
 	public int  getCount();
 	public int  getDepth();
 

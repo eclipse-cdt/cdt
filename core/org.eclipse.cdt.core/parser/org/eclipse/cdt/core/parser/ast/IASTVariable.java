@@ -10,11 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTVariable extends IASTDeclaration, IASTOffsetableNamedElement, IASTQualifiedNameElement {
+public interface IASTVariable extends  IASTDeclaration, IASTOffsetableNamedElement, IASTQualifiedNameElement {
 
 	public boolean isAuto(); 
 	public boolean isRegister(); 

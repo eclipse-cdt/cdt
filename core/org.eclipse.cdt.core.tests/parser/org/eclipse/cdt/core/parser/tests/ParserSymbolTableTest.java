@@ -18,9 +18,9 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.parser.ast.full.ASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTFCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.complete.SymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -107,14 +107,15 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IContainerSymbol x = table.new Declaration("x");
 		
-		IASTFCompilationUnit obj = new ASTCompilationUnit( x );
-		x.setASTNode( obj );
+		ISymbolASTExtension extension = new SymbolExtension( null, null ); // cheating! 
+		
+		x.setASTNode( extension );
 				
 		table.getCompilationUnit().addSymbol( x );
 		
 		ISymbol look = table.getCompilationUnit().Lookup( "x" );
 		
-		assertEquals( look.getASTNode(), obj );
+		assertEquals( look.getASTNode(), extension );
 	}
 	
 	/**

@@ -15,24 +15,30 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 
 /**
  * @author jcamelon
@@ -48,7 +54,7 @@ public interface ISourceElementRequestor {
 	public void acceptUsingDirective( IASTUsingDirective usageDirective );
 	public void acceptUsingDeclaration( IASTUsingDeclaration usageDeclaration );
 	public void acceptASMDefinition( IASTASMDefinition asmDefinition );
-	public void acceptTypedef( IASTTypedefDeclaration typedef );
+	public void acceptTypedefDeclaration( IASTTypedefDeclaration typedef );
 	public void acceptEnumerationSpecifier( IASTEnumerationSpecifier enumeration );
 	public void acceptAbstractTypeSpecDeclaration( IASTAbstractTypeSpecifierDeclaration abstractDeclaration );
 
@@ -63,7 +69,7 @@ public interface ISourceElementRequestor {
 	
 	public void enterTemplateDeclaration( IASTTemplateDeclaration declaration );
 	public void enterTemplateSpecialization( IASTTemplateSpecialization specialization );
-	public void enterTemplateExplicitInstantiation( IASTTemplateInstantiation instantiation );
+	public void enterTemplateInstantiation( IASTTemplateInstantiation instantiation );
 	
 	public void acceptMethodDeclaration( IASTMethod method );
 	public void enterMethodBody( IASTMethod method );
@@ -71,6 +77,13 @@ public interface ISourceElementRequestor {
 	public void acceptField( IASTField field );
 
 	public void acceptClassReference( IASTClassReference reference );
+	public void acceptTypedefReference( IASTTypedefReference reference );
+	public void acceptNamespaceReference( IASTNamespaceReference reference );
+	public void acceptEnumerationReference( IASTEnumerationReference reference );
+	public void acceptVariableReference( IASTVariableReference reference );
+	public void acceptFunctionReference( IASTFunctionReference reference );
+	public void acceptFieldReference( IASTFieldReference reference );
+	public void acceptMethodReference( IASTMethodReference reference );
 	
 	public void exitTemplateDeclaration( IASTTemplateDeclaration declaration );
 	public void exitTemplateSpecialization( IASTTemplateSpecialization specialization );
@@ -81,8 +94,6 @@ public interface ISourceElementRequestor {
 	public void exitNamespaceDefinition( IASTNamespaceDefinition namespaceDefinition ); 
 	public void exitInclusion( IASTInclusion inclusion ); 
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit );
-
-    public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec);
 
     /**
      * @param function

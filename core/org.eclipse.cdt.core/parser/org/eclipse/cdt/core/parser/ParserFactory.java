@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.TranslationOptions;
 import org.eclipse.cdt.internal.core.parser.TranslationResult;
-import org.eclipse.cdt.internal.core.parser.ast.full.FullParseASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.DefaultProblemFactory;
 import org.eclipse.cdt.internal.core.parser.problem.ProblemReporter;
@@ -40,7 +40,7 @@ public class ParserFactory {
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory(); 
 		else
-			return new FullParseASTFactory(); 
+			return new CompleteParseASTFactory(); 
 	}
 	
     public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode )
@@ -55,29 +55,29 @@ public class ParserFactory {
 		return new Parser( scanner, ourCallback, ourMode, problemReporter, unitResult );
 	}
  	
-    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode )
+    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ISourceElementRequestor requestor )
     {
-        return createScanner(input, fileName, config, mode, null, null);
+        return createScanner(input, fileName, config, mode, requestor, null, null);
     }
     
-	public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult ) 
+	public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ISourceElementRequestor requestor, IProblemReporter problemReporter, ITranslationResult unitResult ) 
 	{
-		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		IScanner s = new Scanner( input, fileName, config, problemReporter, unitResult );
-		s.setMode( ourMode ); 
+		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
+		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
+		IScanner s = new Scanner( input, fileName, config, problemReporter, unitResult, ourRequestor, ourMode );
 		return s; 
 	}
     
-    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode )
+    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ISourceElementRequestor requestor )
     {
-        return createPreprocessor(input, fileName, info, mode, null, null);
+        return createPreprocessor(input, fileName, info, mode, requestor, null, null);
     }
  	
-	public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult )
+	public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ISourceElementRequestor requestor, IProblemReporter problemReporter, ITranslationResult unitResult )
 	{
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		IPreprocessor s = new Preprocessor( input, fileName, info, problemReporter, unitResult );
-		s.setMode( ourMode );
+		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
+		IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, problemReporter, unitResult, ourMode );
 		return s;
 	} 
 	

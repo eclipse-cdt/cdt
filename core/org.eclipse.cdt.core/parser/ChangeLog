@@ -1,4 +1,14 @@
 2003-07-18 John Camelon
+	Added ISourceElementCallbackDelegate interface for AST constructs to allow the Parser to delegate callback's to the nodes themselves.  
+	Got rid of ParserMode.STRUCTURAL_PARSE for the time being. 
+	Removed org.eclipse.cdt.internal.core.parser.ast.full. 
+	Created org.eclipse.cdt.internal.core.parser.ast.complete. 
+	Updated ParserFactory.createScanner() to force the user to provide a callback and a ParserMode.
+	Introduced ASTSemanticException for COMPLETE_PARSE mode. 
+	Fleshed out preliminary IASTReference interfaces and added callbacks to ISourceElementRequestor.
+	Removed acceptElaboratedTypeSpecifier() from ISourceElementRequestor.
+
+2003-07-18 John Camelon
 	Removed DeclaratorDuple as it was obsolete.
 	Fixed offsets in quickParse's IASTTypedefDeclaration implementation.
 	Fixed Bug 40436 - Fully Qualified Names Needed (for Indexer/Search features)

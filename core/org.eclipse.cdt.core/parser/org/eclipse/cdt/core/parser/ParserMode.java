@@ -19,11 +19,8 @@ public class ParserMode extends Enum {
 	// follow inclusions, parse function/method bodies
 	public static final ParserMode COMPLETE_PARSE = new ParserMode( 1 );
 	
-	// follow inclusions, do not parse function/method bodies
-	public static final ParserMode STRUCTURAL_PARSE = new ParserMode( 2 );
-	
 	// do not follow inclusions, do not parse function/method bodies
-	public static final ParserMode QUICK_PARSE = new ParserMode( 3 );
+	public static final ParserMode QUICK_PARSE = new ParserMode( 2 );
 	
 	protected ParserMode( int value )
 	{

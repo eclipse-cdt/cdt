@@ -12,11 +12,13 @@ package org.eclipse.cdt.core.parser.ast;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTEnumerationSpecifier extends IASTScopedTypeSpecifier, IASTOffsetableNamedElement {
+public interface IASTEnumerationSpecifier extends ISourceElementCallbackDelegate, IASTScopedTypeSpecifier, IASTOffsetableNamedElement {
 
 	public void addEnumerator( IASTEnumerator enumerator );
 	public Iterator getEnumerators(); 

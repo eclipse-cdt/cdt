@@ -10,10 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTCompilationUnit extends IASTScope {
+public interface IASTCompilationUnit extends IASTScope, ISourceElementCallbackDelegate {
 
 }

@@ -8,15 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
-
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+package org.eclipse.cdt.core.parser.ast;
 
 /**
  * @author jcamelon
  *
  */
-public interface IPSTSymbolExtension {
-
-	ISymbol getSymbol(); 
+public interface IASTVariableReference extends IASTReference
+{
 }

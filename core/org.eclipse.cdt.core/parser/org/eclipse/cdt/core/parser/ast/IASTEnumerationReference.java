@@ -10,11 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-
 /**
  * @author jcamelon
  *
  */
-public interface IASTNamespaceDefinition extends IASTOffsetableNamedElement, IASTScope, IASTDeclaration, IASTQualifiedNameElement {
-
+public interface IASTEnumerationReference extends IASTReference
+{
 }

@@ -8,13 +8,15 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
+package org.eclipse.cdt.internal.core.parser.pst;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTFNamespaceDefinition
-	extends IASTFScope, org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition {
+public interface ISymbolOwner
+{
+	public ISymbol		   getSymbol(); 
+	public void			   setSymbol( ISymbol s );
 
 }

@@ -10,11 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTLinkageSpecification extends IASTScope, IASTDeclaration, IASTOffsetableElement {
+public interface IASTLinkageSpecification extends  IASTScope, IASTDeclaration, IASTOffsetableElement {
 
 	public String getLinkageString(); 
 }

@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.parser.ScannerInfo;
  */
 public class PreprocessorTest extends TestCase {
 
-	public static class Callback extends NullSourceElementRequestor implements ISourceElementRequestor 
+	public static class Callback extends NullSourceElementRequestor
 	{
 		private List enteredInc = new ArrayList(), exitedInc = new ArrayList(); 
 		
@@ -73,8 +73,7 @@ public class PreprocessorTest extends TestCase {
 	
 	public IPreprocessor setupPreprocessor( String text, List includePaths, Map defns, ISourceElementRequestor rq )
 	{
-		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo(), ParserMode.COMPLETE_PARSE );
-		p.setRequestor( rq );
+		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo(), ParserMode.COMPLETE_PARSE, rq );
 		return p; 
 	}
 }

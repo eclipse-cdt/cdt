@@ -59,7 +59,7 @@ public class SourceIndexer extends AbstractIndexer {
 		// Create a new Parser
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, document);
 		IParser parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), document.getName(), new ScannerInfo(), ParserMode.QUICK_PARSE ), 
+							ParserFactory.createScanner( new StringReader( document.getStringContent() ), document.getName(), new ScannerInfo(), ParserMode.QUICK_PARSE, requestor ), 
 							requestor, ParserMode.QUICK_PARSE);
 		try{
 			parser.parse();

@@ -1,3 +1,9 @@
+2003-12-17 Andrew Niefer
+	Content Assist work: 
+	- change parser & symbol table to handle handle friend classes
+	- change visibility filtering to check for friendship
+	- fix finding function parameters in prefix lookup
+
 2003-12-17 Hoda Amer
 	Content Assist work : Integrated with Parser and Symbol table modifications
 	

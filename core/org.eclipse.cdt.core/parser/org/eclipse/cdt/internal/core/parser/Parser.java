@@ -1654,7 +1654,7 @@ public abstract class Parser implements IParser
                     d,
                     t.getOffset(),
                     d.getLastToken().getEndOffset(), 
-                    isForewardDecl );
+                    isForewardDecl, sdw.isFriend() );
         }
         catch (ASTSemanticException e)
         {

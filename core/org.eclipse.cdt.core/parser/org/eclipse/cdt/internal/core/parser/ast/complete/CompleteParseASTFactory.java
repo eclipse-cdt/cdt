@@ -2485,7 +2485,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
     
-    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind kind, ITokenDuple name, int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind kind, ITokenDuple name, int startingOffset, int endOffset, boolean isForewardDecl, boolean isFriend) throws ASTSemanticException
     {
 		IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
 		TypeInfo.eType pstType = classKindToTypeInfo(kind);		
@@ -2504,7 +2504,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol checkSymbol = null;
 		try
 		{
-			checkSymbol = currentScopeSymbol.elaboratedLookup( pstType, lastToken.getImage());
+            if( isFriend ){
+                if( !(currentScopeSymbol instanceof IDerivableContainerSymbol) ){
+                    throw new ASTSemanticException();
+                }
+                checkSymbol = ((IDerivableContainerSymbol)currentScopeSymbol).lookupForFriendship( lastToken.getImage() );
+            } else {
+                checkSymbol = currentScopeSymbol.elaboratedLookup( pstType, lastToken.getImage());
+			}
 		}
 		catch (ParserSymbolTableException e)
 		{
@@ -2520,7 +2527,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				checkSymbol.setIsForwardDeclaration( true );
 				try
 	            {
-	                currentScopeSymbol.addSymbol( checkSymbol  );
+                    if( isFriend ){
+                        ((IDerivableContainerSymbol)currentScopeSymbol).addFriend( checkSymbol );
+                    } else {
+                        currentScopeSymbol.addSymbol( checkSymbol  );
+                    }
 	            }
 	            catch (ParserSymbolTableException e1)
 	            {
@@ -2538,6 +2549,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 {
                 	throw new ASTSemanticException();
                 }
+			} else if( isFriend ){
+				try {
+					((IDerivableContainerSymbol)currentScopeSymbol).addFriend( checkSymbol );
+				} catch (ParserSymbolTableException e1) {
+					throw new ASTSemanticException();
+				}
+				
 			}
  		}
  		
@@ -2612,7 +2630,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTCodeScope createNewCodeBlock(IASTScope scope) {
 		IContainerSymbol symbol = scopeToSymbol( scope );
 		
-		IContainerSymbol newScope = pst.newContainerSymbol("");
+		IContainerSymbol newScope = pst.newContainerSymbol("", TypeInfo.t_block);
 		newScope.setContainingSymbol(symbol);
 		
 		ASTCodeScope codeScope = new ASTCodeScope( newScope );

@@ -169,12 +169,21 @@ public class BasicSymbol implements Cloneable, ISymbol
 	public Map getArgumentMap(){
 		return null;
 	}
+	
+	public boolean getIsInvisible(){
+		return _isInvisible;
+	}
+	public void setIsInvisible( boolean invisible ){
+		_isInvisible = invisible ;
+	}
+	
 	private 	String 				_name;					//our name
 	private		ISymbolASTExtension	_object;				//the object associated with us
 	private		TypeInfo			_typeInfo;				//our type info
 	private		IContainerSymbol	_containingScope;		//the scope that contains us
 	private		int 				_depth;					//how far down the scope stack we are
 	
+	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)	
 	private		boolean				_isTemplateMember = false;		
 	private		TemplateInstance	_templateInstance;		
 }

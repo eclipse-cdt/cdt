@@ -263,7 +263,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
         return new ASTAbstractTypeSpecifierDeclaration( scope, typeSpecifier, template, startingOffset, endingOffset );
     }
 
-    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, ITokenDuple typeName, int startingOffset, int endOffset, boolean isForewardDecl)
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, ITokenDuple typeName, int startingOffset, int endOffset, boolean isForewardDecl, boolean isFriend)
     {
         return new ASTElaboratedTypeSpecifier( scope, elaboratedClassKind, typeName.toString(), startingOffset, typeName.getFirstToken().getOffset(), typeName.getLastToken().getEndOffset(), endOffset );
     }

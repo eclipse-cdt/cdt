@@ -3209,20 +3209,36 @@ public class ParserSymbolTableTest extends TestCase {
 	}
 	
 	/**
-	 * class A { public: static int i; };
+	 * class D { };
+	 * class A { 
+	 * 	   public: static int i; 
+	 *     private: static int j;
+	 *     friend class D;
+	 * };
 	 * class B : private A {};
 	 * class C : public B, public A {};
+	 * 
 	 * 
 	 * @throws Exception
 	 */
 	public void testVisibilityDetermination() throws Exception{
 		newTable();
 		
+		IDerivableContainerSymbol D = table.newDerivableContainerSymbol( "D", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( D );
+		
 		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		ISymbol i = table.newSymbol( "i", TypeInfo.t_int );
+		ISymbol j = table.newSymbol( "j", TypeInfo.t_int );
 		
 		table.getCompilationUnit().addSymbol( A );
+		
+		ISymbol friend = A.lookupForFriendship( "D" );
+		assertEquals( friend, D );
+		A.addFriend( friend );
+		
 		A.addSymbol( i );
+		A.addSymbol( j );
 
 		IASTCompilationUnit compUnit = new ASTCompilationUnit(table.getCompilationUnit() );
 		ISymbolASTExtension cuExtension = new StandardSymbolExtension( table.getCompilationUnit(), (ASTSymbol) compUnit );
@@ -3235,6 +3251,10 @@ public class ParserSymbolTableTest extends TestCase {
 		IASTField field = new ASTField(i, null, null, null, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PUBLIC );
 		ISymbolASTExtension extension = new StandardSymbolExtension( i, (ASTSymbol) field );
 		i.setASTExtension( extension );
+		
+		field = new ASTField(i, null, null, null, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PRIVATE );
+		extension = new StandardSymbolExtension( j, (ASTSymbol) field );
+		j.setASTExtension( extension );
 	
 		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
 		B.addParent( A, false, ASTAccessVisibility.PRIVATE, 0, null );
@@ -3248,6 +3268,8 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( table.getCompilationUnit().isVisible( i, A ) );
 		assertFalse( table.getCompilationUnit().isVisible( i, B ) );
 		assertTrue( table.getCompilationUnit().isVisible(i, C ) );
+		assertTrue( D.isVisible( j, A ) );
+		assertFalse( D.isVisible( j, B ) );
 	}
 	
 	/**

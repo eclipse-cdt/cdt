@@ -54,6 +54,8 @@ public interface ISymbol extends Cloneable {
 	public void setTemplateInstance( TemplateInstance instance );
 
 	public int getDepth();
+	public boolean getIsInvisible();
+	public void setIsInvisible( boolean invisible );
 
     /**
      * @param name

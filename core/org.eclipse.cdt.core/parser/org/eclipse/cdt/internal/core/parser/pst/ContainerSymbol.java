@@ -635,8 +635,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			{
 				return true;
 			}
+
+			//if this is a friend of the symbolContainer, then we are good
+			if( isFriendOf( symbolContainer ) ){
+				return true;
+			}
 			
-			//TODO: friendship
 			if( visibility == ASTAccessVisibility.PROTECTED )
 			{
 				try {
@@ -649,6 +653,33 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 		return true;
+	}
+	
+	protected boolean isFriendOf( IContainerSymbol symbol ){
+		if( symbol instanceof IDerivableContainerSymbol ){
+			IContainerSymbol container = this.getContainingSymbol();
+			
+			while( container != null && container.isType( TypeInfo.t_block ) ){
+				container = container.getContainingSymbol();
+			}
+			if( container != null && !container.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
+				container = null;
+			}
+			
+			IDerivableContainerSymbol derivable = (IDerivableContainerSymbol) symbol;
+			
+			Iterator iter = derivable.getFriends().iterator();
+			while( iter.hasNext() ){
+				ISymbol friend = (ISymbol) iter.next();
+				ISymbol typeSymbol = friend.getTypeSymbol();
+				if( friend == this      || typeSymbol == this ||
+					friend == container || ( container != null && typeSymbol == container ) )
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)

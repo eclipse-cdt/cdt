@@ -97,7 +97,7 @@ public interface IASTFactory
         IASTScope scope,
         ASTClassKind elaboratedClassKind,
         ITokenDuple typeName,
-        int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException;
+        int startingOffset, int endOffset, boolean isForewardDecl, boolean isFriend) throws ASTSemanticException;
 
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,

@@ -335,7 +335,7 @@ public class ParserSymbolTable {
 				name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
 				while( name != null ){
 					if( nameMatches( data, name ) ){
-						obj = parameters.get( data.name );
+						obj = parameters.get( name );
 						obj = collectSymbol( data, obj );
 						if( obj != null ){
 							found.put( name, obj );
@@ -393,7 +393,7 @@ public class ParserSymbolTable {
 		IContainerSymbol cls = null;
 		
 		while( symbol != null ){
-			if( checkType( data, symbol ) ){//, data.type, data.upperType ) ){
+			if( !symbol.getIsInvisible() && checkType( data, symbol ) ){//, data.type, data.upperType ) ){
 				if( symbol.isTemplateMember() && data.templateInstance != null )
 					foundSymbol = new TemplateInstance( symbol.getSymbolTable(), symbol, data.templateInstance.getArgumentMap() );
 				else
@@ -674,12 +674,17 @@ public class ParserSymbolTable {
 		TypeInfo.eType newType  = newSymbol.getType();
 		
 		//handle forward decls
-		if( origSymbol.getTypeInfo().isForwardDeclaration() &&
-			origSymbol.getTypeSymbol() == newSymbol )
-		{
-			return true;
+		if( origSymbol.getTypeInfo().isForwardDeclaration() ){
+			if( origSymbol.getTypeSymbol() == newSymbol )
+				return true;
+			
+			//friend class declarations
+			if( origSymbol.getIsInvisible() && origSymbol.isType( newSymbol.getType() ) ){
+				origSymbol.getTypeInfo().setTypeSymbol(  newSymbol );
+				return true;
+			}
 		}
-		
+				
 		if( (origType.compareTo(TypeInfo.t_class) >= 0 && origType.compareTo(TypeInfo.t_enumeration) <= 0) && //class name or enumeration ...
 			( newType == TypeInfo.t_type || (newType.compareTo( TypeInfo.t_function ) >= 0 /*&& newType <= TypeInfo.typeMask*/) ) ){
 				
@@ -707,7 +712,8 @@ public class ParserSymbolTable {
 			
 			Iterator iter = origList.iterator();
 			ISymbol symbol = (ISymbol) iter.next();
-			boolean valid = ( (symbol.getType().compareTo( TypeInfo.t_class ) >= 0 ) && (symbol.getType().compareTo( TypeInfo.t_enumeration ) <= 0 ) );
+			boolean valid = isValidOverload( symbol, newSymbol );//( (symbol.getType().compareTo( TypeInfo.t_class ) >= 0 ) && (symbol.getType().compareTo( TypeInfo.t_enumeration ) <= 0 ) );
+			
 			if( !valid && (symbol instanceof IParameterizedSymbol) )
 				valid = isValidFunctionOverload( (IParameterizedSymbol)symbol, (IParameterizedSymbol)newSymbol );
 			
@@ -2239,7 +2245,6 @@ public class ParserSymbolTable {
 	
 	static protected class LookupData
 	{
-		
 		public Set ambiguities;
 		public String name;
 		public Map usingDirectives; 
@@ -2256,7 +2261,7 @@ public class ParserSymbolTable {
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
 		public boolean forUserDefinedConversion = false;
-
+		
 		public Map foundItems = null;
 		
 		public ISymbol templateInstance = null;

@@ -1,3 +1,10 @@
+2003-12-17 Andrew Niefer
+	test changes for content assist
+	added ContextualParseTest.testCompletionLookup_FriendClass_1() 
+	added ContextualParseTest.testCompletionLookup_FriendClass_2() 
+	added ContextualParseTest.testCompletionLookup_ParametersAsLocalVariables() 
+	modified ParserSymbolTableTest.testVisibilityDetermination() 
+
 2003-12-17 Hoda Amer
 	Small modifications to cope with the new interfaces
 	

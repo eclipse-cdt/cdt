@@ -17,11 +17,13 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
@@ -245,5 +247,128 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		
 		assertEquals( method.getName(), "aMethod" );
 		assertEquals( baseMethod.getName(), "aPublicBaseMethod" );
+	}
+	
+	public void testCompletionLookup_FriendClass_1() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "class A {" );
+		writer.write( "   private:  void aPrivateMethod();" );
+		writer.write( "   friend class C;" );
+		writer.write( "};" );
+		
+		writer.write( "class C {" );
+		writer.write( "   void foo();" );
+		writer.write( "};" );	
+		
+		writer.write( "void C::foo(){" );		
+		writer.write( "   A a;" );		
+		writer.write( "   a.a \n" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "a.a" );
+		
+		IASTCompletionNode node = parse( code, index + 3 );
+		
+		assertNotNull( node );
+		
+		String prefix = node.getCompletionPrefix();
+		assertEquals( prefix, "a" );
+		
+		assertTrue( node.getCompletionScope() instanceof IASTFunction );
+		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
+		assertNotNull( node.getCompletionContext() );
+		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
+		
+		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
+		assertEquals( result.getPrefix(), prefix );
+		
+		Iterator iter = result.getNodes();
+		assertTrue( iter.hasNext() );
+		
+		IASTMethod method = (IASTMethod) iter.next();
+		
+		assertFalse( iter.hasNext() );
+		
+		assertEquals( method.getName(), "aPrivateMethod" );
+	}
+	
+	public void testCompletionLookup_FriendClass_2() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "class C {" );
+		writer.write( "   void foo();" );
+		writer.write( "};" );		
+		writer.write( "class A {" );
+		writer.write( "   private:  void aPrivateMethod();" );
+		writer.write( "   friend class C;" );
+		writer.write( "};" );
+
+		writer.write( "void C::foo(){" );		
+		writer.write( "   A a;" );		
+		writer.write( "   a.a \n" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "a.a" );
+		
+		IASTCompletionNode node = parse( code, index + 3 );
+		
+		assertNotNull( node );
+		
+		String prefix = node.getCompletionPrefix();
+		assertEquals( prefix, "a" );
+		
+		assertTrue( node.getCompletionScope() instanceof IASTFunction );
+		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
+		assertNotNull( node.getCompletionContext() );
+		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
+		
+		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
+		assertEquals( result.getPrefix(), prefix );
+		
+		Iterator iter = result.getNodes();
+		assertTrue( iter.hasNext() );
+		
+		IASTMethod method = (IASTMethod) iter.next();
+		
+		assertFalse( iter.hasNext() );
+		
+		assertEquals( method.getName(), "aPrivateMethod" );
+	}
+	
+	public void testCompletionLookup_ParametersAsLocalVariables() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "int foo( int aParameter ){" );
+		writer.write( "   int aLocal;" );
+		writer.write( "   if( aLocal != 0 ){" );		
+		writer.write( "      int aBlockLocal;" );
+		writer.write( "      a \n" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( " a " );
+		
+		IASTCompletionNode node = parse( code, index + 2 );
+		
+		assertNotNull( node );
+		
+		String prefix = node.getCompletionPrefix();
+		assertEquals( prefix, "a" );
+		
+		assertTrue( node.getCompletionScope() instanceof IASTCodeScope );
+		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
+		assertNull( node.getCompletionContext() );
+				
+		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext() );
+		assertEquals( result.getPrefix(), prefix );
+		
+		Iterator iter = result.getNodes();
+				
+		IASTVariable aBlockLocal = (IASTVariable) iter.next();
+		IASTVariable aLocal = (IASTVariable) iter.next();
+		IASTParameterDeclaration aParameter = (IASTParameterDeclaration) iter.next();
+		
+		assertFalse( iter.hasNext() );
+		
+		assertEquals( aBlockLocal.getName(), "aBlockLocal" );
+		assertEquals( aLocal.getName(), "aLocal" );
+		assertEquals( aParameter.getName(), "aParameter" );
 	}
 }

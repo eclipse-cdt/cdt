@@ -241,24 +241,22 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * TODO: if/when the parser symbol table starts caring about visibility
 	 * (public/protected/private) we will need to do more to record friendship.
 	 */
-	private ISymbol addFriend( String name ) throws ParserSymbolTableException{
-		ISymbol friend = lookupForFriendship( name  );
-	
-		if( friend == null ){
-			friend = getSymbolTable().newSymbol( name );
-			friend.getTypeInfo().setIsForwardDeclaration( true );
-		
-			IContainerSymbol containing = getContainingSymbol();
-			//find innermost enclosing namespace
-			while( containing != null && containing.getType() != TypeInfo.t_namespace ){
-				containing = containing.getContainingSymbol();
+	public void addFriend( ISymbol friend ) throws ParserSymbolTableException{
+		//is this symbol already in the table?
+		IContainerSymbol containing = friend.getContainingSymbol();
+		if( containing == null ){
+			//its not, it goes in the innermost enclosing namespace
+			IContainerSymbol enclosing = getContainingSymbol();
+			while( enclosing != null && !enclosing.isType( TypeInfo.t_namespace ) ){
+				enclosing = enclosing.getContainingSymbol();
 			}
-		
-			IContainerSymbol namespace = ( containing == null ) ?  getSymbolTable().getCompilationUnit() : containing;
-			namespace.addSymbol( friend );
+			
+			friend.setIsInvisible( true );
+			friend.setIsForwardDeclaration( true );
+			enclosing.addSymbol( friend );
 		}
 		
-		return friend;
+		getFriends().add( friend );
 	}
 	
 	/**
@@ -273,24 +271,28 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * without considering scopes that are outside the innermost enclosing non-
 	 * class scope.
 	 */
-	private ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException{
+	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
-	
-		boolean inClass = ( getType() == TypeInfo.t_class);
-	
+		
 		IContainerSymbol enclosing = getContainingSymbol();
-		while( enclosing != null && (inClass ? enclosing.getType() != TypeInfo.t_class
-											  :	enclosing.getType() == TypeInfo.t_namespace) )
-		{                                        		
-			enclosing = enclosing.getContainingSymbol();
+		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
+			while( enclosing != null && ( enclosing.getType() != TypeInfo.t_namespace) )
+			{                                        		
+				enclosing = enclosing.getContainingSymbol();
+			}
 		}
-
 		data.stopAt = enclosing;
 	
 		ParserSymbolTable.lookup( data, this );
 		return ParserSymbolTable.resolveAmbiguities( data ); 
 	}
 	
+	public List getFriends(){ 
+		if( _friends == null ){
+			_friends = new LinkedList();
+		}
+		return _friends;
+	}
 	
 	static private class AddParentCommand extends Command{
 		public AddParentCommand( IDerivableContainerSymbol container, ParentWrapper wrapper ){
@@ -363,4 +365,5 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	
 	private 	LinkedList 	_constructors;			//constructor list
 	private		LinkedList	_parentScopes;			//inherited scopes (is base classes)
+	private		LinkedList	_friends;
 }

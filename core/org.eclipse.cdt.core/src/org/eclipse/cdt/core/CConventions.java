@@ -121,9 +121,8 @@ public class CConventions {
 				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.lowercaseName"), null); //$NON-NLS-1$
 			}
 			return CModelStatus.VERIFIED_OK;
-		} else {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.invalidName", name), null); //$NON-NLS-1$
 		}
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.invalidName", name), null); //$NON-NLS-1$
 	}
 
 	/**
@@ -183,9 +182,8 @@ public class CConventions {
 //				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.namespace.lowercaseName"), null); //$NON-NLS-1$
 //			}
 			return CModelStatus.VERIFIED_OK;
-		} else {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.invalidName", name), null); //$NON-NLS-1$
 		}
+		return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.invalidName", name), null); //$NON-NLS-1$
 	}
 
 	/**
@@ -282,10 +280,10 @@ public class CConventions {
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateMethodName(String name) {
-		if(name.startsWith("~")) //$NON-NLS-1$
+		if(name.startsWith("~")) { //$NON-NLS-1$
 			return validateIdentifier(name.substring(1));
-		else
-			return validateIdentifier(name);
+		}
+		return validateIdentifier(name);
 	}
 
 	public static boolean isValidIdentifier(String name){

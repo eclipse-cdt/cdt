@@ -48,7 +48,7 @@ public interface IASTNode {
 		}
 	 }
 	 
-	 public static class LookupException extends Exception
+	 public static class LookupError extends Error
 	 {
 	 }
 	 
@@ -64,8 +64,8 @@ public interface IASTNode {
 	 * @param kind
 	 * @param context
 	 * @return
-	 * @throws LookupException
+	 * @throws LookupError
 	 */
-	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException, ASTNotImplementedException;
+	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupError, ASTNotImplementedException;
 }
 

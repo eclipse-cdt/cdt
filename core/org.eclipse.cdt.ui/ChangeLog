@@ -1,5 +1,5 @@
-2004-01-13 Andrew Niefer
-	Updated CompletionEngine to catch ASTNotImplementedException from IASTNode.lookup
+2004-01-16 John Camelon
+	IASTNode.LookupException references changed to IASTNode.LookupError.
 
 2004-01-15 Hoda Amer
 	Moved Content Assist log to the UI plugin
@@ -9,6 +9,9 @@
 	Updated references of ParserFactoryException to ParserFactoryError.
 	Updated references of ParserNotImplementedException to ParseError. 
 	Updated references of CONTEXTUAL_PARSE to COMPLETION_PARSE.  
+
+2004-01-13 Andrew Niefer
+	Updated CompletionEngine to catch ASTNotImplementedException from IASTNode.lookup
 
 2004-01-13 John Camelon
 	Updated CompletionEngine to handle IASTCompletionKind.CompletionKind.STATEMENT_START

@@ -1,3 +1,7 @@
+2004-01-16 John Camelon
+	Changed IASTNode.LookupException to IASTNode.LookupError.
+	Updated IASTElaboratedTypeSpecifier to remove redundant extends relationships.
+
 2004-01-15 Andrew Niefer
 	Modified symbol table constructor to take a ParseMode as a parameter.
 	Modified symbol table to use a TreeMap instead of HashMap when ParseMode is CONTEXTUAL_PARSE

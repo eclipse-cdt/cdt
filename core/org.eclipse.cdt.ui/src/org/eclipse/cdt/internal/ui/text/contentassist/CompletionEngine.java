@@ -398,7 +398,7 @@ public class CompletionEngine implements RelevanceConstants{
 			logLookups (kinds);
 			ILookupResult result = searchNode.lookup (prefix, kinds, context);
 			return result ;
-		} catch (IASTNode.LookupException ilk ){
+		} catch (IASTNode.LookupError ilk ){
 			// do we want to do something here?
 			ilk.printStackTrace();
 			return null;

@@ -33,7 +33,7 @@ public class ASTNode implements IASTNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind, org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException, ASTNotImplementedException {
+	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupError, ASTNotImplementedException {
 
 		if( ! ( this instanceof ISymbolOwner ) || ( context != null && !(context instanceof ISymbolOwner) ) ){
 			return null;
@@ -49,7 +49,7 @@ public class ASTNode implements IASTNode {
 		if( context != null ){
 			ISymbol sym = (IContainerSymbol) ((ISymbolOwner)context).getSymbol();
 			if( sym == null || !(sym instanceof IContainerSymbol) ){
-				throw new LookupException();
+				throw new LookupError();
 			}
 			qualification =  (IContainerSymbol) sym;
 		}
@@ -57,7 +57,7 @@ public class ASTNode implements IASTNode {
 		ISymbolOwner owner = (ISymbolOwner) this;
 		ISymbol symbol = owner.getSymbol();
 		if( symbol == null || !(symbol instanceof IContainerSymbol) ){
-			throw new LookupException();
+			throw new LookupError();
 		}
 	
 		boolean lookInThis = false;
@@ -93,7 +93,7 @@ public class ASTNode implements IASTNode {
 				lookupResults = thisContainer.prefixLookup( filter, prefix, false );
 			}
 		} catch (ParserSymbolTableException e) {
-			throw new LookupException();
+			throw new LookupError();
 		}
 		
 		if(lookupResults == null)

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,6 +36,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 
 abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDelegate {
 
@@ -45,7 +47,8 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		Map env = null;
 		try {
 			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
-		} catch (CoreException e) {
+		}
+		catch (CoreException e) {
 		}
 		if (env == null) {
 			return new String[0];
@@ -125,7 +128,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		String newMessage = message;
-		if ( exception != null ) {
+		if (exception != null) {
 			newMessage = message + " : " + exception.getLocalizedMessage();
 		}
 		throw new CoreException(new Status(IStatus.ERROR, getPluginID(), code, newMessage, exception));
@@ -136,7 +139,6 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	}
 
 	abstract protected String getPluginID();
-
 
 	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = getProjectName(configuration);
@@ -159,6 +161,29 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 
 	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
+	}
+
+	/**
+	 * Assigns a default source locator to the given launch if a source locator has not yet been assigned to it, and the associated
+	 * launch configuration does not specify a source locator.
+	 *
+	 * @param launch launch object
+	 * @param configuration configuration being launched
+	 * @exception CoreException if unable to set the source locator
+	 */
+	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
+		//  set default source locator if none specified
+		if (launch.getSourceLocator() == null) {
+			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
+			if (id == null) {
+				ICProject cProject = getCProject(configuration);
+				if (cProject != null) {
+					IPersistableSourceLocator sourceLocator = new DefaultSourceLocator();
+					sourceLocator.initializeDefaults(configuration);
+					launch.setSourceLocator(sourceLocator);
+				}
+			}
+		}
 	}
 
 	/**
@@ -238,7 +263,8 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!project.exists()) {
 				abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
-			} else if (!project.isOpen()) {
+			}
+			else if (!project.isOpen()) {
 				abort("Project is closed", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
 			abort("Project is not a C/C++ project", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
@@ -249,10 +275,10 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	protected IPath verifyProgramFile(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
 		String fileName = getProgramName(config);
-		if ( fileName == null ) {
+		if (fileName == null) {
 			abort("Program file not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
-		
+
 		IFile projectPath = ((IProject) cproject.getResource()).getFile(fileName);
 		if (projectPath == null || !projectPath.exists()) {
 			abort("Program file does not exist", null, ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
@@ -269,7 +295,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 * @return the working directory specified by the given 
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
-	 */	
+	 */
 	public File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		IPath path = getWorkingDirectoryPath(configuration);
 		if (path == null) {
@@ -279,24 +305,34 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				IProject p = cp.getProject();
 				return p.getLocation().toFile();
 			}
-		} else {
+		}
+		else {
 			if (path.isAbsolute()) {
 				File dir = new File(path.toOSString());
 				if (dir.isDirectory()) {
 					return dir;
-				} else {
-					abort("Working directory does not exist", null, ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
-			} else {
+				else {
+					abort(
+						"Working directory does not exist",
+						null,
+						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+				}
+			}
+			else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (res instanceof IContainer && res.exists()) {
 					return res.getLocation().toFile();
-				} else {
-					abort("Working directory does not exist", null, ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+				}
+				else {
+					abort(
+						"Working directory does not exist",
+						null,
+						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
 
 	private static class ArgumentParser {

@@ -322,7 +322,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	protected void newEntry() {
 		EntryDialog dialog = new EntryDialog(new String(), new String(), false);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == EntryDialog.OK) {
 			fElements.setProperty(dialog.getName(), dialog.getValue());
 			fVariableList.refresh();
 		}
@@ -336,7 +336,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	protected void doEdit(Map.Entry entry) {
 		EntryDialog dialog = new EntryDialog(entry.getKey().toString(), entry.getValue().toString(), true);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == EntryDialog.OK) {
 			fElements.remove(entry.getKey());
 			fElements.setProperty(dialog.getName(), dialog.getValue());
 			fVariableList.refresh();

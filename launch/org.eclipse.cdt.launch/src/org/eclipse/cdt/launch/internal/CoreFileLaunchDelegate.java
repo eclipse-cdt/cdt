@@ -63,7 +63,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		if ( debugger != null ) {
-			debuggerProcess = DebugPlugin.getDefault().newProcess(launch, debugger, "Debug Console");
+			debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
 			launch.removeProcess(debuggerProcess);
 		}
 		CDebugModel.newCoreFileDebugTarget(

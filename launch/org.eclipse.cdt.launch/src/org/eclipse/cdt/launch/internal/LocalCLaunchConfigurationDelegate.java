@@ -136,9 +136,13 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				wd = new File(System.getProperty("user.home", ".")); //NON-NLS-1;
 			}
 			Process process = exec(commandArray, getEnvironmentProperty(config), wd);
-			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray[0]));
+			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 		}
+		// set the default source locator if required
+		setDefaultSourceLocator(launch, config);
+		
 		monitor.done();
+		
 	}
 
 	private int getProcessID() throws CoreException {
@@ -164,7 +168,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					return;
 				}
 				dialog.setElements(plist.getProcessList());
-				if (dialog.open() == dialog.OK) {
+				if (dialog.open() == ElementListSelectionDialog.OK) {
 					IProcessInfo info = (IProcessInfo) dialog.getFirstResult();
 					pid[0] = info.getPid();
 				}

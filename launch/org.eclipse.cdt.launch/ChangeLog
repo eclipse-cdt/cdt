@@ -1,3 +1,9 @@
+2002-12-17 David Inglis
+	
+	* src/.../launch/AbstractCLaunchDelegate.java(setDefaultSourceLocator): new method
+	* src/.../sourcelookup/DefaultSourceLocator.java:new class
+	add method for delegate to call to set a default source locator.
+	
 2002-12-03 Alain Magloire
 
 	* src/.../internal/LocalCLaunchConfigurationDelegate.java(exec):

@@ -218,7 +218,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		provider.dispose();
-		if (result == dialog.OK) {
+		if (result == ElementListSelectionDialog.OK) {
 			return (ICDebugConfiguration) dialog.getFirstResult();
 		}
 		return null;
@@ -242,7 +242,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
-		if (result == dialog.OK) {
+		if (result == ElementListSelectionDialog.OK) {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;
@@ -263,7 +263,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			dialog.setMessage("Choose an application to run"); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementListSelectionDialog.OK) {
 			return (IBinary) dialog.getFirstResult();
 		}
 		return null;

@@ -202,7 +202,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		dialog.setElements(executables);
 		dialog.setMessage("Choose a &program to run");
 		dialog.setTitle("Program Selection");
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementListSelectionDialog.OK) {
 			IBinary binary = (IBinary) dialog.getFirstResult();
 			try {
 				fProgText.setText(binary.getResource().getProjectRelativePath().toString());
@@ -253,7 +253,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (cProject != null) {
 			dialog.setInitialSelections(new Object[] { cProject });
 		}
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementListSelectionDialog.OK) {
 			return (ICProject) dialog.getFirstResult();
 		}
 		return null;

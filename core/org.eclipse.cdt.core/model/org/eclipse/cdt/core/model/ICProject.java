@@ -90,6 +90,11 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 */
 	boolean isOnOutputEntry(IResource resource);
 
+	/**
+	 * @param resource
+	 * @return
+	 */
+	boolean isOnSourceRoot(IResource resource);
 
 	/**
 	 * Return the library references for this project.

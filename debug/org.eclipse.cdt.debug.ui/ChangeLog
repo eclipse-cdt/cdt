@@ -1,3 +1,15 @@
+2004-04-12 Mikhail Khodjaiants
+	Implementing retargettable breakpoint related actions.
+	* AddAddressBreakpointActionDelegate.java
+	* AddWatchpointActionDelegate.java
+	* ManageBreakpointRulerAction.java
+	* ManageBreakpointRulerActionDelegate.java
+	* ManageFunctionBreakpointActionDelegate.java
+	* ToggleBreakpointAdapter.java
+	* DisassemblyMarkerAnnotationModel.java
+	* plugin.properties
+	* plugin.xml
+
 2004-04-11 Mikhail Khodjaiants
 	Implementation of the "Run To Line" retargettable action.
 	* plugin.xml

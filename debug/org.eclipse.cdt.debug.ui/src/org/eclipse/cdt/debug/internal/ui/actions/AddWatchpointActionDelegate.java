@@ -1,11 +1,16 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -34,35 +39,34 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since Sep 4, 2002
  */
-public class AddWatchpointActionDelegate extends ActionDelegate
-										 implements IWorkbenchWindowActionDelegate,
-													IPartListener
-{
+public class AddWatchpointActionDelegate extends ActionDelegate implements IWorkbenchWindowActionDelegate, IPartListener {
+
 	private boolean fInitialized = false;
+
 	private IAction fAction = null;
+
 	private ITextEditor fTextEditor = null;
+
 	private IWorkbenchWindow fWorkbenchWindow = null;
+
 	private IProject fProject = null;
 
 	/**
 	 * Constructor for AddWatchpointActionDelegate.
 	 */
-	public AddWatchpointActionDelegate()
-	{
+	public AddWatchpointActionDelegate() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
-	public void dispose()
-	{
+	public void dispose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
-	public void init( IWorkbenchWindow window )
-	{
+	public void init( IWorkbenchWindow window ) {
 		setWorkbenchWindow( window );
 		window.getPartService().addPartListener( this );
 	}
@@ -70,41 +74,28 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
-	public void run( IAction action )
-	{
+	public void run( IAction action ) {
 		String expression = getSelectedExpression();
-		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(),
-														   true, 
-											  			   false,
-														   expression );
+		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), true, false, expression );
 		if ( dlg.open() != Window.OK )
 			return;
-		if ( getTextEditor() != null )
-		{
+		if ( getTextEditor() != null ) {
 			update();
-			addWatchpoint( getTextEditor().getEditorInput(), 
-						   dlg.getWriteAccess(),
-						   dlg.getReadAccess(),
-						   dlg.getExpression()  );
+			addWatchpoint( getTextEditor().getEditorInput(), dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression() );
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		if ( !fInitialized )
-		{
+	public void selectionChanged( IAction action, ISelection selection ) {
+		if ( !fInitialized ) {
 			setAction( action );
-			if ( getWorkbenchWindow() != null )
-			{
+			if ( getWorkbenchWindow() != null ) {
 				IWorkbenchPage page = getWorkbenchWindow().getActivePage();
-				if ( page != null )
-				{
+				if ( page != null ) {
 					IEditorPart part = page.getActiveEditor();
-					if ( part instanceof ITextEditor )
-					{
+					if ( part instanceof ITextEditor ) {
 						setTextEditor( (ITextEditor)part );
 					}
 				}
@@ -113,53 +104,42 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 		}
 	}
 
-	protected IAction getAction()
-	{
+	protected IAction getAction() {
 		return fAction;
 	}
 
-	protected void setAction( IAction action )
-	{
+	protected void setAction( IAction action ) {
 		fAction = action;
 	}
 
-	protected IWorkbenchWindow getWorkbenchWindow()
-	{
+	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
 	}
 
-	protected void setWorkbenchWindow( IWorkbenchWindow workbenchWindow )
-	{
+	protected void setWorkbenchWindow( IWorkbenchWindow workbenchWindow ) {
 		fWorkbenchWindow = workbenchWindow;
 	}
 
-	protected ITextEditor getTextEditor()
-	{
+	protected ITextEditor getTextEditor() {
 		return fTextEditor;
 	}
 
-	protected void setTextEditor( ITextEditor editor )
-	{
+	protected void setTextEditor( ITextEditor editor ) {
 		fTextEditor = editor;
-		if ( fTextEditor != null )
-		{
+		if ( fTextEditor != null ) {
 			IEditorInput input = fTextEditor.getEditorInput();
-			IFile file = ( input != null && input instanceof IFileEditorInput ) ? ((IFileEditorInput)input).getFile() : null;
-			setProject( ( file != null ) ? file.getProject() : null );
+			IFile file = (input != null && input instanceof IFileEditorInput) ? ((IFileEditorInput)input).getFile() : null;
+			setProject( (file != null) ? file.getProject() : null );
 		}
 		setEnabledState( editor );
 	}
-	
-	protected String getSelectedExpression()
-	{
-		if ( getTextEditor() != null )
-		{
+
+	protected String getSelectedExpression() {
+		if ( getTextEditor() != null ) {
 			ISelectionProvider sp = getTextEditor().getSelectionProvider();
-			if ( sp != null )
-			{
+			if ( sp != null ) {
 				ISelection s = sp.getSelection();
-				if ( s instanceof ITextSelection )
-				{
+				if ( s instanceof ITextSelection ) {
 					return ((ITextSelection)s).getText().trim();
 				}
 			}
@@ -167,70 +147,51 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 		return ""; //$NON-NLS-1$
 	}
 
-	protected void update( ISelection selection )
-	{
+	protected void update( ISelection selection ) {
 		setEnabledState( getTextEditor() );
 	}
 
-	protected void update()
-	{
+	protected void update() {
 		IAction action = getAction();
-		if ( action != null )
-		{
+		if ( action != null ) {
 			action.setEnabled( getTextEditor() != null );
 		}
 	}
 
-	protected void setEnabledState( ITextEditor editor )
-	{
-		if ( getAction() != null )
-		{
+	protected void setEnabledState( ITextEditor editor ) {
+		if ( getAction() != null ) {
 			getAction().setEnabled( editor != null );
 		}
 	}
 
-	protected IProject getProject()
-	{
+	protected IProject getProject() {
 		return fProject;
 	}
 
-	protected void setProject( IProject project ) 
-	{
+	protected void setProject( IProject project ) {
 		fProject = project;
 	}
-	
-	protected void addWatchpoint( IEditorInput editorInput, boolean write, boolean read, String expression )
-	{
+
+	protected void addWatchpoint( IEditorInput editorInput, boolean write, boolean read, String expression ) {
 		if ( getProject() == null )
 			return;
 		IDocument document = getTextEditor().getDocumentProvider().getDocument( editorInput );
 		WatchpointExpressionVerifier wev = new WatchpointExpressionVerifier();
-		if ( wev.isValidExpression( document, expression ) )
-		{
-			try
-			{
-				CDebugModel.createWatchpoint( getProject(),
-											  write,
-											  read,
-											  expression,
-											  true,
-											  0,
-											  "", //$NON-NLS-1$
-											  true );
+		if ( wev.isValidExpression( document, expression ) ) {
+			try {
+				CDIDebugModel.createWatchpoint( "", getProject(), write, read, expression, true, 0, "", true ); //$NON-NLS-1$
 			}
-			catch( CoreException ce )
-			{
-				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointActionDelegate.Cannot_add_watchpoint"), ce ); //$NON-NLS-1$
+			catch( CoreException ce ) {
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString( "internal.ui.actions.AddWatchpointActionDelegate.Cannot_add_watchpoint" ), ce ); //$NON-NLS-1$
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
-	public void partActivated( IWorkbenchPart part )
-	{
-		if ( part instanceof ITextEditor )
-		{
+	public void partActivated( IWorkbenchPart part ) {
+		if ( part instanceof ITextEditor ) {
 			setTextEditor( (ITextEditor)part );
 		}
 	}
@@ -238,20 +199,16 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
-	public void partBroughtToTop( IWorkbenchPart part )
-	{
+	public void partBroughtToTop( IWorkbenchPart part ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
-	public void partClosed( IWorkbenchPart part )
-	{
-		if ( part == getTextEditor() )
-		{
+	public void partClosed( IWorkbenchPart part ) {
+		if ( part == getTextEditor() ) {
 			setTextEditor( null );
-			if ( getAction() != null )
-			{
+			if ( getAction() != null ) {
 				getAction().setEnabled( false );
 			}
 		}
@@ -260,19 +217,15 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
-	public void partDeactivated( IWorkbenchPart part )
-	{
+	public void partDeactivated( IWorkbenchPart part ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
-	public void partOpened( IWorkbenchPart part )
-	{
-		if ( part instanceof ITextEditor )
-		{
-			if ( getTextEditor() == null )
-			{
+	public void partOpened( IWorkbenchPart part ) {
+		if ( part instanceof ITextEditor ) {
+			if ( getTextEditor() == null ) {
 				setTextEditor( (ITextEditor)part );
 			}
 		}

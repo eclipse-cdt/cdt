@@ -43,6 +43,9 @@
       <attribute
             name="org.eclipse.cdt.debug.core.installCount">
       </attribute>
+      <attribute
+            name="org.eclipse.cdt.debug.core.sourceHandle">
+      </attribute>
    </extension>
    <extension
          id="commonCLineBreakpointMarker"

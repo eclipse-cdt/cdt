@@ -71,12 +71,12 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 											  new AddressValidator() );
 		if ( dialog.open() == Window.OK )
 		{
-			CDebugModel.createAddressBreakpoint( ((IExecFileInfo)getDebugTarget( element ).getAdapter( IExecFileInfo.class )).getExecFile(),
-												 parseValue( dialog.getValue().trim() ),
-												 true, 
-												 0, 
-												 "",  //$NON-NLS-1$
-												 true );
+//			CDebugModel.createAddressBreakpoint( ((IExecFileInfo)getDebugTarget( element ).getAdapter( IExecFileInfo.class )).getExecFile(),
+//												 parseValue( dialog.getValue().trim() ),
+//												 true, 
+//												 0, 
+//												 "",  //$NON-NLS-1$
+//												 true );
 		}
 	}
 

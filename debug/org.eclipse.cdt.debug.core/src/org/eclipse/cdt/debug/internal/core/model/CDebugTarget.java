@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
@@ -991,7 +990,7 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( IJumpToAddress.class ) )
 			return this;
-		if ( adapter.equals( ICBreakpointManager.class ) )
+		if ( adapter.equals( CBreakpointManager.class ) )
 			return getBreakpointManager();
 		if ( adapter.equals( DisassemblyManager.class ) )
 			return getDisassemblyManager();

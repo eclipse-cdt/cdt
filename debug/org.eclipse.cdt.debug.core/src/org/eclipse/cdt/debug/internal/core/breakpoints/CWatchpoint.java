@@ -1,104 +1,100 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Sep 4, 2002
+ * A watchpoint specific to the C/C++ debug model.
  */
-public class CWatchpoint extends CBreakpoint implements ICWatchpoint
-{
+public class CWatchpoint extends CBreakpoint implements ICWatchpoint {
+
 	private static final String C_WATCHPOINT = "org.eclipse.cdt.debug.core.cWatchpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for CWatchpoint.
 	 */
-	public CWatchpoint()
-	{
+	public CWatchpoint() {
 	}
 
 	/**
 	 * Constructor for CWatchpoint.
 	 */
-	public CWatchpoint( IResource resource, Map attributes, boolean add ) throws DebugException
-	{
+	public CWatchpoint( IResource resource, Map attributes, boolean add ) throws CoreException {
 		super( resource, getMarkerType(), attributes, add );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.ICWatchpoint#isWriteType()
 	 */
-	public boolean isWriteType() throws CoreException
-	{
+	public boolean isWriteType() throws CoreException {
 		return ensureMarker().getAttribute( WRITE, true );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.ICWatchpoint#isReadType()
 	 */
-	public boolean isReadType() throws CoreException
-	{
+	public boolean isReadType() throws CoreException {
 		return ensureMarker().getAttribute( READ, false );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.ICWatchpoint#getExpression()
 	 */
-	public String getExpression() throws CoreException
-	{
+	public String getExpression() throws CoreException {
 		return ensureMarker().getAttribute( EXPRESSION, "" ); //$NON-NLS-1$
 	}
 
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
-	public static String getMarkerType()
-	{
+	public static String getMarkerType() {
 		return C_WATCHPOINT;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
-	protected String getMarkerMessage() throws CoreException
-	{
+	protected String getMarkerMessage() throws CoreException {
 		StringBuffer sb = new StringBuffer();
 		if ( isWriteType() && !isReadType() )
-			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Write_watchpoint") ); //$NON-NLS-1$
+			sb.append( BreakpointMessages.getString( "CWatchpoint.1" ) ); //$NON-NLS-1$
 		else if ( !isWriteType() && isReadType() )
-			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Read_watchpoint") ); //$NON-NLS-1$
+			sb.append( BreakpointMessages.getString( "CWatchpoint.2" ) ); //$NON-NLS-1$
 		else if ( isWriteType() && isReadType() )
-			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Access_watchpoint") ); //$NON-NLS-1$
+			sb.append( BreakpointMessages.getString( "CWatchpoint.3" ) ); //$NON-NLS-1$
 		else
-			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Watchpoint") ); //$NON-NLS-1$
+			sb.append( BreakpointMessages.getString( "CWatchpoint.4" ) ); //$NON-NLS-1$
 		sb.append( ' ' );
 		String fileName = ensureMarker().getResource().getName();
-		if ( fileName != null && fileName.length() > 0 )
-		{
+		if ( fileName != null && fileName.length() > 0 ) {
 			sb.append( ' ' );
 			sb.append( fileName );
 		}
 		String expression = getExpression();
-		if ( expression != null && expression.length() > 0 )
-		{
-			sb.append( " " );  //$NON-NLS-1$
-			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.at") );  //$NON-NLS-1$
-			sb.append( " \'" );  //$NON-NLS-1$
-			sb.append( expression );
-			sb.append( '\'' );
+		if ( expression != null && expression.length() > 0 ) {
+			sb.append( MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.5" ), new String[]{ expression } ) ); //$NON-NLS-1$
 		}
 		sb.append( getConditionText() );
 		return sb.toString();

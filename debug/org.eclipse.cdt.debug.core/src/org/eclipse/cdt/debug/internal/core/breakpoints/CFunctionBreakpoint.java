@@ -1,10 +1,16 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -12,21 +18,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Aug 21, 2002
+ * A breakpoint that suspends the execution when a function is entered.
  */
-public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakpoint
-{
+public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakpoint {
+
 	private static final String C_FUNCTION_BREAKPOINT = "org.eclipse.cdt.debug.core.cFunctionBreakpointMarker"; //$NON-NLS-1$
 
 	/**
-	 * Breakpoint attribute storing the function this breakpoint suspends 
+	 * Breakpoint attribute storing the function this breakpoint suspends
 	 * execution in (value <code>"org.eclipse.cdt.debug.core.function"</code>).
 	 * This attribute is a <code>String</code>.
 	 */
@@ -35,99 +36,96 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 	/**
 	 * Constructor for CFunctionBreakpoint.
 	 */
-	public CFunctionBreakpoint()
-	{
+	public CFunctionBreakpoint() {
 	}
 
 	/**
 	 * Constructor for CFunctionBreakpoint.
 	 */
-	public CFunctionBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
-	{
+	public CFunctionBreakpoint( IResource resource, Map attributes, boolean add ) throws CoreException {
 		super( resource, getMarkerType(), attributes, add );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.ICFunctionBreakpoint#getFunction()
 	 */
-	public String getFunction() throws CoreException
-	{
+	public String getFunction() throws CoreException {
 		return ensureMarker().getAttribute( FUNCTION, null );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.ICFunctionBreakpoint#setFunction(String)
 	 */
-	public void setFunction( String function ) throws CoreException
-	{
+	public void setFunction( String function ) throws CoreException {
 		setAttribute( FUNCTION, function );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getLineNumber()
 	 */
-	public int getLineNumber() throws CoreException
-	{
+	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.LINE_NUMBER, -1 );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharStart()
 	 */
-	public int getCharStart() throws CoreException
-	{
+	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.CHAR_START, -1 );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharEnd()
 	 */
-	public int getCharEnd() throws CoreException
-	{
+	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
 	}
 
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
-	public static String getMarkerType()
-	{
+	public static String getMarkerType() {
 		return C_FUNCTION_BREAKPOINT;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint#getFileName()
 	 */
-	public String getFileName() throws CoreException
-	{
+	public String getFileName() throws CoreException {
 		IResource resource = ensureMarker().getResource();
-		if ( resource instanceof IFile )
-		{
+		if ( resource instanceof IFile ) {
 			return ((IFile)resource).getLocation().lastSegment();
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
-	protected String getMarkerMessage() throws CoreException
-	{
-		StringBuffer sb = new StringBuffer( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CFunctionBreakpoint.Function_breakpoint") ); //$NON-NLS-1$
+	protected String getMarkerMessage() throws CoreException {
+		StringBuffer sb = new StringBuffer( BreakpointMessages.getString( "CFunctionBreakpoint.2" ) ); //$NON-NLS-1$
 		String name = ensureMarker().getResource().getName();
-		if ( name != null && name.length() > 0 )
-		{
+		if ( name != null && name.length() > 0 ) {
 			sb.append( ' ' );
 			sb.append( name );
 		}
 		String function = getFunction();
-		if ( function != null && function.trim().length() > 0 )
-		{
-			sb.append( " [" ); //$NON-NLS-1$
-			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CFunctionBreakpoint.function") ); //$NON-NLS-1$
-			sb.append( ' ' );
-			sb.append( function.trim() );
-			sb.append( ']' );
+		if ( function != null && function.trim().length() > 0 ) {
+			sb.append( MessageFormat.format( BreakpointMessages.getString( "CFunctionBreakpoint.3" ), new String[] { function.trim() } ) ); //$NON-NLS-1$
 		}
 		sb.append( getConditionText() );
 		return sb.toString();

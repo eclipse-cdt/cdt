@@ -1,64 +1,72 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
- * 
  * A breakpoint specific to the C/C++ debug model. A C/C++ breakpoint supports:
  * <ul>
  * <li>a condition</li>
  * <li>an ignore count</li>
- * <li>a thread filter to restrict a breakpoin to a specific thread</li>
+ * <li>a thread filter to restrict the breakpoint to a specific thread</li>
  * <li>an installed property that indicates a breakpoint was successfully
- *  installed in debug target</li>
+ * installed in debug target</li>
  * </ul>
- * 
- * @since Aug 21, 2002
  */
-public interface ICBreakpoint extends IBreakpoint
-{
+public interface ICBreakpoint extends IBreakpoint {
+
 	/**
-	 * Breakpoint attribute storing the number of debug targets a
-	 * breakpoint is installed in (value <code>"org.eclipse.cdt.debug.core.installCount"</code>).
-	 * This attribute is a <code>int</code>.
+	 * Breakpoint attribute storing the number of debug targets a breakpoint is
+	 * installed in (value <code>"org.eclipse.cdt.debug.core.installCount"</code>). 
+	 * This attribute is an <code>int</code>.
 	 */
 	public static final String INSTALL_COUNT = "org.eclipse.cdt.debug.core.installCount"; //$NON-NLS-1$	
 
 	/**
-	 * Breakpoint attribute storing the conditional expression 
-	 * associated with this breakpoint (value <code>"org.eclipse.cdt.debug.core.condition"</code>).
+	 * Breakpoint attribute storing the conditional expression associated with
+	 * this breakpoint (value <code>"org.eclipse.cdt.debug.core.condition"</code>). 
 	 * This attribute is a <code>String</code>.
 	 */
 	public static final String CONDITION = "org.eclipse.cdt.debug.core.condition"; //$NON-NLS-1$	
 
 	/**
-	 * Breakpoint attribute storing a breakpoint's ignore count value 
-	 * (value <code>"org.eclipse.cdt.debug.core.ignoreCount"</code>).
-	 * This attribute is a <code>int</code>.
+	 * Breakpoint attribute storing a breakpoint's ignore count value (value
+	 * <code>"org.eclipse.cdt.debug.core.ignoreCount"</code>). This attribute
+	 * is an <code>int</code>.
 	 */
 	public static final String IGNORE_COUNT = "org.eclipse.cdt.debug.core.ignoreCount"; //$NON-NLS-1$	
 
 	/**
-	 * Breakpoint attribute storing an identifier of the thread this 
-	 * breakpoint is restricted in (value <code>"org.eclipse.cdt.debug.core.threadId"</code>). 
+	 * Breakpoint attribute storing an identifier of the thread this breakpoint
+	 * is restricted in (value <code>"org.eclipse.cdt.debug.core.threadId"</code>). 
 	 * This attribute is a <code>String</code>.
 	 */
 	public static final String THREAD_ID = "org.eclipse.cdt.debug.core.threadId"; //$NON-NLS-1$	
 
 	/**
-	 * Returns whether this breakpoint is installed in at least
-	 * one debug target.
+	 * Breakpoint attribute storing a source handle this breakpoint
+	 * is set in (value <code>"org.eclipse.cdt.debug.core.sourceHandle"</code>). 
+	 * This attribute is a <code>String</code>.
+	 */
+	public static final String SOURCE_HANDLE = "org.eclipse.cdt.debug.core.sourceHandle"; //$NON-NLS-1$	
+
+	/**
+	 * Returns whether this breakpoint is installed in at least one debug
+	 * target.
 	 * 
 	 * @return whether this breakpoint is installed
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public boolean isInstalled() throws CoreException;
 
@@ -66,8 +74,8 @@ public interface ICBreakpoint extends IBreakpoint
 	 * Returns whether this breakpoint is conditional.
 	 * 
 	 * @return whether this breakpoint is conditional
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public boolean isConditional() throws CoreException;
 
@@ -75,8 +83,8 @@ public interface ICBreakpoint extends IBreakpoint
 	 * Returns the conditional expression associated with this breakpoint.
 	 * 
 	 * @return this breakpoint's conditional expression
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public String getCondition() throws CoreException;
 
@@ -84,8 +92,8 @@ public interface ICBreakpoint extends IBreakpoint
 	 * Sets the condition associated with this breakpoint.
 	 * 
 	 * @param condition the conditional expression
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public void setCondition( String condition ) throws CoreException;
 
@@ -93,8 +101,8 @@ public interface ICBreakpoint extends IBreakpoint
 	 * Returns the ignore count used by this breakpoint.
 	 * 
 	 * @return the ignore count used by this breakpoint
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public int getIgnoreCount() throws CoreException;
 
@@ -102,8 +110,8 @@ public interface ICBreakpoint extends IBreakpoint
 	 * Sets the ignore count attribute for this breakpoint.
 	 * 
 	 * @param ignoreCount the new ignore count
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public void setIgnoreCount( int ignoreCount ) throws CoreException;
 
@@ -111,18 +119,36 @@ public interface ICBreakpoint extends IBreakpoint
 	 * Returns the identifier of the thread this breakpoint is restricted in.
 	 * 
 	 * @return the thread identifier
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public String getThreadId() throws CoreException;
 
 	/**
-	 * Restricts this breakpoint to suspend only in the given thread
-	 * when encounterd in the given thread's target.
+	 * Restricts this breakpoint to suspend only in the given thread when
+	 * encounterd in the given thread's target.
 	 * 
 	 * @param threadId the thread identifier
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
 	 */
 	public void setThreadId( String threadId ) throws CoreException;
+
+	/**
+	 * Returns the source handle this breakpoint is set in.
+	 * 
+	 * @return the source handle
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
+	 */
+	public String getSourceHandle() throws CoreException;
+
+	/**
+	 * Sets the source handle of this breakpoint.
+	 * 
+	 * @param sourceHandle the source handle
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
+	 */
+	public void setSourceHandle( String sourceHandle ) throws CoreException;
 }

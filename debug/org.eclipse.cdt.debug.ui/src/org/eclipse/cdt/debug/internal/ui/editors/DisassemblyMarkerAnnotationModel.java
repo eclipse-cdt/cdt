@@ -7,13 +7,12 @@ package org.eclipse.cdt.debug.internal.ui.editors;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -34,7 +33,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -242,21 +240,21 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 
 	private Position createPositionFromLineBreakpoint( IMarker marker )
 	{
-		if ( fStorage != null )
-		{
-			IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
-			if ( breakpoint instanceof ICBreakpoint )
-			{		 
-				IDebugTarget target = fStorage.getDebugTarget();
-				if ( target != null && target.getAdapter( ICBreakpointManager.class ) != null )
-				{
-					ICBreakpointManager bm = (ICBreakpointManager)target.getAdapter( ICBreakpointManager.class );
-					long address = bm.getBreakpointAddress( (ICBreakpoint)breakpoint );
-					if ( address != 0 )
-						return createPositionFromAddress( address );
-				}
-			}
-		}
+//		if ( fStorage != null )
+//		{
+//			IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
+//			if ( breakpoint instanceof ICBreakpoint )
+//			{		 
+//				IDebugTarget target = fStorage.getDebugTarget();
+//				if ( target != null && target.getAdapter( ICBreakpointManager.class ) != null )
+//				{
+//					ICBreakpointManager bm = (ICBreakpointManager)target.getAdapter( ICBreakpointManager.class );
+//					long address = bm.getBreakpointAddress( (ICBreakpoint)breakpoint );
+//					if ( address != 0 )
+//						return createPositionFromAddress( address );
+//				}
+//			}
+//		}
 		return null;
 	}
 

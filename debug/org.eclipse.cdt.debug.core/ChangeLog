@@ -1,3 +1,23 @@
+2004-04-12 Mikhail Khodjaiants
+	Implementing retargettable breakpoint related actions.
+	* CDebugModel.java
+	* CDIDebugModel.java
+	* ICAddressBreakpoint.java
+	* ICBreakpoint.java
+	* ICFunctionBreakpoint.java
+	* ICLineBreakpoint.java
+	* ICWatchpoint.java
+	* CBreakpointManager.java
+	* CDebugUtils.java
+	* BreakpointMessages.properties
+	* BreakpointMessages.java
+	* CAddressBreakpoint.java
+	* CBreakpoint.java
+	* CFunctionBreakpoint.java
+	* CLineBreakpoint.java
+	* CWatchpoint.java
+	* plugin.xml
+
 2004-04-11 Mikhail Khodjaiants
 	Stack frame should provide an adapter for IRunToLine.
 	* CStackFrame.java

@@ -1,22 +1,24 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
- * A breakpoint that suspend execution when a particular address is reached.
- * 
- * @since Aug 21, 2002
+ * A breakpoint that suspend the execution when a particular address is reached.
  */
-public interface ICAddressBreakpoint extends ICLineBreakpoint
-{
+public interface ICAddressBreakpoint extends ICLineBreakpoint {
+
 	/**
-	 * Breakpoint attribute storing the address this breakpoint suspends 
+	 * Breakpoint attribute storing the address this breakpoint suspends
 	 * execution at (value <code>"org.eclipse.cdt.debug.core.address"</code>).
 	 * This attribute is a <code>String</code>.
 	 */
@@ -26,8 +28,8 @@ public interface ICAddressBreakpoint extends ICLineBreakpoint
 	 * Returns the address this breakpoint suspends execution at.
 	 * 
 	 * @return the address this breakpoint suspends execution at
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 * underlying marker
 	 */
 	public String getAddress() throws CoreException;
 
@@ -35,8 +37,8 @@ public interface ICAddressBreakpoint extends ICLineBreakpoint
 	 * Sets the address this breakpoint suspends execution at.
 	 * 
 	 * @param address the address this breakpoint suspends execution at
-	 * @exception CoreException if unable to access the property 
-	 * 	on this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 * underlying marker
 	 */
 	public void setAddress( String address ) throws CoreException;
 }

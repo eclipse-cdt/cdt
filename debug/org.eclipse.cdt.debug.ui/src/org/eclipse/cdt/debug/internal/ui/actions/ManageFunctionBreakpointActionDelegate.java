@@ -98,22 +98,22 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate
 	
 	private void manageBreakpoint( IFunction function )
 	{
-		try
-		{
-			ICFunctionBreakpoint breakpoint = CDebugModel.functionBreakpointExists( function );
-			if ( breakpoint != null )
-			{
-				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
-			}
-			else
-			{
-				CDebugModel.createFunctionBreakpoint( function, true, 0, "", true ); //$NON-NLS-1$
-			}
-		}
-		catch( CoreException e )
-		{
-			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
-		}
+//		try
+//		{
+//			ICFunctionBreakpoint breakpoint = CDebugModel.functionBreakpointExists( function );
+//			if ( breakpoint != null )
+//			{
+//				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+//			}
+//			else
+//			{
+//				CDebugModel.createFunctionBreakpoint( function, true, 0, "", true ); //$NON-NLS-1$
+//			}
+//		}
+//		catch( CoreException e )
+//		{
+//			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
+//		}
 	}
 	
 	private IFunction getFunction()
@@ -123,22 +123,22 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate
 
 	private void manageBreakpoint( IMethod method )
 	{
-		try
-		{
-			ICFunctionBreakpoint breakpoint = CDebugModel.methodBreakpointExists( method );
-			if ( breakpoint != null )
-			{
-				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
-			}
-			else
-			{
-				CDebugModel.createMethodBreakpoint( method, true, 0, "", true ); //$NON-NLS-1$
-			}
-		}
-		catch( CoreException e )
-		{
-			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
-		}
+//		try
+//		{
+//			ICFunctionBreakpoint breakpoint = CDebugModel.methodBreakpointExists( method );
+//			if ( breakpoint != null )
+//			{
+//				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+//			}
+//			else
+//			{
+//				CDebugModel.createMethodBreakpoint( method, true, 0, "", true ); //$NON-NLS-1$
+//			}
+//		}
+//		catch( CoreException e )
+//		{
+//			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
+//		}
 	}
 	
 	private IMethod getMethod()

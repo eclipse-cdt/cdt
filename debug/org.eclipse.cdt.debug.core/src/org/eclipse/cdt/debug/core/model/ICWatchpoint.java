@@ -1,20 +1,22 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
  * A watchpoint specific to the C/C++ debug model.
- * 
- * @since Sep 4, 2002
  */
-public interface ICWatchpoint extends ICBreakpoint
-{
+public interface ICWatchpoint extends ICBreakpoint {
+
 	/**
 	 * Watchpoint attribute storing the expression associated with this 
 	 * watchpoint (value <code>"org.eclipse.cdt.debug.core.expression"</code>).
@@ -33,21 +35,21 @@ public interface ICWatchpoint extends ICBreakpoint
 	 * This attribute is a <code>boolean</code>.
 	 */
 	public static final String READ = "org.eclipse.cdt.debug.core.read"; //$NON-NLS-1$
-	
+
 	/**
 	 * Returns whether this watchppoint is a write watchpoint.
 	 * 
 	 * @return whether this watchppoint is a write watchpoint
 	 */
 	boolean isWriteType() throws CoreException;
-	
+
 	/**
 	 * Returns whether this watchppoint is a read watchpoint.
 	 * 
 	 * @return whether this watchppoint is a read watchpoint
 	 */
 	boolean isReadType() throws CoreException;
-	
+
 	/**
 	 * Returns the watchpoint's expression.
 	 * 

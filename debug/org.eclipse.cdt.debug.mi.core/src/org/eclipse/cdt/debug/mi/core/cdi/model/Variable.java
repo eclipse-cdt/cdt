@@ -250,6 +250,8 @@ public class Variable extends VariableObject implements ICDIVariable {
 	}
 
 	/**
+	 * Overload the implementation of VariableObject and let gdb
+	 * handle it.
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#isEditable()
 	 */
 	public boolean isEditable() throws CDIException {

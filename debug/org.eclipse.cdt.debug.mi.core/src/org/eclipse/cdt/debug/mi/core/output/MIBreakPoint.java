@@ -61,6 +61,7 @@ public class MIBreakPoint {
 	boolean isWpt;
 	boolean isAWpt;
 	boolean isRWpt;
+	boolean isWWpt;
 
 	public MIBreakPoint(MITuple tuple) {
 		parse(tuple);
@@ -106,6 +107,15 @@ public class MIBreakPoint {
 	public void setReadWatchpoint(boolean r) {
 		isWpt = r;
 		isRWpt = r;
+	}
+
+	public boolean isWriteWatchpoint() {
+		return isWWpt;
+	}
+
+	public void setWriteWatchpoint(boolean w) {
+		isWpt = w;
+		isWWpt = w;
 	}
 
 	public String getDisposition() {

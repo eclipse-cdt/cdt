@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.index.impl;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.cdt.internal.core.index.IIndex;
 
 /**
  * This index stores the document names in an <code>ObjectVector</code>, and the words in
@@ -49,15 +49,8 @@ public class InMemoryIndex {
 		includes= new IncludeEntryHashedArray(501);
 		init();
 	}
-
-	public IndexedFile addDocument(IDocument document) {
-		IndexedFile indexedFile= this.files.add(document);
-		this.footprint += indexedFile.footprint() + 4;
-		this.sortedFiles = null;
-		return indexedFile;
-	}
 	
-	public IndexedFile addExternalFilePath(String path){
+	public IndexedFile addFile(String path){
 		IndexedFile indexedFile = this.files.add(path);
 		this.footprint += indexedFile.footprint() + 4;
 		this.sortedFiles = null;
@@ -104,12 +97,12 @@ public class InMemoryIndex {
 	/**
 	 * Adds the references of the word to the index (reference = number of the file the word belongs to).
 	 */
-	protected void addRef(char[] word, int[] references, int[] indexFlags) {
+	protected void addRef(char[] word, int[] references) {
 		int size= references.length;
 		int i= 0;
 		while (i < size) {
 			if (references[i] != 0)
-				addRef(word, references[i], indexFlags[i]);
+				addRef(word, references[i]);
 			i++;
 		}
 	}
@@ -118,31 +111,29 @@ public class InMemoryIndex {
 	 * If the word does not exist, it adds it in the index.
 	 * @param indexFlags
 	 */
-	protected void addRef(char[] word, int fileNum, int indexFlags) {
+	protected void addRef(char[] word, int fileNum) {
 		WordEntry entry= this.words.get(word);
 		if (entry == null) {
 			entry= new WordEntry(word);
-			//entry.addRef(fileNum, indexFlags);
-			entry.addRef(indexFlags, indexFlags);
+			entry.addRef(fileNum);
 			this.words.add(entry);
 			this.sortedWordEntries= null;
 			this.footprint += entry.footprint();
 		} else {
-			//this.footprint += entry.addRef(fileNum, indexFlags);
-			this.footprint += entry.addRef(indexFlags, indexFlags);
+			this.footprint += entry.addRef(fileNum);
 		}
 	}
 
-	public void addRef(IndexedFile indexedFile, char[] word, int indexFlags) {
-		addRef(word, indexedFile.getFileNumber(), indexFlags);
+	public void addRef(IndexedFile indexedFile, char[] word) {
+		addRef(word, indexedFile.getFileNumber());
 	}
 
-	public void addRef(IndexedFile indexedFile, String word, int indexFlags) {
-		addRef(word.toCharArray(), indexedFile.getFileNumber(), indexFlags);
+	public void addRef(IndexedFile indexedFile, String word) {
+		addRef(word.toCharArray(), indexedFile.getFileNumber());
 	}
 	
-	public void addRelatives(IndexedFile indexedFile, String inclusion, String parent) {
-		addRelatives(indexedFile.getFileNumber(),inclusion.toCharArray(),(parent != null ) ? parent.toCharArray() : null);
+	public void addRelatives(int fileNumber, String inclusion, String parent) {
+		addRelatives(fileNumber,inclusion.toCharArray(),(parent != null ) ? parent.toCharArray() : null);
 	}
 	
 	protected void addRelatives(int fileNumber, char[] inclusion, char[] parent) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.cdt.internal.core.index.impl;
 
 import java.util.ArrayList;
-
-import org.eclipse.cdt.internal.core.index.IDocument;
 
 public final class IndexedFileHashedArray {
 
@@ -29,10 +27,6 @@ public IndexedFileHashedArray(int size) {
 	this.threshold = size + 1; // size is the expected number of elements
 	this.lastId = 0;
 	this.replacedElements = null;
-}
-
-public IndexedFile add(IDocument document) {
-	return add(new IndexedFile(document, ++lastId));
 }
 
 public IndexedFile add(String path){

@@ -114,13 +114,13 @@ public class CTagsConsoleParser implements IConsoleParser {
     	}
     
     	if (entryType != null)
-    	    indexer.getOutput().addRef(IndexEncoderUtil.encodeEntry(fullName,entryType,type), getIndexFlag());
+    	    indexer.getOutput().addRef(getFileNumber(),IndexEncoderUtil.encodeEntry(fullName,entryType,type));
     }
 
     /**
      * @return
      */
-    private int getIndexFlag() {
+    private int getFileNumber() {
         int fileNum = 0;
         IndexedFile mainIndexFile = indexer.getOutput().getIndexedFile(
                 indexer.getResourceFile().getFullPath().toString());

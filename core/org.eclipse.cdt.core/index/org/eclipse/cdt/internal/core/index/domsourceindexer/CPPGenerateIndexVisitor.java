@@ -164,7 +164,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
      * @param limitTo 
      * @throws DOMException
      */
-    private void processNameBinding(IASTName name, IBinding binding, int indexFlag, LimitTo limitTo) throws DOMException {
+    private void processNameBinding(IASTName name, IBinding binding, int fileNumber, LimitTo limitTo) throws DOMException {
         // determine LimitTo
         if (limitTo == null) {
             if (name.isDeclaration()) {
@@ -222,18 +222,17 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             ICPPDelegate[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
             for (int i = 0; i < delegates.length; i++) {
                 IBinding orig = delegates[i].getBinding();
-                processNameBinding(name, orig, indexFlag, ICSearchConstants.REFERENCES); // reference to the original binding
-                processNameBinding(name, delegates[i], indexFlag, ICSearchConstants.DECLARATIONS); // declaration of the new name
+                processNameBinding(name, orig, fileNumber, ICSearchConstants.REFERENCES); // reference to the original binding
+                processNameBinding(name, delegates[i], fileNumber, ICSearchConstants.DECLARATIONS); // declaration of the new name
             }
             return;
         }
         
         if (entryType != null && limitTo != null) {
-            indexer.getOutput().addRef(IndexEncoderUtil.encodeEntry(
+            indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                         getFullyQualifiedName(binding),
                         entryType,
-                        limitTo),
-                    indexFlag);
+                        limitTo));
         }
         
         // add base classes and friends
@@ -247,11 +246,10 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             for (int i = 0; i < baseClauses.length; ++i) {
                 if (!(baseClauses[i] instanceof CPPBaseProblem)) {
                     ICompositeType baseClass = (ICompositeType) ((ICPPBase)baseClauses[i]).getBaseClass();
-                    indexer.getOutput().addRef(IndexEncoderUtil.encodeEntry(
+                    indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                                 getFullyQualifiedName(baseClass),
                                 IIndexEncodingConstants.DERIVED,
-                                ICSearchConstants.DECLARATIONS),
-                            indexFlag);
+                                ICSearchConstants.DECLARATIONS));
                 }
             }
             //Get friends
@@ -259,11 +257,10 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             for (int i = 0; i < friendClauses.length; ++i) {
                 IBinding friendClause = friendClauses[i];
                 if (friendClause instanceof ICompositeType) {
-                    indexer.getOutput().addRef(IndexEncoderUtil.encodeEntry(
+                    indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                                 getFullyQualifiedName(friendClause),
                                 IIndexEncodingConstants.FRIEND,
-                                ICSearchConstants.DECLARATIONS),
-                            indexFlag);
+                                ICSearchConstants.DECLARATIONS));
                 }
             }
         }

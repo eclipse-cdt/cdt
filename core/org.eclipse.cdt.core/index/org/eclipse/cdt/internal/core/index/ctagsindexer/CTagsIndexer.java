@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
@@ -148,7 +147,7 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)
 	 */
-	public void index(IDocument document, IIndexerOutput output)
+	public void index(IFile document, IIndexerOutput output)
 			throws IOException {
 		// TODO Auto-generated method stub
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.index.impl;
 
 import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.cdt.internal.core.index.IDocument;
 
 /**
  * An indexedFile associates a number to a document path, and document properties. 
@@ -28,12 +27,7 @@ public class IndexedFile implements IQueryResult {
 		this.fileNumber= fileNum;
 		this.path= path;
 	}
-	public IndexedFile(IDocument document, int fileNum) {
-		if (fileNum < 1)
-			throw new IllegalArgumentException();
-		this.path= document.getName();
-		this.fileNumber= fileNum;
-	}
+	
 	/**
 	 * Returns the size of the indexedFile.
 	 */

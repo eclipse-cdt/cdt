@@ -1,5 +1,5 @@
 /***********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
@@ -65,9 +65,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 
     }
 
-    protected void indexFile(IDocument document) throws IOException {
+    protected void indexFile(IFile file) throws IOException {
         // Add the name of the file to the index
-        output.addDocument(document);
+        IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
+      
         int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
         setProblemMarkersEnabled(problems);
         requestRemoveMarkers(resourceFile, null);
@@ -165,13 +166,12 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 //                    }
 //                }
 //            }
-            int indexFlag = getOutput().getIndexedFile(
+            int fileNumber = getOutput().getIndexedFile(
                     getResourceFile().getFullPath().toString()).getFileNumber();
-            getOutput().addRef(IndexEncoderUtil.encodeEntry(
+            getOutput().addRef(fileNumber,IndexEncoderUtil.encodeEntry(
                         new char[][] {include.toCharArray()}, 
                         IIndexEncodingConstants.INCLUDE,
-                        ICSearchConstants.REFERENCES),
-                    indexFlag);
+                        ICSearchConstants.REFERENCES));
 
             /* See if this file has been encountered before */
             indexer.haveEncounteredHeader(resourceProject.getFullPath(),new Path(include));
@@ -184,12 +184,11 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     private void processMacroDefinitions(IASTPreprocessorMacroDefinition[] macroDefinitions) {
         for (int i = 0; i < macroDefinitions.length; i++) {
             IASTName macro = macroDefinitions[i].getName();
-            int indexFlag = IndexEncoderUtil.calculateIndexFlags(this, macro);
-            getOutput().addRef(IndexEncoderUtil.encodeEntry(
+            int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, macro);
+            getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                         new char[][] {macro.toCharArray()},
                         IIndexEncodingConstants.MACRO,
-                        ICSearchConstants.DECLARATIONS),
-                    indexFlag);
+                        ICSearchConstants.DECLARATIONS));
         }
         
     }

@@ -1,5 +1,5 @@
 /***********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
@@ -111,12 +110,12 @@ public class IndexEncoderUtil {
                 else {
                     //Need to add file to index
                     if (tempFile != null){
-                    indFile = indexer.getOutput().addSecondaryIndexedFile(new IFileDocument(tempFile));
+                    indFile = indexer.getOutput().addIndexedFile(tempFile.getFullPath().toString());
                     if (indFile != null)
                         fileNum = indFile.getFileNumber();
                     }
                     else {
-                        indFile = indexer.getOutput().addSecondaryExternalIndexedFile(fileName);
+                        indFile = indexer.getOutput().addIndexedFile(fileName);
                         if (indFile != null)
                             fileNum = indFile.getFileNumber();
                     }

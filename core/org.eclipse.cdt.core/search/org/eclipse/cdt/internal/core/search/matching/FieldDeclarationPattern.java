@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public class FieldDeclarationPattern extends CSearchPattern {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#feedIndexRequestor(org.eclipse.cdt.internal.core.search.IIndexSearchRequestor, int, int[], org.eclipse.cdt.internal.core.index.impl.IndexInput, org.eclipse.cdt.core.search.ICSearchScope)
 	 */
-	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, int[] indexFlags, IndexInput input, ICSearchScope scope) throws IOException {
+	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope) throws IOException {
 		for (int i = 0, max = references.length; i < max; i++) {
 			IndexedFile file = input.getIndexedFile(references[i]);
 			String path;

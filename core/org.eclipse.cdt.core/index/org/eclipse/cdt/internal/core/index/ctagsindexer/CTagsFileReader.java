@@ -17,12 +17,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexEncoderUtil;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
@@ -67,7 +65,7 @@ public class CTagsFileReader {
 		      currentFileName = fileName; 
 		      currentFile = (IFile) project.findMember(fileName);
 		      indexer = new MiniIndexer(currentFile);
-		      index.add(new IFileDocument(currentFile),indexer);
+		      index.add(currentFile,indexer);
 		   }
 		  
 		   //encode new tag in current file
@@ -129,14 +127,14 @@ public class CTagsFileReader {
 	    	}
 	    	
 	    	if (entryType != null)
-	    	    output.addRef(IndexEncoderUtil.encodeEntry(fullName,entryType,type), fileNum);
+	    	    output.addRef(fileNum, IndexEncoderUtil.encodeEntry(fullName,entryType,type));
 	    }
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)
          */
-        public void index(IDocument document, IIndexerOutput output) throws IOException {
+        public void index(IFile file, IIndexerOutput output) throws IOException {
             this.output = output;
-            this.output.addDocument(document);
+            IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
         }
 
         /* (non-Javadoc)

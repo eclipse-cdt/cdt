@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.index.impl;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 
@@ -79,11 +78,11 @@ public abstract class IndexInput {
 	 */
 	public abstract IndexedFile getIndexedFile(int fileNum) throws IOException;
 	/**
-	 * Returns the indexedFile corresponding to the given document in the index the input
+	 * Returns the indexedFile corresponding to the given file path in the index the input
 	 * reads in (e.g. the indexedFile with the same path in this index), or null if such 
 	 * indexedFile does not exist.
 	 */
-	public abstract IndexedFile getIndexedFile(IDocument document) throws IOException;
+	public abstract IndexedFile getIndexedFile(String fullpath) throws IOException;
 	/**
 	 * Returns the number of files in the index.
 	 */

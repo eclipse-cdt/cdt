@@ -16,18 +16,12 @@ import java.io.IOException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
-import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -70,46 +64,6 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			monitor.enterRead(); // ask permission to read
 			saveIfNecessary(index, monitor);
 
-			IQueryResult[] results = index.queryInDocumentNames(""); // all file names //$NON-NLS-1$
-			int max = results == null ? 0 : results.length;
-			final SimpleLookupTable indexedFileNames = new SimpleLookupTable(max == 0 ? 33 : max + 11);
-			final String OK = "OK"; //$NON-NLS-1$
-			final String DELETED = "DELETED"; //$NON-NLS-1$
-			for (int i = 0; i < max; i++)
-				indexedFileNames.put(results[i].getPath(), DELETED);
-			
-			project.accept( new IResourceProxyVisitor() {
-
-                public boolean visit(IResourceProxy proxy) throws CoreException {
-                    switch(proxy.getType()){
-                    	case IResource.FILE:
-                    	  IResource resource=proxy.requestResource();
-                    	  indexedFileNames.put(resource.getFullPath().toString(), resource);
-                    	return false;
-                    }
-                    return true;
-                }},IResource.NONE);
-			        
-			       
-			/*Object[] names = indexedFileNames.keyTable;
-			Object[] values = indexedFileNames.valueTable;
-			boolean shouldSave = false;
-			for (int i = 0, length = names.length; i < length; i++) {
-				String name = (String) names[i];
-				if (name != null) {
-					if (this.isCancelled) return false;
-
-					Object value = values[i];
-					if (value != OK) {
-						shouldSave = true;
-						if (value == DELETED)
-							indexer.remove(name, this.indexPath);
-						else
-							indexer.addSource((IFile) value, this.indexPath);
-					}
-				}
-			}*/
-			
 			//Timing support
 			long startTime=0, cTagsEndTime=0, endTime=0;
 			
@@ -142,13 +96,6 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			     }
 			 }
 			 
-		} catch (CoreException e) {
-			if (IndexManager.VERBOSE) {
-				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
-				e.printStackTrace();
-			}
-			indexer.removeIndex(this.indexPath);
-			return false;
 		} catch (IOException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$

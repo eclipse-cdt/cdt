@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexDelta;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
@@ -90,16 +89,16 @@ public class Index implements IIndex {
 	 * If the document already exists in the index, it overrides the previous one. The changes will be 
 	 * taken into account after a merge.
 	 */
-	public void add(IDocument document, IIndexer indexer) throws IOException {
+	public void add(IFile file, IIndexer indexer) throws IOException {
 		if (timeToMerge()) {
 			merge();
 		}
-		IndexedFile indexedFile= addsIndex.getIndexedFile(document.getName());
+		IndexedFile indexedFile= addsIndex.getIndexedFile(file.getFullPath().toString());
 		if (indexedFile != null /*&& removedInAdds.get(document.getName()) == null*/
 			)
 			remove(indexedFile, MergeFactory.ADDS_INDEX);
 		IndexerOutput output= new IndexerOutput(addsIndex);
-		indexer.index(document, output);
+		indexer.index(file, output);
 		state= CAN_MERGE;
 	}
 	/**
@@ -360,9 +359,8 @@ public class Index implements IIndex {
 		int fileNum=0;
 		List tempFileReturn = new ArrayList();
 		try {
-			IDocument temp = new IFileDocument(file);
 			input.open();
-			IndexedFile inFile = input.getIndexedFile(temp);
+			IndexedFile inFile = input.getIndexedFile(file.getFullPath().toString());
 			fileNum =inFile.getFileNumber();
 	
 			IncludeEntry[] tempEntries = input.queryIncludeEntries(fileNum);

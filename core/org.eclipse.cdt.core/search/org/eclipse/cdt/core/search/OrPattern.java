@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@ public class OrPattern extends CSearchPattern {
 	   }
    }
 
-   public void feedIndexRequestor(	IIndexSearchRequestor requestor, int detailLevel, int[] references, int[] indexFlags, IndexInput input, ICSearchScope scope )
+   public void feedIndexRequestor(	IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope )
    throws IOException {
 	   //never called for OrPattern
    }

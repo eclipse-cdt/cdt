@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,14 +91,7 @@ public class Util {
 			quickSort(list, left, original_right);
 		}
 	}
-	private static void quickSort(int[] list, int left, int right, int[] dependentList) {
-		
-		//If we are sorting 2 arrays, make sure that they are the same length
-		if (dependentList != null){
-			if (list.length != dependentList.length)
-				return;
-		}
-		
+	private static void quickSort(int[] list, int left, int right) {
 		int original_left= left;
 		int original_right= right;
 		int mid= list[(left + right) / 2];
@@ -113,22 +106,15 @@ public class Util {
 				int tmp= list[left];
 				list[left]= list[right];
 				list[right]= tmp;
-				
-				if (dependentList != null){
-					int depTmp = dependentList[left];
-					dependentList[left]=dependentList[right];
-					dependentList[right]=depTmp;
-				}
-				
 				left++;
 				right--;
 			}
 		} while (left <= right);
 		if (original_left < right) {
-			quickSort(list, original_left, right, dependentList);
+			quickSort(list, original_left, right);
 		}
 		if (left < original_right) {
-			quickSort(list, left, original_right, dependentList);
+			quickSort(list, left, original_right);
 		}
 	}
 	private static void quickSort(String[] list, int left, int right) {
@@ -317,11 +303,7 @@ public class Util {
 	}
 	public static void sort(int[] list) {
 		if (list.length > 1)
-			quickSort(list, 0, list.length - 1, null);
-	}
-	public static void sort(int[] list, int[] dependentList) {
-		if (list.length > 1)
-			quickSort(list, 0, list.length - 1, dependentList);
+			quickSort(list, 0, list.length - 1);
 	}
 	public static void sort(String[] list) {
 		if (list.length > 1)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,13 +19,13 @@ import org.eclipse.core.resources.IFile;
  */
 public interface IIndexer {
 	/**
-	 * Indexes the given document, adding the document name and the word references 
+	 * Indexes the given file, adding the file name and the word references 
 	 * to this document to the given <code>IIndex</code>.The caller should use 
 	 * <code>shouldIndex()</code> first to determine whether this indexer handles 
 	 * the given type of file, and only call this method if so. 
 	 */
 
-	void index(IDocument document, IIndexerOutput output) throws java.io.IOException;
+	void index(IFile document, IIndexerOutput output) throws java.io.IOException;
 
 	/**
 	 * Returns whether the <code>IIndexer</code> can index the given IFile or not.

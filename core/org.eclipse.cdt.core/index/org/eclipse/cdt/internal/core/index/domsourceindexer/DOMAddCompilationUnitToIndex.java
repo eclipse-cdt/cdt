@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.index.domsourceindexer;
 import java.io.IOException;
 
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AddCompilationUnitToIndex;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
@@ -31,7 +30,7 @@ public class DOMAddCompilationUnitToIndex extends AddCompilationUnitToIndex {
      */
     protected boolean indexDocument(IIndex index) throws IOException {
         if (!initializeContents()) return false;
-        index.add(new IFileDocument(resource, contents), new DOMSourceIndexerRunner(resource, indexer));
+        index.add(resource, new DOMSourceIndexerRunner(resource, indexer));
         
         return true;
     }

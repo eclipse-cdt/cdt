@@ -1,6 +1,14 @@
-/*
- * Created on Jul 23, 2003
- */
+/*******************************************************************************
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.cdt.internal.core.sourcedependency;
 
 import java.io.IOException;
@@ -8,16 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.impl.IncludeEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
-import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -114,11 +118,6 @@ public class DependencyQueryJob implements IIndexJob {
 	
 		if (progressMonitor != null && progressMonitor.isCanceled())
 			throw new OperationCanceledException();
-
-//			IIndex inMemIndex = indexManager.peekAtIndex(new Path(((Index)index).toString.substring("Index for ".length()).replace('\\','/')));
-//			if (inMemIndex != index) {
-//				System.out.println("SANITY CHECK: search job using obsolete index: ["+index+ "] instead of: ["+inMemIndex+"]");
-//			}
 	
 		if (index == null)
 			return COMPLETE;
@@ -157,14 +156,7 @@ public class DependencyQueryJob implements IIndexJob {
 			} finally {
 				input.close();
 			}
-			//
-			//String[] tempFiles = this.indexManager.getFileDependencies(project,file);
-//			if (tempFiles != null){
-//				System.out.println("DQJOB File Deps : " + tempFiles.length);
-//				for (int i=0; i<tempFiles.length; i++){
-//							includeFiles.add(tempFiles[i]);
-//				}
-//			}
+		
 			executionTime += System.currentTimeMillis() - start;
 			return COMPLETE;
 		}
@@ -182,12 +174,11 @@ public class DependencyQueryJob implements IIndexJob {
 	 */
 	private void findDep(IndexInput input) throws IOException {
 		
-		IDocument temp = new IFileDocument(file);
-		IndexedFile dude = input.getIndexedFile(temp);
-		if (dude == null) return;
+		IndexedFile indexedFile = input.getIndexedFile(file.getFullPath().toString());
+		if (indexedFile == null) return;
 		
 		
-		int fileNum =dude.getFileNumber();
+		int fileNum =indexedFile.getFileNumber();
 		IncludeEntry[] tempEntries = input.queryIncludeEntries(fileNum);
 		if (tempEntries != null){
 			for (int r=0; r<tempEntries.length; r++){
@@ -197,41 +188,12 @@ public class DependencyQueryJob implements IIndexJob {
 			   includeFiles.add(tempString.toString());
 		   }
 		}
-       
-		
-		//
-//		if (indexFile == null)
-//				 return new String[0];
-//		 
-//				int fileNum = indexFile.getFileNumber();
-//				IncludeEntry[] tempEntries = addsIndex.getIncludeEntries();
-//				for (int i=0; i<tempEntries.length; i++)
-//				{
-//					int[] fileRefs = tempEntries[i].getRefs();
-//					for (int j=0; j<fileRefs.length; j++)
-//					{
-//						if (fileRefs[j] == fileNum)
-//						{ 
-//							//System.out.println(filePath.toString() + " references " + y[i].toString());
-//							char[] tempFile = tempEntries[i].getFile();
-//							StringBuffer tempString = new StringBuffer();
-//							tempString.append(tempFile);
-//							tempFileReturn.add(tempString.toString());
-//							break;
-//						}
-//					}
-//				}
-//				
-		//
 	}
 
 	public String toString() {
 		return "searching for the dependencies of" + file.getName(); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.search.processing.IJob#isReadyToRun()
-	 */
 	public boolean isReadyToRun() {
 		if (this.indexSelector == null) { // only check once. As long as this job is used, it will keep the same index picture
 			this.indexSelector = new IndexSelector(SearchEngine.createWorkspaceScope(), null, false, indexManager);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,7 +154,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected boolean isForward;
 
 	
-	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, int[] indexFlags, IndexInput input, ICSearchScope scope) throws IOException {
+	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references,IndexInput input, ICSearchScope scope) throws IOException {
 		boolean isClass = decodedType == CLASS_SUFFIX;
 		for (int i = 0, max = references.length; i < max; i++) {
 			IndexedFile file = input.getIndexedFile(references[i]);

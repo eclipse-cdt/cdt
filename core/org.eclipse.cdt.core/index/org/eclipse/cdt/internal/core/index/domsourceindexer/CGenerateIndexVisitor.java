@@ -145,7 +145,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      * @param indexFlag
      * @throws DOMException 
      */
-    private void processNameBinding(IASTName name, IBinding binding, int indexFlag) throws DOMException {
+    private void processNameBinding(IASTName name, IBinding binding, int fileNumber) throws DOMException {
         // determine type
         EntryType entryType = null;
         if (binding instanceof ICompositeType) {
@@ -180,18 +180,16 @@ public class CGenerateIndexVisitor extends CASTVisitor {
         
         if (entryType != null) {
             if (name.isDeclaration()) {
-                indexer.getOutput().addRef(IndexEncoderUtil.encodeEntry(
+                indexer.getOutput().addRef(fileNumber,IndexEncoderUtil.encodeEntry(
                             getFullyQualifiedName(name),
                             entryType,
-                            ICSearchConstants.DECLARATIONS),
-                        indexFlag);
+                            ICSearchConstants.DECLARATIONS));
             }                   
             else if (name.isReference()) {
-                indexer.getOutput().addRef(IndexEncoderUtil.encodeEntry(
+                indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                             getFullyQualifiedName(name),
                             entryType,
-                            ICSearchConstants.REFERENCES),
-                        indexFlag);
+                            ICSearchConstants.REFERENCES));
             }
         }
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,8 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
+import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -70,9 +70,10 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		this.resourceFile = resource;
 	}
 	
-	protected void indexFile(IDocument document) throws IOException {
+	protected void indexFile(IFile file) throws IOException {
 		// Add the name of the file to the index
-		output.addDocument(document);
+		IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
+        
 		// Create a new Parser 
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile);
 		

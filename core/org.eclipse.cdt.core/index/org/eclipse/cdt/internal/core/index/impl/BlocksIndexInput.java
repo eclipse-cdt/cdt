@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,10 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.util.LRUCache;
+import org.eclipse.jface.text.IDocument;
 
 /**
  * This input is used for reading indexes saved using a BlocksIndexOutput.
@@ -122,13 +122,12 @@ public class BlocksIndexInput extends IndexInput {
 	/**
 	 * @see IndexInput#getIndexedFile(IDocument)
 	 */
-	public IndexedFile getIndexedFile(IDocument document) throws java.io.IOException {
+	public IndexedFile getIndexedFile(String fullPath) throws java.io.IOException {
 		setFirstFile();
-		String name= document.getName();
 		while (hasMoreFiles()) {
 			IndexedFile file= getCurrentFile();
 			String path= file.getPath();
-			if (path.equals(name))
+			if (path.equals(fullPath))
 				return file;
 			moveToNextFile();
 		}
@@ -245,7 +244,7 @@ public class BlocksIndexInput extends IndexInput {
 			case -1 :
 				WordEntry entry = getEntry(pattern);
 				if (entry == null) return null;
-				return new IEntryResult[]{ new EntryResult(entry.getWord(), entry.getRefs(), entry.getRefsIndexFlags()) };
+				return new IEntryResult[]{ new EntryResult(entry.getWord(), entry.getRefs()) };
 			case 0 :
 				blockNums = summary.getAllBlockNums();
 				break;
@@ -267,7 +266,7 @@ public class BlocksIndexInput extends IndexInput {
 					if (count == entries.length){
 						System.arraycopy(entries, 0, entries = new IEntryResult[count*2], 0, count);
 					}
-					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getRefsIndexFlags());
+					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs());
 					found = true;
 				} else {
 					if (found) break;
@@ -297,7 +296,7 @@ public class BlocksIndexInput extends IndexInput {
 					if (count == entries.length){
 						System.arraycopy(entries, 0, entries = new IEntryResult[count*2], 0, count);
 					}
-					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getRefsIndexFlags());
+					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs());
 					found = true;
 				} else {
 					if (found) break;

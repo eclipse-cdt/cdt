@@ -1,3 +1,8 @@
+2005-04-04 Bogdan Gheorghe
+	Got rid of IDocument and replaced it with IFile resources throughout all
+	indexing framework. Got rid of index flags and put in a new mechanism for
+	indexers to add files to the index directly. 
+	
 2005-03-30 Bogdan Gheorghe
 	Modified IndexManger to get rid of an exisiting index for a project when an 
 	indexer gets changed. This is needed in the case where two indexers share the same

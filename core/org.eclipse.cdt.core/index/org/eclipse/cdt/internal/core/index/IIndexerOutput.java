@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,13 @@ import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
  */
 
 public interface IIndexerOutput {
-	public void addDocument(IDocument document);
-	public void addRef(char[] word, int indexFlags);
-	public void addRef(String word, int indexFlags);
+	public void addRef(int indexedFileNumber, char[] word);
+	public void addRef(int indexedFileNumber, String word);
+	
 	public IndexedFile getIndexedFile(String path); 
-	public IndexedFile addSecondaryIndexedFile(IDocument document);
-	public IndexedFile addSecondaryExternalIndexedFile(String path);
+	public IndexedFile addIndexedFile(String path);
 	//For Dep Tree
-	public void addIncludeRef(char[] word);
-	public void addIncludeRef(String word);
-	public void addRelatives(String inclusion, String parent);
+	public void addIncludeRef(int indexedFileNumber, char[] word);
+	public void addIncludeRef(int indexedFileNumber, String word);
+	public void addRelatives(int indexedFileNumber, String inclusion, String parent);
 }

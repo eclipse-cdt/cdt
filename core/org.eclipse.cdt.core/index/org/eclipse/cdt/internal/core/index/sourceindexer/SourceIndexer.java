@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
@@ -451,7 +450,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index2.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)
 	 */
-	public void index(IDocument document, IIndexerOutput output) throws IOException {
+	public void index(IFile document, IIndexerOutput output) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

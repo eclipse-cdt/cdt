@@ -32,8 +32,6 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
-import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -51,7 +49,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class SourceIndexerTests extends TestCase implements IIndexChangeListener  {
 	IFile 					file;
-	IFileDocument 			fileDoc;
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IndexManager 			indexManager;
@@ -186,7 +183,6 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 					CTestPlugin.getDefault().getFileInPlugin(new Path(resourceLocation))),
 					false, monitor);
 		}
-		fileDoc = new IFileDocument(file);
 		waitForIndex(20); // only wait 20 seconds max.
 		return file;
 	}

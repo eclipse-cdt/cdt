@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
@@ -60,7 +59,6 @@ import org.eclipse.core.runtime.Platform;
  	*/
 	public class DependencyTests extends TestCase implements IIndexChangeListener {
 	IFile 					file;
-	IFileDocument 			fileDoc;
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IndexManager 			indexManager;
@@ -735,7 +733,6 @@ import org.eclipse.core.runtime.Platform;
 					CTestPlugin.getDefault().getFileInPlugin(new Path(resourceLocation))),
 					false, monitor);
 		}
-		fileDoc = new IFileDocument(file);
 		waitForIndex(10); // only wait 20 seconds max.
 		return file;
 	}

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.index.ctagsindexer;
 import java.io.IOException;
 
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
@@ -28,7 +27,7 @@ public class CTagsAddCompilationUnitToIndex extends CTagsAddFileToIndex {
 	}
 	protected boolean indexDocument(IIndex index) throws IOException {
 		if (!initializeContents()) return false;
-		index.add(new IFileDocument(resource, this.contents), new CTagsIndexerRunner(resource, indexer));
+		index.add(resource, new CTagsIndexerRunner(resource, indexer));
 		
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexProblemHandler;
@@ -297,17 +296,18 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			
 			IndexedFile indFile = indexer.output.getIndexedFile(filePath);
 			if (indFile != null){
+				//File has already been added to the output; it already has a number
 				fileNum = indFile.getFileNumber();
 			}
 			else {
-				//Need to add file to index
+				//Need to add file to index and get a fileNumber
 				if (tempFile != null){
-				indFile = indexer.output.addSecondaryIndexedFile(new IFileDocument(tempFile));
+				indFile = indexer.output.addIndexedFile(tempFile.getFullPath().toString());
 				if (indFile != null)
 					fileNum = indFile.getFileNumber();
 				}
 				else {
-					indFile = indexer.output.addSecondaryExternalIndexedFile(include.getFullFileName());
+					indFile = indexer.output.addIndexedFile(include.getFullFileName());
 					if (indFile != null)
 						fileNum = indFile.getFileNumber();
 				}

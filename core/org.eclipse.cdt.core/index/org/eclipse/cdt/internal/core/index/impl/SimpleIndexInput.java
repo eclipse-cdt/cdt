@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.core.index.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.jface.text.IDocument;
 
 /**
  * A simpleIndexInput is an input on an in memory Index. 
@@ -63,11 +63,10 @@ public class SimpleIndexInput extends IndexInput {
 	/**
 	 * @see IndexInput#getIndexedFile(IDocument)
 	 */
-	public IndexedFile getIndexedFile(IDocument document) throws IOException {
-		String name= document.getName();
+	public IndexedFile getIndexedFile(String fullPath) throws IOException {
 		for (int i= index.getNumFiles(); i >= 1; i--) {
 			IndexedFile file= getIndexedFile(i);
-			if (name.equals(file.getPath()))
+			if (fullPath.equals(file.getPath()))
 				return file;
 		}
 		return null;

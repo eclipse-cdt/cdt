@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,7 +144,7 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 				int ref= prevRef + readCodeStream.readGamma();
 				if (ref < prevRef)
 					throw new InternalError();
-				entry.addRef(ref,0);
+				entry.addRef(ref);
 				prevRef= ref;
 			}
 			

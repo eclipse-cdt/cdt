@@ -1,3 +1,7 @@
+2004-06-23 Tanya Wolff
+	Fix for Bug 66300 - i18n: File Types preferences buttons don't expand
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferences.java
+
 2004-06-21 Alain Magloire
 
 	It is too late to change the icons, but still

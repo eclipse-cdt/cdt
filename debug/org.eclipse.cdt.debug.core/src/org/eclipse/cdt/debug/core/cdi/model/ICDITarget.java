@@ -215,4 +215,12 @@ public interface ICDITarget extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void finish() throws CDIException;
+	
+	/**
+	 * Returns the currently selected thread.
+	 * 
+	 * @return the currently selected thread
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIThread getCurrentThread() throws CDIException;
 }

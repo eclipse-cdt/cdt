@@ -1,3 +1,7 @@
+2003-03-25 Mikhail Khodjaiants
+	Added the 'logErrorMessage' static method to the 'CDebugUIPlugin' class.
+	* CDebugUIPlugin.java
+
 2003-03-18 Mikhail Khodjaiants
 	Removed the gdb-specific variable parsing.
 	* VariableFormatActionDelegate.java

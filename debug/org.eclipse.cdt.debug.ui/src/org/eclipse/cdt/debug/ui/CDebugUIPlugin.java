@@ -185,8 +185,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	 * 
 	 * @param status status to log
 	 */
-	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+	public static void log( IStatus status )
+	{
+		getDefault().getLog().log( status );
 	}
 
 	/**
@@ -199,6 +200,16 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) );
 	}
 	
+	/**
+	 * Logs an internal error with the specified message.
+	 * 
+	 * @param message the error message to log
+	 */
+	public static void logErrorMessage( String message ) 
+	{
+		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, message, null ) );
+	}
+
 	public ILaunchConfigurationTab getDebuggerPage(String debuggerID) {
 		if (fDebuggerPageMap == null) {	
 			initializeDebuggerPageMap();

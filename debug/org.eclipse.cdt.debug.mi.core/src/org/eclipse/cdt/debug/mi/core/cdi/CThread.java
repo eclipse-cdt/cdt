@@ -99,6 +99,14 @@ public class CThread extends CObject implements ICDIThread {
 		if (stackframe != null) {
 			frameNum = stackframe.getLevel();
 		}
+		
+		// Check to see if we are already at this level
+		StackFrame current = getCurrentStackFrame();
+		if (current.getLevel() == frameNum) {
+			// noop
+			return;
+		}
+		
 		MIStackSelectFrame frame = factory.createMIStackSelectFrame(frameNum);
 		try {
 			// Set ourself as the current thread first.

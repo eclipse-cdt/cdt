@@ -480,7 +480,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				containerPut(affectedProject, containerPath, newContainer);
 				continue;
 			}
-			IPathEntryContainer oldContainer = containerGet(affectedProject, containerPath);
+			IPathEntryContainer oldContainer = containerGet(affectedProject, containerPath, true);
 			if (oldContainer != null && newContainer != null && oldContainer.equals(newContainer)) {
 				modifiedProjects[i] = null; // filter out this project -
 				// container did not change
@@ -544,7 +544,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	public IPathEntryContainer getPathEntryContainer(final IPath containerPath, final ICProject project) throws CModelException {
 		// Try the cache.
-		IPathEntryContainer container = containerGet(project, containerPath);
+		IPathEntryContainer container = containerGet(project, containerPath, true);
 		if (container instanceof PathEntryContainerLock) {
 			boolean runInitializer = false;
 			PathEntryContainerLock lock = (PathEntryContainerLock)container;
@@ -554,7 +554,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					lock.setContainerInitialize(runInitializer);
 				} else {
 					// Wait for the inialization to finish.
-					while(containerGet(project, containerPath) instanceof PathEntryContainerLock) {
+					while(containerGet(project, containerPath, true) instanceof PathEntryContainerLock) {
 						try {
 							lock.wait();
 						} catch (InterruptedException e) {
@@ -590,7 +590,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			} 
 			// retrieve new value
-			container = containerGet(project, containerPath);
+			container = containerGet(project, containerPath, false);
 		}
 		return container;
 	}
@@ -637,7 +637,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return null;
 	}
 
-	private synchronized IPathEntryContainer containerGet(ICProject cproject, IPath containerPath) {
+	private synchronized IPathEntryContainer containerGet(ICProject cproject, IPath containerPath, boolean bCreateLock) {
 		Map projectContainers = (Map) Containers.get(cproject);
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
@@ -645,7 +645,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		IPathEntryContainer container = (IPathEntryContainer) projectContainers.get(containerPath);
 		// Initialize the first time with a lock
-		if (container == null) {
+		if (bCreateLock && container == null ) {
 			container = new PathEntryContainerLock();
 			projectContainers.put(containerPath, container);
 		}
@@ -658,7 +658,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			projectContainers = new HashMap();
 			Containers.put(cproject, projectContainers);
 		}
-		IPathEntryContainer oldContainer = (IPathEntryContainer)projectContainers.put(containerPath, container);
+		IPathEntryContainer oldContainer;
+		if (container == null) {
+			 oldContainer = (IPathEntryContainer)projectContainers.remove(containerPath);
+		} else {
+		 oldContainer = (IPathEntryContainer)projectContainers.put(containerPath, container);
+		}
 		if (oldContainer instanceof PathEntryContainerLock) {
 			synchronized (oldContainer) {
 				oldContainer.notifyAll();

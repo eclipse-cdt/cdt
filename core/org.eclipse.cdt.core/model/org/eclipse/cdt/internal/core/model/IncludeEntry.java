@@ -17,25 +17,14 @@ import org.eclipse.core.runtime.IPath;
 
 public class IncludeEntry extends APathEntry implements IIncludeEntry {
 
-	IPath resourcePath;
 	IPath includePath;
 	boolean isSystemInclude;
 
-	public IncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude, boolean isRecursive,
+	public IncludeEntry(IPath path, IPath includePath, boolean isSystemInclude, boolean isRecursive,
 			IPath[] exclusionPatterns) {
-		super(IIncludeEntry.CDT_INCLUDE, isRecursive, exclusionPatterns, resourcePath == null);
-		this.resourcePath = resourcePath;
+		super(IIncludeEntry.CDT_INCLUDE, path, isRecursive, exclusionPatterns, path == null);
 		this.includePath = includePath;
 		this.isSystemInclude = isSystemInclude;
-	}
-
-	/**
-	 * Returns the affected resource by the include.
-	 * 
-	 * @return IPath
-	 */
-	public IPath getResourcePath() {
-		return resourcePath;
 	}
 
 	/**
@@ -62,12 +51,12 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
-			if (resourcePath == null) {
-				if (otherEntry.getResourcePath() != null) {
+			if (path == null) {
+				if (otherEntry.getPath() != null) {
 					return false;
 				}
 			} else {
-				if (!resourcePath.toString().equals(otherEntry.getResourcePath().toString())) {
+				if (!path.toString().equals(otherEntry.getPath().toString())) {
 					return false;
 				}
 			}

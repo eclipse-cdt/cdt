@@ -20,7 +20,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	ILibraryEntry entry;
 
 	public LibraryReference(ICElement parent, ILibraryEntry e) {
-		super(parent, e.getLibraryPath().lastSegment(), ICElement.C_VCONTAINER);
+		super(parent, e.getPath().lastSegment(), ICElement.C_VCONTAINER);
 		entry = e;
 	}
 
@@ -42,7 +42,7 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
 	public IPath getPath() {
-		return entry.getLibraryPath();
+		return entry.getPath();
 	}
 
 }

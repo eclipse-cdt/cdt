@@ -20,8 +20,8 @@ public abstract class APathEntry extends PathEntry {
 	IPath[] exclusionPatterns;
 	boolean isRecursive;
 
-	public APathEntry (int kind, boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
-		super(kind, isExported);
+	public APathEntry (int kind, IPath path, boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
+		super(kind, path, isExported);
 		this.exclusionPatterns = exclusionPatterns;
 		this.isRecursive = isRecursive;
 	}

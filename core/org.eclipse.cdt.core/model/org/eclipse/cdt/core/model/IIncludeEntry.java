@@ -17,12 +17,6 @@ import org.eclipse.core.runtime.IPath;
 public interface IIncludeEntry extends IPathEntry {
 
 	/**
-	 * Returns the affected resource by the include.
-	 * @return IPath
-	 */
-	IPath getResourcePath();
-
-	/**
 	 * Returns the include path 
 	 * @return IPath
 	 */

@@ -18,19 +18,8 @@ import org.eclipse.core.runtime.IPath;
 
 public class ProjectEntry extends PathEntry implements IProjectEntry {
 
-	IPath projectPath;
-
-	public ProjectEntry(IPath projectPath, boolean isExported) {
-		super(IProjectEntry.CDT_PROJECT, isExported);
-		this.projectPath = projectPath;
-	}
-
-	/**
-	 * Returns the absolute path relative to the workspace root.
-	 * @return IPath
-	 */
-	public IPath getProjectPath() {
-		return projectPath;
+	public ProjectEntry(IPath path, boolean isExported) {
+		super(IProjectEntry.CDT_PROJECT, path, isExported);
 	}
 
 	public boolean equals(Object obj) {
@@ -39,12 +28,12 @@ public class ProjectEntry extends PathEntry implements IProjectEntry {
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
-			if (projectPath == null) {
-				if (otherEntry.getProjectPath() != null) {
+			if (path == null) {
+				if (otherEntry.getPath() != null) {
 					return false;
 				}
 			} else {
-				if (!projectPath.toString().equals(otherEntry.getProjectPath().toString())) {
+				if (!path.toString().equals(otherEntry.getPath().toString())) {
 					return false;
 				} 
 			}

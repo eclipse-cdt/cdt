@@ -17,22 +17,11 @@ import org.eclipse.core.runtime.IPath;
 
 public class SourceEntry extends APathEntry implements ISourceEntry {
 
-	IPath sourcePath;
 	IPath outputLocation;
 
-	public SourceEntry(IPath sourcePath, IPath outputLocation, boolean isRecursive, IPath[] exclusionPatterns) {
-		super(ISourceEntry.CDT_SOURCE, isRecursive, exclusionPatterns, false);
-		this.sourcePath = sourcePath;
+	public SourceEntry(IPath path, IPath outputLocation, boolean isRecursive, IPath[] exclusionPatterns) {
+		super(ISourceEntry.CDT_SOURCE, path, isRecursive, exclusionPatterns, false);
 		this.outputLocation = outputLocation;
-	}
-
-	/**
-	 * Returns the absolute path from the worskspace root or
-	 * relative path of the source folder.
-	 * @return String
-	 */
-	public IPath getSourcePath() {
-		return sourcePath;
 	}
 
 	/**
@@ -50,12 +39,12 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
-			if (sourcePath == null) {
-				if (otherEntry.getSourcePath() != null) {
+			if (path == null) {
+				if (otherEntry.getPath() != null) {
 					return false;
 				}
 			} else {
-				if (!sourcePath.toString().equals(otherEntry.getSourcePath().toString())) {
+				if (!path.toString().equals(otherEntry.getPath().toString())) {
 					return false;
 				}
 			}

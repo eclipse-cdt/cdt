@@ -12,14 +12,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.model;
 
-import org.eclipse.core.runtime.IPath;
 
 public interface IContainerEntry extends IPathEntry {
-
-	/**
-	 * Returns the id identifying this container.
-	 * @return IPath
-	 */
-	IPath getPath();
 
 }

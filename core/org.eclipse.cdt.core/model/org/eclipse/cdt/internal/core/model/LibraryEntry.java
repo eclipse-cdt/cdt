@@ -22,21 +22,12 @@ public class LibraryEntry extends PathEntry implements ILibraryEntry {
 	IPath sourceAttachmentRootPath;
 	IPath sourceAttachmentPrefixMapping;
 
-	public LibraryEntry(IPath libraryPath, IPath sourceAttachmentPath,
+	public LibraryEntry(IPath path, IPath sourceAttachmentPath,
 		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		super(ILibraryEntry.CDT_LIBRARY, isExported);
-		this.libraryPath = libraryPath;
+		super(ILibraryEntry.CDT_LIBRARY, path, isExported);
 		this.sourceAttachmentPath = sourceAttachmentPath;
 		this.sourceAttachmentRootPath = sourceAttachmentRootPath;
 		this.sourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping;
-	}
-
-	/**
-	 * Returns the absolute path of the library
-	 * @return String
-	 */
-	public IPath getLibraryPath() {
-		return libraryPath;
 	}
 
 	/**

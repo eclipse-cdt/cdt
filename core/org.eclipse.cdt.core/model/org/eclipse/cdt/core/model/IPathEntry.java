@@ -12,6 +12,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.core.runtime.IPath;
+
 
 public interface IPathEntry {
 
@@ -71,8 +73,7 @@ public interface IPathEntry {
 	 *
 	 * @return one of:
 	 * <ul>
-	 * <li><code>CDT_SOURCE</code> - this entry describes a source root in
-			its project
+	 * <li><code>CDT_SOURCE</code> - this entry describes a source root in its project
 	 * <li><code>CDT_LIBRARY</code> - this entry describes a library
 	 * <li><code>CDT_PROJECT</code> - this entry describes another project
 	 * <li><code>CDT_INCLUDE</code> - this entry describes a include path
@@ -83,12 +84,12 @@ public interface IPathEntry {
 	int getEntryKind();
 	
 	/**
-	 * Returns whether this entry is exported to dependent projects.
-	 * Always returns <code>false</code> for source entries (kind
-	 * <code>CPE_SOURCE</code>), which cannot be exported.
+	 * Returns the affected IPath
 	 *
-	 * @return <code>true</code> if exported, and <code>false</code> otherwise
+	 * @return IPath
 	 */
 	boolean isExported();
+
+	IPath getPath();
 
 }

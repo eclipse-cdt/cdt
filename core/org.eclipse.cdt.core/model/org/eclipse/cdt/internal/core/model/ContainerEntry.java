@@ -17,19 +17,8 @@ import org.eclipse.core.runtime.IPath;
 
 public class ContainerEntry extends PathEntry implements IContainerEntry {
 
-	IPath path;
-
 	public ContainerEntry(IPath path, boolean isExported) {
-		super(IContainerEntry.CDT_CONTAINER, isExported);
-		this.path = path;
-	}
-
-	/**
-	 * Returns the id identifying this container.
-	 * @return IPath
-	 */
-	public IPath getPath() {
-		return path;
+		super(IContainerEntry.CDT_CONTAINER, path, isExported);
 	}
 
 	public boolean equals(Object obj) {

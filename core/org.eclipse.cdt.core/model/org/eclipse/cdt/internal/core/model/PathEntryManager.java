@@ -369,7 +369,7 @@ public class PathEntryManager {
 			for (int i = 0, length = entries.length; i < length; i++) {
 				if (entries[i].getEntryKind() == IPathEntry.CDT_PROJECT) {
 					IProjectEntry entry = (IProjectEntry)entries[i];
-					prerequisites.add(entry.getProjectPath().lastSegment());
+					prerequisites.add(entry.getPath().lastSegment());
 				}
 			}
 			int size = prerequisites.size();
@@ -468,7 +468,7 @@ public class PathEntryManager {
 		int flag = 0;
 		if (kind == IPathEntry.CDT_SOURCE) {
 			ISourceEntry source = (ISourceEntry) entry;
-			IPath path = source.getSourcePath();
+			IPath path = source.getPath();
 			celement = CoreModel.getDefault().create(path);
 			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_SOURCE : ICElementDelta.F_ADDED_PATHENTRY_SOURCE; 
 		} else if (kind == IPathEntry.CDT_LIBRARY) {
@@ -483,12 +483,12 @@ public class PathEntryManager {
 			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_PROJECT : ICElementDelta.F_ADDED_PATHENTRY_PROJECT; 
 		} else if (kind == IPathEntry.CDT_INCLUDE) {
 			IIncludeEntry include = (IIncludeEntry) entry;
-			IPath path = include.getResourcePath();
+			IPath path = include.getPath();
 			celement = CoreModel.getDefault().create(path);
 			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_INCLUDE : ICElementDelta.F_ADDED_PATHENTRY_INCLUDE; 
 		} else if (kind == IPathEntry.CDT_MACRO) {
 			IMacroEntry macro = (IMacroEntry) entry;
-			IPath path = macro.getResourcePath();
+			IPath path = macro.getPath();
 			celement = CoreModel.getDefault().create(path);
 			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_MACRO : ICElementDelta.F_ADDED_PATHENTRY_MACRO; 
 		} else if (kind == IPathEntry.CDT_CONTAINER) {
@@ -673,7 +673,7 @@ public class PathEntryManager {
 
 			if (kind == IPathEntry.CDT_SOURCE) {
 				ISourceEntry source = (ISourceEntry) entries[i];
-				IPath path = source.getSourcePath();
+				IPath path = source.getPath();
 				element.setAttribute(ATTRIBUTE_PATH, path.toString());
 				IPath output = source.getOutputLocation();
 				if (output != null && output.isEmpty()) {
@@ -681,7 +681,7 @@ public class PathEntryManager {
 				}
 			} else if (kind == IPathEntry.CDT_LIBRARY) {
 				ILibraryEntry lib = (ILibraryEntry) entries[i];
-				IPath path = lib.getLibraryPath();
+				IPath path = lib.getPath();
 				element.setAttribute(ATTRIBUTE_PATH, path.toString());
 				if (lib.getSourceAttachmentPath() != null) {
 					element.setAttribute(ATTRIBUTE_SOURCEPATH, lib.getSourceAttachmentPath().toString());
@@ -694,11 +694,11 @@ public class PathEntryManager {
 				}
 			} else if (kind == IPathEntry.CDT_PROJECT) {
 				IProjectEntry pentry = (IProjectEntry) entries[i];
-				IPath path = pentry.getProjectPath();
+				IPath path = pentry.getPath();
 				element.setAttribute(ATTRIBUTE_PATH, path.toString());
 			} else if (kind == IPathEntry.CDT_INCLUDE) {
 				IIncludeEntry include = (IIncludeEntry) entries[i];
-				IPath path = include.getResourcePath();
+				IPath path = include.getPath();
 				element.setAttribute(ATTRIBUTE_PATH, path.toString());
 				IPath includePath = include.getIncludePath();
 				element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
@@ -707,7 +707,7 @@ public class PathEntryManager {
 				}
 			} else if (kind == IPathEntry.CDT_MACRO) {
 				IMacroEntry macro = (IMacroEntry) entries[i];
-				IPath path = macro.getResourcePath();
+				IPath path = macro.getPath();
 				element.setAttribute(ATTRIBUTE_PATH, path.toString());
 				element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
 				element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());

@@ -28,6 +28,9 @@ public class BinaryRunner {
 		runner = new Thread(new Runnable() {
 			public void run() {
 				ICProject cproject = CModelManager.getDefault().create(project);
+				if (cproject == null || Thread.currentThread().isInterrupted()) {
+					return;
+				}
 				ArchiveContainer clib;
 				BinaryContainer cbin;
 				cbin = (BinaryContainer)cproject.getBinaryContainer();

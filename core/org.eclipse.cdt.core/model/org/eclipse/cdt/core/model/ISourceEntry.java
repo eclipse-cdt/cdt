@@ -17,13 +17,6 @@ import org.eclipse.core.runtime.IPath;
 public interface ISourceEntry extends IPathEntry {
 
 	/**
-	 * Returns the absolute path from the worskspace root or
-	 * relative path of the source folder.
-	 * @return String
-	 */
-	IPath getSourcePath();
-
-	/**
 	 * Whether or not to look recursively in the folder.
 	 * @return boolean
 	 */

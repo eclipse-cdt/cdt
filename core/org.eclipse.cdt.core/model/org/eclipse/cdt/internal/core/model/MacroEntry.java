@@ -17,25 +17,14 @@ import org.eclipse.core.runtime.IPath;
 
 public class MacroEntry extends APathEntry implements IMacroEntry {
 
-	IPath resourcePath;
 	String macroName;
 	String macroValue;
 
-	public MacroEntry (IPath resourcePath, String macroName, String macroValue,
+	public MacroEntry (IPath path, String macroName, String macroValue,
 		boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
-		super(IMacroEntry.CDT_MACRO, isRecursive, exclusionPatterns, isExported);
-		this.resourcePath = resourcePath;
+		super(IMacroEntry.CDT_MACRO, path, isRecursive, exclusionPatterns, isExported);
 		this.macroName = macroName;
 		this.macroValue = macroValue;
-	}
-
-	/**
-	 * Returns the absolute path from the worskspace root or
-	 * relative path of the affected resource.
-	 * @return String
-	 */
-	public IPath getResourcePath() {
-		return resourcePath;
 	}
 
 	/**

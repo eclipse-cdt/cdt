@@ -21,7 +21,7 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	ILibraryEntry entry;
 
 	public LibraryReferenceArchive(ICElement parent, ILibraryEntry e, IBinaryArchive ar) {
-		super(parent, e.getLibraryPath(), ar);
+		super(parent, e.getPath(), ar);
 		setElementType(ICElement.C_VCONTAINER);
 		entry = e;
 	}
@@ -38,7 +38,7 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
 	public IPath getPath() {
-		return entry.getLibraryPath();
+		return entry.getPath();
 	}
 
 }

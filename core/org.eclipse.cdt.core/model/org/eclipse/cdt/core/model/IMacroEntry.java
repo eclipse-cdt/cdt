@@ -17,13 +17,6 @@ import org.eclipse.core.runtime.IPath;
 public interface IMacroEntry extends IPathEntry {
 
 	/**
-	 * Returns the absolute path from the worskspace root or
-	 * relative path of the affected resource.
-	 * @return String
-	 */
-	IPath getResourcePath();
-
-	/**
 	 * Returns the macro name.
 	 * @return String
 	 */

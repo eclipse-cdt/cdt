@@ -1,3 +1,18 @@
+2004-02-24 Alain Magloire
+
+	Bug fix the binary runner thread could get interrupted
+	on shutdown we should check:
+		Thread.getCurrentThread().isInterrupted()
+	and bring down the thread.
+
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+
+2004-02-23 Alain Magloire
+
+	Another refactoring, to make the API lighter
+	move the the getPath() method to the base IPathEntry class
+	Too many files to enumerate(JDT refactoris ... is great!)
+
 2004-02-23 Alain Magloire
 
 	Support for IPathEntry deltas in the ICElementDelta

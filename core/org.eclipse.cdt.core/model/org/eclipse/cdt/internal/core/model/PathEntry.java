@@ -13,16 +13,25 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.core.runtime.IPath;
 
 public class PathEntry implements IPathEntry {
 
 	public int entryKind;
 	public boolean isExported;
+	public IPath path;
 
-	public PathEntry(int entryKind, boolean isExported) {
-
+	public PathEntry(int entryKind, IPath path, boolean isExported) {
+		this.path = path;
 		this.entryKind = entryKind;
 		this.isExported = isExported;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IPathEntry#getEntryKind()
+	 */
+	public IPath getPath() {
+		return path;
 	}
 
 	/* (non-Javadoc)

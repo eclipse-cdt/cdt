@@ -17,12 +17,6 @@ import org.eclipse.core.runtime.IPath;
 public interface ILibraryEntry extends IPathEntry {
 
 	/**
-	 * Returns the absolute path of the library
-	 * @return String
-	 */
-	IPath getLibraryPath();
-
-	/**
 	 * Returns the path to the source archive or folder associated with this
 	 * C path entry, or <code>null</code> if this C path entry has no
 	 * source attachment.

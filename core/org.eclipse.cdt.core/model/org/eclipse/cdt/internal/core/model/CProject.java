@@ -105,7 +105,7 @@ public class CProject extends CContainer implements ICProject {
 				if (binParser != null) {
 					IBinaryFile bin;
 					try {
-						bin = binParser.getBinary(entry.getLibraryPath());
+						bin = binParser.getBinary(entry.getPath());
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
 							lib = new LibraryReferenceArchive(this, entry, (IBinaryArchive)bin);
 						} else {

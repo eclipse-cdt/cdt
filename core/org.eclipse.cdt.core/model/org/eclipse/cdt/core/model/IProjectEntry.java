@@ -12,15 +12,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.model;
 
-import org.eclipse.core.runtime.IPath;
 
 
 public interface IProjectEntry extends IPathEntry {
-
-	/**
-	 * Returns the absolute path relative to the workspace root.
-	 * @return IPath
-	 */
-	IPath getProjectPath();
 
 }

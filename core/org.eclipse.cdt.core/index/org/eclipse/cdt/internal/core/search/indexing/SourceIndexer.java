@@ -43,7 +43,9 @@ import org.eclipse.core.resources.IProject;
 public class SourceIndexer extends AbstractIndexer {
 	
 	//TODO: Indexer, add additional file types
-	public static final String[] FILE_TYPES= new String[] {"cpp","h","c", "cc", "hh", "cxx", "hpp"}; //$NON-NLS-1$
+	//Header files: "h" , "hh", "hpp"
+	public static final String[] FILE_TYPES= new String[] {"cpp","c", "cc", "cxx"}; //$NON-NLS-1$
+	
 	//protected DefaultProblemFactory problemFactory= new DefaultProblemFactory(Locale.getDefault());
 	IFile resourceFile;
 		

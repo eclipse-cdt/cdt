@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
+import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -143,7 +144,7 @@ public class Parser implements IParser
                 + ": "
                 + (System.currentTimeMillis() - startTime)
                 + "ms"
-                + (parsePassed ? "" : " - parse failure"));
+                + (parsePassed ? "" : " - parse failure"), IDebugLogConstants.PARSER);
         return parsePassed;
     }
     public void onParseEnd()
@@ -1957,7 +1958,7 @@ public class Parser implements IParser
                                                 failParse();
                                                 Util.debugLog(
                                                     "Unexpected Token ="
-                                                        + image);
+                                                        + image,IDebugLogConstants.PARSER);
                                                 consume();
                                                 // eat this token anyway
                                                 continue;
@@ -4435,7 +4436,7 @@ public class Parser implements IParser
         }
         catch (ScannerException e)
         {
-            Util.debugLog( "ScannerException thrown : " + e.getMessage() );
+            Util.debugLog( "ScannerException thrown : " + e.getMessage(), IDebugLogConstants.PARSER );
             return fetchToken();
         }
     }

@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class SearchEngine implements ICSearchConstants{
 
-	private boolean VERBOSE = false;
+	public static boolean VERBOSE = false;
 
 	/**
 	 * A list of working copies that take precedence over their original 

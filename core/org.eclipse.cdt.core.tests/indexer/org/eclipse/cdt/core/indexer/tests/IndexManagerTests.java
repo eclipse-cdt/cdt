@@ -202,6 +202,7 @@ public class IndexManagerTests extends TestCase {
 		assertTrue("Index exists for project",ind != null);
 		//Add a new file to the project, give it some time to index
 		importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
+		importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
 		Thread.sleep(10000);
 		ind = indexManager.getIndex(testProjectPath,true,true);
 		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray();
@@ -499,7 +500,7 @@ public class IndexManagerTests extends TestCase {
   
   public void testForwardDeclarations() throws Exception{
 	//Add a new file to the project, give it some time to index
-	importFile("refTest.cpp","resources/indexer/refTest.cpp");
+	importFile("reftest.cpp","resources/indexer/reftest.cpp");
 	//Enable indexing on the created project
 	//By doing this, we force the Index Manager to indexAll()
 	indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();

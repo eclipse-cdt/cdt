@@ -15,16 +15,21 @@ import java.text.MessageFormat;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 public class Util {
-
+	
+	public static boolean VERBOSE_PARSER = false;
+	public static boolean VERBOSE_MODEL = false;
+	
 	private Util() {
 	}
-
+	
+	
 	public static StringBuffer getContent(IFile file) throws IOException {
 		InputStream stream = null;
 		try {
@@ -173,9 +178,9 @@ public class Util {
 		Util.log(status);
 	}
 	
-	public static void debugLog(String message) {
+	public static void debugLog(String message, DebugLogConstant client) {
 		if( CCorePlugin.getDefault() == null ) return;
-		if ( CCorePlugin.getDefault().isDebugging()) {
+		if ( CCorePlugin.getDefault().isDebugging() && isActive(client)) {
 			// Time stamp
 			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
 			while (message.length() > 100) {
@@ -191,6 +196,20 @@ public class Util {
 		}
 	}
 	
+	/**
+	 * @param client
+	 * @return
+	 */
+	private static boolean isActive(DebugLogConstant client) {
+		if (client.equals(IDebugLogConstants.PARSER)){
+			return VERBOSE_PARSER;
+		}
+		else if (client.equals(IDebugLogConstants.MODEL)){
+			return VERBOSE_MODEL;
+		}
+		return false;
+	}
+
 	public static void setDebugging(boolean value){
 		CCorePlugin.getDefault().setDebugging(value);
 	}
@@ -263,4 +282,5 @@ public class Util {
 			}
 			return a.equals(b);
 		}	
+		
 }

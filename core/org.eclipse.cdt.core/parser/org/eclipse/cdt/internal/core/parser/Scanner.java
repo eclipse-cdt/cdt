@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
 
 
@@ -2139,7 +2140,7 @@ public class Scanner implements IScanner {
 						BAD_PP + contextStack.getCurrentContext().getOffset());
 			}
 		} else {
-			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c));
+			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c), IDebugLogConstants.PARSER);
 			if (throwExceptionOnBadPreprocessorSyntax)
 				throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset());
 		}
@@ -2333,7 +2334,7 @@ public class Scanner implements IScanner {
 		} else {
 			Util.debugLog(
 				"Unexpected class stored in definitions table. "
-					+ expansion.getClass().getName());
+					+ expansion.getClass().getName(), IDebugLogConstants.PARSER);
 		}
 
 	}

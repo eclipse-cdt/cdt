@@ -22,6 +22,7 @@ import java.util.Stack;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
 
 /**
@@ -86,7 +87,7 @@ public class ContextStack {
 		try {
 			currentContext.getReader().close();
 		} catch (IOException ie) {
-			Util.debugLog("ContextStack : Error closing reader ");
+			Util.debugLog("ContextStack : Error closing reader ", IDebugLogConstants.PARSER);
 		}
 
 		if( currentContext.getKind() == IScannerContext.INCLUSION )

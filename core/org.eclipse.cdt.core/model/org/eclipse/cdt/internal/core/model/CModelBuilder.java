@@ -127,7 +127,7 @@ public class CModelBuilder {
 		// For the debuglog to take place, you have to call
 		// Util.setDebugging(true);
 		// Or set debug to true in the core plugin preference 
-		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms");
+		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL);
 		return this.newElements;
 		
 	}	

@@ -354,7 +354,10 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 						name = new String("");
 						break;
 					default:
-						if( token.getType() == IToken.tSTAR || token.getType() == IToken.tQUESTION ){
+						if( token.getType() == IToken.tSTAR || 
+						    token.getType() == IToken.tQUESTION ||
+						    token.getType() == IToken.tCOMPL //Need this for destructors
+						    ){
 							lastTokenWasWild = true;
 						} else if( !lastTokenWasWild && name.length() > 0 ) {
 							name += " ";

@@ -18,12 +18,18 @@ import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.CPathEntry;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
+import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,6 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
@@ -212,6 +219,9 @@ public class CCorePlugin extends Plugin {
 	public void startup() throws CoreException {
 		super.startup();
 
+		//Set debug tracing options
+		CCorePlugin.getDefault().configurePluginDebugOptions();
+		
 		// Fired up the model.
 		fCoreModel = CoreModel.getDefault();
 		fCoreModel.startup();
@@ -779,5 +789,41 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static ICPathEntry newIncludeEntry(IPath path, IPath[] exclusionPatterns) {
 		return new CPathEntry(ICPathEntry.CDT_INCLUDE, path, exclusionPatterns, null, null, null);  
+	}
+	
+	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
+	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer";
+	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager";
+	private static final String SEARCH  = CCorePlugin.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
+	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
+	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
+	private static final String DEPENDENCY = CCorePlugin.PLUGIN_ID + "/debug/dependency" ; //$NON-NLS-1$
+	/**
+	 * Configure the plugin with respect to option settings defined in ".options" file
+	 */
+	public void configurePluginDebugOptions(){
+		if(CCorePlugin.getDefault().isDebugging()){
+			String option = Platform.getDebugOption(PARSER);
+			if(option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+		
+			option = Platform.getDebugOption(MODEL);
+			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
+			option = Platform.getDebugOption(DEPENDENCY);
+			if(option != null) DependencyManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+		
+			option = Platform.getDebugOption(INDEX_MANAGER);
+			if(option != null) IndexManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			
+			option = Platform.getDebugOption(INDEXER);
+			if(option != null) SourceIndexer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+		
+			option = Platform.getDebugOption(SEARCH);
+			if(option != null) SearchEngine.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			
+			option = Platform.getDebugOption(MATCH_LOCATOR);
+			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			
+		}
 	}
 }

@@ -91,6 +91,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class MatchLocator implements ISourceElementRequestor, ICSearchConstants {
 
+	
+	public static boolean VERBOSE = false;
 	/**
 	 * 
 	 */
@@ -301,6 +303,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			//skip duplicates
 			if( i > 0 && pathString.equals( paths[ i - 1 ] ) ) continue;
 			
+			if  (!searchScope.encloses(pathString)) continue;
+			
 			Reader reader = null;
 			
 			IPath realPath = null; 
@@ -355,6 +359,9 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, this );
 			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE );
 			
+			if (VERBOSE)
+			  MatchLocator.verbose("*** New Search for path: " + pathString);
+			  
 			parser.parse();
 		}
 	}
@@ -368,11 +375,15 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				IASTReference reference = (IASTReference) node;
 				offset = reference.getOffset();
 				length = reference.getName().length();
+				if (VERBOSE)
+					MatchLocator.verbose("Report Match: " + reference.getName());
 			} else if( node instanceof IASTOffsetableNamedElement ){
 				IASTOffsetableNamedElement offsetableElement = (IASTOffsetableNamedElement) node;
 				offset = offsetableElement.getNameOffset() != 0 ? offsetableElement.getNameOffset() 
 															    : offsetableElement.getStartingOffset();
 				length = offsetableElement.getName().length();															  
+				if (VERBOSE)
+					MatchLocator.verbose("Report Match: " + offsetableElement.getName());
 			}
 		
 				
@@ -438,5 +449,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		check( DECLARATIONS, elaboratedType );	
     }
 
+	public static void verbose(String log) {
+	  System.out.println("(" + Thread.currentThread() + ") " + log); 
+	}
 
 }

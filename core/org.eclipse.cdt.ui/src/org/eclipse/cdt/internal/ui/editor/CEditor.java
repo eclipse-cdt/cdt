@@ -425,7 +425,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		setAction("ContentAssistTip", action);
 
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this)); //$NON-NLS-1$
-		setAction("OpenOnSelection", new OpenOnSelectionAction(this));
+		setAction("OpenDeclarations", new OpenDeclarationsAction(this));
 
 		fSearchForReferencesAction = new SearchForReferencesAction(getSelectionProvider());
 		
@@ -458,7 +458,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenOnSelection"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenDeclarations"); //$NON-NLS-1$
 	}
 
 	public void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {

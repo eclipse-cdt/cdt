@@ -1,3 +1,7 @@
+2003-08-26 Bogdan Gheorghe
+	- Removed header file extensions from being indexed (they
+	  will be indexed via inclusion)
+	
 2003-08-20 Bogdan Gheorghe
 	- Added debug tracing in AbstractIndexer
 	- Added additional file extensions to supported indexed files

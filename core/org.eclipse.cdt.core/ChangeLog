@@ -1,3 +1,11 @@
+2003-08-26 Bogdan Gheorghe
+	- Modified start up code to set debug trace options
+	- Added trace debug statements to CModelBuilder.
+	- Added IDebugLogConstants which contain ids for all 
+	  Util.debugLog clients (currently Parser and CModelBuidler)
+	- Modified Util.java to make use of IDebugLogConstants
+	
+	
 2003-08-25 Hoda Amer
 	Modified the IASTFactory to take three expression lists 
 	for the createNewDescriptor() instead of just one. 

@@ -218,9 +218,9 @@ public class CThread extends CDebugElement
 					if ( depth != 0 )
 					{
 						// same number of frames - if top frames are in different
-						// method, replace all frames
-						ICDIStackFrame newTopFrame = frames[0];
-						ICDIStackFrame oldTopFrame = ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame();
+						// function, replace all frames
+						ICDIStackFrame newTopFrame = ( frames.length > 0 ) ? frames[0] : null;
+						ICDIStackFrame oldTopFrame = ( fStackFrames.size() > 0 ) ? ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame() : null;
 						if ( !CStackFrame.equalFrame( newTopFrame, oldTopFrame ) )
 						{
 							disposeStackFrames( 0, fStackFrames.size() );

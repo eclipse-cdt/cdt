@@ -1,3 +1,9 @@
+2004-12-17 Bogdan Gheorghe
+
+	Fix for NPE caused by CDocumentSetupParticipant when called from a 
+	non UI thread
+	
+	
 2004-12-10 Bogdan Gheorghe
 	Fix for 43664 : Search should report matches outside of workspace
 	

@@ -15,6 +15,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * CDocumentSetupParticipant
@@ -30,8 +31,10 @@ public class CDocumentSetupParticipant implements IDocumentSetupParticipant {
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
 	public void setup(IDocument document) {
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		tools.setupCDocument(document);
+		if (Display.getCurrent() != null){
+			CTextTools tools= CUIPlugin.getDefault().getTextTools();
+			tools.setupCDocument(document);
+		}
 	}
 
 }

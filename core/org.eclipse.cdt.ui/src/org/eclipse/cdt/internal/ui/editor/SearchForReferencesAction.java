@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -85,10 +86,15 @@ public class SearchForReferencesAction extends Action {
 			//TextSearchEngine engine = new TextSearchEngine();
 			TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 			// Add the extensions from the C editor definition for now
-			scope.addExtension("c");
-			scope.addExtension("h");
-			scope.addExtension("cc");
-			scope.addExtension("hh");
+			// FIXME: For C/C++ not all files rely on extension to be C++ for <cstring>
+			String[] cexts = CoreModel.getDefault().getTranslationUnitExtensions();
+			for (int i = 0; i < cexts.length; i++) {
+				scope.addExtension("*." + cexts[i]);
+			}
+//			scope.addExtension("*.c");
+//			scope.addExtension("*.h");
+//			scope.addExtension("*.cc");
+//			scope.addExtension("*.hh");
 			
 			TextSearchOperation op= new TextSearchOperation(
 				CUIPlugin.getWorkspace(),

@@ -14,16 +14,29 @@ for CDT 3.0. Changes should be expected until further notified.</span><br>
 Model, is a programmatic way to see the underlying source code in both
 a syntactic and semantic view using an Abstract Syntax Tree (AST) and
 to allow changes in the AST to be reflected back out to the source
-code. Sounds simple enough, but with the complexity of the C and C++
-languages with an intermixing of pre-processor goodness, it certainly
-has it's challenges.<br>
+code.<br>
 </p>
 <h2>Syntactic View</h2>
-<p><br>
+<p>The syntactic view (which we sometimes call the physical view)
+represents the syntactic structure of the program. This is driven
+mainly by the grammar that the parser follows, mapping from terminals
+up to the entry rule in the grammer. This view fulfills the role of a
+traditional Abstract Syntax Tree, and you'll see that the classes that
+make up this view have AST in their name.<br>
 </p>
 <h2>Semantic View</h2>
+<p>The semantic view (which we sometimes call the logical view)
+represent semantic elements in the program. These elements are
+generally types, variables, and functions. The JDT calls these things
+bindings, so we do to. However, the more general rule is that anything
+that links sub-branches of the AST is a binding.<br>
+</p>
 <h2>Workspace-Wide View</h2>
+<p>Once you have a binding, it is possible to find all translation
+units that declare or refer to that binding.</p>
 <h2>Rewriting</h2>
-<br>
+<p>From the Syntactic view, you can ask the AST Rewriter to calculate
+the TextEdits required to accomplish changes to the AST.<br>
+</p>
 </body>
 </html>

@@ -163,6 +163,14 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition) node;
 		assertEquals( namespace.getName(), "Muppets"); //$NON-NLS-1$
 		assertEquals( namespace.getStartingLine(), 1 );
+		
+		index = code.indexOf( "e Muppets") + 2; //$NON-NLS-1$
+		node = parse( code, index, index + 7 );
+		assertTrue( node instanceof IASTNamespaceDefinition );
+		namespace = (IASTNamespaceDefinition) node;
+		assertEquals( namespace.getName(), "Muppets"); //$NON-NLS-1$
+		assertEquals( namespace.getStartingLine(), 1 );
+
 	}
 	
 	public void testBug61613() throws Exception

@@ -2963,6 +2963,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	public IToken identifier() throws EndOfFileException, BacktrackException {
 	    IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
+	    if( first instanceof ITokenDuple ) setGreaterNameContext((ITokenDuple) first);
 	    return first;
 	}
 	/* (non-Javadoc)

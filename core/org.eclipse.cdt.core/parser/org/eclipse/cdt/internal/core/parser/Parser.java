@@ -952,6 +952,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             namespaceDefinition.enterScope( requestor, astFactory.getReferenceManager() );
             setCompletionValues(scope,CompletionKind.VARIABLE_TYPE, KeywordSetKey.DECLARATION );
+            endDeclaration( namespaceDefinition );
             namespaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
                 int checkToken = LA(1).hashCode();

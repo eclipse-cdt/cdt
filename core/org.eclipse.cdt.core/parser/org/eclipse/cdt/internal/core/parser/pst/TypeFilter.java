@@ -123,7 +123,15 @@ public class TypeFilter {
 		
 	}
 
+	public void setLookingInThis( boolean inThis ){
+		lookingInThis = inThis;
+	}
+	public boolean isLookingInThis(){
+		return lookingInThis;
+	}
 
 	private Set acceptedTypes = new HashSet();
     private Set acceptedKinds = new HashSet();
+    
+    private boolean lookingInThis = false;
 }

@@ -628,10 +628,16 @@ public class CompletionEngine implements RelevanceConstants {
 		// and examples.  If my assumptions are not correct as to what deserves to be 
 		// looked up for FUNCTION_REFRENCE then please update the documentation in
 		// IASTCompletionNode.java.
-		
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.ALL; 
 		String prefix = completionNode.getCompletionPrefix();
+		
+		IASTNode.LookupKind[] kinds = null;
+		if( prefix.length() == 0 )
+		{
+			kinds = new IASTNode.LookupKind[] { IASTNode.LookupKind.CONSTRUCTORS, IASTNode.LookupKind.FUNCTIONS, IASTNode.LookupKind.METHODS };
+			prefix = completionNode.getFunctionName();
+		}
+		else
+			kinds = new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL };
 
 		ILookupResult result = lookup(completionNode.getCompletionScope(), prefix, kinds, completionNode.getCompletionContext());
 		addToCompletions(result);

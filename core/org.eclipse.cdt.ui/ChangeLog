@@ -1,3 +1,6 @@
+2004-04-16 Andrew Niefer
+	modify CompletionEngine.completionOnFunctionReference for bug 50807
+
 2004-04-16 Hoda Amer
 	Fix for bug#44370 : [Content Assist] function-style macros have arguments
 	

@@ -23,7 +23,13 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
@@ -205,5 +211,35 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 			return (IASTClassSpecifier) ((IASTTemplateDeclaration)getOwnerScope()).getOwnerScope();
 		
 		return (IASTClassSpecifier) getOwnerScope();
+	}
+	
+	/**
+	 * @param prefix
+	 * @param thisContainer
+	 * @param qualification
+	 * @param lookInThis
+	 * @param filter
+	 * @param lookupResults
+	 * @return
+	 * @throws LookupError
+	 */
+	protected List performPrefixLookup(String prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter) throws LookupError {
+		if( filter.isLookingInThis() ){
+			try{
+				ISymbol thisPointer = thisContainer.lookup( ParserSymbolTable.THIS );
+				ISymbol thisClass = ( thisPointer != null ) ? thisPointer.getTypeSymbol() : null; 
+				if( thisClass != null && thisClass instanceof IContainerSymbol ){
+					return ((IContainerSymbol) thisClass).prefixLookup( filter, prefix, true );
+				}	
+			} catch (ParserSymbolTableException e) {
+				throw new LookupError();
+			} catch (ParserSymbolTableError e ){
+				throw new LookupError();
+			}
+		} else {
+			return super.performPrefixLookup( prefix, thisContainer, qualification, filter );
+		}
+		
+		return null;
 	}
 }

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testing"
       label="%featureName"
-      version="1.2.0"
+      version="2.0.0"
       provider-name="%providerName"
       os=""
       ws=""
@@ -22,33 +22,50 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.platform" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt" version="1.2.0" match="equivalent"/>
-      <import plugin="org.eclipse.test" version="2.1.0" match="equivalent"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.boot"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.cdt.debug.mi.core"/>
+      <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
+      <import plugin="org.eclipse.test"/>
    </requires>
 
    <plugin
          id="org.eclipse.cdt.debug.ui.tests"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="2.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.ui.tests"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="2.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.testing"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="2.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.core.tests"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="2.0.0"/>
 
 </feature>

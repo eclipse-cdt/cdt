@@ -3,7 +3,7 @@
 <fragment
    id="org.eclipse.cdt.core.qnx"
    name="%fragmentName"
-   version="1.2.0"
+   version="2.0.0"
    provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
    plugin-version="1.2.0">

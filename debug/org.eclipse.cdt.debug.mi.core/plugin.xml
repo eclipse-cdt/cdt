@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.debug.mi.core"
    name="%pluginName"
-   version="1.2.0"
+   version="2.0.0"
    provider-name="%providerName"
    class="org.eclipse.cdt.debug.mi.core.MIPlugin">
 
@@ -25,25 +25,25 @@
       <debugger
             platform="native"
             name="%GDBDebugger.name"
-            modes="run,core,attach"
-            cpu="native"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
+            cpu="native"
+            modes="run,core,attach"
             id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>
       <debugger
             platform="win32"
             name="%CygwinGDBDebugger.name"
-            modes="run,core,attach"
-            cpu="native"
             class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
+            cpu="native"
+            modes="run,core,attach"
             id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
       </debugger>
       <debugger
             platform="native"
             name="%GDBServer.name"
-            modes="run"
-            cpu="native"
             class="org.eclipse.cdt.debug.mi.core.GDBServerDebugger"
+            cpu="native"
+            modes="run"
             id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
       </debugger>
    </extension>

@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.make.ui"
    name="%pluginName"
-   version="1.2.0"
+   version="2.0.0"
    provider-name="%providerName"
    class="org.eclipse.cdt.make.internal.ui.MakeUIPlugin">
 
@@ -33,8 +33,8 @@
             icon="icons/ctool16/newc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.make.ui.wizards.NewMakeCProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            project="true"
             id="org.eclipse.cdt.ui.wizards.NewMakeCProjectWizard">
          <description>
             %WizardNewCMakeProject.description
@@ -60,8 +60,8 @@
             icon="icons/ctool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            project="true"
             id="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard">
          <description>
             %WizardNewCCMakeProject.description
@@ -85,8 +85,8 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
+            adaptable="false"
             objectClass="org.eclipse.cdt.core.model.ICContainer"
-            adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
          <action
                label="%ActionMakeCreateTarget.label"
@@ -108,8 +108,8 @@
          </filter>
       </objectContribution>
       <objectContribution
+            adaptable="false"
             objectClass="org.eclipse.cdt.core.model.ITranslationUnit"
-            adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
          <action
                label="%ActionMakeCreateTarget.label"
@@ -131,8 +131,8 @@
          </filter>
       </objectContribution>
       <objectContribution
+            adaptable="false"
             objectClass="org.eclipse.cdt.core.model.IBinary"
-            adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
          <action
                label="%ActionMakeCreateTarget.label"
@@ -154,8 +154,8 @@
          </filter>
       </objectContribution>
       <objectContribution
+            adaptable="false"
             objectClass="org.eclipse.cdt.core.model.IArchive"
-            adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
          <action
                label="%ActionMakeCreateTarget.label"
@@ -177,8 +177,8 @@
          </filter>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
             adaptable="false"
+            objectClass="org.eclipse.core.resources.IResource"
             id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution">
          <action
                label="%ActionMakeBuildTarget.label"
@@ -204,18 +204,17 @@
          point="org.eclipse.ui.commands">
       <command
             name="%CommandTargetBuild.name"
-            description="%CommandTargetBuild.description"
             category="org.eclipse.ui.category.project"
+            description="%CommandTargetBuild.description"
             id="org.eclipse.cdt.make.ui.targetBuildCommand">
       </command>
       <command
             name="%CommandTargetCreate.name"
-            description="%CommandTargetCreate.description"
             category="org.eclipse.ui.category.project"
+            description="%CommandTargetCreate.description"
             id="org.eclipse.cdt.make.ui.targetCreateCommand">
       </command>
    </extension>
-
 <!-- Makefile Editor keybindings  -->
    <extension
          point="org.eclipse.ui.commands">
@@ -232,8 +231,8 @@
       </scope>
       <command
             name="%ActionDefinition.comment.name"
-            description="%ActionDefinition.comment.description"
             category="org.eclipse.cdt.make.ui.category.source"
+            description="%ActionDefinition.comment.description"
             id="org.eclipse.cdt.make.ui.edit.text.makefile.comment">
       </command>
       <keyBinding
@@ -244,8 +243,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.uncomment.name"
-            description="%ActionDefinition.uncomment.description"
             category="org.eclipse.cdt.make.ui.category.source"
+            description="%ActionDefinition.uncomment.description"
             id="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment">
       </command>
       <keyBinding
@@ -255,7 +254,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -268,8 +266,8 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
             name="%PropertyMakeProject.name"
             class="org.eclipse.cdt.make.internal.ui.properties.MakePropertyPage"
             id="org.eclipse.cdt.make.ui.properties.MakePropertyPage">
@@ -301,8 +299,8 @@
          <action
                label="%ActionMakeUpdate.label"
                icon="icons/ctool16/update_old.gif"
-               tooltip="%ActionMakeUpdate.tooltip"
                class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
+               tooltip="%ActionMakeUpdate.tooltip"
                toolbarPath="Normal"
                id="org.eclipse.cdt.make.ui.UpdateMakeAction">
             <enablement>
@@ -362,9 +360,8 @@
          </action>
       </actionSet>
    </extension>
-
 <!-- Makefile Editor comment out for CDT 1.2 -->
-   <!--extension
+<!--extension
          id="org.eclipse.cdt.make.editor"
          name="MakefileEditor"
          point="org.eclipse.ui.editors">
@@ -389,8 +386,8 @@
          <view
                relative="org.eclipse.ui.views.ContentOutline"
                visible="true"
-               relationship="stack"
-               id="org.eclipse.cdt.make.ui.views.MakeView">
+               id="org.eclipse.cdt.make.ui.views.MakeView"
+               relationship="stack">
          </view>
          <viewShortcut
                id="org.eclipse.cdt.make.ui.views.MakeView">

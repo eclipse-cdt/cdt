@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.debug.ui"
    name="%pluginName"
-   version="1.2.0"
+   version="2.0.0"
    provider-name="%providerName"
    class="org.eclipse.cdt.debug.ui.CDebugUIPlugin">
 
@@ -14,7 +14,6 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.editors"/>
@@ -941,8 +940,8 @@
             targetID="org.eclipse.debug.ui.DebugView"
             id="org.eclipse.cdt.debug.ui.debugview.toolbar">
          <action
-               toolbarPath="threadGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
+               toolbarPath="threadGroup"
                hoverIcon="icons/full/clcl16/restart.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
                disabledIcon="icons/full/dlcl16/restart.gif"
@@ -960,8 +959,8 @@
          </action>
          <action
                style="toggle"
-               toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                disabledIcon="icons/full/dlcl16/show_paths.gif"
@@ -978,8 +977,8 @@
          </action>
          <action
                style="toggle"
-               toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
+               toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/disassembly.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
                disabledIcon="icons/full/dlcl16/disassembly.gif"
@@ -997,8 +996,8 @@
          </action>
          <action
                style="toggle"
-               toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
+               toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/debugger_console.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
                disabledIcon="icons/full/dlcl16/debugger_console.gif"
@@ -1020,8 +1019,8 @@
             id="org.eclipse.cdt.debug.ui.breakpointview.toolbar">
          <action
                style="toggle"
-               toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                disabledIcon="icons/full/dlcl16/show_paths.gif"
@@ -1041,8 +1040,8 @@
             targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.expressionsView.toolbar">
          <action
-               toolbarPath="expressionGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
+               toolbarPath="expressionGroup"
                hoverIcon="icons/full/clcl16/watch_globals.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
                disabledIcon="icons/full/dlcl16/watch_globals.gif"
@@ -1064,8 +1063,8 @@
             id="org.eclipse.debug.ui.sharedLibrariesView.toolbar">
          <action
                style="toggle"
-               toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                disabledIcon="icons/full/dlcl16/show_paths.gif"
@@ -1258,8 +1257,8 @@
             id="org.eclipse.cdt.debug.ui.DefaultSourceLocator">
       </sourceLocator>
       <sourceLocator
-            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
             name="%OldDefaultSourceLocator.name"
+            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
             id="org.eclipse.cdt.launch.DefaultSourceLocator">
       </sourceLocator>
    </extension>

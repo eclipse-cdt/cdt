@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2Tests;
-import org.eclipse.cdt.core.parser.tests.ast2.DOMScannerTests;
+import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationTests;
 import org.eclipse.cdt.core.parser.tests.ast2.GCCTests;
 import org.eclipse.cdt.core.parser.tests.parser2.CompleteParser2Tests;
 import org.eclipse.cdt.core.parser.tests.parser2.QuickParser2Tests;
@@ -62,7 +62,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( AST2CPPTests.class );
 		suite.addTestSuite( QuickParser2Tests.class );
 		suite.addTestSuite( CompleteParser2Tests.class );
-		suite.addTestSuite( DOMScannerTests.class );
+		suite.addTestSuite( DOMLocationTests.class );
 		return suite;
 	}	
 }

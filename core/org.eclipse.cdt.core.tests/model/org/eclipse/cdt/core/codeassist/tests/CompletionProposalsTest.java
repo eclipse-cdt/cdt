@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
@@ -109,38 +110,44 @@ public class CompletionProposalsTest  extends TestCase{
 			String buffer = tu.getBuffer().getContents();
 			Document document = new Document(buffer);
 			int pos = buffer.indexOf(" a ") + 2;
-			int length = 0;
 			CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
-			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, length, tu);
+			IWorkingCopy wc = null;
+			try{
+				wc = tu.getWorkingCopy();
+			}catch (CModelException e){
+				fail("Failed to get working copy");
+			}
+			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, wc);
 			try {
 				Thread.sleep(MAGIC_NUMBER);
 			} catch (InterruptedException e1) {
 				fail( "Bogdan's hack did not suffice");
 			}
-			assertEquals(results.length, 7);
+			assertEquals(results.length, 8);
 			for (int i = 0; i<results.length; i++){
 				ICompletionProposal proposal = results[i];
 				String displayString = proposal.getDisplayString();
 				switch(i){
-					case 0:
+					// case 0 is a key word found by the parser "auto"
+					case 1:
 						assertEquals(displayString, "aVariable");
 					break;	
-					case 1:
+					case 2:
 						assertEquals(displayString, "aFunction() bool");
 					break;	
-					case 2:
+					case 3:
 						assertEquals(displayString, "aClass");
 					break;	
-					case 3:
+					case 4:
 						assertEquals(displayString, "anotherClass");
 					break;	
-					case 4:
+					case 5:
 						assertEquals(displayString, "anEnumeration");
 					break;	
-					case 5:
+					case 6:
 						assertEquals(displayString, "AStruct");
 					break;	
-					case 6:
+					case 7:
 						assertEquals(displayString, "AMacro");
 						break;	
 				}

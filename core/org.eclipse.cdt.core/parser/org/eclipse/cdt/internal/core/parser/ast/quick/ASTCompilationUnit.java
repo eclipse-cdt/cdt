@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
  * @author jcamelon
  *
  */
-public class ASTCompilationUnit implements IASTCompilationUnit, IASTQScope {
+public class ASTCompilationUnit extends ASTNode implements IASTCompilationUnit, IASTQScope {
 
 	private List declarations = new ArrayList(); 
 	/* (non-Javadoc)
@@ -74,13 +74,4 @@ public class ASTCompilationUnit implements IASTCompilationUnit, IASTQScope {
             /* do nothing */
         }
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -10,12 +10,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
@@ -23,7 +20,6 @@ import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.corext.template.ContextType;
@@ -32,7 +28,6 @@ import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -42,16 +37,13 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -218,26 +210,23 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		IWorkingCopy unit = fManager.getWorkingCopy(fEditor.getEditorInput());
 							
 		IDocument document = viewer.getDocument();
-		
-		currentOffset = documentOffset;		
-		currentSourceUnit = unit;
-		
+				
 		ICCompletionProposal[] results = null;
 
 		try {
-			if (document != null) {
+//			if (document != null) {
+//
+//				int offset = documentOffset;
+//				int length = 0;
+//
+//				Point selection = viewer.getSelectedRange();
+//				if (selection.y > 0) {
+//					offset = selection.x;
+//					length = selection.y;
+//				}
 
-				int offset = documentOffset;
-				int length = 0;
-
-				Point selection = viewer.getSelectedRange();
-				if (selection.y > 0) {
-					offset = selection.x;
-					length = selection.y;
-				}
-
-				results = evalProposals(document, offset, length, unit);
-			}
+				results = evalProposals(document, documentOffset, unit);
+//			}
 		} catch (Exception e) {
 			CUIPlugin.getDefault().log(e);
 		}
@@ -276,37 +265,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		return results;
 	}
 
-	private ICElement getCurrentScope(ITranslationUnit unit, int documentOffset){
-		// quick parse the unit
-		Map elements = unit.parse();
-		// figure out what element is the enclosing the current offset
-		ICElement currentScope = unit;
-		Iterator i = elements.keySet().iterator();
-		while (i.hasNext()){
-			CElement element = (CElement) i.next();
-			
-			if ((element.getStartPos() < documentOffset ) 
-				&& ( element.getStartPos() + element.getLength() > documentOffset)
-				)
-			{
-				if(currentScope instanceof ITranslationUnit){
-					currentScope = element;
-				}else
-				if (currentScope instanceof CElement){
-					CElement currentScopeElement = (CElement) currentScope;
-					if(
-					 (currentScopeElement.getStartPos() < element.getStartPos())
-					 && (
-					 (currentScopeElement.getStartPos() + currentScopeElement.getLength() )
-					  > (element.getStartPos() + element.getLength()) )
-					)
-					currentScope = element;  
-				}
-			}
-		}
-		return currentScope;
-	}
-
 	/**
 	 * Order the given proposals.
 	 */
@@ -319,114 +277,23 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * Evaluate the actual proposals for C
 	 */
-	public ICCompletionProposal[] evalProposals(IDocument document, int pos, int length, ITranslationUnit unit) {
-		try{
-			currentOffset = pos;		
-			currentSourceUnit = unit.getWorkingCopy();
-		} catch (CModelException e){
-			
-		}
-		return order (evalProposals(document, pos, length, getCurrentScope (unit, pos)));
-	}
-
-	private ICCompletionProposal[] evalProposals(IDocument document, int startPos, int length, ICElement currentScope) {
-		boolean isDereference = false;
-		IRegion region; 
-		String frag = "";
-		int pos = startPos;
-
-		
-		// Move back the pos by one the position is 0-based
-		if (pos > 0) {
-			pos--;
-		}
-
 		// TODO: Check to see if we are trying to open for a structure/class, then
-		// provide that structure's completion instead of the function/variable
-		// completions. This needs to be properly dealt with so that we can
-		// offer completion proposals.
-		if (pos > 1) {
-			int struct_pos = pos;
-			
-			try {
-				//While we aren't on a space, then go back and look for
-				// . or a -> then determine the structure variable type.
-				while(document.getChar(struct_pos) == ' ') {	
-					struct_pos--;
-				}
-				
-				if (document.getChar(struct_pos) == '.') {
-					isDereference = true;
-					pos -= struct_pos - 1;
-				} else if ((document.getChar(struct_pos) == '>') && (document.getChar(struct_pos - 1) == '-')) {
-					isDereference = true;
-					pos -= struct_pos - 2;
-				} else {
-					isDereference = false;
-				}
-			} catch (BadLocationException ex) {
-				return null;
-			}
-		}
-
-		// Get the current "word", it might be a variable or another starter
-		region = CWordFinder.findWord(document, pos);
-		if(region == null) {
-			return null;	//Bail out on error
-		}
-		
 		//@@@ TODO: Implement the structure member completion
-		if(isDereference) {
-			return null;
-		}
-				
-		try {
-			//frag = document.get(region.getOffset(), region.getLength());
-			frag = document.get(region.getOffset(), startPos - region.getOffset());
-			frag = frag.trim();
-		} catch (BadLocationException ex) {
-			return null;		//Bail out on error
-		}
+	public ICCompletionProposal[] evalProposals(IDocument document, int documentOffset, IWorkingCopy unit) {
 		
-		//If there is no fragment, then see if we are in a function
-		if(frag.length() == 0) { 
-			IRegion funcregion;
-			String  funcfrag = "";
-
-			funcregion = CWordFinder.findFunction(document, pos + 1);
-			if(funcregion != null) {			
-				try {
-					funcfrag = document.get(funcregion.getOffset(), funcregion.getLength());
-					funcfrag = funcfrag.trim();
-				} catch(Exception ex) {
-					funcfrag = "";
-				}
-				if(funcfrag.length() == 0) {
-					return null;			
-				} else {
-					//@@@ Add some marker here to indicate different path!
-					region = funcregion;
-					frag = funcfrag;
-				}
-			}
-		}
-		
-		// Based on the frag name, build a list of completion proposals
+		currentOffset = documentOffset;		
+		currentSourceUnit = unit;
 		ArrayList completions = new ArrayList();
 		
-		// Look in index manager
-		addProposalsFromModel(region, completions);
+		addProposalsFromModel(completions);
 		
-		// Loot in the contributed completions
-		addProposalsFromCompletionContributors(region, frag, completions);
-		
-		return (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]);
+		return order ( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]) );		
 	}
 
-	private void addProposalsFromCompletionContributors(IRegion region, String frag, ArrayList completions) {
+	private void addProposalsFromCompletionContributors(String prefix, int offset, int length, List completions) {
 		IFunctionSummary[] summary;
 
-		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(frag);
+		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(prefix);
 		if(summary == null) {
 			return;
 		}
@@ -439,8 +306,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			
 			CCompletionProposal proposal;
 			proposal = new CCompletionProposal(fname, 
-											   region.getOffset(), 
-											   region.getLength(),
+											   offset, 
+											   length,
 											   CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION), 
 											   fproto.getPrototypeString(true),
 											   2);
@@ -472,7 +339,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	}
 	
 
-	private void addProposalsFromModel (IRegion region, ArrayList completions) {
+	private void addProposalsFromModel (List completions) {
 		
 		if (currentSourceUnit == null)
 		   return;
@@ -481,12 +348,15 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		resultCollector.clearCompletions();
 		
 		//invoke the completion engine
-		IASTCompletionNode completionNode = completionEngine.complete(currentSourceUnit, currentOffset, completions);
+		IASTCompletionNode completionNode = completionEngine.complete(currentSourceUnit, currentOffset);
 		if(completionNode == null)
 			return;
 		String prefix = completionNode.getCompletionPrefix();
+		int offset = currentOffset - prefix.length();
+		int length = prefix.length();
+		
 		String searchPrefix = prefix + "*";
-
+		
 		// figure out the search scope
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
@@ -496,8 +366,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	
 		if ((projectScope) || (projectScopeAndDependency)){
 			List elementsFound = new LinkedList();
-			resultCollector.clearCompletions();
-			//////////////////////
 			
 			ICElement[] projectScopeElement = new ICElement[1];
 			projectScopeElement[0] = (ICElement)currentSourceUnit.getCProject();
@@ -515,26 +383,14 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
 			elementsFound.addAll(searchResultCollector.getSearchResults());
 			
-			sendResultsToCollector(elementsFound.iterator(), region.getOffset(), region.getLength(), prefix ); 
+			sendResultsToCollector(elementsFound.iterator(), offset, length, prefix ); 
 		}
-		else{
-/*			//Try to get the file
-			IResource actualFile = currentSourceUnit.getUnderlyingResource();
-			IProject project = currentSourceUnit.getCProject().getProject();
-			ArrayList dependencies = new ArrayList();
-			if (actualFile != null){
-				//Get file's dependencies
-				try {
-					IndexManager indexMan = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-					indexMan.performConcurrentJob(new DependencyQueryJob(project, (IFile)actualFile, indexMan, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null, null);
-				} catch (Exception e) {
-				}
-			}
-			//Create CFileSearchScope
-			scope = SearchEngine.createCFileSearchScope((IFile) actualFile, dependencies);
-*/		}
 		
-		completions.addAll(resultCollector.getCompletions());
+		completions.addAll(resultCollector.getCompletions());		
+		
+		// Loot in the contributed completions
+		addProposalsFromCompletionContributors(prefix, offset, length, completions);
+		
 	}
 	
 	private void sendResultsToCollector(Iterator results , int completionStart, int completionLength, String prefix){

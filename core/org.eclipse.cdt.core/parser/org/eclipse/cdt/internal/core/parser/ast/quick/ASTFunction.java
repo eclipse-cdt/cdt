@@ -281,13 +281,4 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	{
 		return hasFunctionTryBlock;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 }

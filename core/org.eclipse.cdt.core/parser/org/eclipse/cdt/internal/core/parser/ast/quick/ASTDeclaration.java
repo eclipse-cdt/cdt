@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
  * @author jcamelon
  *
  */
-public abstract class ASTDeclaration implements IASTDeclaration {
+public abstract class ASTDeclaration extends ASTNode implements IASTDeclaration {
 
 	private final IASTScope scope; 
 	public ASTDeclaration( IASTScope scope )

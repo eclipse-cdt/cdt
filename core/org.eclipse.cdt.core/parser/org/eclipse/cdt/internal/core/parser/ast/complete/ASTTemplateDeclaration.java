@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
  * @author jcamelon
  *
  */
-public class ASTTemplateDeclaration implements IASTTemplateDeclaration
+public class ASTTemplateDeclaration extends ASTNode implements IASTTemplateDeclaration
 {
     /**
      * 
@@ -122,11 +122,4 @@ public class ASTTemplateDeclaration implements IASTTemplateDeclaration
     {
         // TODO Auto-generated method stub
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

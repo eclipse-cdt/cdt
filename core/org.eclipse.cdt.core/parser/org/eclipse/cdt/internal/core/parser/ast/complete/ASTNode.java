@@ -30,7 +30,7 @@ public class ASTNode implements IASTNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind, org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) throws LookupException {
+	public LookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException {
 		if( ! ( this instanceof ISymbolOwner ) || ( context != null && !(context instanceof ISymbolOwner) ) ){
 			return null;
 		}
@@ -52,7 +52,16 @@ public class ASTNode implements IASTNode {
 			throw new LookupException();
 		}
 	
-		TypeFilter filter = new TypeFilter( kind );
+		TypeFilter filter = null;
+		if( kind != null && kind.length > 0 ){
+			filter = new TypeFilter( kind[0] );
+			for( int i = 1; i < kind.length; i++ ){
+				filter.addFilteredType( kind[i] );
+			}	
+		} else {
+			filter = new TypeFilter();
+		}
+		
 		List lookupResults = null;
 		try {
 			if( qualification != null ){
@@ -63,6 +72,9 @@ public class ASTNode implements IASTNode {
 		} catch (ParserSymbolTableException e) {
 			throw new LookupException();
 		}
+		
+		if(lookupResults == null)
+			return null;
 		
 		ListIterator iter = lookupResults.listIterator();
 		while( iter.hasNext() ){

@@ -133,10 +133,11 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertNotNull( prefix );
 		assertTrue( node.getCompletionScope() instanceof IASTFunction );
 		assertEquals( prefix, "a" );
-		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.VARIABLE_TYPE );
+		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 		
-		
-		LookupResult result = node.getCompletionScope().lookup( prefix, IASTNode.LookupKind.ALL, node.getCompletionContext() );
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.ALL; 
+		LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -177,7 +178,9 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertNotNull( node.getCompletionContext() );
 		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
 		
-		LookupResult result = node.getCompletionScope().lookup( prefix, IASTNode.LookupKind.ALL, node.getCompletionContext() );
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.ALL; 
+		LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -229,7 +232,9 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertNotNull( node.getCompletionContext() );
 		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
 		
-		LookupResult result = node.getCompletionScope().lookup( prefix, IASTNode.LookupKind.METHODS, node.getCompletionContext() );
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.METHODS; 
+		LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();

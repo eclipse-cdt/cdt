@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.parser.ast.Offsets;
  * @author jcamelon
  *
  */
-public class ASTUsingDeclaration implements IASTUsingDeclaration
+public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
 {
 	private final IASTScope ownerScope;
     private final boolean isTypeName;
@@ -128,11 +128,4 @@ public class ASTUsingDeclaration implements IASTUsingDeclaration
     {
         return declaration;
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

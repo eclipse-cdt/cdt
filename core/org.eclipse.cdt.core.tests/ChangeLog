@@ -1,3 +1,6 @@
+2003-12-17 Hoda Amer
+	Small modifications to cope with the new interfaces
+	
 2003-12-15 Andrew Niefer
 	added ContextualParseTest.testCompletionLookup_Unqualified
 	added ContextualParseTest.testCompletionLookup_Qualified

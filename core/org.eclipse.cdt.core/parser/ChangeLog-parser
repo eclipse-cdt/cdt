@@ -1,3 +1,6 @@
+2003-12-17 Hoda Amer
+	Content Assist work : Integrated with Parser and Symbol table modifications
+	
 2003-12-15 Andrew Niefer
 	Changed IASTNode.lookup to take the context as a parameter
 	created ASTNode to implement IASTNode, ASTSymbolOwner extends it.

@@ -114,7 +114,7 @@ public class ContextualParser extends Parser implements IParser {
 	/**
 	 * @return
 	 */
-	private IASTCompletionNode.CompletionKind getCompletionKind() {
+	protected IASTCompletionNode.CompletionKind getCompletionKind() {
 		return kind;
 	}
 

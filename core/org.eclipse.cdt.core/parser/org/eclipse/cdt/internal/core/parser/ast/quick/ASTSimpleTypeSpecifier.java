@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
  * @author jcamelon
  *
  */
-public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
+public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpecifier
 {
 	private final boolean imaginary;
     private final boolean complex;
@@ -193,12 +193,4 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
     {
         return imaginary;
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

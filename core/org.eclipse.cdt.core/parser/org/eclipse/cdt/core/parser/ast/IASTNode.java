@@ -58,6 +58,6 @@ public interface IASTNode {
 	 	public Iterator getNodes(); 
 	 }
 
-	public LookupResult lookup( String prefix, LookupKind kind, IASTNode context) throws LookupException;
+	public LookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException;
 }
 

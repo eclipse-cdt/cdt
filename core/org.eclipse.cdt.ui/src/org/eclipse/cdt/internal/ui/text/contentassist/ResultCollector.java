@@ -10,8 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
@@ -32,7 +33,7 @@ import org.eclipse.swt.graphics.Image;
  * 
  */
 public class ResultCollector extends CompletionRequestorAdaptor {
-	private List completions = new ArrayList();
+	private Set completions = new HashSet();
 	private ImageDescriptorRegistry registry = CUIPlugin.getImageDescriptorRegistry();
 
 	public ResultCollector(){
@@ -42,7 +43,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 	/**
 	 * @return the completion list
 	 */
-	public List getCompletions() {
+	public Set getCompletions() {
 		return completions;
 	}
 	public void clearCompletions() {

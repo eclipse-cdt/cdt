@@ -29,5 +29,4 @@ public class Enum
     {
         return enumValue;
     }
-
 }

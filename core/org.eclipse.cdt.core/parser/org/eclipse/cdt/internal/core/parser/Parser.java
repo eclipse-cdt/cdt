@@ -767,6 +767,8 @@ public abstract class Parser implements IParser
         
         if( scope instanceof IASTClassSpecifier )
         	setCompletionKind( CompletionKind.FIELD_TYPE );
+        else if (scope instanceof IASTCodeScope)
+        	setCompletionKind( CompletionKind.SINGLE_NAME_REFERENCE);
         else
         	setCompletionKind( CompletionKind.VARIABLE_TYPE );
         try

@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
  *
  */
 public interface RelevanceConstants {
-	final int KEYWORD_TYPE_RELEVANCE = 13;
+	final int KEYWORD_TYPE_RELEVANCE = 30;
 	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 12;
 	final int FIELD_TYPE_RELEVANCE = 11;
 	final int VARIABLE_TYPE_RELEVANCE = 10;
@@ -32,6 +32,6 @@ public interface RelevanceConstants {
 	
 	final int CASE_MATCH_RELEVANCE = 10;
 	final int EXACT_NAME_MATCH_RELEVANCE = 4;
-	final int CASE_NOT_VALID_RELEVANCE = -100;
+
 	
 }

@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
  * @author jcamelon
  *
  */
-public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
+public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpecifier
 {
     private final List refs;
     private ISymbol symbol;
@@ -148,13 +148,4 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
     {
 		return symbol.getTypeInfo().checkBit( TypeInfo.isImaginary );		        
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -1,3 +1,6 @@
+2003-12-17 Hoda Amer
+	Content Assist work: Completion Engine calling new lookups
+	
 2003-12-15 Andrew Niefer
 	Updated CompletionEngine to match new signature for IASTNode.lookup
 

@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  * @author jcamelon
  *
  */
-public abstract class ASTAnonymousDeclaration implements IASTDeclaration
+public abstract class ASTAnonymousDeclaration extends ASTNode implements IASTDeclaration
 {
 	private final IContainerSymbol ownerScope; 
     /**

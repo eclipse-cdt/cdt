@@ -373,5 +373,29 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fRelevance= relevance;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fDisplayString.hashCode() 
+		+ fReplacementString.hashCode() 
+		+ ((fAdditionalInfoString == null) ? 0 : fAdditionalInfoString.hashCode());
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		if(!(other instanceof CCompletionProposal))
+			return false;
+		if(!(fDisplayString.equals(((CCompletionProposal)other).fDisplayString)))
+			return false;
+		if(!(fReplacementString.equals(((CCompletionProposal)other).fReplacementString)))
+			return false;
+		if((fAdditionalInfoString != null) && (((CCompletionProposal)other).fAdditionalInfoString != null) && (!(fAdditionalInfoString.equals(((CCompletionProposal)other).fAdditionalInfoString))))
+			return false;
+		
+		return true;
+	}
+	
 }
 

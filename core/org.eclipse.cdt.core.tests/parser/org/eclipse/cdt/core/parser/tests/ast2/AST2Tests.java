@@ -2735,7 +2735,7 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append("q = p;\n"); //$NON-NLS-1$
         buffer.append("p = &((struct s){ j++ }); \n"); //$NON-NLS-1$
         buffer.append("}\n"); //$NON-NLS-1$
-        parse(buffer.toString(), ParserLanguage.C);
+        parse(buffer.toString(), ParserLanguage.C, false, true);
     }
 
     public void testBug84266() throws Exception {

@@ -341,6 +341,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     && (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tLBRACKET)) {
 
                 if (LT(1) == IToken.tIDENTIFIER) {
+                	// fix for 84176: if reach identifier and it's not a designator then return empty designator list
+                	if (LT(2) != IToken.tCOLON)
+                		return designatorList;
+                	
                     IToken identifier = identifier();
                     int lastOffset = consume(IToken.tCOLON).getEndOffset();
                     ICASTFieldDesignator designator = createFieldDesignator();

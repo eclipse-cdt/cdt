@@ -694,6 +694,56 @@ public abstract class CVariable extends CDebugElement
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isNegativeInfinity()
+	 */
+	public boolean isNegativeInfinity()
+	{
+		try 
+		{
+			ICDIValue value = getCDIVariable().getValue();
+			if ( value instanceof ICDIDoubleValue )
+			{
+				double dbl = ((ICDIDoubleValue)value).doubleValue();
+				return ( Double.isInfinite( dbl ) && Double.NEGATIVE_INFINITY == dbl );
+			}
+			if ( value instanceof ICDIFloatValue )
+			{
+				float flt = ((ICDIFloatValue)value).floatValue();
+				return ( Float.isInfinite( flt ) && Float.NEGATIVE_INFINITY == flt );
+			}
+		}
+		catch( CDIException e ) 
+		{
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isPositiveInfinity()
+	 */
+	public boolean isPositiveInfinity()
+	{
+		try 
+		{
+			ICDIValue value = getCDIVariable().getValue();
+			if ( value instanceof ICDIDoubleValue )
+			{
+				double dbl = ((ICDIDoubleValue)value).doubleValue();
+				return ( Double.isInfinite( dbl ) && Double.POSITIVE_INFINITY == dbl );
+			}
+			if ( value instanceof ICDIFloatValue )
+			{
+				float flt = ((ICDIFloatValue)value).floatValue();
+				return ( Float.isInfinite( flt ) && Float.POSITIVE_INFINITY == flt );
+			}
+		}
+		catch( CDIException e ) 
+		{
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isFloatingPointType()
 	 */
 	public boolean isFloatingPointType() 

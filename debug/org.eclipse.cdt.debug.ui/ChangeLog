@@ -1,4 +1,8 @@
 2003-06-05 Mikhail Khodjaiants
+	UI support of infinite values of the floating point types.
+	* CDTDebugModelPresentation.java
+
+2003-06-05 Mikhail Khodjaiants
 	Evaluate expressions of detail panel asynchronously.
 	* CDTValueDetailProvider.java
 

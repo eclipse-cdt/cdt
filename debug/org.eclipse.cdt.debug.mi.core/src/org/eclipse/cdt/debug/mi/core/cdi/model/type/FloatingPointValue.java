@@ -26,13 +26,16 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	 */
 	public double doubleValue() throws CDIException {
 		double result = 0;
-		if ( isNaN() )
+		if (isNaN())
 			result = Double.NaN;
+		else if (isNegativeInfinity())
+			result = Double.NEGATIVE_INFINITY;
+		else if (isPositiveInfinity())
+			result = Double.POSITIVE_INFINITY;
 		else {		
 			try {
-				result = Double.parseDouble( getValueString() );
-			}
-			catch (NumberFormatException e) {
+				result = Double.parseDouble(getValueString());
+			} catch (NumberFormatException e) {
 			}
 		}
 		return result;
@@ -43,20 +46,33 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	 */
 	public float floatValue() throws CDIException {
 		float result = 0;
-		if ( isNaN() )
+		if (isNaN())
 			result = Float.NaN;
+		else if (isNegativeInfinity())
+			result = Float.NEGATIVE_INFINITY;
+		else if (isPositiveInfinity())
+			result = Float.POSITIVE_INFINITY;
 		else {		
 			try {
-				result = Float.parseFloat( getValueString() );
-			}
-			catch (NumberFormatException e) {
+				result = Float.parseFloat(getValueString());
+			} catch (NumberFormatException e) {
 			}
 		}
 		return result;
 	}
 
+	private boolean isPositiveInfinity() throws CDIException {
+		String valueString = getValueString();
+		return (valueString != null) ? valueString.indexOf("inf") != -1 : false;
+	}
+
+	private boolean isNegativeInfinity() throws CDIException {
+		String valueString = getValueString();
+		return (valueString != null) ? valueString.indexOf("-inf") != -1 : false;
+	}
+
 	private boolean isNaN() throws CDIException {
 		String valueString = getValueString();
-		return ( valueString != null ) ? valueString.indexOf( "nan" ) != -1 : false;
+		return (valueString != null) ? valueString.indexOf("nan") != -1 : false;
 	}
 }

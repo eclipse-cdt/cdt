@@ -1,4 +1,10 @@
 2003-06-05 Mikhail Khodjaiants
+	gdb/mi support of infinite values of the floating point types.
+	* DoubleValue.java
+	* FloatingPointValue.java
+	* FloatValue.java
+
+2003-06-05 Mikhail Khodjaiants
 	Removed the redundant methods from the 'ICDIFloatingPointValue' interface.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/FloatingPointValue.java
 

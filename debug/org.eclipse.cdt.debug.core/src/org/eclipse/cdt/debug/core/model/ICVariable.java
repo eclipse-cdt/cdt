@@ -38,6 +38,10 @@ public interface ICVariable extends IVariable
 
 	boolean isNaN();
 
+	boolean isPositiveInfinity();
+
+	boolean isNegativeInfinity();
+
 	boolean isPointer();
 
 	String getQualifiedName() throws DebugException;

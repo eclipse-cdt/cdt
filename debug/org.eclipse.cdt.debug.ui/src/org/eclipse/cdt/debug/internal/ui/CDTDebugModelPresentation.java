@@ -565,14 +565,29 @@ public class CDTDebugModelPresentation extends LabelProvider
 						label.append( ']' );					
 					}
 				}
-
-				else if ( !((ICVariable)var).isStructure() &&  value.getValueString() != null )
+				else if ( ((ICVariable)var).isCharacter() && value.getValueString() != null )
 				{
 					String valueString = value.getValueString().trim();
-					if ( valueString.length() == 0 && ((ICVariable)var).isCharacter() )
+					if ( valueString.length() == 0 )
 						valueString = ".";
+					label.append( "= " );
+					label.append( valueString );
+				}
+				else if ( ((ICVariable)var).isFloatingPointType() && value.getValueString() != null )
+				{
+					String valueString = value.getValueString().trim();
 					if ( ((ICVariable)var).isNaN() )
 						valueString = "NAN";
+					if ( ((ICVariable)var).isPositiveInfinity() )
+						valueString = "Infinity";
+					if ( ((ICVariable)var).isNegativeInfinity() )
+						valueString = "-Infinity";
+					label.append( "= " );
+					label.append( valueString );
+				}
+				else if ( !((ICVariable)var).isStructure() && value.getValueString() != null )
+				{
+					String valueString = value.getValueString().trim();
 					if ( valueString.length() > 0 )
 					{
 						label.append( "= " );

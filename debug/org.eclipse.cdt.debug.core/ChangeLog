@@ -1,4 +1,9 @@
 2003-06-05 Mikhail Khodjaiants
+	Core support of infinite values of the floating point types.
+	* ICVariable.java
+	* CVariable.java
+
+2003-06-05 Mikhail Khodjaiants
 	Renamed the 'computeDetail' method of the 'ICValue' interface to 'evaluateAsExpression'.
 	* ICValue.java
 	* CArrayPartitionValue.java

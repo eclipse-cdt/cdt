@@ -27,6 +27,8 @@
 	<target name="getJavadocPath">
 		<available file="${java.home}/bin/javadoc.exe" property="javadoc" value="${java.home}/bin/javadoc.exe"/>
 		<available file="${java.home}/bin/javadoc" property="javadoc" value="${java.home}/bin/javadoc" />
+		<echo message="javadoc=${javadoc}"/>
+		<echo message="java.home=${java.home}"/>
 	</target>
 	
 	<target name="generateJavadoc" depends="getJavadocPath" if="javadoc">

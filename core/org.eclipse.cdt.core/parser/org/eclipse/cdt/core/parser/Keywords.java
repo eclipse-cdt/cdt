@@ -15,6 +15,12 @@ package org.eclipse.cdt.core.parser;
  */
 public class Keywords {
 
+	public static final String CAST = "cast"; //$NON-NLS-1$
+	public static final String ALIGNOF = "alignof"; //$NON-NLS-1$
+	public static final String TYPEOF = "typeof"; //$NON-NLS-1$
+	public static final String cpMIN = "<?"; //$NON-NLS-1$
+	public static final String cpMAX = ">?"; //$NON-NLS-1$
+	
 	public static final String _BOOL = "_Bool"; //$NON-NLS-1$
 	public static final String _COMPLEX = "_Complex"; //$NON-NLS-1$
 	public static final String _IMAGINARY = "_Imaginary"; //$NON-NLS-1$

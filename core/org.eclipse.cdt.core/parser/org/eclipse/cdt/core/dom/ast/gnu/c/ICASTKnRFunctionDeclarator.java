@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
@@ -29,4 +30,5 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 	public static final ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty( "Parameter"); //$NON-NLS-1$
 	public void setParameterDeclarations(IASTDeclaration[] decls);
 	public IASTDeclaration[] getParameterDeclarations();
+	public IASTDeclarator getDeclaratorForParameterName(IASTName name);
 }

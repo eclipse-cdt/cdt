@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 
 /**
@@ -66,4 +68,27 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 
         return true;
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#getDeclaratorForParameterName()
+	 */
+	public IASTDeclarator getDeclaratorForParameterName(IASTName name) {
+		boolean found=false;
+		for(int i=0; i<parameterNames.length; i++) {
+			if (parameterNames[i] == name) found = true;
+		}
+		if(!found) return null;
+		
+		for(int i=0; i<parameterDeclarations.length; i++) {
+			if (parameterDeclarations[i] instanceof IASTSimpleDeclaration) {
+				IASTDeclarator[] decltors = ((IASTSimpleDeclaration)parameterDeclarations[i]).getDeclarators();
+				for(int j=0; j<decltors.length; j++) {
+					if(decltors[j].getName().toString().equals(name.toString()))
+						return decltors[j];
+				}
+			}
+		}
+		
+		return null;
+	}
 }

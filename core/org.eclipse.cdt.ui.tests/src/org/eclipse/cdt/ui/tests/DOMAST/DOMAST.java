@@ -13,7 +13,8 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
-import org.eclipse.cdt.core.dom.ast.ASTUtil;
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -33,6 +34,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -107,6 +111,9 @@ import org.eclipse.ui.part.ViewPart;
 public class DOMAST extends ViewPart {
    private static final String ASTUTIL_MENU_LABEL = "ASTUtil#"; //$NON-NLS-1$
    private static final String DISPLAY_TYPE = "getNodeType(IASTNode)"; //$NON-NLS-1$
+   private static final String DISPLAY_SIGNATURE = "getNodeSignature(IASTNode)"; //$NON-NLS-1$
+   private static final String DISPLAY_EXPRESSION = "getExpressionString(IASTExpression)"; //$NON-NLS-1$
+   private static final String DISPLAY_INITIALIZER = "getInitializerString(IASTInitializer)"; //$NON-NLS-1$
    private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
    private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
    private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
@@ -129,6 +136,9 @@ public class DOMAST extends ViewPart {
    private Action              openDeclarationsAction;
    private Action              openReferencesAction;
    private Action			   displayNodeTypeAction;
+   private Action			   displayNodeSignatureAction;
+   private Action			   displayExpressionAction;
+   private Action			   displayInitializerAction;
    private Action              singleClickAction;
    private Action              loadActiveEditorAction;
    private Action              refreshAction;
@@ -638,25 +648,71 @@ public class DOMAST extends ViewPart {
       MenuManager menuMgr = new MenuManager(POPUPMENU);
       menuMgr.setRemoveAllWhenShown(true);
       menuMgr.addMenuListener(new IMenuListener() {
+		  private void hideMenuItems(IMenuManager manager) {
+			  IContributionItem[] items = manager.getItems();
+			  
+			  for (int i = 0; i < items.length; i++) {
+				  if (items[i] instanceof IMenuManager) {
+					  hideMenuItems((IMenuManager)items[i]);
+				  }
+				  
+				  if (items[i] instanceof ActionContributionItem) {
+					  String text = ((ActionContributionItem) items[i]).getAction().getText();
+					  IASTNode selectedNode = null;
+					  if (viewer.getSelection() instanceof StructuredSelection
+							  && ((StructuredSelection) viewer.getSelection())
+							  .getFirstElement() instanceof TreeObject) {
+						  selectedNode = ((TreeObject) ((StructuredSelection) viewer
+								  .getSelection()).getFirstElement()).getNode(); 
+					  }
+					  
+					  if (text.equals(OPEN_REFERENCES) || text.equals(OPEN_DECLARATIONS)) {
+						  if (selectedNode instanceof IASTName) {
+							  items[i].setVisible(true);
+						  } else {
+							  items[i].setVisible(false);
+						  }
+					  }
+					  
+					  if (text.equals(DISPLAY_SIGNATURE)) {
+						  if (selectedNode instanceof IASTDeclarator || 
+								  selectedNode instanceof IASTDeclSpecifier ||
+								  selectedNode instanceof IASTTypeId) {
+							  items[i].setVisible(true);
+						  } else {
+							  items[i].setVisible(false);
+						  }
+					  } else if (text.equals(DISPLAY_TYPE)) {
+						  if (selectedNode instanceof IASTDeclarator ||
+								  selectedNode instanceof IASTTypeId ||
+								  (selectedNode instanceof IASTName && (
+										  ((IASTName)selectedNode).resolveBinding() instanceof IVariable ||
+										  ((IASTName)selectedNode).resolveBinding() instanceof IFunction ||
+										  ((IASTName)selectedNode).resolveBinding() instanceof IType))) {
+							  items[i].setVisible(true);
+						  } else {
+							  items[i].setVisible(false);
+						  }
+					  } else if (text.equals(DISPLAY_EXPRESSION)) {
+						  if (selectedNode instanceof IASTExpression) {
+							  items[i].setVisible(true);
+						  } else {
+							  items[i].setVisible(false);
+						  }
+					  } else if (text.equals(DISPLAY_INITIALIZER)) {
+						  if (selectedNode instanceof IASTInitializer) {
+							  items[i].setVisible(true);
+						  } else {
+							  items[i].setVisible(false);
+						  }
+					  }
+				  }
+			  }
+		  }
+		  
          public void menuAboutToShow(IMenuManager manager) {
             DOMAST.this.fillContextMenu(manager);
-            IContributionItem[] items = manager.getItems();
-            for (int i = 0; i < items.length; i++) {
-               if (items[i] instanceof ActionContributionItem
-                     && (((ActionContributionItem) items[i]).getAction()
-                           .getText().equals(OPEN_REFERENCES) || ((ActionContributionItem) items[i])
-                           .getAction().getText().equals(OPEN_DECLARATIONS))) {
-                  if (viewer.getSelection() instanceof StructuredSelection
-                        && ((StructuredSelection) viewer.getSelection())
-                              .getFirstElement() instanceof TreeObject
-                        && ((TreeObject) ((StructuredSelection) viewer
-                              .getSelection()).getFirstElement()).getNode() instanceof IASTName) {
-                     items[i].setVisible(true);
-                  } else {
-                     items[i].setVisible(false);
-                  }
-               }
-            }
+            hideMenuItems(manager);
          }
       });
       Menu menu = menuMgr.createContextMenu(viewer.getControl());
@@ -681,6 +737,9 @@ public class DOMAST extends ViewPart {
 	  // ASTUtil#... menu
 	  MenuManager astMenu = new MenuManager(ASTUTIL_MENU_LABEL);
 	  astMenu.add(displayNodeTypeAction);
+	  astMenu.add(displayNodeSignatureAction);
+	  astMenu.add(displayExpressionAction);
+	  astMenu.add(displayInitializerAction);
 	  manager.add(astMenu);
 	  manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
@@ -787,13 +846,52 @@ public class DOMAST extends ViewPart {
 		     	if (selection instanceof IStructuredSelection &&
 		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
 		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
-					showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTUtil.getNodeType(((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTTypeUtil.getNodeType(((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		     	}
 		  } };
 	  displayNodeTypeAction.setText(DISPLAY_TYPE);
       displayNodeTypeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
+	  displayNodeSignatureAction = new Action() { 
+		  public void run() {
+			  ISelection selection = viewer.getSelection();
+		     	if (selection instanceof IStructuredSelection &&
+		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
+		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
+					showMessage("ASTSignatureUtil#getNodeSignature(IASTNode): \"" + ASTSignatureUtil.getNodeSignature(((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     	}
+		  } };
+      displayNodeSignatureAction.setText(DISPLAY_SIGNATURE);
+	  displayNodeSignatureAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+		  .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	  
+	  displayExpressionAction = new Action() { 
+		  public void run() {
+			  ISelection selection = viewer.getSelection();
+		     	if (selection instanceof IStructuredSelection &&
+		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
+		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTExpression) {
+					showMessage("ASTSignatureUtil#getExpressionString(IASTExpression): \"" + ASTSignatureUtil.getExpressionString((IASTExpression)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     	}
+		  } };
+	  displayExpressionAction.setText(DISPLAY_EXPRESSION);
+	  displayExpressionAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+		  .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	  
+	  displayInitializerAction = new Action() { 
+		  public void run() {
+			  ISelection selection = viewer.getSelection();
+		     	if (selection instanceof IStructuredSelection &&
+		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
+		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTInitializer) {
+					showMessage("ASTSignatureUtil#getInitializerString(IASTInitializer): \"" + ASTSignatureUtil.getInitializerString((IASTInitializer)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     	}
+		  } };
+	  displayInitializerAction.setText(DISPLAY_INITIALIZER);
+	  displayInitializerAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+		  .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	  
       singleClickAction = new ASTHighlighterAction(part);
    }
 
@@ -939,7 +1037,7 @@ public class DOMAST extends ViewPart {
 
    void showMessage(String message) {
       MessageDialog.openInformation(viewer.getControl().getShell(), VIEW_NAME,
-            message);
+            message.replaceAll("&", "&&")); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    /**

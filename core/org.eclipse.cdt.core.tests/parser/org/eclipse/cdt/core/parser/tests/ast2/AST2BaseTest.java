@@ -19,19 +19,26 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -64,7 +71,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfigurat
  * @author aniefer
  */
 public class AST2BaseTest extends TestCase {
-
+	
     private static final IParserLogService NULL_LOG = new NullLogService();
 
     protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
@@ -279,4 +286,40 @@ public class AST2BaseTest extends TestCase {
         assertEquals( num, count );
     }
 
+
+	protected void isExpressionStringEqual(IASTExpression exp, String str) {
+		assertEquals(str, ASTSignatureUtil.getExpressionString(exp));
+	}
+	
+	protected void isParameterSignatureEqual(IASTDeclarator decltor, String str) {
+		assertEquals(str, ASTSignatureUtil.getParameterSignature(decltor));
+	}
+	
+	protected void isSignatureEqual(IASTDeclarator decltor, String str) {
+		assertEquals(str, ASTSignatureUtil.getSignature(decltor));
+	}
+	
+	protected void isSignatureEqual(IASTDeclSpecifier declSpec, String str) {
+		assertEquals(str, ASTSignatureUtil.getSignature(declSpec));
+	}
+	
+	protected void isSignatureEqual(IASTTypeId typeId, String str) {
+		assertEquals(str, ASTSignatureUtil.getSignature(typeId));
+	}
+	
+	protected void isTypeEqual(IASTDeclarator decltor, String str) {
+		assertEquals(str, ASTTypeUtil.getType(decltor));
+	}
+	
+	protected void isTypeEqual(IASTTypeId typeId, String str) {
+		assertEquals(str, ASTTypeUtil.getType(typeId));
+	}
+	
+	protected void isTypeEqual(IType type, String str) {
+		assertEquals(str, ASTTypeUtil.getType(type));
+	}
+	
+	protected void isParameterTypeEqual(IFunctionType fType, String str) {
+		assertEquals(str, ASTTypeUtil.getParameterTypeString(fType));
+	}
 }

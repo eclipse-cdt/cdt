@@ -137,14 +137,15 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 
 	protected void loadSymbols(PE pe) throws IOException {
 		ArrayList list = new ArrayList();
-
-		Coff.Symbol[] peSyms = pe.getSymbols();
-		byte[] table = pe.getStringTable();
-		addSymbols(peSyms, table, list);
-
+		loadSymbols(pe, list);
 		symbols = (ISymbol[]) list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
+	}
+	protected void loadSymbols(PE pe, List list) throws IOException {
+		Coff.Symbol[] peSyms = pe.getSymbols();
+		byte[] table = pe.getStringTable();
+		addSymbols(peSyms, table, list);
 	}
 
 	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List list) {

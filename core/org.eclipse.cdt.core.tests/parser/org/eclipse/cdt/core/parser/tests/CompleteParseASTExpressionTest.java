@@ -96,6 +96,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTMethod   m  = (IASTMethod) i.next();
+		Iterator r = callback.getReferences().iterator();
 		assertAllReferences( 4, createTaskList( new Task( cl, 3 ), new Task( f2 )));
 	}	
 	// Kind PRIMARY_BRACKETED_EXPRESSION : LHS

@@ -37,7 +37,7 @@ public class ASTExpression implements IASTExpression
     private final IASTTypeId typeId;
     private final IASTNewExpressionDescriptor newDescriptor;
     private final List references; 
-    private List resultType;
+    private ExpressionResult resultType;
     /**
      * 
      */
@@ -52,7 +52,6 @@ public class ASTExpression implements IASTExpression
     	this.typeId = typeId;
     	this.newDescriptor = newDescriptor;
     	this.references = references;
-    	resultType = new ArrayList();
     	this.idExpressionDuple = idExpression;
     	this.idExpression = idExpressionDuple == null ? "" : idExpressionDuple.toString();
     }
@@ -182,14 +181,14 @@ public class ASTExpression implements IASTExpression
 	/**
 	 * @return
 	 */
-	public List getResultType() {
+	public ExpressionResult getResultType() {
 		return resultType;
 	}
 
 	/**
 	 * @param i
 	 */
-	public void setResultType(List i) {
+	public void setResultType(ExpressionResult i) {
 		resultType = i;
 	}
     /* (non-Javadoc)

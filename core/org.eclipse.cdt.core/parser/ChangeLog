@@ -1,3 +1,8 @@
+2003-11-13 Hoda Amer
+	Changed the getExpressionResultType() in the complete factory to return 
+	an object of type ExpressionResult.
+	Solved bug#44342: Failure to dereference function calls after a . or an -> 
+	
 2003-11-07 John Camelon
 	Fixed Bug 39554 : _Pragma directive is not supported (ANSI C99) 
 

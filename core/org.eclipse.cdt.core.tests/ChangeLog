@@ -1,3 +1,8 @@
+2003-11-13 Hoda Amer
+	Added CompleteParseASTTest::testBug44342(): Failure to dereference function calls after a . or an ->
+	Moved testErrorHandling_1() to FailedCompleteParseASTTest
+	Added FailedCompleteParseASTTest::testBug44340():Inline functions fail to resolve references 
+	
 2003-11-06 Andrew Niefer
 	Remove dependancy on cdt.internal.ui.search.CSearchResultCollector in BaseSearchTest and DependencyTests
 

@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 
+
 public class TypeSearchMatchLabelProvider extends LabelProvider {
 
 	public static final int SHOW_FULLYQUALIFIED=	0x01;
@@ -58,26 +59,44 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 		
 		StringBuffer buf= new StringBuffer();
 		if (isSet(SHOW_TYPE_ONLY)) {
-			buf.append(typeRef.getName());
+			String name= typeRef.getName();
+			if (name != null && name.length() > 0)
+				buf.append(name);
 		} else if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
-			buf.append(typeRef.getQualifiedParentName());
+			String name= typeRef.getQualifiedParentName();
+			if (name != null && name.length() > 0)
+				buf.append(name);
 		} else if (isSet(SHOW_FILENAME_ONLY)) {
-			buf.append(typeRef.getFileName());
+			String name= typeRef.getFileName();
+			if (name != null && name.length() > 0)
+				buf.append(name);
 		} else {
-			if (isSet(SHOW_FULLYQUALIFIED))
-				buf.append(typeRef.getFullyQualifiedName());
-			else
-				buf.append(typeRef.getParentName());
+			if (isSet(SHOW_FULLYQUALIFIED)) {
+				String name= typeRef.getFullyQualifiedName();
+				if (name != null && name.length() > 0)
+					buf.append(name);
+			}
+			else {
+				String name= typeRef.getParentName();
+				if (name != null && name.length() > 0)
+					buf.append(name);
+			}
 		
 			if (isSet(SHOW_FILENAME_POSTFIX)) {
-				buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.dash")); //$NON-NLS-1$
-				buf.append(typeRef.getFileName());
+				String name= typeRef.getFileName();
+				if (name != null && name.length() > 0) {
+					buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.dash")); //$NON-NLS-1$
+					buf.append(name);
+				}
 			}
 		}
 
 		if (isSet(SHOW_ROOT_POSTFIX)) {
-			buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.dash"));//$NON-NLS-1$
-			buf.append(typeRef.getFilePath());
+			String path= typeRef.getFilePath();
+			if (path != null && path.length() > 0) {
+				buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.dash"));//$NON-NLS-1$
+				buf.append(path);
+			}
 		}
 		return buf.toString();				
 	}

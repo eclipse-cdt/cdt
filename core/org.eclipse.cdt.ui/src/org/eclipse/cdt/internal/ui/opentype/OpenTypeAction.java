@@ -12,14 +12,18 @@ package org.eclipse.cdt.internal.ui.opentype;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.opentype.dialogs.*;
+import org.eclipse.cdt.internal.ui.opentype.dialogs.OpenTypeSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -69,7 +73,14 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		if (result != IDialogConstants.OK_ID)
 			return;
 		
-		ICElement celement= (ICElement)dialog.getFirstResult();
+		TypeSearchMatch selection= (TypeSearchMatch)dialog.getFirstResult();
+		if (selection == null)
+			return;
+
+		boolean revealed = false;
+
+		// get the corresponding CElement
+		ICElement celement= selection.getCElement();
 		if (celement != null) {
 			try {
 				IResource res= celement.getUnderlyingResource();
@@ -77,6 +88,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 				if (part instanceof CEditor) {
 					CEditor ed= (CEditor)part;
 					ed.setSelection(celement);
+					revealed = true;
 				}
 			}
 			catch (CModelException ex){
@@ -85,6 +97,36 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			catch(PartInitException ex) {
 				ex.printStackTrace();
 			}
+		}
+		
+		if (!revealed) {
+			try {
+				IPath path = selection.getLocation();
+				IStorage storage = new FileStorage(path);
+				IEditorPart part= EditorUtility.openInEditor(storage);
+				if (part instanceof CEditor) {
+					CEditor ed= (CEditor)part;
+					ed.selectAndReveal(selection.getStartOffset(), selection.getName().length());
+					revealed = true;
+				}
+			}
+			catch (CModelException ex){
+				ex.printStackTrace();
+			}
+			catch(PartInitException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		if (!revealed)
+		{
+			// could not find definition
+			String path= selection.getFilePath();
+			if (path == null || path.length() == 0)
+				path= "Unknown";
+			String title= OpenTypeMessages.getString("TypeSelectionDialog.errorTitle"); //$NON-NLS-1$
+			String message= OpenTypeMessages.getFormattedString("TypeSelectionDialog.dialogMessage", path); //$NON-NLS-1$
+			MessageDialog.openError(parent, title, message);
 		}
 	}
 

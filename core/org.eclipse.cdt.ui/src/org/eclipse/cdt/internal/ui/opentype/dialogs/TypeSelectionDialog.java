@@ -16,12 +16,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.opentype.OpenTypeMessages;
-import org.eclipse.cdt.internal.ui.opentype.TypeSearchMatchLabelProvider;
 import org.eclipse.cdt.internal.ui.opentype.TypeSearchMatch;
+import org.eclipse.cdt.internal.ui.opentype.TypeSearchMatchLabelProvider;
 import org.eclipse.cdt.internal.ui.opentype.TypeSearchOperation;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -34,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
+
 
 /**
  * A dialog to select a type from a list of types.
@@ -199,20 +199,9 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		TypeSearchMatch selection= (TypeSearchMatch) getLowerSelectedElement();
 		if (selection == null)
 			return;
-
-		// get the corresponding CElement
-		ICElement celement= selection.getCElement();
-		if (celement != null) {
-			List result= new ArrayList(1);
-			result.add(celement);
-			setResult(result);
-		}
-		else {
-			// could not find definition
-			String title= OpenTypeMessages.getString("TypeSelectionDialog.errorTitle"); //$NON-NLS-1$
-			String message= OpenTypeMessages.getFormattedString("TypeSelectionDialog.dialogMessage", selection.getFilePath()); //$NON-NLS-1$
-			MessageDialog.openError(getShell(), title, message);
-			setResult(null);
-		}
+			
+		List result= new ArrayList(1);
+		result.add(selection);
+		setResult(result);
 	}
 }

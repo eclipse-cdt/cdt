@@ -1,3 +1,17 @@
+2004-02-05 Alain Magloire
+
+	From Chris Wiebe:
+	This patch fixes a problem in the OpenType dialog where it did not show
+	types defined in #includes outside the workspace.  If a CElement does
+	not exist for a given type, it tries to open an editor at the file and
+	line where the match was found.
+
+	* src/org/eclipse/cdt/internal/ui/opentype/OpenTypeAction.java
+	* src/org/eclipse/cdt/internal/ui/opentype/TypeSearchMatch.java
+	* src/org/eclipse/cdt/internal/ui/opentype/TypeSearchMatchLabelProvider.java
+	* src/org/eclpise/cdt/internal/ui/opentype/dialogs/OpenTypeSelectionDialog.java
+	* src/org/eclpise/cdt/internal/ui/opentype/dialogs/TypeSelectionDialog.java
+
 2004-02-03 Alain Magloire
 	PR 51121
 	From Chris Wiebe:

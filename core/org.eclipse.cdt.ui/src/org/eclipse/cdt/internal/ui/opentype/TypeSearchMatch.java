@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
+
 /**
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
@@ -30,42 +31,57 @@ public class TypeSearchMatch extends BasicSearchMatch
 	public String getFileName() {
 		if (resource != null)
 			return resource.getName();
-		return "";
+		else if (path != null)
+			return path.lastSegment();
+		else
+			return null;
 	}
 
 	public String getFilePath() {
 		if (resource != null)
 			return resource.getFullPath().toString();
-		return "";
+		else if (path != null)
+			return path.toString();
+		else
+			return null;
 	}
 
 	public String getFileExtension() {
 		if (resource != null)
 			return resource.getFileExtension();
-		return "";
+		else if (path != null)
+			return path.getFileExtension();
+		else
+			return null;
 	}
 
 	public String getQualifiedParentName() {
 		StringBuffer buf= new StringBuffer();
-		if (getFileName().length() > 0)
-			buf.append(getFileName());
-		if (getParentName().length() > 0) {
+		String fileName = getFileName();
+		if (fileName != null && fileName.length() > 0)
+			buf.append(fileName);
+		String parentName = getParentName();
+		if (parentName != null && parentName.length() > 0) {
 			buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.colon")); //$NON-NLS-1$
-			buf.append(getParentName());
+			buf.append(parentName);
 		}
 		return buf.toString();
 	}
 	
 	public String getFullyQualifiedName() {
 		StringBuffer buf= new StringBuffer();
-		if (getFilePath().length() > 0)
-			buf.append(getFilePath());
-		if (getParentName().length() > 0) {
+		String filePath = getFilePath();
+		if (filePath != null && filePath.length() > 0)
+			buf.append(filePath);
+		String parentName = getParentName();
+		if (parentName != null && parentName.length() > 0) {
 			buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.colon")); //$NON-NLS-1$
-			buf.append(getParentName());
+			buf.append(parentName);
 			buf.append("::");
 		}
-		buf.append(getName());
+		String name = getName();
+		if (name != null && name.length() > 0)
+			buf.append(name);
 		return buf.toString();
 	}
 	

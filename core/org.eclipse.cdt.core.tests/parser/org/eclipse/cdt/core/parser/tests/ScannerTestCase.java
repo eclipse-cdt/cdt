@@ -1716,4 +1716,36 @@ public class ScannerTestCase extends BaseScannerTest
     	
     	assertEquals( t1.getNext(), t2 );
     }
+    
+//    public void testBug69134() throws Exception
+//	{
+//    	Writer writer = new StringWriter();
+//    	writer.write( "# ifdef YYDEBUG\n" );
+//    	writer.write( " if (yyDebug) {\n" );
+//    	writer.write( " (void) fprintf (yyTrace,\n" );
+//    	writer.write( "\"  # |Position|State|Mod|Lev|Action |Terminal and Lookahead or Rule\n\");\n" );
+//    	writer.write( "yyNl ();\n" );
+//    	writer.write( "}\n" );
+//    	writer.write( "# endif\n" );
+//    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+//    	initializeScanner(writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+//    	fullyTokenize();
+//    	assertTrue( callback.problems.isEmpty() );
+//	}
+//    
+//    public void testBug69161() throws Exception
+//	{
+//    	Writer writer = new StringWriter();
+//    	writer.write( "#define MACRO(s) s\n" );
+//    	writer.write( "char *testQueries[] =\n");
+//    	writer.write( "{\n");
+//    	writer.write( "MACRO(\",\"), // if you change the comma to anything else there is no error\n");
+//    	writer.write( "MACRO(\"(\"),\n" );
+//    	writer.write( "MACRO(\")\")\n" );
+//    	writer.write( "};\n");
+//    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+//    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+//    	fullyTokenize();
+//    	assertTrue( callback.problems.isEmpty() );
+//	}
 }

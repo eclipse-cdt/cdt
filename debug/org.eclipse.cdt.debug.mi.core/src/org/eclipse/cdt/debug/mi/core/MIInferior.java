@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
  */
@@ -140,7 +141,7 @@ public class MIInferior extends Process {
 			MIExecAbort abort = factory.createMIExecAbort();
 			try {
 				session.postCommand(abort);
-				session.getRxThread().fireEvent(new MIInferiorExitEvent());
+				MIInfo info = abort.getMIInfo();
 			} catch (MIException e) {
 			}
 			setTerminated();
@@ -198,6 +199,7 @@ public class MIInferior extends Process {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		session.getRxThread().fireEvent(new MIInferiorExitEvent());
 		notifyAll();
 	}
 

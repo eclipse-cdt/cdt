@@ -94,24 +94,27 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						opt.setWorkingDirectory(wd.getAbsolutePath());
 					}
 					opt.setEnvironment(expandEnvironment(config));
-					ICDITarget dtarget = dsession.getTargets()[0];
-					Process process = dtarget.getProcess();
-					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 					debugger =  dsession.getSessionProcess();
 					if ( debugger != null ) {
 						debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 					}
-					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-					CDIDebugModel.newDebugTarget(
-						launch,
-						dsession.getCurrentTarget(),
-						renderTargetLabel(debugConfig),
-						iprocess,
-						debuggerProcess,
-						exeFile,
-						true,
-						false,
-						stopInMain);
+					ICDITarget[] dtargets = dsession.getTargets();
+					for (int i = 0; i < dtargets.length; ++i) {
+						ICDITarget dtarget = dtargets[i];
+						Process process = dtarget.getProcess();
+						IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
+						boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+						CDIDebugModel.newDebugTarget(
+								launch,
+								dtarget,
+								renderTargetLabel(debugConfig),
+								iprocess,
+								debuggerProcess,
+								exeFile,
+								true,
+								false,
+								stopInMain);
+					}
 
 				} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
@@ -124,12 +127,15 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 						launch.removeProcess(debuggerProcess);
 					}
-					CDIDebugModel.newAttachDebugTarget(
-						launch,
-						dsession.getCurrentTarget(),
-						renderTargetLabel(debugConfig),
-						debuggerProcess,
-						exeFile);
+					ICDITarget[] dTargets = dsession.getTargets();
+					for (int i = 0; i < dTargets.length; ++i) {
+						CDIDebugModel.newAttachDebugTarget(
+								launch,
+								dTargets[i],
+								renderTargetLabel(debugConfig),
+								debuggerProcess,
+								exeFile);
+					}
 				}
 			} catch (CDIException e) {
 				if (dsession != null) {

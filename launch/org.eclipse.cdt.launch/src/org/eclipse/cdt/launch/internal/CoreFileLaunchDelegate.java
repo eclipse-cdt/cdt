@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -77,14 +78,15 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		}
 		// set the source locator
 		setSourceLocator(launch, config);
-
-		CDIDebugModel.newCoreFileDebugTarget(
-			launch,
-			dsession.getCurrentTarget(),
-			renderTargetLabel(debugConfig),
-			debuggerProcess,
-			exeFile);
-		
+		ICDITarget[] dTargets = dsession.getTargets();
+		for (int i = 0; i < dTargets.length; ++i) {
+			CDIDebugModel.newCoreFileDebugTarget(
+					launch,
+					dTargets[i],
+					renderTargetLabel(debugConfig),
+					debuggerProcess,
+					exeFile);
+		}
 		monitor.done();
 	}
 

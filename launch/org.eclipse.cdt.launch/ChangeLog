@@ -1,3 +1,8 @@
+2004-10-17 Alain Magloire
+	Remove deprecated method in CDI adjust the implementation.
+	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+
 2004-10-08 Mikhail Khodjaiants
 	Added the launch configuration preference for the register bookkeeping.
 	* LaunchUIPluginResources.properties

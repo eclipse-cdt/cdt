@@ -1,3 +1,9 @@
+2003-05-23 Mikhail Khodjaiants
+	Fix for PR 38047: Unable to save changes in C/C++ debug editor.
+	* CDebugEditor.java
+	* EditorInputDelegate.java
+	* CDebugUIPlugin.java
+
 2003-05-29 Mikhail Khodjaiants
 	PR 38268: added the image cache for overlay images.
 	* OverlayImageCache.java: new

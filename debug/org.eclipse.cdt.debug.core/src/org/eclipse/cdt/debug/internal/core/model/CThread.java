@@ -409,7 +409,7 @@ public class CThread extends CDebugElement
 	 */
 	public IBreakpoint[] getBreakpoints()
 	{
-		return null;
+		return ((CDebugTarget)getDebugTarget()).getThreadBreakpoints( this );
 	}
 
 	/* (non-Javadoc)

@@ -335,12 +335,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 					{
 						return target.getName() + " (Watchpoint is out of scope)";
 					}
-/*
 					if ( info != null && info instanceof ICDIBreakpointHit )
 					{
 						return target.getName() + " (Breakpoint hit)";
 					}
-*/
 				}
 			}
 		}

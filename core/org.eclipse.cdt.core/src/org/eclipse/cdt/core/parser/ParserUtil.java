@@ -68,15 +68,22 @@ public class ParserUtil
 					Reader r = findWorkingCopy( resultingResource, workingCopies );
 					if( r != null ) return r;
 				}
-				BufferedInputStream bufferedStream = new BufferedInputStream( ((IFile) resultingResource).getContents() );
-				InputStreamReader inputReader  = new InputStreamReader( bufferedStream );
-				return new BufferedReader( inputReader );
+				return createResourceReader(resultingResource);
 			}
 		}
 		catch( CoreException ce )
 		{
 		}
 		return InternalParserUtil.createFileReader(finalPath);
+	}
+
+	/**
+	 * @param resource
+	 * @return
+	 * @throws CoreException
+	 */
+	public static BufferedReader createResourceReader(IResource resource) throws CoreException {
+		return new BufferedReader( new InputStreamReader( new BufferedInputStream( ((IFile) resource).getContents() ) ) );
 	}
 
 	/**

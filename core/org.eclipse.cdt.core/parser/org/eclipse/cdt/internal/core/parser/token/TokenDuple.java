@@ -110,9 +110,9 @@ public class TokenDuple implements ITokenDuple {
 		if( args != null && args[ args.length - 1 ] != null ){
 			List newArgs = new ArrayList( 1 );
 			newArgs.add( args[ args.length - 1 ] );
-			return new TokenDuple( first, last, newArgs );
+			return TokenFactory.createTokenDuple( first, last, newArgs );
 		} 
-		return new TokenDuple( first, last );
+		return TokenFactory.createTokenDuple( first, last );
 		
 	}
 	
@@ -157,9 +157,9 @@ public class TokenDuple implements ITokenDuple {
 				if( args[i] != null ) 
 					foundArgs = true;
 			}
-			return new TokenDuple( first, last, ( foundArgs ? newArgs : null ) );
+			return TokenFactory.createTokenDuple( first, last, ( foundArgs ? newArgs : null ) );
 		} 
-		return new TokenDuple( first, last );
+		return TokenFactory.createTokenDuple( first, last );
 	}
 	
 	public int getSegmentCount()
@@ -329,7 +329,7 @@ public class TokenDuple implements ITokenDuple {
      */
     public ITokenDuple getSubrange(int startIndex, int endIndex)
     {
-		return new TokenDuple( getToken( startIndex ), getToken( endIndex) );
+		return TokenFactory.createTokenDuple( getToken( startIndex ), getToken( endIndex) );
     }
 
     /**

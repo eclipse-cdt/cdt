@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.io.StringReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 
 public class CModelBuilder {
@@ -81,7 +82,6 @@ public class CModelBuilder {
 	{
 		IProject currentProject = null;
 		boolean hasCppNature = true;
-		String code = ""; //$NON-NLS-1$
 		
 		// get the current project
 		if (translationUnit != null && translationUnit.getCProject() != null) {
@@ -92,11 +92,11 @@ public class CModelBuilder {
 		{
 			hasCppNature = CoreModel.hasCCNature(currentProject);
 		}
-		// get the code to parse
-		try{
-			code = translationUnit.getBuffer().getContents();
-		} catch (CModelException e) {
-			
+		
+		Reader reader = null;
+		try {
+			reader = ParserUtil.createResourceReader( translationUnit.getResource() );
+		} catch (CoreException e) {
 		}
 		// use quick or structural parse mode
 		ParserMode mode = quickParseMode ? ParserMode.QUICK_PARSE : ParserMode.STRUCTURAL_PARSE;
@@ -124,7 +124,7 @@ public class CModelBuilder {
 			
 			parser = ParserFactory.createParser( 
 				ParserFactory.createScanner( 
-					new StringReader( code ), 
+					reader, 
 					(translationUnit.getUnderlyingResource() != null ? 
 					 translationUnit.getUnderlyingResource().getLocation().toOSString() :
 					 ""), //$NON-NLS-1$

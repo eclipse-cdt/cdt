@@ -231,7 +231,7 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getStartOffset()
 	 */
 	public int getStartOffset() {
-		return 0;
+		return getOffset();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getSubrange(int, int)

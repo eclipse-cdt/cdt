@@ -1,3 +1,22 @@
+2003-01-20 Alain Magloire
+
+	The problem was that no check was done for the existence of
+	the program/executable nor the working directory etc ...
+	By asking the arguements to be File, the check is done by
+	the caller.
+
+	* src/.../mi/core/MIPlugin.java (createCSession): Change the
+	the arguments.
+	* src/.../mi/core/GDBDebugger.java (createCSession): Change the
+
+2003-01-20 Alain Magloire
+
+	* src/.../mi/core/command/MIWhatis.java: New file.
+	* src/.../mi/core/command/MIPType.java: New file.
+	* src/.../mi/core/command/MISharedLibary.java: New file.
+	* src/.../mi/core/output/MIWhatisInfo.java: New file.
+	* src/.../mi/core/output/MIPTypeInfo.java: New file.
+
 2003-01-18 Alain Magloire
 
 	* src/.../mi/core/cdi/event/DestroyedEvent.java (DestroyedEvent):

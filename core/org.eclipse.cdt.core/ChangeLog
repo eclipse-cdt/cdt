@@ -1,5 +1,10 @@
 2004-09-03 Alain Magloire
 
+	Add the BinaryModule to the info.
+	* model/org/eclipse/cdt/internal/core/model/BinaryModule.java
+
+2004-09-03 Alain Magloire
+
 	Patch from Patrick Duboy. 72901
 	* plugin.xml
 

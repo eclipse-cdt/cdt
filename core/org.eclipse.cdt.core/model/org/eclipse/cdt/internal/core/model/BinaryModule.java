@@ -89,6 +89,7 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
+		newElements.put(this, info);
 	}
 
 }

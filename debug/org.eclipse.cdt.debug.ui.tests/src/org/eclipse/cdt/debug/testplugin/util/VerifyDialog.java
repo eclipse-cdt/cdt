@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 public class VerifyDialog extends TitleAreaDialog {
 	private int SIZING_WIDTH = 400;
 	
-	private static int      TEST_TYPE;
+	static int      TEST_TYPE;
 	public static final int TEST_SIZING = 0;
 	public static final int TEST_FOCUS  = 1;
 	public static final int TEST_ACCESS = 2;
@@ -42,7 +42,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	private Point  _testDialogSize;
 	
 	private Label  _queryLabel;
-	private Button _yesButton;
+	Button _yesButton;
 	private Button _noButton;
 	private Button _checkList[];
 	private String _failureText;
@@ -181,7 +181,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	 * Disables the yes button if any of the items in the checklist
 	 * are unchecked.  Enables the yes button otherwise.
 	 */
-	private void checkYesEnable() {
+	void checkYesEnable() {
 		boolean enable = true;
 		for (int i = 0; i < _checkList.length; i++) {
 			if ( !_checkList[i].getSelection() ) {
@@ -193,7 +193,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	/*
 	 * Initializes the checklist, banner texts, and query label
 	 */
-	private void initializeTest() {
+	void initializeTest() {
 		IDialogTestPass test = _dialogTests[TEST_TYPE];
 		setTitle( test.title() );
 		setMessage( test.description() );

@@ -26,11 +26,9 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class MakeView extends ViewPart {
 
@@ -45,15 +43,15 @@ public class MakeView extends ViewPart {
 		super();
 	}
 
-	/**
-	 * @see IWorkbenchPart#setFocus()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		viewer.getTree().setFocus();
 	}
 
-	/**
-	 * @see ContentOutlinePage#createControl
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		WorkbenchHelp.setHelp(parent, IMakeHelpContextIds.MAKE_VIEW);
@@ -156,6 +154,7 @@ public class MakeView extends ViewPart {
 		updateActions(sel);
 	}
 
+	
 	void updateActions(IStructuredSelection sel) {
 		addTargetAction.selectionChanged(sel);
 		buildTargetAction.selectionChanged(sel);

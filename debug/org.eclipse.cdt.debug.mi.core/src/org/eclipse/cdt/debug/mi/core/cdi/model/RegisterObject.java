@@ -11,4 +11,8 @@ public class RegisterObject extends VariableObject implements ICDIRegisterObject
 		super(target, name, null, i, 0);
 	}
 
+	public RegisterObject(ICDITarget target, String name, String fn, int i) {
+		super(target, name, fn, null, i, 0);
+	}
+
 }

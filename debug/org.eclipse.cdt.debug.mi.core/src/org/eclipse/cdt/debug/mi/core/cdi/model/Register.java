@@ -25,6 +25,19 @@ public class Register extends Variable implements ICDIRegister {
 		super(obj, var);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject#getFullName()
+	 */
+	public String getFullName() {
+		if (fullName == null) {
+			String n = getName();
+			if (!n.startsWith("$")) { //$NON-NLS-1$
+				fullName = "$" + n; //$NON-NLS-1$
+			}
+		}
+		return fullName;
+	}
+
 	public ICDIVariable[] getChildren() throws CDIException {
 			Session session = (Session)(getTarget().getSession());
 			MISession mi = session.getMISession();
@@ -36,13 +49,24 @@ public class Register extends Variable implements ICDIRegister {
 				mi.postCommand(var);
 				MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException("No answer"); //$NON-NLS-1$
 				}
 				MIVar[] vars = info.getMIVars();
 				children = new Register[vars.length];
 				for (int i = 0; i < vars.length; i++) {
+					String fn;
+					String exp = vars[i].getExp();
+					if (isCPPLanguage()) {
+						if ((exp.equals("private") || exp.equals("public") || exp.equals("protected"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							fn = getFullName();
+						} else {
+							fn = getFullName() + "." + exp;
+						}
+					} else {
+						fn = getFullName() + "." + exp;
+					}
 					RegisterObject regObj = new RegisterObject(getTarget(),
-					 vars[i].getExp(), getPosition());
+					 exp, fn, getPosition());
 					children[i] = mgr.createRegister(regObj, vars[i]);
 				}
 			} catch (MIException e) {

@@ -48,7 +48,6 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.PointerValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ReferenceValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ShortValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.StructValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
@@ -70,7 +69,6 @@ public class Variable extends VariableObject implements ICDIVariable {
 	MIVar miVar;
 	Value value;
 	ICDIVariable[] children = new ICDIVariable[0];
-	Type type;
 	String editable = null;
 	String language;
 	boolean isFake = false;
@@ -115,18 +113,18 @@ public class Variable extends VariableObject implements ICDIVariable {
 				mi.postCommand(var);
 				MIVarInfoExpressionInfo info = var.getMIVarInfoExpressionInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException("No answer"); //$NON-NLS-1$
 				}
 				language = info.getLanguage();
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
 		}
-		return (language == null) ? "" : language;
+		return (language == null) ? "" : language; //$NON-NLS-1$
 	}
 
 	boolean isCPPLanguage() throws CDIException {
-		return getLanguage().equalsIgnoreCase("C++");
+		return getLanguage().equalsIgnoreCase("C++"); //$NON-NLS-1$
 	}
 
 	void setIsFake(boolean f) {
@@ -159,23 +157,38 @@ public class Variable extends VariableObject implements ICDIVariable {
 			}
 			MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("No answer"); //$NON-NLS-1$
 			}
 			MIVar[] vars = info.getMIVars();
 			children = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
 				String fn= getFullName();
 				String childName = vars[i].getExp();
-				String childTypename = null;
+				ICDIType childType = null;
 				boolean childFake = false;
 				ICDIType t = getType();
 				if (t instanceof ICDIArrayType) {
-					fn = "(" + fn + ")[" + i + "]";
+					fn = "(" + fn + ")[" + i + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					// For Array gdb varobj only return the index, override here.
 					int index = castingIndex + i;
-					childName = getName() + "[" + index + "]";
+					childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (t instanceof ICDIPointerType) {
-					fn = "*(" + fn + ")";
+					ICDIType subType = ((ICDIPointerType)t).getComponentType();
+					if (subType instanceof ICDIStructType) {
+						if (isCPPLanguage()) {
+							if (!isFake()
+									|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								childFake = true;
+								childType = t;
+							} else {
+								fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						} else { // If not C++ language
+							fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					} else {
+						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} else if (t instanceof ICDIStructType) {
 					if (isCPPLanguage()) {
 						// For C++ in GDB the children of the
@@ -195,20 +208,20 @@ public class Variable extends VariableObject implements ICDIVariable {
 						// So we choose to ignore the first set of children
 						// but carry over to those "fake" variables the typename and the qualified name
 						if (!isFake()
-							|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) {
+							|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							childFake = true;
-							childTypename = getTypeName();
+							childType = t;
 						} else {
-							fn = "(" + fn + ")." + vars[i].getExp();
+							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					} else { // If not C++ language
-						fn = "(" + fn + ")." + vars[i].getExp();
+						fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				Variable v = new Variable(getTarget(), childName, fn, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
-				if (childTypename != null) {
+				if (childType != null) {
 					// Hack to reset the typename to a known value
-					v.typename = childTypename;
+					v.type = childType;
 				}
 				v.setIsFake(childFake);
 				children[i] = v;
@@ -221,20 +234,6 @@ public class Variable extends VariableObject implements ICDIVariable {
 
 	public int getChildrenNumber() throws CDIException {
 		return miVar.getNumChild();
-	}
-
-	/**
-	 * We overload the VariableObject since the gdb-varobject already knows
-	 * the type and its probably more accurate.
-	 * 
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getTypeName()
-	 */
-	public String getTypeName() throws CDIException {
-		// We overload here not to use the whatis command.
-		if (typename == null) {
-			typename = miVar.getType();
-		}
-		return typename;
 	}
 
 	/**
@@ -299,7 +298,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 			mi.postCommand(var);
 			MIInfo info = var.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("No answer"); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -350,14 +349,14 @@ public class Variable extends VariableObject implements ICDIVariable {
 				mi.postCommand(var);
 				MIVarShowAttributesInfo info = var.getMIVarShowAttributesInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException("No answer"); //$NON-NLS-1$
 				}
 				editable = String.valueOf(info.isEditable());
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
 		}
-		return (editable == null) ? false : editable.equalsIgnoreCase("true");
+		return (editable == null) ? false : editable.equalsIgnoreCase("true"); //$NON-NLS-1$
 	}
 
 	/**
@@ -372,7 +371,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 			mi.postCommand(var);
 			MIInfo info = var.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("No answer"); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);

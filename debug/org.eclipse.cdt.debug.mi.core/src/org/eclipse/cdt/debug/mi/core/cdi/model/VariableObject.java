@@ -22,12 +22,9 @@ import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
-import org.eclipse.cdt.debug.mi.core.command.MIWhatis;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
 
 /**
  */
@@ -45,7 +42,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 
 	String qualifiedName = null;
 	String fullName = null;
-	Type type = null;
+	ICDIType type = null;
 	String typename = null;
 	String sizeof = null;
 
@@ -56,6 +53,9 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	public VariableObject(VariableObject obj) {
 		super(obj.getTarget());
 		name = obj.getName();
+		fullName = obj.fullName;
+		sizeof = obj.sizeof;
+		type = obj.type;
 		try {
 			frame = obj.getStackFrame();
 		} catch (CDIException e) {
@@ -119,7 +119,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		String fn = getFullName();
 		if (castingLength > 0 || castingIndex > 0) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("*(");
+			buffer.append("*("); //$NON-NLS-1$
 			buffer.append('(').append(fn).append(')');
 			if (castingIndex != 0) {
 				buffer.append('+').append(castingIndex);
@@ -129,7 +129,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			fn = buffer.toString();
 		} else if (castingType != null && castingType.length() > 0) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("((").append(castingType).append(')');
+			buffer.append("((").append(castingType).append(')'); //$NON-NLS-1$
 			buffer.append(fn).append(')');
 			fn = buffer.toString();
 		}
@@ -158,7 +158,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			ICDITarget target = getTarget();
 			Session session = (Session) (target.getSession());
 			SourceManager sourceMgr = (SourceManager) session.getSourceManager();
-			String nametype = getTypeName();
+			String nametype = sourceMgr.getTypeName(getQualifiedName());
 			try {
 				type = sourceMgr.getType(target, nametype);
 			} catch (CDIException e) {
@@ -167,6 +167,15 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 					String ptype = sourceMgr.getDetailTypeName(nametype);
 					type = sourceMgr.getType(target, ptype);
 				} catch (CDIException ex) {
+					// Some version of gdb does not work woth the name of the class
+					// ex: class data foo --> ptype data --> fails
+					// ex: class data foo --> ptype foo --> succeed
+					try {
+						String ptype = sourceMgr.getDetailTypeName(getQualifiedName());
+						type = sourceMgr.getType(target, ptype);
+					} catch (CDIException e2) {
+						// give up.
+					}
 				}
 			}
 			if (type == null) {
@@ -185,13 +194,13 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			Session session = (Session) (target.getSession());
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			String exp = "sizeof(" + getTypeName() + ")";
+			String exp = "sizeof(" + getTypeName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression(exp);
 			try {
 				mi.postCommand(evaluate);
 				MIDataEvaluateExpressionInfo info = evaluate.getMIDataEvaluateExpressionInfo();
 				if (info == null) {
-					throw new CDIException("Target is not responding");
+					throw new CDIException("Target not responding"); //$NON-NLS-1$
 				}
 				sizeof = info.getExpression();
 			} catch (MIException e) {
@@ -235,21 +244,8 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	 */
 	public String getTypeName() throws CDIException {
 		if (typename == null) {
-			try {
-				ICDITarget target = getTarget();
-				Session session = (Session) (target.getSession());
-				MISession mi = session.getMISession();
-				CommandFactory factory = mi.getCommandFactory();
-				MIWhatis whatis = factory.createMIWhatis(getQualifiedName());
-				mi.postCommand(whatis);
-				MIWhatisInfo info = whatis.getMIWhatisInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
-				}
-				typename = info.getType();
-			} catch (MIException e) {
-				throw new MI2CDIException(e);
-			}
+			ICDIType theType = getType();
+			typename = theType.getTypeName();
 		}
 		return typename;
 	}

@@ -517,11 +517,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 
         final CSourceViewer sourceViewer = (CSourceViewer) getSourceViewer();
-        if (sourceViewer != null)
-        {
-            sourceViewer.unconfigure();
-        }
-        
         if (fSelectionUpdateListener != null) {
 			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
 			fSelectionUpdateListener = null;
@@ -1023,7 +1018,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				fOverviewRuler,
 				isOverviewRulerVisible(),
 				fileType);
-        sourceViewer.configure(getSourceViewerConfiguration());
 		fSourceViewerDecorationSupport =
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		

@@ -1,3 +1,7 @@
+2004-12-21 Alain Magloire
+	Fix PR 81635 patch form Przemek
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+
 2004-12-20 Alain Magloire
 	Fix PR 50578
 	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java

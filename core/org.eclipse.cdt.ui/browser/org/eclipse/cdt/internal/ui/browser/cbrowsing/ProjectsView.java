@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -47,7 +47,7 @@ public class ProjectsView extends CBrowsingPart {
 	 * @param parent	the parent for the viewer
 	 */
 	protected StructuredViewer createViewer(Composite parent) {
-		ProblemTreeViewer result= new ProblemTreeViewer(parent, SWT.MULTI);
+	    ElementTreeViewer result= new ElementTreeViewer(parent, SWT.MULTI);
 //		fFilterUpdater= new FilterUpdater(result);
 //		ResourcesPlugin.getWorkspace().addResourceChangeListener(fFilterUpdater);
 		return result;
@@ -204,10 +204,21 @@ public class ProjectsView extends CBrowsingPart {
 			return null;
 		}
 
-		if (element instanceof ITypeInfo) {
+	    if (element instanceof ITranslationUnit) {
+			ICElement e = (ICElement)element;
+			ISourceRoot root = findSourceRoot(e);
+			if (exists(root) && !isProjectSourceRoot(root))
+				return root;
+			ICProject cProject = findCProject(e);
+			if (exists(cProject))
+				return cProject;
+			return null;
+	    }
+
+	    if (element instanceof ITypeInfo) {
 			ITypeInfo info = (ITypeInfo)element;
 			ISourceRoot root = findSourceRoot(info);
-			if (exists(root))
+			if (exists(root) && !isProjectSourceRoot(root))
 				return root;
 			ICProject cProject = findCProject(info);
 			if (exists(cProject))
@@ -225,7 +236,7 @@ public class ProjectsView extends CBrowsingPart {
 				    ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
 				    if (info != null) {
 						ISourceRoot root = findSourceRoot(info);
-						if (exists(root))
+						if (exists(root) && !isProjectSourceRoot(root))
 							return root;
 						ICProject cProject = findCProject(info);
 						if (exists(cProject))

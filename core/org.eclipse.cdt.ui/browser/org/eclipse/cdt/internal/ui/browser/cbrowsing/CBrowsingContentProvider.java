@@ -15,8 +15,6 @@ import java.util.Collection;
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeCacheChangedListener;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -62,8 +60,11 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 	}
 
 	public void typeCacheChanged(IProject project) {
-	    ICProject cproject = CoreModel.getDefault().create(project);
-	    postRefresh(cproject);
+	    if (project.exists() && project.isOpen()) {
+	        postAdjustInputAndSetSelection(CoreModel.getDefault().create(project));
+	    } else {
+	        postAdjustInputAndSetSelection(CoreModel.getDefault().getCModel());
+	    }
 	}
 	
 /*	 (non-Javadoc)
@@ -133,7 +134,22 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 		}
 	}
 */
-	private void postRefresh(final Object element) {
+	
+	private void postAdjustInputAndSetSelection(final Object element) {
+		postRunnable(new Runnable() {
+			public void run() {
+				Control ctrl= fViewer.getControl();
+				if (ctrl != null && !ctrl.isDisposed()) {
+					ctrl.setRedraw(false);
+					
+					fBrowsingPart.adjustInputPreservingSelection(element);
+					ctrl.setRedraw(true);
+				}
+			}
+		});
+	}
+	
+/*	private void postRefresh(final Object element) {
 		//System.out.println("UI refresh:" + root);
 		postRunnable(new Runnable() {
 			public void run() {
@@ -154,7 +170,7 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 		});
 	}
 
-/*	private void postAdd(final Object parent, final Object element) {
+	private void postAdd(final Object parent, final Object element) {
 		//System.out.println("UI add:" + parent + " " + element);
 		postRunnable(new Runnable() {
 			public void run() {

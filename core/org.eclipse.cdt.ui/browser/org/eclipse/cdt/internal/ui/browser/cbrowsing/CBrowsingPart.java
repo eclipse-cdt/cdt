@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.ProblemTableViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetFilterActionGroup;
@@ -922,7 +921,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	 * @param parent	the parent for the viewer
 	 */
 	protected StructuredViewer createViewer(Composite parent) {
-		return new ProblemTableViewer(parent, SWT.MULTI);
+		return new ElementTableViewer(parent, SWT.MULTI);
 	}
 	
 	protected int getLabelProviderFlags() {
@@ -1161,12 +1160,34 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		// Default is to do nothing
 	}
 
+	void adjustInputPreservingSelection(Object input) {
+		Object elementToSelect = null;
+		ISelection selection = getSelectionProvider().getSelection();
+		Object oldSelObj = null;
+		if (selection instanceof IStructuredSelection) {
+		    oldSelObj = getSingleElementFromSelection(selection);
+		    if (input != null) {
+		        elementToSelect = findChildInInput(input, oldSelObj);
+		        if (elementToSelect != null) {
+		            adjustInputAndSetSelection(elementToSelect);
+		            return;
+		        }
+		    }
+		}
+		adjustInputAndSetSelection(input);
+	}
+
+    private Object findChildInInput(Object input, Object oldSelObj) {
+        //TODO
+        return null;
+    }
+	
 	void adjustInputAndSetSelection(Object o) {
 		if (!(o instanceof ICElement) && !(o instanceof ITypeInfo)) {
 			setSelection(StructuredSelection.EMPTY, true);
 			return;
 		}
-		
+
 		Object elementToSelect= getSuitableElement(findElementToSelect(o));
 		Object newInput= findInputForElement(o);
 		Object oldInput= null;

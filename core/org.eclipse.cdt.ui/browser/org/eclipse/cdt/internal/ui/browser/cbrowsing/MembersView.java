@@ -17,8 +17,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -96,7 +96,7 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	 * @param parent	the parent for the viewer
 	 */
 	protected StructuredViewer createViewer(Composite parent) {
-		ProblemTreeViewer viewer= new ProblemTreeViewer(parent, SWT.MULTI);
+	    ElementTreeViewer viewer= new ElementTreeViewer(parent, SWT.MULTI);
 //		fMemberFilterActionGroup= new MemberFilterActionGroup(viewer, JavaUI.ID_MEMBERS_VIEW);
 		return viewer;
 	}
@@ -223,7 +223,7 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 		    return element;
 		}
 		
-		if (element instanceof ICElement) {
+		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
 		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
 		    if (parent != null) {
 		        ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
@@ -240,7 +240,8 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findElementToSelect(java.lang.Object)
 	 */
 	protected Object findElementToSelect(Object element) {
-		if (element instanceof ICElement && TypeUtil.isDeclaredType((ICElement)element)) {
+		if (element instanceof ICElement && !(element instanceof ITranslationUnit)
+			&& TypeUtil.isDeclaredType((ICElement)element)) {
 		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
 		    if (parent != null) {
 		        return element;

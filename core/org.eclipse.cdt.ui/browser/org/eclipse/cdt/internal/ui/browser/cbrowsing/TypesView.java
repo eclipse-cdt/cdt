@@ -19,9 +19,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.ProblemTableViewer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
@@ -80,8 +80,8 @@ public class TypesView extends CBrowsingPart {
 //		return fWrappedViewer;
 		return viewer;
 	}
-	private ProblemTableViewer createTableViewer(Composite parent) {
-		return new ProblemTableViewer(parent, SWT.MULTI);
+	private ElementTableViewer createTableViewer(Composite parent) {
+		return new ElementTableViewer(parent, SWT.MULTI);
 	}
 	
 	/**
@@ -166,7 +166,7 @@ public class TypesView extends CBrowsingPart {
 			return null;
 		}
 
-		if (element instanceof ICElement) {
+		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
 		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
 		    if (parent != null) {
 		        ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
@@ -197,7 +197,7 @@ public class TypesView extends CBrowsingPart {
 			return null;
 		}
 		
-		if (element instanceof ICElement) {
+		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
 			ICElement parent = (ICElement)element;
 			while (parent != null) {
 				if ((parent instanceof IStructure

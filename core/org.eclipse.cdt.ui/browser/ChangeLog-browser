@@ -1,5 +1,17 @@
 2004-09-01 Chris Wiebe
 
+	Fix for 68883
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPart.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ElementTableViewer.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ElementTreeViewer.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/NamespacesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProjectsView.java
+
+2004-09-01 Chris Wiebe
+
 	replace deprecated SearchUI.SEARCH_RESULT_VIEW_ID w/ NewSearchUI.SEARCH_VIEW_ID
 	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPerspectiveFactory.java
 

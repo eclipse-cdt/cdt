@@ -74,4 +74,11 @@ public class ObjectSet extends HashTable{
 		removeEntry(i);
 		return true;
 	}
+
+    /**
+     * @return
+     */
+    public boolean isEmpty() {
+        return currEntry == -1;
+    }
 }

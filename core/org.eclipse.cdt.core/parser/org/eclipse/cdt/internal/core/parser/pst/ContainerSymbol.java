@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -838,18 +836,18 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( prefix ){
 			public List 	getParameters() { return params;      }
 			public boolean 	isPrefixLookup(){ return true;        }
-			public Set 		getAmbiguities(){ return ambiguities; }
+			public ObjectSet  getAmbiguities(){ return ambiguities; }
 			public TypeFilter getFilter() { return typeFilter; }
 			
 			public void addAmbiguity( String n ){
-				if( ambiguities == Collections.EMPTY_SET ){
-					ambiguities = new HashSet();
+				if( ambiguities == ObjectSet.EMPTY_SET ){
+					ambiguities = new ObjectSet(2);
 				}
-				ambiguities.add( n );
+				ambiguities.put( n );
 			}
 			
 			final private List params = paramList;
-			private Set ambiguities = Collections.EMPTY_SET;	
+			private ObjectSet ambiguities = ObjectSet.EMPTY_SET;	
 			final private TypeFilter typeFilter = filter;
 		};
 		
@@ -878,21 +876,21 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			} 
 			return null;
 		}
-		//remove any ambiguous symbols
-		if( data.getAmbiguities() != null && !data.getAmbiguities().isEmpty() ){
-			Iterator iter = data.getAmbiguities().iterator();
-			while( iter.hasNext() ){
-				data.foundItems.remove( iter.next() );
-			}
-		}
 		
 		List list = new ArrayList();
 		
-		Iterator iter = data.foundItems.keySet().iterator();
 		Object obj = null;
+		Object key = null;
 		List tempList = null;
-		while( iter.hasNext() ){
-			obj = data.foundItems.get( iter.next() );
+		int size = data.foundItems.size();
+		for( int i = 0; i < size; i++ ){
+		    key = data.foundItems.keyAt( i );
+		    
+		    //skip ambiguous symbols
+		    if( data.getAmbiguities() != null && data.getAmbiguities().containsKey( key ) )
+		        continue;
+		    
+			obj = data.foundItems.get( key );
 			
 			if( obj instanceof List ){
 				//a list must be all functions?
@@ -1031,7 +1029,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	protected class ContentsIterator implements Iterator {
 		final Iterator internalIterator;
 	
-		Set alreadyReturned = new HashSet();
+		ObjectSet alreadyReturned = new ObjectSet( 2 );
 		
 		public ContentsIterator( Iterator iter ){
 			internalIterator = iter;
@@ -1046,14 +1044,14 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				return false;
 			while( internalIterator.hasNext() ){
 				IExtensibleSymbol extensible = (IExtensibleSymbol) internalIterator.next();
-				if( !alreadyReturned.contains( extensible ) ){
+				if( !alreadyReturned.containsKey( extensible ) ){
 					if( extensible instanceof ISymbol ){
 						ISymbol symbol = (ISymbol) extensible;
 						ISymbol forward = symbol.getForwardSymbol();
 						if( symbol.isForwardDeclaration() && forward != null &&
 							forward.getContainingSymbol() == ContainerSymbol.this )
 						{
-							alreadyReturned.add( forward );
+							alreadyReturned.put( forward );
 							next = forward;
 							return true;
 						}
@@ -1077,13 +1075,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			
 			while( internalIterator.hasNext() ){
 				extensible = (IExtensibleSymbol) internalIterator.next();
-				if( !alreadyReturned.contains( extensible ) ){
+				if( !alreadyReturned.containsKey( extensible ) ){
 					if( extensible instanceof ISymbol ){
 						ISymbol symbol = (ISymbol) extensible;
 						if( symbol.isForwardDeclaration() && symbol.getForwardSymbol() != null &&
 							symbol.getForwardSymbol().getContainingSymbol() == ContainerSymbol.this )
 						{
-							alreadyReturned.add( symbol.getForwardSymbol() );
+							alreadyReturned.put( symbol.getForwardSymbol() );
 							return symbol.getForwardSymbol();
 						}
 					} else if( extensible instanceof IUsingDeclarationSymbol ){
@@ -1172,6 +1170,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 //		private final IUsingDirectiveSymbol _directive;
 //	}
 
+	static public final SymbolTableComparator comparator = new SymbolTableComparator();
 	static protected class SymbolTableComparator implements Comparator{
 		static final private Collator collator = Collator.getInstance();
 		static { collator.setStrength( Collator.PRIMARY ); }

@@ -17,8 +17,8 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -32,7 +32,7 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	public void addParameter( ITypeInfo.eType type, int info, ITypeInfo.PtrOp ptrOp, boolean hasDefault );
 	public void addParameter( ISymbol typeSymbol, int info, ITypeInfo.PtrOp ptrOp, boolean hasDefault );
 	
-	public Map getParameterMap();
+	public ObjectMap getParameterMap();
 	public List getParameterList();
 	//public void setParameterList( List list );
 

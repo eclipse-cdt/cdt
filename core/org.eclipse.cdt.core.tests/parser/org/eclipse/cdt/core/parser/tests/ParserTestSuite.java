@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.tests.scanner2.ObjectMapTest;
 import org.eclipse.cdt.core.parser.tests.scanner2.Scanner2Test;
 
 /**
@@ -53,6 +54,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( CompleteParseASTSymbolIteratorTest.class );
 		suite.addTestSuite( CompleteParseASTTemplateTest.class );
 		suite.addTestSuite( StructuralParseTest.class );
+		suite.addTestSuite( ObjectMapTest.class );
 		return suite;
 	}	
 }

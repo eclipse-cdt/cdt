@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -284,7 +285,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			
 			LookupData data = new LookupData( ParserSymbolTable.THIS );
 			try {
-				Map map = ParserSymbolTable.lookupInContained( data, obj );
+				ObjectMap map = ParserSymbolTable.lookupInContained( data, obj );
 				foundThis = ( map != null ) ? map.containsKey( data.name ) : false;
 			} catch (ParserSymbolTableException e) {
 				return false;

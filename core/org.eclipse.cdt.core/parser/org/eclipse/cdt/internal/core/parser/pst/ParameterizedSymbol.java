@@ -15,10 +15,11 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -40,7 +41,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		ParameterizedSymbol copy = (ParameterizedSymbol)super.clone();
 			
 		copy._parameterList = ( _parameterList != Collections.EMPTY_LIST ) ? (List) ((ArrayList)_parameterList).clone() : _parameterList;
-		copy._parameterMap	= ( _parameterMap != Collections.EMPTY_MAP ) ? (Map) ((HashMap) _parameterMap).clone() : _parameterMap;
+		copy._parameterMap	= ( _parameterMap != ObjectMap.EMPTY_MAP ) ? (ObjectMap) _parameterMap.clone() : _parameterMap;
 			
 		return copy;	
 	}
@@ -123,8 +124,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		String name = param.getName();
 		if( name != null && !name.equals(ParserSymbolTable.EMPTY_NAME) )
 		{
-			if( _parameterMap == Collections.EMPTY_MAP ){
-				_parameterMap = new HashMap( );
+			if( _parameterMap == ObjectMap.EMPTY_MAP ){
+				_parameterMap = new ObjectMap( 2 );
 			}
 			
 			if( !_parameterMap.containsKey( name ) )
@@ -165,7 +166,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getParameterMap()
 	 */
-	public Map getParameterMap(){
+	public ObjectMap getParameterMap(){
 		return _parameterMap;
 	}
 
@@ -312,7 +313,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	
 	
 	private 	List	_parameterList = Collections.EMPTY_LIST;	//have my cake
-	private 	Map			_parameterMap  = Collections.EMPTY_MAP;	//and eat it too
+	private 	ObjectMap	_parameterMap  = ObjectMap.EMPTY_MAP;	//and eat it too
 	private 	ISymbol		_returnType;
 	private 	boolean		_hasVarArgs = false;	//whether or not this function has variable arguments
 }

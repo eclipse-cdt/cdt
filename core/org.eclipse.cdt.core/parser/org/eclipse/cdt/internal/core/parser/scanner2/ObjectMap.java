@@ -15,6 +15,7 @@
  */
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.util.Comparator;
 
 /**
  * @author aniefer
@@ -76,5 +77,70 @@ public class ObjectMap extends HashTable{
 	        return null;
 	    
 	    return get( keyAt( i ) );
-	}	
+	}
+
+	public boolean isEmpty(){
+	    return currEntry == -1;
+	}
+	
+	public Object remove( Object key ) {
+		int i = lookup(key);
+		if (i < 0)
+			return null;
+
+		Object value = valueTable[i];
+		removeEntry(i);
+		
+		return value;
+	}
+	
+	protected void removeEntry(int i) {
+		// Remove the entry from the valueTable, shifting everything over if necessary
+		if (i < currEntry)
+			System.arraycopy(valueTable, i + 1, valueTable, i, currEntry - i);
+		valueTable[currEntry] = null;
+
+		// Make sure you remove the value before calling super where currEntry will change
+		super.removeEntry(i);
+	}
+	
+    public void sort( Comparator c ) {
+        if( size() > 1 ){
+	        quickSort( c, 0, size() - 1 );
+	        
+	        rehash( size(), false );
+        }
+    }	
+    
+    private void quickSort( Comparator c, int p, int r ){
+        if( p < r ){
+            int q = partition( c, p, r );
+            if( p < q )   quickSort( c, p, q );
+            if( ++q < r ) quickSort( c, q, r );
+        }
+    }
+    private int partition( Comparator c, int p, int r ){
+        Object x = keyTable[ p ];
+        Object temp = null;
+        int i = p;
+        int j = r;
+        
+        while( true ){
+            while( c.compare( keyTable[ j ], x ) > 0 ){ j--; }
+            if( i < j ) 
+                while( c.compare( keyTable[ i ], x ) < 0 ){ i++; }
+            
+            if( i < j ){
+                temp = keyTable[j];
+                keyTable[j] = keyTable[i];
+                keyTable[i] = temp;
+                
+                temp = valueTable[j];
+                valueTable[j] = valueTable[i];
+                valueTable[i] = temp;
+            } else {
+                return j;
+            }
+        }
+    }
 }

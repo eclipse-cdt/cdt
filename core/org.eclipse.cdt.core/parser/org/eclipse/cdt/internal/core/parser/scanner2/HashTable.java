@@ -21,7 +21,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
  */
 public abstract class HashTable implements Cloneable{
     
-	private Object[] keyTable;
+	protected Object[] keyTable;
 	private int[] hashTable;
 	private int[] nextTable;
 
@@ -81,7 +81,7 @@ public abstract class HashTable implements Cloneable{
 	    currEntry = -1;
 	}
 	
-	protected int capacity() {
+	public int capacity() {
 		return keyTable.length;
 	}
 	
@@ -112,9 +112,21 @@ public abstract class HashTable implements Cloneable{
 		System.arraycopy(oldKeyTable, 0, keyTable, 0, oldKeyTable.length);
 
 		// Need to rehash everything
-		hashTable = new int[size * 2];
-		nextTable = new int[size];
-		for (int i = 0; i < oldKeyTable.length; ++i) {
+		rehash( oldKeyTable.length, true );
+	}
+	
+	protected void rehash( int n, boolean reallocate ){
+	    if( reallocate ){
+	        hashTable = new int[ keyTable.length * 2 ];
+	        nextTable = new int[ keyTable.length ];
+	    } else {
+	        for( int i = 0; i < keyTable.length; i++ ){
+	            hashTable[2*i] = 0;
+	            hashTable[2*i+1] = 0;
+	            nextTable[i] = 0;
+	        }
+	    }
+	    for (int i = 0; i < n; ++i) {
 			insert(i);
 		}
 	}
@@ -184,11 +196,11 @@ public abstract class HashTable implements Cloneable{
 			
 			// adjust hash and next entries for things that moved
 			for (int j = 0; j < hashTable.length; ++j)
-				if (hashTable[j] > i)
+				if (hashTable[j] > i + 1)
 					--hashTable[j];
 
 			for (int j = 0; j < nextTable.length; ++j)
-				if (nextTable[j] > i)
+				if (nextTable[j] > i + 1)
 					--nextTable[j];
 		}
 

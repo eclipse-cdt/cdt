@@ -15,14 +15,10 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -30,8 +26,8 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
  * @author aniefer
@@ -127,7 +123,7 @@ public class ParserSymbolTable {
 		ArrayList transitives = null;	//list of transitive using directives
 		
 		//if this name define in this scope?
-		Map map = null;
+		ObjectMap map = null;
 		if( !data.usingDirectivesOnly ){
 			map = lookupInContained( data, inSymbol );
 			if( data.foundItems == null || data.foundItems.isEmpty() ){
@@ -251,7 +247,7 @@ public class ParserSymbolTable {
 			if( !data.visited.containsKey( temp ) ){
 				data.visited.put( temp );
 				
-				Map map = lookupInContained( data, temp );
+				ObjectMap map = lookupInContained( data, temp );
 				foundSomething = ( map != null && !map.isEmpty() );
 				if( foundSomething ){
 					if( data.foundItems == null )
@@ -278,15 +274,15 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @param map2
 	 */
-	private static void mergeResults( LookupData data, Map resultMap, Map map ) throws ParserSymbolTableException {
+	private static void mergeResults( LookupData data, ObjectMap resultMap, ObjectMap map ) throws ParserSymbolTableException {
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
 		
-		Iterator keyIterator = map.keySet().iterator();
 		Object key = null;
-		while( keyIterator.hasNext() ){
-			key = keyIterator.next();
+		int size = map.size();
+		for( int i = 0; i < size; i++ ){
+		    key = map.keyAt( i );
 			if( resultMap.containsKey( key ) ){
 				List list = new ArrayList();
 				Object obj = resultMap.get( key );
@@ -313,8 +309,8 @@ public class ParserSymbolTable {
 	 * 
 	 * Look for data.name in our collection _containedDeclarations
 	 */
-	protected static Map lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
-		Map found = null;
+	protected static ObjectMap lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
+		ObjectMap found = null;
 		
 		Object obj = null;
 	
@@ -327,8 +323,8 @@ public class ParserSymbolTable {
 		
 		int numKeys = -1;
 		int idx = 0;
-		if( data.isPrefixLookup() && declarations != Collections.EMPTY_MAP ){
-		    numKeys = declarations.size();//iterator = declarations.keySet().iterator();
+		if( data.isPrefixLookup() && declarations != ObjectMap.EMPTY_MAP ){
+		    numKeys = declarations.size();
 		}
 		
 		String name = ( numKeys > 0 ) ? (String) declarations.keyAt( idx++ ) : data.name;
@@ -341,10 +337,7 @@ public class ParserSymbolTable {
 					
 					if( obj != null ){
 						if( found == null ){
-						    if( data.isPrefixLookup() )
-						        found = new TreeMap( new ContainerSymbol.SymbolTableComparator() );
-						    else 
-						        found = new LinkedHashMap();
+						    found = new ObjectMap( 2 );
 						}
 						found.put( name, obj );
 					}
@@ -356,7 +349,7 @@ public class ParserSymbolTable {
 			    name = null;
 		} 
 		if( found != null && data.isPrefixLookup() )
-		    found = new LinkedHashMap( found );
+		    found.sort( ContainerSymbol.comparator );
 		
 		if( found != null && !data.isPrefixLookup() ){
 			return found;
@@ -386,7 +379,7 @@ public class ParserSymbolTable {
 	 * @param found
 	 * @throws ParserSymbolTableException
 	 */
-	private static Map lookupInParameters(LookupData data, IContainerSymbol lookIn, Map found) throws ParserSymbolTableException {
+	private static ObjectMap lookupInParameters(LookupData data, IContainerSymbol lookIn, ObjectMap found) throws ParserSymbolTableException {
 		Object obj;
 		Iterator iterator;
 		String name;
@@ -402,50 +395,50 @@ public class ParserSymbolTable {
 						obj = collectSymbol( data, symbol );
 						if( obj != null ){
 						    if( found == null ){
-							    if( data.isPrefixLookup() )
-							        found = new TreeMap( new ContainerSymbol.SymbolTableComparator() );
-							    else 
-							        found = new LinkedHashMap();
+						        found = new ObjectMap(2);
 							}
 							found.put( symbol.getName(), obj );
 						}
 					}
 				}
-				return ( found instanceof TreeMap ) ? new LinkedHashMap( found ) : found;
+				if( found != null && data.isPrefixLookup() )
+				    found.sort( ContainerSymbol.comparator );
+				
+				return found;
 			}
 			
 		}
-		Map parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
-		if( parameters != Collections.EMPTY_MAP ){
-			iterator = null;
-			if( data.isPrefixLookup() ){
-			    iterator = parameters.keySet().iterator();
-			}
+		ObjectMap parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
+		if( parameters != ObjectMap.EMPTY_MAP ){
+			int numKeys = -1;
+			int idx = 0;
 			
-			name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
+			if( data.isPrefixLookup() && parameters != ObjectMap.EMPTY_MAP ){
+			    numKeys = parameters.size();
+			}
+			name = ( numKeys > 0 ) ? (String) parameters.keyAt( idx++ ) : data.name;
 			while( name != null ){
 				if( nameMatches( data, name ) ){
 					obj = parameters.get( name );
 					obj = collectSymbol( data, obj );
 					if( obj != null ){
 					    if( found == null ){
-						    if( data.isPrefixLookup() )
-						        found = new TreeMap( new ContainerSymbol.SymbolTableComparator() );
-						    else 
-						        found = new LinkedHashMap();
+					        found = new ObjectMap( 2 );
 						}
 						found.put( name, obj );
 					}
 				}
 				
-				if( iterator != null && iterator.hasNext() ){
-					name = (String) iterator.next();
-				} else {
+				if( idx < numKeys )
+				    name = (String) parameters.keyAt( idx++ );
+				else 
 					name = null;
-				}
 			}
 		}
-		return ( found instanceof TreeMap ) ? new LinkedHashMap( found ) : found;
+		if( found != null && data.isPrefixLookup() )
+		    found.sort( ContainerSymbol.comparator );
+
+		return found;
 	}
 
 	private static boolean nameMatches( LookupData data, String name ){
@@ -630,7 +623,7 @@ public class ParserSymbolTable {
 	 * @return Declaration
 	 * @throws ParserSymbolTableException
 	 */
-	private static Map lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
+	private static ObjectMap lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
 		IDerivableContainerSymbol container = null;
 
 		if( lookIn instanceof IDerivableContainerSymbol ){
@@ -641,9 +634,9 @@ public class ParserSymbolTable {
 		
 		List scopes = container.getParents();
 
-		Map temp = null;
-		Map symbol = null;
-		Map inherited = null;
+		ObjectMap temp = null;
+		ObjectMap symbol = null;
+		ObjectMap inherited = null;
 		
 		IDerivableContainerSymbol.IParentSymbol wrapper = null;
 		
@@ -701,10 +694,11 @@ public class ParserSymbolTable {
 				if( symbol == null || symbol.isEmpty() ){
 					symbol = temp;
 				} else if ( temp != null && !temp.isEmpty() ) {
-					Iterator iter = temp.keySet().iterator();
 					Object key = null;
-					while( iter.hasNext() ){
-						key = iter.next();
+					int tempSize = temp.size();
+					for( int ii = 0; ii < tempSize; ii++ ){
+					    key = temp.keyAt( ii );
+					
 						if( symbol.containsKey( key ) ){
 							Object obj = symbol.get( key );
 							List objList = ( obj instanceof List ) ? (List)obj : null;
@@ -770,15 +764,15 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @throws ParserSymbolTableException
 	 */
-	private static void mergeInheritedResults( Map resultMap, Map map ){
+	private static void mergeInheritedResults( ObjectMap resultMap, ObjectMap map ){
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
 		
-		Iterator keyIterator = map.keySet().iterator();
 		Object key = null;
-		while( keyIterator.hasNext() ){
-			key = keyIterator.next();
+		int size = map.size();
+		for( int i = 0; i < size; i++ ){
+		    key = map.keyAt( i );
 			if( !resultMap.containsKey( key ) ){
 				resultMap.put( key, map.get( key ) );
 			}
@@ -1400,7 +1394,7 @@ public class ParserSymbolTable {
 					list = new ArrayList(4);
 					list.add( temp );
 					if( data.usingDirectives == null ){
-						data.usingDirectives = new HashMap();
+						data.usingDirectives = new ObjectMap(2);
 					}
 					data.usingDirectives.put( enclosing, list );
 				} else {
@@ -2224,7 +2218,7 @@ public class ParserSymbolTable {
 		protected static final TypeFilter FUNCTION_FILTER = new TypeFilter( ITypeInfo.t_function );
 		
 		public String name;
-		public Map usingDirectives; 
+		public ObjectMap usingDirectives; 
 		public ObjectSet visited = new ObjectSet(0);	//used to ensure we don't visit things more than once
 		public ObjectSet inheritanceChain;	//used to detect circular inheritance
 		public ISymbol templateMember;  	//to assit with template member defs
@@ -2236,7 +2230,7 @@ public class ParserSymbolTable {
 		public boolean exactFunctionsOnly = false;
 		public boolean returnInvisibleSymbols = false;
 		
-		public Map foundItems = null;
+		public ObjectMap foundItems = null;
 		
 		public LookupData( String n ){
 			name = n;
@@ -2245,7 +2239,7 @@ public class ParserSymbolTable {
 		//the following function are optionally overloaded by anonymous classes deriving from 
 		//this LookupData
 		public boolean isPrefixLookup(){ return false;}       //prefix lookup
-		public Set getAmbiguities()    { return null; }       
+		public ObjectSet getAmbiguities()    { return null; }       
 		public void addAmbiguity(String n ) { /*nothing*/ }
 		public List getParameters()    { return null; }       //parameter info for resolving functions
 		public ObjectSet getAssociated() { return null; }     //associated namespaces for argument dependant lookup

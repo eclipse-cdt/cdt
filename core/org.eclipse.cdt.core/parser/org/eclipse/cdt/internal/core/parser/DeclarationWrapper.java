@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
  */
 public class DeclarationWrapper implements IDeclaratorOwner
 { 
+    private int endOffset;
     private ITokenDuple name;
     private Type simpleType =
         IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
@@ -514,7 +515,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         declarator.getArrayModifiers(),
                         null, null, declarator.getName() == null
                                         ? ""
-                                        : declarator.getName(), declarator.getInitializerClause()));
+                                        : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getEndOffset(), declarator.getNameStartOffset()));
             }
         }
         return result;
@@ -649,4 +650,19 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return templateDeclaration;
     }
+    /**
+     * @param i
+     */
+    public void setEndingOffset(int i)
+    {
+        endOffset = i;
+    }
+    /**
+     * @return
+     */
+    public int getEndOffset()
+    {
+        return endOffset;
+    }
+
 }

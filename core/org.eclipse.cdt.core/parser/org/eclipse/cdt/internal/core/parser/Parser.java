@@ -605,7 +605,7 @@ public class Parser implements IParser
                             declarator.getArrayModifiers(),
                             null, null, declarator.getName() == null
                                             ? ""
-                                            : declarator.getName(), declarator.getInitializerClause()),
+                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getEndOffset(), declarator.getNameStartOffset()),
                         null));
             }
         }
@@ -1078,6 +1078,9 @@ public class Parser implements IParser
         if (LT(1) != IToken.tSEMI)
            initDeclarator(sdw, false, SimpleDeclarationStrategy.TRY_FUNCTION );
  
+ 		if( lastToken != null )
+ 			sdw.setEndingOffset( lastToken.getEndOffset() );
+ 			
         if (current == LA(1))
             throw backtrack;
         collection.addParameter(sdw);

@@ -975,7 +975,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					continue;
 				}
 				if (entry != otherEntry && otherEntry.equals(entry)) {
-					StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceBundle().getString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+					StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
 					errMesg.append(':').append(entry.toString());
 					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 				}
@@ -1005,17 +1005,17 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 									
 							String exclusionPattern = entryPath.removeFirstSegments(otherPath.segmentCount()).segment(0);
 							if (CoreModelUtil.isExcluded(entryPath, exclusionPatterns)) {
-								StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceBundle().getString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
+								StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								errMesg.append(':').append(entry.toString());
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else {
 								if (otherKind == IPathEntry.CDT_SOURCE) {
 									exclusionPattern += '/';
-									StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceBundle().getString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
+									StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 									errMesg.append(':').append(entry.toString());
 									return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 								} else {
-									StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceBundle().getString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
+									StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 									errMesg.append(':').append(entry.toString());
 									return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); //$NON-NLS-1$
 								}
@@ -1032,7 +1032,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	public ICModelStatus validatePathEntry(ICProject cProject, IPathEntry entry, boolean checkSourceAttachment, boolean recurseInContainers){
 		IProject project = cProject.getProject();
 		StringBuffer sb = new StringBuffer();
-		sb.append(CCorePlugin.getResourceBundle().getString("CoreModel.PathEntry.InvalidPathEntry")); //$NON-NLS-1$
+		sb.append(CCorePlugin.getResourceString("CoreModel.PathEntry.InvalidPathEntry")); //$NON-NLS-1$
 		sb.append(':').append(entry.toString());
 		String entryMesg = sb.toString();
 		switch(entry.getEntryKind()) {

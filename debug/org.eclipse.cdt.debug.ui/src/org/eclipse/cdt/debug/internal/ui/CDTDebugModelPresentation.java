@@ -894,12 +894,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 			{
 				// use default image
 			}
-			if ( type != null && ( type.isArray() || type.isStructure() ) )
-				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ? 
-							CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE : CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE_DISABLED );
-			else if ( type != null && type.isPointer() )
+			if ( type != null && (type.isPointer() || type.isReference()) )
 				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ?
 							CDebugImages.DESC_OBJS_VARIABLE_POINTER : CDebugImages.DESC_OBJS_VARIABLE_POINTER_DISABLED );
+			else if ( ((ICVariable)element).hasChildren() )
+				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ? 
+							CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE : CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE_DISABLED );
 			else
 				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ?
 							CDebugImages.DESC_OBJS_VARIABLE_SIMPLE : CDebugImages.DESC_OBJS_VARIABLE_SIMPLE_DISABLED );

@@ -1,3 +1,9 @@
+2004-11-23 Mikhail Khodjaiants
+	The enablement of the step actions is calculated in the UI thread. This causes 
+	the UI locks for slow or unresponsive targets. Use the cached stack frames to 
+	calculate the enablement instead of requesting gdb.
+	* CThread.java
+
 2004-11-22 Mikhail Khodjaiants
 	Check if the pointer value is not null before pass it to the address factory.
 	* CValue.java

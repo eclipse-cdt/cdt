@@ -1,3 +1,7 @@
+2002-11-21 Mikhail Khodjaiants
+	Added the handler of ICDIDestroyedEvent to 'CFormattedMemoryBlock.
+	* CFormattedMemoryBlock.java
+
 2002-11-20 Mikhail Khodjaiants
 	Fix for bug 26595.
 	The type of the address expression has been changed from String to ICDIExpression to handle 

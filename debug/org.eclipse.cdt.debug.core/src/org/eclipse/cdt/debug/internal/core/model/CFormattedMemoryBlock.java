@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
@@ -570,6 +571,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 					handleAddressChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
+			else if ( event instanceof ICDIDestroyedEvent )
+			{
+				if ( source instanceof ICDIExpression && source.equals( fAddressExpression ) )
+				{
+					handleDestroyedEvent( (ICDIDestroyedEvent)event );
+				}
+			}
 		}
 	}
 
@@ -604,6 +612,11 @@ public class CFormattedMemoryBlock extends CDebugElement
 		resetRows();
 		fStartAddressChanged = true;
 		fireChangeEvent( DebugEvent.CONTENT );
+	}
+	
+	private void handleDestroyedEvent( ICDIDestroyedEvent event )
+	{
+		fireTerminateEvent();
 	}
 	
 	public Long[] getChangedAddresses()

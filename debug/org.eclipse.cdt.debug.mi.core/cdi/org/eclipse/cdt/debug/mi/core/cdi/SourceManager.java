@@ -16,6 +16,9 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -23,7 +26,9 @@ import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBDerivedType;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MixedInstruction;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharType;
@@ -452,7 +457,12 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 
-	public String getDetailTypeName(Target target, String typename) throws CDIException {
+	public String getDetailTypeName(ICDIStackFrame frame, String typename) throws CDIException {
+		Target target = (Target)frame.getTarget();
+		ICDIThread currentThread = target.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(currentThread, false);
+		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -465,10 +475,18 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			return info.getType();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 	}
 
-	public String getTypeName(Target target, String variable) throws CDIException {
+	public String getTypeName(ICDIStackFrame frame, String variable) throws CDIException {
+		Target target = (Target)frame.getTarget();
+		ICDIThread currentThread = target.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(currentThread, false);
+		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -481,6 +499,9 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			return info.getType();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 	}
 

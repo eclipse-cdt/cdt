@@ -41,7 +41,9 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 		} catch (CDIException e) {
 			// Try after ptype.
 			try {
-				String ptype = sourceMgr.getDetailTypeName(target, name);
+				//String ptype = sourceMgr.getDetailTypeName(target, name);
+				// TODO: this type should be created with frames not targets.
+				String ptype = sourceMgr.getDetailTypeName(target.getCurrentThread().getCurrentStackFrame(), name);
 				derivedType = sourceMgr.getType(target, ptype);
 			} catch (CDIException ex) {
 			}

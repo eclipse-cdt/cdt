@@ -6,6 +6,8 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -216,17 +218,35 @@ public class Variable extends CObject implements ICDIVariable {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		
-		ICDIVariableManager mgr = session.getVariableManager();
+
 		// If the assign was succesfull fire a MIVarChangedEvent() for the variable
 		// Note GDB will not fire an event for the changed variable we have to do it manually.
 		MIVarChangedEvent change = new MIVarChangedEvent(var.getToken(), miVar.getVarName());
 		mi.fireEvent(change);
-		// Changing values may have side effects i.e. affecting other variable
+
+		// Changing values may have side effects i.e. affecting other variables
 		// if the manager is on autoupdate check all the other variables.
 		// Note: This maybe very costly.
-		if (mgr.isAutoUpdate()) {
-			mgr.update();
+		if (this instanceof Register) {		
+			// If register was on autoupdate, update all the other registers
+			// assigning may have side effects i.e. affecting other registers.
+			ICDIRegisterManager mgr = session.getRegisterManager();
+			if (mgr.isAutoUpdate()) {
+				mgr.update();
+			}	
+		} else if (this instanceof Expression) {
+			// If expression was on autoupdate, update all the other expression
+			// assigning may have side effects i.e. affecting other expressions.
+			ICDIExpressionManager mgr = session.getExpressionManager();
+			if (mgr.isAutoUpdate()) {
+				mgr.update();
+			}	
+		} else {
+			// FIXME: Should we always call the Variable Manager ?
+			ICDIVariableManager mgr = session.getVariableManager();
+			if (mgr.isAutoUpdate()) {
+				mgr.update();
+			}
 		}
 	}
 

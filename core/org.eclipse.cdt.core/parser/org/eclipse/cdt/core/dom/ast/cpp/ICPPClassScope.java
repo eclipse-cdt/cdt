@@ -17,5 +17,18 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @author aniefer
  */
 public interface ICPPClassScope extends ICPPScope {
+    /**
+     * Get the binding for the class this scope is associated with
+     * @return
+     */
 	ICPPClassType getClassType();
+	
+	/**
+	 * Returns an array of methods that were implicitly added to this class scope.
+	 * These methods may or may not have been explicitly declared in the code.
+	 * The methods that will be implicitly declared are: the default constructor, 
+	 * copy constructor, copy assignment operator, and destructor
+	 * @return
+	 */
+	public ICPPMethod [] getImplicitMethods();
 }

@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -40,12 +38,22 @@ public interface ICPPClassType extends ICompositeType {
 	public IField[] getFields() throws DOMException;
 	
 	/**
+	 * findField is restated here to point out that this method looks through the
+	 * inheritance tree of this class while looking for a field with the given name
+	 * If no field is found, null is returned, if the name is found to be ambiguous
+	 * a IProblemBinding is returned.
+	 * @param name
+	 * @return
+	 */
+	public IField findField( String name ) throws DOMException;
+	
+	/**
 	 * Returns a list of ICPPField objects representing fields declared in this
 	 * class. It does not include fields inherited from base classes.
 	 * 
 	 * @return List of ICPPField
 	 */
-	public List getDeclaredFields() throws DOMException;
+	public ICPPField[] getDeclaredFields() throws DOMException;
 	
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods defined for
@@ -54,7 +62,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public List getMethods() throws DOMException;
+	public ICPPMethod[] getMethods() throws DOMException;
 
 	/**
 	 * Returns a list of ICPPMethod objects representing all method explicitly
@@ -63,7 +71,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public List getAllDeclaredMethods() throws DOMException;
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException;
 	
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods explicitly
@@ -72,7 +80,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public List getDeclaredMethods() throws DOMException;
+	public ICPPMethod[] getDeclaredMethods() throws DOMException;
 
     /**
      * @return

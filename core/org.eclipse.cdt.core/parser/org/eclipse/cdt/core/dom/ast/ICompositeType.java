@@ -40,5 +40,10 @@ public interface ICompositeType extends IBinding, IType {
 	 */
 	public IField findField( String name ) throws DOMException;
 	
+	/**
+	 * get the IScope object that is associated with this composite type
+	 * @return
+	 * @throws DOMException
+	 */
 	public IScope getCompositeScope() throws DOMException;
 }

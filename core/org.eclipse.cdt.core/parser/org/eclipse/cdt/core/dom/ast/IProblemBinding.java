@@ -35,80 +35,63 @@ public interface IProblemBinding extends IBinding, IScope, IType {
     
     /*
      * Parser Semantic Problems
+     * All Semantic problems take a char[] as an argument
      */
-    
-    /**
-     * Attempt to add a unique symbol, yet the value was already defined.
-     * Require attributes: A_SYMBOL_NAME
-     * @see #A_SYMBOL_NAME  
-     */
-    public final static int SEMANTIC_UNIQUE_NAME_PREDEFINED = 0x001;
-    
+  
     /**
      * Attempt to use a symbol that was not found. 
      * Require attributes: A_SYMBOL_NAME
      * @see #A_SYMBOL_NAME  
      */ 
-    public final static int SEMANTIC_NAME_NOT_FOUND = 0x002;
-
-    /**
-     * Name not provided in context that it was required.   
-     * Require attributes: none
-     */
-    public final static int SEMANTIC_NAME_NOT_PROVIDED = 0x003;
+    public final static int SEMANTIC_NAME_NOT_FOUND = 0x001;
 
     /**
      * Invalid overload of a particular name.
      * Required attributes: A_SYMBOL_NAME
      * @see #A_SYMBOL_NAME  
      */
-    public static final int SEMANTIC_INVALID_OVERLOAD = 0x004;
+    public static final int SEMANTIC_INVALID_OVERLOAD = 0x002;
 
     /**
      * Invalid using directive.  
      * Required attributes: A_NAMESPACE_NAME
      * @see #A_NAMESPACE_NAME
      */
-    public static final int SEMANTIC_INVALID_USING = 0x005;
+    public static final int SEMANTIC_INVALID_USING = 0x003;
     
     /**
      * Ambiguous lookup for given name. 
      * Required attributes: A_SYMBOL_NAME
      * @see #A_SYMBOL_NAME
      */
-    public static final int SEMANTIC_AMBIGUOUS_LOOKUP = 0x006;
+    public static final int SEMANTIC_AMBIGUOUS_LOOKUP = 0x004;
 
     /**
      * Invalid type provided
      * Required attribugtes: A_TYPE_NAME
      * @see #A_TYPE_NAME
      */
-    public static final int SEMANTIC_INVALID_TYPE = 0x007;
+    public static final int SEMANTIC_INVALID_TYPE = 0x005;
 
-    public static final int SEMANTIC_CIRCULAR_INHERITANCE = 0x008;
+    /**
+     * circular inheritance was detected for a class
+     */
+    public static final int SEMANTIC_CIRCULAR_INHERITANCE = 0x006;
 
-    public static final int SEMANTIC_INVALID_TEMPLATE = 0x009;
-
-    public static final int SEMANTIC_BAD_VISIBILITY = 0x00A;
-
-    public static final int SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION = 0x00B;
-
-    public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENT = 0x00C;
-
-    public static final int SEMANTIC_INVALID_TEMPLATE_PARAMETER = 0x00D;
-
-    public static final int SEMANTIC_REDECLARED_TEMPLATE_PARAMETER = 0x00E;
-
-    public static final int SEMANTIC_INVALID_CONVERSION_TYPE = 0x00F;
-
-    public static final int SEMANTIC_MALFORMED_EXPRESSION = 0x010;
-
-    public static final int SEMANTIC_ILLFORMED_FRIEND = 0x011;
+    /**
+     * the definition for the class/function can not be found
+     */
+    public static final int SEMANTIC_DEFINITION_NOT_FOUND = 0x007;
     
-    public static final int SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION = 0x012;
+    /**
+     * the declaration for the K&R style function parameter can not be found
+     */
+    public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = 0x008;
     
-    public static final int SEMANTIC_DEFINITION_NOT_FOUND = 0x013;
-    public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = 0x014;
-    public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = 0x015;
+    /**
+     * a label statement can not be found to match a goto statement
+     */
+    public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = 0x009;
+    
     public static final int LAST_PROBLEM = SEMANTIC_LABEL_STATEMENT_NOT_FOUND;
 }

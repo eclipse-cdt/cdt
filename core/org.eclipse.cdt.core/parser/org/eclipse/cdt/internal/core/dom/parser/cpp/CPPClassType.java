@@ -13,8 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -36,11 +34,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -63,16 +65,16 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 		public IField[] getFields() throws DOMException {
 			throw new DOMException( this );
 		}
-		public List getDeclaredFields() throws DOMException {
+		public ICPPField[] getDeclaredFields() throws DOMException {
 			throw new DOMException( this );
 		}
-		public List getMethods() throws DOMException {
+		public ICPPMethod[] getMethods() throws DOMException {
 			throw new DOMException( this );
 		}
-		public List getAllDeclaredMethods() throws DOMException {
+		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 			throw new DOMException( this );
 		}
-		public List getDeclaredMethods() throws DOMException {
+		public ICPPMethod[] getDeclaredMethods() throws DOMException {
 			throw new DOMException( this );
 		}
 		public ICPPConstructor[] getConstructors() throws DOMException {
@@ -192,41 +194,37 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
-	public IField[] getFields() {
+	public IField[] getFields() throws DOMException {
 	    if( definition == null ){
 	        checkForDefinition();
 	        if( definition == null )
 	            return new IField [] { new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
 	    }
 
-		IASTDeclaration[] members = getCompositeTypeSpecifier().getMembers();
-		int size = members.length;
-		IField[] fields = null;
-		if( size > 0 ){
-
-			for( int i = 0; i < size; i++ ){
-				IASTNode node = members[i];
-				if( node instanceof IASTSimpleDeclaration ){
-					IASTDeclarator[] declarators = ((IASTSimpleDeclaration)node).getDeclarators();
-					for( int j = 0; j < declarators.length; j++ ){
-						IASTDeclarator declarator = declarators[i];
-						IBinding binding = declarator.getName().resolveBinding();
-						if( binding != null && binding instanceof IField )
-							fields = (IField[]) ArrayUtil.append( IField.class, fields, binding );
-					}
-				}
-			}
-			
-		}
+		IField[] fields = getDeclaredFields();
+		ICPPBase [] bases = getBases();
+		for ( int i = 0; i < bases.length; i++ ) {
+            fields = (IField[]) ArrayUtil.addAll( IField.class, fields, bases[i].getBaseClass().getFields() );
+        }
 		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
 	 */
-	public IField findField(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	public IField findField(String name) throws DOMException {
+		IBinding [] bindings = CPPSemantics.findBindings( getCompositeScope(), name, true );
+		IField field = null;
+		for ( int i = 0; i < bindings.length; i++ ) {
+            if( bindings[i] instanceof IField ){
+                if( field == null )
+                    field = (IField) bindings[i];
+                else {
+                    return new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray() );
+                }
+            }
+        }
+		return field;
 	}
 
 	/* (non-Javadoc)
@@ -337,33 +335,120 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
 	 */
-	public List getDeclaredFields() {
-		// TODO Auto-generated method stub
-		return null;
+	public ICPPField[] getDeclaredFields() throws DOMException {
+	    if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                return new ICPPField[] { new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
+	    IBinding binding = null;
+	    ICPPField [] result = null;
+	    
+	    IASTDeclaration [] decls = getCompositeTypeSpecifier().getMembers();
+	    for ( int i = 0; i < decls.length; i++ ) {
+            if( decls[i] instanceof IASTSimpleDeclaration ){
+                IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
+                for ( int j = 0; j < dtors.length; j++ ) {
+                    binding = dtors[j].getName().resolveBinding();
+                    if( binding instanceof ICPPField )
+                        result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, binding );
+                }
+            } else if( decls[i] instanceof ICPPASTUsingDeclaration ){
+                IASTName n = ((ICPPASTUsingDeclaration)decls[i]).getName();
+                binding = n.resolveBinding();
+                if( binding instanceof ICPPCompositeBinding ){
+                    IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
+                    for ( int j = 0; j < bs.length; j++ ) {
+                        if( bs[j] instanceof ICPPField )
+                            result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, bs[j] );
+                    }
+                } else if( binding instanceof ICPPField ) {
+                    result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, binding );
+                }
+            }
+        }
+		return (ICPPField[]) ArrayUtil.trim( ICPPField.class, result );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
 	 */
-	public List getMethods() {
-		// TODO Auto-generated method stub
-		return null;
+	public ICPPMethod[] getMethods() throws DOMException {
+		ObjectSet set = new ObjectSet(2);
+		ICPPMethod [] ms = getDeclaredMethods();
+		set.addAll( ms );
+		ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
+		set.addAll( scope.getImplicitMethods() );
+		ICPPBase [] bases = getBases();
+		for ( int i = 0; i < bases.length; i++ ) {
+			set.addAll( bases[i].getBaseClass().getMethods() );
+        }
+		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, set.keyArray(), true );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
 	 */
-	public List getAllDeclaredMethods() {
-		// TODO Auto-generated method stub
-		return null;
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+		if( definition == null ){
+	        checkForDefinition();
+	        if( definition == null )
+	            return new ICPPMethod [] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+	    }
+
+		ICPPMethod[] methods = getDeclaredMethods();
+		ICPPBase [] bases = getBases();
+		for ( int i = 0; i < bases.length; i++ ) {
+            methods = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, methods, bases[i].getBaseClass().getAllDeclaredMethods() );
+        }
+		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, methods );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
 	 */
-	public List getDeclaredMethods() {
-		// TODO Auto-generated method stub
-		return null;
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	    if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
+	    IBinding binding = null;
+	    ICPPMethod [] result = null;
+	    
+	    IASTDeclaration [] decls = getCompositeTypeSpecifier().getMembers();
+	    for ( int i = 0; i < decls.length; i++ ) {
+            if( decls[i] instanceof IASTSimpleDeclaration ){
+                IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
+                for ( int j = 0; j < dtors.length; j++ ) {
+                    binding = dtors[j].getName().resolveBinding();
+                    if( binding instanceof ICPPMethod)
+                        result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+                }
+            } else if( decls[i] instanceof IASTFunctionDefinition ){
+                IASTDeclarator dtor = ((IASTFunctionDefinition)decls[i]).getDeclarator();
+                dtor = CPPVisitor.getMostNestedDeclarator( dtor );
+                binding = dtor.getName().resolveBinding();
+                if( binding instanceof ICPPMethod ){
+                    result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+                }
+            } else if( decls[i] instanceof ICPPASTUsingDeclaration ){
+                IASTName n = ((ICPPASTUsingDeclaration)decls[i]).getName();
+                binding = n.resolveBinding();
+                if( binding instanceof ICPPCompositeBinding ){
+                    IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
+                    for ( int j = 0; j < bs.length; j++ ) {
+                        if( bs[j] instanceof ICPPMethod )
+                            result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, bs[j] );
+                    }
+                } else if( binding instanceof ICPPMethod ) {
+                    result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+                }
+            }
+        }
+		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, result );
 	}
 	
     public Object clone(){

@@ -43,31 +43,23 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     protected static final String [] errorMessages;
     static {
         errorMessages = new String [ IProblemBinding.LAST_PROBLEM ];
-        errorMessages[SEMANTIC_UNIQUE_NAME_PREDEFINED - 1] 		= ParserMessages.getString("ASTProblemFactory.error.semantic.uniqueNamePredefined"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_NAME_NOT_FOUND - 1] 		 		= ParserMessages.getString("ASTProblemFactory.error.semantic.nameNotFound"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_NAME_NOT_PROVIDED - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.nameNotProvided"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_INVALID_CONVERSION_TYPE - 1] 	= ParserMessages.getString("ASTProblemFactory.error.semantic.invalidConversionType"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_MALFORMED_EXPRESSION - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.malformedExpression"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_AMBIGUOUS_LOOKUP - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.ambiguousLookup"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_INVALID_TYPE - 1]				= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidType"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_CIRCULAR_INHERITANCE - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.circularInheritance"); //$NON-NLS-1$
         errorMessages[SEMANTIC_INVALID_OVERLOAD - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidOverload"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_INVALID_TEMPLATE - 1]			= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidTemplate"); //$NON-NLS-1$ 
         errorMessages[SEMANTIC_INVALID_USING - 1]				= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidUsing"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_BAD_VISIBILITY - 1]				= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.badVisibility"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION - 1] 	= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.unableToResolveFunction"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_INVALID_TEMPLATE_ARGUMENT - 1]	= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidTemplateArgument"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_INVALID_TEMPLATE_PARAMETER - 1]	= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.invalidTemplateParameter"); //$NON-NLS-1$ 
-        errorMessages[SEMANTIC_REDECLARED_TEMPLATE_PARAMETER - 1] 	= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.redeclaredTemplateParameter"); //$NON-NLS-1$
-        errorMessages[SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION - 1]= ParserMessages.getString("ASTProblemFactory.error.semantic.pst.recursiveTemplateInstantiation"); //$NON-NLS-1$ 
+        errorMessages[SEMANTIC_DEFINITION_NOT_FOUND - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.definitionNotFound"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND - 1] = ParserMessages.getString("ASTProblemFactory.error.semantic.dom.knrParameterDeclarationNotFound"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_LABEL_STATEMENT_NOT_FOUND - 1]	= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.labelStatementNotFound"); //$NON-NLS-1$
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getID()
      */
     public int getID() {
         return id;
     }
-
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getMessage()

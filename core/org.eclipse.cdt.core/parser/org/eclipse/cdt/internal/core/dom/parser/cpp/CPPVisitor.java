@@ -1410,6 +1410,15 @@ public class CPPVisitor {
 	    return null;
 	}
 	
+	public static IASTDeclarator getMostNestedDeclarator( IASTDeclarator dtor ){
+	    if( dtor == null ) return null;
+	    IASTDeclarator nested = null;
+	    while( (nested = dtor.getNestedDeclarator()) != null ){
+	        dtor = nested;
+	    }
+	    return dtor;
+	}
+	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
 		CollectProblemsAction action = new CollectProblemsAction();
 		tu.accept(action);

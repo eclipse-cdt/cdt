@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -40,6 +42,7 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
     private ObjectSet constructorBindings = ObjectSet.EMPTY_SET;
     private ObjectSet constructorNames = ObjectSet.EMPTY_SET;
+    private ICPPMethod[] implicits = null;
     
 	public CPPClassScope( ICPPASTCompositeTypeSpecifier physicalNode ) {
 		super( physicalNode );
@@ -69,25 +72,35 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         IBinding binding = compTypeSpec.getName().resolveBinding();
         if( !(binding instanceof ICPPClassType ) )
         	return;
+        
+        implicits = new ICPPMethod[4];
         ICPPClassType clsType = (ICPPClassType) binding;
         
         char [] className = name.toCharArray();
                
         //default constructor: A()
-	    addBinding( new CPPImplicitConstructor( this, className, IParameter.EMPTY_PARAMETER_ARRAY ) );
+        ICPPMethod m = new CPPImplicitConstructor( this, className, IParameter.EMPTY_PARAMETER_ARRAY );
+        implicits[0] = m;
+	    addBinding( m );
 	    
 	    //copy constructor: A( const A & )
 	    IType pType = new CPPReferenceType( new CPPQualifierType( clsType, true, false ) );
 	    IParameter [] ps = new IParameter [] { new CPPParameter( pType ) };
-	    addBinding( new CPPImplicitConstructor( this, className, ps ) );
+	    m = new CPPImplicitConstructor( this, className, ps );
+	    implicits[1] = m;
+	    addBinding( m );
 	    
 	    //copy assignment operator: A& operator = ( const A & ) 
 	    IType refType = new CPPReferenceType( clsType );
-	    addBinding( new CPPImplicitMethod( this, "operator =".toCharArray(), refType, ps ) ); //$NON-NLS-1$
+	    m = new CPPImplicitMethod( this, "operator =".toCharArray(), refType, ps ); //$NON-NLS-1$
+	    implicits[2] = m;
+	    addBinding( m );
 	    
 	    //destructor: ~A()
 	    char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), className );  //$NON-NLS-1$
-	    addBinding( new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), IParameter.EMPTY_PARAMETER_ARRAY ) );
+	    m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), IParameter.EMPTY_PARAMETER_ARRAY );
+	    implicits[3] = m;
+	    addBinding( m );
 	}
 	
 	/* (non-Javadoc)
@@ -216,5 +229,14 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		}
 		return (ICPPClassType) compSpec.getName().resolveBinding();
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getImplicitMethods()
+	 */
+	public ICPPMethod[] getImplicitMethods() {
+		if( implicits == null )
+			implicits = new ICPPMethod[] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_INVALID_TYPE, CPPSemantics.EMPTY_NAME_ARRAY ) };
+		return implicits;
 	}
 }

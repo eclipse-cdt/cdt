@@ -13,9 +13,19 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IScope;
+
 /**
  * @author aniefer
  */
 public interface ICPPFunctionScope extends ICPPScope {
 
+    /**
+     * Get the scope representing the function body.
+     * returns null if there is no function definition
+     * @return
+     * @throws DOMException
+     */
+    public IScope getBodyScope() throws DOMException;
 }

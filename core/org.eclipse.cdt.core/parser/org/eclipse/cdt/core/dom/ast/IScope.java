@@ -37,6 +37,7 @@ public interface IScope {
 	public IBinding[] find(String name) throws DOMException;
 
     /**
+     * Return the physical IASTNode that this scope was created for
      * @return
      */
     public IASTNode getPhysicalNode() throws DOMException;

@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -2780,6 +2781,74 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( bs[0], f );
         assertSame( bs[1], f1 );
         assertSame( bs[2], f2 );
+    }
+    
+    public void testGets() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A {                                 \n"); //$NON-NLS-1$
+        buffer.append("   int a;                                 \n"); //$NON-NLS-1$
+        buffer.append("   void fa();                             \n"); //$NON-NLS-1$
+        buffer.append("};                                        \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {                      \n"); //$NON-NLS-1$
+        buffer.append("   int b;                                 \n"); //$NON-NLS-1$
+        buffer.append("   void fb();                             \n"); //$NON-NLS-1$
+        buffer.append("};                                        \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(3).resolveBinding();
+        ICPPField a = (ICPPField) col.getName(1).resolveBinding();
+        ICPPMethod fa = (ICPPMethod) col.getName(2).resolveBinding();
+        ICPPField b = (ICPPField) col.getName(5).resolveBinding();
+        ICPPMethod fb = (ICPPMethod) col.getName(6).resolveBinding();
+        
+        Object [] result = B.getDeclaredFields();
+        assertEquals( result.length, 1 );
+        assertSame( result[0], b );
+        
+        result = B.getFields();
+        assertEquals( result.length, 2 );
+        assertSame( result[0], b );
+        assertSame( result[1], a );
+        
+        result = B.getDeclaredMethods();
+        assertEquals( result.length, 1 );
+        assertSame( result[0], fb );
+        
+        result = B.getAllDeclaredMethods();
+        assertEquals( result.length, 2 );
+        assertSame( result[0], fb );
+        assertSame( result[1], fa );
+        
+        ICPPMethod [] B_implicit = ((ICPPClassScope)B.getCompositeScope()).getImplicitMethods();
+        assertEquals( B_implicit.length, 4 );
+        assertTrue( B_implicit[0].getName().equals( "B" ) ); //$NON-NLS-1$
+        assertTrue( B_implicit[1].getName().equals( "B" ) ); //$NON-NLS-1$
+        assertTrue( B_implicit[2].getName().equals( "operator =" ) ); //$NON-NLS-1$
+        assertTrue( B_implicit[3].getName().equals( "~B" ) ); //$NON-NLS-1$
+        
+        ICPPMethod [] A_implicit = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
+        assertEquals( A_implicit.length, 4 );
+        assertTrue( A_implicit[0].getName().equals( "A" ) ); //$NON-NLS-1$
+        assertTrue( A_implicit[1].getName().equals( "A" ) ); //$NON-NLS-1$
+        assertTrue( A_implicit[2].getName().equals( "operator =" ) ); //$NON-NLS-1$
+        assertTrue( A_implicit[3].getName().equals( "~A" ) ); //$NON-NLS-1$
+        
+        result = B.getMethods();
+        assertEquals( result.length, 10 );
+        assertSame( result[0], fb );
+        assertSame( result[1], B_implicit[0] );
+        assertSame( result[2], B_implicit[1] );
+        assertSame( result[3], B_implicit[2] );
+        assertSame( result[4], B_implicit[3] );
+        assertSame( result[5], fa );
+        assertSame( result[6], A_implicit[0] );
+        assertSame( result[7], A_implicit[1] );
+        assertSame( result[8], A_implicit[2] );
+        assertSame( result[9], A_implicit[3] );
     }
 }
 

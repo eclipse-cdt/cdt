@@ -14,8 +14,12 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -91,5 +95,20 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	        
 	    return CPPVisitor.getContainingScope( fdtor );
 	}
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope#getBodyScope()
+     */
+    public IScope getBodyScope() throws DOMException {
+        IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
+        IASTNode parent = fnDtor.getParent();
+        if( parent instanceof IASTFunctionDefinition ){
+            IASTStatement body = ((IASTFunctionDefinition)parent).getBody();
+            if( body instanceof IASTCompoundStatement )
+                return ((IASTCompoundStatement)body).getScope();
+        }
+        return null;
+    }
 
 }

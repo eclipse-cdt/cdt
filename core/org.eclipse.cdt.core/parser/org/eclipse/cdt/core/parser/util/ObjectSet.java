@@ -55,6 +55,15 @@ public class ObjectSet extends ObjectTable {
 	        add( set.keyAt( i ) );
 	    }
 	}
+	
+	public void addAll( Object[] objs ){
+		if( objs == null )
+			return;
+		
+		for (int i = 0; i < objs.length; i++) {
+			if( objs[i] != null ) add( objs[i] );
+		}
+	}
 
 	public boolean remove( Object key ) {
 		int i = lookup(key);

@@ -159,6 +159,6 @@ abstract public class CPPScope implements ICPPScope{
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    return CPPSemantics.findBindings( this, name );
+	    return CPPSemantics.findBindings( this, name, false );
 	}
 }

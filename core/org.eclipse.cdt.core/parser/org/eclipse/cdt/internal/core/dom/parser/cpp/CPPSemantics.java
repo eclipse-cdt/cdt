@@ -2275,13 +2275,14 @@ public class CPPSemantics {
 		return -1;
 	}
 	
-	public static IBinding[] findBindings( IScope scope, String name ) throws DOMException{
+	public static IBinding[] findBindings( IScope scope, String name, boolean qualified ) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName( name.toCharArray() );
 	    astName.setParent( scope.getPhysicalNode() );
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
 	    
 	    LookupData data = new LookupData( astName );
+	    data.forceQualified = qualified;
 	            
 	    try {
 			lookup( data, scope );

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.text.MessageFormat;
 
@@ -99,11 +100,39 @@ public class MIPlugin extends Plugin {
 	 */
 	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit) throws IOException, MIException {
 		PTY pty = null;
+		boolean failed = false;
+
 		try {
 			pty = new PTY();
 		} catch (IOException e) {
 		}
-		return createCSession(gdb, program, cwd, gdbinit, pty);
+
+		try {
+			return createCSession(gdb, program, cwd, gdbinit, pty);
+		} catch (IOException exc) {
+			failed = true;
+			throw exc;
+		} catch (MIException exc) {
+			failed = true;
+			throw exc;
+		} finally {
+			if (failed) {
+				// Shutdown the pty console.
+				if (pty != null) {
+					try {
+						OutputStream out = pty.getOutputStream();
+						if (out != null) {
+							out.close();
+						}
+						InputStream in = pty.getInputStream();
+						if (in != null) {
+							in.close();
+						}
+					} catch (IOException e) {
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -290,7 +319,7 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
-	 * Do some basic synchronisation, gdb make take some time to load
+	 * Do some basic synchronisation, gdb may take some time to load
 	 * for whatever reasons.
 	 * @param args
 	 * @return Process

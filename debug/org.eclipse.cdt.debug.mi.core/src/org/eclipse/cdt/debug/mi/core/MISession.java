@@ -136,17 +136,35 @@ public class MISession extends Observable {
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.
 
-		MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
-		postCommand(confirm, launchTimeout);
-		confirm.getMIInfo(); 
+		try {
+			MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
+			postCommand(confirm, launchTimeout);
+			confirm.getMIInfo(); 
 
-		MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
-		postCommand(width, launchTimeout);
-		confirm.getMIInfo(); 
+			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
+			postCommand(width, launchTimeout);
+			confirm.getMIInfo(); 
 
-		MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
-		postCommand(height, launchTimeout);
-		confirm.getMIInfo(); 
+			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
+			postCommand(height, launchTimeout);
+			confirm.getMIInfo();
+
+		} catch (MIException exc) {
+			// Kill the Transmition thread.
+			if (txThread.isAlive()) {
+				txThread.interrupt();
+			}		
+			// Kill the Receiving Thread.
+			if (rxThread.isAlive()) {
+				rxThread.interrupt();
+			}
+			// Kill the event Thread.
+			if (eventThread.isAlive()) {
+				eventThread.interrupt();
+			}
+			// rethrow up the exception.
+			throw exc;
+		}
 	}
 
 	/**

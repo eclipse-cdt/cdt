@@ -12,9 +12,11 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
+import org.eclipse.cdt.debug.mi.core.command.MIVarInfoNumChildren;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarInfoNumChildrenInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 
 /**
@@ -62,7 +64,29 @@ public class Value extends CObject implements ICDIValue {
 		}
 		return result;
 	}
-
+	
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
+	 */
+	public boolean hasChildren() throws CDIException {
+		int number = 0;
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarInfoNumChildren children = 
+			factory.createMIVarInfoNumChildren(variable.getMIVar().getVarName());
+		try {
+			mi.postCommand(children);
+			MIVarInfoNumChildrenInfo info = children.getMIVarInfoNumChildrenInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			number = info.getChildNumber();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+		return (number > 0);
+		
+	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */

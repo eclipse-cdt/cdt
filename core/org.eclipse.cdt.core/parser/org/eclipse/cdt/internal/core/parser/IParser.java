@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.core.parser.ast.IScope;
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
 
 
@@ -82,12 +81,5 @@ public interface IParser {
 	 * 				our first unrecoverable error.
 	 */
 	public int getLastErrorOffset(); 
-	
-	/**
-	 * Get the AST that the parse built.
-	 * 
-	 * @return
-	 */
-	public IScope getASTRootNode();
 	
 }

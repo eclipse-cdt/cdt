@@ -15,9 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
-import org.eclipse.cdt.core.parser.ast.IScope;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ast.TranslationUnit;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -2979,13 +2977,4 @@ c, quickParse);
 		return firstErrorOffset;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.IParser#getASTRootNode()
-	 */
-	public IScope getASTRootNode() {
-		return ASTTranslationUnit;
-	}
-	
-	private IScope ASTTranslationUnit = new TranslationUnit();
 }

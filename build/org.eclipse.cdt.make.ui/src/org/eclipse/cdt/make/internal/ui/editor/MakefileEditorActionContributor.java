@@ -96,6 +96,8 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 			editMenu.add(fOpenDeclarationAction);
 		}
 
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+
 		IToolBarManager toolBarManager = bars.getToolBarManager();
 		if (toolBarManager != null) {
 			toolBarManager.add(new Separator());

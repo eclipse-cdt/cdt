@@ -17,10 +17,12 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -155,6 +157,14 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		}
 	}
 	
+	/**
+	 * @see org.eclipse.ui.part.EditorActionBarContributor#init(IActionBars)
+	 */
+	public void init(IActionBars bars) {
+		super.init(bars);
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+	}
+
 	/**
 	 * @see EditorActionBarContributor#contributeToToolBar(IToolBarManager)
 	 */

@@ -291,9 +291,7 @@ public class CDebugEditor extends CEditor
 				IPath path = element.getFullPath();
 				String message = "";
 				if ( path.isAbsolute() )
-					message = MessageFormat.format( "The file ''{0}'' does not exist.", new String[] { element.getFullPath().toOSString() } );
-				else
-					message = MessageFormat.format( "The file ''{0}'' not found.", new String[] { element.getFullPath().toOSString() } );
+					message = MessageFormat.format( "Can not find the file ''{0}'' in the specified source locations.", new String[] { element.getFullPath().toOSString() } );
 				fInputLabel.setText( message );
 			}
 		}

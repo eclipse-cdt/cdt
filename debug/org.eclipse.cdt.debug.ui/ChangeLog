@@ -1,3 +1,7 @@
+2003-12-04 Mikhail Khodjaiants
+	Changed the message displayed when the source file is not found.
+	* CDebugEditor.java
+
 2003-11-26 Mikhail Khodjaiants
 	Fix for PR 47595: Referenced projects are not checked in the list of generic source locations.
 	* SourceLookupBlock.java

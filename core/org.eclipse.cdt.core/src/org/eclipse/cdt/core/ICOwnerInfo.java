@@ -7,6 +7,5 @@ package org.eclipse.cdt.core;
 public interface ICOwnerInfo {
 	public String getID();	
 	public String getName();
-	public String[] getPlatforms();
-	public String[] getArchitectures(String platform);
+	public String getPlatform();
 }

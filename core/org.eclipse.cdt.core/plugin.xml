@@ -26,7 +26,7 @@
 
    <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
-   <extension-point id="CProjectOwner" name="%CProjectOwner.name"/>
+   <extension-point id="CProject" name="%CProject.name"/>
    <extension-point id="CBuildModel" name="%CBuilder.name"/>
    <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
 
@@ -89,16 +89,12 @@
    </extension>
    <extension
          id="make"
-         name="%makeprojectowner.name"
-         point="org.eclipse.cdt.core.CProjectOwner">
-      <platform
-            architecture="*"
-            name="%genericmake.name"
-            id="*">
-      </platform>
-      <run
+         name="%makeproject.name"
+         point="org.eclipse.cdt.core.CProject">
+      <cproject
+            platform="local"
             class="org.eclipse.cdt.internal.core.make.MakeProject">
-      </run>
+       </cproject>
    </extension>
    <extension
          id="makeBuilder"

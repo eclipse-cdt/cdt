@@ -20,11 +20,12 @@ import org.eclipse.core.runtime.Status;
 
 public class COwner implements ICOwnerInfo {
 	String ownerID;
+	String fPlatform;
 	IExtension extension;
 	
 	public COwner(String id) throws CoreException {
 		ownerID = id;
-		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProjectOwner");
+		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProject");
 		if (extpoint != null) {
 			extension =  extpoint.getExtension(ownerID);
 		} else {
@@ -41,45 +42,23 @@ public class COwner implements ICOwnerInfo {
 		return extension == null ? null : extension.getLabel();
 	}
 
-	public String[] getPlatforms() {
-		IConfigurationElement element[] = extension.getConfigurationElements();
-		String platforms[] = new String[element.length];
-		for( int i = 0; i < element.length; i++ ) {
-			platforms[i] = element[i].getAttribute("id");
-		}
-		return platforms;
-	}
-
-	public String getPlatformName(String platform) {
-		IConfigurationElement element[] = extension.getConfigurationElements();
-		String platforms[] = new String[element.length];
-		for( int i = 0; i < element.length; i++ ) {
-			if ( platform.equals(element[i].getAttribute("id")) ) {
-				return element[i].getAttribute("name");
-			}
-		}
-		return "";
-	}
-	
-	public String[] getArchitectures(String platform) {
-		IConfigurationElement element[] = extension.getConfigurationElements();
-		String platforms[] = new String[element.length];
-		for( int i = 0; i < element.length; i++ ) {
-			if ( platform.equals(element[i].getAttribute("id")) ) {
-				StringTokenizer stoken = new StringTokenizer(element[i].getAttribute("architecture"), ",");
-				String[] archs = new String[stoken.countTokens()];
-				for( int j = 0; j < archs.length; j++ ) {
-					archs[i] = stoken.nextToken();
+	public String getPlatform() {
+		if ( fPlatform == null ) {
+			IConfigurationElement element[] = extension.getConfigurationElements();
+			for( int i = 0; i < element.length; i++ ) {
+				if ( element[i].getName().equalsIgnoreCase("cproject") ) {
+					fPlatform = element[i].getAttribute("platform");
+					break;
 				}
 			}
 		}
-		return new String[0];
+		return fPlatform;
 	}
 	
 	void configure(IProject project, ICDescriptor cproject) throws CoreException {
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for( int i = 0; i < element.length; i++ ) {
-			if ( element[i].getName().equalsIgnoreCase("run") ) {
+			if ( element[i].getName().equalsIgnoreCase("cproject") ) {
 				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class");
 				owner.configure(cproject);
 				return;
@@ -92,7 +71,7 @@ public class COwner implements ICOwnerInfo {
 	void update(IProject project, ICDescriptor cproject, String extensionID) throws CoreException {
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for( int i = 0; i < element.length; i++ ) {
-			if ( element[i].getName().equalsIgnoreCase("run") ) {
+			if ( element[i].getName().equalsIgnoreCase("cproject") ) {
 				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class");
 				owner.update(cproject, extensionID);
 				return;

@@ -47,13 +47,11 @@ public class CDescriptor implements ICDescriptor {
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private COwner fOwner;
 	private IProject fProject;
-	private String fPlatform = "*";
 	private HashMap extMap = new HashMap(4);
 	private HashMap extInfoMap = new HashMap(4);
 		
 	private final String DESCRIPTION_FILE_NAME = ".cdtproject";
 	private final String PROJECT_DESCRIPTION = "cdtproject";
-	private final String PROJECT_PLATFORM = "platform";
 	private final String PROJECT_EXTENSION = "extension";
 	private final String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
 
@@ -136,7 +134,7 @@ public class CDescriptor implements ICDescriptor {
 	}
 	
 	public String getPlatform() {
-		return fPlatform;
+		return fOwner.getPlatform();
 	}
 
 	public IProject getProject() {
@@ -227,9 +225,6 @@ public class CDescriptor implements ICDescriptor {
 		catch (CoreException e) {
 			return null;
 		}
-		fPlatform = getString(node, PROJECT_PLATFORM);
-		if ( fPlatform == null ) 
-			fPlatform = "*";
 		readProjectExtensions(node);
 		return owner;
 	}
@@ -303,10 +298,6 @@ public class CDescriptor implements ICDescriptor {
 		Element configRootElement = doc.createElement(PROJECT_DESCRIPTION);
 		doc.appendChild(configRootElement);
 		configRootElement.setAttribute("id", fOwner.getID()); //$NON-NLS-1$
-		element= doc.createElement(PROJECT_PLATFORM);
-		element.appendChild(doc.createTextNode(fPlatform));
-		if ( element != null )
-			configRootElement.appendChild(element);
 		Iterator extIterator = extMap.values().iterator();
 		while( extIterator.hasNext() ) {
 			CExtensionReference extension[] = (CExtensionReference[]) extIterator.next();

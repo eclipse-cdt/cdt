@@ -1,12 +1,14 @@
 2004-06-06 Bogdan Gheorghe
+	Changed MouseClickListener to use Parser KeywordSets 
+	* src/org/eclipse/cdt/internal/ui/editor/MouseClickListener.java
+	
+2004-06-06 Bogdan Gheorghe
 	Fix for Bug 60629 
 	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
 	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
 	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
 	* src/org/eclipse/cdt/internal/ui/search/LevelTreeContentProvider.java
 	* src/org/eclipse/cdt/ui/CSearchResultLabelProvider.java
-	
-	
 	
 2004-06-03 Alain Magloire
 

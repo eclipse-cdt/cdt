@@ -6,8 +6,13 @@
  */
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.cdt.core.ICLogConstants;
-import org.eclipse.cdt.internal.ui.text.CppCodeScanner;
+import org.eclipse.cdt.core.parser.KeywordSetKey;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -69,7 +74,7 @@ IPropertyChangeListener{
 		this.fViewer = viewer;
 		this.fPrefStore = store;
 		this.fOpenDeclAction = openDeclAction;
-		this.fgKeywords = CppCodeScanner.getKeywords();
+		this.fgKeywords = KeywordSets.getKeywords(KeywordSetKey.ALL,ParserLanguage.CPP);
 	}
 
 	/** The session is active. */
@@ -92,7 +97,7 @@ IPropertyChangeListener{
 	//Temp. Keywords: Once the selection parser is complete, we can use
 	//it to determine if a word can be underlined
 	
-	private  String[] fgKeywords;
+	private  Set fgKeywords;
 	
 	public void deactivate() {
 		deactivate(false);
@@ -468,10 +473,14 @@ IPropertyChangeListener{
 	}
 	
 	private boolean isKeyWord(String selWord) {
-		for (int i=0; i<fgKeywords.length; i++){
-			if (selWord.equals(fgKeywords[i]))
-				return  true;
+		Iterator i = fgKeywords.iterator();
+		
+		while (i.hasNext()){
+			 String tempWord = (String) i.next();
+			 if (selWord.equals(tempWord))
+			 	return true;
 		}
+		
 		return false;
 	}
 

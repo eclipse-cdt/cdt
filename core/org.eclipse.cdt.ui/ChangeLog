@@ -1,3 +1,9 @@
+2004-09-01 Alain Magloire
+
+	Deal with the fact that elements can come
+	from WorkingCopy or TranslationUnit
+	* src/org/eclipse/cdt/internal/ui/cview/CViewElementComparer.java
+
 2004-08-31 Alain Magloire
 
 	Provide a Proxy wrapper for the includeRefence class

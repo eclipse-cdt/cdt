@@ -31,21 +31,26 @@ public class CViewElementComparer implements IElementComparer {
 		if (c1 == null || c2 == null)
 			return false;
 
-		if (c1 instanceof ITranslationUnit) {
-			ITranslationUnit t1 = (ITranslationUnit)o1;
-			if (t1.isWorkingCopy()) {
-				c1 = ((IWorkingCopy)t1).getOriginalElement();
-			}
-		}
-		if (c2 instanceof ITranslationUnit) {
-			ITranslationUnit t2 = (ITranslationUnit)o2;
-			if (t2.isWorkingCopy()) {
-				c2 = ((IWorkingCopy)t2).getOriginalElement(); 
-			}
-		}
-		if (c1 == null || c2 == null) {
+		// Below is for children of TranslationUnits but we have to make sure
+		// we handle the case that the child comes from the a workingCopy in that
+		// case it should be equal as the original element.
+		ITranslationUnit u1 = (ITranslationUnit)c1.getAncestor(ICElement.C_UNIT);
+		ITranslationUnit u2 = (ITranslationUnit)c2.getAncestor(ICElement.C_UNIT);
+		if (u1 == null || u2 == null) {
 			return false;
 		}
+		
+		if (u1.isWorkingCopy() && u2.isWorkingCopy() || !u1.isWorkingCopy() && !u2.isWorkingCopy()) {
+			return false;
+		}
+		// From here on either c1 or c2 is a working copy.
+		if (u1.isWorkingCopy()) {
+			c1= ((IWorkingCopy)u1).getOriginal(c1);
+		} else if (u2.isWorkingCopy()) {
+			c2= ((IWorkingCopy)u2).getOriginal(c2); 
+		}
+		if (c1 == null || c2 == null)
+			return false;
 		return c1.equals(c2);
 	}
 

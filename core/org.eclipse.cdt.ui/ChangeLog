@@ -1,9 +1,17 @@
+2002-11-06 Tom Tromey
+
+	Fix for Bugzilla 25784.
+	* src/org/eclipse/cdt/ui/wizards/CProjectWizardPage.java
+	(validatePage): Allow project name to contain a space.
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+	(CProjectWizardPage.projectContainsSpace): Removed.
+
 2002-11-06 David Inglis
-	* src/.../ui/CUIPlugin.java
+	* src/.../ui/CUIPlugin.java:
 	fixed NPE.
 	
 2002-11-01 David Inglis
-	* src/.../internal/ui/CElementLabelProvider.java
+	* src/.../internal/ui/CElementLabelProvider.java:
 	change cpu display string to use isLittleEndian method on IBinary
 	
 	
@@ -20,7 +28,7 @@
 	so the user could get into a very awkward state, when selecting or deselecting
 	as one view woud over ride the other.
 	
-	src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java
+	src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java:
 	
 	
 2002-10-29 David Inglis

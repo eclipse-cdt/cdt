@@ -1,13 +1,19 @@
 2003-01-27 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java (getCThreads):
+	When attaching gdb(at least on some platform) does not show
+	the selected thread(info threads).  Fallback on the first one.
+
+2003-01-27 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java (findVariable):
 	Bug fix, did not compare the stacks correctly.
 
 2003-01-27 Alain Magloire
 
-	* src/org/eclipse/cdt/debug/mi/core/cdi/model/ICDIVariableObject.java:
-	* src/org/eclipse/cdt/debug/mi/core/cdi/model/ICDIArgumentObject.java:
-	* src/org/eclipse/cdt/debug/mi/core/cdi/model/ICDIRegisterObject.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/ArgumentObject.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/RegisterObject.java:
     Move to model package.
 
 2003-01-26 Alain Magloire

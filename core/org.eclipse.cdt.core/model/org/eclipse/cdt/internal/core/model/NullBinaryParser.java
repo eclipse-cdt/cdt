@@ -17,7 +17,7 @@ public class NullBinaryParser implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
 	 */
-	public IBinaryFile getBinary(IPath path) throws IOException {
+	public IBinaryFile getBinary(byte[] data, IPath path) throws IOException {
 		throw new IOException(CCorePlugin.getResourceString("CoreModel.NullBinaryParser.Not_binary_file")); //$NON-NLS-1$
 	}
 
@@ -33,6 +33,13 @@ public class NullBinaryParser implements IBinaryParser {
 	 */
 	public boolean isBinary(byte[] array, IPath path) {
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getBufferSize()
+	 */
+	public int getHintBufferSize() {
+		return 0;
 	}
 
 }

@@ -66,7 +66,7 @@ public class PE {
 	Symbol[] symbolTable;
 	byte[] stringTable;
 
-	public class Attribute {
+	public static class Attribute {
 		public static final int PE_TYPE_EXE   = 1;
 		public static final int PE_TYPE_SHLIB = 2;
 		public static final int PE_TYPE_OBJ   = 3;
@@ -342,10 +342,8 @@ public class PE {
 		}
 	}
 
-	public Attribute getAttribute() {
+	public static Attribute getAttributes(FileHeader filhdr) {
 		Attribute attrib = new Attribute();
-		FileHeader filhdr = getFileHeader();
-
 		// Machine type.
 		switch (filhdr.f_magic) {
 			case PEConstants.IMAGE_FILE_MACHINE_UNKNOWN:
@@ -439,12 +437,25 @@ public class PE {
 	}
 
 	public static boolean isExeHeader(byte[] e_signature) {
-		if (e_signature.length < 2 || e_signature[0] != 'M' || e_signature[1] != 'Z')
+		if (e_signature == null || e_signature.length < 2 || e_signature[0] != 'M' || e_signature[1] != 'Z')
 			return false;
 		return true;
 	}
 
-	public static Attribute getAttributes(String file) throws IOException {
+	public Attribute getAttribute() throws IOException {
+		return getAttributes(getFileHeader());
+	}
+
+	public static Attribute getAttribute(byte[] data) throws IOException {
+		if (isExeHeader(data)) {
+			Coff.FileHeader filehdr;
+			filehdr = new Coff.FileHeader(data, true);
+			return getAttributes(filehdr);
+		}
+		throw new IOException("not a PE format");
+	}
+
+	public static Attribute getAttribute(String file) throws IOException {
 		PE pe = new PE(file);
 		Attribute attrib = pe.getAttribute();
 		pe.dispose();

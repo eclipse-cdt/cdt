@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
  
+import java.io.EOFException;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
@@ -22,11 +23,8 @@ import org.eclipse.core.runtime.IPath;
 /**
  */
 public class ElfParser extends AbstractCExtension implements IBinaryParser {
-	byte [] fCachedByteArray;
-	IPath   fCachedPathEntry;
-	boolean fCachedIsAR;
-	
-	public IBinaryFile getBinary(IPath path) throws IOException {
+
+	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
 			throw new IOException("path is null");
 		}
@@ -34,25 +32,15 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		BinaryFile binary = null;
 		try {
 			Elf.Attribute attribute = null;
-			 
-			//Try our luck with the cached entry first, then clear it
-			if(fCachedPathEntry != null && fCachedPathEntry.equals(path)) {			
+			if (hints != null && hints.length > 0) {
 				try {
-					//Don't bother with ELF stuff if this is an archive
-					if(fCachedIsAR) {
-						return new BinaryArchive(path);
-					} 
-					//Well, if it wasn't an archive, go for broke
-					attribute = Elf.getAttributes(fCachedByteArray);
-				} catch(Exception ex) {
-					attribute = null;
-				} finally {
-					fCachedPathEntry = null;
-					fCachedByteArray = null;
+					attribute = Elf.getAttributes(hints);
+				} catch (EOFException eof) {
+					// continue, the array was to small.
 				}
- 			}
+			}
 
-			//Take a second run at it if the cache failed. 			
+			//Take a second run at it if the data array failed. 			
  			if(attribute == null) {
 				attribute = Elf.getAttributes(path.toOSString());
  			}
@@ -95,24 +83,13 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isBinary(byte[] array, IPath path) {
-		boolean isBinaryReturnValue = false;
-
-		if(Elf.isElfHeader(array)) {
-			isBinaryReturnValue = true;
-			fCachedIsAR = false;			
-		} else if(AR.isARHeader(array)) {
-			isBinaryReturnValue = true;
-			fCachedIsAR = true;
-		}
-		
-		//If it is a binary, then cache the array in anticipation that we will be asked to do something with it
-		if(isBinaryReturnValue && array.length > 0) {
-			fCachedPathEntry = path;
-			fCachedByteArray = new byte[array.length];
-			System.arraycopy(array, 0, fCachedByteArray, 0, array.length);
-		}
-		
-		return isBinaryReturnValue;
+		return Elf.isElfHeader(array) || AR.isARHeader(array);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getBufferSize()
+	 */
+	public int getHintBufferSize() {
+		return 128;
+	}
 }

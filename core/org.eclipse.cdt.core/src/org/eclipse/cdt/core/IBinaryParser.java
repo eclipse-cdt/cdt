@@ -90,9 +90,33 @@ public interface IBinaryParser {
 		int getLineNumber(long offset);
 	}
 
-	IBinaryFile getBinary(IPath path) throws IOException;
+	/**
+	 * Creates an IBinaryFile.
+	 * @param hints - array byte that can be use to recognise the file.
+	 *     Can be null or empty array when no hints are passed.
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	IBinaryFile getBinary(byte[] hints, IPath path) throws IOException;
 
-	boolean isBinary(byte[] array, IPath path);
-	
+	/**
+	 * Returns the name of the Format.
+	 * @return
+	 */
 	String getFormat();
+
+	/**
+	 * True if the resource is a binary. 
+	 * @param hints
+	 * @param path
+	 * @return
+	 */
+	boolean isBinary(byte[] hints, IPath path);
+
+	/**
+	 * Get a hint of the needed buffer size to recognise the file.
+	 * @return
+	 */
+	int getHintBufferSize();
 }

@@ -28,8 +28,8 @@ public class GNUElfParser extends ElfParser implements IBinaryParser, IToolsProv
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
 	 */
-	public IBinaryFile getBinary(IPath path) throws IOException {
-		IBinaryFile binary = super.getBinary(path);
+	public IBinaryFile getBinary(byte[] data, IPath path) throws IOException {
+		IBinaryFile binary = super.getBinary(data, path);
 		if (binary instanceof BinaryFile) {
 			((BinaryFile)binary).setToolsProvider(this);
 		}

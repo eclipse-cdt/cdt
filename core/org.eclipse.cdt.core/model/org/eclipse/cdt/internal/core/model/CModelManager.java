@@ -400,7 +400,7 @@ public class CModelManager implements IResourceChangeListener {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
 			InputStream is = file.getContents();
-			byte[] bytes = new byte[128];
+			byte[] bytes = new byte[parser.getHintBufferSize()];
 			int count = is.read(bytes);
 			is.close();
 			if (count > 0 && count < bytes.length) {
@@ -409,9 +409,7 @@ public class CModelManager implements IResourceChangeListener {
 				bytes = array;
 			}
 			IPath location = file.getLocation();
-			if (parser.isBinary(bytes, location)) {
-				return parser.getBinary(location);
-			}
+			return parser.getBinary(bytes, location);
 		} catch (IOException e) {
 		} catch (CoreException e) {
 			//e.printStackTrace();

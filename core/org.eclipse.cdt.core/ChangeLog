@@ -1,3 +1,26 @@
+2004-02-27 Alain Magloire
+
+	Performance improvement in the IBinaryParser and
+	changes in the API according to the specs.
+	Now we have:
+		IBinaryParser.getBinary(byte[] hints, IPath path);
+	This is important when having multiple parsers on
+	the same project.  We provide a bucket/hints for the parser
+	to guess the type of file and reduce the number of open()s.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/NullBinaryParser.java
+	* src/org/eclipse/cdt/core/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/coff/Coff.java
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+	* utils/org/eclipse/cdt/utils/coff/PEArchive.java
+	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEParser.java
+	* utils/org/eclipse/cdt/utils/coff/PEParser.java
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+	* utils/org/eclipse/cdt/utils/elf/parser/ElfParser.java
+	* utils/org/eclipse/cdt/utils/elf/parser/GNUElfParser.java
+
 2004-02-26 Andrew Niefer
 	Mark strings that don't need to be externalized for translation
 

@@ -5,6 +5,7 @@ package org.eclipse.cdt.utils.elf;
  * All Rights Reserved.
  */
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,7 +144,7 @@ public class Elf {
 		
 		protected ELFhdr(byte [] bytes) throws IOException {
 			if(bytes.length <= e_ident.length) {
-				throw new IOException("Not ELF format");
+				throw new EOFException("Not ELF format");
 			}
 			System.arraycopy(bytes, 0, e_ident, 0, e_ident.length);
 			if ( e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 

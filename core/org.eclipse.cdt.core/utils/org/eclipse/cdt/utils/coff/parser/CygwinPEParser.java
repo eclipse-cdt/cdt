@@ -28,8 +28,8 @@ public class CygwinPEParser extends PEParser implements IBinaryParser, ICygwinTo
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
 	 */
-	public IBinaryFile getBinary(IPath path) throws IOException {
-		IBinaryFile binary = super.getBinary(path);
+	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
+		IBinaryFile binary = super.getBinary(hints, path);
 		if (binary instanceof BinaryFile) {
 			((BinaryFile)binary).setToolsProvider(this);
 		}

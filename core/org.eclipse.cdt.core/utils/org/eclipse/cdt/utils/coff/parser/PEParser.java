@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.utils.coff.parser;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
@@ -28,14 +29,26 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IFile)
 	 */
-	public IBinaryFile getBinary(IPath path) throws IOException {
+	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
 			throw new IOException("path is null");
 		}
 
 		BinaryFile binary = null;
 		try {
-			PE.Attribute attribute = PE.getAttributes(path.toOSString());
+			PE.Attribute attribute = null;
+			if (hints != null && hints.length > 0) {
+				try {
+					attribute = PE.getAttribute(hints);
+				} catch (EOFException e) {
+					// continue to try
+				}
+			}
+			// the hints may have to small, keep on trying.
+			if (attribute == null) {
+				attribute = PE.getAttribute(path.toOSString());
+			}
+	
 			if (attribute != null) {
 				switch (attribute.getType()) {
 					case Attribute.PE_TYPE_EXE :
@@ -103,6 +116,13 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 			}
 		}
 		return isBin;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getHintBufferSize()
+	 */
+	public int getHintBufferSize() {
+		return 128;
 	}
 
 }

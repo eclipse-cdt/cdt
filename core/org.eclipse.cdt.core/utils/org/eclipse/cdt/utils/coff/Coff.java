@@ -4,6 +4,7 @@
  */
 package org.eclipse.cdt.utils.coff;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DateFormat;
@@ -54,7 +55,18 @@ public class Coff {
 			file.seek(offset);
 			byte[] hdr = new byte[FILHSZ];
 			file.readFully(hdr);
-			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+			commonSetup(hdr, true);
+		}
+
+		public FileHeader (byte[] hdr, boolean little) throws EOFException {
+			commonSetup(hdr, little);
+		}
+
+		public void commonSetup(byte[] hdr, boolean little) throws EOFException {
+			if (hdr == null || hdr.length < FILHSZ) {
+				throw new EOFException("array to small"); //$NON-NLS-1
+			}
+			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, little);
 			f_magic = memory.getUnsignedShort();
 			f_nscns = memory.getUnsignedShort();
 			f_timdat = memory.getInt();

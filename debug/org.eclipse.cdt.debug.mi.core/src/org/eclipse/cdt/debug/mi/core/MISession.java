@@ -264,6 +264,36 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		} catch (MIException e) {
 		}
 		
+		// Make sure gdb is killed.
+		// FIX: the destroy() must be call before closing gdb streams
+		// on windows if the order is not follow the close() will hang.
+		if (miProcess != null) {
+			miProcess.destroy();
+		}
+
+		// Close the input GDB prompt
+		try {
+			if (inGDB != null)
+				inGDB.close();
+		} catch (IOException e) {
+		}
+
+		// Close the output GDB prompt
+		try {
+			if (outGDB != null)
+				outGDB.close();
+		} catch (IOException e) {
+		}
+
+		// Destroy the MI console stream.
+		try {
+			miInPipe = null;
+			if (miOutPipe != null) {
+				miOutPipe.close();
+			}
+		} catch (IOException e) {
+		}
+		
 		// Kill the Transmition thread.
 		try {
 			if (txThread.isAlive()) {
@@ -289,38 +319,7 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 				eventThread.join(cmdTimeout);
 			}
 		} catch (InterruptedException e) {
-		}
-		
-		// Make sure gdb is killed.
-		// FIX: Spawner will do the waitFor();
-		if (miProcess != null) {
-			miProcess.destroy();
-		}
-
-		// Close the input GDB prompt
-		try {
-			if (inGDB != null)
-				inGDB.close();
-		} catch (IOException e) {
-		}
-
-		// Close the output GDB prompt
-		try {
-			if (outGDB != null)
-				outGDB.close();
-		} catch (IOException e) {
-		}
-		
-
-		// Destroy the MI console stream.
-		try {
-			miInPipe = null;
-			if (miOutPipe != null) {
-				miOutPipe.close();
-			}
-		} catch (IOException e) {
-		}
-		
+		}		
 	}
 
 	/**

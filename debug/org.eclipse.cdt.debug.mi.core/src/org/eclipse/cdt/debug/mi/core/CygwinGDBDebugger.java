@@ -36,7 +36,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			if (manager instanceof SharedLibraryManager) {
 				SharedLibraryManager mgr = (SharedLibraryManager) manager;
 				boolean stopOnSolibEvents =
-					config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
+					config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
 				try {
 					mgr.setStopOnSolibEvents(stopOnSolibEvents);
 					// By default, we provide with the capability of deferred breakpoints

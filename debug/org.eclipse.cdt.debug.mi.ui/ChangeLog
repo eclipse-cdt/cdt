@@ -1,3 +1,7 @@
+2003-12-17 Mikhail Khodjaiants
+	Fix for bug 49061: Different values are used as default for the "Load shared library symbols automatically" option.
+	* GDBSolibBlock.java
+
 2003-12-01 Mikhail Khodjaiants
 	Fix for PR 47230: Need a shared library search path editing capability for GDBServerDebugger.
 	Implemented 'GDBServerDebuggerPage' as an extension of 'GDBDebuggerPage'.

@@ -59,47 +59,46 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			ICProject cproject = getCProject(config);
 
 			String path = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null);
-			IPath corefile;
 			if (path == null) {
-				corefile = promptForCoreFilePath((IProject)cproject.getResource());
+				IPath corefile = promptForCoreFilePath((IProject)cproject.getResource(), debugConfig);
 				if (corefile == null) {
 					cancel(LaunchMessages.getString("CoreFileLaunchDelegate.No_Corefile_selected"), //$NON-NLS-1$
 							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 				}
 				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, corefile.toString());
-				launch(wc, mode, launch, new SubProgressMonitor(monitor, 9));
-				return;
-			}
-			corefile = new Path(path);
-			dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));
-			try {
-				// set the source locator
-				setDefaultSourceLocator(launch, config);
-				ICDITarget[] targets = dsession.getTargets();
-				for (int i = 0; i < targets.length; i++) {
-					Process process = targets[i].getProcess();
-					IProcess iprocess = null;
-					if (process != null) {
-						iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
-					}
-					CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], renderTargetLabel(debugConfig), iprocess,
-												exeFile, false, false, false);
-				}
-			} catch (CoreException e) {
+				wc.launch(mode, new SubProgressMonitor(monitor, 9));
+				cancel("", -1); //$NON-NLS-1$
+			} else {
+				dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));
 				try {
-					dsession.terminate();
-				} catch (CDIException cdi) {
+					// set the source locator
+					setDefaultSourceLocator(launch, config);
+					ICDITarget[] targets = dsession.getTargets();
+					for (int i = 0; i < targets.length; i++) {
+						Process process = targets[i].getProcess();
+						IProcess iprocess = null;
+						if (process != null) {
+							iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
+						}
+						CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], renderTargetLabel(debugConfig),
+														iprocess, exeFile, false, false, false);
+					}
+				} catch (CoreException e) {
+					try {
+						dsession.terminate();
+					} catch (CDIException cdi) {
+					}
+					throw e;
 				}
-				throw e;
 			}
 		} finally {
 			monitor.done();
 		}
-											
+
 	}
 
-	protected IPath promptForCoreFilePath(final IProject project) throws CoreException {
+	protected IPath promptForCoreFilePath(final IProject project, final ICDebugConfiguration debugConfig) throws CoreException {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final String res[] = {null};
 		if (shell == null) {
@@ -121,6 +120,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 				if (initPath == null || initPath.equals("")) { //$NON-NLS-1$
 					initPath = project.getLocation().toString();
 				}
+				dialog.setFilterExtensions(debugConfig.getCoreFileExtensions());
 				dialog.setFilterPath(initPath);
 				res[0] = dialog.open();
 			}

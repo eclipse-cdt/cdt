@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
@@ -264,6 +265,15 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_ARCHIVE;
 
 			case ICElement.C_UNIT:
+				String ext = celement.getPath().getFileExtension();
+				if (ext != null) {
+					String[] exts = CoreModel.getDefault().getHeaderExtensions();
+					for (int i = 0; i < exts.length; i++) {
+						if (exts[i].equalsIgnoreCase(ext)) {
+							return CPluginImages.DESC_OBJS_TUNIT_HEADER;
+						}
+					}
+				}
 				return CPluginImages.DESC_OBJS_TUNIT;
 				
 			case ICElement.C_CCONTAINER:

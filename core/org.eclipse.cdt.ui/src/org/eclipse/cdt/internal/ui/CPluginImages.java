@@ -62,6 +62,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_INCLUDE= NAME_PREFIX + "include_obj.gif";
 	public static final String IMG_OBJS_MACRO= NAME_PREFIX + "define_obj.gif";
 	public static final String IMG_OBJS_TUNIT= NAME_PREFIX + "c_file_obj.gif";
+	public static final String IMG_OBJS_TUNIT_HEADER= NAME_PREFIX + "h_file_obj.gif";
 	public static final String IMG_OBJS_ARCHIVE= NAME_PREFIX + "ar_obj.gif";
 	public static final String IMG_OBJS_BINARY= NAME_PREFIX + "bin_obj.gif";
 	public static final String IMG_OBJS_SHLIB= NAME_PREFIX + "shlib_obj.gif";
@@ -95,6 +96,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_INCLUDE= createManaged(T_OBJ, IMG_OBJS_INCLUDE);
 	public static final ImageDescriptor DESC_OBJS_MACRO= createManaged(T_OBJ, IMG_OBJS_MACRO);
 	public static final ImageDescriptor DESC_OBJS_TUNIT= createManaged(T_OBJ, IMG_OBJS_TUNIT);
+	public static final ImageDescriptor DESC_OBJS_TUNIT_HEADER= createManaged(T_OBJ, IMG_OBJS_TUNIT_HEADER);
 	public static final ImageDescriptor DESC_OBJS_ARCHIVE= createManaged(T_OBJ, IMG_OBJS_ARCHIVE);
 	public static final ImageDescriptor DESC_OBJS_BINARY= createManaged(T_OBJ, IMG_OBJS_BINARY);
 	public static final ImageDescriptor DESC_OBJS_SHLIB= createManaged(T_OBJ, IMG_OBJS_SHLIB);

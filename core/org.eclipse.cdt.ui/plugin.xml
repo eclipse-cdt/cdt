@@ -167,8 +167,17 @@
       <editor
             default="true"
             name="%CEditor.name"
-            extensions="c, h, cc, hh, cpp, cxx, hpp"
+            extensions="c, cc, cpp, cxx"
             icon="icons/full/obj16/c_file_obj.gif"
+            class="org.eclipse.cdt.internal.ui.editor.CEditor"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
+            id="org.eclipse.cdt.ui.editor.CEditor">
+      </editor>
+      <editor
+            default="true"
+            name="%CEditor.name"
+            extensions="h, hh, hpp"
+            icon="icons/full/obj16/h_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             id="org.eclipse.cdt.ui.editor.CEditor">

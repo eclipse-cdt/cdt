@@ -1,3 +1,12 @@
+2003-12-15 Alain Magloire
+
+	Header icon provide by  Mirza Hadzic PR 26486.  Thanks.
+
+	* icons/full/obj16/h_file_obj.gif
+	* src/org/eclipse/cdt/internal/ui/CElementImagerProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* plugin.xml
+
 2003-12-15 Hoda Amer
 	Fixed [Bug 47234] new ParserMode required for a better CModel :
 	- Added a user preference to build the CModel using Structural mode

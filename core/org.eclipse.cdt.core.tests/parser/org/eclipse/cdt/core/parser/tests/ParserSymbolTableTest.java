@@ -17,6 +17,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
@@ -51,10 +52,13 @@ public class ParserSymbolTableTest extends TestCase {
 	}
 	
 	public ParserSymbolTable newTable(){
-		table = new ParserSymbolTable();
-		return table;
+		return newTable( ParserLanguage.CPP );
 	}
 	
+	public ParserSymbolTable newTable( ParserLanguage language ){
+		table = new ParserSymbolTable( language );
+		return table;
+	}
 	/**
 	 * testSimpleAdd.  
 	 * Add a declaration to the table and confirm it is there.

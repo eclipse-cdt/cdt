@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.sourcedependency;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
@@ -75,7 +77,9 @@ public class AddFileToDependencyTree extends DependencyRequest {
 		String docPath = resource.getLocation().toOSString();
 		IScannerInfo newInfo = new ScannerInfo((this.buildInfo != null) ? this.buildInfo.getDefinedSymbols() : null,(this.buildInfo != null) ? this.buildInfo.getIncludePaths() : null);
 		
-		dTree.add(document,docPath,newInfo);
+		ParserLanguage language = CoreModel.getDefault().hasCCNature( resource.getProject() ) ? ParserLanguage.CPP : ParserLanguage.C;
+		
+		dTree.add(document,docPath,newInfo, language);
 		return true;
 	}
 	

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITranslationOptions;
 import org.eclipse.cdt.core.parser.ITranslationResult;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -56,10 +57,11 @@ public class Scanner implements IScanner {
    
 	private Reader backupReader;
 
-    public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult, ISourceElementRequestor requestor, ParserMode parserMode ) {
+    public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language ) {
 		this.requestor = requestor;
 		this.mode = parserMode;
-		astFactory = ParserFactory.createASTFactory( mode );
+		this.language = language;
+		astFactory = ParserFactory.createASTFactory( mode, language );
 		this.backupReader = reader;
 		
 		try {
@@ -762,7 +764,7 @@ public class Scanner implements IScanner {
 
 				Object tokenTypeObject;
 				
-				if( cppNature )
+				if( language == ParserLanguage.CPP )
 				 	tokenTypeObject = cppKeywords.get(ident);
 				else
 					tokenTypeObject = cKeywords.get(ident);
@@ -1789,8 +1791,8 @@ public class Scanner implements IScanner {
 					new StringReader(expression + ";"),
 						EXPRESSION,
 						new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
-						ParserMode.QUICK_PARSE, nullCallback );
-            IParser parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE );
+						ParserMode.QUICK_PARSE, language, nullCallback );
+            IParser parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language );
  
 			try {
 				IASTExpression exp = parser.expression(null);
@@ -1901,7 +1903,8 @@ public class Scanner implements IScanner {
 										problemReporter, 
 										translationResult,
 										new NullSourceElementRequestor(),
-										mode);
+										mode,
+										language );
 			IToken t = null;
 			
 			try {
@@ -2063,7 +2066,7 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, new NullSourceElementRequestor(), problemReporter, translationResult );
+				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, language, new NullSourceElementRequestor(), problemReporter, translationResult );
 				helperScanner.setTokenizingMacroReplacementList( true );
 				IToken t = helperScanner.nextToken(false);
 	
@@ -2150,7 +2153,7 @@ public class Scanner implements IScanner {
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), problemReporter, translationResult, new NullSourceElementRequestor(), mode);
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), problemReporter, translationResult, new NullSourceElementRequestor(), mode, language);
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();
@@ -2370,12 +2373,12 @@ public class Scanner implements IScanner {
 	
 	
 
-	private boolean cppNature = true; 
+	private ParserLanguage language = ParserLanguage.CPP; 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IScanner#setCppNature(boolean)
 	 */
-	public void setCppNature(boolean value) {
-		cppNature = value; 
+	public void setLanguage( ParserLanguage value) {
+		language = value; 
 	}
 	
 	private final ISourceElementRequestor requestor;

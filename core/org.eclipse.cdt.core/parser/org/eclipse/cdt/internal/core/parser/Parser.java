@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ITranslationResult;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -77,7 +78,7 @@ public class Parser implements IParser
     private ParserMode mode = ParserMode.COMPLETE_PARSE;
     // are we doing the high-level parse, or an in depth parse?
     private boolean parsePassed = true; // did the parse pass?
-    private boolean cppNature = true; // true for C++, false for C
+    private ParserLanguage language = ParserLanguage.CPP; // C or CPP
     private ISourceElementRequestor requestor = null;
     // new callback mechanism
     private IASTFactory astFactory = null; // ast factory
@@ -116,6 +117,7 @@ public class Parser implements IParser
         IScanner scanner,
         ISourceElementRequestor callback,
         ParserMode mode,
+        ParserLanguage language,
         IProblemReporter problemReporter,
         ITranslationResult unitResult)
     {
@@ -124,7 +126,8 @@ public class Parser implements IParser
         this.unitResult = unitResult;
         requestor = callback;
         this.mode = mode;
-        astFactory = ParserFactory.createASTFactory(mode);
+        this.language = language;
+        astFactory = ParserFactory.createASTFactory(mode, language);
         scanner.setASTFactory(astFactory);
     }
     // counter that keeps track of the number of times Parser.parse() is called
@@ -4635,20 +4638,20 @@ public class Parser implements IParser
         lastToken = null; // this is not entirely right ... 
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.IParser#isCppNature()
+     * @see org.eclipse.cdt.internal.core.parser.IParser#getLanguage()
      */
-    public boolean isCppNature()
+    public ParserLanguage getLanguage()
     {
-        return cppNature;
+        return language;
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.IParser#setCppNature(boolean)
+     * @see org.eclipse.cdt.internal.core.parser.IParser#setLanguage(Language)
      */
-    public void setCppNature(boolean b)
+    public void setLanguage( ParserLanguage l )
     {
-        cppNature = b;
-        if (scanner != null)
-            scanner.setCppNature(b);
+        language = l;
+        if (scanner != null) 
+            scanner.setLanguage( l );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#getLastErrorOffset()

@@ -22,6 +22,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
@@ -128,6 +129,10 @@ public class IndexManagerTests extends TestCase {
 	   //Create the project
 	   IProject cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,CCorePlugin.PLUGIN_ID + ".make"); //.getCoreModel().create(project);
 	    
+	   if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
+		   addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);
+	   }
+	   
 	   return cproject; 
 	}
 	

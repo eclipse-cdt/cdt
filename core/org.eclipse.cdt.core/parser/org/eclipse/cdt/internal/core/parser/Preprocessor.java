@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITranslationResult;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 
@@ -33,8 +34,8 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 	 * @param filename
 	 * @param defns
 	 */
-	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, IProblemReporter problemReporter, ITranslationResult unitResult, ParserMode mode) {
-        super(reader, filename, info, problemReporter, unitResult, requestor, mode );
+	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, IProblemReporter problemReporter, ITranslationResult unitResult, ParserMode mode, ParserLanguage language ) {
+        super(reader, filename, info, problemReporter, unitResult, requestor, mode, language );
     }
 
 	public void process()

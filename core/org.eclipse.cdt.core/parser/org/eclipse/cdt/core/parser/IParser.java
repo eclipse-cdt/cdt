@@ -48,14 +48,14 @@ public interface IParser {
 	 * 
 	 * @return	true for C++, false for C
 	 */
-	public boolean isCppNature();
+	public ParserLanguage getLanguage();
 	
 	/**
 	 * Set the Parser explicitly to be a C or C++ parser.
 	 * 
-	 * @param b		true for C++, false for C 
+	 * @param l		CPP or C 
 	 */
-	public void setCppNature(boolean b);
+	public void setLanguage( ParserLanguage l);
 	
 	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  

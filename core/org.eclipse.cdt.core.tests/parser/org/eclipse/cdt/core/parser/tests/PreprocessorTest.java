@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -73,7 +74,7 @@ public class PreprocessorTest extends TestCase {
 	
 	public IPreprocessor setupPreprocessor( String text, List includePaths, Map defns, ISourceElementRequestor rq )
 	{
-		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo(), ParserMode.COMPLETE_PARSE, rq );
+		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, rq );
 		return p; 
 	}
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.index.IDocument;
@@ -111,7 +112,7 @@ public class DependencyTree implements IDependencyTree {
 	 * Add the file that will be preprocessed to the tree, create a new
 	 * preprocessor output and preprocess!
 	 */
-	public void add(IDocument document, String docPath, IScannerInfo newInfo) throws IOException  {
+	public void add(IDocument document, String docPath, IScannerInfo newInfo, ParserLanguage language) throws IOException  {
 		IndexedFile indexedFile= addsTree.getIndexedFile(document.getName());
 		//if (indexedFile != null)
 			//remove(indexedFile, 0);
@@ -120,7 +121,7 @@ public class DependencyTree implements IDependencyTree {
 		
 		output.addDocument(document);
 		
-		IPreprocessor preprocessor = ParserFactory.createPreprocessor( new StringReader( document.getStringContent() ),docPath , newInfo, ParserMode.COMPLETE_PARSE,depReq);
+		IPreprocessor preprocessor = ParserFactory.createPreprocessor( new StringReader( document.getStringContent() ),docPath , newInfo, ParserMode.COMPLETE_PARSE, language, depReq);
 		preprocessor.process();
 	}
 	/**

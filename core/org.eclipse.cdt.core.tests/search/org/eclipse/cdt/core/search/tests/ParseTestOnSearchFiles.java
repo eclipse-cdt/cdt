@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
@@ -57,8 +58,8 @@ public class ParseTestOnSearchFiles extends TestCase
 	public void testParseOfAndrewsFile()
 	{
 		ISourceElementRequestor requestor = new NullSourceElementRequestor();
-		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), name, new ScannerInfo(), ParserMode.COMPLETE_PARSE, requestor );
-		IParser parser = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE );
+		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), name, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor );
+		IParser parser = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP );
 		assertTrue( parser.parse() );
 	}
 

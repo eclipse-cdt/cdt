@@ -17,8 +17,8 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
@@ -130,8 +130,8 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 																	 monitor,
 																	 CCorePlugin.PLUGIN_ID + ".make");
 
-		if( !project.hasNature(CProjectNature.C_NATURE_ID) ){
-			addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
+		if( !project.hasNature(CCProjectNature.CC_NATURE_ID) ){
+			addNatureToProject(project, CCProjectNature.CC_NATURE_ID, null);
 		}
 
 		return cproject;

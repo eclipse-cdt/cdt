@@ -1,3 +1,7 @@
+2003-09-08 Andrew Niefer
+	Modified calls to ParserFactory to specify which language to use
+	Add CC nature to projects in BaseSearchTest & IndexManagerTests
+
 2003-09-05 Hoda Amer
 	Added tests to CompleteParseASTTest to test the expression result type
 	for function calls that reference variables with pointers (bug#42453).

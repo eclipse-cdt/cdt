@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.index.IDocument;
@@ -76,9 +78,12 @@ public class SourceIndexer extends AbstractIndexer {
 		  }
 		}
 		
+		//C or CPP?
+		ParserLanguage language = CoreModel.getDefault().hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
+		
 		IParser parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, requestor ), 
-							requestor, ParserMode.COMPLETE_PARSE);
+							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor ), 
+							requestor, ParserMode.COMPLETE_PARSE, language );
 		
 		try{
 			boolean retVal = parser.parse();

@@ -24,6 +24,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
@@ -278,11 +279,11 @@ public class TortureTest extends FractionalAutomatedTest {
 		public void run(){
 			try {           
 				DOMBuilder domBuilder = new DOMBuilder();
-				ParserMode parserMode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
+				ParserMode parserMode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
+				ParserLanguage language = cppNature ? ParserLanguage.CPP : ParserLanguage.C; 
 				parser = ParserFactory.createParser( 
-						ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), parserMode, nullCallback ), nullCallback, parserMode);
+						ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), parserMode, language, nullCallback ), nullCallback, parserMode, language);
 		
-				parser.setCppNature(cppNature);
 				mapping = ParserFactory.createLineOffsetReconciler( new StringReader( code ) );
 	            
 				assertTrue(parser.parse());

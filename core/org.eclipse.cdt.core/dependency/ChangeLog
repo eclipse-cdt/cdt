@@ -1,3 +1,8 @@
+2003-09-08 Andrew Niefer
+	- Modified calls to ParserFactory to specify which language to use
+	- Modified IDependencyTree.add to take ParserLanguage as a parameter so that it can
+	  be passed on when creating the preprocessor
+
 2003-07-23 Bogdan Gheorghe
 
 	Added initial dependency implementation

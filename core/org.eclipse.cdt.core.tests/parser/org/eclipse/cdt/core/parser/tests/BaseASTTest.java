@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
@@ -47,7 +48,7 @@ public class BaseASTTest extends TestCase
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, quickParseCallback), quickParseCallback, mode );
+		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, ParserLanguage.CPP, quickParseCallback), quickParseCallback, mode, ParserLanguage.CPP );
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
 		return quickParseCallback.getCompilationUnit(); 

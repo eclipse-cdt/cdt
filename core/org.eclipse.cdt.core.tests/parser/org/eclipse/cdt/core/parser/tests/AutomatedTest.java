@@ -23,6 +23,7 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
@@ -56,9 +57,9 @@ public class AutomatedTest extends AutomatedFramework {
 			FileInputStream stream = new FileInputStream( file );
 
 			String filePath = file.getCanonicalPath();
-			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, new ScannerInfo(), ParserMode.QUICK_PARSE, nullCallback ), nullCallback, ParserMode.QUICK_PARSE);
-			parser.setCppNature( ((String)natures.get( filePath )).equalsIgnoreCase("cpp") );
-			
+			ParserLanguage language = ((String)natures.get( filePath )).equalsIgnoreCase("cpp") ? ParserLanguage.CPP : ParserLanguage.C;
+			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback ), nullCallback, ParserMode.QUICK_PARSE, language);
+						
 			mapping = ParserFactory.createLineOffsetReconciler( new InputStreamReader( stream ) );
 			
 			assertTrue( parser.parse() );

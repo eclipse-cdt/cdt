@@ -1,3 +1,8 @@
+2003-09-08 Andrew Niefer
+	- Created ParserLanguage.java
+	- Updated Factories to take language as parameter when create scanner & parser
+	- Updated Parser, Scanner & ParserSymbolTable to take language in their constructor
+
 2003-09-05 Hoda Amer
 	- Added references to variables with pointers in solution 
 	of bug#42453:Expression result types not computed

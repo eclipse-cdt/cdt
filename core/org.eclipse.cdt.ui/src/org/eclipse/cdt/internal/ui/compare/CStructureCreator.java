@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
@@ -67,9 +68,12 @@ public class CStructureCreator implements IStructureCreator {
 
 		ISourceElementRequestor builder = new CParseTreeBuilder(root, doc);
 		try {
+			//Using the CPP parser (was implicit before, now its explicit).  If there 
+			//are bugs while parsing C files, we might want to create a separate Structure
+			//compare for c files, but we'll never be completely right about .h files
 			IScanner scanner =
-				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, builder);
-			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE);
+				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder);
+			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP );
 			parser.parse();
 		} catch (Exception e) {
 			// What to do when error ?

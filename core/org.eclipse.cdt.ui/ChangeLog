@@ -1,3 +1,6 @@
+2003-09-08 Andrew Niefer
+	- Modified call to ParserFactory in CStructureCreator to specify which language to use
+
 2003-09-05 Andrew Niefer
 	C++ Search:
 	  - enable Selected Resource Scope

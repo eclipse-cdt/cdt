@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -356,8 +358,16 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				IScannerInfo buildScanInfo = provider.getScannerInformation(project);
 				scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 			}
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, this );
-			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE );
+			
+			ParserLanguage language = null;
+			if( project != null ){
+				language = CoreModel.getDefault().hasCCNature( project ) ? ParserLanguage.CPP : ParserLanguage.C;
+			} else {
+				//TODO no probject, what language do we use?
+				language = ParserLanguage.CPP;
+			}
+			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this );
+			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language );
 			
 			if (VERBOSE)
 			  MatchLocator.verbose("*** New Search for path: " + pathString);

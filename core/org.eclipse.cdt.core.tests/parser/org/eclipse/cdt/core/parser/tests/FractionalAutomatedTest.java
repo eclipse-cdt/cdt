@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
@@ -238,9 +239,10 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		public void run(){
 			try{
 				result = null;
+				ParserLanguage language = cppNature ? ParserLanguage.CPP : ParserLanguage.C;
 				IParser parser = ParserFactory.createParser( 
-					ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, nullCallback ), nullCallback, ParserMode.QUICK_PARSE);
-				parser.setCppNature( cppNature );
+					ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback ), nullCallback, ParserMode.QUICK_PARSE, language);
+				
 				parser.parse();
 			} catch ( Exception e ){
 				result = e.getClass().toString();

@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -554,7 +555,7 @@ public class CompleteParseBaseTest extends TestCase
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, callback ), callback, ParserMode.COMPLETE_PARSE	
+    			ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback ), callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP	
     		);
     	if( ! parser.parse() ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();

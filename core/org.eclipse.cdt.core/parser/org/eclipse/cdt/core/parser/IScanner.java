@@ -23,7 +23,7 @@ public interface IScanner  {
 	public IToken nextToken() throws ScannerException, EndOfFile;
 	public IToken nextToken( boolean next ) throws ScannerException, EndOfFile;
 	 
-	public void setCppNature( boolean value );
+	public void setLanguage( ParserLanguage value );
 		
 	public int  getCount();
 	public int  getDepth();

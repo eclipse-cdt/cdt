@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -74,10 +75,12 @@ public class CModelBuilder {
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
+		
+		ParserLanguage language = hasCppNature ? ParserLanguage.CPP : ParserLanguage.C;
 		IParser parser = ParserFactory.createParser( 
 			ParserFactory.createScanner( new StringReader( code ), "code", 
-			new ScannerInfo(), mode, quickParseCallback), quickParseCallback, mode );
-		parser.setCppNature(hasCppNature);
+			new ScannerInfo(), mode, language, quickParseCallback), quickParseCallback, mode, language );
+		
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
 		return quickParseCallback.getCompilationUnit(); 

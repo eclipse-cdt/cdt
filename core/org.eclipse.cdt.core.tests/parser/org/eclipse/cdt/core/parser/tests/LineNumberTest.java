@@ -19,6 +19,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
@@ -54,7 +55,7 @@ public class LineNumberTest extends TestCase {
 	public void testDOMLineNos() throws Exception
 	{
 		DOMBuilder domBuilder = new DOMBuilder();
-		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader( fileIn ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, domBuilder ), domBuilder, ParserMode.QUICK_PARSE ); 
+		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader( fileIn ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, domBuilder ), domBuilder, ParserMode.QUICK_PARSE, ParserLanguage.CPP); 
 		//parser.mapLineNumbers(true); 
 		if( ! parser.parse() ) fail( "Parse of file failed");
 		

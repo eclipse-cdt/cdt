@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.core.runtime.IPath;
@@ -23,7 +24,7 @@ public interface IDependencyTree {
 	/**
 	 * Adds the given document to the index.
 	 */
-	void add(IDocument document, String docPath, IScannerInfo newInfo) throws IOException;
+	void add(IDocument document, String docPath, IScannerInfo newInfo, ParserLanguage language) throws IOException;
 	/**
 	 * Empties the index.
 	 */

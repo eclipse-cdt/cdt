@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -35,7 +36,7 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 
     protected void initializeScanner(String input, Map definitions )
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE, nullSourceElementRequestor );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor );
 	}
 
 

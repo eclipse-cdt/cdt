@@ -1,3 +1,6 @@
+2003-09-08 Andrew Niefer
+	- Modified calls to ParserFactory to specify which language to use
+
 2003-09-05 Andrew Niefer
 	- Modified how AbstractIndexer creates the fully qualified name for an enumerator (spec 7.2-10)
 

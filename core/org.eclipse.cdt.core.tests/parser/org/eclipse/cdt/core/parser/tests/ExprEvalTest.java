@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -26,7 +27,7 @@ public class ExprEvalTest extends TestCase {
 	public void runTest(String code, int expectedValue) throws Exception {
 		
 		final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
-        IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), null, nullCallback ), nullCallback, ParserMode.QUICK_PARSE);
+        IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), null, ParserLanguage.CPP, nullCallback ), nullCallback, ParserMode.QUICK_PARSE, ParserLanguage.CPP );
 		IASTExpression expression = parser.expression(null);
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}

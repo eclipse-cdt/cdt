@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
@@ -87,9 +88,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      * 
      */
     
-    public CompleteParseASTFactory()
+    public CompleteParseASTFactory( ParserLanguage language )
     {
         super();
+        
+		pst = new ParserSymbolTable( language );
     }
 
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError ) throws ASTSemanticException
@@ -1677,7 +1680,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
     }
 
-    protected ParserSymbolTable pst = new ParserSymbolTable();
+    protected ParserSymbolTable pst;
 
 
     /* (non-Javadoc)

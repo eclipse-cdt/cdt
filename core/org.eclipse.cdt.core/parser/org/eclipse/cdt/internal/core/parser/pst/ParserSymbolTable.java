@@ -22,6 +22,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 /**
@@ -33,10 +34,11 @@ public class ParserSymbolTable {
 	/**
 	 * Constructor for ParserSymbolTable.
 	 */
-	public ParserSymbolTable() {
+	public ParserSymbolTable( ParserLanguage language ) {
 		super();
 		_compilationUnit = new Declaration("");
 		_compilationUnit.setType( TypeInfo.t_namespace );
+		_language = language;
 	}
 
 	public IContainerSymbol getCompilationUnit(){
@@ -102,7 +104,9 @@ public class ParserSymbolTable {
 		//if this name define in this scope?
 		lookupInContained( data, inSymbol );
 		
-		if( !data.ignoreUsingDirectives ){
+		if( inSymbol.getSymbolTable().getLanguage() == ParserLanguage.CPP &&
+		    !data.ignoreUsingDirectives )
+		{
 			//check nominated namespaces
 			//the transitives list is populated in LookupInNominated, and then 
 			//processed in ProcessDirectives
@@ -1799,8 +1803,17 @@ public class ParserSymbolTable {
 
 	//private Stack _contextStack = new Stack();
 	private Declaration _compilationUnit;
+	private ParserLanguage    _language;
 	private LinkedList undoList = new LinkedList();
 	private HashSet markSet = new HashSet();
+	
+	public void setLanguage( ParserLanguage language ){
+		_language = language;
+	}
+	
+	public ParserLanguage getLanguage(){
+		return _language;
+	}
 	
 	protected void pushCommand( Command command ){
 		undoList.addFirst( command );
@@ -2727,6 +2740,10 @@ public class ParserSymbolTable {
 		 * of this is volatile X*....
 		 */
 		private boolean addThis( Declaration obj ){
+			if( getSymbolTable().getLanguage() != ParserLanguage.CPP ){
+				return false; 
+			}
+				
 			TypeInfo type = obj.getTypeInfo();
 			if( ( !type.isType( TypeInfo.t_function ) && !type.isType( TypeInfo.t_constructor) ) ||
 			    type.checkBit( TypeInfo.isStatic ) ){

@@ -65,9 +65,6 @@ public class Scanner {
 
 	protected boolean rollbackContext()
 	{
-		if (callback != null)
-			callback.inclusionEnd();
-			
 		try
 		{
 			currentContext.getReader().close();
@@ -83,6 +80,9 @@ public class Scanner {
 			return false;
 		}
 
+		//if (callback != null)
+		//	callback.inclusionEnd();
+			
 		currentContext= (ScannerContext) contextStack.pop();
 		return true;
 	}

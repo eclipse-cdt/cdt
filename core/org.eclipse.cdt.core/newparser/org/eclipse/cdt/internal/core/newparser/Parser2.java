@@ -168,22 +168,26 @@ public class Parser2 {
 				consume();
 				break;
 			case Token.tLBRACE:
-				// function body - TO DO: right now we just skip the body
-				// simply look for matching brace and return
-				consume();
-				int depth = 1;
-				while (depth > 0) {
-					switch (consume().getType()) {
-						case Token.tRBRACE:
-							--depth;
-							break;
-						case Token.tLBRACE:
-							++depth;
-							break;
-						case Token.tEOF:
-							// Oops, no match
-							throw backtrack;
+				if (quickParse) {
+					// speed up the parser by skiping the body
+					// simply look for matching brace and return
+					consume();
+					int depth = 1;
+					while (depth > 0) {
+						switch (consume().getType()) {
+							case Token.tRBRACE:
+								--depth;
+								break;
+							case Token.tLBRACE:
+								++depth;
+								break;
+							case Token.tEOF:
+								// Oops, no match
+								throw backtrack;
+						}
 					}
+				} else {
+					functionBody();
 				}
 				break;
 			default:
@@ -608,6 +612,132 @@ public class Parser2 {
 		return classSpecifier;
 	}
 	
+	public void functionBody() throws Exception {
+		compoundStatement();
+	}
+	
+	// Statements
+	public void statement() throws Exception {
+		switch (LT(1)) {
+			case Token.t_case:
+				consume();
+				constantExpression();
+				consume(Token.tCOLON);
+				statement();
+				return;
+			case Token.t_default:
+				consume();
+				consume(Token.tCOLON);
+				statement();
+				return;
+			case Token.tLBRACE:
+				compoundStatement();
+				return;
+			case Token.t_if:
+				consume();
+				consume(Token.tLPAREN);
+				condition();
+				consume(Token.tRPAREN);
+				statement();
+				if (LT(1) == Token.t_else) {
+					consume();
+					statement();
+				}
+				return;
+			case Token.t_switch:
+				consume();
+				consume(Token.tLPAREN);
+				condition();
+				consume(Token.tRPAREN);
+				statement();
+				return;
+			case Token.t_while:
+				consume();
+				consume(Token.tLPAREN);
+				condition();
+				consume(Token.tRPAREN);
+				statement();
+				return;
+			case Token.t_do:
+				consume();
+				statement();
+				consume(Token.t_while);
+				consume(Token.tLPAREN);
+				condition();
+				consume(Token.tRPAREN);
+				return;
+			case Token.t_for:
+				consume();
+				consume(Token.tLPAREN);
+				forInitStatement();
+				if (LT(1) != Token.tSEMI)
+					condition();
+				consume(Token.tSEMI);
+				if (LT(1) != Token.tRPAREN)
+					expression();
+				consume(Token.tRPAREN);
+				statement();
+				return;
+			case Token.t_break:
+				consume();
+				consume(Token.tSEMI);
+				return;
+			case Token.t_continue:
+				consume();
+				consume(Token.tSEMI);
+				return;
+			case Token.t_return:
+				consume();
+				if (LT(1) != Token.tSEMI)
+					expression();
+				consume(Token.tSEMI);
+				return;
+			case Token.t_goto:
+				consume();
+				consume(Token.tIDENTIFIER);
+				consume(Token.tSEMI);
+				return;
+			case Token.t_try:
+				consume();
+				compoundStatement();
+				while (LT(1) == Token.t_catch) {
+					consume();
+					consume(Token.tLPAREN);
+					declaration(); // was exceptionDeclaration
+					consume(Token.tRPAREN);
+					compoundStatement();
+				}
+				return;
+			default:
+				// can be many things:
+				// label
+				if (LT(1) == Token.tIDENTIFIER && LT(2) == Token.tCOLON) {
+					consume();
+					consume();
+					statement();
+					return;
+				}
+				
+				// expressionStatement
+				// declarationStatement
+		}
+	}
+	
+	public void condition() throws Exception {
+		// TO DO
+	}
+	
+	public void forInitStatement() throws Exception {
+		// TO DO
+	}
+	
+	public void compoundStatement() throws Exception {
+		consume(Token.tLBRACE);
+		while (LT(1) != Token.tRBRACE)
+			statement();
+		consume();
+	}
+	
 	// Expressions
 	public void constantExpression() throws Exception {
 		conditionalExpression();
@@ -1008,6 +1138,8 @@ public class Parser2 {
 		switch (LT(1)) {
 			// TO DO: we need more literals...
 			case Token.tINTEGER:
+				callback.expressionTerminal(consume());
+				return;
 			case Token.tSTRING:
 				callback.expressionTerminal(consume());
 				return;
@@ -1128,6 +1260,5 @@ public class Parser2 {
 	protected void backup(Token mark) {
 		currToken = mark;
 	}
-	
 
 }

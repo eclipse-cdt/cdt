@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -71,6 +72,14 @@ public class TranslationUnitAnnotationModelEvent  extends AnnotationModelEvent {
 		testIfProblemMarker(annotation);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
+	 */
+	public void annotationRemoved(Annotation annotation, Position position) {
+		super.annotationRemoved(annotation, position);
+		testIfProblemMarker(annotation);
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationModelEvent#annotationRemoved(org.eclipse.jface.text.source.Annotation)

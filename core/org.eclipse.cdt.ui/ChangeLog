@@ -1,3 +1,8 @@
+2004-11-12 David Inglis
+	
+	Fixed bug # 78292
+	* src/org/eclipse/cdt/internal/ui/editor/TranslationUnitAnnotationModelEvent.java
+	
 2004-11-10 Chris Wiebe
 
 	additional case for 78200

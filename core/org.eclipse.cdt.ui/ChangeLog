@@ -1,3 +1,12 @@
+2003-12-19 Alain Magloire
+ 
+	Fix for PR 40247.
+	We have to overload Eclipse ViewSorter.compare() it uses
+	the label provider, it adds ">" to the project name and
+	mixing the sorting.
+ 
+	* src/org/eclipse/cdt/internal/ui/cview/CViewSorter.java
+ 
 2003-12-15 Thomas Fletcher
 	Re-activate the hover help based on the function summary extension point. 
 	Fix a bug in the FunctionSummary class which displayed arguments as

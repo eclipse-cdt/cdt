@@ -15,8 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
-import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 
 /**
  * @author jcamelon
@@ -56,7 +54,7 @@ public class TypeId implements IDeclarator
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IDeclarator#addPointerOperator(org.eclipse.cdt.core.parser.ast.ASTPointerOperator)
      */
-    public void addPointerOperator(ASTPointerOperator ptrOp)
+    public void addPointerOperator(Object ptrOp)
     {
     	if( pointerOperators == Collections.EMPTY_LIST )
     		pointerOperators = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
@@ -65,7 +63,7 @@ public class TypeId implements IDeclarator
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IDeclarator#addArrayModifier(org.eclipse.cdt.core.parser.ast.IASTArrayModifier)
      */
-    public void addArrayModifier(IASTArrayModifier arrayMod)
+    public void addArrayModifier(Object arrayMod)
     {
        	if( arrayModifiers == Collections.EMPTY_LIST )
        		arrayModifiers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );

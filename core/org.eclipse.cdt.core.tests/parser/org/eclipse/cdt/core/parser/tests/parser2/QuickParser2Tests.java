@@ -1501,11 +1501,11 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug39704B() throws Exception
     {
-		parse("extern int (* import) (void) __attribute__((dllimport));"); //$NON-NLS-1$
+		parse("extern int (* import) (void) __attribute__((dllimport));", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
     public void testBug39704C() throws Exception
     {
- 		parse("int func2 (void) __attribute__((dllexport));"); //$NON-NLS-1$
+ 		parse("int func2 (void) __attribute__((dllexport));", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
     
     public void testBug39686() throws Exception
@@ -1517,7 +1517,7 @@ public class QuickParser2Tests extends TestCase {
         code.write("__complex__ int a = 3i; // imaginary intege r literal\n"); //$NON-NLS-1$
         code.write("double v = __real__ x; // real part of expression\n"); //$NON-NLS-1$
         code.write("double w = __imag__ x; // imaginary part of expression\n"); //$NON-NLS-1$
-        parse(code.toString());
+        parse(code.toString(), true, ParserLanguage.C, true);
     }
     
     public void testBug39681() throws Exception
@@ -1540,32 +1540,32 @@ public class QuickParser2Tests extends TestCase {
         writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; }))\n" );//$NON-NLS-1$
-        parse( writer.toString() );
+        parse( writer.toString(), true, ParserLanguage.CPP, true );
         writer = new StringWriter();
         writer.write( "int x = ({ int y = foo (); int z;\n" ); //$NON-NLS-1$
         writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; });\n" );//$NON-NLS-1$
-        parse( writer.toString() );
+        parse( writer.toString() , true, ParserLanguage.CPP, true);
         writer = new StringWriter();
         writer.write( "typeof({ int y = foo (); int z;\n" ); //$NON-NLS-1$
         writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
-        parse( writer.toString() );
+        parse( writer.toString() , true, ParserLanguage.CPP, true);
     }
     
     public void testBug39701A() throws Exception
     {
-        parse("extern template int max (int, int);"); //$NON-NLS-1$
+        parse("extern template int max (int, int);", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
     public void testBug39701B() throws Exception
     {
-    	parse("inline template class Foo<int>;"); //$NON-NLS-1$
+    	parse("inline template class Foo<int>;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
     public void testBug39701C() throws Exception
     {
-    	parse("static template class Foo<int>;"); //$NON-NLS-1$
+    	parse("static template class Foo<int>;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
 
     

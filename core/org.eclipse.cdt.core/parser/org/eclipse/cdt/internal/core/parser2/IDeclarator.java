@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.core.parser2;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
-import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 
 /**
  * @author jcamelon
@@ -25,11 +23,11 @@ public interface IDeclarator
      * @return
      */
     public abstract List getPointerOperators();
-    public abstract void addPointerOperator(ASTPointerOperator ptrOp);
+    public abstract void addPointerOperator(Object ptrOp);
     /**
      * @param arrayMod
      */
-    public abstract void addArrayModifier(IASTArrayModifier arrayMod);
+    public abstract void addArrayModifier(Object arrayMod);
     /**
      * @return
      */

@@ -16,12 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
-import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
-import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 public class Declarator implements IParameterCollection, IDeclaratorOwner, IDeclarator
@@ -32,11 +26,11 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 	private final IDeclaratorOwner owner;
     private ITokenDuple pointerOperatorNameDuple = null;
     private ITokenDuple namedDuple = null;
-    private IASTExpression constructorExpression = null;
+    private Object constructorExpression = null;
     private Declarator ownedDeclarator = null;
-	private IASTInitializerClause initializerClause = null;
-	private IASTExceptionSpecification exceptionSpecification = null;
-	private IASTExpression bitFieldExpression = null;
+	private Object initializerClause = null;
+	private Object exceptionSpecification = null;
+	private Object bitFieldExpression = null;
 
 	private int flag = 0;
 	protected void setBit(boolean b, int mask){
@@ -121,7 +115,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
         return ptrOps;
     }
 
-	public void addPointerOperator( ASTPointerOperator ptrOp )
+	public void addPointerOperator( Object ptrOp )
 	{
     	if( ptrOps == Collections.EMPTY_LIST )
     		ptrOps = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
@@ -146,17 +140,17 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @return
      */
-    public IASTInitializerClause getInitializerClause()
+    public Object getInitializerClause()
     {
         return initializerClause;
     }
 
     /**
-     * @param expression
+     * @param clause
      */
-    public void setInitializerClause(IASTInitializerClause expression)
+    public void setInitializerClause(Object clause)
     {
-        initializerClause = expression;
+        initializerClause = clause;
     }
 
     /**
@@ -183,7 +177,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @return
      */
-    public IASTExceptionSpecification getExceptionSpecification()
+    public Object getExceptionSpecification()
     {
         return exceptionSpecification;
     }
@@ -207,7 +201,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @param specification
      */
-    public void setExceptionSpecification(IASTExceptionSpecification specification)
+    public void setExceptionSpecification(Object specification)
     {
         exceptionSpecification = specification;
     }
@@ -247,7 +241,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @param arrayMod
      */
-    public void addArrayModifier(IASTArrayModifier arrayMod)
+    public void addArrayModifier(Object arrayMod)
     {
     	if( arrayModifiers == Collections.EMPTY_LIST )
     		arrayModifiers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
@@ -265,23 +259,23 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @return
      */
-    public IASTExpression getBitFieldExpression()
+    public Object getBitFieldExpression()
     {
         return bitFieldExpression;
     }
 
     /**
-     * @param expression
+     * @param exp
      */
-    public void setBitFieldExpression(IASTExpression expression)
+    public void setBitFieldExpression(Object exp)
     {
-        bitFieldExpression = expression;
+        bitFieldExpression = exp;
     }
 
     /**
      * @param astExpression
      */
-    public void setConstructorExpression(IASTExpression astExpression)
+    public void setConstructorExpression(Object astExpression)
     {
         constructorExpression = astExpression;
     }
@@ -289,7 +283,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @return
      */
-    public IASTExpression getConstructorExpression()
+    public Object getConstructorExpression()
     {
         return constructorExpression;
     }
@@ -297,7 +291,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @param initializer
      */
-    public void addConstructorMemberInitializer(IASTConstructorMemberInitializer initializer)
+    public void addConstructorMemberInitializer(Object initializer)
     {
     	if( constructorMemberInitializers == Collections.EMPTY_LIST )
     		constructorMemberInitializers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );

@@ -9,7 +9,7 @@ import org.eclipse.cdt.debug.mi.core.command.Command;
 /**
  * Simple thread-safe Queue implemetation.
  */
-public class CommandQueue extends Queue{
+public class CommandQueue extends Queue {
 
 
 	public CommandQueue() {
@@ -40,6 +40,13 @@ public class CommandQueue extends Queue{
 	public void addCommand(Command cmd) {
 		//print("in addCommand() - entering");
 		addItem(cmd);
+	}
+
+	public Command[] clearCommands() {
+		Object[] objs = clearItems();
+		Command[] cmds = new Command[objs.length];
+		System.arraycopy(objs, 0, cmds, 0, objs.length);
+		return cmds;
 	}
 
 	private static void print(String msg) {

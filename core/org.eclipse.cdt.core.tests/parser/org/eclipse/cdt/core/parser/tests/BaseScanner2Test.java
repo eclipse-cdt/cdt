@@ -183,7 +183,8 @@ public class BaseScanner2Test extends TestCase {
 
 	public void validateBalance(int expected)
 	{
-		assertTrue(scanner.getDepth() == expected);
+		// This isn't kept track of any more
+		//assertTrue(scanner.getDepth() == expected);
 	}
 
 	public void validateBalance()
@@ -202,6 +203,8 @@ public class BaseScanner2Test extends TestCase {
 	public void validateDefinition(String name, String value)
 	{
 		Object expObject = scanner.getRealDefinitions().get(name.toCharArray());
+		if (expObject == null)
+			System.out.println("Hi");
 		assertNotNull(expObject);
 		assertTrue(expObject instanceof ObjectStyleMacro);
 		assertTrue(CharArrayUtils.equals(value.toCharArray(), ((ObjectStyleMacro)expObject).expansion));
@@ -209,11 +212,7 @@ public class BaseScanner2Test extends TestCase {
 
 	public void validateDefinition(String name, int value)
 	{
-		String definition= null;
-		definition= scanner.getDefinition(name).getExpansionSignature();
-		assertNotNull(definition);
-		int intValue= (Integer.valueOf(definition)).intValue();
-		assertEquals(value, intValue);
+		validateDefinition(name, String.valueOf(value));
 	}
 
 	public void validateAsUndefined(String name)

@@ -16,10 +16,12 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 public class CharArrayIntMap extends CharArrayMap {
 
 	private int[] valueTable;
+	public final int undefined;
 
-	public CharArrayIntMap(int initialSize) {
+	public CharArrayIntMap(int initialSize, int undefined) {
 		super(initialSize);
 		valueTable = new int[capacity()];
+		this.undefined = undefined;
 	}
 
 	protected void resize(int size) {

@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro.Expansion;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
@@ -52,6 +53,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	private CharArrayObjectMap definitions;
 	private String[] includePaths;
 	int count;
+	
+	private ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 	
 	// The context stack
 	private static final int bufferInitialSize = 8;
@@ -637,7 +640,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		
 		int tokenType = keywords.get(buffer, start, len);
-		if (tokenType < 0)
+		if (tokenType == keywords.undefined)
 			return new ImagedToken(IToken.tIDENTIFIER, new String(buffer, start, len));
 		else
 			return new SimpleToken(tokenType);
@@ -861,33 +864,57 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipOverWhiteSpace();
 		
 		// find the directive
-		int pos = ++bufferPos[bufferStackPos];
+		int start = ++bufferPos[bufferStackPos];
 		
 		// if new line or end of buffer, we're done
-		if (pos >= limit || buffer[pos] == '\n')
+		if (start >= limit || buffer[start] == '\n')
 			return;
 
-		if (isDefine()) {
-			bufferPos[bufferStackPos] += 5;
-			handlePPDefine();
-			return;
-		} else if (isIfdef()) {
-			bufferPos[bufferStackPos] += 4;
-			handlePPIfdef(true);
-		} else if (isIfndef()) {
-			bufferPos[bufferStackPos] += 5;
-			handlePPIfdef(false);
-		} else if (isElse() || isElif()) {
-			// Condition must have been true, skip over the rest
-			skipToNewLine();
-			skipOverConditionalCode(false);
-		} else if (isError()) {
-			throw new ScannerException(null);
-		} else {
-			// don't know, chew up to the end of line
-			// includes endif which is immatereal at this point
-			skipToNewLine();
+		char c = buffer[start];
+		if ((c >= 'a' && c <= 'z')) {
+			while (++bufferPos[bufferStackPos] < limit) {
+				c = buffer[bufferPos[bufferStackPos]];
+				if ((c >= 'a' && c <= 'z'))
+					continue;
+				else
+					break;
+			}
+			--bufferPos[bufferStackPos];
+			int len = bufferPos[bufferStackPos] - start + 1;
+			int type = ppKeywords.get(buffer, start, len);
+			if (type != ppKeywords.undefined) {
+				switch (type) {
+					case ppDefine:
+						handlePPDefine();
+						return;
+					case ppIfdef:
+						handlePPIfdef(true);
+						return;
+					case ppIfndef:
+						handlePPIfdef(false);
+						return;
+					case ppIf:
+						start = bufferPos[bufferStackPos];
+						skipToNewLine();
+						len = bufferPos[bufferStackPos] - start;
+						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0)
+							skipOverConditionalCode(true);
+						return;
+					case ppElse:
+					case ppElif:
+						// Condition must have been true, skip over the rest
+						skipToNewLine();
+						skipOverConditionalCode(false);
+						return;
+					case ppError:
+						throw new ScannerException(null);
+				}
+			}
 		}
+
+		// don't know, chew up to the end of line
+		// includes endif which is immatereal at this point
+		skipToNewLine();
 	}		
 
 	private void handlePPDefine() {
@@ -1034,30 +1061,58 @@ public class Scanner2 implements IScanner, IScannerData {
 			char c = buffer[++bufferPos[bufferStackPos]];
 			if (c == '#') {
 				skipOverWhiteSpace();
-				++bufferPos[bufferStackPos];
 				
-				// TODO handle elif
+				// find the directive
+				int start = ++bufferPos[bufferStackPos];
 				
-				if (isIfdef() || isIfndef()) {
-					++nesting;
-					skipToNewLine();
+				// if new line or end of buffer, we're done
+				if (start >= limit || buffer[start] == '\n')
 					continue;
-				} else if (isElse()) {
-					if (checkelse && nesting == 0) {
-						skipToNewLine();
-						return;
-					} else {
-						skipToNewLine();
-						continue;
+				
+				c = buffer[start];
+				if ((c >= 'a' && c <= 'z')) {
+					while (++bufferPos[bufferStackPos] < limit) {
+						c = buffer[bufferPos[bufferStackPos]];
+						if ((c >= 'a' && c <= 'z'))
+							continue;
+						else
+							break;
 					}
-				} else if (isEndif()) {
-					if (nesting > 0) {
-						--nesting;
-						skipToNewLine();
-						continue;
-					} else {
-						skipToNewLine();
-						return;
+					--bufferPos[bufferStackPos];
+					int len = bufferPos[bufferStackPos] - start + 1;
+					int type = ppKeywords.get(buffer, start, len);
+					if (type != ppKeywords.undefined) {
+						switch (type) {
+							case ppIfdef:
+							case ppIfndef:
+								++nesting;
+								break;
+							case ppElse:
+								if (checkelse && nesting == 0) {
+									skipToNewLine();
+									return;
+								}
+								break;
+							case ppElif:
+								if (checkelse && nesting == 0) {
+									// check the condition
+									start = bufferPos[bufferStackPos];
+									skipToNewLine();
+									len = bufferPos[bufferStackPos] - start;
+									if (expressionEvaluator.evaluate(buffer, start, len, definitions) != 0)
+										// condition passed, we're good
+										return;
+								}
+								break;
+							case ppEndif:
+								if (nesting > 0) {
+									--nesting;
+								} else {
+									skipToNewLine();
+									return;
+								}
+								break;
+						}
 					}
 				}
 			}
@@ -1169,6 +1224,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				case '\n':
 				case ',':
 				case ')':
+				case '(':
 					--bufferPos[bufferStackPos];
 					return;
 				case '\\':
@@ -1286,10 +1342,12 @@ public class Scanner2 implements IScanner, IScannerData {
 			}
 
 			// peel off the arg
-			int argstart = pos;
-			int argend = argstart - 1;
+			--bufferPos[bufferStackPos];
+			int argend = bufferPos[bufferStackPos];
+			int argstart = argend + 1;
 			
 			// Loop looking for end of argument
+			int argparens = 0;
 			while (bufferPos[bufferStackPos] < limit) {
 				skipOverMacroArg();
 				argend = bufferPos[bufferStackPos];
@@ -1298,7 +1356,13 @@ public class Scanner2 implements IScanner, IScannerData {
 				if (++bufferPos[bufferStackPos] >= limit)
 					break;
 				c = buffer[bufferPos[bufferStackPos]];
-				if (c == ',' || c == ')')
+				if (c == '(')
+					++argparens;
+				else if (c == ')') {
+					if (argparens == 0)
+						break;
+					--argparens;
+				} else if (c == ',')
 					break;
 			}
 			
@@ -1318,62 +1382,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if (expText.length > 0)
 			pushContext(expText, exp);
 	}
-	
-	private static final char[] _define = "define".toCharArray();
-	private boolean isDefine() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 5 < limit && CharArrayUtils.equals(buffer, pos, 6, _define);
-	}
-	
-	private static final char[] _ifdef = "ifdef".toCharArray();
-	private boolean isIfdef() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 4 < limit && CharArrayUtils.equals(buffer, pos, 5, _ifdef);
-	}
-	
-	private static final char[] _ifndef = "ifndef".toCharArray();
-	private boolean isIfndef() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 5 < limit && CharArrayUtils.equals(buffer, pos, 6, _ifndef);
-	}
-	
-	private static final char[] _elif = "elif".toCharArray();
-	private boolean isElif() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 3 < limit && CharArrayUtils.equals(buffer, pos, 4, _elif);
-	}
-	
-	private static final char[] _else = "else".toCharArray();
-	private boolean isElse() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 3 < limit && CharArrayUtils.equals(buffer, pos, 4, _else);
-	}
-	
-	private static final char[] _endif = "endif".toCharArray();
-	private boolean isEndif() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 4 < limit && CharArrayUtils.equals(buffer, pos, 5, _endif);
-	}
-	
-	private static final char[] _error = "error".toCharArray();
-	private boolean isError() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int pos = bufferPos[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		return pos + 4 < limit && CharArrayUtils.equals(buffer, pos, 5, _error);
-	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken(boolean)
@@ -1591,8 +1600,20 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 	
 	private static CharArrayIntMap keywords;
+	private static CharArrayIntMap ppKeywords;
+	private static final int ppIf		= 0;
+	private static final int ppIfdef	= 1;
+	private static final int ppIfndef	= 2;
+	private static final int ppElif		= 3;
+	private static final int ppElse		= 4;
+	private static final int ppEndif	= 5;
+	private static final int ppInclude	= 6;
+	private static final int ppDefine	= 7;
+	private static final int ppUndef	= 8;
+	private static final int ppError	= 9;
+	
 	static {
-		keywords = new CharArrayIntMap(128);
+		keywords = new CharArrayIntMap(IToken.tLAST, -1);
 		
 		// Common keywords
 		keywords.put("auto".toCharArray(), IToken.t_auto);
@@ -1679,5 +1700,18 @@ public class Scanner2 implements IScanner, IScannerData {
 		keywords.put("or_eq".toCharArray(), IToken.t_or_eq);
 		keywords.put("xor".toCharArray(), IToken.t_xor);
 		keywords.put("xor_eq".toCharArray(), IToken.t_xor_eq);
+		
+		// Preprocessor keywords
+		ppKeywords = new CharArrayIntMap(16, -1);
+		ppKeywords.put("if".toCharArray(), ppIf);
+		ppKeywords.put("ifdef".toCharArray(), ppIfdef);
+		ppKeywords.put("ifndef".toCharArray(), ppIfndef);
+		ppKeywords.put("elif".toCharArray(), ppElif);
+		ppKeywords.put("else".toCharArray(), ppElse);
+		ppKeywords.put("endif".toCharArray(), ppEndif);
+		ppKeywords.put("include".toCharArray(), ppInclude);
+		ppKeywords.put("define".toCharArray(), ppDefine);
+		ppKeywords.put("undef".toCharArray(), ppUndef);
+		ppKeywords.put("error".toCharArray(), ppError);
 	}
 }

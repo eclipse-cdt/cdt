@@ -76,7 +76,9 @@ public abstract class CharArrayMap {
 		int hash = hash(buffer, start, len);
 		
 		if (hashTable[hash] == 0) {
-			keyTable[++currEntry] = CharArrayUtils.extract(buffer, start, len);
+			if (++currEntry > keyTable.length)
+				resize();
+			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 			insert(currEntry, hash);
 			return currEntry;
 		} else {
@@ -96,7 +98,9 @@ public abstract class CharArrayMap {
 			}
 			
 			// nope, add it in
-			keyTable[++currEntry] = CharArrayUtils.extract(buffer, start, len);
+			if (++currEntry >= keyTable.length)
+				resize();
+			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 			nextTable[last] = currEntry + 1;
 			return currEntry;
 		}

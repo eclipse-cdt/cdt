@@ -23,6 +23,7 @@ public class CharArrayObjectMap extends CharArrayMap {
 	}
 	
 	protected void resize(int size) {
+		super.resize(size);
 		Object[] oldValueTable = valueTable;
 		valueTable = new Object[size];
 		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);

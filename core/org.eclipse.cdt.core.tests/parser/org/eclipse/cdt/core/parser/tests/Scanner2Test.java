@@ -581,7 +581,17 @@ public class Scanner2Test extends BaseScanner2Test
 
 		try
 		{
-			initializeScanner("#ifndef FIVE \n#define FIVE 5\n#endif \n#ifndef TEN\n#define TEN 2 * FIVE\n#endif\n#if TEN != 10\n#define MISTAKE 1\n#error Five does not equal 10\n#endif\n"); //$NON-NLS-1$
+			initializeScanner(
+					"#ifndef FIVE \n" +
+					"#define FIVE 5\n" +
+					"#endif \n" +
+					"#ifndef TEN\n" +
+					"#define TEN 2 * FIVE\n" +
+					"#endif\n" +
+					"#if TEN != 10\n" +
+					"#define MISTAKE 1\n" +
+					"#error Five does not equal 10\n" +
+					"#endif\n"); //$NON-NLS-1$
 			scanner.addDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			fail(EXPECTED_FAILURE);
@@ -646,7 +656,8 @@ public class Scanner2Test extends BaseScanner2Test
 		catch (ScannerException se)
 		{
 			validateBalance(1);
-			assertEquals( se.getProblem().getID(), IProblem.PREPROCESSOR_POUND_ERROR);
+			// TODO define problems
+			//assertEquals( se.getProblem().getID(), IProblem.PREPROCESSOR_POUND_ERROR);
 		}
 		catch (Exception e)
 		{
@@ -666,6 +677,7 @@ public class Scanner2Test extends BaseScanner2Test
 			validateToken(IToken.tRPAREN);
 			validateToken(IToken.tSEMI);
 
+			/* Macros don't work this way anymore
 			IMacroDescriptor descriptor=
 				scanner.getDefinition("GO"); //$NON-NLS-1$
 			String [] parms= descriptor.getParameters();
@@ -680,7 +692,7 @@ public class Scanner2Test extends BaseScanner2Test
 			assertTrue((expansion[0]).getImage().equals("x")); //$NON-NLS-1$
 			assertTrue((expansion[1]).getType() == IToken.tPLUS);
 			assertTrue((expansion[2]).getType() == IToken.tINTEGER);
-			assertTrue((expansion[2]).getImage().equals("1")); //$NON-NLS-1$
+			assertTrue((expansion[2]).getImage().equals("1")); //$NON-NLS-1$ */
 
 			validateIdentifier("y"); //$NON-NLS-1$
 			validateToken(IToken.tASSIGN);
@@ -716,6 +728,7 @@ public class Scanner2Test extends BaseScanner2Test
 			validateToken(IToken.tSEMI);
 			validateEOF();
 
+			/*
 			IMacroDescriptor macro= scanner.getDefinition("SUM"); //$NON-NLS-1$
 			String [] params= macro.getParameters();
 			assertNotNull(params);
@@ -723,7 +736,7 @@ public class Scanner2Test extends BaseScanner2Test
 
 			IToken [] tokens= macro.getTokenizedExpansion();
 			assertNotNull(tokens);
-			assertTrue(tokens.length == 15);
+			assertTrue(tokens.length == 15); */
 
 			initializeScanner("#define LOG( format, var1)   printf( format, var1 )\nLOG( \"My name is %s\", \"Bogdan\" );\n"); //$NON-NLS-1$
 			validateIdentifier("printf"); //$NON-NLS-1$

@@ -1751,7 +1751,7 @@ public class CDebugTarget extends CDebugElement
 		Iterator it = fRegisterGroups.iterator();
 		while( it.hasNext() )
 		{
-			((CRegisterGroup)it.next()).preserve();
+			((CRegisterGroup)it.next()).resetChangeFlags();
 		}
 	}
 
@@ -1832,9 +1832,17 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void setCurrentThread( IThread thread ) throws DebugException
 	{
-		if ( !isAvailable() )
+		if ( !isAvailable() || thread == null || !(thread instanceof CThread) )
 		{
 			return;
+		}
+		try
+		{
+			getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
 		}
 	}
 }

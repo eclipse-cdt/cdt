@@ -963,5 +963,17 @@ public class CThread extends CDebugElement
 	 */
 	public void switchToFrame( IStackFrame frame ) throws DebugException
 	{
+		if ( frame == null && !(frame instanceof CStackFrame) )
+		{
+			return;
+		}
+		try
+		{
+			getCDIThread().setCurrentStackFrame( ((CStackFrame)frame).getCDIStackFrame() );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 }

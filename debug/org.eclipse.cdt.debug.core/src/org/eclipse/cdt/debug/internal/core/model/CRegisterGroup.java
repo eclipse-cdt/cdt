@@ -151,7 +151,7 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 		}
 	}
 	
-	protected void preserve()
+	protected void resetChangeFlags()
 	{
 		if ( fRegisters == null )
 			return;

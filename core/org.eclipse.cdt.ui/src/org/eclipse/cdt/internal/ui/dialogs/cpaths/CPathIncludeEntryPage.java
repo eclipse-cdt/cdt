@@ -14,12 +14,25 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 
 public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 
-
 	public CPathIncludeEntryPage(ITreeListAdapter adapter) {
 		super(adapter, "IncludeEntryPage"); //$NON-NLS-1$
 	}
 
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_INCLUDE;
+	}
+
+	protected void addContributed() {
+		// dinglis-TODO Auto-generated method stub
+	}
+
+	protected void addFromWorkspace() {
+		// dinglis-TODO Auto-generated method stub
+
+	}
+
+	protected void addPath() {
+		// dinglis-TODO Auto-generated method stub
+
 	}
 }

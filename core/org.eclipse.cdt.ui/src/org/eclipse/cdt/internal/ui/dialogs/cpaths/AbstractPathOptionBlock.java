@@ -103,10 +103,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 */
 	public void init(ICElement element, IPathEntry[] cpathEntries) {
 		setCProject(element.getCProject());
-		boolean projectExists = false;
 		List newCPath = null;
 
-		IProject project = getProject();
 		if (cpathEntries == null) {
 			try {
 				cpathEntries = getCProject().getRawPathEntries();

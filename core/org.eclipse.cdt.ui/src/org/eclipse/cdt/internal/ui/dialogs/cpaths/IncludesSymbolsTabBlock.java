@@ -88,14 +88,20 @@ public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 	public Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
 		if (getCProject() != null) {
-			fIncludePage.init(getCProject(), getCPaths());
-			fSymbolsPage.init(getCProject(), getCPaths());
+			fIncludePage.init(getCProject(), fCPaths);
+			fSymbolsPage.init(getCProject(), fCPaths);
 		}
 		Dialog.applyDialogFont(control);
 		return control;
 	}
 
 	protected List getCPaths() {
+		if (fIncludePage == null) {
+			return fCPaths;
+		}
+		fCPaths.clear();
+		fCPaths.addAll(fIncludePage.getCPaths());
+		fCPaths.addAll(fSymbolsPage.getCPaths());
 		return fCPaths;
 	}
 
@@ -106,8 +112,8 @@ public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 	protected void initialize(ICElement element, List cPaths) {
 		fCPaths = cPaths;
 		if (fIncludePage != null) {
-			fIncludePage.init(getCProject(), getCPaths());
-			fSymbolsPage.init(getCProject(), getCPaths());
+			fIncludePage.init(getCProject(), fCPaths);
+			fSymbolsPage.init(getCProject(), fCPaths);
 		}
 		doStatusLineUpdate();
 		initializeTimeStamps();

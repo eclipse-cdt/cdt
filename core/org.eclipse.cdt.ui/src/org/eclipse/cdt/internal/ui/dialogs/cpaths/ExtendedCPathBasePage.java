@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -26,13 +26,9 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -41,14 +37,17 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
-	private ListDialogField fPathList;
-	private TreeListDialogField fSrcList;
-	private List fCPathList;
+	ListDialogField fPathList;
+	TreeListDialogField fSrcList;
+	List fCPathList;
+
+	private static final int IDX_ADD = 0;
+	private static final int IDX_ADD_WORKSPACE = 1;
+	private static final int IDX_ADD_CONTRIBUTED = 2;
+	private static final int IDX_REMOVE = 4;
 
 	private class IncludeListAdapter implements IListAdapter, IDialogFieldListener {
 
@@ -56,48 +55,30 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		}
 
 		public void customButtonPressed(ListDialogField field, int index) {
+			switch (index) {
+				case IDX_ADD :
+					addPath();
+					break;
+				case IDX_ADD_WORKSPACE :
+					addFromWorkspace();
+					break;
+				case IDX_ADD_CONTRIBUTED :
+					addContributed();
+					break;
+				case IDX_REMOVE :
+					if (canRemove(field.getSelectedElements())) {
+						removePath((CPListElement) field.getSelectedElements().get(0));
+					}
+					break;
+			}
 		}
 
 		public void selectionChanged(ListDialogField field) {
+			List selected = fPathList.getSelectedElements();
+			fPathList.enableButton(IDX_REMOVE, canRemove(selected));
 		}
 
 		public void doubleClicked(ListDialogField field) {
-		}
-	}
-
-	private class GlobalElement implements IAdaptable, IWorkbenchAdapter {
-
-		private final IProject fProject;
-
-		public GlobalElement(IProject project) {
-			fProject = project;
-		}
-
-		public IPath getPath() {
-			return fProject.getFullPath();
-		}
-
-		public Object getAdapter(Class adapter) {
-			if (adapter.equals(IWorkbenchAdapter.class)) {
-				return this;
-			}
-			return null;
-		}
-
-		public Object[] getChildren(Object o) {
-			return new Object[0];
-		}
-
-		public ImageDescriptor getImageDescriptor(Object object) {
-			return CUIPlugin.getDefault().getWorkbench().getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
-		}
-
-		public String getLabel(Object o) {
-			return "Global Entries"; //$NON-NLS-1$
-		}
-
-		public Object getParent(Object o) {
-			return null;
 		}
 	}
 
@@ -128,10 +109,10 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		super(CPathEntryMessages.getString(prefix + ".title")); //$NON-NLS-1$
 		IncludeListAdapter includeListAdaper = new IncludeListAdapter();
 
-		String[] buttonLabel = new String[] { CPathEntryMessages.getString(prefix + ".add"), //$NON-NLS-1$
-				CPathEntryMessages.getString(prefix + ".addFromWorkspace"), //$NON-NLS-1$
-				CPathEntryMessages.getString(prefix + ".addContributed"), null, //$NON-NLS-1$
-				CPathEntryMessages.getString(prefix + ".remove")}; //$NON-NLS-1$
+		String[] buttonLabel = new String[]{ /* 0 */CPathEntryMessages.getString(prefix + ".add"), //$NON-NLS-1$
+				/* 1 */CPathEntryMessages.getString(prefix + ".addFromWorkspace"), //$NON-NLS-1$
+				/* 2 */CPathEntryMessages.getString(prefix + ".addContributed"), null, //$NON-NLS-1$
+				/* 4 */CPathEntryMessages.getString(prefix + ".remove")}; //$NON-NLS-1$
 		fPathList = new ListDialogField(includeListAdaper, buttonLabel, new ModifiedCPListLabelProvider()) {
 
 			protected int getListStyle() {
@@ -140,7 +121,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		};
 		fPathList.setDialogFieldListener(includeListAdaper);
 		fPathList.setLabelText(CPathEntryMessages.getString(prefix + ".listName")); //$NON-NLS-1$
-		fSrcList = new TreeListDialogField(adapter, new String[] { CPathEntryMessages.getString(prefix + ".editSourcePaths")}, //$NON-NLS-1$
+		fSrcList = new TreeListDialogField(adapter, new String[]{CPathEntryMessages.getString(prefix + ".editSourcePaths")}, //$NON-NLS-1$
 				new CElementLabelProvider()) {
 
 			protected int getTreeStyle() {
@@ -157,19 +138,55 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 		setControl(composite);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fSrcList, fPathList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fSrcList, fPathList}, true);
 		LayoutUtil.setHorizontalGrabbing(fPathList.getListControl(null));
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(30);
 		fPathList.setButtonsMinWidth(buttonBarWidth);
+		fPathList.enableButton(IDX_REMOVE, false);
+
+	}
+
+	abstract protected void addPath();
+	abstract protected void addFromWorkspace();
+	abstract protected void addContributed();
+
+	protected boolean canRemove(List selected) {
+		return !selected.isEmpty();
+	}
+
+	protected void removePath(CPListElement element) {
+		ICElement celem = (ICElement) getSelection().get(0);
+		if (!celem.getPath().equals(element.getPath())) {
+			IPath exclude = celem.getPath();
+
+			IPath[] exclusions = (IPath[]) element.getAttribute(CPListElement.EXCLUSION);
+			IPath[] newExlusions = new IPath[exclusions.length + 1];
+			System.arraycopy(exclusions, 0, newExlusions, 0, exclusions.length);
+			newExlusions[exclusions.length] = exclude;
+			element.setAttribute(CPListElement.EXCLUSION, newExlusions);
+			selectionChanged(new StructuredSelection(getSelection()));
+		} else {
+			fCPathList.remove(element);
+			fPathList.removeElement(element);
+		}
 	}
 
 	public void init(ICProject project, List cPaths) {
 		List list = new ArrayList(project.getChildrenOfType(ICElement.C_CCONTAINER));
-		list.add(0, new GlobalElement(project.getProject()));
+		int i;
+		for (i = 0; i < list.size(); i++) {
+			if (((ISourceRoot) list.get(i)).getResource() == project.getProject()) {
+				break;
+			}
+		}
+		if (i == list.size()) {
+			list.add(0, project);
+		}
 		fSrcList.setElements(list);
 		fCPathList = filterList(cPaths);
 		fPathList.setElements(fCPathList);
+		fSrcList.selectElements(new StructuredSelection(list.get(0)));
 	}
 
 	public List getCPaths() {
@@ -194,16 +211,13 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		}
 		Object sel = selection.getFirstElement();
 		IPath resPath;
-		if (sel instanceof ICElement) {
-			resPath = ((ICElement) sel).getPath();
-		} else {
-			resPath = ((GlobalElement) sel).getPath();
-		}
+		resPath = ((ICElement) sel).getPath();
 		List newList = new ArrayList(list.size());
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
 			CPListElement element = (CPListElement) iter.next();
-			if (element.getPath().isPrefixOf(resPath) && !CoreModelUtil.isExcludedPath(resPath, (IPath[]) element.getAttribute(CPListElement.EXCLUSION))) { //$NON-NLS-1$
+			if (element.getPath().isPrefixOf(resPath)
+					&& !CoreModelUtil.isExcludedPath(resPath, (IPath[]) element.getAttribute(CPListElement.EXCLUSION))) { //$NON-NLS-1$
 				newList.add(element);
 			}
 		}

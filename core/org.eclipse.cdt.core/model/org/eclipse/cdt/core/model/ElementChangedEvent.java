@@ -15,6 +15,9 @@ import java.util.EventObject;
  * @see ICElementDelta
  */
 public class ElementChangedEvent extends EventObject {
+	public static final int POST_CHANGE = 1;
+	public static final int PRE_AUTO_BUILD = 2;
+	public static final int 	POST_RECONCILE = 4;	
 	/**
 	 * Creates an new element changed event (based on a <code>ICElementDelta</code>).
 	 *

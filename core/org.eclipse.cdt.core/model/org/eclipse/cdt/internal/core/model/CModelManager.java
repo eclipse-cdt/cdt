@@ -53,7 +53,7 @@ public class CModelManager implements IResourceChangeListener {
 	//private static HashMap fParsers = new HashMap();
 
 	/**
-	 * Used to convert <code>IResourceDelta</code>s into <code>IJavaElementDelta</code>s.
+	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
 	 */
 	protected DeltaProcessor fDeltaProcessor= new DeltaProcessor();
 
@@ -72,6 +72,25 @@ public class CModelManager implements IResourceChangeListener {
 	 * Collection of listeners for C element deltas
 	 */
 	protected ArrayList fElementChangedListeners= new ArrayList();
+
+	/**
+	 * A map from ITranslationUnit to IWorkingCopy of the shared working copies.
+	 */
+	public Map sharedWorkingCopies = new HashMap();
+	/**
+	 * Set of elements which are out of sync with their buffers.
+	 */
+	protected Map elementsOutOfSynchWithBuffers = new HashMap(11);
+
+	/**
+	 * Infos cache.
+	 */
+	protected CModelCache cache = new CModelCache();
+
+	/**
+	 * This is a cache of the projects before any project addition/deletion has started.
+	 */
+	public ICProject[] cProjectsCache;
 
 	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"};
 
@@ -658,11 +677,14 @@ public class CModelManager implements IResourceChangeListener {
 
 				case IResourceChangeEvent.PRE_AUTO_BUILD :
 					// No need now.
+					if(delta != null) {
+						this.checkProjectsBeingAddedOrRemoved(delta);
+					}										
 				break;
 
 				case IResourceChangeEvent.POST_CHANGE :
-					if (delta != null) {
-						try {
+					try {
+						if (delta != null) {
 							ICElementDelta[] translatedDeltas = fDeltaProcessor.processResourceDelta(delta);
 							if (translatedDeltas.length > 0) {
 								for (int i= 0; i < translatedDeltas.length; i++) {
@@ -670,10 +692,10 @@ public class CModelManager implements IResourceChangeListener {
 								}
 							}
 							fire();
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
-					}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}					
 				break;
 			}
 		}
@@ -795,4 +817,62 @@ public class CModelManager implements IResourceChangeListener {
 			} // else deltas are fired while processing the resource delta
 		}
 	}
+	
+	/**
+	 * Process the given delta and look for projects being added, opened,
+	 * or closed
+	 */
+	public void checkProjectsBeingAddedOrRemoved(IResourceDelta delta) {
+		IResource resource = delta.getResource();
+		switch (resource.getType()) {
+			case IResource.ROOT :
+			if (this.cProjectsCache == null) {
+				this.cProjectsCache = this.getCRoot().getCProjects();
+			}
+				
+			IResourceDelta[] children = delta.getAffectedChildren();
+			for (int i = 0, length = children.length; i < length; i++) {
+				this.checkProjectsBeingAddedOrRemoved(children[i]);
+			}			
+			break;
+		case IResource.PROJECT :
+			// TO BE COMPLETED ...
+			break;
+		}
+	}
+	/** 
+	 * Returns the set of elements which are out of synch with their buffers.
+	 */
+	protected Map getElementsOutOfSynchWithBuffers() {
+		return this.elementsOutOfSynchWithBuffers;
+	}
+	
+	/**
+	 *  Returns the info for the element.
+	 */
+	public Object getInfo(ICElement element) {
+		return this.cache.getInfo(element);
+	}
+	/**
+	 *  Returns the info for this element without
+	 *  disturbing the cache ordering.
+	 */
+	protected Object peekAtInfo(ICElement element) {
+		return this.cache.peekAtInfo(element);
+	}
+
+	/**
+	 * Puts the info for a C Model Element
+	 */
+	protected void putInfo(ICElement element, Object info) {
+		this.cache.putInfo(element, info);
+	}
+	
+	/** 
+	 * Removes the info of this model element.
+	 */
+	protected void removeInfo(ICElement element) {
+		this.cache.removeInfo(element);
+	}
+	
 }

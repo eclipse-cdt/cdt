@@ -6,5 +6,5 @@
 package org.eclipse.cdt.core.model;
 
 
-public interface ICResource extends IParent, ICElement {
+public interface ICResource extends IParent, ICElement, ICOpenable {
 }

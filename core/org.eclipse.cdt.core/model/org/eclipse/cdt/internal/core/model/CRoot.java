@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -29,10 +31,10 @@ public class CRoot extends CResource implements ICRoot {
 	}
 
 	public ICProject[] getCProjects() {
-		ICElement[] e = getChildren();
-		ICProject[] p = new ICProject[e.length];
-		System.arraycopy(e, 0, p, 0, e.length);
-		return p;
+		ArrayList list = getChildrenOfType(C_PROJECT);
+		ICProject[] array= new ICProject[list.size()];
+		list.toArray(array);
+		return array;
 	}
 
 	public IWorkspace getWorkspace() {
@@ -109,4 +111,10 @@ public class CRoot extends CResource implements ICRoot {
 	protected CElementInfo createElementInfo () {
 		return new CRootInfo(this);
 	}
+
+	// CHECKPOINT: Roots will return the hashcode of their resource
+	public int hashCode() {
+		return resource.hashCode();
+	}
+	
 }

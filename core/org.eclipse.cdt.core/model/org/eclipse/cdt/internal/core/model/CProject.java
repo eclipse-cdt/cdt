@@ -77,4 +77,10 @@ public class CProject extends CResource implements ICProject {
 	protected CElementInfo createElementInfo() {
 		return new CProjectInfo(this);
 	}
+	
+	// CHECKPOINT: CProjects will return the hash code of their underlying IProject
+	public int hashCode() {
+		return getProject().hashCode();
+	}
+
 }

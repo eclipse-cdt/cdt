@@ -5,15 +5,15 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.ISourceManipulation;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ISourceManipulation;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.CModelException;
 
 /**
  * Abstract class for C elements which implement ISourceReference.
@@ -102,6 +102,21 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * @see ICElement
 	 */
 	public IResource getCorrespondingResource() throws CModelException {
+		return null;
+	}
+
+	/**
+	 * Returns the first parent of the element that is an instance of
+	 * ICOpenable.
+	 */
+	public ICOpenable getOpenableParent() {
+		ICElement current = getParent();
+		while (current != null){
+			if (current instanceof ICOpenable){
+				return (ICOpenable) current;
+			}
+			current = current.getParent();
+		}
 		return null;
 	}
 

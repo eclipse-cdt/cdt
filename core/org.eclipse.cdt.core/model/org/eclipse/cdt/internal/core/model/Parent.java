@@ -5,14 +5,14 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.CModelException;
 
 public abstract class Parent extends CElement implements IParent {
 	
@@ -62,6 +62,24 @@ public abstract class Parent extends CElement implements IParent {
 	 */		
 	public ICElement[] getChildren() {
 		return getElementInfo().getChildren();
+	}
+
+	/**
+	 * Gets the children of a certain type
+	 * @param type
+	 * @return ArrayList
+	 */
+	public ArrayList getChildrenOfType(int type){
+		ICElement[] children = getChildren();
+		int size = children.length;
+		ArrayList list = new ArrayList(size);
+		for (int i = 0; i < size; ++i) {
+			CElement elt = (CElement)children[i];
+			if (elt.getElementType() == type) {
+				list.add(elt);
+			}
+		}
+		return list;
 	}
 
 	public boolean hasChildren () {

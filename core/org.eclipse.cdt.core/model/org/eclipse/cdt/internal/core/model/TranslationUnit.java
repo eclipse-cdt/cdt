@@ -7,21 +7,25 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.model.IUsing;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.CModelException;
-
-
 /**
+ * @see ITranslationUnit
  */
 public class TranslationUnit extends CFile implements ITranslationUnit {
 
@@ -180,4 +184,259 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 	protected CElementInfo createElementInfo () {
 		return new TranslationUnitInfo(this);
 	}
+	
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.CFile#buildStructure(CFileInfo, IProgressMonitor)
+	 */
+	protected void buildStructure(CFileInfo info, IProgressMonitor monitor) throws CModelException {
+		if (monitor != null && monitor.isCanceled()) return;
+
+		// remove existing (old) infos
+		removeInfo();
+
+		HashMap newElements = new HashMap(11);
+		info.setIsStructureKnown(generateInfos(info, monitor, newElements, getResource()));
+		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
+		for (Iterator iter = newElements.keySet().iterator(); iter.hasNext();) {
+			ICElement key = (ICElement) iter.next();
+			Object value = newElements.get(key);
+			CModelManager.getDefault().putInfo(key, value);
+		}
+		// problem detection 
+		if (monitor != null && monitor.isCanceled()) return;
+
+		//IProblemRequestor problemRequestor = this.getProblemRequestor();
+		//if (problemRequestor != null && problemRequestor.isActive()){
+		//	problemRequestor.beginReporting();
+		//	CompilationUnitProblemFinder.process(this, problemRequestor, monitor);
+		//	problemRequestor.endReporting();
+		//}
+	
+		// add the info for this at the end, to ensure that a getInfo cannot reply null in case the LRU cache needs
+		// to be flushed. Might lead to performance issues.
+		CModelManager.getDefault().putInfo(this, info);	
+		
+	}
+	/**
+	 * Returns true if this handle represents the same Java element
+	 * as the given handle.
+	 *
+	 * <p>Compilation units must also check working copy state;
+	 *
+	 * @see Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		return super.equals(o) && !((ITranslationUnit)o).isWorkingCopy();
+	}
+
+	/**
+	 * @see IWorkingCopy#findSharedWorkingCopy(IBufferFactory)
+	 */
+	public IWorkingCopy findSharedWorkingCopy(IBufferFactory factory) {
+
+		// if factory is null, default factory must be used
+		if (factory == null) factory = BufferManager.getDefaultBufferManager();
+
+		// In order to be shared, working copies have to denote the same translation unit 
+		// AND use the same buffer factory.
+		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
+		Map sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
+	
+		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null) return null;
+		return (WorkingCopy)perFactoryWorkingCopies.get(this);
+	}
+
+	/**
+	 * To be removed with the new model builder in place
+	 * @param newElements
+	 * @param element
+	 */
+	private void getNewElements(Map newElements, CElement element){
+		Object info = element.getElementInfo();
+		if(info != null){
+			if(element instanceof IParent){
+				ICElement[] children = ((CElementInfo)info).getChildren();
+				int size = children.length;
+				for (int i = 0; i < size; ++i) {
+					CElement child = (CElement) children[i];
+					getNewElements(newElements, child);		
+				}		
+			}
+		}
+		newElements.put(element, info);		
+	}
+	
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.CResource#generateInfos(CResourceInfo, IProgressMonitor, Map, IResource)
+	 */
+	protected boolean generateInfos(CResourceInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
+		// put the info now, because getting the contents requires it
+		CModelManager.getDefault().putInfo(this, info);
+		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
+
+		// generate structure
+		this.parse();
+		
+		// this is temporary until the New Model Builder is implemented
+		getNewElements(newElements, this);		
+		///////////////////////////////////////////////////////////////
+		
+		if (isWorkingCopy()) {
+			ITranslationUnit original = (ITranslationUnit) ((IWorkingCopy)this).getOriginalElement();
+			// might be IResource.NULL_STAMP if original does not exist
+			unitInfo.fTimestamp = ((IFile) original.getResource()).getModificationStamp();
+		}
+		
+		return unitInfo.isStructureKnown();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getContents()
+	 */
+	public char[] getContents() {
+		try {
+			IBuffer buffer = this.getBuffer();
+			return buffer == null ? null : buffer.getCharacters();
+		} catch (CModelException e) {
+			return new char[0];
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getSharedWorkingCopy(IProgressMonitor, IBufferFactory)
+	 */
+	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory)
+		throws CModelException {
+	
+		// if factory is null, default factory must be used
+		if (factory == null) factory = BufferManager.getDefaultBufferManager();
+
+		CModelManager manager = CModelManager.getDefault();
+	
+		// In order to be shared, working copies have to denote the same translation unit 
+		// AND use the same buffer factory.
+		// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
+		Map sharedWorkingCopies = manager.sharedWorkingCopies;
+	
+		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null){
+			perFactoryWorkingCopies = new HashMap();
+			sharedWorkingCopies.put(factory, perFactoryWorkingCopies);
+		}
+		WorkingCopy workingCopy = (WorkingCopy)perFactoryWorkingCopies.get(this);
+		if (workingCopy != null) {
+			workingCopy.useCount++;
+			return workingCopy;
+
+		} else {
+			workingCopy = (WorkingCopy)this.getWorkingCopy(monitor, factory);
+			perFactoryWorkingCopies.put(this, workingCopy);
+
+			// report added java delta
+//			CElementDelta delta = new CElementDelta(this.getCModel());
+//			delta.added(workingCopy);
+//			manager.fire(delta, CModelManager.DEFAULT_CHANGE_EVENT);
+
+			return workingCopy;
+		}
+	}
+	/**
+	 * 
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy()
+	 */
+	public IWorkingCopy getWorkingCopy()throws CModelException{
+		return this.getWorkingCopy(null, null);
+	}
+
+	/**
+	 * 
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy()
+	 */
+	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)throws CModelException{
+		WorkingCopy workingCopy = new WorkingCopy(getParent(), getFile(), factory);
+		// open the working copy now to ensure contents are that of the current state of this element
+		workingCopy.open(monitor);
+		return workingCopy;
+	}
+
+	/**
+	 * Returns true if this element may have an associated source buffer.
+	 */
+	protected boolean hasBuffer() {
+		return true;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICOpenable#isConsistent()
+	 */
+	public boolean isConsistent() throws CModelException {
+		return CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.CResource#isSourceElement()
+	 */
+	protected boolean isSourceElement() {
+		return true;
+	}
+	/**
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isWorkingCopy()
+	 */
+	public boolean isWorkingCopy() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICOpenable#makeConsistent(IProgressMonitor)
+	 */
+	public void makeConsistent(IProgressMonitor pm) throws CModelException {
+		if (!isConsistent()) {
+			// create a new info and make it the current info
+			CFileInfo info = (CFileInfo) createElementInfo();
+			buildStructure(info, pm);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.CResource#openBuffer(IProgressMonitor)
+	 */
+	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
+
+		// create buffer -  translation units only use default buffer factory
+		BufferManager bufManager = getBufferManager();		
+		IBuffer buffer = getBufferFactory().createBuffer(this);
+		if (buffer == null) 
+			return null;
+	
+		// set the buffer source
+		if (buffer.getCharacters() == null){
+			IResource file = this.getResource();
+			if (file != null && file.getType() == IResource.FILE) {
+				buffer.setContents(Util.getResourceContentsAsCharArray((IFile)file));
+			}
+		}
+
+		// add buffer to buffer cache
+		bufManager.addBuffer(buffer);
+			
+		// listen to buffer changes
+		buffer.addBufferChangedListener(this);
+	
+		return buffer;
+	}
+
+	/**
+	 * Parse the buffer contents of this element.
+	 */
+	public void parse(){
+		try{
+			getTranslationUnitInfo().parse(this.getBuffer().getContents());
+		} catch (CModelException e){
+			// error getting the buffer
+		}
+	}
+	
+
+	
 }

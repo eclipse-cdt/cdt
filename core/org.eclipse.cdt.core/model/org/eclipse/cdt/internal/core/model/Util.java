@@ -5,14 +5,19 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class Util {
 
@@ -113,5 +118,52 @@ public class Util {
 		// use a platform operation to update the resource contents
 		boolean force = true;
 		file.setContents(stream, force, true, null); // record history
+	}
+	
+	/**
+	 * Returns the given file's contents as a character array.
+	 */
+	public static char[] getResourceContentsAsCharArray(IFile file) throws CModelException {
+		return getResourceContentsAsCharArray(file, null);
+	}
+	
+	public static char[] getResourceContentsAsCharArray(IFile file, String encoding) throws CModelException {
+		InputStream stream= null;
+		try {
+			stream = new BufferedInputStream(file.getContents(true));
+		} catch (CoreException e) {
+			throw new CModelException(e, ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST);
+		}
+		try {
+			return Util.getInputStreamAsCharArray(stream, -1, encoding);
+		} catch (IOException e) {
+			throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+	
+	/*
+	 * Add a log entry
+	 */
+	public static void log(Throwable e, String message) {
+		IStatus status= new Status(
+			IStatus.ERROR, 
+			CCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+			IStatus.ERROR, 
+			message, 
+			e); 
+			
+		CCorePlugin.getDefault().getLog().log(status);
+	}	
+	
+	/**
+	 * Combines two hash codes to make a new one.
+	 */
+	public static int combineHashCodes(int hashCode1, int hashCode2) {
+		return hashCode1 * 17 + hashCode2;
 	}
 }

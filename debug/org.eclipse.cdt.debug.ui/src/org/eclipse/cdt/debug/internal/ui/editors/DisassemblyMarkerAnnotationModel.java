@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
@@ -240,16 +241,19 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 
 	private Position createPositionFromLineBreakpoint( IMarker marker )
 	{
-		if ( fStorage == null )
-			return null;
-		IDebugTarget target = fStorage.getDebugTarget();
-		if ( target != null && target.getAdapter( ICBreakpointManager.class ) != null )
+		if ( fStorage != null )
 		{
-			ICBreakpointManager bm = (ICBreakpointManager)target.getAdapter( ICBreakpointManager.class );
-			long address = bm.getBreakpointAddress( DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker ) );
-			if ( address != 0 )
-			{
-				return createPositionFromAddress( address );
+			IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
+			if ( breakpoint instanceof ICBreakpoint )
+			{		 
+				IDebugTarget target = fStorage.getDebugTarget();
+				if ( target != null && target.getAdapter( ICBreakpointManager.class ) != null )
+				{
+					ICBreakpointManager bm = (ICBreakpointManager)target.getAdapter( ICBreakpointManager.class );
+					long address = bm.getBreakpointAddress( (ICBreakpoint)breakpoint );
+					if ( address != 0 )
+						return createPositionFromAddress( address );
+				}
 			}
 		}
 		return null;

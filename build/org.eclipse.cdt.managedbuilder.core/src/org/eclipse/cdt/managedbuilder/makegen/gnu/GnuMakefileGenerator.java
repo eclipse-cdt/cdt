@@ -791,7 +791,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				depFile.delete(true, new SubProgressMonitor(monitor, 1));
 			} catch (CoreException e) {
 				// This had better be allowed during a build
-				ManagedBuilderCorePlugin.log(e);
+				
 			}
 		}		
 	}
@@ -811,7 +811,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				depFile.delete(true, new SubProgressMonitor(monitor, 1));
 			} catch (CoreException e) {
 				// This had better be allowed during a build
-				ManagedBuilderCorePlugin.log(e);
+				
 			}
 		}
 	}
@@ -866,7 +866,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						throw e;
 					} catch (IOException e) {
 						// Keep trying
-						ManagedBuilderCorePlugin.log(e);
 						continue;
 					}
 				}
@@ -1229,7 +1228,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			firstLine = (String) deps.get(0);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// This makes no sense so bail
-			ManagedBuilderCorePlugin.log(e);
 			return;
 		}
 
@@ -1522,7 +1520,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				throw e;
 			} catch (IOException e) {
 				// This looks like a problem reading or writing the file
-				ManagedBuilderCorePlugin.log(e);
 				continue;
 			}
 		}
@@ -1541,12 +1538,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Populate the makefile if any source files have been found in the project
 		if (getSubdirList().isEmpty()) {
-			throw new CoreException(new Status(
-					IStatus.WARNING,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					NO_SOURCE_FOLDERS,
-					new String(),
-					null));
+			monitor.subTask(ManagedMakeMessages.getFormattedString("MakefileGenerator.warning.no.source", project.getName()));	//$NON-NLS-1$
 		} 
 
 		// Create the top-level directory for the build output

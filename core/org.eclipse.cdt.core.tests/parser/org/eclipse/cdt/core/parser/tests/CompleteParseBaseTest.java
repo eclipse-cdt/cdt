@@ -516,7 +516,9 @@ public class CompleteParseBaseTest extends TestCase
         
         protected CodeScope getCurrentCodeScope()
         {
-        	return (CodeScope)scopes.peek();
+        	if( scopes.peek() instanceof CodeScope )
+        		return (CodeScope)scopes.peek();
+        	return null;
         }
         
         protected Scope popScope()
@@ -714,7 +716,8 @@ public class CompleteParseBaseTest extends TestCase
 		 */
 		public void exitCodeBlock(IASTCodeScope scope) {
 			popScope();
-			getCurrentCodeScope().addNewScope(scope);
+			if( getCurrentCodeScope() != null )
+				getCurrentCodeScope().addNewScope(scope);
 		}
 
         /* (non-Javadoc)

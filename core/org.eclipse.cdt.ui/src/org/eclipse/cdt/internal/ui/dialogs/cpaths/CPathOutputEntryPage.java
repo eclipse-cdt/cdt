@@ -104,15 +104,8 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	}
 
 	private void updateFoldersList() {
-		ArrayList folders = new ArrayList();
-
-		List cpelements = fCPathList.getElements();
-		for (int i = 0; i < cpelements.size(); i++) {
-			CPListElement cpe = (CPListElement) cpelements.get(i);
-			if (cpe.getEntryKind() == IPathEntry.CDT_OUTPUT) {
-				folders.add(cpe);
-			}
-		}
+		
+		List folders = filterList(fCPathList.getElements());
 		fOutputList.setElements(folders);
 
 		for (int i = 0; i < folders.size(); i++) {

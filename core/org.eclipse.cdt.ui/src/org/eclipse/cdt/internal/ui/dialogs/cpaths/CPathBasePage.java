@@ -8,6 +8,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 	public CPathBasePage(String title) {
 		super(title);
 	}
+
 	public CPathBasePage(String title, ImageDescriptor image) {
 		super(title, image);
 	}
@@ -53,10 +55,24 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 			}
 		}
 	}
+
 	public abstract List getSelection();
 
 	public abstract void setSelection(List selection);
 
 	public abstract boolean isEntryKind(int kind);
+
+	protected List filterList(List input) {
+		ArrayList filtered = new ArrayList();
+
+		List cpelements = input;
+		for (int i = 0; i < cpelements.size(); i++) {
+			CPListElement cpe = (CPListElement) cpelements.get(i);
+			if (isEntryKind(cpe.getEntryKind())) {
+				filtered.add(cpe);
+			}
+		}
+		return filtered;
+	}
 
 }

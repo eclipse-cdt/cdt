@@ -11,26 +11,20 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public class CPathTabBlock extends AbstractPathOptionBlock {
 
+	private int[] pathTypes = { IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,
+			IPathEntry.CDT_CONTAINER};
 	private CheckedListDialogField fCPathList;
 
 	private CPathSourceEntryPage fSourcePage;
@@ -108,52 +102,18 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		return control;
 	}
 
-	/**
-	 * Initializes the classpath for the given project. Multiple calls to init
-	 * are allowed, but all existing settings will be cleared and replace by the
-	 * given or default paths.
-	 * 
-	 * @param jproject
-	 *        The java project to configure. Does not have to exist.
-	 * @param outputLocation
-	 *        The output location to be set in the page. If <code>null</code>
-	 *        is passed, jdt default settings are used, or - if the project is
-	 *        an existing Java project- the output location of the existing
-	 *        project
-	 * @param classpathEntries
-	 *        The classpath entries to be set in the page. If <code>null</code>
-	 *        is passed, jdt default settings are used, or - if the project is
-	 *        an existing Java project - the classpath entries of the existing
-	 *        project
-	 */
-	public void init(ICProject cproject, IPathEntry[] cpathEntries) {
-		setCProject(cproject);
-		boolean projectExists = false;
-		List newClassPath = null;
 
-		IProject project = getProject();
-		if (cpathEntries == null) {
-			try {
-				cpathEntries = getCProject().getRawPathEntries();
-			} catch (CModelException e) {
-			}
-		}
-		if (cpathEntries != null) {
-			newClassPath = getExistingEntries(cpathEntries);
-		}
-		if (newClassPath == null) {
-			newClassPath = getDefaultCPath(cproject);
-		}
+	protected void initialize(ICElement element, List cPaths) {
 
 		List exportedEntries = new ArrayList();
-		for (int i = 0; i < newClassPath.size(); i++) {
-			CPListElement curr = (CPListElement) newClassPath.get(i);
+		for (int i = 0; i < cPaths.size(); i++) {
+			CPListElement curr = (CPListElement) cPaths.get(i);
 			if (curr.isExported() && curr.getEntryKind() != IPathEntry.CDT_SOURCE) {
 				exportedEntries.add(curr);
 			}
 		}
 
-		fCPathList.setElements(newClassPath);
+		fCPathList.setElements(cPaths);
 		fCPathList.setCheckedElements(exportedEntries);
 
 		if (fProjectsPage != null) {
@@ -167,52 +127,11 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		initializeTimeStamps();
 	}
 
-	private List getDefaultCPath(ICProject cproj) {
-		List list = new ArrayList();
-		//		IResource srcFolder;
-		//		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
-		//		String sourceFolderName=
-		// store.getString(PreferenceConstants.SRCBIN_SRCNAME);
-		//		if (store.getBoolean(PreferenceConstants.SRCBIN_FOLDERS_IN_NEWPROJ)
-		// && sourceFolderName.length() > 0) {
-		//			srcFolder= jproj.getProject().getFolder(sourceFolderName);
-		//		} else {
-		//			srcFolder= jproj.getProject();
-		//		}
-		//
-		//		list.add(new CPListElement(jproj, IClasspathEntry.CPE_SOURCE,
-		// srcFolder.getFullPath(), srcFolder));
-		//
-		//		IClasspathEntry[] jreEntries=
-		// PreferenceConstants.getDefaultJRELibrary();
-		//		list.addAll(getExistingEntries(jreEntries));
-		return list;
+	
+	protected int[] getFilteredTypes() {
+		return pathTypes;
 	}
-
-	// -------- evaluate default settings --------
-
-	//	private List getDefaultClassPath(IJavaProject jproj) {
-	//		List list= new ArrayList();
-	//		IResource srcFolder;
-	//		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
-	//		String sourceFolderName=
-	// store.getString(PreferenceConstants.SRCBIN_SRCNAME);
-	//		if (store.getBoolean(PreferenceConstants.SRCBIN_FOLDERS_IN_NEWPROJ) &&
-	// sourceFolderName.length() > 0) {
-	//			srcFolder= jproj.getProject().getFolder(sourceFolderName);
-	//		} else {
-	//			srcFolder= jproj.getProject();
-	//		}
-	//
-	//		list.add(new CPListElement(jproj, IClasspathEntry.CPE_SOURCE,
-	// srcFolder.getFullPath(), srcFolder));
-	//
-	//		IPathEntry[] jreEntries= PreferenceConstants.getDefaultJRELibrary();
-	//		list.addAll(getExistingEntries(jreEntries));
-	//		return list;
-	//	}
-	//	
-
+	
 	/**
 	 * Validates the build path.
 	 */
@@ -261,48 +180,5 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		 * //$NON-NLS-1$ }
 		 */
 		updateBuildPathStatus();
-	}
-
-
-	/*
-	 * Creates the Java project and sets the configured build path and output
-	 * location. If the project already exists only build paths are updated.
-	 */
-	protected void internalConfigureCProject(List cPathEntries, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		// 10 monitor steps to go
-
-		monitor.worked(2);
-
-		int nEntries = cPathEntries.size();
-		IPathEntry[] classpath = new IPathEntry[nEntries];
-
-		// create and set the class path
-		for (int i = 0; i < nEntries; i++) {
-			CPListElement entry = ((CPListElement) cPathEntries.get(i));
-			IResource res = entry.getResource();
-			if ((res instanceof IFolder) && !res.exists()) {
-				createFolder((IFolder) res, true, true, null);
-			}
-			classpath[i] = entry.getPathEntry();
-		}
-
-		monitor.worked(1);
-
-		getCProject().setRawPathEntries(classpath, new SubProgressMonitor(monitor, 7));
-	}
-
-	/**
-	 * Creates a folder and all parent folders if not existing. Project must
-	 * exist. <code> org.eclipse.ui.dialogs.ContainerGenerator</code> is too
-	 * heavy (creates a runnable)
-	 */
-	private void createFolder(IFolder folder, boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
-		if (!folder.exists()) {
-			IContainer parent = folder.getParent();
-			if (parent instanceof IFolder) {
-				createFolder((IFolder) parent, force, local, null);
-			}
-			folder.create(force, local, monitor);
-		}
 	}
 }

@@ -12,16 +12,12 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -29,9 +25,13 @@ import org.eclipse.swt.widgets.Control;
 
 public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 
+	private int[] pathTypes = { IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO};
+
 	private CPathIncludeEntryPage fIncludePage;
 	private CPathSymbolEntryPage fSymbolsPage;
 	private SourceTreeAdapter fSourceTreeAdapter;
+
+	private List fCPaths;
 
 	private class SourceTreeAdapter implements ITreeListAdapter {
 
@@ -79,46 +79,32 @@ public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 		fSymbolsPage = new CPathSymbolEntryPage(fSourceTreeAdapter);
 		addPage(fSymbolsPage);
 	}
-		
+
 	public Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
 		if (getCProject() != null) {
-			fIncludePage.init(getCProject());
-			fSymbolsPage.init(getCProject());
+			fIncludePage.init(getCProject(), getCPaths());
+			fSymbolsPage.init(getCProject(), getCPaths());
 		}
 		Dialog.applyDialogFont(control);
 		return control;
 	}
-	
+
 	protected List getCPaths() {
-		return new ArrayList();
+		return fCPaths;
 	}
 
-	public void init(ICElement cElement, IPathEntry[] cpathEntries) {
-		setCProject(cElement.getCProject());
-		boolean projectExists = false;
-		List newClassPath = null;
+	protected int[] getFilteredTypes() {
+		return pathTypes;
+	}
 
-		IProject project = getProject();
-		if (cpathEntries == null) {
-			try {
-				cpathEntries = getCProject().getRawPathEntries();
-			} catch (CModelException e) {
-			}
-		}
-		if (cpathEntries != null) {
-			newClassPath = getExistingEntries(cpathEntries);
-		}
+	protected void initialize(ICElement element, List cPaths) {
+		fCPaths = cPaths;
 		if (fIncludePage != null) {
-			fIncludePage.init(getCProject());
-			fSymbolsPage.init(getCProject());
+			fIncludePage.init(getCProject(), getCPaths());
+			fSymbolsPage.init(getCProject(), getCPaths());
 		}
 		doStatusLineUpdate();
 		initializeTimeStamps();
-	}
-
-	protected void internalConfigureCProject(List cPathEntries, IProgressMonitor monitor) throws CoreException,
-			InterruptedException {
-
 	}
 }

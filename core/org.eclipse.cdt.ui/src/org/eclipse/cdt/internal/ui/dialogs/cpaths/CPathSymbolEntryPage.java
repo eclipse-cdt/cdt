@@ -72,7 +72,6 @@ public class CPathSymbolEntryPage extends CPathBasePage {
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(30);
 		fSymbolsList.setButtonsMinWidth(buttonBarWidth);
-
 	}
 
 	public List getSelection() {
@@ -93,7 +92,8 @@ public class CPathSymbolEntryPage extends CPathBasePage {
 	public void performDefaults() {
 	}
 
-	public void init(ICProject project) {
+	public void init(ICProject project, List list) {
 		fSrcList.setElements(project.getChildrenOfType(ICElement.C_CCONTAINER));
+		fSymbolsList.setElements(filterList(list));
 	}
 }

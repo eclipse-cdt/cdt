@@ -83,7 +83,7 @@ class CPListLabelProvider extends LabelProvider {
 			} else {
 				buf.append(notAvailable);
 			}
-		} 
+		}
 		if (key.equals(CPListElement.EXCLUSION)) {
 			buf.append(CPathEntryMessages.getString("CPListLabelProvider.exclusion_filter.label")); //$NON-NLS-1$
 			IPath[] patterns = (IPath[]) attrib.getValue();
@@ -128,6 +128,11 @@ class CPListLabelProvider extends LabelProvider {
 				}
 			case IPathEntry.CDT_PROJECT:
 				return path.lastSegment();
+			case IPathEntry.CDT_INCLUDE:
+				return ((IPath) cpentry.getAttribute(CPListElement.INCLUDE)).toString();
+			case IPathEntry.CDT_MACRO:
+				return (String) cpentry.getAttribute(CPListElement.MACRO_NAME) + "=" //$NON-NLS-1$
+						+ (String) cpentry.getAttribute(CPListElement.MACRO_VALUE);
 			case IPathEntry.CDT_CONTAINER:
 				try {
 					IPathEntryContainer container = CoreModel.getDefault().getPathEntryContainer(cpentry.getPath(),
@@ -163,7 +168,8 @@ class CPListLabelProvider extends LabelProvider {
 		if (ArchiveFileFilter.isArchivePath(path)) {
 			IPath appendedPath = path.removeLastSegments(1);
 			String appended = isExternal ? appendedPath.toOSString() : appendedPath.makeRelative().toString();
-			return CPathEntryMessages.getFormattedString("CPListLabelProvider.twopart", new String[] { path.lastSegment(), appended}); //$NON-NLS-1$
+			return CPathEntryMessages.getFormattedString("CPListLabelProvider.twopart", //$NON-NLS-1$
+					new String[] { path.lastSegment(), appended});
 		} else {
 			return isExternal ? path.toOSString() : path.makeRelative().toString();
 		}
@@ -229,16 +235,12 @@ class CPListLabelProvider extends LabelProvider {
 		} else if (element instanceof CPListElementAttribute) {
 			String key = ((CPListElementAttribute) element).getKey();
 			if (key.equals(CPListElement.SOURCEATTACHMENT)) {
-//				return fRegistry.get(CPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB);
+				//				return
+				// fRegistry.get(CPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB);
 			} else if (key.equals(CPListElement.EXCLUSION)) {
 				return CPluginImages.get(CPluginImages.IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
-			} else if (key.equals(CPListElement.INCLUDE)) {
-//				return fRegistry.get(CPluginImages.DESC_OBJS_INCLUDE_ATTRIB);
-			} else if (key.equals(CPListElement.DEFINE)) {
-//				return fRegistry.get(CPluginImages.DESC_OBJS_MACRO_ATTRIB);
 			}
 		}
 		return null;
 	}
-
 }

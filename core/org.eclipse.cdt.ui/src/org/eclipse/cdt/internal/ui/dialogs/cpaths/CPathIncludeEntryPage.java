@@ -33,6 +33,7 @@ public class CPathIncludeEntryPage extends CPathBasePage {
 
 	private ListDialogField fIncludeList;
 	private TreeListDialogField fSrcList;
+	private List fCPathList;
 
 	private class IncludeListAdapter implements IListAdapter, IDialogFieldListener {
 
@@ -75,8 +76,9 @@ public class CPathIncludeEntryPage extends CPathBasePage {
 		fIncludeList.setButtonsMinWidth(buttonBarWidth);
 	}
 
-	public void init(ICProject project) {
+	public void init(ICProject project, List cPaths) {
 		fSrcList.setElements(project.getChildrenOfType(ICElement.C_CCONTAINER));
+		fIncludeList.setElements(filterList(cPaths));
 	}
 	
 	public List getSelection() {

@@ -512,7 +512,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 				 friend,
 				 staticc,
 				 startingOffset,
-				 declarator.getNameStartOffset(),
+				 declarator.getOwnedDeclarator().getNameStartOffset(),
 				 templateDeclaration,
 				 declarator.isConst(),
 				 declarator.isVolatile(),
@@ -545,7 +545,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 			 friend,
 			 staticc,
 			 startingOffset,
-			 declarator.getNameStartOffset(),
+			 declarator.getOwnedDeclarator().getNameStartOffset(),
 			 templateDeclaration, (ASTPointerOperator)declarator.getOwnedDeclarator().getPtrOps().get(0));
 	 }
     

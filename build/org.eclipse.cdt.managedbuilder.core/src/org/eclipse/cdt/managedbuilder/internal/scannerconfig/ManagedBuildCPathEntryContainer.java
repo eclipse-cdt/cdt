@@ -24,14 +24,17 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
@@ -52,6 +55,10 @@ import org.eclipse.core.runtime.Platform;
  * @since 2.0
  */
 public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
+    // Managed make per project scanner configuration discovery profile
+    private static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
+    private static final String SPECS_FILE_PROVIDER = "specsFile"; //$NON-NLS-1$
+    
 	private static final String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	private static final String ERROR_HEADER = "PathEntryContainer error [";	//$NON-NLS-1$
@@ -161,27 +168,22 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 
 	}
 
-	protected void calculateEntriesDynamically(final IProject project, final IScannerInfoCollector collector) {
-		final IScannerConfigBuilderInfo buildInfo;
-		buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(
-												MakeCorePlugin.getDefault().getPluginPreferences(), 
-												BUILDER_ID, 
-												false);
-
+	protected void calculateEntriesDynamically(final IProject project, 
+                                               SCProfileInstance profileInstance, 
+                                               final IScannerInfoCollector collector) {
 		// TODO Get the provider from the toolchain specification
-		final IExternalScannerInfoProvider esiProvider;
-		esiProvider = MakeCorePlugin.getDefault().getExternalScannerInfoProvider(MakeCorePlugin.DEFAULT_EXTERNAL_SI_PROVIDER_ID);
-		
+
+        final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
+                createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
+                                              MM_PP_DISCOVERY_PROFILE_ID, false);
+        final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider(SPECS_FILE_PROVIDER);
+        
 		// Set the arguments for the provider
-		Vector compilerArgs = new Vector();
-		String args = buildInfo.getESIProviderArguments();
-		IPath command = buildInfo.getESIProviderCommand();
-		final Vector buildArgs = compilerArgs;
 		
 		ISafeRunnable runnable = new ISafeRunnable() {
 			public void run() {
 				IProgressMonitor monitor = new NullProgressMonitor();
-				esiProvider.invokeProvider(monitor, project, buildInfo, buildArgs, collector);
+				esiProvider.invokeProvider(monitor, project, SPECS_FILE_PROVIDER, buildInfo, collector);
 			}
 
 			public void handleException(Throwable exception) {
@@ -210,13 +212,16 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		}
 		
 		// See if we can load a dynamic resolver
-		IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(defaultConfig); 
-		if (collector != null) {
+        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+                getSCProfileInstance(project, MM_PP_DISCOVERY_PROFILE_ID);
+        IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+        
+		if (collector instanceof IManagedScannerInfoCollector) {
+            IManagedScannerInfoCollector mCollector = (IManagedScannerInfoCollector) collector;
 			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
-			collector.setProject(info.getOwner().getProject());
-			calculateEntriesDynamically((IProject)info.getOwner(), collector);
-			addIncludePaths(collector.getIncludePaths());
-			addDefinedSymbols(collector.getDefinedSymbols());
+			calculateEntriesDynamically((IProject)info.getOwner(), profileInstance, collector);
+			addIncludePaths(mCollector.getIncludePaths());
+			addDefinedSymbols(mCollector.getDefinedSymbols());
 		} else {
 			// If none supplied, use the built-ins
 			if (defaultConfig != null) {

@@ -14,9 +14,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
@@ -37,18 +39,25 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 	private final static char[] matchingChars = {'`', '\'', '\"'};
 	
 	private IProject fProject = null;
-	private IScannerInfoConsoleParserUtility fUtil = null;
+	private ScannerInfoConsoleParserUtility fUtil = null;
 	private IScannerInfoCollector fCollector = null;
 	
 	private boolean bMultiline = false;
 	private String sMultiline = ""; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#getUtility()
 	 */
-	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector) {
+	public IScannerInfoConsoleParserUtility getUtility() {
+        fUtil = new ScannerInfoConsoleParserUtility();
+		return fUtil;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
+	 */
+	public void startup(IProject project, IScannerInfoCollector collector) {
 		fProject = project;
-		fUtil = util;
 		fCollector = collector;
 	}
 
@@ -111,9 +120,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			
 			while (I.hasNext()) {
 				token = (String) I.next();
-				if (token.equals("-mwin32") ||		//$NON-NLS-1$
-					token.equals("-mno-win32") ||	//$NON-NLS-1$
-					token.equals("-mno-cygwin") ||	//$NON-NLS-1$
+				if (token.startsWith("-m") ||		//$NON-NLS-1$
 					token.equals("-ansi") ||		//$NON-NLS-1$
 					token.equals("-nostdinc") ||	//$NON-NLS-1$
 					token.equals("-posix") ||		//$NON-NLS-1$
@@ -171,9 +178,11 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			}
 			// Contribute discovered includes and symbols to the ScannerInfoCollector
 			if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-				Map extraInfo = new HashMap();
-				extraInfo.put(IScannerInfoCollector.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
-				fCollector.contributeToScannerConfig(project, translatedIncludes, symbols, extraInfo);
+				Map scannerInfo = new HashMap();
+				scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
+				scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
+				scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
+				fCollector.contributeToScannerConfig(project, scannerInfo);
 				
 				TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
 						"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$
@@ -184,7 +193,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 
 	/**
 	 * @param line
-	 * @return
+	 * @return list of tokens
 	 */
 	private List tokenize(String line) {
 		List rv = new ArrayList(2);
@@ -361,4 +370,5 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		}
 		return num;
 	}
+
 }

@@ -1,3 +1,7 @@
+2005-01-24 Vladimir Hirsl
+	Updated managed build scanner info collector to use new interfaces introduced
+	for CDT 3.0.
+	
 2004-03-16 Tanya Wolff
 	Marked remaining strings untranslatable as they belong to the extensibility schema.
 

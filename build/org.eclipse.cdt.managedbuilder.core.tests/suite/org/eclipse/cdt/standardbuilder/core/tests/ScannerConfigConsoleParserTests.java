@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerInfoConsoleParser;
-import org.eclipse.core.resources.IResource;
-
-import junit.framework.TestCase;
 
 /**
  * Scanner configuration console parser tests
@@ -58,13 +58,20 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 	 * Only tests parsing of the imput (make build output) 
 	 */
 	public void testParsingIncludePaths() {
-		final ArrayList sumIncludes = new ArrayList();
-		// initialize it with the utility
-		clParser.startup(null, null, new IScannerInfoCollector() {
-			public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
-				sumIncludes.addAll(includes);
-			}
-		});
+		IScannerInfoCollector collector = new IScannerInfoCollector() {
+            private List sumIncludes = new ArrayList();
+            public void contributeToScannerConfig(Object resource, Map scannerInfo) {
+                sumIncludes.addAll((List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS));
+            }
+            public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
+                if (type.equals(ScannerInfoTypes.INCLUDE_PATHS)) {
+                    return sumIncludes;
+                }
+                return new ArrayList();
+            }
+        }; 
+        // initialize it with the utility
+		clParser.startup(null, collector);
 		
 		clParser.processLine("gcc -I /dir/include -I C:\\dir\\include -ID:/dir/include -c test.c");	// absolute paths
 		clParser.processLine("gcc -I -I /dir2/include -c test.c");	// empty -I
@@ -80,7 +87,8 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 		clParser.processLine("/multiline\\");
 		clParser.processLine("/dir -c test.c"); // multiline
 		
-		assertTrue(sumIncludes.contains("/dir/include"));
+		List sumIncludes = collector.getCollectedScannerInfo(null, ScannerInfoTypes.INCLUDE_PATHS);
+        assertTrue(sumIncludes.contains("/dir/include"));
 		assertTrue(sumIncludes.contains("C:\\dir\\include"));
 		assertTrue(sumIncludes.contains("D:/dir/include"));
 		assertTrue(sumIncludes.contains("/dir2/include"));
@@ -108,13 +116,20 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 	}
 	
 	public void testParsingSymbolDefinitions() {
-		final ArrayList sumSymbols = new ArrayList();
+        IScannerInfoCollector collector = new IScannerInfoCollector() {
+            private List sumSymbols = new ArrayList();
+            public void contributeToScannerConfig(Object resource, Map scannerInfo) {
+                sumSymbols.addAll((List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS));
+            }
+            public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
+                if (type.equals(ScannerInfoTypes.SYMBOL_DEFINITIONS)) {
+                    return sumSymbols;
+                }
+                return new ArrayList();
+            }
+        };
 		// initialize it with the utility
-		clParser.startup(null, null, new IScannerInfoCollector() {
-			public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
-				sumSymbols.addAll(symbols);
-			}
-		});
+		clParser.startup(null, collector);
 		
 		clParser.processLine("gcc -DMACRO1 -D MACRO2=value2 -c test.c");	// simple definitions
 		clParser.processLine("gcc -D -DMACRO3 -c test.c");	// empty -D
@@ -127,7 +142,8 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 		clParser.processLine("-c test.c"); // multiline
 		clParser.processLine("gcc -D 'SUM(x, y) = (x) + (y)' -c test.c"); // more complex macro definition
 		
-		assertTrue(sumSymbols.contains("MACRO1"));
+		List sumSymbols = collector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+        assertTrue(sumSymbols.contains("MACRO1"));
 		assertTrue(sumSymbols.contains("MACRO2=value2"));
 		assertTrue(sumSymbols.contains("MACRO3"));
 		assertTrue(sumSymbols.contains("MACRO4=value4"));
@@ -143,20 +159,27 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 		assertTrue(sumSymbols.contains("MULTILINE=TRUE"));
 		assertTrue(sumSymbols.contains("SUM(x, y) = (x) + (y)"));
 		assertTrue(sumSymbols.size() == 15);
-		
 	}
 	
 	public void testParsingSymbolDefinitions_bug80271() {
-		final ArrayList sumSymbols = new ArrayList();
-		// initialize it with the utility
-		clParser.startup(null, null, new IScannerInfoCollector() {
-			public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
-				sumSymbols.addAll(symbols);
-			}
-		});
+        IScannerInfoCollector collector = new IScannerInfoCollector() {
+            private List sumSymbols = new ArrayList();
+            public void contributeToScannerConfig(Object resource, Map scannerInfo) {
+                sumSymbols.addAll((List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS));
+            }
+            public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
+                if (type.equals(ScannerInfoTypes.SYMBOL_DEFINITIONS)) {
+                    return sumSymbols;
+                }
+                return new ArrayList();
+            }
+        };
+        // initialize it with the utility
+        clParser.startup(null, collector);
 		
 		clParser.processLine("gcc -DMACRO1 -I ..\\inc -c ..\\source\\source.c");	// PR 80271
 
+        List sumSymbols = collector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("MACRO1"));
 		assertTrue(sumSymbols.size() == 1);
 	}

@@ -30,6 +30,7 @@ import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 
 /**
  * Creates a ScannerConfigBuilderInfo variant
@@ -47,6 +48,10 @@ public class ScannerConfigInfoFactory {
 	static final String ESI_PROVIDER_ARGUMENTS = PREFIX + ".esiProviderArguments"; //$NON-NLS-1$
 	static final String ESI_PROVIDER_PARSER_ID = PREFIX + ".esiProviderParserId"; //$NON-NLS-1$
 	static final String SI_PROBLEM_GENERATION_ENABLED = PREFIX + ".siProblemGenerationEnabled"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
+	static final String SI_PROFILE_ID = PREFIX + ".siProfileId"; //$NON-NLS-1$
 	
 	/**
 	 *
@@ -169,7 +174,7 @@ public class ScannerConfigInfoFactory {
 			if (isDefaultESIProviderCmd()) {
 				String attributes = getESIProviderParameter("defaultAttributes"); //$NON-NLS-1$
 				if (attributes == null) {
-					attributes = "-E -P -v -dD ${plugin_state_location}/{specs_file}"; //$NON-NLS-1$
+					attributes = "-E -P -v -dD ${plugin_state_location}/${specs_file}"; //$NON-NLS-1$
 				}
 				return attributes;
 			}
@@ -220,6 +225,24 @@ public class ScannerConfigInfoFactory {
 		 */
 		public void setSIProblemGenerationEnabled(boolean enabled) throws CoreException {
 			putString(SI_PROBLEM_GENERATION_ENABLED, Boolean.toString(enabled));
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#getProfileId()
+		 */
+		public String getProfileId() {
+			String profileId = getString(SI_PROFILE_ID);
+			if (profileId == null || profileId.length() == 0) {
+				profileId = ScannerConfigProfileManager.getDefaultSIProfileId();
+				// the default is the first one in the registry
+			}
+			return profileId;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setProfileId(java.lang.String)
+		 */
+		public void setProfileId(String profileId) throws CoreException {
+			putString(SI_PROFILE_ID, profileId);
 		}
 		
 		protected boolean getBoolean(String property) {

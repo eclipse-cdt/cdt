@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.make.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.make.core" id="ScannerConfigurationDiscoveryProfile" name="Scanner Configuration Discovery Profile"/>
+      </appInfo>
+      <documentation>
+         A unified definition of a scanner configuration profile. Usually consists of &lt;p&gt;
+- A make build output parser &lt;p&gt;
+- A scanner info collector &lt;p&gt;
+- An external scanner info generator &lt;p&gt;
+    - An external scanner info generator output parser &lt;p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            Definition of a profile:
+- A scanner info collector
+- A make build output parser 
+- A number of external scanner info providers
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="scannerInfoCollector"/>
+            <element ref="buildOutputProvider" minOccurs="0" maxOccurs="1"/>
+            <element ref="scannerInfoProvider" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Profile id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the profile will be presented to the user.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="scannerInfoCollector">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Java class that implements IScannerInfoCollector interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="scannerInfoConsoleParser">
+      <annotation>
+         <documentation>
+            Make build output or external scanner info provider output parser.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Java class that implements IScannerInfoConsoleParser interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.make.core.IScannerInfoConsoleParser"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="buildOutputProvider">
+      <annotation>
+         <documentation>
+            Build output provider is make build or/and build output file.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="open" minOccurs="0" maxOccurs="1"/>
+            <element ref="scannerInfoConsoleParser"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="scannerInfoProvider">
+      <annotation>
+         <documentation>
+            Either a command with arguments whose output will provide scanner information or a file that contains the scanner info.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <choice>
+               <element ref="run"/>
+               <element ref="open"/>
+            </choice>
+            <element ref="scannerInfoConsoleParser"/>
+         </sequence>
+         <attribute name="providerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  An id of the specific provider.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="run">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider2&lt;/samp&gt; interface.
+If not specified then &lt;samp&gt;org.eclipse.cdt.make.internal.core.scannerconfig.DefaultExternalScannerInfoProvider&lt;/samp&gt; is the default one used.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  A command to run. Example: &lt;samp&gt;gcc&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="arguments" type="string">
+            <annotation>
+               <documentation>
+                  Arguments for the command. Example: &lt;samp&gt;-E -P -v -dD&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="open">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoReader&lt;/samp&gt; interface.
+If not specified then &lt;samp&gt;org.eclipse.cdt.make.internal.core.scannerconfig.DefaultExternalScannerInfoReader&lt;/samp&gt; is the default one used.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.make.core.scannerconfig.IESIFileReader"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="file" type="string">
+            <annotation>
+               <documentation>
+                  A file containing a make build output or scanner information in some other form.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         &lt;samp&gt;org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile&lt;/samp&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

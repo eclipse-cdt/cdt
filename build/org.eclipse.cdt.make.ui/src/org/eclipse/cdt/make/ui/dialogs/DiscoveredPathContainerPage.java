@@ -30,16 +30,19 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
-import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElement;
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementLabelProvider;
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementSorter;
 import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -128,7 +131,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		fDiscoveredContainerList.setDialogFieldListener(adapter);
 		fDiscoveredContainerList.setLabelText(MakeUIPlugin.getResourceString(CONTAINER_LIST_LABEL)); //$NON-NLS-1$
 
-		fDiscoveredContainerList.setViewerSorter(new DiscoveredElementSorter());
+        fDiscoveredContainerList.setTreeExpansionLevel(2);
+        fDiscoveredContainerList.setViewerSorter(new DiscoveredElementSorter());
 		dirty = false;
 	}
 	
@@ -563,18 +567,23 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 				if (parent != null) {
 					Object[] children = parent.getChildren();
 					if (elem.delete()) {
+                        // ScannerInfoCollector collector = ScannerInfoCollector.getInstance();
+                        IProject project = fCProject.getProject();
+                        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+                                getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID); // use selected profile for the project
+                        PerProjectSICollector collector = (PerProjectSICollector) profileInstance.getScannerInfoCollector();
 						switch (elem.getEntryKind()) {
 							case DiscoveredElement.PATHS_GROUP:
-								ScannerInfoCollector.getInstance().deleteAllPaths(fCProject.getProject());
+                                collector.deleteAllPaths(project);
 								break;
 							case DiscoveredElement.SYMBOLS_GROUP:
-								ScannerInfoCollector.getInstance().deleteAllSymbols(fCProject.getProject());
+                                collector.deleteAllSymbols(project);
 								break;
 							case DiscoveredElement.INCLUDE_PATH:
-								ScannerInfoCollector.getInstance().deletePath(fCProject.getProject(), elem.getEntry());
+                                collector.deletePath(project, elem.getEntry());
 								break;
 							case DiscoveredElement.SYMBOL_DEFINITION:
-								ScannerInfoCollector.getInstance().deleteSymbol(fCProject.getProject(), elem.getEntry());
+                                collector.deleteSymbol(project, elem.getEntry());
 								break;
 						}
 						rc = true;

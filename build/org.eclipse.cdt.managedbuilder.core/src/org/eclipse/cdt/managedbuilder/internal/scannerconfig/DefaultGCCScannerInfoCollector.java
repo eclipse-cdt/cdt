@@ -16,9 +16,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Implementation class for gathering the built-in compiler settings for 
@@ -28,7 +32,7 @@ import org.eclipse.core.resources.IResource;
  * 
  * @since 2.0
  */
-public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollector {
+public class DefaultGCCScannerInfoCollector implements IScannerInfoCollector2 {
 	protected Map definedSymbols;
 	protected static final String EQUALS = "=";	//$NON-NLS-1$
 	protected List includePaths;
@@ -42,26 +46,32 @@ public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollec
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.Map)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
 	 */
-	public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
-		// This method will be called by the parser each time there is a new value
-		Iterator pathIter = includes.listIterator();
-		while (pathIter.hasNext()) {
-			String path = (String) pathIter.next();
-			getIncludePaths().add(path);
+	public void contributeToScannerConfig(Object resource, Map scannerInfo) {
+		// check the resource
+		if (resource != null && resource instanceof IResource &&
+				((IResource) resource).getProject() == project ) {
+			List includes = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
+			List symbols = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
+			
+			// This method will be called by the parser each time there is a new value
+			Iterator pathIter = includes.listIterator();
+			while (pathIter.hasNext()) {
+				String path = (String) pathIter.next();
+				getIncludePaths().add(path);
+			}
+			
+			// Now add the macros
+			Iterator symbolIter = symbols.listIterator();
+			while (symbolIter.hasNext()) {
+				// See if it has an equals
+				String[] macroTokens = ((String)symbolIter.next()).split(EQUALS);
+				String macro = macroTokens[0].trim();
+				String value = (macroTokens.length > 1) ? macroTokens[1].trim() : new String();
+				getDefinedSymbols().put(macro, value);
+			}
 		}
-		
-		// Now add the macros
-		Iterator symbolIter = symbols.listIterator();
-		while (symbolIter.hasNext()) {
-			// See if it has an equals
-			String[] macroTokens = ((String)symbolIter.next()).split(EQUALS);
-			String macro = macroTokens[0].trim();
-			String value = (macroTokens.length > 1) ? macroTokens[1].trim() : new String();
-			getDefinedSymbols().put(macro, value);
-		}	
-		
 	}
 
 	/* (non-Javadoc)
@@ -91,5 +101,58 @@ public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollec
 		this.project = project;
 		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#updateScannerConfiguration(org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
+     */
+    public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
+        List rv = null;
+        String errorMessage = null;
+        if (resource == null) {
+            errorMessage = "resource is null";//$NON-NLS-1$
+        } 
+        else if (!(resource instanceof IResource)) {
+            errorMessage = "resource is not an IResource";//$NON-NLS-1$
+        }
+        else if (((IResource) resource).getProject() == null) {
+            errorMessage = "project is null";//$NON-NLS-1$
+        }
+        else if (((IResource) resource).getProject() != project) {
+            errorMessage = "wrong project";//$NON-NLS-1$
+        }
+        
+        if (errorMessage != null) {
+            TraceUtil.outputError("DefaultGCCScannerInfoCollector.getCollectedScannerInfo : ", errorMessage); //$NON-NLS-1$
+        }
+        else if (type.equals(ScannerInfoTypes.INCLUDE_PATHS)) {
+            rv = getIncludePaths();
+        }
+        else if (type.equals(ScannerInfoTypes.SYMBOL_DEFINITIONS)) {
+            rv = new ArrayList();
+            Map symbols = getDefinedSymbols();
+            for (Iterator i = symbols.keySet().iterator(); i.hasNext(); ) {
+                String macro = (String) i.next();
+                String value = (String) symbols.get(macro);
+                if (value.length() > 0) {
+                    rv.add(macro + EQUALS + value);
+                }
+                else {
+                    rv.add(macro);
+                }
+            }
+        }
+        else {
+            rv = new ArrayList();
+        }
+        return rv;
+    }
 
 }

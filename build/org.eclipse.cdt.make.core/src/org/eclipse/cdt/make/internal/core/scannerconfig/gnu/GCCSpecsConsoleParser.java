@@ -13,10 +13,12 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
 
@@ -40,14 +42,20 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private List includes = new ArrayList();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#getUtility()
 	 */
-	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector) {
+	public IScannerInfoConsoleParserUtility getUtility() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
+	 */
+	public void startup(IProject project, IScannerInfoCollector collector) {
 		this.fProject = project;
-		this.fUtil = util;
 		this.fCollector = collector;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#processLine(java.lang.String)
 	 */
@@ -85,18 +93,18 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				includes.add(line);
 		}
 			
-	return rc;
+		return rc;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
 	 */
 	public void shutdown() {
-		fCollector.contributeToScannerConfig(fProject, includes, symbols, new HashMap());
+		Map scannerInfo = new HashMap();
+		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
+		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
+		fCollector.contributeToScannerConfig(fProject, scannerInfo);
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
 				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
-		if (fUtil != null) {
-			fUtil.reportProblems();
-		}
 	}
 }

@@ -51,8 +51,14 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 	private List fCollectedFiles;
 	private List fNameConflicts;
 	private Vector fDirectoryStack;
+    
+    private boolean fInitialized = false;
 	
-	public ScannerInfoConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility#initialize(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.IMarkerGenerator)
+	 */
+	public void initialize(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
+        fInitialized = true;
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
 		fBaseDirectory = fProject.getLocation();
@@ -77,10 +83,9 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility#reportProblems()
-	 */
 	public boolean reportProblems() {
+        if (!fInitialized) 
+            return false;
 		boolean reset = false;
 		for (Iterator iter = fErrors.iterator(); iter.hasNext(); ) {
 			Problem problem = (Problem) iter.next();
@@ -251,7 +256,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		return fNameConflicts.contains(path.lastSegment());
 	}
 
-	protected IPath getWorkingDirectory() {
+	public IPath getWorkingDirectory() {
 		if (fDirectoryStack.size() != 0) {
 			return (IPath) fDirectoryStack.lastElement();
 		}
@@ -300,9 +305,6 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		return fDirectoryStack.size();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility#changeMakeDirectory(java.lang.String, int, boolean)
-	 */
 	public void changeMakeDirectory(String dir, int dirLevel, boolean enterDir) {
     	if (enterDir) {
     		/* Sometimes make screws up the output, so
@@ -319,9 +321,6 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
     	}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility#translateRelativePaths(org.eclipse.core.resources.IFile, java.lang.String, java.util.List)
-	 */
 	public List translateRelativePaths(IFile file, String fileName, List includes) {
 		List translatedIncludes = new ArrayList(includes.size());
 		for (Iterator i = includes.iterator(); i.hasNext(); ) {
@@ -380,9 +379,6 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		return translatedIncludes;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility#normalizePath(java.lang.String)
-	 */
 	public String normalizePath(String path) {
 		int column = path.indexOf(':');
 		if (column > 0) {

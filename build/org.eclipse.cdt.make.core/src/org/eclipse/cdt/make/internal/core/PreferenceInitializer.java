@@ -13,7 +13,9 @@ import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -59,6 +61,28 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		} catch (CoreException e) {
 		}
 
+        // default plugin preferences for new scanner configuration discovery
+        IScannerConfigBuilderInfo2 scInfo2 = ScannerConfigProfileManager.
+                createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
+                        ScannerConfigProfileManager.NULL_PROFILE_ID, true);
+        scInfo2.setAutoDiscoveryEnabled(true);
+        scInfo2.setProblemReportingEnabled(true);
+        scInfo2.setSelectedProfileId(ScannerConfigProfileManager.DEFAULT_SI_PROFILE_ID);
+        scInfo2.setBuildOutputFileActionEnabled(false);
+        scInfo2.setBuildOutputFilePath(""); //$NON-NLS-1$
+        scInfo2.setBuildOutputParserEnabled(true);
+        String providerId = "specsFile";    //$NON-NLS-1$
+        scInfo2.setProviderOpenFilePath(providerId, "");//$NON-NLS-1$
+        scInfo2.setProviderRunCommand(providerId, "gcc");   //$NON-NLS-1$
+        scInfo2.setProviderRunArguments(providerId, "-E -P -v -dD ${plugin_state_location}/${specs_file}");//$NON-NLS-1$
+        scInfo2.setProviderOutputParserEnabled(providerId, true);
+        scInfo2.setProblemReportingEnabled(true);
+        try {
+            scInfo2.store();
+        }
+        catch (CoreException e) {
+        }
+        
 		// Store default for makefile
 		MakeCorePlugin.getDefault().getPluginPreferences().setDefault(MakeCorePlugin.MAKEFILE_STYLE, "GNU"); //$NON-NLS-1$
 	}

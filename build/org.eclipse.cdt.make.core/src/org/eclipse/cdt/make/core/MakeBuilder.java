@@ -189,7 +189,7 @@ public class MakeBuilder extends ACBuilder {
 				OutputStream stderr = epm.getOutputStream();
 				// Sniff console output for scanner info
 				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
-						stdout, stderr, getProject(), workingDirectory, this);
+						stdout, stderr, getProject(), workingDirectory, null, this, null);
 				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
 				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);

@@ -83,5 +83,18 @@
             natureID="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
             class="org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeProject"/>
    </extension>
+   <extension
+         id="GCCManagedMakePerProjectProfile"
+         name="GNU C/C++ managed make per project SCD profile"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"/>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"
+               command="gcc"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
 
 </plugin>

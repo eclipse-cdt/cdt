@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.make.core.scannerconfig;
+package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,8 +51,8 @@ public final class ScannerConfigUtil {
 			String value = null;
 			int index = symbol.indexOf("="); //$NON-NLS-1$
 			if (index != -1) {
-				key = getSymbolKey(symbol);
-				value = getSymbolValue(symbol);
+				key = symbol.substring(0, index).trim();
+				value = symbol.substring(index + 1).trim();
 			} else {
 				key = symbol.trim();
 			}
@@ -123,8 +123,8 @@ public final class ScannerConfigUtil {
 		String value = null;
 		int index = symbol.indexOf("="); //$NON-NLS-1$
 		if (index != -1) {
-			key = symbol.substring(0, index).trim();
-			value = symbol.substring(index + 1).trim();
+			key = getSymbolKey(symbol);
+			value = getSymbolValue(symbol);
 		} else {
 			key = symbol.trim();
 		}
@@ -272,13 +272,8 @@ public final class ScannerConfigUtil {
 		String[] tokens = line.split(quoteStyle);
 		for (int i = 0; i < tokens.length; ++i) {
 			if (i % 2 == 0) { // even tokens need further tokenization
-				String[] sTokens = tokens[i].split("\\s"); //$NON-NLS-1$
-				// remove empty strings
-				for (int j = 0; j < sTokens.length; ++j) {
-					if (sTokens[j].length() > 0) {
-						allTokens.add(sTokens[j]);
-					}
-				}
+				String[] sTokens = tokens[i].split("\\s+"); //$NON-NLS-1$
+				for (int j = 0; j < sTokens.length; allTokens.add(sTokens[j++]));
 			}
 			else {
 				allTokens.add(tokens[i]);

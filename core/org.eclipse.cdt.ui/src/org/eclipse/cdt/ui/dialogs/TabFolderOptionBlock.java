@@ -194,7 +194,13 @@ public abstract class TabFolderOptionBlock {
 			ICOptionPage tab = (ICOptionPage)iter.next();
 			ok = tab.isValid();
 			if (!ok) {
-				setErrorMessage(tab.getErrorMessage());
+                String errorMessage = tab.getErrorMessage();
+                if (!tab.getControl().isVisible()) {
+                    setErrorMessage(CUIMessages.getFormattedString(
+                            "TabFolderOptionBlock.error.message", tab.getTitle())); //$NON-NLS-1$
+                } else {
+                    setErrorMessage(errorMessage);
+                }
 				break;
 			}
 		}

@@ -14,12 +14,13 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerInfoConsoleParserUtility;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -32,45 +33,55 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ScannerInfoConsoleParserFactory {
 
-	/**
-	 * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
-	 * and a utility.
-	 * 
-	 * @param outputStream
-	 * @param currentProject
-	 * @param markerGenerator
-	 * @param scBuildInfo
-	 * @param collector	- scanner info collector
-	 * @return ConsoleOutputSniffer
-	 */
-	public static ConsoleOutputSniffer getESIProviderOutputSniffer(
-											OutputStream outputStream,
-											OutputStream errorStream,
-											IProject currentProject,
-											IScannerConfigBuilderInfo scBuildInfo,
-											IScannerInfoCollector collector) {
-		if (scBuildInfo.isESIProviderCommandEnabled()) {
-			// get the ESIProvider console parser 
-			IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
-				getScannerInfoConsoleParser(scBuildInfo.getESIProviderConsoleParserId());
-			// initialize it with the utility
-			clParser.startup(currentProject, null /*new ScannerInfoConsoleParserUtility(
-				currentProject, null, markerGenerator)*/, collector);
-			// create an output stream sniffer
-			return new ConsoleOutputSniffer(outputStream, errorStream, new 
-				IScannerInfoConsoleParser[] {clParser});
-		}
-		return null;
-	}
-	
+    /**
+     * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
+     * and a utility.
+     * 
+     * @param outputStream
+     * @param errorStream
+     * @param currentProject
+     * @param providerId 
+     * @param scBuildInfo
+     * @param markerGenerator
+     * @return ConsoleOutputSniffer
+     */
+    public static ConsoleOutputSniffer getESIProviderOutputSniffer(
+                                            OutputStream outputStream,
+                                            OutputStream errorStream,
+                                            IProject currentProject,
+                                            String providerId,
+                                            IScannerConfigBuilderInfo2 scBuildInfo,
+                                            IMarkerGenerator markerGenerator) {
+        if (scBuildInfo.isProviderOutputParserEnabled(providerId)) {
+            // get the ESIProvider console parser 
+            SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+                    getSCProfileInstance(currentProject, scBuildInfo.getSelectedProfileId());
+            IScannerInfoConsoleParser clParser = profileInstance.createExternalScannerInfoParser(providerId);
+            // initialize the utility object
+            IScannerInfoConsoleParserUtility util = clParser.getUtility();
+            if (util != null) {
+                util.initialize(currentProject, currentProject.getLocation(), markerGenerator);
+            }
+            IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+            clParser.startup(currentProject, collector);
+            // create an output stream sniffer
+            return new ConsoleOutputSniffer(outputStream, errorStream, new 
+                IScannerInfoConsoleParser[] {clParser});
+        }
+        return null;
+    }
+
 	/**
 	 * Creates a ConsoleOutputStreamSniffer, ESI provider scanner info console parser
 	 * and a utility.
 	 * 
 	 * @param outputStream
+     * @param errorStream
 	 * @param currentProject
 	 * @param workingDirectory
+     * @param buildInfo
 	 * @param markerGenerator
+     * @param IScannerInfoCollector2
 	 * @return ConsoleOutputSniffer
 	 */
 	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
@@ -78,30 +89,40 @@ public class ScannerInfoConsoleParserFactory {
 											OutputStream errorStream,
 											IProject currentProject,
 											IPath workingDirectory,
-											IMarkerGenerator markerGenerator) {
+                                            IScannerConfigBuilderInfo2 scBuildInfo,
+											IMarkerGenerator markerGenerator,
+                                            IScannerInfoCollector collector) {
 		try {
 			// get the SC builder settings
 			if (currentProject.hasNature(ScannerConfigNature.NATURE_ID)) {
-				IScannerConfigBuilderInfo scBuildInfo;
-				try {
-					scBuildInfo = MakeCorePlugin.
-						createScannerConfigBuildInfo(currentProject, ScannerConfigBuilder.BUILDER_ID);
-				}
-				catch (CoreException e) {
-					// builder not installed or disabled
-					scBuildInfo = null;
-				}
+				if (scBuildInfo == null) {
+    				try {
+    					scBuildInfo = ScannerConfigProfileManager.
+    						createScannerConfigBuildInfo2(currentProject);
+    				}
+    				catch (CoreException e) {
+    					// builder not installed or disabled
+    				}
+                }
 				if (scBuildInfo != null && 
 						scBuildInfo.isAutoDiscoveryEnabled() &&
-						scBuildInfo.isMakeBuilderConsoleParserEnabled()) {
+						scBuildInfo.isBuildOutputParserEnabled()) {
 					// get the make builder console parser 
-					IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
-						getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			
-					// initialize it with the utility
-					clParser.startup(currentProject, new ScannerInfoConsoleParserUtility(
-							currentProject, workingDirectory,
-							scBuildInfo.isSIProblemGenerationEnabled() ? markerGenerator : null),
-							ScannerInfoCollector.getInstance());
+					SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+							getSCProfileInstance(currentProject, scBuildInfo.getSelectedProfileId());
+					IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
+                    if (collector == null) {
+                        collector = profileInstance.getScannerInfoCollector();
+                    }
+                    
+					// initialize the utility object
+					IScannerInfoConsoleParserUtility util = clParser.getUtility();
+					if (util != null) {
+						util.initialize(currentProject, workingDirectory,
+										scBuildInfo.isProblemReportingEnabled() ?
+										markerGenerator : null);
+					}
+					clParser.startup(currentProject, collector);
 					// create an output stream sniffer
 					return new ConsoleOutputSniffer(outputStream, errorStream, new 
 						IScannerInfoConsoleParser[] {clParser});

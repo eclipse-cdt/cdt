@@ -25,6 +25,7 @@
       <import plugin="org.eclipse.cdt.make.core"/>
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
+   <extension-point id="DiscoveryProfilePage" name="%discoveryProfilePage.name" schema="schema/DiscoveryProfilePage.exsd"/>
 
 
    <extension
@@ -526,4 +527,11 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.make.internal.ui.MakeUIPreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.make.ui.DiscoveryProfilePage">
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.GCCPerProjectSCDProfilePage"
+            name="%GCCPerProjectProfile.name"
+            profileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
    </extension></plugin>

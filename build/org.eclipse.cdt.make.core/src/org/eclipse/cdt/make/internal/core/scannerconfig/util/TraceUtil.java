@@ -10,8 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 
 /**
  * Tracebility related utility functions
@@ -21,6 +25,18 @@ import java.util.List;
 public class TraceUtil {
 	public static final String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
 	public static boolean SCANNER_CONFIG = false;
+	private static LogWriter logger = null;
+	
+	static {
+		logger = new LogWriter(MakeCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#finalize()
+	 */
+	protected void finalize() throws Throwable {
+		logger.shutdown();
+		super.finalize();
+	}
 	
 	public static boolean isTracing() {
 		return SCANNER_CONFIG;
@@ -77,4 +93,74 @@ public class TraceUtil {
 			System.out.println("Error: " + string + line); //$NON-NLS-1$
 		}
 	}
+
+	/**
+	 * @param title
+	 * @param subtitlePrefix
+	 * @param subtitlePostfix
+	 * @param map - el grande map
+	 */
+	public static void metricsTrace(String title, String subtitlePrefix, String subtitlePostfix, Map directoryCommandListMap) {
+		try {
+			logger.writeln();
+			logger.writeln(" *** NEW METRICS TRACE ***");
+			logger.writeln();
+			for (Iterator k = directoryCommandListMap.keySet().iterator(); k.hasNext(); ) { 
+				String dir = (String) k.next();
+				logger.writeln(title + dir + ":");
+				List directoryCommandList = (List) directoryCommandListMap.get(dir);
+				if (directoryCommandList == null) {
+					logger.writeln("  --- empty ---" + EOL); //$NON-NLS-1$
+					return;
+				}
+				for (Iterator i = directoryCommandList.iterator(); i.hasNext(); ) {
+					Map command21FileListMap = (Map) i.next();
+					String[] commands = (String[]) command21FileListMap.keySet().toArray(new String[1]);
+					logger.writeln("  " + subtitlePrefix + commands[0] + subtitlePostfix); //$NON-NLS-1$
+					List fileList = (List) command21FileListMap.get(commands[0]);
+					for (Iterator j = fileList.iterator(); j.hasNext(); ) {
+						String fileName = (String) j.next();
+						logger.writeln("    " + fileName); //$NON-NLS-1$
+					}
+				}
+			}
+			logger.flushLog();
+		}
+		catch (IOException e) {}
+	}
+
+	/**
+	 * @param title
+	 * @param workingDirsN
+	 * @param commandsN
+	 * @param filesN
+	 */
+	public static void summaryTrace(String title, int workingDirsN, int commandsN, int filesN) {
+		try {
+			logger.writeln();
+			logger.writeln(" *** METRICS SUMMARY ***");
+			logger.writeln();
+			logger.writeln(title);
+			logger.writeln("  Number of directories visited: " + Integer.toString(workingDirsN));
+			logger.writeln("  Number of generic commands:    " + Integer.toString(commandsN));
+			logger.writeln("  Number of compiled files:      " + Integer.toString(filesN));
+			logger.flushLog();
+		}
+		catch (IOException e) {}
+	}
+
+	/**
+	 * @param trace : String
+	 */
+	public static void metricsTrace(String trace) {
+		try {
+			logger.writeln();
+			logger.writeln(" *** NEW METRICS TRACE 2 ***");
+			logger.writeln();
+			logger.writeln(trace);
+			logger.flushLog();
+		}
+		catch (IOException e) {}
+	}
+
 }

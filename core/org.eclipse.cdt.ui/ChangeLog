@@ -1,3 +1,9 @@
+2005-01-24 Vladimir Hirsl
+	SCD work for CDT 3.0
+	Better displaying of error messages in TabFolderOptionBlock.
+	* src/org/eclipse/cdt/ui/dialogs/TabFolderOptionsBlock.java
+	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties
+	
 2005-01-24 Alain Magloire
 	PR 83514 patch from Przemek
 	* src/org/eclipse/cdt/internal/ui/actions/ActionMessages.properties

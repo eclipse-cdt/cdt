@@ -92,12 +92,11 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 		// session
 		scannerInfo = (DiscoveredScannerInfo)project.getSessionProperty(scannerInfoProperty);
 
-		// this will convert user info
-		org.eclipse.cdt.make.core.MakeScannerInfo makeScannerInfo = org.eclipse.cdt.make.core.MakeScannerProvider.getDefault().getMakeScannerInfo(
-				project, cacheInfo);
-
 		if (scannerInfo == null) {
 			scannerInfo = new DiscoveredScannerInfo(project);
+			// this will convert user info
+			org.eclipse.cdt.make.core.MakeScannerInfo makeScannerInfo = org.eclipse.cdt.make.core.MakeScannerProvider.getDefault().getMakeScannerInfo(
+					project, cacheInfo);
 			scannerInfo.setUserScannerInfo(makeScannerInfo);
 			
 			// migrate to new C Path Entries

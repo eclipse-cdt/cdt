@@ -10,8 +10,6 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
-import org.eclipse.cdt.debug.mi.core.event.MIEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 
 /**
  * Transmission command thread blocks on the command Queue
@@ -82,42 +80,5 @@ public class TxThread extends Thread {
 			}
 		}
 	}
-	
-	/**
-	 * An attempt to discover the command type and
-	 * fire an event if necessary.
-	 */
-	void processCLICommand(CLICommand cmd) {
-		String operation = cmd.getOperation();
-		int indx = operation.indexOf(' ');
-		if (indx != -1) {
-			operation = operation.substring(0, indx).trim();
-		} else {
-			operation = operation.trim();
-		}
 
-		// Check the type of command
-		int type = -1;
-		// if it was a step instruction set state running
-		if (operation.equals("n") || operation.equals("next")) {
-			type = MIRunningEvent.NEXT;
-		} else if (operation.equals("ni") || operation.equals("nexti")) {
-			type = MIRunningEvent.NEXTI;
-		} else if (operation.equals("s") || operation.equals("step")) {
-			type = MIRunningEvent.STEP;
-		} else if (operation.equals("si") || operation.equals("stepi")) {
-			type = MIRunningEvent.STEPI;
-		} else if (operation.equals("u") || operation.startsWith("unt")) {
-			type = MIRunningEvent.UNTIL;
-		} else if (operation.startsWith("fin")) {
-			type = MIRunningEvent.FINISH;
-		} else if (operation.equals("c") || operation.equals("fg") || operation.startsWith("cont")) {
-			type = MIRunningEvent.CONTINUE;
-		}
-		if (type != -1) {
-			session.getMIInferior().setRunning();
-			MIEvent event = new MIRunningEvent(cmd.getToken(), type);
-			session.fireEvent(event);
-		}
-	}
 }

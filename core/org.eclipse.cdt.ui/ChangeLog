@@ -1,5 +1,10 @@
 2004-06-03 Alain Magloire
 
+	Fix for PR 60650
+	* src/org/eclipse/cdt/ui/wizards/NewClassWizardPage.java
+
+2004-06-03 Alain Magloire
+
 	Fix for PR 64197 60906
 
 	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java

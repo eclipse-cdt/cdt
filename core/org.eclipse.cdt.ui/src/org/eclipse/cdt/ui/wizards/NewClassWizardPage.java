@@ -196,7 +196,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 		IResource resource = getSelectionResourceElement(currentSelection);
 		if (resource != null)
-			defaultSourceFolder = resource.getLocation().makeAbsolute();
+			defaultSourceFolder = resource.getFullPath();
 		if (fSelectedProject != null && hasCppNature && defaultSourceFolder != null) {
 			fAccessButtons.setEnabled(false);
 			setPageComplete(false);
@@ -577,83 +577,87 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 		monitor.beginTask(NewWizardMessages.getString("NewTypeWizardPage.operationdesc"), 10); //$NON-NLS-1$
 
-		try {
-			// resolve location of base class
-			String baseClassName = getBaseClassName();
-			ITypeInfo baseClass = null;
-			if ((baseClassName != null) && (baseClassName.length() > 0))
-			{
-				ITypeInfo[] classElements = findClassElementsInProject();
-				baseClass = findInList(classElements, new QualifiedTypeName(baseClassName));
-				if (baseClass != null && baseClass.getResolvedReference() == null) {
-					final ITypeInfo[] typesToResolve = new ITypeInfo[] { baseClass };
-					IRunnableWithProgress runnable = new IRunnableWithProgress() {
-						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
-							AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
-							if (progressMonitor.isCanceled()) {
-								throw new InterruptedException();
-							}
+		// resolve location of base class
+		String baseClassName = getBaseClassName();
+		ITypeInfo baseClass = null;
+		if ((baseClassName != null) && (baseClassName.length() > 0))
+		{
+			ITypeInfo[] classElements = findClassElementsInProject();
+			baseClass = findInList(classElements, new QualifiedTypeName(baseClassName));
+			if (baseClass != null && baseClass.getResolvedReference() == null) {
+				final ITypeInfo[] typesToResolve = new ITypeInfo[] { baseClass };
+				IRunnableWithProgress runnable = new IRunnableWithProgress() {
+					public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
+						AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
+						if (progressMonitor.isCanceled()) {
+							throw new InterruptedException();
 						}
-					};
-					
-					try {
-						getContainer().run(true, true, runnable);
-					} catch (InvocationTargetException e) {
-						String title= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.title"); //$NON-NLS-1$
-						String message= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.message"); //$NON-NLS-1$
-						ExceptionHandler.handle(e, title, message);
-						return false;
-					} catch (InterruptedException e) {
-						// cancelled by user
-						return false;
 					}
+				};
+				
+				try {
+					getContainer().run(true, true, runnable);
+				} catch (InvocationTargetException e) {
+					String title= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.title"); //$NON-NLS-1$
+					String message= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.message"); //$NON-NLS-1$
+					ExceptionHandler.handle(e, title, message);
+					return false;
+				} catch (InterruptedException e) {
+					// cancelled by user
+					return false;
 				}
 			}
-			
-			String lineDelimiter= null;	
-			lineDelimiter= System.getProperty("line.separator", "\n");  //$NON-NLS-1$ //$NON-NLS-2$
-			
-			parentHeaderTU = createTranslationUnit(linkedResourceGroupForHeader);		
-			parentBodyTU = createTranslationUnit(linkedResourceGroupForBody);		
-			monitor.worked(1);
-	
-			if(parentHeaderTU != null){
-				String header = constructHeaderFileContent(parentHeaderTU, lineDelimiter, baseClass);
-				IWorkingCopy headerWC = parentHeaderTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
-				headerWC.getBuffer().append(header);
-				synchronized(headerWC)	{
-					headerWC.reconcile();	
-					headerWC.commit(true, monitor);
-				}
-				//createdClass= (IStructure)headerWC.getElement(getNewClassName());				
-				createdClass= headerWC.getElement(getNewClassName());				
-				headerWC.destroy();
-			}
-			if(parentBodyTU != null){
-				String body = constructBodyFileContent(lineDelimiter);
-				IWorkingCopy bodyWC = parentBodyTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
-				bodyWC.getBuffer().append(body);
-				synchronized(bodyWC){
-					bodyWC.reconcile();
-					bodyWC.commit(true, monitor);
-				}
-				bodyWC.destroy();
-			}
-		
-			return true;	
-		}catch(CModelException e){
-			MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), WorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
-			return false;			
-		}finally{
-			monitor.done();
 		}
-					
+		
+		String lineDelimiter= null;	
+		lineDelimiter= System.getProperty("line.separator", "\n");  //$NON-NLS-1$ //$NON-NLS-2$
+		
+		parentHeaderTU = createTranslationUnit(linkedResourceGroupForHeader, true);		
+		parentBodyTU = createTranslationUnit(linkedResourceGroupForBody, false);		
+		monitor.worked(1);
+		
+		if(parentHeaderTU != null && !parentHeaderTU.isReadOnly()){
+			String header = constructHeaderFileContent(parentHeaderTU, lineDelimiter, baseClass);
+			IWorkingCopy headerWC = null;
+			try {
+				headerWC = parentHeaderTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
+				headerWC.getBuffer().append(header);
+				headerWC.reconcile();	
+				headerWC.commit(true, monitor);
+				//createdClass= (IStructure)headerWC.getElement(getNewClassName());				
+				createdClass= headerWC.getElement(getNewClassName());
+			} catch (CModelException cme) {
+				MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), cme.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
+			} finally {
+				if (headerWC != null) {
+					headerWC.destroy();
+				}
+			}
+		}
+		if(parentBodyTU != null && !parentBodyTU.isReadOnly()){
+			String body = constructBodyFileContent(lineDelimiter);
+			IWorkingCopy bodyWC = null;
+			try {
+				bodyWC = parentBodyTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
+				bodyWC.getBuffer().append(body);
+				bodyWC.reconcile();
+				bodyWC.commit(true, monitor);
+			} catch (CModelException cme) {
+				MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), cme.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
+			} finally {
+				if (bodyWC != null) {
+					bodyWC.destroy();
+				}
+			}
+		}
+		monitor.done();
+		return true;	
 	}
 	
-	protected ITranslationUnit createTranslationUnit(LinkToFileGroup linkedGroup){
+	protected ITranslationUnit createTranslationUnit(LinkToFileGroup linkedGroup, boolean isHeader){
 		ITranslationUnit createdUnit = null;
 		IFile createdFile = null;
-		createdFile= createNewFile(linkedGroup);
+		createdFile= createNewFile(linkedGroup, isHeader);
 		// turn the file into a translation unit
 		if(createdFile != null){
 			Object element= CoreModel.getDefault().create(createdFile);
@@ -664,16 +668,16 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return createdUnit;
 	}
 		
-	protected IFile createNewFile(LinkToFileGroup linkedGroup) {
-		final IPath newFilePath = getContainerFullPath(linkedGroup);
-		final IFile newFileHandle = createFileHandle(newFilePath);
+	protected IFile createNewFile(LinkToFileGroup linkedGroup, boolean isHeader) {
+		final IFile newFileHandle = createFileHandle(linkedGroup, isHeader);
 
 		if(newFileHandle.exists()){
 			return newFileHandle;
 		}
 
 		// create the new file and cache it if successful
-		final boolean linkedFile = linkedGroup.linkCreated();
+		final IPath newFilePath = getContainerFullPath(linkedGroup);
+		final boolean isLinkedFile = linkedGroup.linkCreated();
 		final IPath containerPath = getContainerPath(linkedGroup);
 		final InputStream initialContents = getInitialContents();
 	
@@ -687,7 +691,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 						ContainerGenerator generator = new ContainerGenerator(containerPath);
 						generator.generateContainer(new SubProgressMonitor(monitor, 1000));
 					}
-					createFile(newFileHandle,initialContents, newFilePath, linkedFile, new SubProgressMonitor(monitor, 1000));
+					createFile(newFileHandle,initialContents, newFilePath, isLinkedFile, new SubProgressMonitor(monitor, 1000));
 				} finally {
 					monitor.done();
 				}
@@ -716,22 +720,30 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 		return newFileHandle;
 	}
-	protected IFile createFileHandle(IPath filePath) {
-		IFile newFile = null;
-		IWorkspaceRoot root= CUIPlugin.getWorkspace().getRoot();	
-		newFile = root.getFileForLocation(filePath);
+
+	protected IFile createFileHandle(LinkToFileGroup linkedGroup, boolean isHeader) {
+		IWorkspaceRoot root= CUIPlugin.getWorkspace().getRoot();						
+		if (linkedGroup.linkCreated()) {
+			IPath path = (isHeader) ? getHeaderFullPath() : getBodyFullPath();
+			return root.getFile(path);
+		}
+		IPath filePath = getContainerFullPath(linkedGroup);
+		IFile newFile = root.getFileForLocation(filePath);
 		if(newFile == null)
 			newFile = root.getFile(filePath);
-					
 		return newFile;
 	}
 
-	protected void createFile(IFile fileHandle, InputStream contents, IPath targetPath, boolean linkedFile, IProgressMonitor monitor) throws CoreException {
+	protected void createFile(IFile fileHandle, InputStream contents, IPath linkTargetPath, boolean isLinkedFile, IProgressMonitor monitor) throws CoreException {
 		if (contents == null)
 			contents = new ByteArrayInputStream(new byte[0]);
 			
 		try {
-			fileHandle.create(contents, false, monitor);
+			if (isLinkedFile) {
+				fileHandle.createLink(linkTargetPath, IResource.ALLOW_MISSING_LOCAL, monitor);
+			} else {
+				fileHandle.create(contents, false, monitor);
+			}
 		}
 		catch (CoreException e) {
 			// If the file already existed locally, just refresh to get contents
@@ -760,7 +772,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			return defaultSourceFolder;			
 		}
 	}
-	
+
 	/*
 	 * returns the path including the file name
 	 */ 
@@ -778,6 +790,24 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			containerPath.addTrailingSeparator();
 			return ((containerPath.append(pathName)).makeAbsolute());						
 		}
+	}
+
+	/**
+	 * return the path of the new ClassName
+	 * @return
+	 */
+	protected IPath getHeaderFullPath() {
+		String pathName = getNewClassName() + HEADER_EXT;
+		IPath containerPath = defaultSourceFolder;
+		//containerPath.addTrailingSeparator();
+		return ((containerPath.append(pathName)).makeAbsolute());								
+	}
+
+	protected IPath getBodyFullPath() {
+		String pathName = getNewClassName() + BODY_EXT;
+		IPath containerPath = defaultSourceFolder;
+		//containerPath.addTrailingSeparator();
+		return ((containerPath.append(pathName)).makeAbsolute());								
 	}
 
 	protected boolean containerExists(IPath containerPath) {

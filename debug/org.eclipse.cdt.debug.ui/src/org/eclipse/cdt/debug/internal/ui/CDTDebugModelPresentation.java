@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IDisassemblyStorage;
+import org.eclipse.cdt.debug.core.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -409,6 +410,11 @@ public class CDTDebugModelPresentation extends LabelProvider
 			if ( info.getFrameLineNumber() != 0 )
 				label += info.getFrameLineNumber();
 			return label;
+		}
+		IDummyStackFrame dummy = (IDummyStackFrame)stackFrame.getAdapter( IDummyStackFrame.class );
+		if ( dummy != null )
+		{
+			return stackFrame.getName();
 		}
 		return stackFrame.getName();
 	}

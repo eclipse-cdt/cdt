@@ -1,3 +1,8 @@
+2004-08-27 Alain Magloire
+
+	Fix for PR 72782
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
 2004-08-26 Alain Magloire
 
 	Do not call computeSources() multiple times.

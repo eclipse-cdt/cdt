@@ -148,7 +148,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 			//"nonVector"
 			{"T"},
 			//"ArrayOverlay"
-			{"X","Y","size"}, // should be {"X","Y","int=16"},
+			{"X","Y","int=16"},
 			//"TemplateContainer::fum"
 			{"Bar"},
 		  	//"TemplateParameter::scrum"
@@ -194,7 +194,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 		String[] myExpectedValues = {
 			"Map<Key, Value, SortAlgorithm>",
 			"nonVector<T>",
-			"ArrayOverlay<X, Y, size>", // should be  "ArrayOverlay<X, Y, int=16>",
+			"ArrayOverlay<X, Y, int=16>",
 			"fum<Bar>(int) : void",
 			"scrum<Foo>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			// TODO: shouldn't signature indicate const function as well?

@@ -42,36 +42,39 @@ public class ASTUtil {
 		while (templateParams.hasNext()){
 			StringBuffer paramType = new StringBuffer();
 			IASTTemplateParameter parameter = (IASTTemplateParameter)templateParams.next();
-			if((parameter.getIdentifier() != null) && (parameter.getIdentifier().length() != 0))
-			{
-				paramList.add(parameter.getIdentifier().toString());
-			}
-			else
-			{				
-				IASTTemplateParameter.ParamKind kind = parameter.getTemplateParameterKind();
-				if(kind == IASTTemplateParameter.ParamKind.CLASS){
+			IASTTemplateParameter.ParamKind kind = parameter.getTemplateParameterKind();
+			if(kind == IASTTemplateParameter.ParamKind.CLASS){
+				if((parameter.getIdentifier() != null) && (parameter.getIdentifier().length() != 0))
+				{
+					paramType.append(parameter.getIdentifier().toString());
+				}else {
 					paramType.append("class"); //$NON-NLS-1$
 				}
-				if(kind == IASTTemplateParameter.ParamKind.TYPENAME){
+			}
+			if(kind == IASTTemplateParameter.ParamKind.TYPENAME){
+				if((parameter.getIdentifier() != null) && (parameter.getIdentifier().length() != 0))
+				{
+					paramType.append(parameter.getIdentifier().toString());
+				}else {
 					paramType.append("typename"); //$NON-NLS-1$
 				}
-				if(kind == IASTTemplateParameter.ParamKind.TEMPLATE_LIST){
-					paramType.append("template<"); //$NON-NLS-1$
-					String[] subParams = getTemplateParameters(parameter.getTemplateParameters());
-					int p = 0; 
-					if ( subParams.length > 0)
-						paramType.append(subParams[p++]);
-					while( p < subParams.length){
-						paramType.append(", "); //$NON-NLS-1$
-						paramType.append(subParams[p++]);							
-					}
-					paramType.append(">"); //$NON-NLS-1$
+			}
+			if(kind == IASTTemplateParameter.ParamKind.TEMPLATE_LIST){
+				paramType.append("template<"); //$NON-NLS-1$
+				String[] subParams = getTemplateParameters(parameter.getTemplateParameters());
+				int p = 0; 
+				if ( subParams.length > 0)
+					paramType.append(subParams[p++]);
+				while( p < subParams.length){
+					paramType.append(", "); //$NON-NLS-1$
+					paramType.append(subParams[p++]);							
 				}
-				if(kind == IASTTemplateParameter.ParamKind.PARAMETER){
-					paramType.append(getType(parameter.getParameterDeclaration()));				
-				}
-				paramList.add(paramType.toString());
-			} // end else
+				paramType.append(">"); //$NON-NLS-1$
+			}
+			if(kind == IASTTemplateParameter.ParamKind.PARAMETER){
+				paramType.append(getType(parameter.getParameterDeclaration()));				
+			}
+			paramList.add(paramType.toString());
 		}// end while
 		String[] parameterTypes = new String[paramList.size()];
 		for(int j=0; j<paramList.size(); ++j){

@@ -1,5 +1,14 @@
 2003-11-20 Alain Magloire
 
+	The profiler need to get the line number of the offset within
+	a Symbol.  We provide this functionnality.
+	
+	* src/org/eclipse/cdt/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/elf/parser/Symbol.java
+	* utils/org/eclipse/cdt/utils/coff/parser/Symbol.java
+
+2003-11-20 Alain Magloire
+
 	Remove of methods that are JVM 1.4.x
 	* model/org/eclipse/cdt/internal/core/model/Binary.java
 	

@@ -975,7 +975,7 @@ public class CThread extends CDebugElement
 		{
 			return;
 		}
-//		((CDebugTarget)getDebugTarget()).resetRegisters();
+		((CDebugTarget)getDebugTarget()).resetRegisters();
 		try
 		{
 			if ( getLastStackFrame() != null )

@@ -68,12 +68,16 @@ public class CommandFactory {
 		return new MIDataListRegisterNames();
 	}
 
-	public MIDataListRegisterNames createMIDataListRegisterNames(int[] regno) {
-		return new MIDataListRegisterNames(regno);
+	public MIDataListRegisterNames createMIDataListRegisterNames(int[] regnos) {
+		return new MIDataListRegisterNames(regnos);
 	}
 
-	public MIDataListRegisterValues createMIDataListRegisterValues(int fmt, int[] regno) {
-		return new MIDataListRegisterValues(fmt, regno);
+	public MIDataListRegisterValues createMIDataListRegisterValues(int fmt, int[] regnos) {
+		return new MIDataListRegisterValues(fmt, regnos);
+	}
+
+	public MIDataWriteRegisterValues createMIDataWriteRegisterValues(int fmt, int[] regnos, String[] values) {
+		return new MIDataWriteRegisterValues(fmt, regnos, values);
 	}
 
 	public MIDataReadMemory createMIDataReadMemory(long offset, String address,
@@ -81,6 +85,12 @@ public class CommandFactory {
 							int rows, int cols, Character asChar) {
 		return new MIDataReadMemory(offset, address, wordFormat, wordSize,
 						rows, cols, asChar);
+	}
+
+	public MIDataWriteMemory createMIDataWriteMemory(long offset, String address,
+							int wordFormat, int wordSize,
+							String value) {
+		return new MIDataWriteMemory(offset, address, wordFormat, wordSize, value);
 	}
 
 	public MIEnvironmentCD createMIEnvironmentCD(String pathdir) {

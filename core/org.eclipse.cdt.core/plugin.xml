@@ -77,19 +77,19 @@
       </type>
    </extension>
 
-   <extension
-         point="org.eclipse.cdt.core.BinaryParser">
-      <parser
-            name="Elf Parser"
-            class="org.eclipse.cdt.internal.core.model.parser.ElfParser"
-            format="ELF">
-      </parser>
-      <parser
-            name="PE Windows Parser"
-            class="org.eclipse.cdt.internal.core.model.parser.PEParser"
-            format="PE">
-      </parser>
-   </extension>
+   <!-- Define the list of the Binary Parser provided by the CDT -->
+   <extension id="ELF" name="Elf Parser" point="org.eclipse.cdt.core.BinaryParser">
+     <cextension>
+       <run class="org.eclipse.cdt.internal.core.model.parser.ElfParser"/>
+     </cextension>
+  </extension>
+
+  <extension id="PE" name="PE Windows Parser" point="org.eclipse.cdt.core.BinaryParser">
+    <cextension>
+      <run class="org.eclipse.cdt.internal.core.model.parser.PEParser"> </run>
+    </cextension>
+  </extension>
+
    <extension
          id="cbuilder"
          name="C Builder"

@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.core.model.parser;
  
 import java.io.IOException;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -14,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class ElfParser implements IBinaryParser {
+public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)

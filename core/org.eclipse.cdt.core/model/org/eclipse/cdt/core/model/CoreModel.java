@@ -12,7 +12,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CoreModel {
 
@@ -145,36 +144,20 @@ public class CoreModel {
 		return manager.hasCNature(project);
 	}
 
+	/**
+	 * Return true if project has C++ nature.
+	 */
 	public boolean hasCCNature(IProject project){
 		return manager.hasCCNature(project);
 	}
 
 	/**
-	 * Return the binaryParser of the Project.
+	 * TODO: this is a temporary hack until, the CDescriptor manager is
+	 * in place and could fire deltas of Parser change.
+	 * @deprecated this function will be removed shortly.
 	 */
-	public String getBinaryParserFormat(IProject project) {
-		return manager.getBinaryParserFormat(project);
-	}
-
-	/**
-	 * Set the binaryParser of the Project.
-	 */
-	public void setBinaryParserFormat(IProject project, String format, IProgressMonitor monitor) {
-		manager.setBinaryParserFormat(project, format, monitor);
-	}
-
-	/**
-	 * Return the default BinaryParser format
-	 */
-	public String getDefaultBinaryParserFormat() {
-		return manager.getDefaultBinaryParserFormat();
-	}
-
-	/**
-	 * Set the default binaryParser.
-	 */
-	public void setDefaultBinaryParserFormat(String format) {
-		manager.setDefaultBinaryParserFormat(format);
+	public void resetBinaryParser(IProject project) {
+		manager.resetBinaryParser(project);
 	}
 
 	/**

@@ -46,8 +46,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CDescriptor implements ICDescriptor {
-	/* constants */
-	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private COwner fOwner;
 	private IProject fProject;
 	private HashMap extMap = new HashMap(4);
@@ -177,12 +175,15 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	public ICExtensionReference[] get(String extensionID) {
-		return (CExtensionReference[]) extMap.get(extensionID);
+		CExtensionReference[] refs = (CExtensionReference[]) extMap.get(extensionID);
+		if (refs == null)
+			return new ICExtensionReference[0];
+		return refs;
 	}
 
 	public ICExtensionReference[] get(String extensionID, boolean update) {
 		ICExtensionReference[] ext = get(extensionID);
-		if ((ext == null || ext.length == 0) && update) {
+		if (ext.length == 0 && update) {
 			try {
 				fOwner.update(fProject, this, extensionID);
 				saveInfo();
@@ -204,8 +205,8 @@ public class CDescriptor implements ICDescriptor {
 			extensions = newExtensions;
 			extMap.put(extensionPoint, extensions);
 		}
-		setDirty();
 		extensions[extensions.length - 1] = new CExtensionReference(this, extensionPoint, extensionID);
+		setDirty();
 		return extensions[extensions.length - 1];
 	}
 
@@ -230,7 +231,7 @@ public class CDescriptor implements ICDescriptor {
 	public void remove(String extensionPoint) throws CoreException {
 		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
 		if (extensions != null) {
-			extMap.put(extensionPoint, null);
+			extMap.remove(extensionPoint);
 			setDirty();
 		}
 	}

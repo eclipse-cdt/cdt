@@ -88,6 +88,7 @@ public class CDescriptorManager implements IResourceChangeListener {
 		cproject = (CDescriptor)fDescriptorMap.get(project) ;
 		if ( cproject == null ) {
 			cproject = new CDescriptor(project);
+			cproject.setAutoSave(true);
 			fDescriptorMap.put(project, cproject);
 		}
 		return cproject;

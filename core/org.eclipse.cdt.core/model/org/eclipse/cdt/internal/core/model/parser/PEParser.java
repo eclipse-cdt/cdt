@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.core.model.parser;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
@@ -14,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class PEParser implements IBinaryParser {
+public class PEParser extends AbstractCExtension implements IBinaryParser {
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IFile)

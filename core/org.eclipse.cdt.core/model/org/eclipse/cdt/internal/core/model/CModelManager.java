@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
@@ -32,7 +31,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.model.parser.ElfParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -47,19 +45,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
 
 public class CModelManager implements IResourceChangeListener {
 
 	private Map fParsedResources =  Collections.synchronizedMap(new HashMap());
-
-	final static String BINARY_PARSER= "binaryparser";
-
-	static QualifiedName binaryParserKey = new QualifiedName(CoreModel.CORE_MODEL_ID, BINARY_PARSER);
 	
-	private static HashMap fParsers = new HashMap();
-	private static IBinaryParser defaultBinaryParser = new ElfParser();
-	//private static IBinaryParser defaultBinaryParser = new PEParser();
+	//private static HashMap fParsers = new HashMap();
 
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>IJavaElementDelta</code>s.
@@ -377,84 +368,126 @@ public class CModelManager implements IResourceChangeListener {
 		}
 		return null;
 	}
-
+	
 	public IBinaryParser getBinaryParser(IProject project) {
-		// It is in the property of the project of the cdtproject
-		// For now the default is Elf.
-		IBinaryParser parser = (IBinaryParser)fParsers.get(project);
-		if (parser == null) {
-			String format = getBinaryParserFormat(project);
-			if (format == null || format.length() == 0) {
-				format = getDefaultBinaryParserFormat();
-			}
-			if (format != null && format.length() > 0) {
-				parser = CCorePlugin.getDefault().getBinaryParser(format);
-			}
-			if (parser == null) {
-				parser = defaultBinaryParser;
-			}
-			fParsers.put(project, parser);
-		}
-		return parser;
-	}
-
-	public String getDefaultBinaryParserFormat() {
-		String format = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(BINARY_PARSER);
-		if (format == null || format.length() == 0) {
-			return "ELF";
-		}
-		return format;
-	}
-
-	public String getBinaryParserFormat(IProject project) {
-		// It can be in the property of the project or in the .cdtproject
-		String format = null;
-		// FIXME: Ask the .cdtproject.
 		try {
-			if (project != null) {
-				format = project.getPersistentProperty(binaryParserKey);
-			}
+			return CCorePlugin.getDefault().getBinaryParser(project);
 		} catch (CoreException e) {
 		}
-		return format;
+		return new NullBinaryParser();
 	}
 
-	public void setDefaultBinaryParserFormat(String format) {
-		CCorePlugin.getDefault().getPluginPreferences().setDefault(BINARY_PARSER, format);
-	}
+//	public IBinaryParser getBinaryParser(IProject project) {
+//		// It is in the property of the project of the cdtproject
+//		// For now the default is Elf.
+//		IBinaryParser parser = (IBinaryParser)fParsers.get(project);
+//		if (parser == null) {
+//			String format = getBinaryParserFormat(project);
+//			if (format == null || format.length() == 0) {
+//				format = getDefaultBinaryParserFormat();
+//			}
+//			if (format != null && format.length() > 0) {
+//				parser = CCorePlugin.getDefault().getBinaryParser(format);
+//			}
+//			if (parser == null) {
+//				parser = defaultBinaryParser;
+//			}
+//			fParsers.put(project, parser);
+//		}
+//		return parser;
+//	}
 
-	public void setBinaryParserFormat(IProject project, String format, IProgressMonitor monitor) {
-		try {
-			if (project != null) {
-				project.setPersistentProperty(binaryParserKey, format);
-				fParsers.remove(project);
-				IPath projPath = project.getFullPath();
-				if (projPath != null) {
-					Collection c = fParsedResources.values();
-					ArrayList list = new ArrayList();
-					synchronized (c) {
-						Iterator values = c.iterator();
-						while (values.hasNext()) {
-							ICElement ce = (ICElement)values.next();
-							if (!(ce instanceof ICRoot || ce instanceof ICProject)) {
-							   	if (ce.getCProject().getProject().equals(project)) {
-									list.add(ce);
-								}
+//	public String getDefaultBinaryParserFormat() {
+//		String format = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(BINARY_PARSER);
+//		if (format == null || format.length() == 0) {
+//			return "ELF";
+//		}
+//		return format;
+//	}
+
+//	public String getBinaryParserFormat(IProject project) {
+//		// It can be in the property of the project or in the .cdtproject
+//		String format = null;
+//		// FIXME: Ask the .cdtproject.
+//		try {
+//			if (project != null) {
+//				format = project.getPersistentProperty(binaryParserKey);
+//			}
+//		} catch (CoreException e) {
+//		}
+//		return format;
+//	}
+
+//	public void setDefaultBinaryParserFormat(String format) {
+//		CCorePlugin.getDefault().getPluginPreferences().setDefault(BINARY_PARSER, format);
+//	}
+//
+//	public void setBinaryParserFormat(IProject project, String format, IProgressMonitor monitor) {
+//		try {
+//			if (project != null) {
+//				project.setPersistentProperty(binaryParserKey, format);
+//				fParsers.remove(project);
+//				IPath projPath = project.getFullPath();
+//				if (projPath != null) {
+//					Collection c = fParsedResources.values();
+//					ArrayList list = new ArrayList();
+//					synchronized (c) {
+//						Iterator values = c.iterator();
+//						while (values.hasNext()) {
+//							ICElement ce = (ICElement)values.next();
+//							if (!(ce instanceof ICRoot || ce instanceof ICProject)) {
+//							   	if (ce.getCProject().getProject().equals(project)) {
+//									list.add(ce);
+//								}
+//							}
+//						}
+//					}
+//					for (int i = 0; i < list.size(); i++) {
+//						ICElement ce = (ICElement)list.get(i);
+//						releaseCElement(ce);
+//					}
+//				}
+//				// Fired and ICElementDelta.PARSER_CHANGED
+//				CElementDelta delta = new CElementDelta(getCRoot());
+//				delta.binaryParserChanged(create(project));
+//				registerCModelDelta(delta);
+//				fire();
+//			}
+//		} catch (CoreException e) {
+//		}
+//	}
+
+	/**
+	 * TODO: this is a temporary hack until, the CDescriptor manager is
+	 * in place and could fire deltas of Parser change.
+	 */
+	public void resetBinaryParser(IProject project) {
+		if (project != null) {
+			IPath projPath = project.getFullPath();
+			if (projPath != null) {
+				Collection c = fParsedResources.values();
+				ArrayList list = new ArrayList();
+				synchronized (c) {
+					Iterator values = c.iterator();
+					while (values.hasNext()) {
+						ICElement ce = (ICElement)values.next();
+						if (!(ce instanceof ICRoot || ce instanceof ICProject)) {
+							if (ce.getCProject().getProject().equals(project)) {
+								list.add(ce);
 							}
 						}
 					}
-					for (int i = 0; i < list.size(); i++) {
-						ICElement ce = (ICElement)list.get(i);
-						releaseCElement(ce);
-					}
 				}
-				// Fired and ICElementDelta.PARSER_CHANGED
-				CElementDelta delta = new CElementDelta(getCRoot());
-				delta.binaryParserChanged(create(project));
-				registerCModelDelta(delta);
-				fire();
+				for (int i = 0; i < list.size(); i++) {
+					ICElement ce = (ICElement)list.get(i);
+					releaseCElement(ce);
+				}
 			}
-		} catch (CoreException e) {
+			// Fired and ICElementDelta.PARSER_CHANGED
+			CElementDelta delta = new CElementDelta(getCRoot());
+			delta.binaryParserChanged(create(project));
+			registerCModelDelta(delta);
+			fire();
 		}
 	}
 	
@@ -464,7 +497,6 @@ public class CModelManager implements IResourceChangeListener {
 			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.SHARED);
 		} catch (IOException e) {
-			//e.printStackTrace();
 		}
 		return false;
 	}
@@ -475,7 +507,6 @@ public class CModelManager implements IResourceChangeListener {
 			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.OBJECT);
 		} catch (IOException e) {
-			//e.printStackTrace();
 		}
 		return false;
 	}
@@ -500,7 +531,6 @@ public class CModelManager implements IResourceChangeListener {
 				|| bin.getType() == IBinaryFile.SHARED
 				|| bin.getType() == IBinaryFile.CORE);
 		} catch (IOException e) {
-			//e.printStackTrace();
 		}
 		return false;
 	}
@@ -511,7 +541,6 @@ public class CModelManager implements IResourceChangeListener {
 			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.ARCHIVE);
 		} catch (IOException e) {
-			//e.printStackTrace();
 		}
 		return false;
 	}

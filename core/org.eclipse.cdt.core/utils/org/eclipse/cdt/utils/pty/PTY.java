@@ -85,9 +85,13 @@ public class PTY {
 			System.loadLibrary("pty"); //$NON-NLS-1$
 			hasPTY = true;
 		} catch (SecurityException e) {
-			CCorePlugin.log(e);
+			// Comment out the log it worries the user
+			// way to much
+			//CCorePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
-			CCorePlugin.log(e);
+			// Comment out the log it worries the user
+			// way to much
+			//CCorePlugin.log(e);
 		}			
 	}
 	

@@ -12,6 +12,7 @@
 		<property name="dest" value="reference/extension-points" />
 	    <record name="${basedir}/cdtconvert.txt" action="start"/>
 	    <pde.convertSchemaToHTML manifest="../org.eclipse.cdt.core/plugin.xml" destination="${dest}" />
+	    <pde.convertSchemaToHTML manifest="../org.eclipse.cdt.debug.core/plugin.xml" destination="${dest}" />
 	    <record name="${basedir}/cdtconvert.txt" action="stop"/>
 	</target>
 	

@@ -9,6 +9,10 @@
        <topic label="org.eclipse.cdt.core.dom.c" href="reference/api/org/eclipse/cdt/core/dom/ast/c/package-summary.html"/>
        <topic label="org.eclipse.cdt.core.dom.c.gcc" href="reference/api/org/eclipse/cdt/core/dom/ast/c/gcc/package-summary.html"/>
        <topic label="org.eclipse.cdt.core.dom.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/cpp/package-summary.html"/>
+       <topic label="org.eclipse.cdt.debug.core.cdi" href="reference/api/org/eclipse/cdt/debug/core/cdi/package-summary.html"/>
+       <topic label="org.eclipse.cdt.debug.core.cdi.event" href="reference/api/org/eclipse/cdt/debug/core/cdi/event/package-summary.html"/>
+       <topic label="org.eclipse.cdt.debug.core.cdi.model" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/package-summary.html"/>
+       <topic label="org.eclipse.cdt.debug.core.cdi.model.type" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/type/package-summary.html"/>
 	</topic>
 	<topic label="Extension Points Reference" href="reference/extension-points/index.html">
          <topic label="org.eclipse.cdt.core.CBuildConsole" href="reference/extension-points/org_eclipse_cdt_core_CBuildConsole.html"/>
@@ -18,5 +22,6 @@
          <topic label="org.eclipse.cdt.core.CProject" href="reference/extension-points/org_eclipse_cdt_core_CProject.html"/>
          <topic label="org.eclipse.cdt.core.PathEntryContainerInitializer" href="reference/extension-points/org_eclipse_cdt_core_PathEntryContainerInitializer.html"/>
          <topic label="org.eclipse.cdt.core.ProcessList" href="reference/extension-points/org_eclipse_cdt_core_ProcessList.html"/>
+         <topic label="org.eclipse.cdt.debug.core.CDebugger" href="reference/extension-points/org_eclipse_cdt_debug_core_CDebugger.html"/>
 	</topic>
 </toc>

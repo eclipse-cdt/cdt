@@ -52,8 +52,10 @@ public class ManagedProjectUpdateTests extends TestCase {
 
 	private IProject[] createVersionProjects(String version){
 		File file = getVersionProjectsDir(version);
-		if(file == null)
+		if(file == null) {
+			fail("Test project directory " + file.getName() + " is missing.");
 			return null;
+		}
 		
 		File projectZips[] = file.listFiles(new FileFilter(){
 			public boolean accept(File pathname){
@@ -80,8 +82,10 @@ public class ManagedProjectUpdateTests extends TestCase {
 			catch(Exception e){
 			}
 		}
-		if(projectList.size() == 0)
+		if(projectList.size() == 0) {
+			fail("No projects found in test project directory " + file.getName() + ".  The .zip file may be missing or corrupt.");
 			return null;
+		}
 		return (IProject[])projectList.toArray(new IProject[projectList.size()]);
 	}
 	

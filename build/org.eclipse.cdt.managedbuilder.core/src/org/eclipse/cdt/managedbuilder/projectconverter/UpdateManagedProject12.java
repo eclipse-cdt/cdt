@@ -218,6 +218,7 @@ class UpdateManagedProject12 {
 				convertToolRef(toolChain, (Element) toolRefNodes.item(refIndex), monitor);
 			}
 			catch(CoreException e){
+				// TODO:  Need error dialog!
 				newProject.removeConfiguration(newConfigId);
 				throw e;
 			}
@@ -233,7 +234,7 @@ class UpdateManagedProject12 {
 	    String optId = null;	    
 		String[] idTokens = oldId.split(REGEXP_SEPARATOR);
 		Vector oldIdVector = new Vector(Arrays.asList(idTokens));
-			if (isBuiltInOption(oldIdVector)) {
+		if (isBuiltInOption(oldIdVector)) {
 			
 			// New ID will be in form gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
 			Vector newIdVector = new Vector(idTokens.length + 2);
@@ -314,7 +315,6 @@ class UpdateManagedProject12 {
 				// ignore this exception too
 			}
 			
-			
 			// Construct the new ID
 			optId = new String();
 			for (int rebuildIndex = 0; rebuildIndex < newIdVector.size(); ++ rebuildIndex) {
@@ -350,8 +350,7 @@ class UpdateManagedProject12 {
 				
 			return curOption.getId();
 		}
-		throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-				ConverterMessages.getFormattedString("UpdateManagedProject12.3",optId), null)); //$NON-NLS-1$
+		return optId;	
 	}
 	
 	protected static void convertOptionRef(IToolChain toolChain, ITool tool, Element optRef) 
@@ -362,51 +361,47 @@ class UpdateManagedProject12 {
 		optId = getNewOptionId(toolChain, tool, optId);
 		// Get the option from the new tool
 		IOption newOpt = tool.getOptionById(optId);
-		if (newOpt == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject12.4",optId), null)); //$NON-NLS-1$
-		}
-
-		IConfiguration configuration = toolChain.getParent();
-
-		try {
-			switch (newOpt.getValueType()) {
-				case IOption.BOOLEAN:
-					Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
-				configuration.setOption(tool, newOpt, bool.booleanValue());
-					break;
-				case IOption.STRING:
-				case IOption.ENUMERATED:
-					// This is going to be the human readable form of the enumerated value
-					String name = (String) optRef.getAttribute(IOption.DEFAULT_VALUE);
-					// Convert it to the ID
-					String idValue = newOpt.getEnumeratedId(name);
-					configuration.setOption(tool, newOpt, idValue != null ? idValue : name);
-					break;
-				case IOption.STRING_LIST:
-				case IOption.INCLUDE_PATH:
-				case IOption.PREPROCESSOR_SYMBOLS:
-				case IOption.LIBRARIES:
-				case IOption.OBJECTS:
-					Vector values = new Vector();
-					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
-					for (int i = 0; i < nodes.getLength(); ++i) {
-						Node node = nodes.item(i);
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
-							if (!isBuiltIn.booleanValue()) {
-								values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+		if (newOpt != null) {		//  Ignore options that don't have a match
+			IConfiguration configuration = toolChain.getParent();
+	
+			try {
+				switch (newOpt.getValueType()) {
+					case IOption.BOOLEAN:
+						Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
+						configuration.setOption(tool, newOpt, bool.booleanValue());
+						break;
+					case IOption.STRING:
+					case IOption.ENUMERATED:
+						// This is going to be the human readable form of the enumerated value
+						String name = (String) optRef.getAttribute(IOption.DEFAULT_VALUE);
+						// Convert it to the ID
+						String idValue = newOpt.getEnumeratedId(name);
+						configuration.setOption(tool, newOpt, idValue != null ? idValue : name);
+						break;
+					case IOption.STRING_LIST:
+					case IOption.INCLUDE_PATH:
+					case IOption.PREPROCESSOR_SYMBOLS:
+					case IOption.LIBRARIES:
+					case IOption.OBJECTS:
+						Vector values = new Vector();
+						NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
+						for (int i = 0; i < nodes.getLength(); ++i) {
+							Node node = nodes.item(i);
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
+								Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+								if (!isBuiltIn.booleanValue()) {
+									values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+								}
 							}
 						}
-					}
-					configuration.setOption(tool, newOpt, (String[])values.toArray(new String[values.size()]));
-					break;
+						configuration.setOption(tool, newOpt, (String[])values.toArray(new String[values.size()]));
+						break;
+				}
+			} catch (BuildException e) {
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+						ConverterMessages.getFormattedString("UpdateManagedProject12.5",e.getMessage()), e)); //$NON-NLS-1$
 			}
-		} catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject12.5",e.getMessage()), e)); //$NON-NLS-1$
-		}
-		
+		}		
 	}
 	
 	/* (non-Javadoc)
@@ -582,17 +577,15 @@ class UpdateManagedProject12 {
 			ITool parent = curTool.getSuperClass();
 			String curToolId = curTool.getId();
 			
+			while (parent != null) {
+				String parentId = parent.getId();
+				if(parentId.equals(toolId))
+					break;
+				parent = parent.getSuperClass();
+			}
 			if(parent == null)
 				continue;
-			
-			parent = parent.getSuperClass();
-			if(parent == null)
-				continue;
-
-			String parentId = parent.getId();
-			if(!parentId.equals(toolId))
-				continue;
-				
+						
 			try{
 				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.')+1)); //$NON-NLS-1$
 			}
@@ -611,9 +604,7 @@ class UpdateManagedProject12 {
 	protected static void convertToolRef(IToolChain toolChain, Element oldToolRef, IProgressMonitor monitor) 
 								throws CoreException {
 		String toolId = oldToolRef.getAttribute(IToolReference.ID);
-
 		toolId = getNewToolId(toolChain, toolId);
-
 		IConfiguration configuration = toolChain.getParent();
 
 		// Get the new tool out of the configuration

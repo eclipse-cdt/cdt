@@ -124,8 +124,6 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public IConsole getConsole(String id) {
-		IConsole consoleDocument = null;
-		
 		try {
 			IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole");
 			if (extension != null) {
@@ -136,7 +134,7 @@ public class CCorePlugin extends Plugin {
 						String builderID = configElements[j].getAttribute("builderID");
 						if ( (id == null && builderID == null) || 
 							 ( id != null && builderID.equals(id))) {
-							return consoleDocument = (IConsole)configElements[j].createExecutableExtension("class");
+							return (IConsole)configElements[j].createExecutableExtension("class");
 						 }
 					}
 				}

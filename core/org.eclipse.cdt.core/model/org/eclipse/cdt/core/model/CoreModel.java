@@ -5,16 +5,13 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IResource;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-//import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.model.CModelManager;
 
 // This should be done in the Plugin.
 

@@ -1,12 +1,10 @@
 package org.eclipse.cdt.internal.core.win32;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
@@ -43,7 +41,6 @@ public class ProcessList implements IProcessList {
 		}
 		in = p .getInputStream();
 		InputStreamReader reader = new InputStreamReader(in);
-		String line;
 		StreamTokenizer tokenizer = new StreamTokenizer(reader);
 		tokenizer.eolIsSignificant(true);
 		tokenizer.parseNumbers();

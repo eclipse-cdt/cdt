@@ -53,7 +53,6 @@ public class CDescriptorManager implements IResourceChangeListener {
 			return;
 		}
 		IResource resource = event.getResource();
-		IResourceDelta delta = event.getDelta();
 		if ( event.getType() == IResourceChangeEvent.PRE_DELETE ) {
 			if(resource.getType() == IResource.PROJECT ) {
 				fDescriptorMap.remove(resource);

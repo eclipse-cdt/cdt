@@ -4,8 +4,6 @@
  */
 package org.eclipse.cdt.internal.core;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICOwner;

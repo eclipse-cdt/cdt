@@ -26,7 +26,6 @@ public class ProcessList implements IProcessList {
 	public IProcessInfo [] getProcessList()  {
 		File proc = new File("/proc");
 		File[] pidFiles = null;
-		String[] pidNames = null;
 		
 		// We are only interrested in the pid so filter the rest out.
 		try {
@@ -34,7 +33,7 @@ public class ProcessList implements IProcessList {
 				public boolean accept(File dir, String name) {
 					boolean isPID = false;
 					try {
-						int pid = Integer.parseInt(name);
+						Integer.parseInt(name);
 						isPID = true;
 					} catch (NumberFormatException e) {
 					}

@@ -20,7 +20,6 @@ h4           { font-size: 10pt; margin-top: 20; margin-bottom: 3; font-style: it
 p 	     { font-size: 10pt; }
 pre	     { margin-left: 6; font-size: 9pt }
 
-
 a:link { color: #006699 }
 a:visited { color: #996699 }
 a:hover  { color: #006699 }
@@ -49,5 +48,4 @@ th	     { font-weight: bold }
      }
 div.linux  {display:none;}
 .firsterm {font-style:italic;}
-
 

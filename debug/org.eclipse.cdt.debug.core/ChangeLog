@@ -1,5 +1,15 @@
 2003-02-03  Alain Magloire
 
+	* src/org/eclipse/cdt/debug/core/cdi/event/ICDIExitEvent.java:
+	Extends ICDIDestroyedEvent.
+	(getReason): New method.
+	* src/org/eclipse/cdt/debug/core/cdi/ICDISignalExitInfo.java:
+	New file.
+	* src/org/eclipse/cdt/debug/internal/core/CDebugTarget.java (handleExitEvent):
+	Change to conform to new ICDIExitEvent changes.
+
+2003-02-03  Alain Magloire
+
 	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISignal.java:
 	(getDescription): new Method replace getMeaning().
 	(isStopSet): new method.

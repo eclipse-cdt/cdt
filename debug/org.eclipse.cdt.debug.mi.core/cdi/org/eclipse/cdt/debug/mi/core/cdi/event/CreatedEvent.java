@@ -109,7 +109,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 
 	public CreatedEvent(Session s, MISharedLibCreatedEvent slib) {
 		session = s;
-		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
+		SharedLibraryManager mgr = session.getSharedLibraryManager();
 		MISession miSession = slib.getMISession();
 		String name = slib.getName();
 		source = mgr.getSharedLibrary(miSession, name);

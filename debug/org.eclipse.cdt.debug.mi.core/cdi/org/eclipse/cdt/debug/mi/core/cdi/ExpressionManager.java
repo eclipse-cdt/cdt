@@ -18,17 +18,24 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
+import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
@@ -37,11 +44,13 @@ public class ExpressionManager extends Manager {
 
 	final static ICDIExpression[] EMPTY_EXPRESSIONS = {};
 	Map expMap;
+	List variableList;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public ExpressionManager(Session session) {
 		super(session, true);
 		expMap = new Hashtable();
+		variableList = Collections.synchronizedList(new ArrayList());
 	}
 
 	synchronized List getExpressionList(Target target) {
@@ -79,7 +88,6 @@ public class ExpressionManager extends Manager {
 		for (int i = 0; i < expressions.length; ++i) {
 			if (expressions[i] instanceof Expression) {
 				expList.remove(expressions[i]);
-				((Expression)expressions[i]).deleteVariable();
 			}
 		}
 	}
@@ -96,10 +104,9 @@ public class ExpressionManager extends Manager {
 		List eventList = new ArrayList();
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		List expList = getExpressionList(target);
-		Expression[] exps = (Expression[])expList.toArray(new Expression[0]);
-		for (int i = 0; i < exps.length; i++) {
-			Variable variable = exps[i].getVariable();
+		Variable[] vars = (Variable[])variableList.toArray(new Variable[0]);
+		for (int i = 0; i < vars.length; i++) {
+			Variable variable = vars[i];
 			if (variable != null) {
 				String varName = variable.getMIVar().getVarName();
 				MIVarChange[] changes = noChanges;
@@ -132,20 +139,68 @@ public class ExpressionManager extends Manager {
 	 * @param varName
 	 * @return
 	 */
-	public Expression getExpression(MISession miSession, String varName) {
+	public Variable getVariable(MISession miSession, String varName) {
 		Session session = (Session)getSession();
 		Target target = session.getTarget(miSession);
-		List expList = getExpressionList(target);
-		Expression[] exps = (Expression[])expList.toArray(new Expression[0]);
-		for (int i = 0; i < exps.length; i++) {
-			Variable variable = exps[i].getVariable();
-			if (variable != null) {
-				if (variable.getMIVar().getVarName().equals(varName)) {
-					return exps[i];
-				}
+		Variable[] vars = (Variable[])variableList.toArray(new Variable[0]);
+		for (int i = 0; i < vars.length; i++) {
+			if (vars[i].getMIVar().getVarName().equals(varName)) {
+				return vars[i];
 			}
 		}
 		return null;
+	}
+
+	public Variable createVariable(ICDIStackFrame frame, String code) throws CDIException {
+		Target target = (Target)frame.getTarget();
+		ICDIThread currentThread = target.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(frame.getThread(), false);
+		frame.getThread().setCurrentStackFrame(frame, false);
+		try {
+			MISession mi = target.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarCreate var = factory.createMIVarCreate(code);
+			mi.postCommand(var);
+			MIVarCreateInfo info = var.getMIVarCreateInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			VariableObject varObj = new VariableObject(target, code, frame, 0, 0);
+			Variable variable = new Variable(varObj, info.getMIVar());
+			variableList.add(variable);
+			return variable;
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		} finally {
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
+		}
+	}
+
+	/**
+	 * Get rid of the underlying variable.
+	 *
+	 */
+	public void deleteVariable(Variable variable) throws CDIException {
+		Target target = (Target)variable.getTarget();
+		MISession miSession = target.getMISession();
+		MIVar miVar = variable.getMIVar();
+		removeMIVar(miSession, variable.getMIVar());
+	}
+
+	/**
+	 * Tell gdb to remove the underlying var-object also.
+	 */
+	public void removeMIVar(MISession miSession, MIVar miVar) throws CDIException {
+		CommandFactory factory = miSession.getCommandFactory();
+		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
+		try {
+			miSession.postCommand(var);
+			var.getMIInfo();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 }

@@ -50,7 +50,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 		// Try the Expression manager
 		if (source == null) {
 			ExpressionManager expMgr = session.getExpressionManager();
-			source = expMgr.getExpression(miSession, varName);
+			source = expMgr.getVariable(miSession, varName);
 		}
 
 		// Try the Register manager
@@ -94,7 +94,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 
 	public ChangedEvent(Session s, MISharedLibChangedEvent slib) {
 		session = s;
-		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
+		SharedLibraryManager mgr = session.getSharedLibraryManager();
 		MISession miSession = slib.getMISession();
 		String name = slib.getName();
 		ICDISharedLibrary lib = mgr.getSharedLibrary(miSession, name);

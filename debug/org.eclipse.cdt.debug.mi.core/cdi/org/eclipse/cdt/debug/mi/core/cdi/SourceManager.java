@@ -26,7 +26,6 @@ import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MixedInstruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharType;

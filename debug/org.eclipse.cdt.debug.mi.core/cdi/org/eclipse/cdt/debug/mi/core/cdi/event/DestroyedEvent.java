@@ -22,7 +22,6 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
@@ -58,13 +57,9 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 			}
 		} else {
 			ExpressionManager expMgr = session.getExpressionManager();
-			Expression expression = expMgr.getExpression(miSession, varName);
-			if (expression != null) {
-				source = expression;
-				try {
-					expression.deleteVariable();
-				} catch (CDIException e) {
-				}
+			variable = expMgr.getVariable(miSession, varName);
+			if (variable != null) {
+				source = variable;
 			} else {
 				Target target = session.getTarget(miSession);
 				source = new CObject(target);
@@ -89,7 +84,7 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 
 	public DestroyedEvent(Session s, MISharedLibUnloadedEvent slib) {
 		session = s;
-		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
+		SharedLibraryManager mgr = session.getSharedLibraryManager();
 		MISession miSession = slib.getMISession();
 		String name = slib.getName();
 		ICDISharedLibrary lib = mgr.getSharedLibrary(miSession, name);

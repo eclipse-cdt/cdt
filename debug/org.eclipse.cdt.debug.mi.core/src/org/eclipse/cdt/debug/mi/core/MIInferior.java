@@ -142,6 +142,14 @@ public class MIInferior extends Process {
 	 * @see java.lang.Process#destroy()
 	 */
 	public void destroy() {
+		try {
+			terminate();
+		} catch (MIException e) {
+			// do nothing.
+		}
+	}
+
+	public void terminate() throws MIException {
 		// An inferior will be destroy():interrupt and kill if
 		// - For attach session:
 		//   the inferior was not disconnected yet (no need to try
@@ -153,14 +161,11 @@ public class MIInferior extends Process {
 
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
-			try {
-				// Try to interrupt the inferior, first.
-				interrupt();
-				session.postCommand(abort);
-				abort.getMIInfo();
-				setTerminated(abort.getToken(), true);
-			} catch (MIException e) {
-			}
+			// Try to interrupt the inferior, first.
+			interrupt();
+			session.postCommand(abort);
+			abort.getMIInfo();
+			setTerminated(abort.getToken(), true);
 		}
 	}
 

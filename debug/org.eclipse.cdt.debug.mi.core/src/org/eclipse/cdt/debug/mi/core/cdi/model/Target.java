@@ -594,7 +594,11 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#terminate()
 	 */
 	public void terminate() throws CDIException {
-		session.getMISession().getMIInferior().destroy();
+		try {
+			session.getMISession().getMIInferior().terminate();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 	/**

@@ -66,7 +66,7 @@ public class Binary extends Openable implements IBinary {
 	public boolean hasDebug() {
 		if (isObject() || isExecutable() || isSharedLib()) {
 			if (hasDebug == null || hasChanged()) {
-				hasDebug = Boolean.toString(((IBinaryObject)getBinaryFile()).hasDebug());
+				hasDebug = new Boolean(((IBinaryObject)getBinaryFile()).hasDebug()).toString();
 			}
 		}
 		return Boolean.valueOf(hasDebug).booleanValue();
@@ -129,7 +129,7 @@ public class Binary extends Openable implements IBinary {
 	public boolean isLittleEndian() {
 		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
 			if (endian == null || hasChanged()) {
-				endian = Boolean.toString(((IBinaryObject)getBinaryFile()).isLittleEndian());
+				endian = new Boolean(((IBinaryObject)getBinaryFile()).isLittleEndian()).toString();
 			}
 		}
 		return Boolean.valueOf(endian).booleanValue();

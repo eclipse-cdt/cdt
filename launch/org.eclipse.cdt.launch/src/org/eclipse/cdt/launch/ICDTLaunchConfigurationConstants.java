@@ -121,6 +121,9 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static final int ERR_DEBUGGER_NOT_INSTALLED = 102;
 
+	public static final int ERR_NO_PROCESSID = 103;
+	public static final int ERR_NO_COREFILE = 104;
+	
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */

@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IProcessInfo;
+import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
@@ -42,9 +45,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * Insert the type's description here.
@@ -120,29 +129,20 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
 					if ( pid == -1 ) {
-						monitor.setCanceled(true);
-						return;
+						abort("No Process ID selected", null, ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 					}
 					dsession = cdebugger.createAttachSession(config, exe, pid);
 				}
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
 					IPath corefile = getCoreFilePath((IProject)cproject.getResource());
 					if ( corefile == null ) {
-						monitor.setCanceled(true);
-						return;
+						abort("No Corefile selected", null, ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 					}
 					dsession = cdebugger.createCoreSession(config, exe, corefile);
 				}
 			}
 			catch (CDIException e) {
-				IStatus status =
-					new Status(
-						0,
-						LaunchUIPlugin.getUniqueIdentifier(),
-						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
-						"CDI Error",
-						e);
-				throw new CoreException(status);
+				abort( "Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
 			ICDIRuntimeOptions opt = dsession.getRuntimeOptions();			
 			opt.setArguments(getProgramArgumentsArray(config));
@@ -206,7 +206,34 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 
 
 	private int getProcessID() {
-		return -1;
+		final Shell shell = LaunchUIPlugin.getShell();
+		final int pid[] = {-1};
+		if ( shell == null ) 
+			return -1;
+		Display display = shell.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog( shell, new LabelProvider() {
+					public String getText(Object element) {
+						IProcessInfo info = (IProcessInfo)element;
+						return info.getPid() + " " + info.getName();
+					}
+				} );
+				dialog.setTitle( "Select Process" );
+				dialog.setMessage("Select a Process to attach debugger to:");
+				IProcessList plist = CCorePlugin.getDefault().getProcessList();
+				if ( plist == null ) {
+					MessageDialog.openError(shell, "CDT Launch Error", "Current platform does not support listing processes");
+					return;
+				}
+				dialog.setElements(plist.getProcessList());
+				if ( dialog.open() == dialog.OK ) {
+					IProcessInfo info = (IProcessInfo)dialog.getFirstResult();
+					pid[0] = info.getPid();
+				}
+			}
+		});
+		return pid[0];
 	}
 
 
@@ -238,7 +265,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			if (p != null) {
 				p.destroy();
 			}
-			abort("Exception starting process", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort("Error starting process", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory

@@ -304,12 +304,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			VariableObject vo =
 				new VariableObject(
 					obj.getTarget(),
-					obj.getQualifiedName(),
+					obj.getName(),
+					obj.getFullName(),
 					obj.getStackFrame(),
 					obj.getPosition(),
 					obj.getStackDepth());
-			vo.setCastingArrayStart(start);
-			vo.setCastingArrayEnd(length);
+			vo.setCastingArrayStart(obj.getCastingArrayStart() + start);
+			vo.setCastingArrayEnd(obj.getCastingArrayEnd() + length);
 			return vo;
 		}
 		throw new CDIException("Unknown variable object");
@@ -329,10 +330,15 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			VariableObject vo =
 				new VariableObject(
 					obj.getTarget(),
-					obj.getQualifiedName(),
+					obj.getName(),
+					obj.getFullName(),
 					obj.getStackFrame(),
 					obj.getPosition(),
 					obj.getStackDepth());
+			String casting = obj.getCastingType();
+			if (casting != null && casting.length() > 0) {
+				type = "(" + type + ")" + "(" + casting + " )";
+			}
 			vo.setCastingType(type);
 			return vo;
 		}

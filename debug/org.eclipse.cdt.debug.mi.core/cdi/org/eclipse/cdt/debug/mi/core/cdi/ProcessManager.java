@@ -63,7 +63,6 @@ public class ProcessManager extends Manager {
 			Target target = targets[i];
 			MISession miSession = target.getMISession();
 			if (miSession != null) {
-				miSession.notifyObservers(new MIInferiorExitEvent(miSession, 0));
 				miSession.deleteObserver(eventManager);
 			}
 			if (currentTarget != null && currentTarget.equals(target)) {

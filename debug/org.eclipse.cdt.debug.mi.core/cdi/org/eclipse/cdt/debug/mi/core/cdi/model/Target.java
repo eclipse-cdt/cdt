@@ -653,8 +653,6 @@ public class Target  implements ICDITarget {
 			miSession.getMIInferior().terminate();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		} finally {
-			miSession.terminate();
 		}
 	}
 

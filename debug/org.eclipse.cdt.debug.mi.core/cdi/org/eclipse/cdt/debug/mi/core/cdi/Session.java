@@ -26,9 +26,11 @@ import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.event.DestroyedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
@@ -245,12 +247,30 @@ public class Session implements ICDISession, ICDISessionObject {
 		ProcessManager pMgr = getProcessManager();
 		Target[] targets = pMgr.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
-			if (!targets[i].isTerminated()) {
-				targets[i].terminate();
+			if (!targets[i].getMISession().isTerminated()) {
+				targets[i].getMISession().terminate();
 			}
 		}
-		//TODO: the ExitEvent is sent by MISession.terminate()
-		// We nee move it here.
+		// Do not do the removeTargets(), Target.getMISession().terminate() will do it 
+		// via an event, MIGDBExitEvent of the mi session
+		//removeTargets(targets);
+		
+		// wait ~2 seconds for the targets to be terminated.
+		for (int i = 0; i < 2; ++i) {
+			targets = pMgr.getTargets();
+			if (targets.length == 0) {
+				break;
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				//
+			}
+		}
+		// send our goodbyes.
+		EventManager eMgr = (EventManager)getEventManager();
+		eMgr.fireEvents(new ICDIEvent[] { new DestroyedEvent(this) });
+		eMgr.removeEventListeners();
 	}
 	/**
 	 * @deprecated

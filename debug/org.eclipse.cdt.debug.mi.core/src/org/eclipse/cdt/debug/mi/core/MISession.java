@@ -482,6 +482,9 @@ public class MISession extends Observable {
 
 		// Tell the observers that the session is terminated
 		notifyObservers(new MIGDBExitEvent(this, 0));
+
+		// Should not be necessary but just to be safe.
+		deleteObservers();
 	}
 
 	/**

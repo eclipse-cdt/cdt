@@ -1,3 +1,12 @@
+2004-09-12 Alain Magloire
+	Since MISession is attach to the Target, the
+	way we fire termination events must change also.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ProcessManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* src/org/eclipse/cdt/debug/mi/core/MISession.java
+
 2004-09-09 Alain Magloire
 	Introduction of new classes in the CDI interface
 		ICDIExecuteStep

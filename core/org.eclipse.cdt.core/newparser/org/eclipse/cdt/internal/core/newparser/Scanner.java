@@ -1050,7 +1050,8 @@ public class Scanner {
 			throw new ScannerException("End of file encountered without terminating #endif");
 
 		// we're done
-		currentToken.setNext(Token.EOF);
+		if (currentToken != null)
+			currentToken.setNext(Token.EOF);
 		return Token.EOF;
 	}
 

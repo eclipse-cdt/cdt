@@ -469,7 +469,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         consume(IToken.tRBRACE);
 
         IASTCompoundStatement result = createCompoundStatement();
-        result.setOffset(startingOffset);
+        ((ASTNode)result).setOffset(startingOffset);
         for (int i = 0; i < statements.size(); ++i) {
             IASTStatement s = (IASTStatement) statements.get(i);
             result.addStatement(s);
@@ -509,7 +509,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         consume(IToken.tRPAREN);
         IGNUASTCompoundStatementExpression resultExpression = createCompoundStatementExpression();
-        resultExpression.setOffset( startingOffset );
+        ((ASTNode)resultExpression).setOffset( startingOffset );
         resultExpression.setCompoundStatement(compoundStatement);
         compoundStatement.setParent(resultExpression);
         compoundStatement
@@ -541,7 +541,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             return assignmentExpression;
         
         IASTExpressionList expressionList = createExpressionList();
-        expressionList.setOffset( startingOffset );
+        ((ASTNode)expressionList).setOffset( startingOffset );
         expressionList.addExpression( assignmentExpression );
         assignmentExpression.setParent( expressionList );
         assignmentExpression.setPropertyInParent( IASTExpressionList.NESTED_EXPRESSION );
@@ -718,7 +718,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             IASTExpression firstExpression, IASTExpression secondExpression) {
         IASTBinaryExpression result = createBinaryExpression();
         result.setOperator(operator);
-        result.setOffset(firstExpression.getOffset());
+        ((ASTNode)result).setOffset(((ASTNode)firstExpression).getOffset());
         result.setOperand1(firstExpression);
         firstExpression.setParent(result);
         firstExpression.setPropertyInParent(IASTBinaryExpression.OPERAND_ONE);
@@ -834,7 +834,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression buildUnaryExpression(int operator,
             IASTExpression operand, int offset) {
         IASTUnaryExpression result = createUnaryExpression();
-        result.setOffset(offset);
+        ((ASTNode)result).setOffset(offset);
         result.setOperator(operator);
         result.setOperand(operand);
         operand.setParent(result);
@@ -1060,7 +1060,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (LT(1) == IToken.tLBRACE) {
             
             IASTEnumerationSpecifier result = createEnumerationSpecifier();
-            result.setOffset( startOffset );
+            ((ASTNode)result).setOffset( startOffset );
             result.setName( name );
             name.setParent( result );
             name.setPropertyInParent( IASTEnumerationSpecifier.ENUMERATION_NAME );
@@ -1084,7 +1084,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 if (LT(1) == IToken.tRBRACE) {
                     enumerator = createEnumerator();
                     enumerator.setName( enumeratorName );
-                    enumerator.setOffset( enumeratorName.getOffset() );
+                    ((ASTNode)enumerator).setOffset( ((ASTNode)enumeratorName).getOffset() );
                     enumeratorName.setParent( enumerator );
                     enumeratorName.setPropertyInParent( IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME );
                     if( initialValue != null )
@@ -1108,7 +1108,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
                 enumerator = createEnumerator();
                 enumerator.setName( enumeratorName );
-                enumerator.setOffset( enumeratorName.getOffset() );
+                ((ASTNode)enumerator).setOffset( ((ASTNode)enumeratorName).getOffset() );
                 enumeratorName.setParent( enumerator );
                 enumeratorName.setPropertyInParent( IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME );
                 if( initialValue != null )

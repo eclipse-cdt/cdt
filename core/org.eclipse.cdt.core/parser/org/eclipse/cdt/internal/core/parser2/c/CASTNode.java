@@ -11,25 +11,17 @@ package org.eclipse.cdt.internal.core.parser2.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.parser2.ASTNode;
 
 /**
  * @author jcamelon
  */
-class CASTNode implements IASTNode {
+class CASTNode extends ASTNode implements IASTNode {
 
     
-    private int length;
-    private int offset;
     private IASTNode parent;
     private ASTNodeProperty property;
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public int getLength() {
-        return length;
-    }
 
     public IASTNode getParent() {
         return parent;
@@ -44,20 +36,6 @@ class CASTNode implements IASTNode {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setOffset(int)
-     */
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setLength()
-     */
-    public void setLength( int length ) {
-        this.length = length;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
      */
     public void setParent(IASTNode parent) {
@@ -69,6 +47,20 @@ class CASTNode implements IASTNode {
      */
     public void setPropertyInParent(ASTNodeProperty property) {
         this.property = property;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getTranslationUnit()
+     */
+    public IASTTranslationUnit getTranslationUnit() {
+        if( this instanceof IASTTranslationUnit ) return (IASTTranslationUnit) this;
+        IASTNode node = getParent();
+        while( ! (node instanceof IASTTranslationUnit ))
+        {
+            node = node.getParent();
+        }
+        return (IASTTranslationUnit) node;
     }
 
 }

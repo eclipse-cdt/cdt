@@ -18,25 +18,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTNode {
 
-	/**
-	 * This is the offset into the location of the beginning of the text
-	 * that this node represents.
-	 * 
-	 * @return the offset of the node
-	 */
-	public int getOffset();
-	
-	public void setOffset( int offset );
-
-	/**
-	 * This is the length text that this node represents.
-	 * 
-	 * @return
-	 */
-	public int getLength();
-	
-	public void setLength( int length );
-
+    public IASTTranslationUnit getTranslationUnit();
+    
 	/**
 	 * Get the parent node of this node in the tree.
 	 * 

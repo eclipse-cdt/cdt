@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -405,20 +404,15 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	public void resume() throws DebugException {
 		if ( !canResume() )
 			return;
-		final CDebugElementState oldState = getState();
+		CDebugElementState oldState = getState();
 		setState( CDebugElementState.RESUMING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDIThread().resume( false );
-				}
-				catch( CDIException e ) {
-					setState( oldState );
-					failed( CoreModelMessages.getString( "CThread.2" ), e ); //$NON-NLS-1$
-				}
-			}
-		} );
+		try {
+			getCDIThread().resume( false );
+		}
+		catch( CDIException e ) {
+			setState( oldState );
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -427,20 +421,15 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	public void suspend() throws DebugException {
 		if ( !canSuspend() )
 			return;
-		final CDebugElementState oldState = getState();
+		CDebugElementState oldState = getState();
 		setState( CDebugElementState.SUSPENDING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().suspend();
-				}
-				catch( CDIException e ) {
-					setState( oldState );
-					failed( CoreModelMessages.getString( "CThread.3" ), e ); //$NON-NLS-1$
-				}
-			}
-		} );
+		try {
+			getCDITarget().suspend();
+		}
+		catch( CDIException e ) {
+			setState( oldState );
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -492,25 +481,20 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	public void stepInto() throws DebugException {
 		if ( !canStepInto() )
 			return;
-		final CDebugElementState oldState = getState();
+		CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					if ( !isInstructionsteppingEnabled() ) {
-						getCDIThread().stepInto( 1 );
-					}
-					else {
-						getCDIThread().stepIntoInstruction( 1 );
-					}
-				}
-				catch( CDIException e ) {
-					setState( oldState );
-					failed( CoreModelMessages.getString( "CThread.4" ), e ); //$NON-NLS-1$
-				}
+		try {
+			if ( !isInstructionsteppingEnabled() ) {
+				getCDIThread().stepInto( 1 );
 			}
-		} );
+			else {
+				getCDIThread().stepIntoInstruction( 1 );
+			}
+		}
+		catch( CDIException e ) {
+			setState( oldState );
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -519,25 +503,20 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	public void stepOver() throws DebugException {
 		if ( !canStepOver() )
 			return;
-		final CDebugElementState oldState = getState();
+		CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					if ( !isInstructionsteppingEnabled() ) {
-						getCDIThread().stepOver( 1 );
-					}
-					else {
-						getCDIThread().stepOverInstruction( 1 );
-					}
-				}
-				catch( CDIException e ) {
-					setState( oldState );
-					failed( CoreModelMessages.getString( "CThread.5" ), e ); //$NON-NLS-1$
-				}
+		try {
+			if ( !isInstructionsteppingEnabled() ) {
+				getCDIThread().stepOver( 1 );
 			}
-		} );
+			else {
+				getCDIThread().stepOverInstruction( 1 );
+			}
+		}
+		catch( CDIException e ) {
+			setState( oldState );
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -549,21 +528,16 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		IStackFrame[] frames = getStackFrames();
 		if ( frames.length == 0 )
 			return;
-		final CStackFrame f = (CStackFrame)frames[0]; 
-		final CDebugElementState oldState = getState();
+		CStackFrame f = (CStackFrame)frames[0]; 
+		CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					f.doStepReturn();
-				}
-				catch( DebugException e ) {
-					setState( oldState );
-					failed( CoreModelMessages.getString( "CThread.6" ), e ); //$NON-NLS-1$
-				}
-			}
-		} );
+		try {
+			f.doStepReturn();
+		}
+		catch( DebugException e ) {
+			setState( oldState );
+			throw e;
+		}
 	}
 
 	/* (non-Javadoc)

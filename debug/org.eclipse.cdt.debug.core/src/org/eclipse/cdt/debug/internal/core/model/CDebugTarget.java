@@ -449,23 +449,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return;
 		}
 		changeState( CDebugElementState.TERMINATING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().terminate();
-				}
-				catch( CDIException e ) {
-					restoreOldState();
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						failed( CoreModelMessages.getString( "CDebugTarget.2" ), e1 ); //$NON-NLS-1$
-					}
-				}
-			}
-		} );
+		try {
+			getCDITarget().terminate();
+		}
+		catch( CDIException e ) {
+			restoreOldState();
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -508,23 +498,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canResume() )
 			return;
 		changeState( CDebugElementState.RESUMING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().resume( false );
-				}
-				catch( CDIException e ) {
-					restoreOldState();
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						failed( CoreModelMessages.getString( "CDebugTarget.3" ), e1 ); //$NON-NLS-1$
-					}
-				}
-			}
-		} );
+		try {
+			getCDITarget().resume( false );
+		}
+		catch( CDIException e ) {
+			restoreOldState();
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -534,23 +514,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canSuspend() )
 			return;
 		changeState( CDebugElementState.SUSPENDING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().suspend();
-				}
-				catch( CDIException e ) {
-					restoreOldState();
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						failed( CoreModelMessages.getString( "CDebugTarget.4" ), e1 ); //$NON-NLS-1$
-					}
-				}
-			}
-		} );
+		try {
+			getCDITarget().suspend();
+		}
+		catch( CDIException e ) {
+			restoreOldState();
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	protected boolean isSuspending() {
@@ -736,23 +706,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return;
 		}
 		changeState( CDebugElementState.DISCONNECTING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().disconnect();
-				}
-				catch( CDIException e ) {
-					restoreOldState();
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						failed( CoreModelMessages.getString( "CDebugTarget.5" ), e1 ); //$NON-NLS-1$
-					}
-				}
-			}
-		} );
+		try {
+			getCDITarget().disconnect();
+		}
+		catch( CDIException e ) {
+			restoreOldState();
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/* (non-Javadoc)

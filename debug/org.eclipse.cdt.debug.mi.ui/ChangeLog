@@ -1,3 +1,6 @@
+2004-06-22 Mikhail Khodjaiants
+	Replaced global resource bundles by messages.
+
 2004-06-21 Mikhail Khodjaiants
 	Fix for bug 60872. Accessibility: Run/Debug configuration dialog has duplicate mnemonics.
 	* MIUIMessages.properties

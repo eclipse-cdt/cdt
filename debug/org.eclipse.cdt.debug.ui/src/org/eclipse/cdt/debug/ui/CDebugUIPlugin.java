@@ -10,11 +10,8 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.ui;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.model.ISwitchToThread;
@@ -65,9 +62,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
 
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
-
 	protected Map fDebuggerPageMap;
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
@@ -78,12 +72,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	public CDebugUIPlugin() {
 		super();
 		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle( "org.eclipse.cdt.debug.ui.CDebugUIPluginResources" ); //$NON-NLS-1$
-		}
-		catch( MissingResourceException x ) {
-			resourceBundle = null;
-		}
 	}
 
 	/**
@@ -98,41 +86,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}
-
-	/**
-	 * Returns the string from the plugin's resource bundle, or 'key' if not found.
-	 */
-	public static String getResourceString( String key ) {
-		ResourceBundle bundle = CDebugUIPlugin.getDefault().getResourceBundle();
-		try {
-			return bundle.getString( key );
-		}
-		catch( MissingResourceException e ) {
-			return '!' + key + '!';
-		}
-		catch( NullPointerException e ) {
-			return '#' + key + '#';
-		}
-	}
-
-	public static String getFormattedString( String key, String arg ) {
-		return MessageFormat.format( getResourceString( key ), new String[]{ arg } );
-	}
-
-	public static String getFormattedString( String key, Integer arg ) {
-		return MessageFormat.format( getResourceString( key ), new Object[]{ arg } );
-	}
-
-	public static String getFormattedString( String key, String[] args ) {
-		return MessageFormat.format( getResourceString( key ), args );
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
 	}
 
 	/**

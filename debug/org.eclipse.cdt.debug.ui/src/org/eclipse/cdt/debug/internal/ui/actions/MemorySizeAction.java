@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import java.text.MessageFormat;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -59,7 +60,7 @@ public class MemorySizeAction extends Action implements IUpdate {
 				// Examples of the display for the following value are "1 byte" and "8 bytes".
 				// Normally placeholders in {} are not translated, except when they are choice forms,
 				// where the strings after each "#" are to be translated. 
-				label = CDebugUIPlugin.getFormattedString( ActionMessages.getString( "MemorySizeAction.0" ), new Integer( id ) ); //$NON-NLS-1$
+				label = MessageFormat.format( ActionMessages.getString( "MemorySizeAction.0" ), new Integer[] { new Integer( id ) } ); //$NON-NLS-1$
 				break;
 		}
 		return label;

@@ -11,22 +11,20 @@
 package org.eclipse.cdt.debug.mi.internal.ui.actions;
 
 import java.util.MissingResourceException;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
-//import java.util.ResourceBundle;
+import java.util.ResourceBundle;
 
 public class ActionMessages {
 
-//	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.mi.internal.ui.actions.ActionMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.mi.internal.ui.actions.ActionMessages";//$NON-NLS-1$
 
-//	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
 
 	private ActionMessages() {
 	}
 
 	public static String getString( String key ) {
 		try {
-			return MIUIPlugin.getResourceString( key );
-//			return RESOURCE_BUNDLE.getString( key );
+			return RESOURCE_BUNDLE.getString( key );
 		}
 		catch( MissingResourceException e ) {
 			return '!' + key + '!';

@@ -12,22 +12,20 @@
 package org.eclipse.cdt.debug.internal.ui.views.sharedlibs;
 
 import java.util.MissingResourceException;
-//import java.util.ResourceBundle;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import java.util.ResourceBundle;
 
 public class SharedLibrariesMessages {
 
-//	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.views.sharedlibs.SharedLibrariesMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.views.sharedlibs.SharedLibrariesMessages"; //$NON-NLS-1$
 
-//	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private SharedLibrariesMessages() {
 	}
 
 	public static String getString( String key ) {
 		try {
-			return CDebugUIPlugin.getResourceString( key );
-//			return RESOURCE_BUNDLE.getString( key );
+			return RESOURCE_BUNDLE.getString( key );
 		}
 		catch (MissingResourceException e) {
 			return '!' + key + '!';

@@ -11,8 +11,6 @@
 package org.eclipse.cdt.debug.core;
 
 import java.util.HashMap;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
@@ -54,8 +52,6 @@ public class CDebugCorePlugin extends Plugin {
 	 */
 	private static CDebugCorePlugin plugin;
 
-	private static ResourceBundle fgResourceBundle;
-
 	private HashMap fDebugConfigurations;
 
 	/**
@@ -64,14 +60,6 @@ public class CDebugCorePlugin extends Plugin {
 	private ListenerList fBreakpointListeners;
 
 	private SessionManager fSessionManager = null;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle( "org.eclipse.cdt.debug.internal.core.CDebugCorePluginResources" ); //$NON-NLS-1$
-		}
-		catch( MissingResourceException x ) {
-			fgResourceBundle = null;
-		}
-	}
 
 	/**
 	 * The constructor.
@@ -112,24 +100,6 @@ public class CDebugCorePlugin extends Plugin {
 			return PLUGIN_ID;
 		}
 		return getDefault().getBundle().getSymbolicName();
-	}
-
-	public static String getResourceString( String key ) {
-		try {
-			return fgResourceBundle.getString( key );
-		}
-		catch( MissingResourceException e ) {
-			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		catch( NullPointerException e ) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
-
-
-	public static ResourceBundle getResourceBundle() {
-		return fgResourceBundle;
 	}
 
 	/**

@@ -1,3 +1,6 @@
+2004-06-22 Mikhail Khodjaiants
+	Replaced global resource bundles by messages.
+
 2004-06-21 Mikhail Khodjaiants
 	Added transparency to the icons.
 	* icons/full/cview16/signals_view.gif

@@ -1,3 +1,6 @@
+2004-06-22 Mikhail Khodjaiants
+	Replaced global resource bundles by messages.
+
 2004-06-16 Mikhail Khodjaiants
 	Added support for the "Skip Breakpoints" and "Skip breakpoints during a "Run To Line" operation.
 	* IRunToAddress.java

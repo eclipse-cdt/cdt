@@ -1,7 +1,5 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -18,15 +16,7 @@ public class MIUIPlugin extends AbstractUIPlugin {
 
 	//The shared instance.
 	private static MIUIPlugin plugin;
-	//Resource bundle.
-	private static ResourceBundle resourceBundle;
-	static {
-		try {
-			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.debug.mi.internal.ui.MIUIPluginResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-	}
+
 	/**
 	 * The constructor.
 	 */
@@ -47,27 +37,6 @@ public class MIUIPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}
-
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		try {
-			return resourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		} catch (NullPointerException e) {
-			return '#' + key + '#';
-		}
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
 	}
 
 	/**

@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import java.text.MessageFormat;
 import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -39,7 +40,7 @@ public class MemoryNumberOfColumnAction extends Action implements IUpdate {
 	}
 
 	private static String getLabel( int numberOfColumns ) {
-		return CDebugUIPlugin.getFormattedString( ActionMessages.getString( "MemoryNumberOfColumnAction.0" ), new Integer( numberOfColumns ) ); //$NON-NLS-1$
+		return MessageFormat.format( ActionMessages.getString( "MemoryNumberOfColumnAction.0" ), new Integer[] { new Integer( numberOfColumns ) } ); //$NON-NLS-1$
 	}
 
 	/*

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
@@ -46,7 +47,6 @@ public class BuildInfoFactory {
 	static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild"; //$NON-NLS-1$
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
-	static final String ERROR_PARSERS = PREFIX + ".buildErrorParsers"; //$NON-NLS-1$
 
 	private abstract static class Store implements IMakeBuilderInfo {
 
@@ -182,7 +182,7 @@ public class BuildInfoFactory {
 		}
 		
 		public String[] getErrorParsers() {
-			String parsers = getString(ERROR_PARSERS);
+			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
 			if (parsers != null && parsers.length() > 0) {
 				StringTokenizer tok = new StringTokenizer(parsers, ";");
 				List list = new ArrayList(tok.countTokens());
@@ -199,7 +199,7 @@ public class BuildInfoFactory {
 			for (int i = 0; i < parsers.length; i++) {
 				buf.append(parsers[i]).append(';');
 			}
-			putValue(ERROR_PARSERS, buf.toString());
+			putValue(ErrorParserManager.PREF_ERROR_PARSER, buf.toString());
 		}
 	}
 

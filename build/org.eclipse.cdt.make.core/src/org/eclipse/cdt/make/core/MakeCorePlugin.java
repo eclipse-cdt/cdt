@@ -122,6 +122,7 @@ public class MakeCorePlugin extends Plugin {
 			info.setIncrementalBuildTarget("all"); //$NON-NLS-1$
 			info.setFullBuildEnable(true);
 			info.setFullBuildTarget("clean all"); //$NON-NLS-1$
+			info.setErrorParsers(CCorePlugin.getDefault().getAllErrorParsersIDs());
 		} catch (CoreException e) {
 		}
 		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$

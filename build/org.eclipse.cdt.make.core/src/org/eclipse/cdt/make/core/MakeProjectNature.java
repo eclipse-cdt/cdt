@@ -117,6 +117,7 @@ public class MakeProjectNature implements IProjectNature {
 
 		projectInfo.setFullBuildEnable(info.isFullBuildEnabled());
 		projectInfo.setFullBuildTarget(info.getFullBuildTarget());
+		projectInfo.setErrorParsers(info.getErrorParsers());
 	}
 
 	public void removeBuildSpec() throws CoreException {

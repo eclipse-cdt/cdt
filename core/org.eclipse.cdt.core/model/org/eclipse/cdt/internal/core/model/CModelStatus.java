@@ -157,8 +157,21 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Returns the message that is relevant to the code of this status.
 	 */
 	public String getMessage() {
-		return "Error in C Plugin";
+		Throwable exception = getException();
+		if (exception == null) {
+			if (fString == null) {
+				return "Error in C Plugin(" + getCode() + ")";
+			}
+			return "Error in C Plugin(" + getCode() + "):" + fString ;
+		} else {
+			String mesg = exception.getMessage();
+			if (mesg != null && mesg.length() > 0) {
+				return mesg;
+			}
+			return exception.toString();
+		}
 	}
+
 	/**
 	 * @see IOperationStatus
 	 */

@@ -66,11 +66,14 @@
 		<topic label="Managed Make Projects" href="reference/cdt_o_mmake_proj.htm">
 			<topic label="Info" href="reference/cdt_u_mprop_info.htm"/>
 			<topic label="Builders" href="reference/cdt_u_mprop_builders.htm"/>
-			<topic label="Build" href="reference/cdt_u_mprop_build.htm"/>
+			<topic label="C/C++ Build" href="reference/cdt_u_mprop_build.htm">
+				<topic label="Tool Settings" href="reference/cdt_u_mprop_tool_settings.htm"/>
+				<topic label="Build Settings" href="reference/cdt_u_mprop_build_settings.htm"/>
+				<topic label="Error Parser" href="reference/cdt_u_mprop_merror.htm"/>
+				<topic label="Binary Parser" href="reference/cdt_u_mprop_mbinary.htm"/>
+			</topic>
 			<topic label="File Types" href="reference/cdt_u_mprop_file_types.htm"/>
 			<topic label="Indexer" href="reference/cdt_u_mprop_indexer.htm"/>
-			<topic label="Error Parser" href="reference/cdt_u_mprop_merror.htm"/>
-			<topic label="Binary Parser" href="reference/cdt_u_mprop_mbinary.htm"/>
 			<topic label="Project References" href="reference/cdt_u_mprop_ref.htm"/>
 		</topic>
 		<topic label="Standard Make Projects" href="reference/cdt_o_smake_proj.htm">
@@ -98,9 +101,8 @@
 	<topic label="C/C++ New Project Wizard" href="reference/cdt_u_new_proj_wiz.htm">
 		<topic label="Managed Make Projects" href="reference/cdt_o_new_mproj.htm">
 			<topic label="Name" href="reference/cdt_u_new_proj_wiz_m_name.htm"/>
-			<topic label="Select a Target" href="reference/cdt_u_new_proj_wiz_m_target.htm"/>
+			<topic label="Select a Project Type" href="reference/cdt_u_new_proj_wiz_m_target.htm"/>
 			<topic label="Referenced Projects" href="reference/cdt_u_new_proj_wiz_m_proj.htm"/>
-			<topic label="Error Parsers" href="reference/cdt_u_new_proj_wiz_m_errorp.htm"/>
 			<topic label="C/C++ Indexer" href="reference/cdt_u_new_proj_wiz_m_cindexer.htm"/>
 		</topic>
 		<topic label="Standard Make Projects" href="reference/cdt_o_new_sproj.htm">

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public abstract class CElement extends PlatformObject implements ICElement {
 	
+	protected static final CElement[] NO_ELEMENTS = new CElement[0];
 	protected int fType;
 	
 	protected ICElement fParent;

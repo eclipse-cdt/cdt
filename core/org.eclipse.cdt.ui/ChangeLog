@@ -1,3 +1,9 @@
+2003-04-08 Alain Magloire
+
+	Fix the drag & drop.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CViewSorter.java:
+
 2003-04-07 Alain Magloire
 
 	Enable contribution to the outliner ContentProvider, in the future

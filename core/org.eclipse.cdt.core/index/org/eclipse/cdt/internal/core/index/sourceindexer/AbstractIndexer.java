@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
@@ -81,14 +82,6 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	protected static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
     protected static final String INDEXER_MARKER_ORIGINATOR =  ICModelMarker.INDEXER_MARKER + ".originator";  //$NON-NLS-1$
     private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
-
-    
-	//IDs defined in plugin.xml for file types
-	private final static String C_SOURCE_ID = "org.eclipse.cdt.core.fileType.c_source"; //$NON-NLS-1$
-	private final static String C_HEADER_ID = "org.eclipse.cdt.core.fileType.c_header"; //$NON-NLS-1$
-	private final static String CPP_SOURCE_ID = "org.eclipse.cdt.core.fileType.cxx_source"; //$NON-NLS-1$
-	private final static String CPP_HEADER_ID = "org.eclipse.cdt.core.fileType.cxx_header"; //$NON-NLS-1$
-   
 	
 	public AbstractIndexer() {
 		super();
@@ -542,10 +535,10 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 			ICFileType type = CCorePlugin.getDefault().getFileType(fileToBeIndexed.getProject(),fileToBeIndexed.getName());
 			if (type.isSource() || type.isHeader()){
 			  String id = type.getId();
-			  if (id.equals(AbstractIndexer.C_SOURCE_ID) ||
-			  	  id.equals(AbstractIndexer.CPP_SOURCE_ID) ||
-				  id.equals(AbstractIndexer.C_HEADER_ID) ||
-				  id.equals(AbstractIndexer.CPP_HEADER_ID))
+			  if (id.equals(ICFileTypeConstants.FT_C_SOURCE) ||
+			  	  id.equals(ICFileTypeConstants.FT_CXX_SOURCE) ||
+				  id.equals(ICFileTypeConstants.FT_C_HEADER) ||
+				  id.equals(ICFileTypeConstants.FT_CXX_HEADER))
 			  	return true;
 			}
 		}

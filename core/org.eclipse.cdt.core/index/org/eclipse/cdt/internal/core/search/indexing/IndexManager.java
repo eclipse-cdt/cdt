@@ -34,10 +34,13 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Bogdan Gheorghe
@@ -339,8 +342,26 @@ public class IndexManager extends JobManager{
 	        Object e = indexerMap.remove(project);   
 	    } finally { 
 	        monitor.exitWrite();
-	        ICDTIndexer indexer = this.getIndexerForProject(project);
-	        indexer.notifyIndexerChange(project);
+	        final ICDTIndexer indexer = this.getIndexerForProject(project);
+	        final IProject finalProject = project;
+	        
+	    	//Notify new indexer in a job of change
+			Job job = new Job("Index Change Notification"){ //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor)	{	
+					Platform.run(new ISafeRunnable() {
+						public void handleException(Throwable exception) {
+							CCorePlugin.log(exception);
+						}
+						public void run() throws Exception {
+						    indexer.notifyIndexerChange(finalProject);
+						}
+					});
+					
+					return Status.OK_STATUS;
+				}
+			};
+
+			job.schedule();
 	    }
 	}
 }

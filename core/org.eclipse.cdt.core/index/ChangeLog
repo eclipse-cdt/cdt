@@ -1,4 +1,8 @@
 2005-03-29 Bogdan Gheorghe
+	Changed indexer change notification to run as a job.
+	Some additiional ICDTIndexer changes.
+	
+2005-03-29 Bogdan Gheorghe
 	
 	Added cumulative timer to SouceIndexer/DOMIndexer.
 	Purge any existing jobs from job queue on indexer change event.

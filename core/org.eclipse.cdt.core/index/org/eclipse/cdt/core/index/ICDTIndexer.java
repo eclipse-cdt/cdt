@@ -10,10 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * @author Bogdan Gheorghe
@@ -105,15 +107,25 @@ public interface ICDTIndexer extends IIndexer {
 
     /**
      * Returns if this indexer is enabled
-     * @param p
+     * @param project
      * @return
      */
-    public boolean isIndexEnabled(IProject p);
+    public boolean isIndexEnabled(IProject project);
 
     /**
      * Returns the storage used by this indexer.
      * @return
      */
     public IIndexStorage getIndexStorage();
+
+    /**
+     * Returns the index for the given path. 
+     * 
+     * @param path
+     * @param reuseExistingFile
+     * @param createIfMissing
+     * @return
+     */
+    public IIndex getIndex(IPath path, boolean reuseExistingFile, boolean createIfMissing);
 
 }

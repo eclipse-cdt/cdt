@@ -21,7 +21,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
  * @author jcamelon
  */
 public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
-
+    private static final char[] EMPTY_CHAR_ARRAY = { };
+    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
     private IASTName templateName;
 
     /* (non-Javadoc)
@@ -121,8 +122,10 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
      * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
      */
     public char[] toCharArray() {
-        // TODO Auto-generated method stub
-        return null;
+        return EMPTY_CHAR_ARRAY;
+    }
+    public String toString() {
+        return EMPTY_STRING;
     }
 
 }

@@ -2124,5 +2124,23 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( refs[0], col.getName(4) );
         assertSame( refs[1], col.getName(7) );
     }
+    
+    public void testBug86372() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A {                           \n"); //$NON-NLS-1$
+		buffer.append("	public:                            \n"); //$NON-NLS-1$
+		buffer.append("   template <class T> void f(T);    \n"); //$NON-NLS-1$
+		buffer.append("   template <class T> struct X { }; \n"); //$NON-NLS-1$
+		buffer.append("};                                  \n"); //$NON-NLS-1$
+		buffer.append("class B : public A {                \n"); //$NON-NLS-1$
+		buffer.append(" public:                            \n"); //$NON-NLS-1$
+		buffer.append("   using A::f<double>; // illformed \n"); //$NON-NLS-1$
+		buffer.append("   using A::X<int>; // illformed    \n"); //$NON-NLS-1$
+		buffer.append("};                                  \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+    }
 }
 

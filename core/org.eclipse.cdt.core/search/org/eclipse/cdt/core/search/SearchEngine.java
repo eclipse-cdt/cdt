@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -229,12 +230,15 @@ public class SearchEngine implements ICSearchConstants{
 		IWorkingCopy[] results= new IWorkingCopy[length];
 		int index=0;
 
-		for (int i=0;i<length;i++){
-		  IWorkingCopy workingCopy = copies[i];
-		  if(scope.encloses(workingCopy.getPath().toOSString())){
-		  	results[index++]=workingCopy;
-		  }
-		}
+		try {
+			for (int i=0;i<length;i++){
+				IWorkingCopy workingCopy = copies[i];
+				if(scope.encloses(workingCopy.getPath().toOSString()) &&
+				  	 workingCopy.hasUnsavedChanges()){
+				  	results[index++]=workingCopy;
+				  }
+			}
+		} catch (CModelException e) {}
 		
 		System.arraycopy(results,0,results= new IWorkingCopy[index],0,index);
 		

@@ -343,9 +343,6 @@ public class MatchLocator implements IMatchLocator{
    
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ) throws InterruptedException{
 		
-		if (!(paths.length > 0))
-			return;
-		
 		matchStorage = new ArrayList();
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
 		
@@ -356,7 +353,7 @@ public class MatchLocator implements IMatchLocator{
 			
 			for( int i = 0; i < wcLength; i++ ){
 				IWorkingCopy workingCopy = workingCopies[ i ];
-				String path = workingCopy.getOriginalElement().getPath().toString();
+				String path = workingCopy.getOriginalElement().getPath().toString();	
 				wcPaths.put( path, workingCopy );
 				newPaths[ i ] = path;
 			}

@@ -1,3 +1,7 @@
+2004-05-21 Bogdan Gheorghe
+	bug 63320 - Search does not consider working copies
+	Added a check to turn off indexer timer thread, if number entered is <= 0
+	
 2004-05-18 Andrew Niefer
 	bug 62651 - indexer job hangs if project deleted from workspace
 	When we discard jobs, we must downtick the indexing job as well.

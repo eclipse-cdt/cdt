@@ -119,8 +119,10 @@ public class SourceIndexer extends AbstractIndexer {
 			// start timer
 			String timeOut = CCorePlugin.getDefault().getPluginPreferences().getString(CDT_INDEXER_TIMEOUT);
 			Integer timeOutValue = new Integer(timeOut);
-			requestor.setTimeout(timeOutValue.intValue());
-			requestor.startTimer();
+			if (timeOutValue.intValue() > 0) {
+				requestor.setTimeout(timeOutValue.intValue());
+				requestor.startTimer();
+			}
 			boolean retVal = parser.parse();
 			
 			if (!retVal)

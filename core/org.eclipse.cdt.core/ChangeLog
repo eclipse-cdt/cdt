@@ -1,5 +1,28 @@
 2003-03-06 Alain Magloire
 
+	A few corrections:  The Elf parser was call to often and unnecessarly.
+	We can optimized the code by holding on the IBinarFile object and reuse
+	it instead of calling isBinary(file), isArchive(file), isShared(file) 3 times,
+	getting IBinaryFile and calling IBinaryFile.getType() saves some call.
+	This also delays the creation of IBinaryInfo until needed.
+
+	* model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java
+	(addIfExec): Unused method removed.
+	* model/org/eclipse/cdt/internal/core/model/BinaryContainer.java
+	(addIfExec): Unused method removed.
+	(Visitor): Unused inner class removed.
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner:
+	Call the new method CModelManager.create(parent, file, binaryFile) instead.
+	and the create will add the binary to the container.
+	* model/org/eclipse/cdt/internal/core/model/CModelManager:
+	(getBinaryFile): New method.
+	(create): New method takes for argument the IBinaryFile if it was created.
+	* model/org/eclipse/cdt/internal/core/model/CProjectInfo
+	(getBinaryContainer): Now synchronized.
+	(getArchiveContainer): Now synchronized.
+
+2003-03-06 Alain Magloire
+
 	Overload isBinary()/isArchive()/isTranslationUnit()
 	* model/org/eclipse/cdt/internal/core/model/Archive.java:
 	* model/org/eclipse/cdt/internal/core/model/Binary.java:

@@ -210,6 +210,128 @@
 					    		</td>
 					    	</tr>
 					    </xsl:if>
+				    	<xsl:if test="substring(@label, 17, 12) &gt; '200405201200'">
+							<tr>
+								<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-aix.motif.ppc.zip</xsl:text>
+						    			</xsl:attribute>
+					    				<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-aix.motif.ppc.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+								<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-hpux.motif.PA_RISC.zip</xsl:text>
+						    			</xsl:attribute>
+					    				<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-hpux.motif.PA_RISC.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    	</tr>
+					    	<tr>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-linux.gtk.x86.zip</xsl:text>
+						    			</xsl:attribute>
+					    				<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-linux.gtk.x86.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-linux.motif.x86.zip</xsl:text>
+						    			</xsl:attribute>
+					    				<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-linux.motif.x86.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    	</tr>
+					    	<tr>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-qnx.photon.x86.zip</xsl:text>
+						    			</xsl:attribute>
+						    			<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-qnx.photon.x86.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-solaris.motif.sparc.zip</xsl:text>
+						    			</xsl:attribute>
+						    			<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-solaris.motif.sparc.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    	</tr>
+					    	<tr>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>-win32.win32.x86.zip</xsl:text>
+						    			</xsl:attribute>
+						    			<font size="1">
+							    			<xsl:text>org.eclipse.cdt.sdk-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>-win32.win32.x86.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    	</tr>
+					    </xsl:if>
 				    </table>
 	    		</li>
 		    </ul>

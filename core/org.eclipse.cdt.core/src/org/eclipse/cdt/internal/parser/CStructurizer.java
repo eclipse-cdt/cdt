@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import org.eclipse.cdt.internal.parser.generated.CPPParser;
 import org.eclipse.cdt.internal.parser.generated.ParseException;
+import org.eclipse.cdt.internal.parser.generated.ParserFatalException;
 import org.eclipse.cdt.internal.parser.generated.TokenMgrError;
 
 
@@ -40,6 +41,8 @@ public class CStructurizer {
 		} catch (TokenMgrError error) {
 			callback.reportError(error);
 		} catch (ParseException e) {
+			callback.reportError(e);
+		} catch( ParserFatalException e ) {
 			callback.reportError(e);
 		}
 	}

@@ -9664,7 +9664,7 @@ void type_specifier() :
   static ASCII_CharStream jj_input_stream;
   static public Token token, jj_nt;
   static private int jj_ntk;
-  static private Token jj_scanpos, jj_lastpos;
+  static private Token jj_scanpos, jj_lastpos, jj_lasterrorpos;
   static private int jj_la;
   static public boolean lookingAhead = false;
   static private boolean jj_semLA;
@@ -9701,6 +9701,7 @@ void type_specifier() :
     token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
+	jj_lasterrorpos = null;
     jj_gen = 0;
     for (int i = 0; i < 123; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
@@ -9860,6 +9861,11 @@ void type_specifier() :
   }
 
   static final public ParseException generateParseException() {
+	if( jj_lasterrorpos != null && 
+		jj_lasterrorpos.equals( jj_lastpos ) )
+		throw new ParserFatalException();
+	else
+		jj_lasterrorpos = jj_lastpos;
     jj_expentries.removeAllElements();
     boolean[] la1tokens = new boolean[145];
     for (int i = 0; i < 145; i++) {

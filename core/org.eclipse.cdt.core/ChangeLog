@@ -1,3 +1,20 @@
+2003-04-07 Alain Magloire
+
+	Patch from Chris Songer, from its email:
+	"So, please find a patch attached that fixes all of this class of lockup 
+	while leaving the recovery potential in place. Basically, I added a new 
+	RuntimeException called ParserFatalException. 
+	CPPParser::generateParseException throws ParserFatalException when called 
+	twice in a row with the same token position. It's kind of a big hammer to 
+	use, but it works and I didn't have to type throw 
+	NewFatalNonRuntimeException in the 1000 machine generated functions in 
+	CPPParser.java. The 1.0.1 parser is not long for this world anyway."
+
+	* src/org/eclipse/cdt/internal/parser/CStructurizer.java:
+	* src/org/eclipse/cdt/internal/parser/generated/CPPParser.java:
+	* src/org/eclipse/cdt/internal/parser/generated/ParserFatalException.java:
+	* src/org/eclipse/cdt/internal/parser/generated/ParserFatalException.java:
+
 2003-03-17 Alain Magloire
 
 	Patch from Chris Songer.

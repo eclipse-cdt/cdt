@@ -464,9 +464,23 @@ public class DeltaProcessor {
 				((CModelInfo)info).setNonCResources(null);
 				fCurrentDelta.addResourceDelta(delta);
 				return;
-			case ICElement.C_PROJECT:
+			case ICElement.C_PROJECT: {
 				((CProjectInfo)info).setNonCResources(null);
+				// deal with project == sourceroot.  For that case the parent could have been the sourceroot
+				// so we must update the sourceroot nonCResource array also.
+				ICProject cproject = (ICProject)parent;
+				ISourceRoot[] roots = cproject.getAllSourceRoots();
+				for (int i = 0; i < roots.length; i++) {
+					IResource r = roots[i].getResource();
+					if (r instanceof IProject) {
+						CElementInfo cinfo = (CElementInfo) CModelManager.getDefault().peekAtInfo(roots[i]);
+						if (cinfo instanceof CContainerInfo) {
+							((CContainerInfo)cinfo).setNonCResources(null);
+						}
+					}
+				}
 				break;
+			}
 			case ICElement.C_CCONTAINER:
 				((CContainerInfo)info).setNonCResources(null);
 				break;

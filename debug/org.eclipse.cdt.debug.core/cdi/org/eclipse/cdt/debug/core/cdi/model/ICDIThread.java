@@ -36,16 +36,19 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	ICDIStackFrame[] getStackFrames() throws CDIException;
 
 	/**
-	 * Returns the stack frames contained in this thread whose levels
-	 * are between the two arguments(inclusive).
+	 * Returns the stack frames contained in this thread between the specified
+     * <tt>fromIndex</tt>, inclusive, and <tt>toIndex</tt>, exclusive.
 	 * An empty collection is returned if this thread contains
 	 * no stack frames, or is not currently suspended. Stack frames
 	 * are returned in top down order.
 	 * 
 	 * @return  a collection of stack frames
 	 * @throws CDIException if this method fails.  Reasons include:
+	 * @throws IndexOutOfBoundsException for an illegal endpoint index value
+     *     (fromIndex &lt; 0 || toIndex &gt; size || fromIndex &gt; toIndex).
+ 
 	 */
-	ICDIStackFrame[] getStackFrames(int lowFrame, int highFrame) throws CDIException;
+	ICDIStackFrame[] getStackFrames(int fromIndex, int len) throws CDIException;
 
 	/**
 	 * Returns the depth of the stack frames.

@@ -1,3 +1,12 @@
+2004-11-19 Alain Magloire
+
+	Clear the confusion about sublist of stackframes.
+	PR 78611
+
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIStackFrame.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIThread.java
+	* src/org/eclipse/cdt/debug/internal/model/CThread.java
+
 2004-11-17 David Inglis
 	
 	Change debug target to use IBinaryObject instead of IBinaryExecutable

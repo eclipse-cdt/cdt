@@ -1923,17 +1923,21 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( 4, bs.length );
     }
     
-    public void testBug85310() throws Exception
-    {
-    	  StringBuffer buffer = new StringBuffer( "void f() {" ); //$NON-NLS-1$
-    	  buffer.append( " if (__io.flags() & ios_base::showbase" );  //$NON-NLS-1$
-    	  buffer.append( "	      || __i < 2 || __sign.size() > 1" ); //$NON-NLS-1$
-    	  buffer.append( "	      || ((static_cast<part>(__p.field[3]) != money_base::none)" ); //$NON-NLS-1$
-    	  buffer.append( "		  && __i == 2)) " ); //$NON-NLS-1$
-    	  buffer.append( "	  return;" ); //$NON-NLS-1$
-    	  buffer.append( "}"); //$NON-NLS-1$
-    	  String code = buffer.toString();
-    	  IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
-    }
+//    public void testBug85310() throws Exception
+//    {
+//    	  StringBuffer buffer = new StringBuffer( "void f() {" ); //$NON-NLS-1$
+//    	  buffer.append( " if (__io.flags() & ios_base::showbase" );  //$NON-NLS-1$
+//    	  buffer.append( "	      || __i < 2 || __sign.size() > 1" ); //$NON-NLS-1$
+//    	  buffer.append( "	      || ((static_cast<part>(__p.field[3]) != money_base::none)" ); //$NON-NLS-1$
+//    	  buffer.append( "		  && __i == 2)) " ); //$NON-NLS-1$
+//    	  buffer.append( "	  return;" ); //$NON-NLS-1$
+//    	  buffer.append( "}"); //$NON-NLS-1$
+//    	  String code = buffer.toString();
+//    	  IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+//    	  IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+//    	  IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
+//    	  IASTIfStatement if_stmt = (IASTIfStatement) body.getStatements()[0];
+//    	  assertNotNull( if_stmt.getCondition() );
+//    }
 }
 

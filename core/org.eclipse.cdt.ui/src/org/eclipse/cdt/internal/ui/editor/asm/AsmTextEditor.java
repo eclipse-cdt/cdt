@@ -54,6 +54,10 @@ public class AsmTextEditor extends StatusTextEditor {
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		setRangeIndicator(new DefaultRangeIndicator());
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
+		setEditorContextMenuId("#ASMEditorContext"); //$NON-NLS-1$
+		setRulerContextMenuId("#ASMEditorRulerContext"); //$NON-NLS-1$
+		//setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
+		
 	}
 	/**
 	 * The <code>TextEditor</code> implementation of this 

@@ -252,7 +252,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 		// Update the managers.
 		// For the Variable/Expression Managers call only the updateManager.
-		UpdateManager upMgr = session.getUpdateManager();
 		ICDIVariableManager varMgr = session.getVariableManager();
 		ICDIExpressionManager expMgr  = session.getExpressionManager();		
 		ICDIRegisterManager regMgr = session.getRegisterManager();
@@ -262,8 +261,11 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		ICDISignalManager sigMgr = session.getSignalManager();
 		ICDISourceManager srcMgr = session.getSourceManager();
 		try {
-			if (varMgr.isAutoUpdate() || expMgr.isAutoUpdate()) { 
-				upMgr.update();
+			if (varMgr.isAutoUpdate()) {
+				varMgr.update();
+			}
+			if (expMgr.isAutoUpdate()) { 
+				expMgr.update();
 			}
 			if (regMgr.isAutoUpdate()) {
 				regMgr.update();

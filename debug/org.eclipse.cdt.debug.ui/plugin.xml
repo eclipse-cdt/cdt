@@ -182,7 +182,7 @@
       </viewerContribution>
       <viewerContribution
             targetID="#CEditorRulerContext"
-            id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
+            id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
          <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
@@ -203,6 +203,18 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CEditorContext"
+            id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
+         <action
+               label="%AddExpressionAction.label"
+               icon="icons/full/obj16/expression_obj.gif"
+               helpContextId="add_expression_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
          </action>
       </viewerContribution>
       <objectContribution

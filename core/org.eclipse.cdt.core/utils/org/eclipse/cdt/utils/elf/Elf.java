@@ -303,8 +303,22 @@ public class Elf {
 			if ( line == null ) {
 				if ( addr2line == null )
 					addr2line = new Addr2line(file);
-				line = addr2line.getLine(st_value + 19);
-				func = addr2line.getFunction(st_value + 19);
+				long value = st_value;
+				// We try to get the nearest match
+				// since the symbol may not exactly align with debug info.
+				// In C line number 0 is invalid, line starts at 1 for file, we use
+				// this for validation.
+				for (int i = 0; i <= 20; i += 4, value += i) {
+					line = addr2line.getLine(value);
+					if (line != null) {
+						int colon = line.lastIndexOf(':');
+						String number = line.substring(colon + 1);
+						if (!number.startsWith("0")) {
+							break; // bail out
+						}
+					}
+				}
+				func = addr2line.getFunction(value);
 			}
 			return line;
 		}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -72,6 +73,7 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
@@ -386,6 +388,76 @@ public class CVisitor {
 		}
 	}
 
+	public static class CollectReferencesAction extends CBaseVisitorAction {
+		private static final int DEFAULT_LIST_SIZE = 8;
+		private IASTName [] refs;
+		private IBinding binding;
+		private int idx = 0;
+		private int kind;
+		
+		private static final int KIND_LABEL  = 1;
+		private static final int KIND_OBJ_FN = 2;
+		private static final int KIND_TYPE   = 3;
+		
+		
+		public CollectReferencesAction( IBinding binding ){
+			this.binding = binding;
+			this.refs = new IASTName[ DEFAULT_LIST_SIZE ];
+			
+			processNames = true;
+			if( binding instanceof ILabel )
+				kind = KIND_LABEL;
+			else if( binding instanceof ICompositeType || binding instanceof ITypedef )
+				kind = KIND_TYPE;
+			else 
+				kind = KIND_OBJ_FN;
+		}
+		
+		public int processNames( IASTName name ){
+			ASTNodeProperty prop = name.getPropertyInParent();
+			switch( kind ){
+				case KIND_LABEL:
+					if( prop == IASTGotoStatement.NAME || prop == IASTLabelStatement.NAME )
+						break;
+					return PROCESS_CONTINUE;
+				case KIND_TYPE:
+					if( prop == IASTNamedTypeSpecifier.NAME )
+						break;
+					else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
+						IASTNode p = name.getParent().getParent();
+						if( !(p instanceof IASTSimpleDeclaration) ||
+							((IASTSimpleDeclaration)p).getDeclarators().length > 0 )
+						{
+							break;
+						}
+					}
+					return PROCESS_CONTINUE;
+				case KIND_OBJ_FN:
+					if( prop == IASTIdExpression.ID_NAME || prop == IASTFieldReference.FIELD_NAME )
+						break;
+					return PROCESS_CONTINUE;
+			}
+			
+			if( name.resolveBinding() == binding ){
+				if( refs.length == idx ){
+					IASTName [] temp = new IASTName[ refs.length * 2 ];
+					System.arraycopy( refs, 0, temp, 0, refs.length );
+					refs = temp;
+				}
+				refs[idx++] = name;
+			}
+			return PROCESS_CONTINUE;
+		}
+		public IASTName[] getReferences(){
+			if( idx < refs.length ){
+				IASTName [] temp = new IASTName[ idx ];
+				System.arraycopy( refs, 0, temp, 0, idx );
+				refs = temp;
+			}
+			return refs;
+		}
+	}
+	
 	//lookup bits
 	private static final int COMPLETE = 0;		
 	private static final int CURRENT_SCOPE = 1;
@@ -1733,5 +1805,16 @@ public class CVisitor {
 		visitTranslationUnit(tu, action);
 
 		return action.getDeclarationNames();
+	}
+
+	/**
+	 * @param unit
+	 * @param binding
+	 * @return
+	 */
+	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
+		CollectReferencesAction action = new CollectReferencesAction( binding );
+		visitTranslationUnit( tu, action );
+		return action.getReferences();
 	}
 }

@@ -109,8 +109,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public IASTName[] getReferences(IBinding binding) {
-		// TODO Auto-generated method stub
-		return null;
+		return CVisitor.getReferences( this, binding );
 	}
 
 

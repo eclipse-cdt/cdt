@@ -11,10 +11,15 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -51,7 +56,16 @@ public class LibraryRefContainer implements IAdaptable, IWorkbenchAdapter {
 	 */
 	public Object[] getChildren(Object o) {
 		try {
-			return fCProject.getLibraryReferences();
+			ILibraryReference[] references = fCProject.getLibraryReferences();
+			ArrayList list = new ArrayList(references.length);
+			for (int i = 0; i < references.length; i++) {
+				IPath path = references[i].getPath();
+				IFile file = references[i].getCModel().getWorkspace().getRoot().getFileForLocation(path);
+				if (file == null || !file.isAccessible()) {
+					list.add(references[i]);
+				}
+			}
+			return list.toArray();
 		} catch (CModelException e) {
 		}
 		return EMPTY;

@@ -149,9 +149,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	protected ISelectionChangedListener fStatusLineClearer;
     protected ISelectionChangedListener fSelectionUpdateListener;
 	
-    /** The mouse listener */
-    private MouseClickListener fMouseListener;
-
 	/** Pairs of brackets, used to match. */
     protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
 
@@ -175,9 +172,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
     /** Preference key for compiler task tags */
     private final static String TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
-
-    /** Preference key for hyperlink enablement */
-    public final static String HYPERLINK_ENABLED = "hyperlinkEnable"; //$NON-NLS-1$
 
 	/** 
 	 * This editor's projection support 
@@ -348,14 +342,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 					return;
 				}
 				
-				if (HYPERLINK_ENABLED.equals(property)) {
-					if (hyperLinkEnabled())
-						enableBrowserLikeLinks();
-					else
-						disableBrowserLikeLinks();
-					return;
-				}
-
 				// Not implemented ... for the future.
 				if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
 					ISourceViewer sourceViewer= getSourceViewer();
@@ -604,7 +590,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 
 		stopTabConversion();
-		disableBrowserLikeLinks();
 		
 		super.dispose();
 	}
@@ -718,12 +703,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
-		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
-		
-		if (hyperLinkEnabled()){
-			enableBrowserLikeLinks();
-		}
-	
+		fRefactoringActionGroup = new RefactoringActionGroup(this, null);		
 	}
 
 	/**
@@ -1303,36 +1283,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			statusLine.setMessage(false, msg, null);	
 	}
 
-	/**
-     * Enables browser like links, requires disable to clean up 
-     */
-    private void enableBrowserLikeLinks() {
-    	if (fMouseListener == null) {
-    		IAction openDeclAction = getAction("OpenDeclarations");  //$NON-NLS-1$
-    		fMouseListener= new MouseClickListener(this, getSourceViewer(), getPreferenceStore(), openDeclAction);
-    		fMouseListener.install();
-    	}
-    }
-
-	/**
-	 * Disable browser like links, clean up resources  
-	 */
-	private void disableBrowserLikeLinks() {
-		if (fMouseListener != null) {
-			fMouseListener.uninstall();
-			fMouseListener= null;
-		}
-	}
-    
-    /**
-     * Determine if the hyperlink capability is enabled
-	 * @return boolean indicating if hyperlinking is enabled
-	 */
-	private boolean hyperLinkEnabled() {
-		IPreferenceStore store= getPreferenceStore();
-		return store.getBoolean(HYPERLINK_ENABLED);
- 	}
-     
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
 	 */

@@ -125,7 +125,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER));
-        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.HYPERLINK_ENABLED));
       
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -170,7 +169,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
         PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
 
-		store.setDefault(CEditor.HYPERLINK_ENABLED,true);
 	}
 
 	/*
@@ -402,30 +400,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.folding.title")); //$NON-NLS-1$
 		item.setControl(fFoldingConfigurationBlock.createControl(folder));
 
-		item = new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.getString("CEditorPreferencePage.Navigation")); //$NON-NLS-1$
-		item.setControl(createNavPage(folder));
-		
 		initialize();
 
 		return folder;
-	}
-
-	/**
-	 * @param folder
-	 * @return
-	 */
-	private Control createNavPage(Composite parent) {
-		Composite navComposite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		navComposite.setLayout(layout);
-
-		String label = PreferencesMessages.getString("CEditorPreferencePage.Enable_Hyperlink_Navigation"); //$NON-NLS-1$
-		addCheckBox(navComposite, label, CEditor.HYPERLINK_ENABLED, 0);
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(navComposite, ICHelpContextIds.C_EDITOR_NAVIGATION_PAGE);
-		return navComposite;
 	}
 
 	private void initialize() {

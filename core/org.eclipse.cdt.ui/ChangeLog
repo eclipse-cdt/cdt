@@ -1,4 +1,16 @@
-2005-02-24 Alain Magloire
+2005-02-25 Alain Magloire
+	Fix PR 86647: remove the hyperlink preference page in the CEditor preference
+	Use the Text Editors
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	+ src/org/eclipse/cdt/internal/ui/editor/CElementHyperlink.java
+	= src/org/eclipse/cdt/internal/ui/editor/CElementHperlinkDetector.java
+	- src/org/eclipse/cdt/internal/ui/editor/IPositionManager.java
+	- src/org/eclipse/cdt/internal/ui/editor/MouseClickListener.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+
+2005-02-25 Alain Magloire
 	Fix PR 86655: adds a link to the Text Editor preference
 	Remove some warning, WorkbenchHelp was deprecated.
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

@@ -29,6 +29,7 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 
 	private ReferenceBlock referenceBlock;
 	private SettingsBlock settingsBlock;
+	private BinaryParserBlock binaryParserBlock;
 
 	public StdMakeProjectWizard() {
 		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC));
@@ -61,6 +62,16 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 		item2.setData(settingsBlock);
 		item2.setControl(settingsBlock.getControl(folder));
 		addTabItem(settingsBlock);
+		
+		binaryParserBlock = new BinaryParserBlock(getValidation());
+		TabItem item3 = new TabItem(folder, SWT.NONE);
+		item3.setText(binaryParserBlock.getLabel());
+		Image img3 = binaryParserBlock.getImage();
+		if (img3 != null)
+			item3.setImage(img3);
+		item3.setData(binaryParserBlock);
+		item3.setControl(binaryParserBlock.getControl(folder));
+		addTabItem(binaryParserBlock);
 	}
 
 	protected void doRunPrologue(IProgressMonitor monitor) {
@@ -86,6 +97,10 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 			// Update the settings.
 			if (settingsBlock != null) {
 				settingsBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
+			}
+			// Update the binary parser
+			if (binaryParserBlock != null) {
+				binaryParserBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
 			}
 		}
 	}

@@ -1841,7 +1841,7 @@ public class Scanner implements IScanner {
         	    ( c == NOCHAR ) )
         	{
         		handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(),beginOffset, false, true, throwExceptionOnBadCharacterRead );
-        		c = ' ';
+        		c = '\'';
 			}			
 			// exit condition
 			if ( ( c =='\'' ) && ( prev != '\\' || prevPrev == '\\' ) ) break;

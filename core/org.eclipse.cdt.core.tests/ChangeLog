@@ -1,3 +1,6 @@
+2004-01-28 John Camelon
+	Added ScannerTestCase::testBug50821().  
+
 2004-01-27 John Camelon
 	Renamed ContextualParseTest to CompletionParseTest.
 	Updated COMPLETION_PARSE clients to use SINGLE_NAME_REFERENCE rather than STATEMENT_START.  

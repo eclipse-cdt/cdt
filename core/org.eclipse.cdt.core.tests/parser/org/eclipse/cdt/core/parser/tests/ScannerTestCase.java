@@ -1547,4 +1547,12 @@ public class ScannerTestCase extends BaseScannerTest
     	initializeScanner( buffer.toString(), ParserMode.COMPLETE_PARSE );
     	validateEOF();
     }
+    
+    public void testBug50821() throws Exception
+	{
+    	Callback callback = new Callback( ParserMode.QUICK_PARSE );
+    	initializeScanner( "\'\n\n\n", ParserMode.QUICK_PARSE,  callback );
+    	scanner.nextToken(); 
+    	assertEquals( callback.problems.size(), 1 );
+    }
 }

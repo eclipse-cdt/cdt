@@ -1,4 +1,7 @@
 2004-01-28 John Camelon
+	Fixed Bug 50821 - Freezes when opening / saving .c file 
+
+2004-01-28 John Camelon
 	Fixed Bug 50711 - Wrong completion kind in a new expression
 
 2004-01-28 John Camelon

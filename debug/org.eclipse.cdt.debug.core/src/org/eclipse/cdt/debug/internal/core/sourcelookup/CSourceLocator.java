@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,6 +64,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private static final String ATTR_CLASS = "class";
 	private static final String ATTR_MEMENTO = "memento";
 	private static final String ATTR_PROJECT_NAME = "projectName";
+	private static final String ATTR_DUPLICATE_FILES = "duplicateFiles";
 
 	/**
 	 * The project associated with this locator.
@@ -78,6 +80,12 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * The array of projects referenced by main project.
 	 */
 	private List fReferencedProjects = new ArrayList( 10 );
+
+	/**
+	 * The flag specifies whether to search for all source elements, 
+	 * or just the first match.
+	 */
+	private boolean fDuplicateFiles = false;
 
 	/**
 	 * Constructor for CSourceLocator.
@@ -112,9 +120,10 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	protected Object getInput( IStackFrameInfo info )
 	{
-		Object result = null;
+		LinkedList list = new LinkedList();
 		if ( info != null )
 		{
+			Object result = null;
 			String fileName = info.getFile();
 			if ( fileName != null && fileName.length() > 0 )
 			{
@@ -130,11 +139,18 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 						// do nothing
 					}
 					if ( result != null )
-						break;
+					{
+						if ( result instanceof List )
+							list.addAll( (List)result );
+						else
+							list.add( result );
+						if ( !searchForDuplicateFiles() )
+							break;
+					}
 				}
 			}
 		}		
-		return result;
+		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
 	}
 
 	/* (non-Javadoc)
@@ -281,7 +297,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		ICSourceLocation[] locations = getSourceLocations();
 		saveDisabledGenericSourceLocations( locations, doc, node );
 		saveAdditionalSourceLocations( locations, doc, node );
-
+		node.setAttribute( ATTR_DUPLICATE_FILES, new Boolean( searchForDuplicateFiles() ).toString() );
 		try
 		{
 			return CDebugUtils.serializeDocument( doc, " " );
@@ -333,6 +349,9 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			// To support old launch configuration
 			addOldLocations( root, sourceLocations );
 			setSourceLocations( (ICSourceLocation[])sourceLocations.toArray( new ICSourceLocation[sourceLocations.size()] ) );
+			
+			setSearchForDuplicateFiles( Boolean.valueOf( root.getAttribute( ATTR_DUPLICATE_FILES ) ).booleanValue() );
+
 			return;
 		}
 		catch( ParserConfigurationException e )
@@ -692,5 +711,21 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		}
 		fReferencedProjects = newRefs;
 		setSourceLocations( (ICSourceLocation[])newLocations.toArray( new ICSourceLocation[newLocations.size()] ) );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
+	 */
+	public boolean searchForDuplicateFiles()
+	{
+		return fDuplicateFiles;
+	}
+
+	public void setSearchForDuplicateFiles( boolean search )
+	{
+		fDuplicateFiles = search;
+		ICSourceLocation[] locations = getSourceLocations();
+		for ( int i = 0; i < locations.length; ++i )
+			locations[i].setSearchForDuplicateFiles( search );
 	}
 }

@@ -71,4 +71,18 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @return source element
 	 */
 	Object findSourceElement( String fileName );
+
+	/**
+	 * Returns whether to search for all source elements, or just the first match.
+	 *  
+	 * @return whether to search for all source elements, or just the first match
+	 */
+	boolean searchForDuplicateFiles();
+
+	/**
+	 * Sets the value of the 'search for duplicate source files' flag.
+	 * 
+	 * @param search - a value to set
+	 */
+	void setSearchForDuplicateFiles( boolean search );
 }

@@ -172,7 +172,7 @@ public class CSourceManager implements ICSourceLocator,
 		}
 		return result;
 	}
-	
+
 	protected ICSourceLocator getCSourceLocator()
 	{
 		if ( getSourceLocator() instanceof ICSourceLocator )
@@ -275,4 +275,21 @@ public class CSourceManager implements ICSourceLocator,
 	{
 		return fDebugTarget;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSearchForDuplicateFiles(boolean)
+	 */
+	public void setSearchForDuplicateFiles( boolean search )
+	{
+		if ( getCSourceLocator() != null )
+			getCSourceLocator().setSearchForDuplicateFiles( search );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
+	 */
+	public boolean searchForDuplicateFiles()
+	{
+		return ( getCSourceLocator() != null ) ? getCSourceLocator().searchForDuplicateFiles() : false;
+	}	
 }

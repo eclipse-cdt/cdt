@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -107,7 +106,7 @@ public class SourcePropertyPage extends PropertyPage
 		{
 			try
 			{
-				setSourceLocations( fBlock.getSourceLocations() );
+				setAttributes( fBlock );
 			}
 			catch( DebugException e )
 			{
@@ -118,7 +117,7 @@ public class SourcePropertyPage extends PropertyPage
 		return true;
 	}
 	
-	private void setSourceLocations( ICSourceLocation[] locations ) throws DebugException
+	private void setAttributes( SourceLookupBlock block ) throws DebugException
 	{
 		ICDebugTarget target = getDebugTarget();
 		if ( target != null )
@@ -128,7 +127,8 @@ public class SourcePropertyPage extends PropertyPage
 				ICSourceLocator locator = (ICSourceLocator)((IAdaptable)target.getLaunch().getSourceLocator()).getAdapter( ICSourceLocator.class );
 				if ( locator != null )
 				{
-					locator.setSourceLocations( locations );
+					locator.setSourceLocations( block.getSourceLocations() );
+					locator.setSearchForDuplicateFiles( block.searchForDuplicateFiles() );
 					if ( target.getLaunch().getSourceLocator() instanceof IPersistableSourceLocator )
 					{
 						ILaunchConfiguration configuration = target.getLaunch().getLaunchConfiguration();

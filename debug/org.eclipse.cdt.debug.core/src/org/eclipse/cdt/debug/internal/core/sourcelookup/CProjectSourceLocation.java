@@ -62,6 +62,8 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	private HashSet fNotFoundCache = new HashSet( 20 );
 
 	private boolean fGenerated = true;
+	
+	private boolean fSearchForDuplicateFiles = false;
 
 	/**
 	 * Constructor for CProjectSourceLocation.
@@ -162,12 +164,12 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
 			for ( int i = 0; i < wsFiles.length; ++i )
 				if ( wsFiles[i].getProject().equals( getProject() ) && wsFiles[i].exists() )
-					if ( !searchForDuplicateFileNames() )
+					if ( !searchForDuplicateFiles() )
 						return wsFiles[i];
 					else
 						list.add( wsFiles[i] );
 		}
-		return ( list.size() > 0 ) ? list : null;
+		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
 	}
 
 	private Object findFileByRelativePath( String fileName )
@@ -176,7 +178,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		LinkedList list = new LinkedList();
 		for ( int i = 0; i < folders.length; ++i )
 		{
-			if ( list.size() > 0 && !searchForDuplicateFileNames() )
+			if ( list.size() > 0 && !searchForDuplicateFiles() )
 				break;
 			IPath path = folders[i].getLocation().append( fileName );
 			File file = new File( path.toOSString() );
@@ -185,13 +187,13 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 				IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
 				for ( int j = 0; j < wsFiles.length; ++j )
 					if ( wsFiles[j].exists() )
-						if ( !searchForDuplicateFileNames() )
+						if ( !searchForDuplicateFiles() )
 							return wsFiles[j];
 						else
 							list.add( wsFiles[j] );
 			}
 		}
-		return ( list.size() > 0 ) ? list : null;
+		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
 	}
 
 	private Object cacheLookup( String name )
@@ -369,9 +371,21 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		return fFolders;
 	}
 
-	protected boolean searchForDuplicateFileNames()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#searchForDuplicateFiles()
+	 */
+	public boolean searchForDuplicateFiles()
 	{
-		// for now
-		return false;
+		return fSearchForDuplicateFiles;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#setSearchForDuplicateFiles(boolean)
+	 */
+	public void setSearchForDuplicateFiles( boolean search )
+	{
+		fCache.clear();
+		fNotFoundCache.clear();
+		fSearchForDuplicateFiles = search;
 	}
 }

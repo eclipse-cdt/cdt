@@ -24,7 +24,7 @@ public interface ICSourceLocation extends IAdaptable
 {
 	/**
 	 * Returns an object representing the source code
-	 * for a type with the specified name, or <code>null</code>
+	 * for a file with the specified name, or <code>null</code>
 	 * if none could be found. The source element 
 	 * returned is implementation specific - for example, a
 	 * resource, a local file, a zip file entry, etc.
@@ -35,7 +35,7 @@ public interface ICSourceLocation extends IAdaptable
 	 * @exception CoreException if an exception occurs while searching for the specified source element
 	 */
 	Object findSourceElement( String name ) throws CoreException;
-	
+
 	/**
 	 * Returns a memento for this source location from which this
 	 * source location can be reconstructed.
@@ -43,7 +43,7 @@ public interface ICSourceLocation extends IAdaptable
 	 * @return a memento for this source location
 	 * @exception CoreException if unable to create a memento
 	 */
-	public String getMemento() throws CoreException;
+	String getMemento() throws CoreException;
 	
 	/**
 	 * Initializes this source location from the given memento.
@@ -52,5 +52,19 @@ public interface ICSourceLocation extends IAdaptable
 	 * @exception CoreException if unable to initialize this source
 	 * 	location
 	 */
-	public void initializeFrom( String memento ) throws CoreException;
+	void initializeFrom( String memento ) throws CoreException;
+
+	/**
+	 * Returns whether to search for all source elements, or just the first match.
+	 *  
+	 * @return whether to search for all source elements, or just the first match
+	 */
+	boolean searchForDuplicateFiles();
+
+	/**
+	 * Sets the value of the 'search for duplicate source files' flag.
+	 * 
+	 * @param search - a value to set
+	 */
+	void setSearchForDuplicateFiles( boolean search );
 }

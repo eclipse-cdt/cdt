@@ -1,4 +1,13 @@
 2003-10-17 Mikhail Khodjaiants
+	UI support of the 'Search for duplicate source files' option.
+	* icons/full/obj16/prj_file_obj.gif: new
+	* icons/full/obj16/ext_file_obj.gif: new
+	* CDebugImages.java
+	* CUISourceLocator.java
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+
+2003-10-17 Mikhail Khodjaiants
 	* CDebugEditor.java: changed the message displayed when the source file not found.
 
 2003-10-14 Mikhail Khodjaiants

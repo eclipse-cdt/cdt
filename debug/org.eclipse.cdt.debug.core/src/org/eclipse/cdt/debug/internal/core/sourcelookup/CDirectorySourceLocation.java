@@ -57,6 +57,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	 */
 	private IPath fAssociation = null;
 
+	private boolean fSearchForDuplicateFiles = false;
+
 	/**
 	 * Constructor for CDirectorySourceLocation.
 	 */
@@ -182,12 +184,12 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		LinkedList list = new LinkedList();
 		for ( int j = 0; j < wsFiles.length; ++j )
 			if ( wsFiles[j].exists() )
-				if ( !searchForDuplicateFileNames() )
+				if ( !searchForDuplicateFiles() )
 					return wsFiles[j];
 				else
 					list.add( wsFiles[j] );
 		if ( list.size() > 0 ) 
-			return list;
+			return ( list.size() == 1 ) ? list.getFirst() : list;
 
 		file = filePath.toFile();
 		if ( file.exists() )
@@ -211,12 +213,12 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 				LinkedList list = new LinkedList();
 				for ( int j = 0; j < wsFiles.length; ++j )
 					if ( wsFiles[j].exists() )
-						if ( !searchForDuplicateFileNames() )
+						if ( !searchForDuplicateFiles() )
 							return wsFiles[j];
 						else
 							list.add( wsFiles[j] );
 				if ( list.size() > 0 ) 
-					return list;
+					return ( list.size() == 1 ) ? list.getFirst() : list;
 				else
 					return createExternalFileStorage( path );
 			}
@@ -368,9 +370,19 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		return prefixString.equalsIgnoreCase( pathString );
 	}
 
-	protected boolean searchForDuplicateFileNames()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#setSearchForDuplicateFiles(boolean)
+	 */
+	public void setSearchForDuplicateFiles( boolean search )
 	{
-		// for now
-		return false;
+		fSearchForDuplicateFiles = search;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#searchForDuplicateFiles()
+	 */
+	public boolean searchForDuplicateFiles()
+	{
+		return fSearchForDuplicateFiles;
 	}
 }

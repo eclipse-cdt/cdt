@@ -35,8 +35,8 @@ public class Stabs {
 
 		public String toString() {
 			StringBuffer buf = new StringBuffer();
-			buf.append("Name:").append(string).append("\n");
-			buf.append("\taddress:").append(addr).append("\n");
+			buf.append("Name: ").append(string).append("\n");
+			buf.append("\taddress:").append("0x").append(Long.toHexString(addr)).append("\n");
 			buf.append("\tstartLine:").append(startLine).append("\n");
 			//buf.append("\tName:").append(string).append("\n");
 			return buf.toString();
@@ -60,10 +60,11 @@ public class Stabs {
 		}
 
 		public String toString() {
-			StringBuffer buf = new StringBuffer(super.toString());
+			StringBuffer buf = new StringBuffer();
+			buf.append("Variable: ");
+			buf.append(super.toString());
 			buf.append("\tkind:").append(kind).append("\n");
 			buf.append("\tfilename:").append(filename).append("\n");
-			buf.append("\tVariable");
 			return buf.toString();
 		}
 	}
@@ -80,7 +81,9 @@ public class Stabs {
 		}
 
 		public String toString() {
-			StringBuffer buf = new StringBuffer(super.toString());
+			StringBuffer buf = new StringBuffer();
+			buf.append("Function: ");
+			buf.append(super.toString());
 			buf.append("\tendLine:").append(endLine).append("\n");
 			buf.append("\tfilename:").append(filename).append("\n");
 			buf.append("\tSource code: ");
@@ -90,9 +93,9 @@ public class Stabs {
 			buf.append("\n");
 			buf.append("\tVariables\n");
 			for (int i = 0; i < variables.size(); i++) {
-				buf.append("\t\t").append(variables.get(i)).append("\n");
+				buf.append("\t\t").append("[" + i + "]").append("\n");
+				buf.append("\t\t\t").append(variables.get(i)).append("\n");
 			}
-			buf.append("\tFunction");
 			return buf.toString();
 		}
 	}
@@ -109,31 +112,70 @@ public class Stabs {
 		}
 	}
 
-	public class TypeDef extends Entry {
-		String type;
+	// type-information = type-number | type-definition
+	// type-number = type-reference
+	// type-reference = number | '(' number ',' number ')'
+	// type-definition = type_number '=' (type-descriptor | type-reference)
+	public class TypeInformation {
+		int typeNumber;
+		int fileNumber;
+		boolean isTypeDefinition;
 
-		public TypeDef(String s) {
-			super(s);
+		public TypeInformation(String s) {
+			parserTypeInformation(s.toCharArray());
+		}
+
+		void parserTypeInformation(char[] array) {
 		}
 	}
 
-	public class TypeDefinition extends Entry {
-		int typeNumber;
+	/**
+	 * Format: string_field = name ':' symbol-descriptor type-information
+	 */
+	public class StringField {
 		String name;
+		char symbolDescriptor;
+		String typeInformation;
 
-		public TypeDefinition(String s) {
-			super(s);
-		}
-	}
-
-	public class StringField extends Entry {
-		String name;
-		String symbolDescriptor;
-		String typeDefinition;
-		int typeNumber;
-		
 		public StringField(String s) {
-			super(s);
+			parseStringField(s.toCharArray());
+		}
+
+		/**
+		 * Format: string_field = name ':' symbol-descriptor type-information
+		 */
+		void parseStringField(char[] array) {
+			int index = 0;
+
+			// Some String field may contain format like:
+			// "foo::bar::baz:t5=*6" in that case the name is "foo::bar::baz"
+			char prev = 0;
+			for (int i = 0; index < array.length; index++) {
+				char c = array[index];
+				if (prev != ':') {
+					break;
+				}
+				prev = c;
+			}
+
+			if (index < array.length) {
+				name = new String(array, 0, index);
+			} else {
+				name = new String(array);
+			}
+
+			// get the symbol descriptor
+			if (index < array.length) {
+				index++;
+				symbolDescriptor = array[index];
+			}
+
+			// get the type-information
+			if (index < array.length) {
+				typeInformation = new String(array, index, array.length);
+			} else {
+				typeInformation = new String();
+			}
 		}
 	}
 
@@ -220,6 +262,30 @@ public class Stabs {
 				holder = null;
 			}
 
+			/* FIXME: Sometimes the special C++ names start with '.'. */
+			if (name.length() > 1 && name.charAt(0) == '$') {
+				switch (name.charAt(1)) {
+					case 't' :
+						name = "this";
+						break;
+					case 'v' :
+						/* Was: name = "vptr"; */
+						break;
+					case 'e' :
+						name = "eh_throw";
+						break;
+					case '_' :
+						/* This was an anonymous type that was never fixed up. */
+						break;
+					case 'X' :
+						/* SunPRO (3.0 at least) static variable encoding. */
+						break;
+					default :
+						name = "unknown C++ encoded name";
+						break;
+				}
+			}
+
 			// get the type; 1 byte;
 			type = 0xff & stabData[offset + 4];
 
@@ -228,13 +294,9 @@ public class Stabs {
 
 			// get the desc
 			if (isLe) {
-				int a = stabData[offset + 8] << 8;
-				int b = stabData[offset + 7];
-				int c = a + b;
-				//desc = (short) ((stabData[offset + 7] << 8) + stabData[offset + 6]);
-				desc = (short) ((stabData[offset + 8] << 8) + stabData[offset + 7]);
+				desc = (short) (((stabData[offset + 7] & 0xff) << 8) + (stabData[offset + 6] & 0xff));
 			} else {
-				desc = (short) ((stabData[offset + 6] << 8) + stabData[offset + 7]);
+				desc = (short) (((stabData[offset + 6] & 0xff) << 8) + (stabData[offset + 7] & 0xff));
 			}
 
 			// get the value
@@ -270,20 +332,24 @@ public class Stabs {
 					break;
 				case StabConstant.N_SLINE :
 					if (currentFunction != null) {
-						currentFunction.endLine = desc;
+						if (currentFunction.startLine == 0) {
+							currentFunction.endLine = currentFunction.startLine = desc;
+						} else {
+							currentFunction.endLine = desc;
+						}
 						currentFunction.lines.add(new Integer(desc));
 					}
 					break;
 				case StabConstant.N_FUN :
-					if (name.length() == 0 || desc == 0) {
-						currentFunction = null;
-					} else {
-						currentFunction = new Function(name);
-						currentFunction.addr = value;
-						currentFunction.startLine = desc;
-						currentFunction.filename = currentFile;
-						entries.add(currentFunction);
+					if (name.length() == 0) {
+						name = "anon";
 					}
+					currentFunction = null;
+					currentFunction = new Function(name);
+					currentFunction.addr = value;
+					currentFunction.startLine = desc;
+					currentFunction.filename = currentFile;
+					entries.add(currentFunction);
 					break;
 				case StabConstant.N_LBRAC :
 					bracket++;
@@ -313,52 +379,6 @@ public class Stabs {
 			//System.out.println(" " + i + "\t" + Stab.type2String(type) + "\t" + other + "\t\t" +
 			//	desc + "\t" + Long.toHexString(value) + "\t" + + stroff + "\t\t" +name);
 		}
-	}
-
-	/**
-	 * Format: string_field = name ':' symbol-descriptor type-information type-information = type_number [ '=' ( type_description |
-	 * type_reference )] type_number = number | '(' number ',' number ')' type_reference type_descriptor =
-	 */
-	private void parseString(String s, StringField field) {
-		// Some String field may contain format like:
-		// "foo::bar::baz:t5=*6" in that case the name is "foo::bar::baz"
-		int index = s.lastIndexOf(':');
-
-		if (index > 0) {
-			field.name = s.substring(0, index).trim();
-			index++;
-			// Advance the string.
-			s = s.substring(index);
-		} else {
-			field.name = s;
-			s = new String();
-		}
-
-		// get the symbol descriptor
-		for (index = 0; index < s.length(); index++) {
-			char c = s.charAt(index);
-			if (!(Character.isLetter(c) || c == ':' || c == '-')) {
-				break;
-			}
-		}
-		if (index > 0) {
-			field.symbolDescriptor = s.substring(0, index);
-			index++;
-			// Advance the string.
-			s = s.substring(index);
-		} else {
-			field.symbolDescriptor = new String();
-		}
-
-		field.typeDefinition = s;
-
-	}
-
-	private void parseType(String s) {
-		int index = s.indexOf(':');
-		if (index != -1) {
-		}
-		// "name:symbol-descriptor type-information"
 	}
 
 	public void print() {

@@ -30,10 +30,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -262,6 +264,7 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 										{
 											IExpression expression = CDebugModel.createExpression( getDebugTarget(), text );
 											DebugPlugin.getDefault().getExpressionManager().addExpression( expression );
+											showExpressionView();
 										}
 										catch( DebugException e )
 										{
@@ -316,6 +319,34 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 			{
 				setDebugTarget( target );
 			}			
+		}
+	}
+
+	/**
+	 * Make the expression view visible or open one if required.
+	 * 
+	 */
+	protected void showExpressionView()
+	{
+		IWorkbenchPage page = CDebugUIPlugin.getDefault().getActivePage();
+		if ( page != null )
+		{
+			IViewPart part = page.findView( IDebugUIConstants.ID_EXPRESSION_VIEW );
+			if ( part == null )
+			{
+				try
+				{
+					page.showView( IDebugUIConstants.ID_EXPRESSION_VIEW );
+				}
+				catch( PartInitException e )
+				{
+					CDebugUIPlugin.getDefault().log( e.getStatus() );
+				}
+			}
+			else
+			{
+				page.bringToTop( part );
+			}
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2003-06-15 Victor Mozgin
+	Moved testBug39349() from DOMFailedTest.java to DOMTests.java.
+	Moved testBug39544() from DOMFailedTest.java to DOMTests.java.
+
 2003-07-14 Victor Mozgin
 	Added failed tests that correspond to recently reported PRs.
 

@@ -1,3 +1,7 @@
+2003-07-15 Victor Mozgin
+	Fixed PR 39349 : Scanner fails on long long literals.
+	Fixed PR 39544 : Scanner fails on wide char literals.
+
 2003-07-10 John Camelon
 	Added in template support to IAST hierarchy.
 	Updated instantiation & specialization hierarchy.  

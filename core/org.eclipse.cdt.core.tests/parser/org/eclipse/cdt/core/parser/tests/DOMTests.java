@@ -2199,4 +2199,13 @@ public class DOMTests extends BaseDOMTest {
 	{
 		parse("struct A { A() throw (int); };");
 	}
+	
+	public void testBug39349() throws Exception
+	{
+		parse( "enum foo {  foo1   = 0,  foo2   = 0xffffffffffffffffULL,  foo3   = 0xf0fffffffffffffeLLU };" ); 
+	}
+	
+	public void testBug39544() throws Exception	{
+		parse("wchar_t wc = L'X';"); 
+	}  
 }

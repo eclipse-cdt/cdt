@@ -4561,7 +4561,7 @@ public class Parser implements IParser
 				catch (Exception e)
 				{
 				}
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null, null, null, "", "", t.getImage(), null );
+				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, "", "", t.getImage(), null );
             
             case IToken.t_false :
             case IToken.t_true :
@@ -4576,6 +4576,7 @@ public class Parser implements IParser
 				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL, null, null, null, "", "", t.getImage(), null );
             
             case IToken.tCHAR :
+			case IToken.tLCHAR :
 				t = consume();
                 try
                 {

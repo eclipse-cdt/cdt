@@ -281,22 +281,24 @@ public interface IToken {
 	static public final int t_xor = 127;
 
 	static public final int t_xor_eq = 128;
+	
+	static public final int tFLOATINGPT = 129;
 
-	static public final int tSTRING = 129;
-
-	static public final int tFLOATINGPT = 130;
-
+	static public final int tSTRING = 130;
+	
 	static public final int tLSTRING = 131;
 
 	static public final int tCHAR = 132;
+	
+	static public final int tLCHAR = 133;
 
-	static public final int t__Bool = 133;
+	static public final int t__Bool = 134;
 
-	static public final int t__Complex = 134;
+	static public final int t__Complex = 135;
 
-	static public final int t__Imaginary = 135;
+	static public final int t__Imaginary = 136;
 
-	static public final int t_restrict = 136;
+	static public final int t_restrict = 137;
 
 	static public final int tLAST = t_restrict;
 }

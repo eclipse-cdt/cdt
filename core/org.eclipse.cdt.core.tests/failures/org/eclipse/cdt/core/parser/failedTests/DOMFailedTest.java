@@ -35,12 +35,7 @@ public class DOMFailedTest extends BaseDOMTest  {
 	public void testBug36730()throws Exception {
 		failTest("FUNCTION_MACRO( 1, a )\n	int i;");
 	}
-	
-	public void testBug39349() throws Exception
-	{
-		failTest( "enum foo {  foo1   = 0,  foo2   = 0xffffffffffffffffULL,  foo3   = 0xf0fffffffffffffeULL };" ); 
-	}    
-	
+		
 	public void testBug39504A() throws Exception	{
 		TranslationUnit tu = parse("int y = sizeof(x[0]);");
 		 
@@ -154,10 +149,6 @@ public class DOMFailedTest extends BaseDOMTest  {
 
 	public void testBug39542() throws Exception	{
 		failTest("void f(int a, struct {int b[a];} c) {}"); 
-	}
-
-	public void testBug39544() throws Exception	{
-		failTest("wchar_t wc = L'X';"); 
 	}
 
 	public void testBug39546() throws Exception	{

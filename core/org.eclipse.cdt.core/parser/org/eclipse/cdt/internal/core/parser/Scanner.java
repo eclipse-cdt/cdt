@@ -501,7 +501,8 @@ public class Scanner implements IScanner {
 		}
 		
 		count++;
-		boolean madeMistake = false; 
+		boolean possibleWideLiteral = true;
+		boolean wideLiteral = false; 
 		int c = getChar();
 
 		while (c != NOCHAR) {
@@ -536,24 +537,20 @@ public class Scanner implements IScanner {
 			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
 				c = getChar();
 				continue;
-			} else if (c == '"' || ( c == 'L' && ! madeMistake ) ) {
-			
-				boolean wideString = false; 
-				if( c == 'L' )
-				{
-					int oldChar =c;
-					wideString = true;
-					c = getChar(); 
-					if( c != '"' )
-					{
-						// we have made a mistake
-						ungetChar( c );
-						c = oldChar;
-						madeMistake = true; 
-						continue;
-					}
-				} 
-				 
+			} else if (c == 'L' && possibleWideLiteral ) { 
+				int oldChar = c;
+				c = getChar(); 
+				if(!(c == '"' || c == '\'')) {
+					// we have made a mistake
+					ungetChar(c);
+					c = oldChar;
+					possibleWideLiteral = false; 
+					continue;
+				}
+				wideLiteral = true;
+				continue;
+			} else if (c == '"') {
+								 
 				// string
 				StringBuffer buff = new StringBuffer(); 
 				int beforePrevious = NOCHAR;
@@ -572,7 +569,7 @@ public class Scanner implements IScanner {
 
 				if (c != NOCHAR ) 
 				{
-					int type = wideString ? IToken.tLSTRING : IToken.tSTRING;
+					int type = wideLiteral ? IToken.tLSTRING : IToken.tSTRING;
 					
 					//If the next token is going to be a string as well, we need to concatenate
 					//it with this token.
@@ -613,7 +610,6 @@ public class Scanner implements IScanner {
                         
                 int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
 						
-				if( madeMistake ) madeMistake = false;
 				// String buffer is slow, we need a better way such as memory mapped files
 				StringBuffer buff = new StringBuffer(); 
 				buff.append((char) c);
@@ -787,8 +783,12 @@ public class Scanner implements IScanner {
 							c = getChar();
 							if( c == 'l' || c == 'L')
 								c = getChar();
+							if( c == 'l' || c == 'L')
+								c = getChar();
 						} else if( c == 'l' || c == 'L' ){
 							c = getChar();
+							if( c == 'l' || c == 'L')
+								c = getChar();
 							if( c == 'u' || c == 'U' )
 								c = getChar();
 						}
@@ -1031,17 +1031,18 @@ public class Scanner implements IScanner {
 			} else {
 				switch (c) {
 					case '\'' :
+						int type = wideLiteral ? IToken.tLCHAR : IToken.tCHAR;
 						c = getChar( true ); 
 						int next = getChar( true );
 						if( c == '\\' ){
 							c = next;
 							next = getChar( true );
 							if( next == '\'' )
-								return newToken( IToken.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
+								return newToken( type, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
 							else if( throwExceptionOnBadCharacterRead )
 								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
 						} else if( next == '\'' )
-							return newToken( IToken.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
+							return newToken( type, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
 						else
 							if( throwExceptionOnBadCharacterRead )
 								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );

@@ -34,9 +34,13 @@
 		<concat destfile="compile.log">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
 		</concat>
+		<loadfile property="compileLog" srcFile="compile.log"/>
+		<condition property="hasErrors">
+			<contains string="${compileLog}" substring="ERROR"/>
+		</condition>
 	</target>
 
-	<target name="test" depends="init">
+	<target name="test" depends="init" unless="hasErrors">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />
 		</ant>
@@ -60,7 +64,7 @@
 			out="${sitedir}/logs/${siteversion}.${timestamp}.html"/>
 	</target>
 	
-	<target name="updateSite" depends="init">
+	<target name="updateSite" depends="init" unless="hasErrors">
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${sitedir}"/>
@@ -94,8 +98,9 @@
 		     destfile="${sitedir}/${dir}/${id}_${siteversion}.${timestamp}.jar"/>
 	</target>
 
-	<target name="milestoneSite" depends="init">
+	<target name="milestoneSite" depends="init" unless="hasErrors">
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-hpux.motif.PA_RISC.zip" dest="${milestonedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${milestonedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${milestonedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${milestonedir}"/>
@@ -117,14 +122,14 @@
 			 destfile="${milestonedir}/${dir}/${id}_${siteversion}.jar"/>
 	</target>
 	
-	<target name="upload" depends="init">
+	<target name="upload" depends="init" unless="hasErrors">
 		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
 			remotedir="${remotedir}" action="put" verbose="yes">
 			<fileset dir="${sitedir}"/>
 		</ftp>
 	</target>
 
-	<target name="wswbmap" depends="init">
+	<target name="wswbmap" depends="init" unless="hasErrors">
 		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
 		<replace file="cdt-map.txt" token="@buildId@" value="${buildId}"/>
 		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
@@ -133,13 +138,25 @@
 		</ftp>
 	</target>
 	
-	<target name="mail" depends="init">	
+	<target name="mail" depends="init">
+		<antcall target="mailPass"/>
+		<antcall target="mailFail"/>
+	</target>
+	
+	<target name="mailPass" unless="hasErrors">
 		<concat destfile="mail.txt">
 			<filelist dir="${basedir}" files="message.txt,compile.log"/>
 		</concat>
 		<mail subject="CDT Build ${siteversion}.${timestamp} completed"
 			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
 			<message src="mail.txt"/>
+		</mail>
+	</target>
+
+	<target name="mailFail" if="hasErrors">
+		<mail subject="CDT Build ${siteversion}.${timestamp} failed"
+			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
+			<message src="compile.logs"/>
 		</mail>
 	</target>
 

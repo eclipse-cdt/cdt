@@ -27,6 +27,10 @@
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 </target>
 
+<target name="assemble.org.eclipse.cdt.hpux.motif.PA_RISC">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+</target>
+
 <target name="assemble.org.eclipse.cdt.linux.gtk.x86">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 </target>

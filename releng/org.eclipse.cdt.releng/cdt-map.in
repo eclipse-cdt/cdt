@@ -1,4 +1,5 @@
 org.eclipse.cdt-@buildId@-aix.motif.ppc.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | aix,motif,ppc | | runtime
+org.eclipse.cdt-@buildId@-hpux.motif.PA_RISC.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | hpux,motif,PA_RISC | | runtime
 org.eclipse.cdt-@buildId@-linux.gtk.x86.zip =  http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | linux,gtk,x86 & linux,*,x86 | | runtime
 org.eclipse.cdt-@buildId@-linux.motif.x86.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | linux,motif,x86 & linux,*,x86 | | runtime
 org.eclipse.cdt-@buildId@-qnx.photon.x86.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | qnx,photon,x86 | | runtime

@@ -1,3 +1,8 @@
+2004-07-22 Alain Magloire
+
+	Fix for PR 70688
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2004-07-12 Alain Magloire
 
 	Remove some compiler warnings.

@@ -385,9 +385,10 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		List list = binaryList.getSelectedElements();
 		if (list.size() > 0) {
 			BinaryParserConfiguration selected = (BinaryParserConfiguration) list.get(0);
-			if (binaryList.isChecked(selected)) {
-				return selected.getID();
-			}
+			//if (binaryList.isChecked(selected)) {
+			//	return selected.getID();
+			//}
+			return selected.getID();
 		}
 		return null;
 	}

@@ -1,4 +1,10 @@
 2004-06-03 Alain Magloire
+
+	Fix for PR 64197 60906
+
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
+
+2004-06-03 Alain Magloire
 	Again the problem:
 	Eclipse filename association with editors is done strictly via
 	the plugin.xml(and Preference Page).

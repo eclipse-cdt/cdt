@@ -1,3 +1,10 @@
+2003-01-13 Alex Chapiro
+
+	* os/win32/x86/spawner.dll: Rebuild.
+	* os/win32/x86/starter.exe: Rebuild.
+	* library/Win32ProcessEx.c: Quoting of spaces when calling starter.
+	* library/starter/starter.cpp: Quoting of spaces when calling the executable.
+
 2002-11-06 Alex Chapiro
 
 	* library/Win32ProcessEx.c:

@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -25,10 +21,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
         ICPPASTTemplatedTypeTemplateParameter {
 
-    public List getTemplateParameters() {
-        if( parameters == null ) return Collections.EMPTY_LIST;
+    public ICPPASTTemplateParameter[] getTemplateParameters() {
+        if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
         removeNullParameters();
-        return Arrays.asList( parameters );
+        return parameters;
     }
 
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {

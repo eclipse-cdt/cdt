@@ -10,9 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -86,7 +86,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
-	public List getDeclarations(IBinding binding) {
+	public IASTDeclaration[] getDeclarations(IBinding binding) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -94,7 +94,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
-	public List getReferences(IBinding binding) {
+	public IASTName[] getReferences(IBinding binding) {
 		// TODO Auto-generated method stub
 		return null;
 	}

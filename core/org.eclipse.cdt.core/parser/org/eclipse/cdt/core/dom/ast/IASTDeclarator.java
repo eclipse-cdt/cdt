@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * @author Doug Schaefer
@@ -29,7 +28,7 @@ public interface IASTDeclarator extends IASTNode {
 	 * 
 	 * @return List of IASTPointerOperator
 	 */
-	public List getPointerOperators();
+	public IASTPointerOperator[] getPointerOperators();
 	
 	public void addPointerOperator( IASTPointerOperator operator );
 

@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 
@@ -43,10 +39,10 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
     private static final int DEFAULT_ARRAYMODS_LIST_SIZE = 4;
 
 
-    public List getArrayModifiers() {
-        if( arrayMods == null ) return Collections.EMPTY_LIST;
+    public IASTArrayModifier[] getArrayModifiers() {
+        if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;
         removeNullArrayModifiers();
-        return Arrays.asList( arrayMods );
+        return arrayMods;
  
     }
 

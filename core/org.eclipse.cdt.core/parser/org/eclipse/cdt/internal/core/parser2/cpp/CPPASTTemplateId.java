@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -83,10 +79,10 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId#getTemplateArguments()
      */
-    public List getTemplateArguments() {
-        if( templateArguments == null ) return Collections.EMPTY_LIST;
+    public IASTNode[] getTemplateArguments() {
+        if( templateArguments == null ) return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
         removeNullArguments();
-        return Arrays.asList( templateArguments );
+        return templateArguments;
     }
     
     private void removeNullArguments() {

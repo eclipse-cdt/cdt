@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * The translation unit represents a compilable unit of source.
@@ -44,7 +43,7 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * @param binding 
 	 * @return List of IASTName nodes for the binding's declaration
 	 */
-	public List getDeclarations(IBinding binding);
+	public IASTDeclaration[] getDeclarations(IBinding binding);
 
 	/**
 	 * Returns the list of references in this translation unit to the given
@@ -54,7 +53,7 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * @param binding
 	 * @return List of IASTName nodes representing uses of the binding
 	 */
-	public List getReferences(IBinding binding);
+	public IASTName[] getReferences(IBinding binding);
 	
 	public IASTNodeLocation getLocationInfo( int offset );
 	public IASTNodeLocation [] getLocationInfo( int offset, int length );

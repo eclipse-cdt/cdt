@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTArrayModifier extends IASTNode {
     
     public static final ASTNodeProperty CONSTANT_EXPRESSION = new ASTNodeProperty( "Constant Expression");  //$NON-NLS-1$
+    public static final IASTArrayModifier[] EMPTY_ARRAY = new IASTArrayModifier[0];
     public IASTExpression getConstantExpression();
     public void setConstantExpression( IASTExpression expression );
 

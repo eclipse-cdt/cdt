@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 
 /**
@@ -22,7 +21,7 @@ public interface IASTArrayDeclarator extends IASTDeclarator {
 
     public static final ASTNodeProperty ARRAY_MODIFIER = new ASTNodeProperty( "Array Modifier"); //$NON-NLS-1$
     
-	public List getArrayModifiers();
+	public IASTArrayModifier[] getArrayModifiers();
 	public void addArrayModifier( IASTArrayModifier arrayModifier );
 	
 }

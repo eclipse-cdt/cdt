@@ -9,10 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -48,10 +44,10 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#getPointerOperators()
      */
-    public List getPointerOperators() {
-        if( pointerOps == null ) return Collections.EMPTY_LIST;
+    public IASTPointerOperator[] getPointerOperators() {
+        if( pointerOps == null ) return IASTPointerOperator.EMPTY_ARRAY;
         removeNullPointers();
-        return Arrays.asList( pointerOps );
+        return pointerOps;
     }
 
     /* (non-Javadoc)

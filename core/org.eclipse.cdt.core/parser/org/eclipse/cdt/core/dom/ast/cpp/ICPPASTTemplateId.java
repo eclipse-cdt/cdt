@@ -10,11 +10,11 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
@@ -27,8 +27,9 @@ public interface ICPPASTTemplateId extends IASTName {
     public void setTemplateName( IASTName name );
     
     public static final ASTNodeProperty TEMPLATE_ID_ARGUMENT = new ASTNodeProperty( "TemplateId Arg"); //$NON-NLS-1$
+    public static final IASTNode[] EMPTY_ARG_ARRAY = new IASTNode[0];
     public void addTemplateArgument( IASTTypeId typeId );
     public void addTemplateArgument( IASTExpression expression );
-    public List getTemplateArguments();
+    public IASTNode[] getTemplateArguments();
     
 }

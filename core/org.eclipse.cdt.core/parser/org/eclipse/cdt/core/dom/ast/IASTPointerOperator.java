@@ -15,4 +15,6 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTPointerOperator extends IASTNode {
 
+    public static final IASTPointerOperator[] EMPTY_ARRAY = new IASTPointerOperator[0];
+
 }

@@ -328,8 +328,8 @@ public class AST2Tests extends AST2BaseTest {
     	IASTName nameA3 = compTypeSpec.getName();
     	IASTDeclarator dtor = decl3.getDeclarators()[0];
     	IASTName namea = dtor.getName();
-    	assertEquals( 1, dtor.getPointerOperators().size() );
-    	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
+    	assertEquals( 1, dtor.getPointerOperators().length );
+    	assertTrue( dtor.getPointerOperators()[0] instanceof ICASTPointer );
 
     	//bindings
     	ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
@@ -371,8 +371,8 @@ public class AST2Tests extends AST2BaseTest {
     	IASTName nameA2 = compTypeSpec.getName();  	
     	IASTDeclarator dtor = decl2.getDeclarators()[0];
     	IASTName namea = dtor.getName();
-    	assertEquals( 1, dtor.getPointerOperators().size() );
-    	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
+    	assertEquals( 1, dtor.getPointerOperators().length );
+    	assertTrue( dtor.getPointerOperators()[0] instanceof ICASTPointer );
 
     	//bindings
     	ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
@@ -407,8 +407,8 @@ public class AST2Tests extends AST2BaseTest {
     	IASTName name_A2 = elabTypeSpec.getName();  	
     	IASTDeclarator dtor = decl.getDeclarators()[0];
     	IASTName name_a = dtor.getName();
-    	assertEquals( 1, dtor.getPointerOperators().size() );
-    	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
+    	assertEquals( 1, dtor.getPointerOperators().length );
+    	assertTrue( dtor.getPointerOperators()[0] instanceof ICASTPointer );
     	
     	//struct A {
     	decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
@@ -820,8 +820,8 @@ public class AST2Tests extends AST2BaseTest {
         assertNull( f.getName().toString() );
         assertNotNull( f.getNestedDeclarator() );
         assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
-        assertTrue( f.getPointerOperators().isEmpty() );
-        assertFalse( f.getNestedDeclarator().getPointerOperators().isEmpty() );
+        assertTrue( f.getPointerOperators().length == 0 );
+        assertFalse( f.getNestedDeclarator().getPointerOperators().length == 0 );
         tu = parse( "int (*pfi)();", ParserLanguage.CPP ); //$NON-NLS-1$
         assertEquals( tu.getDeclarations().length, 1 );
         d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
@@ -845,7 +845,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( tu.getDeclarations().length, 2 );
         IASTSimpleDeclaration p2m = (IASTSimpleDeclaration) tu.getDeclarations()[1];
         IASTDeclarator d = p2m.getDeclarators()[0];
-        ICPPASTPointerToMember po = (ICPPASTPointerToMember) d.getPointerOperators().get(0);
+        ICPPASTPointerToMember po = (ICPPASTPointerToMember) d.getPointerOperators()[0];
         assertEquals( po.getName().toString(), "X::"); //$NON-NLS-1$
     }
     

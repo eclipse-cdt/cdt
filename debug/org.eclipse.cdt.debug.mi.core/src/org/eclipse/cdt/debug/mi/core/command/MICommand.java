@@ -6,8 +6,7 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+
 
 /**
  * 
@@ -94,18 +93,38 @@ public class MICommand extends Command
 					}
 				}
 			}
+
+			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < parameters.length; i++) {
-				// According to the MI documentation '-' is not permitted
-				//(parameters[i].indexOf('-') != -1 || parameters[i].indexof(\n)
-				if (parameters[i].indexOf('\t') != -1 ||
-				    parameters[i].indexOf('\"') != -1 ||
-				    parameters[i].indexOf(' ') != -1) {
-					command += " \"" + parameters[i] + "\"";
-				} else {
-					command += " " + parameters[i];
+				// We need to escape the double quotes and the backslash.
+				sb.setLength(0);
+				String param = parameters[i];
+				for (int j = 0; j < param.length(); j++) {
+					char c = param.charAt(j);
+					if (c == '"' || c == '\\') {
+						sb.append('\\');
+					}
+					sb.append(c);
 				}
+				
+				// If the string contains spaces instead of escaping
+				// surround the parameter with double quotes.
+				if (containsWhitespace(param)) {
+					sb.insert(0, '"');
+					sb.append('"');
+				}
+				command += " " + sb.toString();
 			}
 		}
 		return command + "\n";
+	}
+	
+	boolean containsWhitespace(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (Character.isWhitespace(s.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage;
+import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -107,7 +107,7 @@ public class TargetBuild {
 		};
 		targetJob.schedule();
 
-		if (!MakeTargetsPreferencePage.isBuildTargetInBackground()) {
+		if (!MakePreferencePage.isBuildTargetInBackground()) {
 			runWithProgressDialog(shell, targetJob);
 		}
 	}

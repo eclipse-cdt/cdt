@@ -8,7 +8,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
-import org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage;
+import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferenceConstants;
 import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferencePage;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -20,7 +20,7 @@ public class MakeUIPreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		MakeTargetsPreferencePage.initDefaults(MakeUIPlugin.getDefault().getPreferenceStore());
+		MakePreferencePage.initDefaults(MakeUIPlugin.getDefault().getPreferenceStore());
 		MakefileEditorPreferenceConstants.initializeDefaultValues(MakeUIPlugin.getDefault().getPreferenceStore());
 		MakefileEditorPreferencePage.initDefaults(MakeUIPlugin.getDefault().getPreferenceStore());
 	}

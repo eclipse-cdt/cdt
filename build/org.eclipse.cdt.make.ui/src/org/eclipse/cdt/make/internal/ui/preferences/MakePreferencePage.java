@@ -18,12 +18,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class MakeTargetsPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class MakePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private static final String PREF_BUILD_TARGET_IN_BACKGROUND = "MakeTargetPrefs.buildTargetInBackground"; //$NON-NLS-1$
 	private static final String TARGET_BUILDS_IN_BACKGROUND = "MakeTargetPreferencePage.buildTargetInBackground.label"; //$NON-NLS-1$
 
-	public MakeTargetsPreferencePage() {
+	public MakePreferencePage() {
 		super(GRID);
 		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
 	}

@@ -12,18 +12,20 @@
 
 <h1>Converting CDT 1.x Projects</h1>
 
-<p>There are two ways to update CDT 1.x projects to CDT 2.0, after they have been imported, either restart eclipse, or update them using the <b>Convert to C/C++ Make Project Wizard</b>.</p>
-<p><b>Note:</b> the project must first be imported into your workspace using <b>File > Import > Existing Project into Workspace</b> before you can update the project.</p>
+<p>How you update your CDT 1.x project to CDT 2.1 depends upon whether the 
+project is a Standard Make project or a Managed Make project. For a Standard 
+Make project, see <b>Convert to C/C++ Make Project Wizard below.</b></p>
+<h2>Updating a Managed Make Project </h2>
 
-<p>For more information on importing projects see <b>Workbench &gt; Tasks &gt; Importing &gt; Importing Existing Projects</b>.
-
-<h2>Restart Eclipse</h2>
-
-<p>When Eclipse starts, the CDT 1.x project will be detected and you will be prompted to update the project.</p>
+<p>For a Managed Make project, the Managed Build system will prompt you to 
+convert your project when it attempts to read the Managed Build project 
+information and discovers that project needs to be updated.&nbsp; You will be prompted to update the project.</p>
 <p> <img src="../images/update_managed_build.png" alt="Update Managed Builder dialog box"></p>
-<p>Click <b>Yes</b> and the project will be updated.</p>
-
-<p>&nbsp;</p>
+<p>Click <b>Yes</b> and the project will be updated.&nbsp; The updated Managed 
+Build information can no longer be loaded by CDT 1.x or CDT 2.0.&nbsp; Select <b>
+No</b> and the project will not be updated.&nbsp; You will be able to view the 
+Managed Build settings, but no changes will be saved when you close the project 
+or exit Eclipse.</p>
 
 <h2>Convert to C/C++ Make Project Wizard</h2>
 

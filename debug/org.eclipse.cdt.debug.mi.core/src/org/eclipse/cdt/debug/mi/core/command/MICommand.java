@@ -7,7 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
  * 
@@ -22,7 +22,8 @@ public class MICommand extends Command
 	String[] options = empty;
 	String[] parameters = empty;
 	String operation = "";
-	String token;
+	String token = "";
+	MIOutput miOutput = null;
 
 	public MICommand(String oper) {
 		this.operation = oper;
@@ -91,7 +92,7 @@ public class MICommand extends Command
 				command += " " + parameters[i];
 			}
 		}
-		return command;
+		return command + "\n";
 	}
 
 	public String getToken() {
@@ -102,7 +103,11 @@ public class MICommand extends Command
 		token = t;
 	}
 
-	public MIInfo getInfo (MIResultRecord rr) {
-		return new MIInfo(rr);
+	public void setMIOutput(MIOutput mi) {
+		miOutput = mi;
+	}
+	
+	public MIInfo getInfo () {
+		return null;
 	}
 }

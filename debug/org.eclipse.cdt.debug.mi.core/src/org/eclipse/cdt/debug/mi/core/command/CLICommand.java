@@ -7,7 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
  * 
@@ -18,20 +18,31 @@ import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
  */
 public class CLICommand extends Command
 {
+	String token = "";
+	MIOutput miOutput = null;
+	
 	/**
 	 * Returns the text representation of this command.
 	 * 
 	 * @return the text representation of this command
 	 */
 	public String getToken() {
-		return "";
+		return token;
+	}
+	
+	public void setToken(String t) {
+		token = t;
 	}
 	
 	public String toString(){
 		return "";
 	}
 
-	public MIInfo getInfo (MIResultRecord rr) {
-		return new MIInfo(rr);
+	public void setMIOutput(MIOutput mi) {
+		miOutput = mi;
+	}
+
+	public MIInfo getInfo () {
+		return null;
 	}
 }

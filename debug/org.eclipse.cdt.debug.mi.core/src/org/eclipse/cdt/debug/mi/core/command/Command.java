@@ -7,7 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
  * 
@@ -24,8 +24,12 @@ public abstract class Command
 	 * @return the identifier of this request
 	 */
 	public abstract String getToken();
+	
+	public abstract void setToken(String token);
 
 	public abstract String toString();
 
-	public abstract MIInfo getInfo(MIResultRecord rr);
+	public abstract void setMIOutput(MIOutput mi);
+
+	public abstract MIInfo getInfo();
 }

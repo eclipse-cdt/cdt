@@ -1,3 +1,7 @@
+2004-10-18 Alain Magloire
+	Adjust to changes in CDI
+	* src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java
+
 2004-10-18 David Inglis
 	
 	Update to new ICDIDebugger interface deprecating old

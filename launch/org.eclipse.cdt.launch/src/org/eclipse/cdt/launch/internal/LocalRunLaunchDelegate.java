@@ -21,8 +21,8 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
@@ -71,13 +71,16 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
 					dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));
 					try {
-						ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
-						opt.setArguments(arguments);
-						File wd = getWorkingDirectory(config);
-						if (wd != null) {
-							opt.setWorkingDirectory(wd.getAbsolutePath());
+						ICDITarget[] dtargets = dsession.getTargets();
+						for (int i = 0; i < dtargets.length; ++i) {
+							ICDIRuntimeOptions opt = dtargets[i].getRuntimeOptions();
+							opt.setArguments(arguments);
+							File wd = getWorkingDirectory(config);
+							if (wd != null) {
+								opt.setWorkingDirectory(wd.getAbsolutePath());
+							}
+							opt.setEnvironment(expandEnvironment(config));
 						}
-						opt.setEnvironment(expandEnvironment(config));
 					} catch (CDIException e) {
 						try {
 							dsession.terminate();

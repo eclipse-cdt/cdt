@@ -520,10 +520,16 @@ public class DeltaProcessor {
 	
 	private void updateDependencies(ICElement element){
 		//Update table
-		String fileExtension = element.getResource().getFileExtension();
-		if (fileExtension.equals("h") ||
+		IResource resource = element.getResource();
+		if (resource == null)
+		 return;
+		 
+		String fileExtension = resource.getFileExtension();
+		
+		if ((fileExtension != null) &&
+			(fileExtension.equals("h") ||
 			fileExtension.equals("hh") ||
-			fileExtension.equals("hpp")){
+			fileExtension.equals("hpp"))){
 		
 			if (sourceDependencyManager.getProjectDependsForFile(element.getResource().getLocation().toOSString()) == null){
 				//retrigger dep trees

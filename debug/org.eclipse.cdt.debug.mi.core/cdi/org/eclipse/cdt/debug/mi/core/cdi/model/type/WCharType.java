@@ -13,7 +13,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -22,11 +22,11 @@ public class WCharType extends IntegralType implements ICDIWCharType {
 	/**
 	 * @param typename
 	 */
-	public WCharType(Target target, String typename) {
-		this(target, typename, false);
+	public WCharType(VariableObject vo, String typename) {
+		this(vo, typename, false);
 	}
 
-	public WCharType(Target target, String typename, boolean usigned) {
-		super(target, typename, usigned);
+	public WCharType(VariableObject vo, String typename, boolean usigned) {
+		super(vo, typename, usigned);
 	}
 }

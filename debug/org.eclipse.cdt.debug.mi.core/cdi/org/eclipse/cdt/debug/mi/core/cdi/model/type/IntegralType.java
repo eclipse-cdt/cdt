@@ -12,7 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntegralType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -20,8 +20,8 @@ public abstract class IntegralType extends Type implements ICDIIntegralType {
 
 	boolean unSigned;
 
-	public IntegralType(Target target, String typename, boolean isUnsigned) {
-		super(target, typename);
+	public IntegralType(VariableObject vo, String typename, boolean isUnsigned) {
+		super(vo, typename);
 		unSigned = isUnsigned;
 	}
 	

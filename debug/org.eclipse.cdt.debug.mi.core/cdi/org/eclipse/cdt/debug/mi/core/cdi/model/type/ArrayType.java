@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -24,8 +24,8 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 	/**
 	 * @param typename
 	 */
-	public ArrayType(Target target, String typename,int dim) {
-		super(target, typename);
+	public ArrayType(VariableObject vo, String typename,int dim) {
+		super(vo, typename);
 		dimension = dim;
 	}
 

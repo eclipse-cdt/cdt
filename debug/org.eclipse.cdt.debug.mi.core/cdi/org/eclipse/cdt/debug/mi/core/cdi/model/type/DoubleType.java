@@ -12,7 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,11 +21,11 @@ public class DoubleType extends FloatingPointType implements ICDIDoubleType {
 	/**
 	 * @param typename
 	 */
-	public DoubleType(Target target, String typename) {
-		this(target, typename, false, false, false);
+	public DoubleType(VariableObject vo, String typename) {
+		this(vo, typename, false, false, false);
 	}
 
-	public DoubleType(Target target, String typename, boolean isComplex, boolean isImg, boolean isLong) {
-		super(target, typename, isComplex, isImg, isLong);
+	public DoubleType(VariableObject vo, String typename, boolean isComplex, boolean isImg, boolean isLong) {
+		super(vo, typename, isComplex, isImg, isLong);
 	}
 }

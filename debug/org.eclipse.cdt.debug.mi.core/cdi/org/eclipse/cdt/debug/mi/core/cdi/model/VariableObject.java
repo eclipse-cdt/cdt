@@ -164,28 +164,28 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			ICDIStackFrame frame = getStackFrame();
 			Session session = (Session) (target.getSession());
 			SourceManager sourceMgr = (SourceManager) session.getSourceManager();
-			String nametype = sourceMgr.getTypeName(frame, getQualifiedName());
+			String nametype = sourceMgr.getTypeName(this, getQualifiedName());
 			try {
-				type = sourceMgr.getType(target, nametype);
+				type = sourceMgr.getType(this, nametype);
 			} catch (CDIException e) {
 				// Try with ptype.
 				try {
 					String ptype = sourceMgr.getDetailTypeName(frame, nametype);
-					type = sourceMgr.getType(target, ptype);
+					type = sourceMgr.getType(this, ptype);
 				} catch (CDIException ex) {
 					// Some version of gdb does not work woth the name of the class
 					// ex: class data foo --> ptype data --> fails
 					// ex: class data foo --> ptype foo --> succeed
 					try {
 						String ptype = sourceMgr.getDetailTypeName(frame, getQualifiedName());
-						type = sourceMgr.getType(target, ptype);
+						type = sourceMgr.getType(this, ptype);
 					} catch (CDIException e2) {
 						// give up.
 					}
 				}
 			}
 			if (type == null) {
-				type = new IncompleteType(target, nametype);
+				type = new IncompleteType(this, nametype);
 			}
 		}
 		return type;

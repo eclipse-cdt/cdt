@@ -12,7 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIEnumType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,11 +21,11 @@ public class EnumType extends IntegralType implements ICDIEnumType {
 	/**
 	 * @param typename
 	 */
-	public EnumType(Target target, String typename) {
-		this(target, typename, false);
+	public EnumType(VariableObject vo, String typename) {
+		this(vo, typename, false);
 	}
 
-	public EnumType(Target target, String typename, boolean usigned) {
-		super(target, typename, usigned);
+	public EnumType(VariableObject vo, String typename, boolean usigned) {
+		super(vo, typename, usigned);
 	}
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 
 
@@ -22,8 +22,8 @@ public class IncompleteType extends Type {
 	/**
 	 * @param name
 	 */
-	public IncompleteType(Target target, String name) {
-		super(target, name);
+	public IncompleteType(VariableObject vo, String name) {
+		super(vo, name);
 	}
 
 }

@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -24,8 +25,8 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 
 	ICDIType derivedType;
 
-	public DerivedType(Target target, String typename) {
-		super(target, typename);
+	public DerivedType(VariableObject vo, String typename) {
+		super(vo, typename);
 	}
 
 	public void setComponentType(ICDIType dtype) {
@@ -37,19 +38,17 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 		Session session = (Session)(target.getSession());
 		SourceManager sourceMgr = (SourceManager)session.getSourceManager();
 		try {
-			derivedType = sourceMgr.getType(target, name);
+			derivedType = sourceMgr.getType(getVariableObject(), name);
 		} catch (CDIException e) {
 			// Try after ptype.
 			try {
-				//String ptype = sourceMgr.getDetailTypeName(target, name);
-				// TODO: this type should be created with frames not targets.
-				String ptype = sourceMgr.getDetailTypeName(target.getCurrentThread().getCurrentStackFrame(), name);
-				derivedType = sourceMgr.getType(target, ptype);
+				String ptype = sourceMgr.getDetailTypeName(getVariableObject().getStackFrame(), name);
+				derivedType = sourceMgr.getType(getVariableObject(), ptype);
 			} catch (CDIException ex) {
 			}
 		}
 		if (derivedType == null) {
-			derivedType = new IncompleteType(target, name);
+			derivedType = new IncompleteType(getVariableObject(), name);
 		}
 	}
 }

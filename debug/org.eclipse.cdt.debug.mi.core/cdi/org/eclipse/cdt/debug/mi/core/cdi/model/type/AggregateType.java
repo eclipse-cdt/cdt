@@ -12,13 +12,13 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIAggregateType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
 public abstract class AggregateType extends Type implements ICDIAggregateType {
 
-	public AggregateType(Target target, String typename) {
-		super(target, typename);
+	public AggregateType(VariableObject vo, String typename) {
+		super(vo, typename);
 	}
 }

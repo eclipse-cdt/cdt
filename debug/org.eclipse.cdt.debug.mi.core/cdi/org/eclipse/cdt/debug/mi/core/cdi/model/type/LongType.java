@@ -12,7 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,11 +21,11 @@ public class LongType extends IntegralType implements ICDILongType {
 	/**
 	 * @param typename
 	 */
-	public LongType(Target target, String typename) {
-		this(target, typename, false);
+	public LongType(VariableObject vo, String typename) {
+		this(vo, typename, false);
 	}
 
-	public LongType(Target target, String typename, boolean usigned) {
-		super(target, typename, usigned);
+	public LongType(VariableObject vo, String typename, boolean usigned) {
+		super(vo, typename, usigned);
 	}
 }

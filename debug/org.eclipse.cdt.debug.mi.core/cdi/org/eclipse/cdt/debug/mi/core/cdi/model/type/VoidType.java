@@ -12,13 +12,13 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIVoidType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
 public class VoidType extends Type implements ICDIVoidType {
 
-	public VoidType(Target target, String typename) {
-		super(target, typename);
+	public VoidType(VariableObject vo, String typename) {
+		super(vo, typename);
 	}
 }

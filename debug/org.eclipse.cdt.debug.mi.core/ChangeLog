@@ -1,5 +1,9 @@
 2004-09-15 Alain Magloire
 
+	Chang Type to take a VariableObject.
+
+2004-09-15 Alain Magloire
+
 	The correct thread was not set.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ExpressionManager.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java

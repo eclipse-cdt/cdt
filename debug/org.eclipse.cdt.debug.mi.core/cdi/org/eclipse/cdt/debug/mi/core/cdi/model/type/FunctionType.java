@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,8 +21,8 @@ public class FunctionType extends DerivedType implements ICDIFunctionType {
 
 	String params = ""; //$NON-NLS-1$
 
-	public FunctionType(Target target, String typename) {
-		super(target, typename);
+	public FunctionType(VariableObject vo, String typename) {
+		super(vo, typename);
 	}
 
 	/* (non-Javadoc)

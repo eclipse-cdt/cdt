@@ -35,4 +35,10 @@ public interface IMacroEntry extends IPathEntry {
 	 */
 	IPath[] getExclusionPatterns();
 
+	/**
+	 * Return the base path.
+	 * @return
+	 */
+	IPath getBasePath();
+
 }

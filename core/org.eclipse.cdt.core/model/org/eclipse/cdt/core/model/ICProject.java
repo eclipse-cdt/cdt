@@ -95,6 +95,14 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	ILibraryReference[] getLibraryReferences() throws CModelException;
 
 	/**
+	 * Return the include paths set on the project.
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	IIncludeReference[] getIncludeReferences() throws CModelException;
+
+	/**
 	 * Returns the names of the projects that are directly required by this
 	 * project. A project is required if it is in its cpath entries.
 	 * <p>

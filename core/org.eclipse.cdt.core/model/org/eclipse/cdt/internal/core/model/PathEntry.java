@@ -98,8 +98,6 @@ public class PathEntry implements IPathEntry {
 				return "src"; //$NON-NLS-1$
 			case IPathEntry.CDT_LIBRARY :
 				return "lib"; //$NON-NLS-1$
-			//case IPathEntry.CDT_VARIABLE :
-			//	return "var"; //$NON-NLS-1$
 			case IPathEntry.CDT_INCLUDE :
 				return "inc"; //$NON-NLS-1$
 			case IPathEntry.CDT_MACRO :

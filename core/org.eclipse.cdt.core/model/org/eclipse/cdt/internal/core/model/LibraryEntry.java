@@ -15,16 +15,16 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.core.runtime.IPath;
 
-public class LibraryEntry extends PathEntry implements ILibraryEntry {
+public class LibraryEntry extends APathEntry implements ILibraryEntry {
 
 	IPath libraryPath;
 	IPath sourceAttachmentPath;
 	IPath sourceAttachmentRootPath;
 	IPath sourceAttachmentPrefixMapping;
 
-	public LibraryEntry(IPath path, IPath sourceAttachmentPath,
+	public LibraryEntry(IPath libraryPath, IPath basePath, IPath sourceAttachmentPath,
 		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		super(ILibraryEntry.CDT_LIBRARY, path, isExported);
+		super(ILibraryEntry.CDT_LIBRARY, libraryPath, basePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
 		this.sourceAttachmentPath = sourceAttachmentPath;
 		this.sourceAttachmentRootPath = sourceAttachmentRootPath;
 		this.sourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping;

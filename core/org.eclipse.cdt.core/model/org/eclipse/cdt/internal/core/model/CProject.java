@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IOutputEntry;
@@ -131,14 +133,29 @@ public class CProject extends Openable implements ICProject {
 		return getProject().hashCode();
 	}
 
+	public IIncludeReference[] getIncludeReferences() throws CModelException {
+		IPathEntry[] entries = getResolvedPathEntries();
+		ArrayList list = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+				IIncludeEntry entry = (IIncludeEntry) entries[i];
+				IIncludeReference inc = new IncludeReference(this, entry);
+				if (inc != null) {
+					list.add(inc);
+				}
+			}
+		}
+		return (IIncludeReference[]) list.toArray(new IIncludeReference[0]);
+	}
+
 	public ILibraryReference[] getLibraryReferences() throws CModelException {
-		ArrayList list = new ArrayList(5);
 		IBinaryParser[] binParsers = null;
 		try {
 			binParsers = CCorePlugin.getDefault().getBinaryParser(getProject());
 		} catch (CoreException e) {
 		}
 		IPathEntry[] entries = getResolvedPathEntries();
+		ArrayList list = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 				ILibraryEntry entry = (ILibraryEntry) entries[i];

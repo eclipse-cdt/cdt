@@ -22,7 +22,6 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 
 	public LibraryReferenceArchive(ICElement parent, ILibraryEntry e, IBinaryArchive ar) {
 		super(parent, e.getPath(), ar);
-		setElementType(ICElement.C_VCONTAINER);
 		entry = e;
 	}
 

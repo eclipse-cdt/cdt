@@ -57,4 +57,10 @@ public interface ILibraryEntry extends IPathEntry {
 	 */
 	IPath getSourceAttachmentPrefixMapping();
 
+	/**
+	 * Return the base path of the library.
+	 * @return IPath
+	 */
+	IPath getBasePath();
+
 }

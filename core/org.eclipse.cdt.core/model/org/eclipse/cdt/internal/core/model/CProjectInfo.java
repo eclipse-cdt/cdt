@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
@@ -27,6 +28,8 @@ class CProjectInfo extends OpenableInfo {
 	BinaryContainer vBin;
 	ArchiveContainer vLib;
 	ILibraryReference[] libReferences;
+	IIncludeReference[] incReferences;
+
 	Object[] nonCResources = null;
 
 	/**
@@ -130,6 +133,16 @@ class CProjectInfo extends OpenableInfo {
 				try {
 					((CElement)libReferences[i]).close();
 				} catch (CModelException e) {
+					//
+				}
+			}
+		}
+		if (incReferences != null) {
+			for (int i = 0; i < incReferences.length; i++) {
+				try {
+					((CElement)incReferences[i]).close();
+				} catch (CModelException e) {
+					//
 				}
 			}
 		}

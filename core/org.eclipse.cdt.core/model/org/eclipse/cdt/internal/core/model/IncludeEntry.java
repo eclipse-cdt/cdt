@@ -19,8 +19,8 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	IPath includePath;
 	boolean isSystemInclude;
 
-	public IncludeEntry(IPath path, IPath includePath, boolean isSystemInclude, IPath[] exclusionPatterns) {
-		super(IIncludeEntry.CDT_INCLUDE, path, exclusionPatterns, path == null);
+	public IncludeEntry(IPath resourcePath, IPath includePath, IPath basePath, boolean isSystemInclude, IPath[] exclusionPatterns) {
+		super(IIncludeEntry.CDT_INCLUDE, resourcePath, basePath, exclusionPatterns, resourcePath == null);
 		this.includePath = includePath;
 		this.isSystemInclude = isSystemInclude;
 	}

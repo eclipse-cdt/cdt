@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 public class SourceEntry extends APathEntry implements ISourceEntry {
 
 	public SourceEntry(IPath path, IPath[] exclusionPatterns) {
-		super(ISourceEntry.CDT_SOURCE, path, exclusionPatterns, false);
+		super(ISourceEntry.CDT_SOURCE, path, null, exclusionPatterns, false);
 	}
 
 	public boolean equals (Object obj) {

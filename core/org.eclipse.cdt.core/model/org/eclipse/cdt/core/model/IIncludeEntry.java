@@ -23,6 +23,12 @@ public interface IIncludeEntry extends IPathEntry {
 	IPath getIncludePath();
 
 	/**
+	 * Return the base path of the includePath
+	 * @return IPath
+	 */
+	IPath getBasePath();
+
+	/**
 	 * Whether or not it a system include path
 	 * @return boolean
 	 */

@@ -22,7 +22,6 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 
 	public LibraryReferenceShared(ICElement parent, ILibraryEntry e, IBinaryObject bin) {
 		super(parent, e.getPath(), bin);
-		setElementType(ICElement.C_VCONTAINER);
 		entry = e;
 	}
 

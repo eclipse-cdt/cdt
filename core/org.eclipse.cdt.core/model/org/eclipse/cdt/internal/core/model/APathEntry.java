@@ -18,11 +18,13 @@ public abstract class APathEntry extends PathEntry {
 
 	public static IPath[] NO_EXCLUSION_PATTERNS = {};
 	IPath[] exclusionPatterns;
+	IPath basePath;
 	private final static char[][] UNINIT_PATTERNS = new char[][] { "Non-initialized yet".toCharArray() }; //$NON-NLS-1$
 	char[][]fullCharExclusionPatterns = UNINIT_PATTERNS;
 
-	public APathEntry (int kind, IPath path, IPath[] exclusionPatterns, boolean isExported) {
+	public APathEntry (int kind, IPath path, IPath basePath, IPath[] exclusionPatterns, boolean isExported) {
 		super(kind, path, isExported);
+		this.basePath = basePath;
 		this.exclusionPatterns = exclusionPatterns;
 	}
 
@@ -34,7 +36,15 @@ public abstract class APathEntry extends PathEntry {
 		return exclusionPatterns;
 	}
 
-	/*
+	/**
+	 * Returns the base Path
+	 * @return IPath
+	 */
+	public IPath getBasePath() {
+		return basePath;
+	}
+
+	/**
 	 * Returns a char based representation of the exclusions patterns full path.
 	 */
 	public char[][] fullExclusionPatternChars() {
@@ -69,6 +79,12 @@ public abstract class APathEntry extends PathEntry {
 					if (!myPattern.equals(otherExcludes[i].toString())) {
 						return false;
 					}
+				}
+			}
+			IPath otherBasePath = otherEntry.getBasePath();
+			if (basePath != null) {
+				if (otherBasePath != null && !basePath.equals(otherBasePath)) {
+					return false;
 				}
 			}
 			return true;

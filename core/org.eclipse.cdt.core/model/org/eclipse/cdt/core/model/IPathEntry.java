@@ -62,12 +62,6 @@ public interface IPathEntry {
 	 */
 	int CDT_OUTPUT = 7;
 
-    /**
-     * Entry kind constant describing an entry defined using
-     * a path that begins with a variable reference.
-     */
-	int CDT_VARIABLE = 10;
-
 	/**
 	 * Returns the kind of this path entry.
 	 *

@@ -25,7 +25,7 @@ public class OutputEntry extends APathEntry implements IOutputEntry {
 	 * @param isExported
 	 */
 	public OutputEntry(IPath path, IPath[] exclusionPatterns, boolean isExported) {
-		super(CDT_OUTPUT, path, exclusionPatterns, isExported);
+		super(CDT_OUTPUT, path, null, exclusionPatterns, isExported);
 	}
 
 	public boolean equals(Object obj) {

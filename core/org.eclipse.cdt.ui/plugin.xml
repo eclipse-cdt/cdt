@@ -27,9 +27,9 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -130,8 +130,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -326,6 +326,12 @@
                class="org.eclipse.cdt.ui.actions.OpenClassWizardAction"
                toolbarPath="Normal/FolderWizards"
                id="org.eclipse.cdt.ui.actions.OpenClassWizardAction">
+            <enablement>
+               <objectState
+                     name="projectNature"
+                     value="org.eclipse.cdt.core.ccnature">
+               </objectState>
+            </enablement>
          </action>
       </actionSet>
    </extension>

@@ -1225,5 +1225,12 @@ public class DOMTests extends TestCase {
 		assertEquals( parmDeclarator.getName().toString(), "p1");
 		assertNotNull( parmDeclarator.getExpression());
 	}
+	
+	public void testBug36237() throws Exception
+	{
+		TranslationUnit tu = parse( "A::A():B( (char *)0 ){}", true ); 
+		assertEquals( tu.getDeclarations().size(), 1 );  
+	}
+	 
 }
 

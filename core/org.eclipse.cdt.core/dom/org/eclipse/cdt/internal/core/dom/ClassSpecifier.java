@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.eclipse.cdt.internal.core.parser.Token;
 
-public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable {
+public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable, IAccessable {
 
 	private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_private );
 	private ClassKey key = new ClassKey();
@@ -42,7 +42,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	/**
 	 * @return int
 	 */
-	public int getCurrentVisibility() {
+	public int getVisibility() {
 		return access.getAccess();
 	}
 
@@ -50,7 +50,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	 * Sets the currentVisiblity.
 	 * @param currentVisiblity The currentVisiblity to set
 	 */
-	public void setCurrentVisibility(int currentVisiblity) {
+	public void setVisibility(int currentVisiblity) {
 		access.setAccess(currentVisiblity);
 	}
 

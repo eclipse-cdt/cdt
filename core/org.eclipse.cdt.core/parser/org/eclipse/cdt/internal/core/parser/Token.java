@@ -49,6 +49,29 @@ public class Token {
 	public Token getNext() { return next; }
 	public void setNext(Token t) { next = t; }
 	
+	public boolean looksLikeExpression()
+	{
+		switch( getType() )
+		{
+			case tINTEGER:
+			case t_false:
+			case t_true:
+			case tSTRING:
+			case tLSTRING:
+			case tFLOATINGPT:
+			case tCHAR:
+			case tAMPER:
+			case tDOT:
+			case tLPAREN:
+				return true;
+			default:
+				break;
+		}
+	
+		
+		return false;
+	}
+	
 	public boolean isOperator()
 	{
 		switch( getType() )

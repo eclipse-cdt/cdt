@@ -53,7 +53,7 @@ public class DOMBuilder implements IParserCallback
 		}
 		
 		ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
-		classSpecifier.setCurrentVisibility( visibility );
+		classSpecifier.setVisibility( visibility );
 		classSpecifier.setStartingOffset( classKey.getOffset() );
 		classSpecifier.setClassKeyToken( classKey );
 		decl.setTypeSpecifier(classSpecifier);
@@ -175,8 +175,8 @@ public class DOMBuilder implements IParserCallback
 	public Object simpleDeclarationBegin(Object container, Token firstToken) {
 		SimpleDeclaration decl = new SimpleDeclaration();
 		((IScope)container).addDeclaration(decl);
-		if( container instanceof ClassSpecifier )
-			decl.setAccessSpecifier(new AccessSpecifier( ((ClassSpecifier)container).getCurrentVisibility() ));
+		if( container instanceof IAccessable )
+			decl.setAccessSpecifier(new AccessSpecifier( ((IAccessable)container).getVisibility() ));
 		((IOffsetable)decl).setStartingOffset( firstToken.getOffset() );
 		return decl;
 	}
@@ -381,13 +381,13 @@ public class DOMBuilder implements IParserCallback
 		switch( visibility.getType() )
 		{
 			case Token.t_public:
-				spec.setCurrentVisibility( AccessSpecifier.v_public );
+				spec.setVisibility( AccessSpecifier.v_public );
 				break;
 			case Token.t_protected:
-				spec.setCurrentVisibility( AccessSpecifier.v_protected );
+				spec.setVisibility( AccessSpecifier.v_protected );
 				break;
 			case Token.t_private:
-				spec.setCurrentVisibility( AccessSpecifier.v_private );
+				spec.setVisibility( AccessSpecifier.v_private );
 				break;
 		}
 		return spec;
@@ -814,7 +814,10 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
 	public Object templateDeclarationBegin(Object container, Token exported) {
-		return new TemplateDeclaration( (IScope)container, exported );
+		TemplateDeclaration d = new TemplateDeclaration( (IScope)container, exported );
+		if( container instanceof IAccessable )
+			d.setVisibility( ((IAccessable)container).getVisibility() );
+		return d;
 	}
 
 	/* (non-Javadoc)

@@ -22,9 +22,10 @@ import org.eclipse.cdt.internal.core.parser.Token;
  * @author jcamelon
  *
  */
-public class TemplateDeclaration extends Declaration implements IScope, ITemplateParameterListOwner, IOffsetable {
+public class TemplateDeclaration extends Declaration implements IScope, IAccessable, ITemplateParameterListOwner, IOffsetable {
 
 	private final boolean exported;
+	private AccessSpecifier visibility = null; 
 	private Token firstToken, lastToken; 
 	private IScope ownerScope;  
 	private List declarations = new ArrayList(); 
@@ -125,14 +126,30 @@ public class TemplateDeclaration extends Declaration implements IScope, ITemplat
 	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setStartingOffset(int)
 	 */
 	public void setStartingOffset(int i) {
-		throw new Error( "Sorry, not implemented bucko!");
+		throw new Error( "Offset should not be set");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTotalLength(int)
 	 */
 	public void setTotalLength(int i) {
-		throw new Error( "Sorry, not implemented bucko!");
+		throw new Error( "Offset should not be set");
+	}
+
+	/**
+	 * @return
+	 */
+	public int getVisibility() {
+		if( visibility == null ) return AccessSpecifier.v_unknown;
+		return visibility.getAccess();
+	}
+
+	/**
+	 * @param specifier
+	 */
+	public void setVisibility(int visibility) {
+		if( this.visibility == null ) this.visibility = new AccessSpecifier(visibility);
+		else this.visibility.setAccess(visibility);
 	}
 
 }

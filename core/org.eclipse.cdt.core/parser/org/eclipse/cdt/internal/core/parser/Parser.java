@@ -1151,8 +1151,7 @@ c, quick);
 				switch (LT(1)) {
 					case Token.tLPAREN:
 						// temporary fix for initializer/function declaration ambiguity
-						if( LT(2) != Token.tINTEGER && LT(2) != Token.t_false && LT(2) != Token.t_true && LT(2) != Token.tSTRING && 
-							LT(2) != Token.tLSTRING )
+						if( ! LA(2).looksLikeExpression() )
 						{
 							// parameterDeclarationClause
 							Object clause = null; 
@@ -1894,13 +1893,19 @@ c, quick);
 	 */
 	protected void castExpression( Object expression ) throws Backtrack {
 		// TO DO: we need proper symbol checkint to ensure type name
-		if (false && LT(1) == Token.tLPAREN) {
+		if (LT(1) == Token.tLPAREN) {
 			Token mark = mark();
 			consume();
 			
 			// If this isn't a type name, then we shouldn't be here
 			try {
+				if( LT(1) == Token.t_const ) consume(); 
 				typeId();
+				while( LT(1) == Token.tSTAR ) 
+				{
+					consume( Token.tSTAR ); 
+					if( LT(1) == Token.t_const || LT(1) == Token.t_volatile ) consume();
+				}
 				consume(Token.tRPAREN);
 				castExpression( expression );
 				return;
@@ -1917,6 +1922,33 @@ c, quick);
 			name();
 			return;
 		} catch (Backtrack b) {
+			boolean encountered = false;
+			simpleMods:
+			for( ; ; )
+			{
+				switch( LT(1) )
+				{
+					case Token.t_short:
+					case Token.t_unsigned:
+					case Token.t_long:
+						encountered = true;
+						consume(); 
+						break;
+					case Token.t_int:
+					case Token.t_char:
+					case Token.t_bool:
+					case Token.t_double:
+					case Token.t_float:
+					case Token.t_wchar_t:
+					case Token.t_void: 
+						encountered = true;
+						consume(); 
+					default:
+						break simpleMods;
+				}
+			}
+			if( encountered )
+				return;
 		}
 	}
 	

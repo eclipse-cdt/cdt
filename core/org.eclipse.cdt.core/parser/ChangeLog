@@ -1,4 +1,8 @@
 2003-04-10 John Camelon
+	Fixed Bug36237  Parser fails on casts in ctor initializer.
+	Added AccessSpecifier to TemplateDeclaration.
+
+2003-04-10 John Camelon
 	Updated callbacks and parser to add offset information to template declarations, 
 	thus making TemplateDeclaration implement IOffsetable.
 

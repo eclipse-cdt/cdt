@@ -1165,6 +1165,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             while_statement.setBody( while_body );
             while_condition.setParent( while_statement );
             while_condition.setPropertyInParent( IASTWhileStatement.BODY );
+            while_body.setParent( while_statement );
             return while_statement;
         case IToken.t_do:
             startOffset = consume(IToken.t_do).getOffset();

@@ -8,16 +8,17 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation 
  **********************************************************************/
-package org.eclipse.cdt.internal.core.parser2;
+package org.eclipse.cdt.internal.core.parser2.c;
 
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.c.ICFileScope;
 
 /**
  * @author aniefer
  */
-public class CompilationUnit implements IScope {
+public class CFileScope implements ICFileScope{
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()

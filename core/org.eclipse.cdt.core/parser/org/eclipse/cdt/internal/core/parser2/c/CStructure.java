@@ -30,11 +30,11 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
  * @author aniefer
  */
 public class CStructure implements ICompositeType {
-	final private IASTDeclSpecifier declSpec;
+	final private IASTDeclSpecifier declSpecifier;
 	
 	public CStructure( IASTDeclSpecifier declSpec ){
 		declSpec = checkForDefinition( declSpec );
-		this.declSpec = declSpec;
+		this.declSpecifier = declSpec;
 	}
 	
 	private IASTDeclSpecifier checkForDefinition( IASTDeclSpecifier declSpec ){
@@ -54,10 +54,10 @@ public class CStructure implements ICompositeType {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		if( declSpec instanceof ICASTCompositeTypeSpecifier )
-			return ((ICASTCompositeTypeSpecifier)declSpec).getName().toString();
-		else if( declSpec instanceof ICASTElaboratedTypeSpecifier )
-			return ((ICASTElaboratedTypeSpecifier)declSpec).getName().toString();
+		if( declSpecifier instanceof ICASTCompositeTypeSpecifier )
+			return ((ICASTCompositeTypeSpecifier)declSpecifier).getName().toString();
+		else if( declSpecifier instanceof ICASTElaboratedTypeSpecifier )
+			return ((ICASTElaboratedTypeSpecifier)declSpecifier).getName().toString();
 		
 		return ""; //$NON-NLS-1$
 	}
@@ -66,19 +66,19 @@ public class CStructure implements ICompositeType {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CVisitor.getContainingScope( declSpec );
+		return CVisitor.getContainingScope( declSpecifier );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
 	public List getFields() {
-		if( !( declSpec instanceof ICASTCompositeTypeSpecifier ) ){
+		if( !( declSpecifier instanceof ICASTCompositeTypeSpecifier ) ){
 			//error
 			return null;
 		}
 		
-		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
+		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpecifier;
 		List members = compositeTypeSpec.getMembers();
 		int size = members.size();
 		List fields = new ArrayList( size );
@@ -105,12 +105,12 @@ public class CStructure implements ICompositeType {
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public IField findField(String name) {
-		if( !( declSpec instanceof ICASTCompositeTypeSpecifier ) ){
+		if( !( declSpecifier instanceof ICASTCompositeTypeSpecifier ) ){
 			//error
 			return null;
 		}
 		
-		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
+		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpecifier;
 		List members = compositeTypeSpec.getMembers();
 		int size = members.size();
 		if( size > 0 ){

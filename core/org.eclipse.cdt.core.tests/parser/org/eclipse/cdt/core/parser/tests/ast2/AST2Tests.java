@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -814,5 +816,45 @@ public class AST2Tests extends TestCase {
     	
     	assertNotNull( x1 );
     	assertSame( x1, x2 );
+    }
+    
+    static class NameCollector extends CVisitor.BaseVisitorAction {
+        {
+            processNames = true;
+        }
+        public List nameList = new ArrayList();
+        public boolean processName( IASTName name ){
+            nameList.add( name );
+            return true;
+        }
+        public IASTName getName( int idx ){
+            if( idx < 0 || idx >= nameList.size() )
+                return null;
+            return (IASTName) nameList.get( idx );
+        }
+        public int size() { return nameList.size(); } 
+    }
+    public void testLabels() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f() {          \n"); //$NON-NLS-1$
+        buffer.append("   while( 1 ) {     \n"); //$NON-NLS-1$
+        buffer.append("      if( 1 )       \n"); //$NON-NLS-1$
+        buffer.append("         goto end;  \n"); //$NON-NLS-1$
+        buffer.append("   }                \n"); //$NON-NLS-1$
+        buffer.append("   end: ;           \n"); //$NON-NLS-1$
+        buffer.append("}                   \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 3 );
+        IFunction function = (IFunction) collector.getName( 0 ).resolveBinding();
+        ILabel label_1 = (ILabel) collector.getName( 1 ).resolveBinding();
+        ILabel label_2 = (ILabel) collector.getName( 2 ).resolveBinding();
+        assertNotNull( function );
+        assertNotNull( label_1 );
+        assertEquals( label_1, label_2 );
     }
 }

@@ -35,16 +35,16 @@ public class CFunction implements IFunction {
 		this.functionScope = new CFunctionScope( this );
 	}
 	
-	private IASTFunctionDeclarator checkForDefinition( IASTFunctionDeclarator declarator ){
-		if( declarator.getParent() instanceof IASTFunctionDefinition )
-			return declarator;
+	private IASTFunctionDeclarator checkForDefinition( IASTFunctionDeclarator dtor ){
+		if( dtor.getParent() instanceof IASTFunctionDefinition )
+			return dtor;
 		
-		IASTFunctionDeclarator decl = CVisitor.findDefinition( declarator );
-		if( decl != null && decl != declarator ){
-			declarator = decl;
-			((CASTName)declarator.getName()).setBinding( this );
+		IASTFunctionDeclarator def = CVisitor.findDefinition( dtor );
+		if( def != null && def != dtor ){
+			dtor = def;
+			((CASTName)dtor.getName()).setBinding( this );
 		}
-		return declarator;
+		return dtor;
 	}
 	
 	/* (non-Javadoc)
@@ -82,5 +82,9 @@ public class CFunction implements IFunction {
 	 */
 	public IScope getFunctionScope() {
 		return functionScope;
+	}
+	
+	public IASTDeclaration getDeclaration(){
+	    return (IASTDeclaration) declarator.getParent();
 	}
 }

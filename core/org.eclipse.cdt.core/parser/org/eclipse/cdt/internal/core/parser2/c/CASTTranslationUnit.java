@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.internal.core.parser2.CompilationUnit;
 
 /**
  * @author jcamelon
@@ -30,7 +29,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     private int currentIndex = 0;
     
     //Binding
-    private CompilationUnit compilationUnit = null;
+    private CFileScope compilationUnit = null;
     
     public void addDeclaration( IASTDeclaration d )
     {
@@ -81,7 +80,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      */
     public IScope getScope() {
     	if( compilationUnit == null )
-    		compilationUnit = new CompilationUnit();
+    		compilationUnit = new CFileScope();
         return compilationUnit;
     }
     

@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -66,7 +68,40 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @author aniefer
  */
 public class CVisitor {
+	public static abstract class BaseVisitorAction {
+		public boolean processNames          = false;
+		public boolean processDeclarations   = false;
+		public boolean processParameterDeclarations = false;
+		public boolean processDeclarators    = false;
+		public boolean processDeclSpecifiers = false;
+		public boolean processExpressions    = false;
+		public boolean processStatements     = false;
+		public boolean processTypeIds        = false;
+		
+		/**
+		 * @return true to continue visiting, return false to stop
+		 */
+		public boolean processName( IASTName name ) 					{ return true; }
+		public boolean processDeclaration( IASTDeclaration declaration ){ return true; }
+		public boolean processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return true; }
+		public boolean processDeclarator( IASTDeclarator declarator )   { return true; }
+		public boolean processDeclSpecifier( IASTDeclSpecifier declSpec ){return true; }
+		public boolean processExpression( IASTExpression expression )   { return true; }
+		public boolean processStatement( IASTStatement statement )      { return true; }
+		public boolean processTypeId( IASTTypeId typeId )               { return true; }
+	}
 	
+	public static class ClearBindingAction extends BaseVisitorAction {
+		{
+			processNames = true;
+		}
+		public boolean processName(IASTName name) {
+			((CASTName) name ).setBinding( null );
+			return true;
+		}
+	}
+	
+	//Scopes
 	private static final int COMPLETE = 1;
 	private static final int CURRENT_SCOPE = 2;
 	
@@ -80,16 +115,39 @@ public class CVisitor {
 			binding = resolveBinding( parent );
 		} else if( parent instanceof IASTFieldReference ){
 			binding = findBinding( (IASTFieldReference) parent );
-		} else if( parent instanceof CASTDeclarator ){
-			binding = createBinding( (CASTDeclarator) parent, name );
-		} else if( parent instanceof CASTCompositeTypeSpecifier ){
-			binding = createBinding( (CASTCompositeTypeSpecifier) parent );
+		} else if( parent instanceof IASTDeclarator ){
+			binding = createBinding( (IASTDeclarator) parent, name );
+		} else if( parent instanceof ICASTCompositeTypeSpecifier ){
+			binding = createBinding( (ICASTCompositeTypeSpecifier) parent );
 		} else if( parent instanceof ICASTElaboratedTypeSpecifier ){
 			binding = createBinding( (ICASTElaboratedTypeSpecifier) parent );
+		} else if( parent instanceof IASTStatement ){
+		    binding = createBinding ( (IASTStatement) parent );
 		}
 		name.setBinding( binding );
 	}
 
+	private static IBinding createBinding( IASTStatement statement ){
+	    if( statement instanceof IASTGotoStatement ){
+	        IScope scope = getContainingScope( statement );
+	        while( scope != null && !( scope instanceof ICFunctionScope) ){
+	            scope = scope.getParent();
+	        }
+	        if( scope != null && scope instanceof ICFunctionScope ){
+	            CFunctionScope functionScope = (CFunctionScope) scope;
+	            List labels = functionScope.getLabels();
+	            for( int i = 0; i < labels.size(); i++ ){
+	                ILabel label = (ILabel) labels.get(i);
+	                if( label.getName().equals( ((IASTGotoStatement)statement).getName().toString() ) ){
+	                    return label;
+	                }
+	            }
+	        }
+	    } else if( statement instanceof IASTLabelStatement ){
+	        return new CLabel( (IASTLabelStatement) statement );
+	    }
+	    return null;
+	}
 	private static IBinding createBinding( ICASTElaboratedTypeSpecifier elabTypeSpec ){
 		IASTNode parent = elabTypeSpec.getParent();
 		if( parent instanceof IASTSimpleDeclaration ){
@@ -253,7 +311,7 @@ public class CVisitor {
 	
 	public static IScope getContainingScope( IASTStatement statement ){
 		IASTNode parent = statement.getParent();
-		if( parent instanceof IASTCompoundStatement ){
+		if( parent instanceof IASTStatement ){
 			return getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
@@ -463,31 +521,49 @@ public class CVisitor {
 	}
 	
 	public static void clearBindings( IASTTranslationUnit tu ){
+		visitTranslationUnit( tu, new ClearBindingAction() ); 
+	}
+	
+	public static void visitTranslationUnit( IASTTranslationUnit tu, BaseVisitorAction action ){
 		List decls = tu.getDeclarations();
 		for( int i = 0; i < decls.size(); i++ ){
-			clearBindings( (IASTDeclaration) decls.get(i) );
+			if( !visitDeclaration( (IASTDeclaration) decls.get(i), action ) ) return;
 		}
 	}
-	private static void clearBindings( IASTDeclaration declaration ){
+	
+	public static boolean visitName( IASTName name, BaseVisitorAction action ){
+		if( action.processNames )
+			return action.processName( name );
+		return true;
+	}
+	
+	public static boolean visitDeclaration( IASTDeclaration declaration, BaseVisitorAction action ){
+		if( action.processDeclarations )
+			if( !action.processDeclaration( declaration ) ) return false;
+		
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declaration;
-			clearBindings( simpleDecl.getDeclSpecifier() );
+			if( !visitDeclSpecifier( simpleDecl.getDeclSpecifier(), action ) ) return false;
 			List list = simpleDecl.getDeclarators();
 			for( int i = 0; i < list.size(); i++ ){
-				clearBindings( (IASTDeclarator) list.get(i) );
+				if( !visitDeclarator( (IASTDeclarator) list.get(i), action ) ) return false;
 			}
 		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition fnDef = (IASTFunctionDefinition) declaration;
-			clearBindings( fnDef.getDeclSpecifier() );
-			clearBindings( fnDef.getDeclarator() );
-			clearBindings( fnDef.getBody() );
+			if( !visitDeclSpecifier( fnDef.getDeclSpecifier(), action ) ) return false;
+			if( !visitDeclarator( fnDef.getDeclarator(), action ) ) return false;
+			if( !visitStatement( fnDef.getBody(), action ) ) return false;
 		}
+		return true;
 	}
-	private static void clearBindings( IASTDeclarator declarator ){
-		((CASTName)declarator.getName()).setBinding( null );
+	public static boolean visitDeclarator( IASTDeclarator declarator, BaseVisitorAction action ){
+		if( action.processDeclarators )
+			if( !action.processDeclarator( declarator ) ) return false;
+		
+		if( !visitName( declarator.getName(), action ) ) return false;
 		
 		if( declarator.getNestedDeclarator() != null )
-			clearBindings( declarator.getNestedDeclarator() );
+			if( !visitDeclarator( declarator.getNestedDeclarator(), action ) ) return false;
 		
 		//TODO: if( declarator.getInitializer() != null )
 		
@@ -495,94 +571,124 @@ public class CVisitor {
 			List list = ((IASTFunctionDeclarator)declarator).getParameters();
 			for( int i = 0; i < list.size(); i++ ){
 				IASTParameterDeclaration param = (IASTParameterDeclaration) list.get(i);
-				clearBindings( param.getDeclarator() );
+				if( !visitDeclarator( param.getDeclarator(), action ) ) return false;
 			}
 		}
+		return true;
 	}
-	private static void clearBindings( IASTDeclSpecifier declSpec ){
+	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, BaseVisitorAction action ){
+	    if( action.processParameterDeclarations )
+	        if( !action.processParameterDeclaration( parameterDeclaration ) ) return false;
+	    
+	    if( !visitDeclSpecifier( parameterDeclaration.getDeclSpecifier(), action ) ) return false;
+	    if( !visitDeclarator( parameterDeclaration.getDeclarator(), action ) ) return false;
+	    return true;
+	}
+	
+	public static boolean visitDeclSpecifier( IASTDeclSpecifier declSpec, BaseVisitorAction action ){
+		if( action.processDeclSpecifiers )
+			if( !action.processDeclSpecifier( declSpec ) ) return false;
+		
 		if( declSpec instanceof ICASTCompositeTypeSpecifier ){
 			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
-			((CASTName) compTypeSpec.getName()).setBinding( null );
+			if( !visitName( compTypeSpec.getName(), action ) ) return false;
 			
 			List list = compTypeSpec.getMembers();
 			for( int i = 0; i < list.size(); i++ ){
-				clearBindings( (IASTDeclaration) list.get(i) );
+				if( !visitDeclaration( (IASTDeclaration) list.get(i), action ) ) return false;
 			}
+		} else if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
+			if( !visitName( ((ICASTElaboratedTypeSpecifier) declSpec).getName(), action ) ) return false;
+		} else if( declSpec instanceof ICASTTypedefNameSpecifier ){
+			if( !visitName( ((ICASTTypedefNameSpecifier) declSpec).getName(), action ) ) return false;
 		}
+		return true;
 	}
-	private static void clearBindings( IASTStatement statement ){
+	public static boolean visitStatement( IASTStatement statement, BaseVisitorAction action ){
+		if( action.processStatements )
+			if( !action.processStatement( statement ) ) return false;
+		
 		if( statement instanceof IASTCompoundStatement ){
 			List list = ((IASTCompoundStatement) statement).getStatements();
 			for( int i = 0; i < list.size(); i++ ){
-				clearBindings( (IASTStatement) list.get(i) );
+				if( !visitStatement( (IASTStatement) list.get(i), action ) ) return false;
 			}
 		} else if( statement instanceof IASTDeclarationStatement ){
-			clearBindings( ((IASTDeclarationStatement)statement).getDeclaration() );
+			if( !visitDeclaration( ((IASTDeclarationStatement)statement).getDeclaration(), action ) ) return false;
 		} else if( statement instanceof IASTExpressionStatement ){
-			clearBindings( ((IASTExpressionStatement)statement).getExpression() );
+		    if( !visitExpression( ((IASTExpressionStatement)statement).getExpression(), action ) ) return false;
 		} else if( statement instanceof IASTCaseStatement ){
-			clearBindings( ((IASTCaseStatement)statement).getExpression() );
+		    if( !visitExpression( ((IASTCaseStatement)statement).getExpression(), action ) ) return false;
 		} else if( statement instanceof IASTDoStatement ){
-			clearBindings( ((IASTDoStatement)statement).getBody() );
+		    if( !visitStatement( ((IASTDoStatement)statement).getBody(), action ) ) return false;
 		} else if( statement instanceof IASTGotoStatement ){
-			((CASTName) ((IASTGotoStatement)statement).getName()).setBinding( null );
+		    if( !visitName( ((IASTGotoStatement)statement).getName(), action ) ) return false;
 		} else if( statement instanceof IASTIfStatement ){
-			clearBindings( ((IASTIfStatement) statement ).getCondition() );
-			clearBindings( ((IASTIfStatement) statement ).getThenClause() );
-			clearBindings( ((IASTIfStatement) statement ).getElseClause() );
+		    if( !visitExpression( ((IASTIfStatement) statement ).getCondition(), action ) ) return false;
+		    if( !visitStatement( ((IASTIfStatement) statement ).getThenClause(), action ) ) return false;
+		    if( !visitStatement( ((IASTIfStatement) statement ).getElseClause(), action ) ) return false;
 		} else if( statement instanceof IASTLabelStatement ){
-			((CASTName) ((IASTLabelStatement)statement).getName()).setBinding( null );
+		    if( !visitName( ((IASTLabelStatement)statement).getName(), action ) ) return false;
 		} else if( statement instanceof IASTReturnStatement ){
-			clearBindings( ((IASTReturnStatement) statement ).getReturnValue() );
+		    if( !visitExpression( ((IASTReturnStatement) statement ).getReturnValue(), action ) ) return false;
 		} else if( statement instanceof IASTSwitchStatement ){
-			clearBindings( ((IASTSwitchStatement) statement ).getController() );
-			clearBindings( ((IASTSwitchStatement) statement ).getBody() );
+		    if( !visitExpression( ((IASTSwitchStatement) statement ).getController(), action ) ) return false;
+		    if( !visitStatement( ((IASTSwitchStatement) statement ).getBody(), action ) ) return false;
 		} else if( statement instanceof IASTWhileStatement ){
-			clearBindings( ((IASTWhileStatement) statement ).getCondition() );
-			clearBindings( ((IASTWhileStatement) statement ).getBody() );
+		    if( !visitExpression( ((IASTWhileStatement) statement ).getCondition(), action ) ) return false;
+		    if( !visitStatement( ((IASTWhileStatement) statement ).getBody(), action ) ) return false;
 		}
+		return true;
 	}
-	private static void clearBindings( IASTTypeId typeId ){
-		clearBindings( typeId.getAbstractDeclarator() );
-		clearBindings( typeId.getDeclSpecifier() );		
+	public static boolean visitTypeId( IASTTypeId typeId, BaseVisitorAction action ){
+		if( action.processTypeIds )
+			if( !action.processTypeId( typeId ) ) return false;
+		
+		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
+		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
+		return true;
 	}
-	private static void clearBindings( IASTExpression expression ){
+	public static boolean visitExpression( IASTExpression expression, BaseVisitorAction action ){
+		if( action.processExpressions )
+		    if( !action.processExpression( expression ) ) return false;
+		
 		if( expression instanceof IASTArraySubscriptExpression ){
-			clearBindings( ((IASTArraySubscriptExpression)expression).getArrayExpression() );
-			clearBindings( ((IASTArraySubscriptExpression)expression).getSubscriptExpression() );
+		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getArrayExpression(), action ) ) return false;
+		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getSubscriptExpression(), action ) ) return false;
 		} else if( expression instanceof IASTBinaryExpression ){
-			clearBindings( ((IASTBinaryExpression)expression).getOperand1() );
-			clearBindings( ((IASTBinaryExpression)expression).getOperand2() );
+		    if( !visitExpression( ((IASTBinaryExpression)expression).getOperand1(), action ) ) return false;
+		    if( !visitExpression( ((IASTBinaryExpression)expression).getOperand2(), action ) ) return false;
 		} else if( expression instanceof IASTConditionalExpression){
-			clearBindings( ((IASTConditionalExpression)expression).getLogicalConditionExpression() );
-			clearBindings( ((IASTConditionalExpression)expression).getNegativeResultExpression() );
-			clearBindings( ((IASTConditionalExpression)expression).getPositiveResultExpression() );
+		    if( !visitExpression( ((IASTConditionalExpression)expression).getLogicalConditionExpression(), action ) ) return false;
+		    if( !visitExpression( ((IASTConditionalExpression)expression).getNegativeResultExpression(), action ) ) return false;
+		    if( !visitExpression( ((IASTConditionalExpression)expression).getPositiveResultExpression(), action ) ) return false;
 		} else if( expression instanceof IASTExpressionList ){
 			List list = ((IASTExpressionList)expression).getExpressions();
 			for( int i = 0; i < list.size(); i++){
-				clearBindings( (IASTExpression) list.get(i) );
+			    if( !visitExpression( (IASTExpression) list.get(i), action ) ) return false;
 			}
 		} else if( expression instanceof IASTFieldReference ){
-			clearBindings( ((IASTFieldReference)expression).getFieldOwner() );
-			((CASTName) ((IASTFieldReference)expression).getFieldName()).setBinding( null );
+		    if( !visitExpression( ((IASTFieldReference)expression).getFieldOwner(), action ) ) return false;
+		    if( !visitName( ((IASTFieldReference)expression).getFieldName(), action ) ) return false;
 		} else if( expression instanceof IASTFunctionCallExpression ){
-			clearBindings( ((IASTFunctionCallExpression)expression).getFunctionNameExpression() );
-			clearBindings( ((IASTFunctionCallExpression)expression).getParameterExpression() );
+		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getFunctionNameExpression(), action ) ) return false;
+		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
 		} else if( expression instanceof IASTIdExpression ){
-			((CASTName) ((IASTIdExpression)expression).getName()).setBinding( null );
+		    if( !visitName( ((IASTIdExpression)expression).getName(), action ) ) return false;
 		} else if( expression instanceof IASTTypeIdExpression ){
-			clearBindings( ((IASTTypeIdExpression)expression).getTypeId() );
+		    if( !visitTypeId( ((IASTTypeIdExpression)expression).getTypeId(), action ) ) return false;
 		} else if( expression instanceof IASTUnaryExpression ){
-			clearBindings( ((IASTUnaryExpression)expression).getOperand() );
+		    if( !visitExpression( ((IASTUnaryExpression)expression).getOperand(), action ) ) return false;
 		} else if( expression instanceof IASTUnaryTypeIdExpression ){
-			clearBindings( ((IASTUnaryTypeIdExpression)expression).getOperand() );
-			clearBindings( ((IASTUnaryTypeIdExpression)expression).getTypeId() );
+		    if( !visitExpression( ((IASTUnaryTypeIdExpression)expression).getOperand(), action ) ) return false;
+		    if( !visitTypeId( ((IASTUnaryTypeIdExpression)expression).getTypeId(), action ) ) return false;
 		} else if( expression instanceof ICASTTypeIdInitializerExpression ){
-			clearBindings( ((ICASTTypeIdInitializerExpression)expression).getTypeId() );
+		    if( !visitTypeId( ((ICASTTypeIdInitializerExpression)expression).getTypeId(), action ) ) return false;
 			//TODO: ((ICASTTypeIdInitializerExpression)expression).getInitializer();
 		} else if( expression instanceof IGNUASTCompoundStatementExpression ){
-			clearBindings( ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement() );
+		    if( !visitStatement( ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement(), action ) ) return false;
 		}
+		return true;
 	}
 	
 }

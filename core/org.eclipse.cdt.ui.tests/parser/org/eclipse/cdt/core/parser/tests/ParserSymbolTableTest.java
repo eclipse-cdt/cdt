@@ -1107,7 +1107,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ParserSymbolTable.Declaration f1 = table.new Declaration( "f" );
 		f1.setType( ParserSymbolTable.TypeInfo.t_function );
-		f1.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f1.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f1.addParameter( ParserSymbolTable.TypeInfo.t_int, 0, null, false );
 		A.addSymbol( f1 );
 		
@@ -1121,7 +1121,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol("f");
 		f2.setType( ParserSymbolTable.TypeInfo.t_function );
-		f2.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f2.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f2.addParameter( ParserSymbolTable.TypeInfo.t_char, 0, null, false );
 		
 		A.addSymbol( f2 );
@@ -1244,7 +1244,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f = table.newParameterizedSymbol("f");
 		f.setType( ParserSymbolTable.TypeInfo.t_function );
-		f.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		
 		ISymbol look = NS.Lookup( "T" );
 		assertEquals( look, T );				
@@ -1264,7 +1264,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol main = table.newParameterizedSymbol("main");
 		main.setType( ParserSymbolTable.TypeInfo.t_function );
-		main.setReturnType( ParserSymbolTable.TypeInfo.t_int );
+		main.setReturnType( table.newSymbol( "", TypeInfo.t_int ) );
 		compUnit.addSymbol( main );
 
 		LinkedList paramList = new LinkedList();
@@ -1312,7 +1312,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ParserSymbolTable.Declaration f1 = table.new Declaration( "f" );
 		f1.setType( ParserSymbolTable.TypeInfo.t_function );
-		f1.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f1.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f1.addParameter( ParserSymbolTable.TypeInfo.t_void, 0, new PtrOp( PtrOp.t_pointer ), false );
 		NS1.addSymbol( f1 );
 		
@@ -1331,7 +1331,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f" );
 		f2.setType( ParserSymbolTable.TypeInfo.t_function );
-		f2.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f2.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f2.addParameter( ParserSymbolTable.TypeInfo.t_void, 0, new PtrOp( PtrOp.t_pointer ), false );
 		NS2.addSymbol( f2 );
 		
@@ -1394,20 +1394,20 @@ public class ParserSymbolTableTest extends TestCase {
 				
 		IParameterizedSymbol f1 = table.newParameterizedSymbol("foo");
 		f1.setType( ParserSymbolTable.TypeInfo.t_function );
-		f1.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f1.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f1.addParameter( ParserSymbolTable.TypeInfo.t_int, 0, null, false );
 		C.addSymbol( f1 );
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol("foo");
 		f2.setType( ParserSymbolTable.TypeInfo.t_function );
-		f2.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f2.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f2.addParameter( ParserSymbolTable.TypeInfo.t_int, 0, null, false );
 		f2.addParameter( ParserSymbolTable.TypeInfo.t_char, 0, null, false );
 		C.addSymbol( f2 );
 		
 		IParameterizedSymbol f3 = table.newParameterizedSymbol("foo");
 		f3.setType( ParserSymbolTable.TypeInfo.t_function );
-		f3.setReturnType( ParserSymbolTable.TypeInfo.t_void );
+		f3.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f3.addParameter( ParserSymbolTable.TypeInfo.t_int, 0, null, false );
 		f3.addParameter( ParserSymbolTable.TypeInfo.t_char, 0, null, false );
 		f3.addParameter( C, new PtrOp( PtrOp.t_pointer ), false );
@@ -2186,7 +2186,6 @@ public class ParserSymbolTableTest extends TestCase {
 	
 	/**
 	 * 
-	 * @throws Exception
 	 * template < class T1, class T2, int I > class A                {}  //#1
 	 * template < class T, int I >            class A < T, T*, I >   {}  //#2
 	 * template < class T1, class T2, int I > class A < T1*, T2, I > {}  //#3
@@ -2198,12 +2197,17 @@ public class ParserSymbolTableTest extends TestCase {
 	 * A <int, char*, 5> a3;		//uses #4, T is char
 	 * A <int, char*, 1> a4;		//uses #5, T is int, T2 is char, I is1
 	 * A <int*, int*, 2> a5;		//ambiguous, matches #3 & #5.
-	 *    
+	 * 
+	 * @throws Exception   
 	 */
 	public void incompletetestTemplateSpecialization() throws Exception{
 		newTable();
 		
-		IDerivableContainerSymbol cls = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol cls1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol cls2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol cls3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol cls4 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol cls5 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		
 		IParameterizedSymbol template1 = table.newParameterizedSymbol( "A", TypeInfo.t_template );
 		ISymbol T1p1 = table.newSymbol( "T1", TypeInfo.t_undef );
@@ -2212,7 +2216,7 @@ public class ParserSymbolTableTest extends TestCase {
 		template1.addParameter( T1p1 );
 		template1.addParameter( T1p2 );
 		template1.addParameter( T1p3 );
-		template1.addSymbol( cls );
+		template1.addSymbol( cls1 );
 		table.getCompilationUnit().addSymbol( template1 );
 		
 		IParameterizedSymbol template2 = table.newParameterizedSymbol( "A", TypeInfo.t_template );
@@ -2227,7 +2231,7 @@ public class ParserSymbolTableTest extends TestCase {
 		template2.addArgument( T2a1 );
 		template2.addArgument( T2a2 );
 		template2.addArgument( T2a3 );
-		template2.addSymbol( cls );
+		template2.addSymbol( cls2 );
 		template1.addSpecialization( template2 );
 		
 		IParameterizedSymbol template3 = table.newParameterizedSymbol( "A", TypeInfo.t_template );
@@ -2244,7 +2248,7 @@ public class ParserSymbolTableTest extends TestCase {
 		template3.addArgument( T3a1 );
 		template3.addArgument( T3a2 );
 		template3.addArgument( T3a3 );
-		template3.addSymbol( cls );
+		template3.addSymbol( cls3 );
 		template1.addSpecialization( template3 );
 				
 		IParameterizedSymbol template4 = table.newParameterizedSymbol( "A", TypeInfo.t_template );
@@ -2253,13 +2257,13 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol T4a1 = table.newSymbol( "", TypeInfo.t_int );
 		ISymbol T4a2 = table.newSymbol( "T", TypeInfo.t_undef );
-		T4a1.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
+		T4a2.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		ISymbol T4a3 = table.newSymbol( "", TypeInfo.t_int );
 		T4a3.getTypeInfo().setDefault( new Integer(5) );
 		template4.addArgument( T4a1 );
 		template4.addArgument( T4a2 );
 		template4.addArgument( T4a3 );
-		template4.addSymbol( cls );
+		template4.addSymbol( cls4 );
 		template1.addSpecialization( template4 );
 				
 		IParameterizedSymbol template5 = table.newParameterizedSymbol( "A", TypeInfo.t_template );
@@ -2276,7 +2280,7 @@ public class ParserSymbolTableTest extends TestCase {
 		template5.addArgument( T5a1 );
 		template5.addArgument( T5a2 );
 		template5.addArgument( T5a3 );
-		template5.addSymbol( cls );
+		template5.addSymbol( cls5 );
 		template1.addSpecialization( template5 );
 		
 		IParameterizedSymbol a = (IParameterizedSymbol) table.getCompilationUnit().Lookup( "A" );
@@ -2288,7 +2292,7 @@ public class ParserSymbolTableTest extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, new Integer(1) ) );
 		
 		TemplateInstance a1 = a.instantiate( args );
-		assertEquals( a1.getInstantiatedSymbol(), template1 );
+		assertEquals( a1.getInstantiatedSymbol(), cls1 );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
@@ -2296,21 +2300,21 @@ public class ParserSymbolTableTest extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, new Integer(1) ) );
 		
 		TemplateInstance a2 = a.instantiate( args );
-		assertEquals( a2.getInstantiatedSymbol(), template2 );
+		assertEquals( a2.getInstantiatedSymbol(), cls2 );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_char, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, new Integer(5) ) );
 		TemplateInstance a3 = a.instantiate( args );
-		assertEquals( a3.getInstantiatedSymbol(), template4 );
+		assertEquals( a3.getInstantiatedSymbol(), cls4 );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_char, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, new Integer(1) ) );
 		TemplateInstance a4 = a.instantiate( args );
-		assertEquals( a4.getInstantiatedSymbol(), template5 );
+		assertEquals( a4.getInstantiatedSymbol(), cls5 );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );

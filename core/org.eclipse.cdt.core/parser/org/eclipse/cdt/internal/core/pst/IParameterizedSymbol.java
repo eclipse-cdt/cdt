@@ -35,6 +35,7 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public void addArgument( ISymbol arg );
 	public LinkedList getArgumentList();
+	public void setArgumentList( LinkedList list );
 	
 	public HashMap getParameterMap();
 	public LinkedList getParameterList();
@@ -42,7 +43,8 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 
 	public boolean hasSameParameters(IParameterizedSymbol newDecl);
 	
-	public void setReturnType( TypeInfo.eType type );
+	public void setReturnType( ISymbol type );
+	public ISymbol getReturnType();
 	
 	public boolean	hasSpecializations();
 	public void 	addSpecialization( IParameterizedSymbol spec );

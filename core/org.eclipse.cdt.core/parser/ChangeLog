@@ -1,3 +1,7 @@
+2003-06-05 Andrew Niefer
+	Begin implementation of functions for template specializations: deduceTemplateArgument,
+	classTemplateSpecializationToFunctionTemplate, transformFunctionTemplateForOrdering
+	
 2003-06-05 John Camelon
 	Fix Bug 38380  "Include" class public methods fails JUnit tests 
 

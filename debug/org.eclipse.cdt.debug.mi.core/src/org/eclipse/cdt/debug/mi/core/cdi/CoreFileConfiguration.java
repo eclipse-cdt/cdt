@@ -16,10 +16,6 @@ public class CoreFileConfiguration implements ICDIConfiguration {
 		return false;
 	}
 
-	public boolean supportsSuspendResume() {
-		return false;
-	}
-
 	public boolean supportsRestart() {
 		return false;
 	}
@@ -59,7 +55,7 @@ public class CoreFileConfiguration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsResume()
 	 */
 	public boolean supportsResume() {
-		return true;
+		return false;
 	}
 
 	/**

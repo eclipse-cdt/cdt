@@ -6,7 +6,9 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
+import org.eclipse.cdt.debug.mi.core.MIInferior;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.utils.spawner.Spawner;
 
 /**
  * @author alain
@@ -95,13 +97,6 @@ public class Configuration implements ICDIConfiguration {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSuspendResume()
-	 */
-	public boolean supportsSuspendResume() {
-		return true;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsTerminate()
 	 */
 	public boolean supportsTerminate() {
@@ -119,6 +114,23 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSuspend()
 	 */
 	public boolean supportsSuspend() {
+		String os = null;
+		try {
+			os = System.getProperty("os.name", "");
+		} catch (SecurityException e) {
+		}
+		// FIXME: bug in gdb whe using -tty sending a control-c
+		// to gdb does not work.
+		if (os.equals("SunOS")) {
+			return false;
+		}
+		Process gdb = miSession.getMIProcess();
+		if (gdb instanceof Spawner) {
+			MIInferior inferior = miSession.getMIInferior();
+			if (inferior.getPTY() != null) {
+				return true;
+			}
+		}
 		return false;
 	}
 

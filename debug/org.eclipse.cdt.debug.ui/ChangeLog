@@ -1,3 +1,8 @@
+2002-10-25 Mikhail Khodjaiants
+	Replaced the usage of 'setWordSize' method by the 'reformat' method of 'IFormattedMemoryBlock'.
+	* MemorySizeAction.java
+	* MemoryViewer.java
+
 2002-10-24 Mikhail Khodjaiants
 	Set the 'relationship' attribute value to 'stack' for the 'MemoryView' perspective extension.
 	* plugin.xml

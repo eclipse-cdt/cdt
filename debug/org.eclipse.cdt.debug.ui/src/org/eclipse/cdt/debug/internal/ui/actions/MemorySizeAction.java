@@ -7,6 +7,9 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -76,8 +79,16 @@ public class MemorySizeAction extends Action implements IUpdate
 	 */
 	public void run()
 	{
-		fGroup.setCurrentSelection( this );
-		fMemoryViewer.setWordSize( fId );
+		try
+		{
+			fMemoryViewer.setWordSize( fId );
+			fGroup.setCurrentSelection( this );
+		}
+		catch( DebugException e )
+		{
+			CDebugUIPlugin.errorDialog( e.getMessage(), (IStatus)null );
+			setChecked( false );
+		}
 	}
 	
 	public String getActionId()

@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -216,12 +217,12 @@ public class MemoryViewer extends ContentViewer
 		return ( block != null ) ? block.getWordSize() : 0;
 	}
 	
-	public void setWordSize( int size )
+	public void setWordSize( int size ) throws DebugException
 	{
 		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
 		if ( block != null )
 		{ 
-			block.setWordSize( size );
+			block.reformat( block.getFormat(), size, block.getNumberOfRows(), block.getNumberOfColumns() );
 			((MemoryControlArea)fTabFolder.getSelection().getControl()).refresh();
 		}
 	}

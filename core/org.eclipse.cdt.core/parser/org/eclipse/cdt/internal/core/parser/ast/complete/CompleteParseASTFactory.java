@@ -900,6 +900,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     protected void setParameter(IParameterizedSymbol symbol, IASTAbstractDeclaration absDecl, boolean isParameter, List references) throws ASTSemanticException
     {
+    	if (absDecl.getTypeSpecifier() == null)
+    		return;
+    		
     	TypeInfo.eType type = null;
     	ISymbol xrefSymbol = null;
     	List newReferences = null; 

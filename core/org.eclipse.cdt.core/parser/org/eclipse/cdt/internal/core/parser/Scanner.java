@@ -340,9 +340,10 @@ public class Scanner implements IScanner {
 				handleInclusion( fileName, true, nameOffset, beginOffset, endOffset );
 			}
 		}
-		
-		IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, endOffset, nameOffset ); 
-		contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
+		if (inclusionReader != null) {
+			IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, endOffset, nameOffset ); 
+			contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
+		}
 	}
 
 	// constants

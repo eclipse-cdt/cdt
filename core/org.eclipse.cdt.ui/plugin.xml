@@ -123,6 +123,40 @@
             id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
       </filter>
    </extension>
+      <extension
+         point="org.eclipse.cdt.ui.textHovers">
+      <hover
+            label="%cdocHover"
+            description="%cdocHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.CDocHover"
+            id="org.eclipse.cdt.ui.CDocHover">
+      </hover>
+      <hover
+            label="%sequentialHover"
+            description="%sequentialHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.BestMatchHover"
+            id="org.eclipse.cdt.ui.BestMatchHover">
+      </hover>
+      <hover
+            label="%sourceHover"
+            description="%sourceHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.CSourceHover"
+            id="org.eclipse.cdt.ui.CSourceHover">
+      </hover>
+      <!--hover
+            label="%problemHover"
+            description="%problemHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.ProblemHover"
+            id="org.eclipse.cdt.ui.ProblemHover">
+      </hover-->
+      <hover
+            label="%annotationHover"
+            description="%annotationHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.AnnotationHover"
+            id="org.eclipse.cdt.ui.AnnotationHover">
+      </hover>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective

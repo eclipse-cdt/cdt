@@ -4,20 +4,14 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
-import java.util.HashMap;
 import java.util.Vector;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CEditorTextHoverDispatcher;
-import org.eclipse.cdt.internal.ui.text.contentassist.*;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICDTConstants;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoIndentStrategy;
@@ -26,6 +20,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -302,45 +297,57 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	}
 
 
-	/**
+	
+	/*
+	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
+	 * @since 2.1
+	 */
+	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
+		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
+		int stateMasks[]= new int[hoverDescs.length];
+		int stateMasksLength= 0;		
+		for (int i= 0; i < hoverDescs.length; i++) {
+			if (hoverDescs[i].isEnabled()) {
+				int j= 0;
+				int stateMask= hoverDescs[i].getStateMask();
+				while (j < stateMasksLength) {
+					if (stateMasks[j] == stateMask)
+						break;
+					j++;
+				}
+				if (j == stateMasksLength)
+					stateMasks[stateMasksLength++]= stateMask;
+			}
+		}
+		if (stateMasksLength == hoverDescs.length)
+			return stateMasks;
+		
+		int[] shortenedStateMasks= new int[stateMasksLength];
+		System.arraycopy(stateMasks, 0, shortenedStateMasks, 0, stateMasksLength);
+		return shortenedStateMasks;
+	}
+	
+	/*
+	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String, int)
+	 * @since 2.1
+	 */
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
+		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
+		int i= 0;
+		while (i < hoverDescs.length) {
+			if (hoverDescs[i].isEnabled() &&  hoverDescs[i].getStateMask() == stateMask)
+				return new CEditorTextHoverProxy(hoverDescs[i], getEditor());
+			i++;
+		}
+
+		return null;
+	}
+
+	/*
 	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		HashMap textHovers = new HashMap( 3 );
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint point = pluginRegistry.getExtensionPoint( CUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-																  ICDTConstants.EP_TEXT_HOVERS );
-		if ( point != null ) 
-		{
-			IExtension[] extensions = point.getExtensions();
-			for ( int i = 0; i < extensions.length; i++ ) 
-			{
-				IExtension currentExtension = extensions[i];
-				IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
-				for ( int j = 0; j < configElements.length; j++ ) 
-				{
-					IConfigurationElement config = configElements[j];
-					if ( config.getName().equals( ICDTConstants.TAG_TEXT_HOVER ) ) 
-					{
-						processTextHoverElement( textHovers, config );
-					}
-				}
-			}
-		}
-
-		return new CEditorTextHoverDispatcher( fEditor, textHovers );
-	}
-
-	private void processTextHoverElement( HashMap textHovers, IConfigurationElement element ) {
-		String perspId = element.getAttribute( ICDTConstants.ATT_PERSPECTIVE );
-		ITextHover textHover = null;
-		try {
-			textHover = (ITextHover)element.createExecutableExtension( ICDTConstants.ATT_CLASS );
-		} catch (CoreException e) {
-		}
-		if ( perspId != null ) {
-			textHovers.put( perspId, textHover );
-		}
+		return getTextHover(sourceViewer, contentType, ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK);
 	}
 
 	/**

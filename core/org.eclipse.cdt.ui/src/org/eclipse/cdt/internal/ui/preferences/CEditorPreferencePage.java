@@ -128,6 +128,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 	protected List fAppearanceColorList;
 	protected ColorEditor fAppearanceForegroundColorEditor;
+	private CEditorHoverConfigurationBlock fCEditorHoverConfigurationBlock;
 
 	private Button fShowInOverviewRulerCheckBox;
 	private Button fShowInVerticalRulerCheckBox;
@@ -731,6 +732,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	protected Control createContents(Composite parent) {
 
+		fCEditorHoverConfigurationBlock= new CEditorHoverConfigurationBlock(this, fOverlayStore);
+
 		fOverlayStore.load();
 		fOverlayStore.start();
 
@@ -752,6 +755,12 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.contentAssistTabTitle")); //$NON-NLS-1$
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createContentAssistPage(folder));
+
+		item= new TabItem(folder, SWT.NONE);
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.hoverTab.title")); //$NON-NLS-1$
+		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
+		item.setControl(fCEditorHoverConfigurationBlock.createControl(folder));
+
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.Navigation")); //$NON-NLS-1$
@@ -847,6 +856,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		fCEditorHoverConfigurationBlock.performOk();
 		fOverlayStore.propagate();
 		return true;
 	}
@@ -860,6 +870,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		initializeFields();
 		handleListSelection();
 		handleAppearanceColorListSelection();
+
+		fCEditorHoverConfigurationBlock.performDefaults();
 
 		super.performDefaults();
 
@@ -1043,7 +1055,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		return status;
 	}
 
-	private void updateStatus(IStatus status) {
+	void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
 			for (int i = 0; i < fNumberFields.size(); i++) {
 				Text text = (Text) fNumberFields.get(i);
@@ -1051,6 +1063,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 				status = StatusUtil.getMoreSevere(s, status);
 			}
 		}
+		status= StatusUtil.getMoreSevere(fCEditorHoverConfigurationBlock.getStatus(), status);
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
 	}

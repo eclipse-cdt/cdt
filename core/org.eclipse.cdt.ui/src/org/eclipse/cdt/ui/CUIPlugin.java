@@ -44,6 +44,8 @@ import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 import org.eclipse.cdt.internal.ui.util.Util;
@@ -52,6 +54,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -72,6 +75,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 public class CUIPlugin extends AbstractUIPlugin {
@@ -97,7 +102,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
-	
+	private CEditorTextHoverDescriptor[] fCEditorTextHoverDescriptors;
+
+	/**
+	 * The combined preference store.
+	 * @since 3.0
+	 */
+	private IPreferenceStore fCombinedPreferenceStore;
+
 	static String SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
 
 	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
@@ -480,13 +492,29 @@ public class CUIPlugin extends AbstractUIPlugin {
 			if(option != null) Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		}
 	}
+
+	/**
+	 * Returns a combined preference store, this store is read-only.
+	 * 
+	 * @return the combined preference store
+	 * 
+	 * @since 3.0
+	 */
+	public IPreferenceStore getCombinedPreferenceStore() {
+		if (fCombinedPreferenceStore == null) {
+			IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
+			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), new PreferencesAdapter(CCorePlugin.getDefault().getPluginPreferences()), generalTextStore });
+		}
+		return fCombinedPreferenceStore;
+	}
+	
+
 	/**
 	 * Returns an array of all editors that have an unsaved content. If the identical content is 
 	 * presented in more than one editor, only one of those editor parts is part of the result.
 	 * 
 	 * @return an array of all dirty editor parts.
-	 */
-	
+	 */	
 	public static IEditorPart[] getDirtyEditors() {
 		Set inputs= new HashSet();
 		List result= new ArrayList(0);
@@ -560,6 +588,88 @@ public class CUIPlugin extends AbstractUIPlugin {
 		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+	}
+
+	/**
+	 * Returns all C editor text hovers contributed to the workbench.
+	 * 
+	 * @return an array of CEditorTextHoverDescriptor
+	 */
+	public CEditorTextHoverDescriptor[] getCEditorTextHoverDescriptors() {
+		if (fCEditorTextHoverDescriptors == null) {
+			fCEditorTextHoverDescriptors= CEditorTextHoverDescriptor.getContributedHovers();
+			ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
+				/**
+				 * {@inheritDoc}
+				 */
+				public IConfigurationElement getConfigurationElement(Object object) {
+					return ((CEditorTextHoverDescriptor)object).getConfigurationElement();
+				}
+			};
+			sorter.sort(fCEditorTextHoverDescriptors);
+		
+			// The Problem hover has to be the first and the Annotation hover has to be the last one in the CDT UI's hover list
+			int length= fCEditorTextHoverDescriptors.length;
+			int first= -1;
+			int last= length - 1;
+			int problemHoverIndex= -1;
+			int annotationHoverIndex= -1;
+			for (int i= 0; i < length; i++) {
+				if (!fCEditorTextHoverDescriptors[i].getId().startsWith(PLUGIN_ID)) {
+					if (problemHoverIndex == -1 || annotationHoverIndex == -1)
+						continue;
+					else {
+						last= i - 1;
+						break;
+					}
+				}
+				if (first == -1)
+					first= i;
+				
+				if (fCEditorTextHoverDescriptors[i].getId().equals("org.eclipse.cdt.ui.AnnotationHover")) { //$NON-NLS-1$
+					annotationHoverIndex= i;
+					continue;
+				}
+				if (fCEditorTextHoverDescriptors[i].getId().equals("org.eclipse.cdt.ui.ProblemHover")) { //$NON-NLS-1$
+					problemHoverIndex= i;
+					continue;
+				}
+			}
+	
+			CEditorTextHoverDescriptor hoverDescriptor= null;
+			
+			if (first > -1 && problemHoverIndex > -1 && problemHoverIndex != first) {
+				// move problem hover to beginning
+				hoverDescriptor= fCEditorTextHoverDescriptors[first];
+				fCEditorTextHoverDescriptors[first]= fCEditorTextHoverDescriptors[problemHoverIndex];
+				fCEditorTextHoverDescriptors[problemHoverIndex]= hoverDescriptor;
+
+				// update annotation hover index if needed
+				if (annotationHoverIndex == first)
+					annotationHoverIndex= problemHoverIndex;
+			}
+			
+			if (annotationHoverIndex > -1 && annotationHoverIndex != last) {
+				// move annotation hover to end
+				hoverDescriptor= fCEditorTextHoverDescriptors[last];
+				fCEditorTextHoverDescriptors[last]= fCEditorTextHoverDescriptors[annotationHoverIndex];
+				fCEditorTextHoverDescriptors[annotationHoverIndex]= hoverDescriptor;
+			}
+		}
+		
+		return fCEditorTextHoverDescriptors;
+	} 
+
+	/**
+	 * Resets the C editor text hovers contributed to the workbench.
+	 * <p>
+	 * This will force a rebuild of the descriptors the next time
+	 * a client asks for them.
+	 * </p>
+	 * 
+	 */
+	public void resetCEditorTextHoverDescriptors() {
+		fCEditorTextHoverDescriptors= null;
 	}
 
 	

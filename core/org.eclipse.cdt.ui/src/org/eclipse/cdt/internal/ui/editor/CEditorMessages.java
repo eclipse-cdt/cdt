@@ -5,12 +5,12 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
-public class CEditorMessages 
-{
+public class CEditorMessages  {
 	private static final String RESOURCE_BUNDLE = "org.eclipse.cdt.internal.ui.editor.CEditorMessages"; //$NON-NLS-1$
 
 
@@ -24,29 +24,38 @@ public class CEditorMessages
 	}
 
 
-	private CEditorMessages() 
-	{
+	private CEditorMessages() {
 	}
 
 
-	public static ResourceBundle getResourceBundle() 
-	{
+	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
 	}
 	
-	public static String getString( String key ) 
-	{
-		try 
-		{
+	public static String getString( String key ) {
+		try {
 			return fgResourceBundle.getString( key );
-		} 
-		catch( MissingResourceException e ) 
-		{
+		} catch(MissingResourceException e) {
 			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (NullPointerException e) {
 			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+
+	/**
+	 * Gets a string from the resource bundle and formats it with arguments
+	 */	
+	public static String getFormattedString(String key, Object[] args) {
+		return MessageFormat.format(getString(key), args);
+	}
+	
+	/**
+	 * Gets a string from the resource bundle and formats it with arguments
+	 */	
+	public static String getFormattedString(String key, Object arg) {
+		return MessageFormat.format(getString(key), new Object[] { arg } );
+	}	
+
 }
 
 

@@ -4,8 +4,10 @@
  */
 package org.eclipse.cdt.ui;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 
@@ -138,6 +140,29 @@ public class PreferenceConstants {
 	 */
 	public final static String EDITOR_EVALUATE_TEMPORARY_PROBLEMS= "handleTemporaryProblems"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that defines the key for the hover modifiers.
+	 *
+	 */
+	public static final String EDITOR_TEXT_HOVER_MODIFIERS= "hoverModifiers"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that defines the key for the hover modifier state masks.
+	 * The value is only used if the value of <code>EDITOR_TEXT_HOVER_MODIFIERS</code>
+	 * cannot be resolved to valid SWT modifier bits.
+	 * 
+	 * @see #EDITOR_TEXT_HOVER_MODIFIERS
+	 */
+	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS= "hoverModifierMasks"; //$NON-NLS-1$
+
+	/**
+	 * The id of the best match hover contributed for extension point
+	 * <code>javaEditorTextHovers</code>.
+	 *
+	 * @since 2.1
+	 */
+	public static final String ID_BESTMATCH_HOVER= "org.eclipse.cdt.ui.BestMatchHover"; //$NON-NLS-1$
+
 
     public static final String REFACTOR_ERROR_PAGE_SEVERITY_THRESHOLD= "Refactoring.ErrorPage.severityThreshold"; //$NON-NLS-1$
     public static final String REFACTOR_FATAL_SEVERITY= "4"; //$NON-NLS-1$
@@ -239,6 +264,11 @@ public class PreferenceConstants {
 
 		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
 		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, false);
+
+		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on Mac; SWT.CONTROL elsewhere
+		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + mod1Name); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + SWT.MOD1); //$NON-NLS-1$
+		//store.setDefault(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 
     }
 }

@@ -15,10 +15,13 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.jface.action.Action;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -296,7 +299,69 @@ public class EditorUtility {
 	public static String getEditorID(IEditorInput input, Object inputObject) {
 		return getEditorID(input.getName());
 	}
-	
+
+	/**
+	 * Maps the localized modifier name to a code in the same
+	 * manner as #findModifier.
+	 * 
+	 * @return the SWT modifier bit, or <code>0</code> if no match was found
+	 */
+	public static int findLocalizedModifier(String token) {
+		if (token == null)
+			return 0;
+		
+		if (token.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+			return SWT.CTRL;
+		if (token.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+			return SWT.SHIFT;
+		if (token.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+			return SWT.ALT;
+		if (token.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+			return SWT.COMMAND;
+
+		return 0;
+	}
+
+	/**
+	 * Returns the modifier string for the given SWT modifier
+	 * modifier bits.
+	 * 
+	 * @param stateMask	the SWT modifier bits
+	 * @return the modifier string
+	 * @since 2.1.1
+	 */
+	public static String getModifierString(int stateMask) {
+		String modifierString= ""; //$NON-NLS-1$
+		if ((stateMask & SWT.CTRL) == SWT.CTRL)
+			modifierString= appendModifierString(modifierString, SWT.CTRL);
+		if ((stateMask & SWT.ALT) == SWT.ALT)
+			modifierString= appendModifierString(modifierString, SWT.ALT);
+		if ((stateMask & SWT.SHIFT) == SWT.SHIFT)
+			modifierString= appendModifierString(modifierString, SWT.SHIFT);
+		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
+			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
+		
+		return modifierString;
+	}
+
+	/**
+	 * Appends to modifier string of the given SWT modifier bit
+	 * to the given modifierString.
+	 * 
+	 * @param modifierString	the modifier string
+	 * @param modifier			an int with SWT modifier bit
+	 * @return the concatenated modifier string
+	 * @since 2.1.1
+	 */
+	private static String appendModifierString(String modifierString, int modifier) {
+		if (modifierString == null)
+			modifierString= ""; //$NON-NLS-1$
+		String newModifierString= Action.findModifierString(modifier);
+		if (modifierString.length() == 0)
+			return newModifierString;
+		return CEditorMessages.getFormattedString("EditorUtility.concatModifierStrings", new String[] {modifierString, newModifierString}); //$NON-NLS-1$
+	}
+
 	public static IStorage getStorage(IBinary bin) {
 		IStorage store = null;
 		try {

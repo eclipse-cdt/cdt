@@ -135,7 +135,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 				++result;
 				for ( int j = 0; j < instructions.length; ++j ) {
 					++result;
-					if ( address.compareTo(instructions[j].getAdress()) ==  0) {
+					if ( address.equals( instructions[j].getAdress() ) ) {
 						return result;
 					}
 				}

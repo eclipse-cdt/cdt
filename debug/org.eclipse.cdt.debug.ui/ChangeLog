@@ -1,3 +1,8 @@
+2004-09-21 Mikhail Khodjaiants
+	Fixed the problems with the Disassembly view and address breakpoints caused by switch to IAddress.
+	* CBreakpointPropertyPage.java
+	* DisassemblyEditorInput.java
+
 2004-09-20 Mikhail Khodjaiants
 	Fix for bug 73920: Stopping CDT debug at a break point and using a non-text editor throws an error.
 	* ResumeAtLineActionDelegate.java

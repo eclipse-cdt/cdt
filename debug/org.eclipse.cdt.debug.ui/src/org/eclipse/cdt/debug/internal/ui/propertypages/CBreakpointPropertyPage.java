@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.internal.ui.propertypages;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -293,6 +292,11 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			ICAddressBreakpoint abrkpt = (ICAddressBreakpoint)breakpoint;
 			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), PropertyPageMessages.getString( "CBreakpointPropertyPage.6" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
 			String address = PropertyPageMessages.getString( "CBreakpointPropertyPage.4" ); //$NON-NLS-1$
+			try {
+				address = abrkpt.getAddress();
+			}
+			catch( CoreException e ) {
+			}
 			if ( address != null ) {
 				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.5" ), address ) ); //$NON-NLS-1$
 			}

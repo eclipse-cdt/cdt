@@ -13,9 +13,13 @@ import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -36,6 +40,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -83,6 +88,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -966,17 +972,24 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				ICElement celement = (ICElement)o;
 				IResource res  = (IResource)celement.getAdapter(IResource.class);
 				if (res != null) {
-					if (celement.getElementType() == ICElement.C_VCONTAINER) {   
-						ICElement parent = celement.getParent();
-						IResource proj = (IResource)parent.getAdapter(IResource.class);
-						if (celement instanceof IArchiveContainer)
-							return proj.getFullPath() + " - archives";
-						else
-							return proj.getFullPath() + " - binaries";
-					} else if (celement.getElementType() > ICElement.C_UNIT) {
-						return res.getFullPath().toString() + " - [" + celement.getElementName() +"]";
-					}
 					return res.getFullPath().toString();
+				} else if (celement.getElementType() == ICElement.C_VCONTAINER) {					   
+					if (celement instanceof IBinaryContainer) {
+						ICProject cproj = celement.getCProject();
+						if (cproj != null) {
+							return cproj.getPath() + " - binaries";
+						}
+					} else if (celement instanceof IArchiveContainer) {
+						ICProject cproj = celement.getCProject();
+						if (cproj != null) {
+							return cproj.getPath() + " - archives";
+						}
+					} else if (celement instanceof IBinaryModule) {
+						IBinary bin = ((IBinaryModule)celement).getBinary();
+						return bin.getPath() + ":" + celement.getElementName();
+					}
+				} else if (celement.getElementType() > ICElement.C_UNIT) {
+					return celement.getPath().toString() + " - [" + celement.getElementName() +"]";
 				}
 				return celement.getElementName();
 			} else {
@@ -1141,24 +1154,30 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 					return;
 				}
 			}
-		} else if (obj instanceof ICElement) {
-			ICElement celement = (ICElement) obj;
-			IResource res = (IResource)celement.getAdapter(IResource.class);
-			if (res == null || !(res instanceof IFile))
+		} else if (obj instanceof ISourceReference) {
+			ISourceReference sourceRef = (ISourceReference) obj;
+			ITranslationUnit tu = sourceRef.getTranslationUnit();
+			if (tu == null) 
+				return;
+			IPath path = tu.getPath();
+			if (path == null)
 				return;
 			IWorkbenchPage page = getSite().getPage();
 			IEditorReference editorReferences[] = page.getEditorReferences();
 			for (int i = 0; i < editorReferences.length; ++i) {
 				IEditorPart editor = editorReferences[i].getEditor(false);
-				if(null != editor) {
+				if (null != editor) {
 					IEditorInput input = editor.getEditorInput();
-					if (input instanceof IFileEditorInput && res.equals(((IFileEditorInput)input).getFile())) {
-						page.bringToTop(editor);
-						if (editor instanceof CEditor) {
-							CEditor e = (CEditor)editor;
-							e.selectionChanged (new SelectionChangedEvent (e.getOutlinePage (),selection));
+					try {
+						if (input instanceof IStorageEditorInput && path.equals(((IStorageEditorInput)input).getStorage().getFullPath())) {
+							page.bringToTop(editor);
+							if (editor instanceof CEditor) {
+								CEditor e = (CEditor)editor;
+								e.selectionChanged (new SelectionChangedEvent (e.getOutlinePage (),selection));
+							}
+							return;
 						}
-						return;
+					} catch (CoreException e) {
 					}
 				}
 			}

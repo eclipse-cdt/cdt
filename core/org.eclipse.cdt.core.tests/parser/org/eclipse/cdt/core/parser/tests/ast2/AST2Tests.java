@@ -36,10 +36,10 @@ public class AST2Tests extends TestCase {
 
 	public void testBasicFunction() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("int x;");
-		buff.append("void f(int y) {");
-		buff.append("   int z = x + y;");
-		buff.append("}");
+		buff.append("int x;\n");
+		buff.append("void f(int y) {\n");
+		buff.append("   int z = x + y;\n");
+		buff.append("}\n");
 		
 		ICASTTranslationUnit tu = CASTFactory.parseString(buff);
 		List declarations = tu.getDeclarations();

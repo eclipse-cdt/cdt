@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
@@ -1563,7 +1564,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         assertFalse( i.hasNext() );
         IASTExpression exp = a.getInitializerClause().getAssigmentExpression();
         assertEquals( exp.getExpressionKind(), IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID );
-        assertEquals( exp.toString(), "__alignof__(int)");
+        assertEquals( exp.toString(), "__alignof__(int)"); //$NON-NLS-1$
     }
     
     public void testBug39684() throws Exception
@@ -1597,14 +1598,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         Iterator i = parse("int c = a <? b;").getDeclarations(); //$NON-NLS-1$
         IASTVariable c = (IASTVariable) i.next();
         IASTExpression exp = c.getInitializerClause().getAssigmentExpression();
-        assertEquals( ASTUtil.getExpressionString( exp ), "a <? b" );
+        assertEquals( ASTUtil.getExpressionString( exp ), "a <? b" ); //$NON-NLS-1$
     }
     public void testBug39698B() throws Exception
     {
     	Iterator i = parse("int c = a >? b;").getDeclarations(); //$NON-NLS-1$
     	IASTVariable c = (IASTVariable) i.next();
         IASTExpression exp = c.getInitializerClause().getAssigmentExpression();
-        assertEquals( ASTUtil.getExpressionString( exp ), "a >? b" );
+        assertEquals( ASTUtil.getExpressionString( exp ), "a >? b" ); //$NON-NLS-1$
     }
 
     public void testULong() throws Exception
@@ -1951,8 +1952,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug67680() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "template < class T> class Base {};                  \n" );
-    	writer.write( "class Derived : public Base, Base<int>, foo {};     \n" );
+    	writer.write( "template < class T> class Base {};                  \n" ); //$NON-NLS-1$
+    	writer.write( "class Derived : public Base, Base<int>, foo {};     \n" ); //$NON-NLS-1$
     	
     	Iterator i = parse( writer.toString(), false ).getDeclarations();
     	
@@ -1967,4 +1968,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	
     	assertEquals( parent.getParentClassSpecifier(), base );
 	}
+    
+    public void testTypeIDSignature() throws Exception
+    {
+    	IASTVariable v = (IASTVariable) parse( "int * v = (int*)0;").getDeclarations().next();
+    	IASTTypeId typeId = v.getInitializerClause().getAssigmentExpression().getTypeId();
+    	assertEquals( typeId.getFullSignature(), "int *"); //$NON-NLS-1$
+    }
+	
 }

@@ -254,17 +254,17 @@ public class ASTUtil {
 		}
 		type.append( id.getFullSignature() );
 		
-		Iterator i = id.getPointerOperators();
-		while(i.hasNext()){
-			ASTPointerOperator po = (ASTPointerOperator) i.next();
-			type.append(getPointerOperator(po));
-		}
-		
-		i  = id.getArrayModifiers(); 
-		while (i.hasNext()){
-			i.next();
-			type.append("[]");				 //$NON-NLS-1$
-		}
+//		Iterator i = id.getPointerOperators();
+//		while(i.hasNext()){
+//			ASTPointerOperator po = (ASTPointerOperator) i.next();
+//			type.append(getPointerOperator(po));
+//		}
+//		
+//		i  = id.getArrayModifiers(); 
+//		while (i.hasNext()){
+//			i.next();
+//			type.append("[]");				 //$NON-NLS-1$
+//		}
 		
 		return type.toString();
 	}

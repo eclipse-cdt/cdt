@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -121,6 +122,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	private final IFilenameProvider fileProvider;
 	private final ParserMode mode;
 	private final ReferenceCache cache = new ReferenceCache();
+	private static final int BUILTIN_TYPE_SIZE = 64;
+	private final Hashtable typeIdCache = new Hashtable( BUILTIN_TYPE_SIZE );
 	
     static 
     {
@@ -3380,10 +3383,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     public IASTTypeId createTypeId(IASTScope scope, Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
 	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, String completeSignature) throws ASTSemanticException
     {
+    	if( kind != Type.CLASS_OR_TYPENAME )
+    	{
+    		IASTTypeId check = (IASTTypeId) typeIdCache.get( completeSignature );
+    		if( check != null )
+    			return check;
+    	}
         ASTTypeId result = 
         	new ASTTypeId( kind, name, pointerOps, arrayMods, completeSignature,   
         	isConst, isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename );
         result.setTypeSymbol( createSymbolForTypeId( scope, result ) );
+        if( kind != Type.CLASS_OR_TYPENAME )
+        	typeIdCache.put( completeSignature, result );
         return result;
     }
 

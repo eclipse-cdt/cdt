@@ -632,9 +632,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		return result;
 	}
 
-	protected void consumeArrayModifiers(IDeclarator d, IASTScope scope)
+	protected IToken consumeArrayModifiers(IDeclarator d, IASTScope scope)
 			throws EndOfFileException, BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		IToken last = null;
 		while (LT(1) == IToken.tLBRACKET) {
 			consume(IToken.tLBRACKET); // eat the '['
 
@@ -644,7 +645,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						CompletionKind.SINGLE_NAME_REFERENCE,
 						KeywordSetKey.EXPRESSION);
 			}
-			consume(IToken.tRBRACKET);
+			last = consume(IToken.tRBRACKET);
 			IASTArrayModifier arrayMod = null;
 			try {
 				arrayMod = astFactory.createArrayModifier(exp);
@@ -654,6 +655,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			}
 			d.addArrayModifier(arrayMod);
 		}
+		return last;
 	}
 
 	protected void operatorId(Declarator d, IToken originalToken,
@@ -1615,27 +1617,31 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 		TypeId id = getTypeIdInstance(scope);
 		IToken last = lastToken;
+		IToken temp = last;
 
 		//template parameters are consumed as part of name
 		//lastToken = consumeTemplateParameters( last );
 		//if( lastToken == null ) lastToken = last;
 
-		consumePointerOperators(id);
-		if (lastToken == null)
-			lastToken = last;
+		temp = consumePointerOperators(id);
+		if (temp != null)
+			last = temp;
 
 		if (!skipArrayModifiers) {
-			last = lastToken;
-			consumeArrayModifiers(id, scope);
-			if (lastToken == null)
-				lastToken = last;
+			temp = consumeArrayModifiers(id, scope);
+			if (temp != null)
+				last = temp;
 		}
 
 		try {
 			String signature = "";//$NON-NLS-1$
-			if (lastToken != null)
+			if (last != null)
+			{
+				if( lastToken == null )
+					lastToken = last;
 				signature = TokenFactory.createStringRepresentation(mark,
-						lastToken);
+						last);
+			}
 			return astFactory.createTypeId(scope, kind, isConst, isVolatile,
 					isShort, isLong, isSigned, isUnsigned, isTypename, name, id
 							.getPointerOperators(), id.getArrayModifiers(),

@@ -384,7 +384,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_REINTERPRET_CAST
 	public void testPostfixReinterpretCast() throws Exception{
-		Iterator i = parse( "int *a; \n int foo(); int foo( double* ); \n int x = foo( reinterpret_cast<double*>(a) );").getDeclarations(); //$NON-NLS-1$
+		Iterator i = parse( "int *a; \n int foo(); int foo( double* ); \n int x = foo( reinterpret_cast<double *>(a) );").getDeclarations(); //$NON-NLS-1$
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -393,7 +393,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertAllReferences( 2, createTaskList( new Task(a), new Task(f2)));	
 		
 		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
-		assertEquals( exp.toString(), "foo(reinterpret_cast<double*>(a))" ); //$NON-NLS-1$
+		assertEquals( exp.toString(), "foo(reinterpret_cast<double *>(a))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_STATIC_CAST
 	public void testPostfixStaticCast() throws Exception{
@@ -419,7 +419,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertAllReferences( 2, createTaskList( new Task(a), new Task(f2)));		
 		
 		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
-		assertEquals( exp.toString(), "foo(const_cast<int*>(&a))" ); //$NON-NLS-1$
+		assertEquals( exp.toString(), "foo(const_cast<int *>(&a))" ); //$NON-NLS-1$
 	}	
 	// Kind POSTFIX_TYPEID_EXPRESSION : LHS
 	public void testPostfixTypeIdExpression() throws Exception{

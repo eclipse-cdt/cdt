@@ -25,14 +25,6 @@
 
    <extension-point id="CProject" name="%CProject.name"/>
 <!-- =================================================================================== -->
-<!-- Extension Point:(Deprecated, to be removed)                                         -->
-<!-- =================================================================================== -->
-   <extension-point id="CBuildModel" name="%CBuilder.name"/>
-<!-- =================================================================================== -->
-<!-- Extension Point:(Deprecated, to be removed) Default command for the MakeBuilder     -->
-<!-- =================================================================================== -->
-   <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
-<!-- =================================================================================== -->
 <!-- Extension Point:(work in progress) IConsole, customize a C Build console output     -->
 <!-- =================================================================================== -->
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
@@ -137,19 +129,6 @@
       </errorparser>
    </extension>
 <!-- =================================================================================== -->
-<!-- Eclipse Builder provided by the CDT, to be removed to the MakePlugin                -->
-<!-- =================================================================================== -->
-   <extension
-         id="cbuilder"
-         name="C Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder>
-         <run
-               class="org.eclipse.cdt.internal.core.CBuilder">
-         </run>
-      </builder>
-   </extension>
-<!-- =================================================================================== -->
 <!-- CDT customized problem markers: C Problem markers                                   -->
 <!-- =================================================================================== -->
    <extension
@@ -188,37 +167,6 @@
                class="org.eclipse.cdt.core.CCProjectNature">
          </run>
       </runtime>
-   </extension>
-<!-- =================================================================================== -->
-<!-- Deprecated Make default command, will be removed.                                   -->
-<!-- =================================================================================== -->
-   <extension
-         point="org.eclipse.cdt.core.CBuildCommand">
-      <buildcommand
-            command="make">
-      </buildcommand>
-   </extension>
-<!-- =================================================================================== -->
-<!-- Deprecated Make owner, will be removed.                                             -->
-<!-- =================================================================================== -->
-   <extension
-         id="make"
-         name="%makeproject.name"
-         point="org.eclipse.cdt.core.CProject">
-      <cproject
-            class="org.eclipse.cdt.internal.core.make.MakeProject">
-      </cproject>
-   </extension>
-<!-- =================================================================================== -->
-<!-- Deprecated Make builder, will be removed.                                           -->
-<!-- =================================================================================== -->
-   <extension
-         id="makeBuilder"
-         name="%makebuildmodel.name"
-         point="org.eclipse.cdt.core.CBuildModel">
-      <run
-            class="org.eclipse.cdt.internal.core.make.MakeBuilder">
-      </run>
    </extension>
 <!-- =================================================================================== -->
 <!-- Some well known C file extensions override for the team plugins                     -->
@@ -307,18 +255,6 @@
             enabled="true"
             pattern="*.exe">
       </ignore>
-   </extension>
-<!-- =================================================================================== -->
-<!-- Extension Point(Note:Temporary): IScannerInfoProvider for the standard Builder      -->
-<!-- =================================================================================== -->
-   <extension
-         id="StandardBuildManager"
-         point="org.eclipse.cdt.core.ScannerInfoProvider">
-      <cextension>
-         <run
-               class="org.eclipse.cdt.core.build.standard.StandardBuildManager">
-         </run>
-      </cextension>
    </extension>
 <!-- =================================================================================== -->
 <!-- =================================================================================== -->

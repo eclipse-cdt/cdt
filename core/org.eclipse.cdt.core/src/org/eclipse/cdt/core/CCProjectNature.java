@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-
-
 public class CCProjectNature extends CProjectNature {
 
 	public static final String CC_NATURE_ID= CCorePlugin.PLUGIN_ID + ".ccnature";

@@ -1,44 +1,31 @@
 package org.eclipse.cdt.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2001. All Rights Reserved.
  */
- 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.build.standard.StandardBuildManager;
-import org.eclipse.cdt.core.resources.IStandardBuildInfo;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Plugin;
-
-
 
 public class CProjectNature implements IProjectNature {
 
-    public static final String BUILDER_NAME= "cbuilder";
-    public static final String BUILDER_ID= CCorePlugin.PLUGIN_ID + "." + BUILDER_NAME;
-    public static final String C_NATURE_ID= CCorePlugin.PLUGIN_ID + ".cnature";
+	public static final String C_NATURE_ID = CCorePlugin.PLUGIN_ID + ".cnature";
 
-    private IProject fProject;
-    private IStandardBuildInfo fBuildInfo;
+	private IProject fProject;
 
-    public CProjectNature() {
-    }
+	public CProjectNature() {
+	}
 
-    public CProjectNature(IProject project) {
+	public CProjectNature(IProject project) {
 		setProject(project);
-    }
+	}
 
 	public static void addCNature(IProject project, IProgressMonitor mon) throws CoreException {
 		addNature(project, C_NATURE_ID, mon);
@@ -47,26 +34,29 @@ public class CProjectNature implements IProjectNature {
 	public static void removeCNature(IProject project, IProgressMonitor mon) throws CoreException {
 		removeNature(project, C_NATURE_ID, mon);
 	}
-	
+
 	/**
 	 * Utility method for adding a nature to a project.
 	 * 
-	 * @param proj the project to add the nature
-	 * @param natureId the id of the nature to assign to the project
-	 * @param monitor a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
-	 * 
+	 * @param proj
+	 *            the project to add the nature
+	 * @param natureId
+	 *            the id of the nature to assign to the project
+	 * @param monitor
+	 *            a progress monitor to indicate the duration of the operation,
+	 *            or <code>null</code> if progress reporting is not required.
+	 *  
 	 */
 	public static void addNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		for (int i= 0; i < prevNatures.length; i++) {
+		String[] prevNatures = description.getNatureIds();
+		for (int i = 0; i < prevNatures.length; i++) {
 			if (natureId.equals(prevNatures[i]))
 				return;
 		}
-		String[] newNatures= new String[prevNatures.length + 1];
+		String[] newNatures = new String[prevNatures.length + 1];
 		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= natureId;
+		newNatures[prevNatures.length] = natureId;
 		description.setNatureIds(newNatures);
 		project.setDescription(description, monitor);
 	}
@@ -74,243 +64,46 @@ public class CProjectNature implements IProjectNature {
 	/**
 	 * Utility method for removing a project nature from a project.
 	 * 
-	 * @param proj the project to remove the nature from
-	 * @param natureId the nature id to remove
-	 * @param monitor a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
+	 * @param proj
+	 *            the project to remove the nature from
+	 * @param natureId
+	 *            the nature id to remove
+	 * @param monitor
+	 *            a progress monitor to indicate the duration of the operation,
+	 *            or <code>null</code> if progress reporting is not required.
 	 */
 	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
-		String[] prevNatures= description.getNatureIds();
+		String[] prevNatures = description.getNatureIds();
 		List newNatures = new ArrayList(Arrays.asList(prevNatures));
 		newNatures.remove(natureId);
-		description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
+		description.setNatureIds((String[]) newNatures.toArray(new String[newNatures.size()]));
 		project.setDescription(description, monitor);
 	}
 
-    /**
-     * Sets the path of the build command executable.
-     * @depercated
-     */
-    public void setBuildCommand(IPath locationPath, IProgressMonitor monitor) throws CoreException {
-    }
-
-    /**
-     * Gets the path of the build command executable.
-     * @deprecated
-     */
-    public IPath getBuildCommand() throws CoreException {
-    	if( fBuildInfo == null) {
-			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
-    	}
-		String buildLocation= fBuildInfo.getBuildLocation();
-	    return new Path(buildLocation);
-    }
-
-    /**
-     * Sets the arguments for the full build.
-     * @deprecated
-     */
-    public void setFullBuildArguments(String arguments, IProgressMonitor monitor) throws CoreException {
-    }
-
-    /**
-     * Gets the arguments for the full build
-     * @deprecated
-     */
-    public String getFullBuildArguments() throws CoreException {
-		if( fBuildInfo == null) {
-			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
-		}
-		String buildArguments= fBuildInfo.getFullBuildArguments();
-		if (buildArguments == null) {
-			buildArguments= "";
-		}
-		return buildArguments;
-    }
-    
-    /**
-     * Sets the arguments for the incremental build.
-     * @deprecated
-     */
-    public void setIncrBuildArguments(String arguments, IProgressMonitor monitor) throws CoreException {
-    }
-
-    /**
-     * Gets the arguments for the incremental build
-     * @deprecated
-     */
-    public String getIncrBuildArguments() throws CoreException {
-		if( fBuildInfo == null) {
-			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
-		}
-		String buildArguments= fBuildInfo.getIncrementalBuildArguments();
-		if (buildArguments == null) {
-			buildArguments= "";
-		}
-		return buildArguments;
-    }
-
-    /**
-     * Sets Stop on Error
-     * @deprecated
-     */
-    public void setStopOnError(boolean on) throws CoreException {
-    }
-
 	/**
-	* @deprecated
-     */
-    public void setBuildCommandOverride(boolean on) throws CoreException {
-    }
-
-    /**
-     * Gets Stop on Error
-     * @deprecated
-     */
-    public boolean isStopOnError() throws CoreException {
-		if( fBuildInfo == null) {
-			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
-		}
-		return fBuildInfo.isStopOnError();
-    }
-
-	/**
-	* @deprecated
-     */
-    public boolean isDefaultBuildCmd() throws CoreException {
-		if( fBuildInfo == null) {
-			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
-		}
-		return fBuildInfo.isDefaultBuildCmd();
-    }
-
-    /**
-	* @deprecated
-     */
-	public static boolean hasCBuildSpec(IProject project) {
-		boolean found= false;
-		try {
-			IProjectDescription description = project.getDescription();
-			ICommand[] commands= description.getBuildSpec();
-			for (int i= 0; i < commands.length; ++i) {
-				if (commands[i].getBuilderName().equals(BUILDER_ID)) {
-					found= true;
-					break;
-				}
-			}
-		} catch (CoreException e) {
-		}
-		return found;
-	}
-
-    /**
-	* @deprecated
-     */
-	public void addCBuildSpec(IProgressMonitor mon) throws CoreException {
-	}
-
-    /**
-	* @deprecated
-     */
-	public static void addCBuildSpec(IProject project, IProgressMonitor mon) throws CoreException {
-	}
-
-    /**
-	* @deprecated
-     */
-    public void addToBuildSpec(String builderID, IProgressMonitor mon) throws CoreException {
-		addToBuildSpec(getProject(), builderID, mon);
-	}
-
-    /**
-     * Adds a builder to the build spec for the given project.
-     * @deprecated
-     */
-    public static void addToBuildSpec(IProject project, String builderID, IProgressMonitor mon) throws CoreException {
-		IProjectDescription description= project.getDescription();
-		ICommand[] commands= description.getBuildSpec();
-		boolean found= false;
-		for (int i= 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(builderID)) {
-				found= true;
-				break;
-			}
-		}
-		if (!found) {
-			ICommand command= description.newCommand();
-			command.setBuilderName(builderID);
-			ICommand[] newCommands= new ICommand[commands.length + 1];
-			// Add it before other builders. See 1FWJK7I: ITPJCORE:WIN2000
-			System.arraycopy(commands, 0, newCommands, 1, commands.length);
-			newCommands[0]= command;
-			description.setBuildSpec(newCommands);
-			project.setDescription(description, mon);
-		}
+	 * @see IProjectNature#configure
+	 */
+	public void configure() throws CoreException {
 	}
 
 	/**
-	* @deprecated
-     */
-	public void removeCBuildSpec(IProgressMonitor mon) throws CoreException {
+	 * @see IProjectNature#deconfigure
+	 */
+	public void deconfigure() throws CoreException {
 	}
 
-    /**
-     * Removes the given builder from the build spec for the given project.
-     * @deprecated
-     */
-    public void removeFromBuildSpec(String builderID, IProgressMonitor mon) throws CoreException {
-		IProjectDescription description= getProject().getDescription();
-		ICommand[] commands= description.getBuildSpec();
-		for (int i= 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(builderID)) {
-				ICommand[] newCommands= new ICommand[commands.length - 1];
-				System.arraycopy(commands, 0, newCommands, 0, i);
-				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
-				description.setBuildSpec(newCommands);
-				break;
-			}
-		}
-		getProject().setDescription(description, mon);
-	}
-
-    /**
-     * Get the correct builderID
-     * @deprecated
-     */
-    public static String getBuilderID() {
-    	Plugin plugin = (Plugin)CCorePlugin.getDefault();
-    	IPluginDescriptor descriptor = plugin.getDescriptor();
-    	if (descriptor.getExtension(BUILDER_NAME) != null) {
-			return descriptor.getUniqueIdentifier() + "." + BUILDER_NAME;
-    	}
-    	return BUILDER_ID;
-    }
-
-    /**
-     * @see IProjectNature#configure
-     */
-    public void configure() throws CoreException {
-    }
-
-    /**
-     * @see IProjectNature#deconfigure
-     */
-    public void deconfigure() throws CoreException {
-    }
-
-    /**
-     * @see IProjectNature#getProject
-     */
-    public IProject getProject() {
+	/**
+	 * @see IProjectNature#getProject
+	 */
+	public IProject getProject() {
 		return fProject;
-    }
+	}
 
-    /**
-     * @see IProjectNature#setProject
-     */
-    public void setProject(IProject project) {
-		fProject= project;
-    }
-    
+	/**
+	 * @see IProjectNature#setProject
+	 */
+	public void setProject(IProject project) {
+		fProject = project;
+	}
 }

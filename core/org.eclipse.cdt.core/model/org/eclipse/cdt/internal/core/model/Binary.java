@@ -182,7 +182,7 @@ public class Binary extends Openable implements IBinary {
 		return true;
 	}
 
-	public CElementInfo createElementInfo() {
+	 public CElementInfo createElementInfo() {
 		return new BinaryInfo(this);
 	}
 
@@ -326,4 +326,10 @@ public class Binary extends Openable implements IBinary {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#exists()
+	 */
+	public boolean exists() {
+		return getResource() != null;
+	}
 }

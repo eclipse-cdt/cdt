@@ -12,6 +12,9 @@
 	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
 
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+	* model/org/eclipse/cdt/internal/core/model/Archive.java
+
 2004-02-28 Alain Magloire
 	Fix PE Parser
 

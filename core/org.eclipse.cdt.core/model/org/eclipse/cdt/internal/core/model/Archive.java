@@ -81,4 +81,10 @@ public class Archive extends Openable implements IArchive {
 		return binaryArchive;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#exists()
+	 */
+	public boolean exists() {
+		return getResource() != null;
+	}
 }

@@ -29,14 +29,15 @@
          name="Tools for Build Test"
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
       <target
-            makeFlags="-k"
-            isTest="true"
-            cleanCommand="del /myworld"
             name="Test Root"
+            id="test.root"
+            cleanCommand="del /myworld"
+            isTest="true"
             defaultExtension="toor"
             isAbstract="false"
             makeCommand="make"
-            id="test.root">
+            binaryParser="org.eclipse.cdt.core.PE"
+            makeFlags="-k">
          <tool
                sources="foo,bar"
                name="Root Tool"
@@ -126,6 +127,7 @@
             defaultExtension="bus"
             isAbstract="false"
             makeCommand="gmake"
+            binaryParser="org.eclipse.cdt.core.PE"
             makeFlags="-d"
             parent="test.root">
          <configuration
@@ -180,6 +182,7 @@
             isTest="true"
             name="Test Sub Sub"
             parent="test.sub"
+            binaryParser="org.eclipse.cdt.core.ELF"
             defaultExtension="tss"
             makeCommand="nmake"
             id="test.sub.sub">

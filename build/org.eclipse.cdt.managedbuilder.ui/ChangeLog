@@ -1,3 +1,15 @@
+2003-09-19 Sean Evoy
+	Removed the binary parser selection tab from the new class wizard. Updated the
+	page description externalized string.
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/NewManagedProjectOptionPage.java
+	
+	Added the hard-coded binary parser info to the defined targets.
+	* plugin.xml
+	
+	Fixed the event handling for add/remove in the list widget for build settings pages.
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionListFieldEditor.java
+	
 2003-09-16 Sean Evoy
 	Changed the initialization and button status logic so the list buttons are 
 	enabled correctly on start-up and that the fist item in the list (if 

@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
 public class Target extends BuildObject implements ITarget {
 
 	private String artifactName;
+	private String binaryParserId;
 	private String cleanCommand;
 	private Map configMap;
 	private List configurations;
@@ -66,6 +67,7 @@ public class Target extends BuildObject implements ITarget {
 		setId(parent.getId() + ".1");		
 		setName(parent.getName());
 		this.artifactName = parent.getArtifactName();
+		this.binaryParserId = parent.getBinaryParserId();
 		this.defaultExtension = parent.getDefaultExtension();
 		this.isTest = parent.isTestTarget();
 		this.cleanCommand = parent.getCleanCommand();
@@ -83,23 +85,26 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public Target(IConfigurationElement element) {
 		// id
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(ID));
 		
 		// hook me up
 		ManagedBuildManager.addExtensionTarget(this);
 		
 		// Get the target name
-		setName(element.getAttribute("name"));
+		setName(element.getAttribute(NAME));
 
 		// Get the name of the build artifact associated with target (usually 
 		// in the plugin specification).
-		artifactName = element.getAttribute("artifactName");
+		artifactName = element.getAttribute(ARTIFACT_NAME);
 		
+		// Get the ID of the binary parser
+		binaryParserId = element.getAttribute(BINARY_PARSER);
+
 		// Get the default extension
-		defaultExtension = element.getAttribute("defaultExtension");
+		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
 
 		// parent
-		String parentId = element.getAttribute("parent");
+		String parentId = element.getAttribute(PARENT);
 		if (parentId != null) {
 			parent = ManagedBuildManager.getTarget(null, parentId);
 			// copy over the parents configs
@@ -109,21 +114,21 @@ public class Target extends BuildObject implements ITarget {
 		}
 
 		// isAbstract
-		if ("true".equals(element.getAttribute("isAbstract")))
+		if ("true".equals(element.getAttribute(IS_ABSTRACT)))
 			isAbstract = true;
 
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute("isTest")));
+		isTest = ("true".equals(element.getAttribute(IS_TEST)));
 		
 		// Get the clean command
-		cleanCommand = element.getAttribute("cleanCommand");
+		cleanCommand = element.getAttribute(CLEAN_COMMAND);
 		if (cleanCommand == null) {
 			// See if it defined in the parent
 			cleanCommand = parent.getCleanCommand();
 		}
 
 		// Get the make command
-		makeCommand = element.getAttribute("makeCommand");
+		makeCommand = element.getAttribute(MAKE_COMMAND);
 		if (makeCommand == null) {
 			// See if it defined in the parent
 			makeCommand = parent.getMakeCommand();
@@ -151,38 +156,41 @@ public class Target extends BuildObject implements ITarget {
 		this(buildInfo.getOwner());
 		
 		// id
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(ID));
 		
 		// hook me up
 		buildInfo.addTarget(this);
 		
 		// name
-		setName(element.getAttribute("name"));
+		setName(element.getAttribute(NAME));
 
 		// Get the name of the build artifact associated with target (should
 		// contain what the user entered in the UI).
-		artifactName = element.getAttribute("artifactName");
+		artifactName = element.getAttribute(ARTIFACT_NAME);
+
+		// Get the ID of the binary parser
+		binaryParserId = element.getAttribute(BINARY_PARSER);
 
 		// Get the default extension
-		defaultExtension = element.getAttribute("defaultExtension");
+		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
 
 		// parent
-		String parentId = element.getAttribute("parent");
+		String parentId = element.getAttribute(PARENT);
 		if (parentId != null)
 			parent = ManagedBuildManager.getTarget(null, parentId);
 
 		// isAbstract
-		if ("true".equals(element.getAttribute("isAbstract")))
+		if ("true".equals(element.getAttribute(IS_ABSTRACT)))
 			isAbstract = true;
 			
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute("isTest")));
+		isTest = ("true".equals(element.getAttribute(IS_TEST)));
 		
 		// Get the clean command
-		cleanCommand = element.getAttribute("cleanCommand");
+		cleanCommand = element.getAttribute(CLEAN_COMMAND);
 		
 		// Get the make command
-		makeCommand = element.getAttribute("makeCommand");
+		makeCommand = element.getAttribute(MAKE_COMMAND);
 	
 		Node child = element.getFirstChild();
 		while (child != null) {
@@ -200,21 +208,22 @@ public class Target extends BuildObject implements ITarget {
 	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
-		element.setAttribute("id", getId());
-		element.setAttribute("name", getName());
+		element.setAttribute(ID, getId());
+		element.setAttribute(NAME, getName());
 		if (parent != null)
-			element.setAttribute("parent", parent.getId());
-		element.setAttribute("isAbstract", isAbstract ? "true" : "false");
-		element.setAttribute("artifactName", getArtifactName());
-		element.setAttribute("defaultExtension", getDefaultExtension());
-		element.setAttribute("isTest", isTest ? "true" : "false");
-		element.setAttribute("cleanCommand", getCleanCommand());
-		element.setAttribute("makeCommand", getMakeCommand());
+			element.setAttribute(PARENT, parent.getId());
+		element.setAttribute(IS_ABSTRACT, isAbstract ? "true" : "false");
+		element.setAttribute(ARTIFACT_NAME, getArtifactName());
+		element.setAttribute(BINARY_PARSER, getBinaryParserId());
+		element.setAttribute(DEFAULT_EXTENSION, getDefaultExtension());
+		element.setAttribute(IS_TEST, isTest ? "true" : "false");
+		element.setAttribute(CLEAN_COMMAND, getCleanCommand());
+		element.setAttribute(MAKE_COMMAND, getMakeCommand());
 				
 		if (configurations != null)
 			for (int i = 0; i < configurations.size(); ++i) {
 				Configuration config = (Configuration)configurations.get(i);
-				Element configElement = doc.createElement("configuration");
+				Element configElement = doc.createElement(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 				element.appendChild(configElement);
 				config.serialize(doc, configElement);
 			}
@@ -318,6 +327,13 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getBinaryParserId()
+	 */
+	public String getBinaryParserId() {
+		return binaryParserId == null ? EMPTY_STRING : binaryParserId;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
 	 */
 	public IConfiguration getConfiguration(String id) {
@@ -367,5 +383,6 @@ public class Target extends BuildObject implements ITarget {
 	public void setBuildArtifact(String name) {
 		artifactName = name;		
 	}
+
 
 }

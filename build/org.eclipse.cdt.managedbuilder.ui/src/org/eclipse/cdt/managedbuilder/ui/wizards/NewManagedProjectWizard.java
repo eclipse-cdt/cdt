@@ -103,9 +103,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		}
 
 		// Add the target to the project
+		ITarget newTarget = null;
 		try {
 			ITarget parent = targetConfigurationPage.getSelectedTarget();
-			ITarget newTarget = ManagedBuildManager.createTarget(newProject, parent);
+			newTarget = ManagedBuildManager.createTarget(newProject, parent);
 			if (newTarget != null) {
 				// TODO add name entry field to project
 				String artifactName = newProject.getName();
@@ -131,6 +132,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(newProject);
 			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
+			
+			desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+			// org.eclipse.cdt.core.ELF or "org.eclipse.cdt.core.PE"
+			desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
 		} catch (CoreException e) {
 			// TODO Flag the error to the user
 		}

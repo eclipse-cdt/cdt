@@ -11,9 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedProjectOptionBlock;
-import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
@@ -31,7 +29,6 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
-			addTab(new BinaryParserBlock(ManagedBuilderCorePlugin.getDefault().getPluginPreferences()));
 		}
 	}
 

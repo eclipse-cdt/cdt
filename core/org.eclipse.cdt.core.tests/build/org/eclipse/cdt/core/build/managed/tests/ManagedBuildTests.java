@@ -533,10 +533,12 @@ public class ManagedBuildTests extends TestCase {
 		// Target stuff
 		String expectedCleanCmd = "del /myworld";
 		String expectedMakeCommand = "make";
+		String expectedParserId = "org.eclipse.cdt.core.PE";
 		assertTrue(target.isTestTarget());
 		assertEquals(target.getDefaultExtension(), rootExt);
 		assertEquals(expectedCleanCmd, target.getCleanCommand());
 		assertEquals(expectedMakeCommand, target.getMakeCommand());
+		assertEquals(expectedParserId, target.getBinaryParserId());
 		
 		// Tools
 		ITool[] tools = target.getTools();
@@ -643,14 +645,14 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("doIt", tools[0].getToolCommand());
 	}
 
-	/**
+	/*
 	 * @param testSubSub
 	 */
 	private void checkSubSubTarget(ITarget target) {
 		// Check the inherited clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
 		assertEquals("nmake", target.getMakeCommand());
-		
+		assertEquals("org.eclipse.cdt.core.ELF", target.getBinaryParserId());
 	}
 
 	/*
@@ -664,6 +666,7 @@ public class ManagedBuildTests extends TestCase {
 		// Check the overridden clan command
 		assertEquals("rm -yourworld", target.getCleanCommand());
 		assertEquals("gmake", target.getMakeCommand());
+		assertEquals("org.eclipse.cdt.core.PE", target.getBinaryParserId());
 
 		// Make sure this is a test target
 		assertTrue(target.isTestTarget());

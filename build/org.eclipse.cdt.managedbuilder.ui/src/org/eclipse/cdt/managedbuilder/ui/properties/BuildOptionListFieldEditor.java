@@ -98,6 +98,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 				list.add(input, 0);
 				list.setSelection(0);
 			}
+			selectionChanged();
 		}
 	}
 
@@ -374,6 +375,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		int index = list.getSelectionIndex();
 		if (index >= 0) {
 			list.remove(index);
+			list.setSelection(index - 1);
 			selectionChanged();
 		}
 	}
@@ -387,7 +389,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		int size = list.getItemCount();
 
 		// Enable the remove button if there is at least one item in the list
-		removeButton.setEnabled(index >= 0);
+		removeButton.setEnabled(size > 0);
 		// Enable the up button IFF there is more than 1 item and selection index is not first item
 		upButton.setEnabled(size > 1 && index > 0);
 		// Enable the down button IFF there is more than 1 item and selection index not last item

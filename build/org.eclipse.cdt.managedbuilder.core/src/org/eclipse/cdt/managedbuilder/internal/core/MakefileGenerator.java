@@ -80,6 +80,9 @@ public class MakefileGenerator {
 	protected IPath topBuildDir;
 	protected boolean shouldRunBuild;
 	
+	private String target;
+	
+	private String extension;
 	/**
 	 * This class is used to recursively walk the project and determine which
 	 * modules contribute buildable source files. 
@@ -211,6 +214,13 @@ public class MakefileGenerator {
 		this.info = info;
 		// By default a build never runs
 		shouldRunBuild = false;
+		// Get the name of the build target
+		target = info.getBuildArtifactName();
+		// Get its extension
+		extension = (new Path(target)).getFileExtension();
+		if (extension == null) {
+			extension = new String();
+		}
 	}
 
 	/* (non-javadoc)
@@ -289,12 +299,22 @@ public class MakefileGenerator {
 		
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
 		buffer.append("C_SRCS := " + NEWLINE);
-		buffer.append("CC_SRCS := " + NEWLINE + NEWLINE);
+		buffer.append("CC_SRCS := " + NEWLINE);
+		buffer.append("CXX_SRCS := " + NEWLINE);
+		buffer.append("CAPC_SRCS := " + NEWLINE);
+		buffer.append("CPP_SRCS := " + NEWLINE + NEWLINE);
 		
 		// Add the libraries this project depends on
 		buffer.append("LIBS := ");
+		String[] libs = info.getLibsForTarget(extension);
+		for (int i = 0; i < libs.length; i++) {
+			String string = libs[i];
+			buffer.append(LINEBREAK + NEWLINE + string);
+		}
 		buffer.append(NEWLINE + NEWLINE);
-		return buffer;
+		
+		buffer.append("OBJS = $(C_SRCS:$(ROOT)/%.c=%.o) $(CC_SRCS:$(ROOT)/%.cc=%.o) $(CXX_SRCS:$(ROOT)/%.cxx=%.o) $(CAPC_SRCS:$(ROOT)/%.C=%.o) $(CPP_SRCS:$(ROOT)/%.cpp=%.o)" + NEWLINE);
+		return (buffer.append(NEWLINE));
 	}
 
 	/* (non-javadoc)
@@ -347,6 +367,12 @@ public class MakefileGenerator {
 		cBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
 		StringBuffer ccBuffer = new StringBuffer("CC_SRCS += \\" + NEWLINE);
 		ccBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
+		StringBuffer cxxBuffer = new StringBuffer("CXX_SRCS += \\" + NEWLINE);
+		cxxBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
+		StringBuffer capcBuffer = new StringBuffer("CAPC_SRCS += \\" + NEWLINE);
+		capcBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
+		StringBuffer cppBuffer = new StringBuffer("CPP_SRCS += \\" + NEWLINE);
+		cppBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
 		StringBuffer ruleBuffer = new StringBuffer(ManagedBuilderCorePlugin.getResourceString(MOD_RULES) + NEWLINE);
 
 		// Put the comment in		
@@ -359,8 +385,18 @@ public class MakefileGenerator {
 			if (resource.getType() == IResource.FILE) {
 				String ext = resource.getFileExtension();
 				if (info.buildsFileType(ext)) {
-					// TODO use build model to determine what list the file goes in
-					ccBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
+					if (new String("c").equals(ext)) {
+						cBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
+					} else if (new String("cc").equalsIgnoreCase(ext)) {
+						ccBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
+					} else if (new String("cxx").equalsIgnoreCase(ext)) {
+						cxxBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
+					} else if (new String("C").equals(ext)) {
+						capcBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
+					} else {
+						cppBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
+					}
+
 					// Try to add the rule for the file
 					addRule(relativePath, ruleBuffer, resource);
 				}
@@ -368,12 +404,13 @@ public class MakefileGenerator {
 		}
 
 		// Finish the commands in the buffers
-		cBuffer.append("}" + NEWLINE + NEWLINE);
-		ccBuffer.append("}" + NEWLINE + NEWLINE);
+		buffer.append(cBuffer.append("}" + NEWLINE + NEWLINE));
+		buffer.append(ccBuffer.append("}" + NEWLINE + NEWLINE));
+		buffer.append(cxxBuffer.append("}" + NEWLINE + NEWLINE));
+		buffer.append(capcBuffer.append("}" + NEWLINE + NEWLINE));
+		buffer.append(cppBuffer.append("}" + NEWLINE + NEWLINE));
 
-		// Append them all together
-		buffer.append(cBuffer).append(ccBuffer).append(ruleBuffer);
-		return buffer;
+		return buffer.append(ruleBuffer + NEWLINE);
 	}
 
 	/* (non-javadoc)
@@ -383,65 +420,77 @@ public class MakefileGenerator {
 	protected StringBuffer addTargets(boolean rebuild) {
 		StringBuffer buffer = new StringBuffer();
 
-		// Get the target and it's extension
-		String target = info.getBuildArtifactName();
-		IPath temp = new Path(target);
-		String extension = temp.getFileExtension();
-		
-		/*
-		 * Write out the target rule as:
-		 * <prefix><target>.<extension>: $(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)
-		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) all> 
-		 * 		<cd <Proj_Dep_.../build_dir>; $(MAKE) all> 
-		 * 		<cd <Proj_Dep_n/build_dir>; $(MAKE) all> 
-		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $^ $(LIB_DEPS)
-		 */
+		// Assemble the information needed to generate the targets
 		String cmd = info.getToolForTarget(extension);
 		String flags = info.getFlagsForTarget(extension);
 		String outflag = info.getOutputFlag(extension);
 		String outputPrefix = info.getOutputPrefix(extension);
 		String targets = rebuild ? "clean all" : "all";
-		buffer.append(outputPrefix + target + COLON + WHITESPACE + "$(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)" + NEWLINE);
-		IProject[] deps;
+
+		// Get all the projects the build target depends on
+		IProject[] deps = null;
 		try {
 			deps = project.getReferencedProjects();
-			for (int i = 0; i < deps.length; i++) {
-				IProject dep = deps[i];
-				String buildDir = dep.getLocation().toString();
-				if (ManagedBuildManager.manages(dep)) {
-					IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
-					buildDir += SEPARATOR + depInfo.getConfigurationName();
-				}
-				buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "$(MAKE) " + targets + NEWLINE);
-			}
 		} catch (CoreException e) {
 			// There are 2 exceptions; the project does not exist or it is not open
 			// and neither conditions apply if we are building for it ....
 		}
 
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$^");
-		String[] libraries = info.getLibsForTarget(extension);
-		for (int i = 0; i < libraries.length; i++) {
-			String lib = libraries[i];
-			buffer.append(WHITESPACE + lib);
-		}
-		buffer.append(NEWLINE);
+		// Write out the all target first in case someone just runs make
+		buffer.append("all: deps" + WHITESPACE + outputPrefix + target + NEWLINE);
 		buffer.append(NEWLINE);
 
-		// We only have one target, 'all'
-		buffer.append("all: " + outputPrefix + target + NEWLINE);
+		/*
+		 * The build target may depend on other projects in the workspace. These are
+		 * captured in the deps target:
+		 * deps:
+		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) [clean all | all]> 
+		 */
+		List managedProjectOutputs = new ArrayList();
+		buffer.append("deps:" + NEWLINE);
+		if (deps != null) {
+			for (int i = 0; i < deps.length; i++) {
+				IProject dep = deps[i];
+				String buildDir = dep.getLocation().toString();
+				if (ManagedBuildManager.manages(dep)) {
+					// Add the current configuration to the makefile path
+					IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
+					buildDir += SEPARATOR + depInfo.getConfigurationName();
+					
+					// Extract the build artifact to add to the dependency list
+					String depTarget = depInfo.getBuildArtifactName();
+					String depExt = (new Path(depTarget)).getFileExtension();
+					String depPrefix = depInfo.getOutputPrefix(depExt);
+					managedProjectOutputs.add(buildDir + SEPARATOR + depPrefix + depTarget);
+				}
+				buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "$(MAKE) " + targets + NEWLINE);
+			}
+		}
 		buffer.append(NEWLINE);
-		
+
+		/*
+		 * Write out the target rule as:
+		 * <prefix><target>.<extension>: $(OBJS) [<dep_proj_1_output> ... <dep_proj_n_output>]
+		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $^ $(LIB_DEPS)
+		 */
+		//
+		buffer.append(outputPrefix + target + COLON + WHITESPACE + "$(OBJS)");
+		Iterator iter = managedProjectOutputs.listIterator();
+		while (iter.hasNext()) {
+			buffer.append(WHITESPACE + (String)iter.next());
+		}
+		buffer.append(NEWLINE);
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$(OBJS) $(LIBS)");
+		buffer.append(NEWLINE + NEWLINE);
+
 		// Always add a clean target
-		buffer.append(".PHONY: clean" + NEWLINE);
 		buffer.append("clean:" + NEWLINE);
-		buffer.append(TAB + "$(RM)" + WHITESPACE + "${addprefix ., $(CC_SRCS:$(ROOT)%.cpp=%.o)} ${addprefix ., $(C_SRCS:$(ROOT)%.c=%.o)}" + WHITESPACE + outputPrefix + target + NEWLINE);
-		buffer.append(NEWLINE);
+		buffer.append(TAB + "$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target + NEWLINE + NEWLINE);
 		
-		buffer.append(NEWLINE + ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
+		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE);
+		
+		buffer.append(ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
 		buffer.append("include ${patsubst %, %/module.dep, $(MODULES)}" + NEWLINE);
-		
-		buffer.append(NEWLINE);
 		return buffer;
 	}
 

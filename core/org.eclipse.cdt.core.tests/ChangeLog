@@ -1,3 +1,8 @@
+2003-09-19 Sean Evoy
+	Updated the build test to check the binary parser specification in the 
+	target specification.
+	* build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
+
 2003-09-18 Andrew Niefer
 	- removed testConditionalExpression_Bug43159 from FailedCompleteParseASTExpressionTest
 	  and uncommented it (testConditionalExpression) in CompleteParseASTExpressionTest

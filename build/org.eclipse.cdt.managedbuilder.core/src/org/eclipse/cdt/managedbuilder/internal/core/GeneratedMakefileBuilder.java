@@ -18,19 +18,17 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -208,18 +206,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (fullBuild) {
 			args.add("clean");
 		}
-		// Add each target
-		String sessionTarget = MakeUtil.getSessionTarget(getProject());
-		StringTokenizer tokens = new StringTokenizer(sessionTarget);
-		while (tokens.hasMoreTokens()) {
-			String target = tokens.nextToken().trim();
-			if (!args.contains(target)) {
-				args.add(target);
-			}
-		}
-		if (args.isEmpty() || !args.contains("all")) {
-			args.add("all");
-		}
+		args.add("all");
 		return (String[])args.toArray(new String[args.size()]);
 	}
 	
@@ -233,7 +220,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		return resourcesToBuild;
 	}
 
-	/**
+	/* (non-javadoc)
+	 * Answers the list of build rules that have been assembled. If there are none, 
+	 * answers an empty list, never <code>null</code>
+	 * 
 	 * @return
 	 */
 	protected List getRuleList() {
@@ -248,9 +238,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	public IPath getWorkingDirectory() {
 		IProject currProject = getProject();
-		IPath workingDirectory = new Path(MakeUtil.getSessionBuildDir((IResource) currProject));
-		if (workingDirectory.isEmpty())
-			workingDirectory = currProject.getLocation();
+		IPath workingDirectory = currProject.getLocation();
 		return workingDirectory;
 	}
 

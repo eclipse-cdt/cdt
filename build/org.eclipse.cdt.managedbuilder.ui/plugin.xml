@@ -70,6 +70,7 @@
             isTest="false"
             cleanCommand="rm -rf"
             name="Cygwin"
+            binaryParser="org.eclipse.cdt.core.PE"
             isAbstract="true"
             makeCommand="make"
             id="cygwin">
@@ -307,6 +308,7 @@
             isTest="false"
             name="Cygwin Executable"
             parent="cygwin"
+            binaryParser="org.eclipse.cdt.core.PE"
             defaultExtension="exe"
             isAbstract="false"
             id="cygwin.exec">
@@ -336,18 +338,18 @@
                   id="cygwin.link.ld.flags">
             </option>
             <option
-                  name="Library Paths"
-                  category="cygwin.linker.category.general"
-                  command="-L"
-                  valueType="stringList"
-                  id="cygwin.link.ld.paths">
-            </option>
-            <option
                   name="Libraries"
                   category="cygwin.linker.category.general"
                   command="-l"
                   valueType="libs"
                   id="cygwin.link.libs">
+            </option>
+            <option
+                  name="Library Paths"
+                  category="cygwin.linker.category.general"
+                  command="-L"
+                  valueType="stringList"
+                  id="cygwin.link.ld.paths">
             </option>
          </tool>
       </target>
@@ -355,6 +357,7 @@
             isTest="false"
             name="Cygwin Shared Library"
             parent="cygwin"
+            binaryParser="org.eclipse.cdt.core.PE"
             defaultExtension="dll"
             isAbstract="false"
             id="cygwin.so">
@@ -405,6 +408,7 @@
             isTest="true"
             name="Cygwin Export Library (DLL)"
             parent="cygwin"
+            binaryParser="org.eclipse.cdt.core.PE"
             defaultExtension="dll.a"
             isAbstract="false"
             id="cygwin.exp">
@@ -455,6 +459,7 @@
             isTest="false"
             name="Cygwin Static Library"
             parent="cygwin"
+            binaryParser="org.eclipse.cdt.core.PE"
             defaultExtension="a"
             isAbstract="false"
             id="cygwin.lib">
@@ -491,6 +496,7 @@
             isTest="false"
             cleanCommand="rm -rf"
             name="Linux"
+            binaryParser="org.eclipse.cdt.core.ELF"
             isAbstract="true"
             makeCommand="make"
             id="linux.gnu">
@@ -781,6 +787,7 @@
             isTest="false"
             name="Linux Executable"
             parent="linux.gnu"
+            binaryParser="org.eclipse.cdt.core.ELF"
             isAbstract="false"
             id="linux.gnu.exec">
          <configuration
@@ -874,6 +881,7 @@
             isTest="false"
             name="Linux Shared Library"
             parent="linux.gnu"
+            binaryParser="org.eclipse.cdt.core.ELF"
             defaultExtension="so"
             isAbstract="false"
             id="linux.gnu.so">
@@ -978,6 +986,7 @@
             isTest="false"
             name="Linux Static Library"
             parent="linux.gnu"
+            binaryParser="org.eclipse.cdt.core.ELF"
             defaultExtension="a"
             isAbstract="false"
             id="linux.gnu.lib">
@@ -1015,6 +1024,7 @@
             isTest="false"
             cleanCommand="rm -rf"
             name="Solaris"
+            binaryParser="org.eclipse.cdt.core.ELF"
             isAbstract="true"
             makeCommand="make"
             id="solaris.gnu">
@@ -1297,6 +1307,7 @@
             isTest="false"
             name="Solaris Executable"
             parent="solaris.gnu"
+            binaryParser="org.eclipse.cdt.core.ELF"
             isAbstract="false"
             id="solaris.gnu.exec">
          <configuration
@@ -1390,6 +1401,7 @@
             isTest="false"
             name="Solaris Shared Library"
             parent="solaris.gnu"
+            binaryParser="org.eclipse.cdt.core.ELF"
             defaultExtension="so"
             isAbstract="false"
             id="solaris.gnu.so">
@@ -1494,6 +1506,7 @@
             isTest="false"
             name="Solaris Static Library"
             parent="solaris.gnu"
+            binaryParser="org.eclipse.cdt.core.ELF"
             defaultExtension="a"
             isAbstract="false"
             id="solaris.gnu.lib">

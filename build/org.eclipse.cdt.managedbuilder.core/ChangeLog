@@ -1,3 +1,20 @@
+2003-09-19 Sean Evoy
+	Added a new field to the target specification in the build model to 
+	hard-code the binary parser for project creation. There is a new getter 
+	method in the interface and the implementor contains additional code to 
+	extract the information from a project file or plugin manifest. The 
+	interface also contains new strings to make changing the specification 
+	easier in the future.
+	* schema/ManagedBuildTools.exsd
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+	
+	Fix for bug 41720: libraries are now found for Solaris and Linux 
+	executables. The problem was the executable had no extension and 
+	the client of the build model passed null instead of the empty string.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+
 2003-09-16 Sean Evoy
 	Patch contains a fix for bug 43017. Renamed the "addDeps" method to a 
 	more descriptive "addSourceDependencies". Added a flag when the 

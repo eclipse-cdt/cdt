@@ -18,7 +18,15 @@ import org.eclipse.core.resources.IResource;
  */
 public interface ITarget extends IBuildObject {
 	public static final String TARGET_ELEMENT_NAME = "target";	//$NON-NLS-1$
-
+	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
+	public static final String BINARY_PARSER = "binaryParser";	//$NON-NLS-1$
+	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
+	public static final String DEFAULT_EXTENSION = "defaultExtension";	//$NON-NLS-1$
+	public static final String IS_ABSTRACT = "isAbstract";	//$NON-NLS-1$
+	public static final String IS_TEST = "isTest";	//$NON-NLS-1$
+	public static final String MAKE_COMMAND = "makeCommand";	//$NON-NLS-1$
+	public static final String PARENT = "parent";	//$NON-NLS-1$
+	
 	/**
 	 * Creates a configuration for the target populated with the tools and
 	 * options settings from the parent configuration.  As options and tools
@@ -46,6 +54,13 @@ public interface ITarget extends IBuildObject {
 	 * @return 
 	 */
 	public String getArtifactName();
+	
+	/**
+	 * Answers the unique ID of the binary parser associated with the target.
+	 * 
+	 * @return
+	 */
+	public String getBinaryParserId();
 	
 	/**
 	 * Answers the OS-specific command to remove files created by the build

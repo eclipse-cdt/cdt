@@ -1,3 +1,7 @@
+2003-06-23 Mikhail Khodjaiants
+	Fix for ClassCastException in CStackFrame.
+	* CStackFrame.java
+
 2003-06-20 Mikhail Khodjaiants
 	Variable bookkeeping (phase 0.1).
 	* ICDTLaunchConfigurationConstants.java: add a new attribute - ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING.

@@ -17,7 +17,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
@@ -145,7 +144,7 @@ public class CStackFrame extends CDebugElement
 		Iterator newOnes = locals.iterator();
 		while( newOnes.hasNext() )
 		{
-			fVariables.add( new CModificationVariable( this, (ICDIVariable)newOnes.next() ) );
+			fVariables.add( new CModificationVariable( this, (ICDIVariableObject)newOnes.next() ) );
 		}
 	}
 

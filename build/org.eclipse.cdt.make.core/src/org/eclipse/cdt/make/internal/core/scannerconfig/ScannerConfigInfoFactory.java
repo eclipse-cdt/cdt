@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 
 /**
  * Creates a ScannerConfigBuilderInfo variant
@@ -274,7 +275,7 @@ public class ScannerConfigInfoFactory {
 			if (builder == null) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeCorePlugin.getResourceString("ScannerConfigInfoFactory.Missing_Builder")//$NON-NLS-1$
+						MakeMessages.getString("ScannerConfigInfoFactory.Missing_Builder")//$NON-NLS-1$
 							+ builderID, null)); 
 			}
 			args = builder.getArguments();

@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.core.scannerconfig;
 import java.util.Map;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,7 +50,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 		
 		if (autodiscoveryEnabled) {
 			monitor.beginTask("ScannerConfigBuilder.Invoking_Builder", 100); //$NON-NLS-1$
-			monitor.subTask(MakeCorePlugin.getResourceString("ScannerConfigBuilder.Invoking_Builder") +	//$NON-NLS-1$ 
+			monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +	//$NON-NLS-1$ 
 					getProject().getName());
 			ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), new SubProgressMonitor(monitor, 100));
 		}

@@ -53,9 +53,9 @@ public class TraceUtil {
 			System.out.println(prefix + subtitle1 + " (" + item1.size() + "):");	//$NON-NLS-1$ //$NON-NLS-2$
 			int count = 0;
 			for (Iterator i = item1.iterator(), j = item1new.iterator(); i.hasNext(); ) {
-				System.out.println(doublePrefix + String.valueOf(++count) + "\t\'" +(String)i.next() + (j.hasNext()?"\' -> \'" + (String)j.next():"") + '\'');	//$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println(doublePrefix + String.valueOf(++count) + "\t\'" +(String)i.next() + (j.hasNext()?"\' -> \'" + (String)j.next():"") + '\'');	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			System.out.println(prefix + subtitle2 + " (" + item2.size() + "):");	//$NON-NLS-1$
+			System.out.println(prefix + subtitle2 + " (" + item2.size() + "):");	//$NON-NLS-1$ //$NON-NLS-2$
 			count = 0;
 			for (Iterator i = item2.iterator(); i.hasNext(); ) {
 				System.out.println(doublePrefix + String.valueOf(++count) + "\t\'" + (String)i.next() + '\'');	//$NON-NLS-1$

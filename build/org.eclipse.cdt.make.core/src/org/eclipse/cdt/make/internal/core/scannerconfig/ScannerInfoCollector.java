@@ -38,6 +38,7 @@ import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 
@@ -153,17 +154,17 @@ public class ScannerInfoCollector {
 	 */
 	private void updateScannerConfig(IProject project, IProgressMonitor monitor) {
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-		monitor.beginTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
+		monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
 		if (provider != null) {
 			IScannerInfo scanInfo = provider.getScannerInformation(project);
 			if (scanInfo != null) {
 				if (scanInfo instanceof DiscoveredScannerInfo) {
 					DiscoveredScannerInfo discScanInfo = (DiscoveredScannerInfo)scanInfo;
 					String projectName = project.getName();
-					monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
+					monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
 					if (scannerConfigNeedsUpdate(discScanInfo, projectName)) {
 						monitor.worked(50);
-						monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Updating") + projectName); //$NON-NLS-1$
+						monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + projectName); //$NON-NLS-1$
 						try {
 							// update scanner configuration
 							discScanInfo.update();

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.core.resources.IContainer;
@@ -44,8 +45,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class MakeBuilder extends ACBuilder {
-
-	private static final String BUILD_ERROR = "MakeBuilder.buildError"; //$NON-NLS-1$
 
 	public final static String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeBuilder"; //$NON-NLS-1$
 
@@ -116,7 +115,7 @@ public class MakeBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), 100); //$NON-NLS-1$
+		monitor.beginTask(MakeMessages.getString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), 100); //$NON-NLS-1$
 
 		try {
 			IPath buildCommand = info.getBuildCommand();
@@ -204,11 +203,11 @@ public class MakeBuilder extends ACBuilder {
 					} catch (IOException e) {
 					}
 					// Before launching give visual cues via the monitor
-					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
+					monitor.subTask(MakeMessages.getString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
 					if (launcher.waitAndRead(sniffer, sniffer, new SubProgressMonitor(monitor, 0))
 						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
-					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
+					monitor.subTask(MakeMessages.getString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
 					try {
 						// Do not allow the cancel of the refresh, since the builder is external
@@ -229,7 +228,7 @@ public class MakeBuilder extends ACBuilder {
 						buf.append(' ');
 					}
 
-					String errorDesc = MakeCorePlugin.getFormattedString(BUILD_ERROR, buf.toString());
+					String errorDesc = MakeMessages.getFormattedString("MakeBuilder.buildError", buf.toString()); //$NON-NLS-1$
 					buf = new StringBuffer(errorDesc);
 					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -240,7 +239,7 @@ public class MakeBuilder extends ACBuilder {
 				stdout.close();
 				stderr.close();
 
-				monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
+				monitor.subTask(MakeMessages.getString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				sniffer.close();
 				epm.reportProblems();
 				cos.close();

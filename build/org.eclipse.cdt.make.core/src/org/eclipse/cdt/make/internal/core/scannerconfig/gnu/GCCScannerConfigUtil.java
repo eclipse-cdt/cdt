@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -50,7 +51,7 @@ public class GCCScannerConfigUtil {
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeCorePlugin.getResourceString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
+						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
 			}
 		}
 	}

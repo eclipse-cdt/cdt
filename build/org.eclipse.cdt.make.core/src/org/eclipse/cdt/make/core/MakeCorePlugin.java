@@ -12,17 +12,14 @@ package org.eclipse.cdt.make.core;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
@@ -62,8 +59,6 @@ public class MakeCorePlugin extends Plugin {
 	
 	//The shared instance.
 	private static MakeCorePlugin plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
 
 	/**
 	 * The constructor.
@@ -71,11 +66,6 @@ public class MakeCorePlugin extends Plugin {
 	public MakeCorePlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.make.core.PluginResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
 	}
 
 	/**
@@ -98,30 +88,6 @@ public class MakeCorePlugin extends Plugin {
 
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = MakeCorePlugin.getDefault().getResourceBundle();
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
 	}
 
 	public static String getUniqueIdentifier() {

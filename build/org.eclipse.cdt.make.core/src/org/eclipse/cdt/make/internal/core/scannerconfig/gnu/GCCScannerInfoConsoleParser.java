@@ -90,7 +90,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					if (symbol.length() == 0) {
 						if (scanner.hasMoreTokens()) {
 							symbol = scanner.nextToken();
-							if (symbol.startsWith("-")) {	// $NON-NLS-1$
+							if (symbol.startsWith("-")) {	//$NON-NLS-1$
 								cashedToken = symbol;
 								continue;
 							}
@@ -107,7 +107,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					if (iPath.length() == 0) {
 						if (scanner.hasMoreTokens()) {
 							iPath = scanner.nextToken();
-							if (iPath.startsWith("-")) {	// $NON-NLS-1$
+							if (iPath.startsWith("-")) {	//$NON-NLS-1$
 								cashedToken = iPath;
 								continue;
 							}

@@ -139,7 +139,7 @@ public class ProjectTargets {
 		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-					MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
+					MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		if (list == null) {
 			list = new ArrayList();

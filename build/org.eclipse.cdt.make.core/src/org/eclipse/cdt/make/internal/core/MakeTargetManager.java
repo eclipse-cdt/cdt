@@ -61,10 +61,10 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
 		if (target.getContainer() != null) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_temporary_target"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_temporary_target"), null)); //$NON-NLS-1$
 		}
 		IProject project = container.getProject();
 		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
@@ -96,7 +96,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			projectTargets = readTargets(project);
 		}
 		if (!projectTargets.contains((MakeTarget)target)) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		((MakeTarget)target).setName(name);
 		updateTarget((MakeTarget) target);
@@ -255,7 +255,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			projectTargets.saveTargets();
 		} catch (IOException e) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.error_writing_file"), e)); //$NON-NLS-1$
+				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.error_writing_file"), e)); //$NON-NLS-1$
 		}
 	}
 

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
@@ -183,7 +184,7 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 				// Add the symbol to the symbol list
 				String symbol = ((Element)child).getAttribute(SYMBOL);
 				String removed = ((Element)child).getAttribute(REMOVED);
-				boolean bRemoved = (removed != null && removed.equals("true"));	// $NON-NLS-1$
+				boolean bRemoved = (removed != null && removed.equals("true"));	//$NON-NLS-1$
 				ScannerConfigUtil.scAddSymbolString2SymbolEntryMap(symbols, symbol, !bRemoved);
 			}
 			child = child.getNextSibling();
@@ -304,21 +305,21 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 	private void loadDiscoveredScannerInfoFromState(IProject project, LinkedHashMap includes, LinkedHashMap symbols) throws CoreException {
 		// Save the document
 		IPath path = MakeCorePlugin.getWorkingDirectory();
-		path = path.append(project.getName() + ".sc");
+		path = path.append(project.getName() + ".sc"); //$NON-NLS-1$
 		if (path.toFile().exists()) {
 			try {
 				FileInputStream file = new FileInputStream(path.toFile());
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document document = parser.parse(file);
 				Node rootElement = document.getFirstChild();
-				if (rootElement.getNodeName().equals("scannerInfo")) {
+				if (rootElement.getNodeName().equals("scannerInfo")) { //$NON-NLS-1$
 					Node child = rootElement.getFirstChild();
 					loadDiscoveredScannerInfo(includes, symbols, child);
 				}
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeCorePlugin.getResourceString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
+						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
 			} catch (ParserConfigurationException e) {
 				MakeCorePlugin.log(e);
 			} catch (FactoryConfigurationError e) {
@@ -334,8 +335,8 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
-			Element rootElement = doc.createElement("scannerInfo");
-			rootElement.setAttribute("id", CDESCRIPTOR_ID);
+			Element rootElement = doc.createElement("scannerInfo"); //$NON-NLS-1$
+			rootElement.setAttribute("id", CDESCRIPTOR_ID); //$NON-NLS-1$
 			doc.appendChild(rootElement);
 
 			saveDiscoveredScannerInfo(scannerInfo, rootElement, doc);
@@ -352,7 +353,7 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 			
 			// Save the document
 			IPath path = MakeCorePlugin.getWorkingDirectory();
-			path = path.append(project.getName() + ".sc");
+			path = path.append(project.getName() + ".sc"); //$NON-NLS-1$
 			try {
 				FileOutputStream file = new FileOutputStream(path.toFile());
 				file.write(stream.toByteArray());
@@ -360,7 +361,7 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeCorePlugin.getResourceString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
+						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
 			}
 			
 			// Close the streams

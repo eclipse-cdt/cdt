@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.core.resources.IMarker;
@@ -67,7 +68,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Reading_Specs"), 100); //$NON-NLS-1$
+		monitor.beginTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs"), 100); //$NON-NLS-1$
 		
 		try {
 			IConsole console = CCorePlugin.getDefault().getConsole(EXTERNAL_SI_PROVIDER_CONSOLE_ID);
@@ -75,7 +76,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			OutputStream cos = console.getOutputStream();
 
 			// Before launching give visual cues via the monitor
-			monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Reading_Specs")); //$NON-NLS-1$
+			monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs")); //$NON-NLS-1$
 			
 			String errMsg = null;
 			CommandLauncher launcher = new CommandLauncher();
@@ -87,7 +88,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 
 			String ca = coligate(compileArguments);
 
-			monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Invoking_Command")  //$NON-NLS-1$
+			monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Invoking_Command")  //$NON-NLS-1$
 					+ fCompileCommand.toString() + ca);
 			cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
 			
@@ -104,19 +105,19 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 				if (launcher.waitAndRead(sniffer, sniffer, new SubProgressMonitor(monitor, 0)) != CommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
 				}
-				monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Parsing_Output")); //$NON-NLS-1$
+				monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Parsing_Output")); //$NON-NLS-1$
 			}
 			else {
 				errMsg = launcher.getErrorMessage();
 			}
 
 			if (errMsg != null) {
-				String errorDesc = MakeCorePlugin.getFormattedString(EXTERNAL_SI_PROVIDER_ERROR, 
+				String errorDesc = MakeMessages.getFormattedString(EXTERNAL_SI_PROVIDER_ERROR, 
 						fCompileCommand.toString() + ca);
 				addMarker(currentProject, -1, errorDesc, IMarkerGenerator.SEVERITY_WARNING, null);
 			}
 
-			monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Creating_Markers")); //$NON-NLS-1$
+			monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Creating_Markers")); //$NON-NLS-1$
 			sniffer.close();
 			cos.close();
 		}

@@ -1,4 +1,14 @@
-2003-04-21 Alain Magloire
+2003-04-26 Alain Magloire
+
+	ClastCastException in CView see PR 36876
+	and PR 36743 allow extending of the CView.
+	
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
+	(createContentProvider): new Method.
+	(createViewer): new Method.
+	(createLabelProvider): new method.
+
+2003-04-26 Alain Magloire
 
 	Fix NPE in the ComparatorModelBuilder when doing visual diffs
 	with the new Parser.

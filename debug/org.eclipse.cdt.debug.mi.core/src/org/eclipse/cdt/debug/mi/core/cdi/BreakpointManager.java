@@ -307,6 +307,8 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				}
 			} else if (function != null && function.length() > 0) {
 				line.append(function);
+			} else if (location.getLineNumber() != 0) {
+				line.append(location.getLineNumber());
 			} else {
 				line.append('*').append(location.getAddress());
 			}

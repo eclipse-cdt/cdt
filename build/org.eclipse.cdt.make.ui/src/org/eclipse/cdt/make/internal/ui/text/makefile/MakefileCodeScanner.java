@@ -57,7 +57,7 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 		List rules = new ArrayList();
 
 		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("#", comment, '\\')); //$NON-NLS-1$
+		rules.add(new EndOfLineRule("#", comment, '\\', true)); //$NON-NLS-1$
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {

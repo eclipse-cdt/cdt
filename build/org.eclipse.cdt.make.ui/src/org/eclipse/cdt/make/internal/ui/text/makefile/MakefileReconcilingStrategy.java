@@ -77,13 +77,15 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	
 	private void reconcile() {
 		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
-		String content = fDocumentProvider.getDocument(fEditor.getEditorInput()).get();
-		StringReader reader = new StringReader(content);
-		try {
+		if (makefile != null) {
+			String content = fDocumentProvider.getDocument(fEditor.getEditorInput()).get();
+			StringReader reader = new StringReader(content);
+			try {
 				makefile.parse(makefile.getFileName(), reader);
-		} catch (IOException e) {
+			} catch (IOException e) {
+			}
+			
+			fOutliner.update();
 		}
-
-		fOutliner.update();
  	}	
 }

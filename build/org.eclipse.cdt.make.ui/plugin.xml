@@ -423,6 +423,8 @@
          </action>
       </actionSet>
    </extension>
+   
+   <!-- Makefile Editor extensions.  -->
    <extension
          id="org.eclipse.cdt.make.editor"
          name="MakefileEditor"
@@ -436,6 +438,26 @@
             id="org.eclipse.cdt.make.editor">
       </editor>
    </extension>
+   <extension
+         id="org.eclipse.cdt.make.ui.MakefileDocumentFactory"
+         name="%MakefileDocumentFactory.name"
+         point="org.eclipse.core.filebuffers.documentCreation">
+      <factory
+            extensions="*"
+            class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentFactory">
+      </factory>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.make.ui.MakefileDocumentSetupParticipant"
+         name="%MakefileDocumentSetupParticipant.name"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            extensions="*"
+            class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentSetupParticipant">
+      </participant>
+   </extension>
+    
+   
    <extension
          point="org.eclipse.ui.startup">
       <startup

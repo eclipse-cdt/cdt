@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -259,11 +260,58 @@ public class CVisitor {
 			binding = createBinding( (IASTSimpleDeclaration) parent, name );
 		} else if( parent instanceof IASTParameterDeclaration ){
 			binding = createBinding( (IASTParameterDeclaration ) parent );
+		} else if ( parent instanceof IASTFunctionDeclarator ) {
+			binding = createBinding(declarator);
 		}
 		
 		return binding;
 	}
 
+	private static IBinding createBinding( IASTDeclarator declarator ){
+		IASTNode parent = declarator.getParent();
+
+		if( declarator.getNestedDeclarator() != null )
+			return createBinding( declarator.getNestedDeclarator() );
+		
+		while( parent instanceof IASTDeclarator ){
+			parent = parent.getParent();
+		}
+		
+		ICScope scope = (ICScope) getContainingScope( parent );
+		IBinding binding = null;
+		binding = ( scope != null ) ? scope.getBinding( ICScope.NAMESPACE_TYPE_OTHER, declarator.getName().toCharArray() ) : null;  
+		
+		if( declarator instanceof IASTFunctionDeclarator ){
+			if( binding != null && binding instanceof IFunction ){
+			    IFunction function = (IFunction) binding;
+			    IFunctionType ftype = function.getType();
+			    IType type = createType( declarator.getName() );
+			    if( ftype.equals( type ) ){
+			        if( parent instanceof IASTSimpleDeclaration )
+			            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
+			        
+			        return function;
+			    }
+			} 
+
+			binding = new CFunction( (IASTFunctionDeclarator) declarator );
+		} else if( parent instanceof IASTSimpleDeclaration ){
+			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
+			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
+				binding = new CTypeDef( declarator.getName() );
+			} else if( simpleDecl.getParent() instanceof ICASTCompositeTypeSpecifier ){
+				binding = new CField( declarator.getName() );
+			} else {
+				binding = new CVariable( declarator.getName() );
+			}
+		} 
+
+		if( scope != null && binding != null )
+		    scope.addBinding( binding );
+		return binding;
+	}
+
+	
 	private static IBinding createBinding( ICASTCompositeTypeSpecifier compositeTypeSpec ){
 	    ICompositeType binding = new CStructure( compositeTypeSpec );
 	    ICScope scope = (ICScope) binding.getScope();
@@ -883,58 +931,111 @@ public class CVisitor {
 		return true;
 	}
 	
-	public static IType getType(IASTName name) {
+	public static IType createType(IASTName name) {
+		return createType(name, false);
+	}
+	
+	public static IType createType(IASTName name, boolean isParm) {
+		if (!(name.getParent() instanceof IASTDeclarator)) return null;
+
 		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
-		IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) declarator.getParent();
 		
-		IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
+		if (declarator.getParent() instanceof IASTSimpleDeclaration) {		
+			return createBaseType( declarator, ((IASTSimpleDeclaration)(declarator).getParent()).getDeclSpecifier(), isParm );
+		} else if (declarator.getParent() instanceof IASTFunctionDeclarator) {
+			IASTDeclarator origDecltor = (IASTDeclarator)declarator.getParent();
+			IType returnType = createType(origDecltor.getName(), isParm);
+			IType lastType = new CFunctionType(returnType, getParmTypes((IASTFunctionDeclarator)declarator.getParent()));
+				
+			if (declarator.getPointerOperators() != null) 
+				lastType = setupPointerChain(declarator.getPointerOperators(), lastType);
+				
+			IType arrayChain = setupArrayChain(declarator, lastType);
+			if (arrayChain != null) lastType = arrayChain;
+
+			return lastType;
+		} else if (declarator.getParent() instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition functionDef = (IASTFunctionDefinition)declarator.getParent();
+
+			return createBaseType(functionDef.getDeclarator(), functionDef.getDeclSpecifier(), isParm);
+		} else if (declarator.getParent() instanceof IASTParameterDeclaration) {
+			if (declarator instanceof IASTFunctionDeclarator) {		
+				IType returnType = createBaseType(declarator, ((IASTParameterDeclaration)declarator.getParent()).getDeclSpecifier(), isParm);
+				IType lastType = new CFunctionType(returnType, getParmTypes((IASTFunctionDeclarator)declarator));
+					
+				if (declarator.getPointerOperators() != IASTPointerOperator.EMPTY_ARRAY) 
+					lastType = setupPointerChain(declarator.getPointerOperators(), lastType);
+					
+				IType arrayChain = setupArrayChain(declarator, lastType);
+				if (arrayChain != null) lastType = arrayChain;
+
+				// any parameter to type function returning T is adjusted to be pointer to function returning T
+	            lastType = new CPointerType( lastType );
+				
+				return lastType;
+			}
+			
+			return createBaseType( declarator, ((IASTParameterDeclaration)(declarator).getParent()).getDeclSpecifier(), isParm );
+		}
+
+		return createType((IASTName)declarator.getParent());
+	}
+
+	public static IType createBaseType(IASTDeclarator declarator, IASTDeclSpecifier declSpec, boolean isParm) {
+		IType lastType = null;
+		
 		if( declSpec instanceof ICASTTypedefNameSpecifier ){
 			if (declSpec.isConst() || declSpec.isVolatile() || (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()))
 				return new CQualifierType(declSpec);
 			
-			IType lastType = null;
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
 			lastType = (IType) nameSpec.getName().resolveBinding();			
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
 			if (pointerChain != null) lastType = pointerChain;
 			
-			IType arrayChain = setupArrayChain(declarator, lastType);
+			IType arrayChain = null;
+			if (isParm)
+				arrayChain = setupArrayParmChain(declarator, lastType);
+			else
+				arrayChain = setupArrayChain(declarator, lastType);
 			if (arrayChain != null) lastType = arrayChain;
 			
-			return lastType;
 		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
 			if (declSpec.isConst() || declSpec.isVolatile() || (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()))
 				return new CQualifierType(declSpec);
 			
-			IType lastType = null;
 			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
 			lastType = (IType) elabTypeSpec.getName().resolveBinding();
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
 			if (pointerChain != null) lastType = pointerChain;
 			
-			IType arrayChain = setupArrayChain(declarator, lastType);
+			IType arrayChain = null;
+			if (isParm)
+				arrayChain = setupArrayParmChain(declarator, lastType);
+			else
+				arrayChain = setupArrayChain(declarator, lastType);
 			if (arrayChain != null) lastType = arrayChain;
 			
-			return lastType;
 		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
 			if (declSpec.isConst() || declSpec.isVolatile() || (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()))
 				return new CQualifierType(declSpec);
 			
-			IType lastType = null;
 			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
 			lastType = (IType) compTypeSpec.getName().resolveBinding();
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
 			if (pointerChain != null) lastType = pointerChain;
 			
-			IType arrayChain = setupArrayChain(declarator, lastType);
+			IType arrayChain = null;
+			if (isParm)
+				arrayChain = setupArrayParmChain(declarator, lastType);
+			else
+				arrayChain = setupArrayChain(declarator, lastType);
 			if (arrayChain != null) lastType = arrayChain;
 			
-			return lastType;
 		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
-			IType lastType = null;
 			if (declSpec.isConst() || declSpec.isVolatile() || (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()))
 				lastType = new CQualifierType(declSpec);
 			else						
@@ -943,14 +1044,49 @@ public class CVisitor {
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
 			if (pointerChain != null) lastType = pointerChain;
 			
-			IType arrayChain = setupArrayChain(declarator, lastType);
+			IType arrayChain = null;
+			if (isParm)
+				arrayChain = setupArrayParmChain(declarator, lastType);
+			else
+				arrayChain = setupArrayChain(declarator, lastType);
 			if (arrayChain != null) lastType = arrayChain;
 			
-			return lastType;
 		}
+
+		return lastType;
+	}
+
+	private static IType setupArrayParmChain(IASTDeclarator decl, IType lastType) {
+		if (decl instanceof IASTArrayDeclarator) {
+			int i=0;
+			IASTArrayModifier[] mods = ((IASTArrayDeclarator)decl).getArrayModifiers();
+
+			// C99: 6.7.5.3-7 "array of type" shall be adjusted to "qualified pointer to type", where the type qualifiers (if any)
+			// are those specified within the [ and ] of the array type derivation
+			IType pType = new CQualifiedPointerType(lastType, mods[i++]); 
+			for (; i < ((IASTArrayDeclarator)decl).getArrayModifiers().length - 1; i++) {
+				pType = new CQualifiedPointerType(lastType, mods[i]);
+			}
+			return pType;
+		}
+		
 		return null;
 	}
 	
+	public static IFunctionType createFunctionType( IASTFunctionDeclarator functionName ) {
+		return new CFunctionType( CVisitor.createType(functionName.getName()), getParmTypes(functionName) );
+	}
+	
+	private static IType[] getParmTypes( IASTFunctionDeclarator decltor ){
+		IASTParameterDeclaration parms[] = decltor.getParameters();
+		IType parmTypes[] = new IType[parms.length];
+		
+	    for( int i = 0; i < parms.length; i++ ){
+	    	parmTypes[i] = createType(parms[i].getDeclarator().getName(), true);
+	    }
+	    return parmTypes;
+	}
+
 	private static IType setupArrayChain(IASTDeclarator decl, IType lastType) {
 		if (decl instanceof IASTArrayDeclarator) {
 			int i=0;
@@ -958,7 +1094,7 @@ public class CVisitor {
 			
 			CArrayType arrayType = new CArrayType(lastType); 
 			if (mods[i] instanceof ICASTArrayModifier) {
-				arrayType.setModifiedArrayModifier((ICASTArrayModifier)mods[i]);
+				arrayType.setModifiedArrayModifier((ICASTArrayModifier)mods[i++]);
 			}
 			for (; i < ((IASTArrayDeclarator)decl).getArrayModifiers().length - 1; i++) {
 				arrayType = new CArrayType(arrayType);

@@ -59,7 +59,7 @@ public class CVariable implements IVariable {
 	 */
 	public IType getType() {
 		if (type == null)
-			type = CVisitor.getType(name);
+			type = CVisitor.createType(name);
 		return type;
 	}
 	

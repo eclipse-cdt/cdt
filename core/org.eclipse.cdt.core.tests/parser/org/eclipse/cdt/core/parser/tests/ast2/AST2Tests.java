@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -68,6 +70,8 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -1067,7 +1071,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( ((IBasicType)t_c_6).getType(), IBasicType.t_char);
     }
     
-    public void _testFunctionTypes() throws Exception{
+    public void testFunctionTypes() throws Exception{
         StringBuffer buffer = new StringBuffer();
         buffer.append( "struct A;                           \n"); //$NON-NLS-1$
         buffer.append( "int * f( int i, char c );           \n"); //$NON-NLS-1$
@@ -1118,7 +1122,7 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue( t_h instanceof IPointerType );
         assertTrue( ((IPointerType) t_h).getType() instanceof IFunctionType );
         IFunctionType t_h_func = (IFunctionType) ((IPointerType) t_h).getType();
-        IType t_h_func_return = t_g_func.getReturnType();
+        IType t_h_func_return = t_h_func.getReturnType();
         IType [] t_h_func_params = t_h_func.getParameterTypes();
         assertEquals( t_h_func_params.length, 1 );
         IType t_h_func_p1 = t_h_func_params[0];
@@ -1166,5 +1170,79 @@ public class AST2Tests extends AST2BaseTest {
    		    assertNotNull( fieldDesignator.getName().toString() );
    		}
     }
+    
+    public void testFnReturningPtrToFn() throws Exception {
+    	IASTTranslationUnit tu = parse( "void ( * f( int ) )(){}", ParserLanguage.C ); //$NON-NLS-1$
+    	
+        IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IFunction f = (IFunction) def.getDeclarator().getNestedDeclarator().getName().resolveBinding();
+        
+        IFunctionType ft = f.getType();
+        assertTrue( ft.getReturnType() instanceof IPointerType );
+        assertTrue( ((IPointerType) ft.getReturnType()).getType() instanceof IFunctionType );
+        assertEquals( ft.getParameterTypes().length, 1 );
+    }
+    
+    // test C99: 6.7.5.3-7 A declaration of a parameter as ‘‘array of type’’ shall be adjusted to ‘‘qualified pointer to
+    // type’’, where the type qualifiers (if any) are those specified within the [ and ] of the
+    // array type derivation.
+    public void testArrayTypeToQualifiedPointerTypeParm() throws Exception {
+    	IASTTranslationUnit tu = parse( "void f(int parm[const 3]);", ParserLanguage.C ); //$NON-NLS-1$
+    	
+        IASTSimpleDeclaration def = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IFunction f = (IFunction) def.getDeclarators()[0].getName().resolveBinding();
+        
+        IFunctionType ft = f.getType();
+        assertTrue( ft.getParameterTypes()[0] instanceof IPointerType );
+        assertTrue( ((IPointerType)ft.getParameterTypes()[0]).isConst() );
+    }
+    
+	// any parameter to type function returning T is adjusted to be pointer to function returning T
+    public void testParmToFunction() throws Exception {
+    	IASTTranslationUnit tu = parse( "int f(int g(void)) { return g();}", ParserLanguage.C ); //$NON-NLS-1$
+    	
+        IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IFunction f = (IFunction) def.getDeclarator().getName().resolveBinding();
+        
+        IType ft = ((CFunction)f).getType();
+        assertTrue( ft instanceof IFunctionType );
+        IType gt_1 = ((IFunctionType)ft).getParameterTypes()[0];
+        assertTrue( gt_1 instanceof IPointerType );
+        IType gt_2 = ((IPointerType)gt_1).getType();
+        assertTrue( gt_2 instanceof IFunctionType );
+        IType gt_ret = ((IFunctionType)gt_2).getReturnType();
+        assertTrue( gt_ret instanceof IBasicType );
+        assertEquals( ((IBasicType)gt_ret).getType(), IBasicType.t_int );
+        IType gt_parm = ((IFunctionType)gt_2).getParameterTypes()[0];
+        assertTrue( gt_parm instanceof IBasicType );
+        assertEquals( ((IBasicType)gt_parm).getType(), IBasicType.t_void );
+    }
+    
+    public void testArrayPointerFunction() throws Exception {
+    	IASTTranslationUnit tu = parse( "int (*v[])(int *x, int *y);", ParserLanguage.C ); //$NON-NLS-1$
+    	
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IVariable v = (IVariable)((IASTFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName().resolveBinding();
+        
+        IType vt_1 = v.getType();
+        assertTrue( vt_1 instanceof IArrayType );
+        IType vt_2 = ((IArrayType)vt_1).getType();
+        assertTrue( vt_2 instanceof IPointerType );
+        IType vt_3 = ((IPointerType)vt_2).getType();
+        assertTrue( vt_3 instanceof IFunctionType );
+        IType vt_ret = ((IFunctionType)vt_3).getReturnType();
+        assertTrue( vt_ret instanceof IBasicType );
+        assertEquals( ((IBasicType)vt_ret).getType(), IBasicType.t_int );
+        assertEquals( ((IFunctionType)vt_3).getParameterTypes().length, 2 );
+        IType vpt_1 = ((IFunctionType)vt_3).getParameterTypes()[0];
+        assertTrue( vpt_1 instanceof IPointerType );
+        IType vpt_1_2 = ((IPointerType)vpt_1).getType();
+        assertTrue( vpt_1_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)vpt_1_2).getType(), IBasicType.t_int );
+        IType vpt_2 = ((IFunctionType)vt_3).getParameterTypes()[0];
+        assertTrue( vpt_2 instanceof IPointerType );
+        IType vpt_2_2 = ((IPointerType)vpt_1).getType();
+        assertTrue( vpt_2_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)vpt_2_2).getType(), IBasicType.t_int );
+    }
 }
-

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 public class CFunction implements IFunction {
 	private IASTFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
+	IFunctionType type = null;
 	
 	public CFunction( IASTFunctionDeclarator declarator ){
 	    if( declarator.getParent() instanceof IASTFunctionDefinition )
@@ -126,8 +127,12 @@ public class CFunction implements IFunction {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
     public IFunctionType getType() {
-        // TODO Auto-generated method stub
-        return null;
+        if( type == null ) {
+        	IASTFunctionDeclarator functionName = ( definition != null ) ? definition : declarators[0];
+        	type = CVisitor.createFunctionType( functionName );
+        }
+        
+        return type;
     }
 	
 //	public IASTDeclaration getDeclaration(){

@@ -40,7 +40,7 @@ public class CTypeDef implements ITypedef, ITypeContainer {
 	 */
 	public IType getType() {
 		if (type == null)
-			type = CVisitor.getType(name);
+			type = CVisitor.createType(name);
 		return type;
 	}
 

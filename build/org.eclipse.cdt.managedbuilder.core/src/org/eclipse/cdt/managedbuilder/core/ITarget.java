@@ -26,6 +26,7 @@ public interface ITarget extends IBuildObject {
 	public static final String IS_ABSTRACT = "isAbstract";	//$NON-NLS-1$
 	public static final String IS_TEST = "isTest";	//$NON-NLS-1$
 	public static final String MAKE_COMMAND = "makeCommand";	//$NON-NLS-1$
+	public static final String MAKE_ARGS = "makeArguments";	//$NON-NLS-1$
 	public static final String OS_LIST = "osList";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 	
@@ -95,6 +96,15 @@ public interface ITarget extends IBuildObject {
 	 */
 	public String getDefaultExtension();	
 
+	
+	/**
+	 * Answers the command line arguments to pass to the make utility used 
+	 * by the receiver to build a project.
+	 * 
+	 * @return
+	 */
+	public String getMakeArguments();
+	
 	/**
 	 * Answers the name of the make utility for the target.
 	 *  
@@ -192,6 +202,14 @@ public interface ITarget extends IBuildObject {
 	 * @param name
 	 */
 	public void setArtifactName(String name);
+
+	/**
+	 * Sets the arguments to be passed to the make utility used by the 
+	 * receiver to produce a build goal.
+	 * 
+	 * @param makeArgs
+	 */
+	public void setMakeArguments(String makeArgs);
 
 	/**
 	 * Sets the make command for the receiver to the value in the argument.

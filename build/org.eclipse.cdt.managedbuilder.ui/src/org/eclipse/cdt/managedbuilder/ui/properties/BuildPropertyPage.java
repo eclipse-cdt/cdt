@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -458,8 +460,12 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				// This is a cheap assignment to null so do it to be doubly sure
 				selectedTarget.resetMakeCommand();
 			} else {
-				String makeCommand = manageDialog.getMakeCommand();
+				// Parse for command and arguments
+				String rawCommand = manageDialog.getMakeCommand();
+				String makeCommand = parseMakeCommand(rawCommand);
 				selectedTarget.setMakeCommand(makeCommand);
+				String makeArguments = parseMakeArgs(rawCommand);
+				selectedTarget.setMakeArguments(makeArguments);
 			}
 			
 			// Check to see if any configurations have to be deleted
@@ -545,6 +551,126 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 */
 	protected void initializeSashForm() {
 		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+	}
+
+	/* (non-Javadoc)
+	 * @param rawCommand
+	 * @return
+	 */
+	private String parseMakeArgs(String rawCommand) {
+		StringBuffer result = new StringBuffer();		
+		
+		// Parse out the command
+		String actualCommand = parseMakeCommand(rawCommand);
+		
+		// The flags and targets are anything not in the command
+		String arguments = rawCommand.substring(actualCommand.length());
+
+		// If there aren't any, we can stop
+		if (arguments.length() == 0) {
+			return result.toString().trim();
+		}
+
+		String[] tokens = arguments.trim().split("\\s");
+		/*
+		 * Cases to consider
+		 * --<flag>					Sensible, modern single flag. Add to result and continue.
+		 * -<flags>					Flags in single token, add to result and stop
+		 * -<flag_with_arg> ARG		Flag with argument. Add next token if valid arg.
+		 * -<mixed_flags> ARG		Mix of flags, one takes arg. Add next token if valid arg.
+		 * -<flag_with_arg>ARG		Corrupt case where next token should be arg but isn't
+		 * -<flags> [target]..		Flags with no args, another token, add flags and stop.
+		 */
+		Pattern flagPattern = Pattern.compile("C|f|I|j|l|O|W");
+		// Look for a '-' followed by 1 or more flags with no args and exactly 1 that expects args
+		Pattern mixedFlagWithArg = Pattern.compile("-[^CfIjloW]*[CfIjloW]{1}.+");
+		for (int i = 0; i < tokens.length; ++i) {
+			String currentToken = tokens[i];
+			if (currentToken.startsWith("--")) {
+				result.append(currentToken);
+				result.append(" ");
+			} else if (currentToken.startsWith("-")) {
+				// Is there another token
+				if (i + 1 >= tokens.length) {
+					//We are done
+					result.append(currentToken);
+				} else {
+					String nextToken = tokens[i + 1];
+					// Are we expecting arguments
+					Matcher flagMatcher = flagPattern.matcher(currentToken);
+					if (!flagMatcher.find()) {
+						// Evalutate whether the next token should be added normally
+						result.append(currentToken);
+						result.append(" ");
+					} else {
+						// Look for the case where there is no space between flag and arg
+						if (mixedFlagWithArg.matcher(currentToken).matches()) {
+							// Add this single token and keep going
+							result.append(currentToken);
+							result.append(" ");							
+						} else {
+							// Add this token and the next one right now
+							result.append(currentToken);
+							result.append(" ");
+							result.append(nextToken);
+							result.append(" ");
+							// Skip the next token the next time through, though
+							++i;
+						}
+					}
+				}
+			}
+		}
+		
+		return result.toString().trim();
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @param string
+	 * @return
+	 */
+	private String parseMakeCommand(String rawCommand) {
+		StringBuffer command = new StringBuffer();
+		boolean hasSpace = false;
+		
+		// Try to separate out the command from the arguments 
+		String[] result = rawCommand.split("\\s");
+		
+		/*
+		 * Here are the cases to consider:
+		 * 	cmd								First segment is last segment, assume is command
+		 * 	cmd [flags]						First segment is the command
+		 * 	path/cmd [flags]				Same as above
+		 * 	path with space/make [flags]	Must append each segment up-to flags as command
+		 */
+		for (int i = 0; i < result.length; ++i) {
+			// Get the segment
+			String cmdSegment = result[i];
+			// If there is not another segment, we found the end
+			if (i + 1 >= result.length) {
+				command.append(cmdSegment);
+			} else {
+				// See if the next segment is the start of the flags
+				String nextSegment = result[i + 1];
+				if (nextSegment.startsWith("-")) {
+					// we have found the end of the command
+					command.append(cmdSegment);
+					break;
+				} else {
+					command.append(cmdSegment);
+					// Add the whitespace back
+					command.append(" ");
+					hasSpace = true;
+				}
+			}
+		}
+		
+//		if (hasSpace == true) {
+//			return "\"" + command.toString().trim() + "\"";
+//		} else {
+			return command.toString().trim();
+//		}
 	}
 
 	/*

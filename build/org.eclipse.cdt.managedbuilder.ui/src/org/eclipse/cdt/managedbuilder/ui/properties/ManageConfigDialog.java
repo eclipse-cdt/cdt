@@ -64,7 +64,7 @@ public class ManageConfigDialog extends Dialog {
 	private SortedMap deletedConfigs;
 	// Map of configuration names and ids
 	private SortedMap existingConfigs;
-	// The make command associated with the target	
+	// The make command associated with the target
 	private String makeCommand;
 	// The target the configs belong to
 	private ITarget managedTarget;
@@ -95,8 +95,7 @@ public class ManageConfigDialog extends Dialog {
 		this.title = title;
 		this.managedTarget = target;
 		
-		// Figure out the default make command
-		makeCommand = managedTarget.getMakeCommand();
+		setMakeCommand();
 		
 		// Get the name of the build artifact
 		artifactExt = managedTarget.getArtifactExtension();
@@ -186,7 +185,7 @@ public class ManageConfigDialog extends Dialog {
 		buildArtifactExt.setFont(outputGroup.getFont());
 		buildArtifactExt.setText(artifactExt);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
 		buildArtifactExt.setLayoutData(data);
 		buildArtifactExt.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -238,7 +237,7 @@ public class ManageConfigDialog extends Dialog {
 		currentConfigList = new List(currentComp, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
 		currentConfigList.setFont(currentComp.getFont());
 		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
 		currentConfigList.setLayoutData(data);
 		currentConfigList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
@@ -306,7 +305,7 @@ public class ManageConfigDialog extends Dialog {
 		deletedConfigList = new List(deletedComp, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
 		deletedConfigList.setFont(deletedComp.getFont());
 		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
 		deletedConfigList.setLayoutData(data);
 		deletedConfigList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
@@ -563,7 +562,27 @@ public class ManageConfigDialog extends Dialog {
 	 */
 	protected void handleUseDefaultPressed() {
 		// If the state of the button is unchecked, then we want to enable the edit widget
-		makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
+		boolean checked = makeCommandDefault.getSelection();
+		if (checked == true) {
+			managedTarget.resetMakeCommand();
+			setMakeCommand();
+			makeCommandEntry.setText(makeCommand);
+			makeCommandEntry.setEditable(false);
+		} else {
+			makeCommandEntry.setEditable(true);
+		}
+	}
+
+	/*
+	 * 
+	 */
+	private void setMakeCommand() {
+		// Figure out the make command
+		makeCommand = managedTarget.getMakeCommand();
+		String makeArgs = managedTarget.getMakeArguments();
+		if (makeArgs.length() > 0) {
+			makeCommand += " " + makeArgs;
+		}
 	}
 
 	private void updateButtons() {

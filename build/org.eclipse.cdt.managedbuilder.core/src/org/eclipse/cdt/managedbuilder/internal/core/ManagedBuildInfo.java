@@ -19,15 +19,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -47,6 +47,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private Map defaultConfigurations;
 	private ITarget defaultTarget;
 	
+	/**
+	 * Create a new managed build information for the IResource specified in the argument
+	 * 
+	 * @param owner
+	 */
 	public ManagedBuildInfo(IResource owner) {
 		targetMap = new HashMap();
 		targets = new ArrayList();
@@ -54,13 +59,20 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		this.owner = owner;
 	}
 	
+	/**
+	 * Reads the build information from the project file and creates the 
+	 * internal representation of the build settings for the project.
+	 * 
+	 * @param owner
+	 * @param element
+	 */
 	public ManagedBuildInfo(IResource owner, Element element) {
 		this(owner);
+		Node child = element.getFirstChild();
 		
 		// The id of the default configuration
 		String defaultTargetId = null;
 		List configIds = new ArrayList();
-		Node child = element.getFirstChild();
 		while (child != null) {
 			if (child.getNodeName().equals("target")) {
 				new Target(this, (Element)child);
@@ -495,46 +507,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeArguments()
 	 */
 	public String getMakeArguments() {
-		String arguments = new String();		
-		
-		// The make command may or may not have any flags
-		ITarget target = getDefaultTarget();
-		String command = target.getMakeCommand();
-		
-		// If it does, the flags will be everything between the '-' and the next space
-		int indexOfArgs = command.indexOf('-');
-		if (indexOfArgs != - 1) {
-			try {
-				String argsAndTargs = command.substring(indexOfArgs);
-				int indexOfTargs = argsAndTargs.indexOf(' ');
-				arguments = (indexOfTargs != -1) ? 
-							argsAndTargs.substring(0, indexOfTargs) : 
-							argsAndTargs;
-				// Make sure the arg list does not contain f or C
-				
-			} catch (IndexOutOfBoundsException e) {
-			}
-		}
-		
-		return arguments.trim();
+		return getDefaultTarget().getMakeArguments();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeCommand()
 	 */
 	public String getMakeCommand() {
-		String command = new String();
-		ITarget target = getDefaultTarget();
-		command = target.getMakeCommand();
-		
-		// There may actually be arguments, so just get everything up to the first '-'
-		int indexOfArgs = command.indexOf('-');
-		if (indexOfArgs != -1) {
-			// Return ecverything up to the first argument as the command
-			return command.substring(0, indexOfArgs).trim();
-		} else {
-			return command.trim();
-		}
+		return getDefaultTarget().getMakeCommand();
 	}
 
 	/* (non-Javadoc)

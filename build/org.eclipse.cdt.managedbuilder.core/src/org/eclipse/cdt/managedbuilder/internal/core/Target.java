@@ -42,6 +42,7 @@ public class Target extends BuildObject implements ITarget {
 	private String extension;
 	private boolean isAbstract = false;
 	private boolean isTest = false;
+	private String makeArguments;
 	private String makeCommand;
 	private IResource owner;
 	private ITarget parent;
@@ -214,9 +215,12 @@ public class Target extends BuildObject implements ITarget {
 		// Get the clean command
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
 		
-		// Get the make command
+		// Get the make command and arguments
 		if (element.hasAttribute(MAKE_COMMAND)) {
 			makeCommand = element.getAttribute(MAKE_COMMAND);
+		}
+		if(element.hasAttribute(MAKE_ARGS)) {
+			makeArguments = element.getAttribute(MAKE_ARGS);
 		}
 	
 		Node child = element.getFirstChild();
@@ -249,6 +253,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public void resetMakeCommand() {
 		makeCommand = null;
+		makeArguments = null;
 	}
 	
 	/**
@@ -272,6 +277,9 @@ public class Target extends BuildObject implements ITarget {
 		if (makeCommand != null) {
 			element.setAttribute(MAKE_COMMAND, makeCommand);
 		}
+		if (makeArguments != null) {
+			element.setAttribute(MAKE_ARGS, makeArguments);
+		}
 				
 		if (configurations != null)
 			for (int i = 0; i < configurations.size(); ++i) {
@@ -280,6 +288,22 @@ public class Target extends BuildObject implements ITarget {
 				element.appendChild(configElement);
 				config.serialize(doc, configElement);
 			}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getMakeArguments()
+	 */
+	public String getMakeArguments() {
+		if (makeArguments == null) {
+			// See if it is defined in my parent
+			if (parent != null) {
+				return parent.getMakeArguments();
+			} else { 
+				// No parent and no user setting
+				return new String("");
+			}
+		}
+		return makeArguments;
 	}
 
 	/* (non-Javadoc)
@@ -376,7 +400,9 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#hasMakeCommandOverride()
 	 */
 	public boolean hasOverridenMakeCommand() {
-		return (makeCommand != null && !makeCommand.equals(parent.getMakeCommand()));
+		// We answer true if the make command or the flags are different
+		return ((makeCommand != null && !makeCommand.equals(parent.getMakeCommand())) 
+			|| (makeArguments != null && !makeArguments.equals(parent.getMakeArguments())));
 	}
 
 	/**
@@ -548,6 +574,15 @@ public class Target extends BuildObject implements ITarget {
 	public void setArtifactName(String name) {
 		if (name != null) {
 			artifactName = name;		
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setMakeArguments(java.lang.String)
+	 */
+	public void setMakeArguments(String makeArgs) {
+		if (makeArgs != null && !getMakeArguments().equals(makeArgs)) {
+			makeArguments = makeArgs;
 		}
 	}
 

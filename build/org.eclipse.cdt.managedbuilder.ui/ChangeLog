@@ -1,3 +1,16 @@
+2004-02-23 Sean Evoy
+	Fix for bug 52647.
+	In 1.2, the target stored the raw, overridden build command the user 
+	specified on the property page. This fix involves enhancing the logic 
+	to pry apart the command from the args, and moving it into the property 
+	itself, so the build system only pays the price to parse once. 
+	Obviously since the make command or the args can be overridden by a user, 
+	the logic as to when to enable the edit field and check box in the manage 
+	dialog had to be tweaked. I am still not 100% satisfied, but this gets the 
+	meat of the fix into the hands of users.
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/ManageConfigDialog.java
+
 2004-2-17 Sean Evoy
 	Fixes for 51640
 	Externalized strings for the target names. 

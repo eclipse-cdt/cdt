@@ -31,8 +31,8 @@
             icon="icons/full/wizban/newmngcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewManagedCCProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            project="true"
             id="org.eclipse.cdt.managedbuilder.ui.wizards.StdCCWizard">
          <description>
             %MngCCWizard.description
@@ -43,8 +43,8 @@
             icon="icons/full/wizban/newmngc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewManagedCProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            project="true"
             id="org.eclipse.cdt.managedbuilder.ui.wizards.StdCWizard">
          <description>
             %MngCWizard.description
@@ -54,6 +54,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
+            adaptable="true"
             objectClass="org.eclipse.core.resources.IProject"
             name="%MngBuildProp.name"
             class="org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage"
@@ -84,12 +85,12 @@
             osList="win32">
          <tool
                natureFilter="cnature"
-               sources="c"
                name="%ToolName.compiler.c"
+               sources="c"
                headerExtensions="h"
                outputFlag="-o"
-               outputs="o"
                command="gcc"
+               outputs="o"
                id="cdt.build.tool.cygwin.gnu.c.compiler">
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
@@ -101,16 +102,16 @@
                   name="%Option.Posix.Nostdinc"
                   category="cygwin.gnu.c.compiler.category.preprocessor"
                   command="-nostdinc"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.preprocessor.nostdinc">
+                  id="cygwin.gnu.c.compiler.preprocessor.nostdinc"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="cygwin.gnu.c.compiler.category.preprocessor"
                   command="-E"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.preprocessor.preprocess">
+                  id="cygwin.gnu.c.compiler.preprocessor.preprocess"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
@@ -121,103 +122,103 @@
                   name="%Option.Posix.DefSym"
                   category="cygwin.gnu.c.compiler.category.symbols"
                   command="-D"
-                  valueType="definedSymbols"
-                  id="cygwin.gnu.c.preprocessor.def.symbols">
+                  id="cygwin.gnu.c.preprocessor.def.symbols"
+                  valueType="definedSymbols">
                <listOptionValue
-                     value="_X86_=1"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_X86_=1">
                </listOptionValue>
                <listOptionValue
-                     value="__OPTIMIZE__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__OPTIMIZE__">
                </listOptionValue>
                <listOptionValue
-                     value="__STDC_HOSTED__=1"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__STDC_HOSTED__=1">
                </listOptionValue>
                <listOptionValue
-                     value="i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_i686__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_i686__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_pentiumpro__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_pentiumpro__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_pentium2__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_pentium2__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_pentium3__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_pentium3__">
                </listOptionValue>
                <listOptionValue
-                     value="__stdcall=__attribute__((__stdcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__stdcall=__attribute__((__stdcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="__fastcall=__attribute__((__fastcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__fastcall=__attribute__((__fastcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="__cdecl=__attribute__((__cdecl__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__cdecl=__attribute__((__cdecl__))">
                </listOptionValue>
                <listOptionValue
-                     value="_stdcall=__attribute__((__stdcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_stdcall=__attribute__((__stdcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="_fastcall=__attribute__((__fastcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_fastcall=__attribute__((__fastcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="_cdecl=__attribute__((__cdecl__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_cdecl=__attribute__((__cdecl__))">
                </listOptionValue>
                <listOptionValue
-                     value="__declspec(x)=__attribute__((x))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__declspec(x)=__attribute__((x))">
                </listOptionValue>
                <listOptionValue
-                     value="__CYGWIN32__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__CYGWIN32__">
                </listOptionValue>
                <listOptionValue
-                     value="__CYGWIN__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__CYGWIN__">
                </listOptionValue>
                <listOptionValue
-                     value="unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="unix">
                </listOptionValue>
                <listOptionValue
-                     value="__unix__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix__">
                </listOptionValue>
                <listOptionValue
-                     value="__unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix">
                </listOptionValue>
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="cygwin.gnu.c.compiler.category.symbols"
                   command="-U"
-                  valueType="stringList"
-                  id="cygwin.gnu.c.preprocessor.undef.symbol">
+                  id="cygwin.gnu.c.preprocessor.undef.symbol"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
@@ -228,11 +229,11 @@
                   name="%Option.Posix.InclPaths"
                   category="cygwin.gnu.c.compiler.category.dirs"
                   command="-I"
-                  valueType="includePath"
-                  id="cygwin.gnu.c.compiler.general.include.paths">
+                  id="cygwin.gnu.c.compiler.general.include.paths"
+                  valueType="includePath">
                <listOptionValue
-                     value="C:\cygwin\usr\include\w32api"
-                     builtIn="true">
+                     builtIn="true"
+                     value="C:\cygwin\usr\include\w32api">
                </listOptionValue>
             </option>
             <optionCategory
@@ -243,8 +244,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="cygwin.gnu.c.compiler.category.optimization"
-                  valueType="enumerated"
-                  id="cygwin.gnu.c.compiler.general.optimization.level">
+                  id="cygwin.gnu.c.compiler.general.optimization.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      isDefault="false"
@@ -271,8 +272,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="cygwin.gnu.c.compiler.category.optimization"
-                  valueType="string"
-                  id="cygwin.gnu.c.compiler.optimization.flags">
+                  id="cygwin.gnu.c.compiler.optimization.flags"
+                  valueType="string">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
@@ -282,8 +283,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="cygwin.gnu.c.compiler.category.debug"
-                  valueType="enumerated"
-                  id="cygwin.c.compiler.debugging.level">
+                  id="cygwin.c.compiler.debugging.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -311,24 +312,24 @@
                   defaultValue="-gstabs"
                   name="%Option.Posix.Debug.Other"
                   category="cygwin.gnu.c.compiler.category.debug"
-                  valueType="string"
-                  id="cygwin.gnu.c.compiler.debugging.other">
+                  id="cygwin.gnu.c.compiler.debugging.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="cygwin.gnu.c.compiler.category.debug"
                   command="-pg"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.debugging.gprof">
+                  id="cygwin.gnu.c.compiler.debugging.gprof"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="cygwin.gnu.c.compiler.category.debug"
                   command="-p"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.debugging.prof">
+                  id="cygwin.gnu.c.compiler.debugging.prof"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
@@ -340,48 +341,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="cygwin.c.compiler.category.warnings"
                   command="-fsyntax-only"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.warnings.syntax">
+                  id="cygwin.gnu.c.compiler.warnings.syntax"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="cygwin.c.compiler.category.warnings"
                   command="-pedantic"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.warnings.pedantic">
+                  id="cygwin.gnu.c.compiler.warnings.pedantic"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="cygwin.c.compiler.category.warnings"
                   command="-pedantic-errors"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.warnings.pedantic.error">
+                  id="cygwin.gnu.c.compiler.warnings.pedantic.error"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="cygwin.c.compiler.category.warnings"
                   command="-w"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.warnings.nowarn">
+                  id="cygwin.gnu.c.compiler.warnings.nowarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="cygwin.c.compiler.category.warnings"
                   command="-Wall"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.warnings.allwarn">
+                  id="cygwin.gnu.c.compiler.warnings.allwarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="cygwin.c.compiler.category.warnings"
                   command="-Werror"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.warnings.toerrors">
+                  id="cygwin.gnu.c.compiler.warnings.toerrors"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
@@ -392,34 +393,34 @@
                   defaultValue="-c"
                   name="%Option.OtherFlags"
                   category="cygwin.c.compiler.category.other"
-                  valueType="string"
-                  id="cygwin.gnu.c.compiler.misc.other">
+                  id="cygwin.gnu.c.compiler.misc.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="cygwin.c.compiler.category.other"
                   command="-v"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.misc.verbose">
+                  id="cygwin.gnu.c.compiler.misc.verbose"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Ansi"
                   category="cygwin.c.compiler.category.other"
                   command="-ansi"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.compiler.misc.ansi">
+                  id="cygwin.gnu.c.compiler.misc.ansi"
+                  valueType="boolean">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="c,cc,cpp,cxx,C"
                name="%ToolName.compiler.cpp"
+               sources="c,cc,cpp,cxx,C"
                headerExtensions="h,H,hpp"
                outputFlag="-o"
-               outputs="o"
                command="g++"
+               outputs="o"
                id="org.eclipse.cdt.build.tool.cygwin.compiler">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
@@ -431,16 +432,16 @@
                   name="%Option.Posix.Nostdinc"
                   category="cygwin.compiler.category.preprocessor"
                   command="-nostdinc"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.preprocessor.nostdinc">
+                  id="cygwin.gnu.compiler.preprocessor.nostdinc"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="cygwin.compiler.category.preprocessor"
                   command="-E"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.preprocessor.preprocess">
+                  id="cygwin.gnu.compiler.preprocessor.preprocess"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
@@ -451,103 +452,103 @@
                   name="%Option.Posix.DefSym"
                   category="cygwin.gnu.compiler.category.symbols"
                   command="-D"
-                  valueType="definedSymbols"
-                  id="cygwin.preprocessor.def.symbols">
+                  id="cygwin.preprocessor.def.symbols"
+                  valueType="definedSymbols">
                <listOptionValue
-                     value="_X86_=1"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_X86_=1">
                </listOptionValue>
                <listOptionValue
-                     value="__OPTIMIZE__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__OPTIMIZE__">
                </listOptionValue>
                <listOptionValue
-                     value="__STDC_HOSTED__=1"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__STDC_HOSTED__=1">
                </listOptionValue>
                <listOptionValue
-                     value="i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_i686__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_i686__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_pentiumpro__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_pentiumpro__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_pentium2__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_pentium2__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_pentium3__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_pentium3__">
                </listOptionValue>
                <listOptionValue
-                     value="__stdcall=__attribute__((__stdcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__stdcall=__attribute__((__stdcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="__fastcall=__attribute__((__fastcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__fastcall=__attribute__((__fastcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="__cdecl=__attribute__((__cdecl__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__cdecl=__attribute__((__cdecl__))">
                </listOptionValue>
                <listOptionValue
-                     value="_stdcall=__attribute__((__stdcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_stdcall=__attribute__((__stdcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="_fastcall=__attribute__((__fastcall__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_fastcall=__attribute__((__fastcall__))">
                </listOptionValue>
                <listOptionValue
-                     value="_cdecl=__attribute__((__cdecl__))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_cdecl=__attribute__((__cdecl__))">
                </listOptionValue>
                <listOptionValue
-                     value="__declspec(x)=__attribute__((x))"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__declspec(x)=__attribute__((x))">
                </listOptionValue>
                <listOptionValue
-                     value="__CYGWIN32__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__CYGWIN32__">
                </listOptionValue>
                <listOptionValue
-                     value="__CYGWIN__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__CYGWIN__">
                </listOptionValue>
                <listOptionValue
-                     value="unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="unix">
                </listOptionValue>
                <listOptionValue
-                     value="__unix__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix__">
                </listOptionValue>
                <listOptionValue
-                     value="__unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix">
                </listOptionValue>
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="cygwin.gnu.compiler.category.symbols"
                   command="-U"
-                  valueType="stringList"
-                  id="cygwin.preprocessor.undef.symbol">
+                  id="cygwin.preprocessor.undef.symbol"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
@@ -558,11 +559,11 @@
                   name="%Option.Posix.InclPaths"
                   category="cygwin.gnu.compiler.category.dirs"
                   command="-I"
-                  valueType="includePath"
-                  id="cygwin.compiler.general.include.paths">
+                  id="cygwin.compiler.general.include.paths"
+                  valueType="includePath">
                <listOptionValue
-                     value="C:\cygwin\usr\include\w32api"
-                     builtIn="true">
+                     builtIn="true"
+                     value="C:\cygwin\usr\include\w32api">
                </listOptionValue>
             </option>
             <optionCategory
@@ -573,8 +574,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="cygwin.gnu.compiler.category.optimization"
-                  valueType="enumerated"
-                  id="cygwin.compiler.general.optimization.level">
+                  id="cygwin.compiler.general.optimization.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      isDefault="false"
@@ -601,8 +602,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="cygwin.gnu.compiler.category.optimization"
-                  valueType="string"
-                  id="cygwin.compiler.optimization.flags">
+                  id="cygwin.compiler.optimization.flags"
+                  valueType="string">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
@@ -612,8 +613,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="cygwin.gnu.compiler.category.debug"
-                  valueType="enumerated"
-                  id="cygwin.compiler.debugging.level">
+                  id="cygwin.compiler.debugging.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -641,24 +642,24 @@
                   defaultValue="-gstabs"
                   name="%Option.Posix.Debug.Other"
                   category="cygwin.gnu.compiler.category.debug"
-                  valueType="string"
-                  id="cygwin.gnu.compiler.debugging.other">
+                  id="cygwin.gnu.compiler.debugging.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="cygwin.gnu.compiler.category.debug"
                   command="-p"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.debugging.prof">
+                  id="cygwin.gnu.compiler.debugging.prof"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="cygwin.gnu.compiler.category.debug"
                   command="-pg"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.debugging.gprof">
+                  id="cygwin.gnu.compiler.debugging.gprof"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
@@ -670,48 +671,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="cygwin.compiler.category.warnings"
                   command="-fsyntax-only"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.warnings.syntax">
+                  id="cygwin.gnu.compiler.warnings.syntax"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="cygwin.compiler.category.warnings"
                   command="-pedantic"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.warnings.pedantic">
+                  id="cygwin.gnu.compiler.warnings.pedantic"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="cygwin.compiler.category.warnings"
                   command="-pedantic-errors"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.warnings.pedantic.error">
+                  id="cygwin.gnu.compiler.warnings.pedantic.error"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="cygwin.compiler.category.warnings"
                   command="-w"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.warnings.nowarn">
+                  id="cygwin.gnu.compiler.warnings.nowarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="cygwin.compiler.category.warnings"
                   command="-Wall"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.warnings.allwarn">
+                  id="cygwin.gnu.compiler.warnings.allwarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="cygwin.compiler.category.warnings"
                   command="-Werror"
-                  valueType="boolean"
-                  id="cygwin.gnu.compiler.warnings.toerrors">
+                  id="cygwin.gnu.compiler.warnings.toerrors"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -722,24 +723,24 @@
                   defaultValue="-c"
                   name="%Option.OtherFlags"
                   category="cygwin.compiler.category.other"
-                  valueType="string"
-                  id="cygwin.compiler.misc.other">
+                  id="cygwin.compiler.misc.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="cygwin.compiler.category.other"
                   command="-v"
-                  valueType="boolean"
-                  id="cygwin.compiler.misc.verbose">
+                  id="cygwin.compiler.misc.verbose"
+                  valueType="boolean">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.cygw.exe"
-            parent="cygwin"
             binaryParser="org.eclipse.cdt.core.PE"
+            parent="cygwin"
             defaultExtension="exe"
             isAbstract="false"
             id="cygwin.exec">
@@ -802,8 +803,8 @@
                natureFilter="cnature"
                name="%ToolName.linker.c"
                outputFlag="-o"
-               outputs="exe"
                command="gcc"
+               outputs="exe"
                id="cdt.build.tool.cygwin.c.link">
             <optionCategory
                   owner="cdt.build.tool.cygwin.c.link"
@@ -815,40 +816,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="cygwin.gnu.c.linker.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.link.options.nostart">
+                  id="cygwin.gnu.c.link.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="cygwin.gnu.c.linker.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.link.options.nodeflibs">
+                  id="cygwin.gnu.c.link.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="cygwin.gnu.c.linker.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.link.options.nostdlibs">
+                  id="cygwin.gnu.c.link.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="cygwin.gnu.c.linker.category.general"
                   command="-s"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.link.options.strip">
+                  id="cygwin.gnu.c.link.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="cygwin.gnu.c.linker.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.link.options.noshared">
+                  id="cygwin.gnu.c.link.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.c.link"
@@ -859,15 +860,15 @@
                   name="%Option.Posix.Libs"
                   category="cygwin.gnu.c.linker.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="cygwin.gnu.c.link.libs">
+                  id="cygwin.gnu.c.link.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="cygwin.gnu.c.linker.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="cygwin.gnu.c.link.paths">
+                  id="cygwin.gnu.c.link.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.c.link"
@@ -877,29 +878,29 @@
             <option
                   name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.c.linker.category.other"
-                  valueType="string"
-                  id="cygwin.gnu.c.link.ldflags">
+                  id="cygwin.gnu.c.link.ldflags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="cygwin.gnu.c.linker.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="cygwin.gnu.c.link.options.other">
+                  id="cygwin.gnu.c.link.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="cygwin.gnu.c.linker.category.other"
-                  valueType="userObjs"
-                  id="cygwin.gnu.c.link.ld.userobjs">
+                  id="cygwin.gnu.c.link.ld.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
                name="%ToolName.linker.cpp"
                outputFlag="-o"
-               outputs="exe"
                command="g++"
+               outputs="exe"
                id="org.eclipse.cdt.build.tool.cygwin.link">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.link"
@@ -911,40 +912,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="cygwin.linker.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="cygwin.gnu.linker.options.nostart">
+                  id="cygwin.gnu.linker.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="cygwin.linker.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="cygwin.gnu.linker.options.nodeflibs">
+                  id="cygwin.gnu.linker.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="cygwin.linker.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="cygwin.gnu.linker.options.nostdlibs">
+                  id="cygwin.gnu.linker.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="cygwin.linker.category.general"
                   command="-s"
-                  valueType="boolean"
-                  id="cygwin.gnu.linker.options.strip">
+                  id="cygwin.gnu.linker.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="cygwin.linker.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="cygwin.gnu.linker.options.noshared">
+                  id="cygwin.gnu.linker.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.link"
@@ -955,15 +956,15 @@
                   name="%Option.Posix.Libs"
                   category="cygwin.gnu.linker.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="cygwin.link.libs">
+                  id="cygwin.link.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="cygwin.gnu.linker.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="cygwin.link.ld.paths">
+                  id="cygwin.link.ld.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.link"
@@ -973,29 +974,29 @@
             <option
                   name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.linker.category.other"
-                  valueType="string"
-                  id="cygwin.link.ld.flags">
+                  id="cygwin.link.ld.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="cygwin.gnu.linker.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="cygwin.gnu.linker.options.other">
+                  id="cygwin.gnu.linker.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="cygwin.gnu.linker.category.other"
-                  valueType="userObjs"
-                  id="cygwin.gnu.link.ld.userobjs">
+                  id="cygwin.gnu.link.ld.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.cygw.so"
-            parent="cygwin"
             binaryParser="org.eclipse.cdt.core.PE"
+            parent="cygwin"
             defaultExtension="dll"
             isAbstract="false"
             id="cygwin.so">
@@ -1058,9 +1059,9 @@
                natureFilter="cnature"
                name="%ToolName.linker.c"
                outputFlag="-o"
-               outputs="dll"
-               outputPrefix="lib"
                command="gcc"
+               outputPrefix="lib"
+               outputs="dll"
                id="cdt.build.tool.cygwin.c.solink">
             <optionCategory
                   owner="cdt.build.tool.cygwin.c.solink"
@@ -1072,40 +1073,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="cygwin.gnu.c.solink.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.solink.options.nostart">
+                  id="cygwin.gnu.c.solink.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="cygwin.gnu.c.solink.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.solink.options.nodeflibs">
+                  id="cygwin.gnu.c.solink.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="cygwin.gnu.c.solink.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.solink.options.nostdlibs">
+                  id="cygwin.gnu.c.solink.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="cygwin.gnu.c.solink.category.general"
                   command="-s"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.solink.options.strip">
+                  id="cygwin.gnu.c.solink.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="cygwin.gnu.c.solink.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="cygwin.gnu.c.solink.options.noshared">
+                  id="cygwin.gnu.c.solink.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.c.solink"
@@ -1116,15 +1117,15 @@
                   name="%Option.Posix.Libs"
                   category="cygwin.gnu.c.solink.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="cygwin.gnu.c.solink.libs">
+                  id="cygwin.gnu.c.solink.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="cygwin.gnu.c.solink.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="cygwin.gnu.c.solink.paths">
+                  id="cygwin.gnu.c.solink.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.c.solink"
@@ -1135,30 +1136,30 @@
                   defaultValue="-shared"
                   name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.c.solink.category.other"
-                  valueType="string"
-                  id="cygwin.gnu.c.solink.ldflags">
+                  id="cygwin.gnu.c.solink.ldflags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="cygwin.gnu.c.solink.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="cygwin.gnu.c.solink.options.other">
+                  id="cygwin.gnu.c.solink.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="cygwin.gnu.c.solink.category.other"
-                  valueType="userObjs"
-                  id="cygwin.gnu.c.solink.userobjs">
+                  id="cygwin.gnu.c.solink.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
                name="%ToolName.linker.cpp"
                outputFlag="-o"
-               outputs="dll"
-               outputPrefix="lib"
                command="g++"
+               outputPrefix="lib"
+               outputs="dll"
                id="org.eclipse.cdt.build.tool.cygwin.solink">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.solink"
@@ -1170,32 +1171,32 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="cygwin.gnu.solink.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="cygwin.gnu.solink.options.nostart">
+                  id="cygwin.gnu.solink.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="cygwin.gnu.solink.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="cygwin.gnu.solink.options.nodeflibs">
+                  id="cygwin.gnu.solink.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="cygwin.gnu.solink.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="cygwin.gnu.solink.options.nostdlibs">
+                  id="cygwin.gnu.solink.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="cygwin.gnu.solink.category.general"
                   command="-s"
-                  valueType="boolean"
-                  id="cygwin.gnu.solink.options.strip">
+                  id="cygwin.gnu.solink.options.strip"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.solink"
@@ -1206,15 +1207,15 @@
                   name="%Option.Posix.Libs"
                   category="cygwin.gnu.solink.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="cygwin.solink.libs">
+                  id="cygwin.solink.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="cygwin.gnu.solink.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="cygwin.solink.ld.paths">
+                  id="cygwin.solink.ld.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.solink"
@@ -1225,29 +1226,29 @@
                   defaultValue="-shared"
                   name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.solink.category.other"
-                  valueType="string"
-                  id="cygwin.solink.ld.flags">
+                  id="cygwin.solink.ld.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="cygwin.gnu.solink.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="cygwin.gnu.solinker.options.other">
+                  id="cygwin.gnu.solinker.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="cygwin.gnu.solink.category.other"
-                  valueType="userObjs"
-                  id="cygwin.gnu.solink.userobjs">
+                  id="cygwin.gnu.solink.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
       </target>
       <target
             isTest="true"
             name="%TargetName.cygw.dll"
-            parent="cygwin"
             binaryParser="org.eclipse.cdt.core.PE"
+            parent="cygwin"
             defaultExtension="dll.a"
             isAbstract="false"
             id="cygwin.exp">
@@ -1288,9 +1289,9 @@
                natureFilter="ccnature"
                name="%ToolName.linker.cpp"
                outputFlag="-o"
-               outputs="dll"
-               outputPrefix="cyg"
                command="g++ -shared"
+               outputPrefix="cyg"
+               outputs="dll"
                id="org.eclipse.cdt.build.tool.cygwin.explink">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.explink"
@@ -1301,30 +1302,30 @@
                   defaultValue="-Wl,--export-all-symbols -Wl,--enable-auto-import"
                   name="%Option.Posix.Linker.Flags"
                   category="cygwin.explink.category.general"
-                  valueType="string"
-                  id="cygwin.explink.ld.flags">
+                  id="cygwin.explink.ld.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Libs"
                   category="cygwin.explink.category.general"
                   command="-l"
-                  valueType="libs"
-                  id="cygwin.explink.libs">
+                  id="cygwin.explink.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="cygwin.explink.category.general"
                   command="-L"
-                  valueType="stringList"
-                  id="cygwin.explink.ld.paths">
+                  id="cygwin.explink.ld.paths"
+                  valueType="stringList">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.cygw.lib"
-            parent="cygwin"
             binaryParser="org.eclipse.cdt.core.PE"
+            parent="cygwin"
             defaultExtension="a"
             isAbstract="false"
             id="cygwin.lib">
@@ -1386,9 +1387,9 @@
          <tool
                natureFilter="both"
                name="%ToolName.archiver"
-               outputs="a"
-               outputPrefix="lib"
                command="ar"
+               outputPrefix="lib"
+               outputs="a"
                id="org.eclipse.cdt.build.tool.cygwin.ar">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.ar"
@@ -1399,8 +1400,8 @@
                   defaultValue="-r"
                   name="%Option.Posix.Archiver.Flags"
                   category="cygwin.ar.category.general"
-                  valueType="string"
-                  id="cygwin.ar.flags">
+                  id="cygwin.ar.flags"
+                  valueType="string">
             </option>
          </tool>
       </target>
@@ -1416,12 +1417,12 @@
             osList="linux">
          <tool
                natureFilter="cnature"
-               sources="c"
                name="%ToolName.compiler.c"
+               sources="c"
                headerExtensions="h"
                outputFlag="-o"
-               outputs="o"
                command="gcc"
+               outputs="o"
                id="cdt.build.tool.linux.gnu.c.compiler">
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1433,16 +1434,16 @@
                   name="%Option.Posix.Nostdinc"
                   category="linux.gnu.c.compiler.category.preprocessor"
                   command="-nostdinc"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.preprocessor.nostdinc">
+                  id="linux.gnu.c.compiler.preprocessor.nostdinc"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="linux.gnu.c.compiler.category.preprocessor"
                   command="-E"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.preprocessor.preprocess">
+                  id="linux.gnu.c.compiler.preprocessor.preprocess"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1453,75 +1454,75 @@
                   name="%Option.Posix.DefSym"
                   category="linux.gnu.c.compiler.category.symbols"
                   command="-D"
-                  valueType="definedSymbols"
-                  id="linux.gnu.c.preprocessor.def.symbols">
+                  id="linux.gnu.c.preprocessor.def.symbols"
+                  valueType="definedSymbols">
                <listOptionValue
-                     value="__ELF__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__ELF__">
                </listOptionValue>
                <listOptionValue
-                     value="unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="unix">
                </listOptionValue>
                <listOptionValue
-                     value="__gnu_linux__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__gnu_linux__">
                </listOptionValue>
                <listOptionValue
-                     value="linux"
-                     builtIn="true">
+                     builtIn="true"
+                     value="linux">
                </listOptionValue>
                <listOptionValue
-                     value="__unix__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix__">
                </listOptionValue>
                <listOptionValue
-                     value="__linux__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__linux__">
                </listOptionValue>
                <listOptionValue
-                     value="__unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix">
                </listOptionValue>
                <listOptionValue
-                     value="__linux"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__linux">
                </listOptionValue>
                <listOptionValue
-                     value="__OPTIMIZE__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__OPTIMIZE__">
                </listOptionValue>
                <listOptionValue
-                     value="__STDC_HOSTED__=1"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__STDC_HOSTED__=1">
                </listOptionValue>
                <listOptionValue
-                     value="_GNU_SOURCE"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_GNU_SOURCE">
                </listOptionValue>
                <listOptionValue
-                     value="i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_i386__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_i386__">
                </listOptionValue>
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="linux.gnu.c.compiler.category.symbols"
                   command="-U"
-                  valueType="stringList"
-                  id="linux.gnu.c.preprocessor.undef.symbol">
+                  id="linux.gnu.c.preprocessor.undef.symbol"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1532,8 +1533,8 @@
                   name="%Option.Posix.InclPaths"
                   category="linux.gnu.c.compiler.category.dirs"
                   command="-I"
-                  valueType="includePath"
-                  id="linux.gnu.c.compiler.general.include.paths">
+                  id="linux.gnu.c.compiler.general.include.paths"
+                  valueType="includePath">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1543,8 +1544,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="linux.gnu.c.compiler.category.optimization"
-                  valueType="enumerated"
-                  id="linux.gnu.c.compiler.general.optimization.level">
+                  id="linux.gnu.c.compiler.general.optimization.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      isDefault="false"
@@ -1571,8 +1572,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="linux.gnu.c.compiler.category.optimization"
-                  valueType="string"
-                  id="linux.gnu.c.compiler.optimization.flags">
+                  id="linux.gnu.c.compiler.optimization.flags"
+                  valueType="string">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1582,8 +1583,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="linux.gnu.c.compiler.category.debug"
-                  valueType="enumerated"
-                  id="linux.c.compiler.debugging.level">
+                  id="linux.c.compiler.debugging.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -1610,24 +1611,24 @@
             <option
                   name="%Option.Posix.Debug.Other"
                   category="linux.gnu.c.compiler.category.debug"
-                  valueType="string"
-                  id="linux.gnu.c.compiler.debugging.other">
+                  id="linux.gnu.c.compiler.debugging.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="linux.gnu.c.compiler.category.debug"
                   command="-pg"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.debugging.gprof">
+                  id="linux.gnu.c.compiler.debugging.gprof"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="linux.gnu.c.compiler.category.debug"
                   command="-p"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.debugging.prof">
+                  id="linux.gnu.c.compiler.debugging.prof"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1639,48 +1640,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="linux.c.compiler.category.warnings"
                   command="-fsyntax-only"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.warnings.syntax">
+                  id="linux.gnu.c.compiler.warnings.syntax"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="linux.c.compiler.category.warnings"
                   command="-pedantic"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.warnings.pedantic">
+                  id="linux.gnu.c.compiler.warnings.pedantic"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="linux.c.compiler.category.warnings"
                   command="-pedantic-errors"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.warnings.pedantic.error">
+                  id="linux.gnu.c.compiler.warnings.pedantic.error"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="linux.c.compiler.category.warnings"
                   command="-w"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.warnings.nowarn">
+                  id="linux.gnu.c.compiler.warnings.nowarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="linux.c.compiler.category.warnings"
                   command="-Wall"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.warnings.allwarn">
+                  id="linux.gnu.c.compiler.warnings.allwarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="linux.c.compiler.category.warnings"
                   command="-Werror"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.warnings.toerrors">
+                  id="linux.gnu.c.compiler.warnings.toerrors"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
@@ -1691,34 +1692,34 @@
                   defaultValue="-c"
                   name="%Option.OtherFlags"
                   category="linux.c.compiler.category.other"
-                  valueType="string"
-                  id="linux.gnu.c.compiler.misc.other">
+                  id="linux.gnu.c.compiler.misc.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="linux.c.compiler.category.other"
                   command="-v"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.misc.verbose">
+                  id="linux.gnu.c.compiler.misc.verbose"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Ansi"
                   category="linux.c.compiler.category.other"
                   command="-ansi"
-                  valueType="boolean"
-                  id="linux.gnu.c.compiler.misc.ansi">
+                  id="linux.gnu.c.compiler.misc.ansi"
+                  valueType="boolean">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler.cpp"
+               sources="c,C,cc,cxx,cpp"
                headerExtensions="h,H,hpp"
                outputFlag="-o"
-               outputs="o"
                command="g++"
+               outputs="o"
                id="cdt.build.tool.linux.gnu.compiler">
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -1730,90 +1731,90 @@
                   name="%Option.Posix.Nostdinc"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-nostdinc"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.preprocessor.nostdinc">
+                  id="linux.gnu.compiler.preprocessor.nostdinc"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-E"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.preprocessor.preprocess">
+                  id="linux.gnu.compiler.preprocessor.preprocess"
+                  valueType="boolean">
             </option>
             <option
                   name="%Option.Posix.DefSym"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-D"
-                  valueType="definedSymbols"
-                  id="linux.gnu.compiler.preprocessor.def">
+                  id="linux.gnu.compiler.preprocessor.def"
+                  valueType="definedSymbols">
                <listOptionValue
-                     value="__ELF__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__ELF__">
                </listOptionValue>
                <listOptionValue
-                     value="unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="unix">
                </listOptionValue>
                <listOptionValue
-                     value="__gnu_linux__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__gnu_linux__">
                </listOptionValue>
                <listOptionValue
-                     value="linux"
-                     builtIn="true">
+                     builtIn="true"
+                     value="linux">
                </listOptionValue>
                <listOptionValue
-                     value="__unix__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix__">
                </listOptionValue>
                <listOptionValue
-                     value="__linux__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__linux__">
                </listOptionValue>
                <listOptionValue
-                     value="__unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix">
                </listOptionValue>
                <listOptionValue
-                     value="__linux"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__linux">
                </listOptionValue>
                <listOptionValue
-                     value="__OPTIMIZE__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__OPTIMIZE__">
                </listOptionValue>
                <listOptionValue
-                     value="__STDC_HOSTED__=1"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__STDC_HOSTED__=1">
                </listOptionValue>
                <listOptionValue
-                     value="_GNU_SOURCE"
-                     builtIn="true">
+                     builtIn="true"
+                     value="_GNU_SOURCE">
                </listOptionValue>
                <listOptionValue
-                     value="i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386">
                </listOptionValue>
                <listOptionValue
-                     value="__i386__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__i386__">
                </listOptionValue>
                <listOptionValue
-                     value="__tune_i386__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__tune_i386__">
                </listOptionValue>
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-U"
-                  valueType="stringList"
-                  id="linux.gnu.compiler.preprocessor.undef">
+                  id="linux.gnu.compiler.preprocessor.undef"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -1824,15 +1825,15 @@
                   name="%Option.Posix.InclPaths"
                   category="linux.gnu.compiler.category.dirs"
                   command="-I"
-                  valueType="includePath"
-                  id="linux.gnu.compiler.dirs.incpaths">
+                  id="linux.gnu.compiler.dirs.incpaths"
+                  valueType="includePath">
                <listOptionValue
-                     value="/usr/local/include"
-                     builtIn="true">
+                     builtIn="true"
+                     value="/usr/local/include">
                </listOptionValue>
                <listOptionValue
-                     value="/usr/include"
-                     builtIn="true">
+                     builtIn="true"
+                     value="/usr/include">
                </listOptionValue>
             </option>
             <optionCategory
@@ -1843,8 +1844,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="linux.gnu.compiler.category.optimization"
-                  valueType="enumerated"
-                  id="linux.gnu.compiler.optimization.level">
+                  id="linux.gnu.compiler.optimization.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      command="-O0"
@@ -1870,8 +1871,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="linux.gnu.compiler.category.optimization"
-                  valueType="string"
-                  id="linux.compiler.optimization.flags">
+                  id="linux.compiler.optimization.flags"
+                  valueType="string">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -1881,8 +1882,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="linux.gnu.compiler.category.debug"
-                  valueType="enumerated"
-                  id="linux.gnu.compiler.debugging.level">
+                  id="linux.gnu.compiler.debugging.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -1909,24 +1910,24 @@
             <option
                   name="%Option.Posix.Debug.Other"
                   category="linux.gnu.compiler.category.debug"
-                  valueType="string"
-                  id="linux.gnu.compiler.debugging.other">
+                  id="linux.gnu.compiler.debugging.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="linux.gnu.compiler.category.debug"
                   command="-p"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.debugging.prof">
+                  id="linux.gnu.compiler.debugging.prof"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="linux.gnu.compiler.category.debug"
                   command="-pg"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.debugging.gprof">
+                  id="linux.gnu.compiler.debugging.gprof"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -1938,48 +1939,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="linux.gnu.compiler.category.warnings"
                   command="-fsyntax-only"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.warnings.syntax">
+                  id="linux.gnu.compiler.warnings.syntax"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="linux.gnu.compiler.category.warnings"
                   command="-pedantic"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.warnings.pedantic">
+                  id="linux.gnu.compiler.warnings.pedantic"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="linux.gnu.compiler.category.warnings"
                   command="-pedantic-errors"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.warnings.pedantic.error">
+                  id="linux.gnu.compiler.warnings.pedantic.error"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="linux.gnu.compiler.category.warnings"
                   command="-w"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.warnings.nowarn">
+                  id="linux.gnu.compiler.warnings.nowarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="linux.gnu.compiler.category.warnings"
                   command="-Wall"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.warnings.allwarn">
+                  id="linux.gnu.compiler.warnings.allwarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="linux.gnu.compiler.category.warnings"
                   command="-Werror"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.warnings.toerrors">
+                  id="linux.gnu.compiler.warnings.toerrors"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -1990,24 +1991,24 @@
                   defaultValue="-c"
                   name="%Option.OtherFlags"
                   category="linux.gnu.compiler.category.other"
-                  valueType="string"
-                  id="linux.gnu.compiler.other.other">
+                  id="linux.gnu.compiler.other.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="linux.gnu.compiler.category.other"
                   command="-v"
-                  valueType="boolean"
-                  id="linux.gnu.compiler.other.verbose">
+                  id="linux.gnu.compiler.other.verbose"
+                  valueType="boolean">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.linux.exe"
-            parent="linux.gnu"
             binaryParser="org.eclipse.cdt.core.ELF"
+            parent="linux.gnu"
             isAbstract="false"
             id="linux.gnu.exec">
          <configuration
@@ -2064,8 +2065,8 @@
          </configuration>
          <tool
                natureFilter="cnature"
-               sources="o"
                name="%ToolName.linker.c"
+               sources="o"
                outputFlag="-o"
                command="gcc"
                id="cdt.build.tool.linux.c.link">
@@ -2079,40 +2080,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="linux.gnu.c.linker.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="linux.gnu.c.link.options.nostart">
+                  id="linux.gnu.c.link.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="linux.gnu.c.linker.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="linux.gnu.c.link.options.nodeflibs">
+                  id="linux.gnu.c.link.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="linux.gnu.c.linker.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="linux.gnu.c.link.options.nostdlibs">
+                  id="linux.gnu.c.link.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="linux.gnu.c.linker.category.options"
                   command="-s"
-                  valueType="boolean"
-                  id="linux.gnu.c.link.options.strip">
+                  id="linux.gnu.c.link.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="linux.gnu.c.linker.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="linux.gnu.c.link.options.noshared">
+                  id="linux.gnu.c.link.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.c.link"
@@ -2123,15 +2124,15 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.c.linker.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="linux.gnu.c.link.libs">
+                  id="linux.gnu.c.link.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.c.linker.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="linux.gnu.c.link.paths">
+                  id="linux.gnu.c.link.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.c.link"
@@ -2141,27 +2142,27 @@
             <option
                   name="%Option.Posix.Linker.Flags"
                   category="linux.gnu.c.linker.category.other"
-                  valueType="string"
-                  id="linux.gnu.c.link.ldflags">
+                  id="linux.gnu.c.link.ldflags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="linux.gnu.c.linker.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="linux.gnu.c.link.options.other">
+                  id="linux.gnu.c.link.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.c.linker.category.other"
-                  valueType="userObjs"
-                  id="linux.gnu.c.link.ld.userobjs">
+                  id="linux.gnu.c.link.ld.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="o"
                name="%ToolName.linker.cpp"
+               sources="o"
                outputFlag="-o"
                command="g++"
                id="cdt.build.tool.linux.gnu.link">
@@ -2175,40 +2176,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="linux.gnu.linker.category.options"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="linux.gnu.linker.options.nostart">
+                  id="linux.gnu.linker.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="linux.gnu.linker.category.options"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="linux.gnu.linker.options.nodeflibs">
+                  id="linux.gnu.linker.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="linux.gnu.linker.category.options"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="linux.gnu.linker.options.nostdlibs">
+                  id="linux.gnu.linker.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="linux.gnu.linker.category.options"
                   command="-s"
-                  valueType="boolean"
-                  id="linux.gnu.linker.options.strip">
+                  id="linux.gnu.linker.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="linux.gnu.linker.category.options"
                   command="-static"
-                  valueType="boolean"
-                  id="linux.gnu.linker.options.noshared">
+                  id="linux.gnu.linker.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.link"
@@ -2219,15 +2220,15 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.linker.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="linux.gnu.linker.libs.libs">
+                  id="linux.gnu.linker.libs.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.linker.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="linux.gnu.linker.libs.paths">
+                  id="linux.gnu.linker.libs.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.link"
@@ -2237,29 +2238,29 @@
             <option
                   name="%Option.Posix.Linker.Flags"
                   category="linux.gnu.linker.category.other"
-                  valueType="string"
-                  id="linux.gnu.linker.libs.flags">
+                  id="linux.gnu.linker.libs.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="linux.gnu.linker.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="linux.gnu.linker.options.other">
+                  id="linux.gnu.linker.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.linker.category.other"
-                  valueType="userObjs"
-                  id="linux.gnu.linker.userobjs">
+                  id="linux.gnu.linker.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.linux.so"
-            parent="linux.gnu"
             binaryParser="org.eclipse.cdt.core.ELF"
+            parent="linux.gnu"
             defaultExtension="so"
             isAbstract="false"
             id="linux.gnu.so">
@@ -2317,12 +2318,12 @@
          </configuration>
          <tool
                natureFilter="cnature"
-               sources="o"
                name="%ToolName.linker.c"
+               sources="o"
                outputFlag="-o"
-               outputs="so"
-               outputPrefix="lib"
                command="gcc"
+               outputPrefix="lib"
+               outputs="so"
                id="cdt.build.tool.linux.gnu.c.solink">
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.solink"
@@ -2334,40 +2335,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="linux.gnu.c.solink.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="linux.gnu.c.solink.options.nostart">
+                  id="linux.gnu.c.solink.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="linux.gnu.c.solink.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="linux.gnu.c.solink.options.nodeflibs">
+                  id="linux.gnu.c.solink.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="linux.gnu.c.solink.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="linux.gnu.c.solink.options.nostdlibs">
+                  id="linux.gnu.c.solink.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="linux.gnu.c.solink.category.general"
                   command="-s"
-                  valueType="boolean"
-                  id="linux.gnu.c.solink.options.strip">
+                  id="linux.gnu.c.solink.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="linux.gnu.c.solink.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="linux.gnu.c.solink.options.noshared">
+                  id="linux.gnu.c.solink.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.solink"
@@ -2378,15 +2379,15 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.c.solink.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="linux.gnu.c.solink.libs">
+                  id="linux.gnu.c.solink.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.c.solink.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="linux.gnu.c.solink.paths">
+                  id="linux.gnu.c.solink.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.solink"
@@ -2397,31 +2398,31 @@
                   defaultValue="-shared"
                   name="%Option.Posix.Linker.Flags"
                   category="linux.gnu.c.solink.category.other"
-                  valueType="string"
-                  id="linux.gnu.c.solink.ldflags">
+                  id="linux.gnu.c.solink.ldflags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="linux.gnu.c.solink.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="linux.gnu.c.solink.options.other">
+                  id="linux.gnu.c.solink.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.c.solink.category.other"
-                  valueType="userObjs"
-                  id="linux.gnu.c.solink.userobjs">
+                  id="linux.gnu.c.solink.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="o"
                name="%ToolName.linker.cpp"
+               sources="o"
                outputFlag="-o"
-               outputs="so"
-               outputPrefix="lib"
                command="g++"
+               outputPrefix="lib"
+               outputs="so"
                id="cdt.build.tool.linux.gnu.solink">
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.solink"
@@ -2433,32 +2434,32 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="linux.gnu.solink.category.options"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="linux.gnu.solink.options.nostart">
+                  id="linux.gnu.solink.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="linux.gnu.solink.category.options"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="linux.gnu.solink.options.nodeflibs">
+                  id="linux.gnu.solink.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="linux.gnu.solink.category.options"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="linux.gnu.solink.options.nostdlibs">
+                  id="linux.gnu.solink.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="linux.gnu.solink.category.options"
                   command="-s"
-                  valueType="boolean"
-                  id="linux.gnu.solink.options.strip">
+                  id="linux.gnu.solink.options.strip"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.solink"
@@ -2469,15 +2470,15 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.solink.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="linux.gnu.solink.libs.libs">
+                  id="linux.gnu.solink.libs.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.solink.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="linux.gnu.solink.libs.paths">
+                  id="linux.gnu.solink.libs.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.solink"
@@ -2488,29 +2489,29 @@
                   defaultValue="-shared"
                   name="%Option.Posix.Linker.Flags"
                   category="linux.gnu.solink.category.other"
-                  valueType="string"
-                  id="linux.gnu.solink.libs.flags">
+                  id="linux.gnu.solink.libs.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="linux.gnu.solink.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="linux.gnu.solink.options.other">
+                  id="linux.gnu.solink.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.solink.category.other"
-                  valueType="userObjs"
-                  id="linux.gnu.solink.userobjs">
+                  id="linux.gnu.solink.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.linux.lib"
-            parent="linux.gnu"
             binaryParser="org.eclipse.cdt.core.ELF"
+            parent="linux.gnu"
             defaultExtension="a"
             isAbstract="false"
             id="linux.gnu.lib">
@@ -2568,11 +2569,11 @@
          </configuration>
          <tool
                natureFilter="both"
-               sources="o"
                name="%ToolName.archiver"
-               outputs="a"
-               outputPrefix="lib"
+               sources="o"
                command="ar"
+               outputPrefix="lib"
+               outputs="a"
                id="cdt.build.tool.linux.gnu.lib">
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.lib"
@@ -2583,8 +2584,8 @@
                   defaultValue="-r"
                   name="%Option.Posix.Archiver.Flags"
                   category="linux.gnu.lib.category.general"
-                  valueType="string"
-                  id="linux.gnu.lib.flags">
+                  id="linux.gnu.lib.flags"
+                  valueType="string">
             </option>
          </tool>
       </target>
@@ -2600,12 +2601,12 @@
             osList="solaris">
          <tool
                natureFilter="cnature"
-               sources="c"
                name="%ToolName.compiler.c"
+               sources="c"
                headerExtensions="h"
                outputFlag="-o"
-               outputs="o"
                command="gcc"
+               outputs="o"
                id="cdt.build.tool.solaris.gnu.c.compiler">
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2617,16 +2618,16 @@
                   name="%Option.Posix.Nostdinc"
                   category="solaris.gnu.c.compiler.category.preprocessor"
                   command="-nostdinc"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.preprocessor.nostdinc">
+                  id="solaris.gnu.c.compiler.preprocessor.nostdinc"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="solaris.gnu.c.compiler.category.preprocessor"
                   command="-E"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.preprocessor.preprocess">
+                  id="solaris.gnu.c.compiler.preprocessor.preprocess"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2637,67 +2638,67 @@
                   name="%Option.Posix.DefSym"
                   category="solaris.gnu.c.compiler.category.symbols"
                   command="-D"
-                  valueType="definedSymbols"
-                  id="solaris.gnu.c.preprocessor.def.symbols">
+                  id="solaris.gnu.c.preprocessor.def.symbols"
+                  valueType="definedSymbols">
                <listOptionValue
-                     value="sun"
-                     builtIn="true">
+                     builtIn="true"
+                     value="sun">
                </listOptionValue>
                <listOptionValue
-                     value="sparc"
-                     builtIn="true">
+                     builtIn="true"
+                     value="sparc">
                </listOptionValue>
                <listOptionValue
-                     value="unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="unix">
                </listOptionValue>
                <listOptionValue
-                     value="__svr4__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__svr4__">
                </listOptionValue>
                <listOptionValue
-                     value="__SVR4"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__SVR4">
                </listOptionValue>
                <listOptionValue
-                     value="__GCC_NEW_VARARGS__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__GCC_NEW_VARARGS__">
                </listOptionValue>
                <listOptionValue
-                     value="__sun__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sun__">
                </listOptionValue>
                <listOptionValue
-                     value="__sparc__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sparc__">
                </listOptionValue>
                <listOptionValue
-                     value="__unix__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix__">
                </listOptionValue>
                <listOptionValue
-                     value="__sun"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sun">
                </listOptionValue>
                <listOptionValue
-                     value="__sparc"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sparc">
                </listOptionValue>
                <listOptionValue
-                     value="__unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix">
                </listOptionValue>
                <listOptionValue
-                     value="__OPTIMIZE__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__OPTIMIZE__">
                </listOptionValue>
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="solaris.gnu.c.compiler.category.symbols"
                   command="-U"
-                  valueType="stringList"
-                  id="solaris.gnu.c.preprocessor.undef.symbol">
+                  id="solaris.gnu.c.preprocessor.undef.symbol"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2708,8 +2709,8 @@
                   name="%Option.Posix.InclPaths"
                   category="solaris.gnu.c.compiler.category.dirs"
                   command="-I"
-                  valueType="includePath"
-                  id="solaris.gnu.c.compiler.general.include.paths">
+                  id="solaris.gnu.c.compiler.general.include.paths"
+                  valueType="includePath">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2719,8 +2720,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="solaris.gnu.c.compiler.category.optimization"
-                  valueType="enumerated"
-                  id="solaris.gnu.c.compiler.general.optimization.level">
+                  id="solaris.gnu.c.compiler.general.optimization.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      isDefault="false"
@@ -2747,8 +2748,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="solaris.gnu.c.compiler.category.optimization"
-                  valueType="string"
-                  id="solaris.gnu.c.compiler.optimization.flags">
+                  id="solaris.gnu.c.compiler.optimization.flags"
+                  valueType="string">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2758,8 +2759,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="solaris.gnu.c.compiler.category.debug"
-                  valueType="enumerated"
-                  id="solaris.c.compiler.debugging.level">
+                  id="solaris.c.compiler.debugging.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -2786,24 +2787,24 @@
             <option
                   name="%Option.Posix.Debug.Other"
                   category="solaris.gnu.c.compiler.category.debug"
-                  valueType="string"
-                  id="solaris.gnu.c.compiler.debugging.other">
+                  id="solaris.gnu.c.compiler.debugging.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="solaris.gnu.c.compiler.category.debug"
                   command="-pg"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.debugging.gprof">
+                  id="solaris.gnu.c.compiler.debugging.gprof"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="solaris.gnu.c.compiler.category.debug"
                   command="-p"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.debugging.prof">
+                  id="solaris.gnu.c.compiler.debugging.prof"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2815,48 +2816,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="solaris.c.compiler.category.warnings"
                   command="-fsyntax-only"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.warnings.syntax">
+                  id="solaris.gnu.c.compiler.warnings.syntax"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="solaris.c.compiler.category.warnings"
                   command="-pedantic"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.warnings.pedantic">
+                  id="solaris.gnu.c.compiler.warnings.pedantic"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="solaris.c.compiler.category.warnings"
                   command="-pedantic-errors"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.warnings.pedantic.error">
+                  id="solaris.gnu.c.compiler.warnings.pedantic.error"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="solaris.c.compiler.category.warnings"
                   command="-w"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.warnings.nowarn">
+                  id="solaris.gnu.c.compiler.warnings.nowarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="solaris.c.compiler.category.warnings"
                   command="-Wall"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.warnings.allwarn">
+                  id="solaris.gnu.c.compiler.warnings.allwarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="solaris.c.compiler.category.warnings"
                   command="-Werror"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.warnings.toerrors">
+                  id="solaris.gnu.c.compiler.warnings.toerrors"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
@@ -2867,34 +2868,34 @@
                   defaultValue="-c"
                   name="%Option.OtherFlags"
                   category="solaris.c.compiler.category.other"
-                  valueType="string"
-                  id="solaris.gnu.c.compiler.misc.other">
+                  id="solaris.gnu.c.compiler.misc.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="solaris.c.compiler.category.other"
                   command="-v"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.misc.verbose">
+                  id="solaris.gnu.c.compiler.misc.verbose"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Ansi"
                   category="solaris.c.compiler.category.other"
                   command="-ansi"
-                  valueType="boolean"
-                  id="solaris.gnu.c.compiler.misc.ansi">
+                  id="solaris.gnu.c.compiler.misc.ansi"
+                  valueType="boolean">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler.cpp"
+               sources="c,C,cc,cxx,cpp"
                headerExtensions="h,H,hpp"
                outputFlag="-o"
-               outputs="o"
                command="g++"
+               outputs="o"
                id="cdt.build.tool.solaris.gnu.compiler">
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.compiler"
@@ -2906,74 +2907,74 @@
                   name="%Option.Posix.Nostdinc"
                   category="solaris.gnu.compiler.category.preprocessor"
                   command="-nostdinc"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.preprocessor.nostdinc">
+                  id="solaris.gnu.compiler.preprocessor.nostdinc"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="solaris.gnu.compiler.category.preprocessor"
                   command="-E"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.preprocessor.preprocess">
+                  id="solaris.gnu.compiler.preprocessor.preprocess"
+                  valueType="boolean">
             </option>
             <option
                   name="%Option.Posix.DefSym"
                   category="solaris.gnu.compiler.category.preprocessor"
                   command="-D"
-                  valueType="definedSymbols"
-                  id="solaris.gnu.compiler.preprocessor.def">
+                  id="solaris.gnu.compiler.preprocessor.def"
+                  valueType="definedSymbols">
                <listOptionValue
-                     value="sun"
-                     builtIn="true">
+                     builtIn="true"
+                     value="sun">
                </listOptionValue>
                <listOptionValue
-                     value="sparc"
-                     builtIn="true">
+                     builtIn="true"
+                     value="sparc">
                </listOptionValue>
                <listOptionValue
-                     value="unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="unix">
                </listOptionValue>
                <listOptionValue
-                     value="__svr4__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__svr4__">
                </listOptionValue>
                <listOptionValue
-                     value="__SVR4"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__SVR4">
                </listOptionValue>
                <listOptionValue
-                     value="__GCC_NEW_VARARGS__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__GCC_NEW_VARARGS__">
                </listOptionValue>
                <listOptionValue
-                     value="__sun__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sun__">
                </listOptionValue>
                <listOptionValue
-                     value="__sparc__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sparc__">
                </listOptionValue>
                <listOptionValue
-                     value="__unix__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix__">
                </listOptionValue>
                <listOptionValue
-                     value="__sun"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sun">
                </listOptionValue>
                <listOptionValue
-                     value="__sparc"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__sparc">
                </listOptionValue>
                <listOptionValue
-                     value="__unix"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__unix">
                </listOptionValue>
                <listOptionValue
-                     value="__OPTIMIZE__"
-                     builtIn="true">
+                     builtIn="true"
+                     value="__OPTIMIZE__">
                </listOptionValue>
             </option>
             <optionCategory
@@ -2985,15 +2986,15 @@
                   name="%Option.Posix.InclPaths"
                   category="solaris.gnu.compiler.category.dirs"
                   command="-I"
-                  valueType="includePath"
-                  id="solaris.gnu.compiler.dirs.incpaths">
+                  id="solaris.gnu.compiler.dirs.incpaths"
+                  valueType="includePath">
                <listOptionValue
-                     value="/usr/local/include"
-                     builtIn="true">
+                     builtIn="true"
+                     value="/usr/local/include">
                </listOptionValue>
                <listOptionValue
-                     value="/usr/include"
-                     builtIn="true">
+                     builtIn="true"
+                     value="/usr/include">
                </listOptionValue>
             </option>
             <optionCategory
@@ -3004,8 +3005,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="solaris.gnu.compiler.category.optimization"
-                  valueType="enumerated"
-                  id="solaris.gnu.compiler.optimization.level">
+                  id="solaris.gnu.compiler.optimization.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      command="-O0"
@@ -3031,8 +3032,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="solaris.gnu.compiler.category.optimization"
-                  valueType="string"
-                  id="solaris.compiler.optimization.flags">
+                  id="solaris.compiler.optimization.flags"
+                  valueType="string">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.compiler"
@@ -3042,8 +3043,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="solaris.gnu.compiler.category.debug"
-                  valueType="enumerated"
-                  id="solaris.gnu.compiler.debugging.level">
+                  id="solaris.gnu.compiler.debugging.level"
+                  valueType="enumerated">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -3070,24 +3071,24 @@
             <option
                   name="%Option.Posix.Debug.Other"
                   category="solaris.gnu.compiler.category.debug"
-                  valueType="string"
-                  id="solaris.gnu.compiler.debugging.other">
+                  id="solaris.gnu.compiler.debugging.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="solaris.gnu.compiler.category.debug"
                   command="-p"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.debugging.prof">
+                  id="solaris.gnu.compiler.debugging.prof"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="solaris.gnu.compiler.category.debug"
                   command="-pg"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.debugging.gprof">
+                  id="solaris.gnu.compiler.debugging.gprof"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.compiler"
@@ -3099,48 +3100,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-fsyntax-only"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.warnings.syntax">
+                  id="solaris.gnu.compiler.warnings.syntax"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-pedantic"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.warnings.pedantic">
+                  id="solaris.gnu.compiler.warnings.pedantic"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-pedantic-errors"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.warnings.pedantic.error">
+                  id="solaris.gnu.compiler.warnings.pedantic.error"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-w"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.warnings.nowarn">
+                  id="solaris.gnu.compiler.warnings.nowarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-Wall"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.warnings.allwarn">
+                  id="solaris.gnu.compiler.warnings.allwarn"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-Werror"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.warnings.toerrors">
+                  id="solaris.gnu.compiler.warnings.toerrors"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.compiler"
@@ -3151,24 +3152,24 @@
                   defaultValue="-c"
                   name="%Option.OtherFlags"
                   category="solaris.gnu.compiler.category.other"
-                  valueType="string"
-                  id="solaris.gnu.compiler.other.other">
+                  id="solaris.gnu.compiler.other.other"
+                  valueType="string">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="solaris.gnu.compiler.category.other"
                   command="-v"
-                  valueType="boolean"
-                  id="solaris.gnu.compiler.other.verbose">
+                  id="solaris.gnu.compiler.other.verbose"
+                  valueType="boolean">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.solaris.exe"
-            parent="solaris.gnu"
             binaryParser="org.eclipse.cdt.core.ELF"
+            parent="solaris.gnu"
             isAbstract="false"
             id="solaris.gnu.exec">
          <configuration
@@ -3225,8 +3226,8 @@
          </configuration>
          <tool
                natureFilter="cnature"
-               sources="o"
                name="%ToolName.linker.c"
+               sources="o"
                outputFlag="-o"
                command="gcc"
                id="cdt.build.tool.solaris.gnu.c.link">
@@ -3240,40 +3241,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="solaris.gnu.c.linker.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="solaris.gnu.c.link.options.nostart">
+                  id="solaris.gnu.c.link.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="solaris.gnu.c.linker.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="solaris.gnu.c.link.options.nodeflibs">
+                  id="solaris.gnu.c.link.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="solaris.gnu.c.linker.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="solaris.gnu.c.link.options.nostdlibs">
+                  id="solaris.gnu.c.link.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="solaris.gnu.c.linker.category.options"
                   command="-s"
-                  valueType="boolean"
-                  id="solaris.gnu.c.link.options.strip">
+                  id="solaris.gnu.c.link.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="solaris.gnu.c.linker.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="solaris.gnu.c.link.options.noshared">
+                  id="solaris.gnu.c.link.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.link"
@@ -3284,15 +3285,15 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.c.linker.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="solaris.gnu.c.link.libs">
+                  id="solaris.gnu.c.link.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.c.linker.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="solaris.gnu.c.link.paths">
+                  id="solaris.gnu.c.link.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.link"
@@ -3302,27 +3303,27 @@
             <option
                   name="%Option.Posix.Linker.Flags"
                   category="solaris.gnu.c.linker.category.other"
-                  valueType="string"
-                  id="solaris.gnu.c.link.ldflags">
+                  id="solaris.gnu.c.link.ldflags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="solaris.gnu.c.linker.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="solaris.gnu.c.link.options.other">
+                  id="solaris.gnu.c.link.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.c.linker.category.other"
-                  valueType="userObjs"
-                  id="solaris.gnu.c.link.ld.userobjs">
+                  id="solaris.gnu.c.link.ld.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="o"
                name="%ToolName.linker.cpp"
+               sources="o"
                outputFlag="-o"
                command="g++"
                id="cdt.build.tool.solaris.gnu.link">
@@ -3336,40 +3337,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="solaris.gnu.linker.category.options"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="solaris.gnu.linker.options.nostart">
+                  id="solaris.gnu.linker.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="solaris.gnu.linker.category.options"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="solaris.gnu.linker.options.nodeflibs">
+                  id="solaris.gnu.linker.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="solaris.gnu.linker.category.options"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="solaris.gnu.linker.options.nostdlibs">
+                  id="solaris.gnu.linker.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="solaris.gnu.linker.category.options"
                   command="-s"
-                  valueType="boolean"
-                  id="solaris.gnu.linker.options.strip">
+                  id="solaris.gnu.linker.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="solaris.gnu.linker.category.options"
                   command="-static"
-                  valueType="boolean"
-                  id="solaris.gnu.linker.options.noshared">
+                  id="solaris.gnu.linker.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.link"
@@ -3380,15 +3381,15 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.linker.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="solaris.gnu.linker.libs.libs">
+                  id="solaris.gnu.linker.libs.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.linker.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="solaris.gnu.linker.libs.paths">
+                  id="solaris.gnu.linker.libs.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.link"
@@ -3398,29 +3399,29 @@
             <option
                   name="%Option.Posix.Linker.Flags"
                   category="solaris.gnu.linker.category.other"
-                  valueType="string"
-                  id="solaris.gnu.linker.libs.flags">
+                  id="solaris.gnu.linker.libs.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="solaris.gnu.linker.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="solaris.gnu.linker.options.other">
+                  id="solaris.gnu.linker.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.linker.category.other"
-                  valueType="userObjs"
-                  id="solaris.gnu.linker.userobjs">
+                  id="solaris.gnu.linker.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.solaris.so"
-            parent="solaris.gnu"
             binaryParser="org.eclipse.cdt.core.ELF"
+            parent="solaris.gnu"
             defaultExtension="so"
             isAbstract="false"
             id="solaris.gnu.so">
@@ -3482,12 +3483,12 @@
          </configuration>
          <tool
                natureFilter="cnature"
-               sources="o"
                name="%ToolName.linker.c"
+               sources="o"
                outputFlag="-o"
-               outputs="so"
-               outputPrefix="lib"
                command="gcc"
+               outputPrefix="lib"
+               outputs="so"
                id="cdt.build.tool.solaris.gnu.c.solink">
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.solink"
@@ -3499,40 +3500,40 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="solaris.gnu.c.solink.category.general"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="solaris.gnu.c.solink.options.nostart">
+                  id="solaris.gnu.c.solink.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="solaris.gnu.c.solink.category.general"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="solaris.gnu.c.solink.options.nodeflibs">
+                  id="solaris.gnu.c.solink.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="solaris.gnu.c.solink.category.general"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="solaris.gnu.c.solink.options.nostdlibs">
+                  id="solaris.gnu.c.solink.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="solaris.gnu.c.solink.category.general"
                   command="-s"
-                  valueType="boolean"
-                  id="solaris.gnu.c.solink.options.strip">
+                  id="solaris.gnu.c.solink.options.strip"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Static"
                   category="solaris.gnu.c.solink.category.general"
                   command="-static"
-                  valueType="boolean"
-                  id="solaris.gnu.c.solink.options.noshared">
+                  id="solaris.gnu.c.solink.options.noshared"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.solink"
@@ -3543,15 +3544,15 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.c.solink.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="solaris.gnu.c.solink.libs">
+                  id="solaris.gnu.c.solink.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.c.solink.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="solaris.gnu.c.solink.paths">
+                  id="solaris.gnu.c.solink.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.solink"
@@ -3562,31 +3563,31 @@
                   defaultValue="-shared -fPIC"
                   name="%Option.Posix.Linker.Flags"
                   category="solaris.gnu.c.solink.category.other"
-                  valueType="string"
-                  id="solaris.gnu.c.solink.ldflags">
+                  id="solaris.gnu.c.solink.ldflags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="solaris.gnu.c.solink.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="solaris.gnu.c.solink.options.other">
+                  id="solaris.gnu.c.solink.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.c.solink.category.other"
-                  valueType="userObjs"
-                  id="solaris.gnu.c.solink.userobjs">
+                  id="solaris.gnu.c.solink.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="o"
                name="%ToolName.linker.cpp"
+               sources="o"
                outputFlag="-o"
-               outputs="so"
-               outputPrefix="lib"
                command="g++"
+               outputPrefix="lib"
+               outputs="so"
                id="cdt.build.tool.solaris.gnu.solink">
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.solink"
@@ -3598,32 +3599,32 @@
                   name="%Option.Posix.Linker.NoStartFiles"
                   category="solaris.gnu.solink.category.options"
                   command="-nostartfiles"
-                  valueType="boolean"
-                  id="solaris.gnu.solink.options.nostart">
+                  id="solaris.gnu.solink.options.nostart"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoDefLibs"
                   category="solaris.gnu.solink.category.options"
                   command="-nodefaultlibs"
-                  valueType="boolean"
-                  id="solaris.gnu.solink.options.nodeflibs">
+                  id="solaris.gnu.solink.options.nodeflibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.NoStdLibs"
                   category="solaris.gnu.solink.category.options"
                   command="-nostdlib"
-                  valueType="boolean"
-                  id="solaris.gnu.solink.options.nostdlibs">
+                  id="solaris.gnu.solink.options.nostdlibs"
+                  valueType="boolean">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Linker.Strip"
                   category="solaris.gnu.solink.category.options"
                   command="-s"
-                  valueType="boolean"
-                  id="solaris.gnu.solink.options.strip">
+                  id="solaris.gnu.solink.options.strip"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.solink"
@@ -3634,15 +3635,15 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.solink.category.libs"
                   command="-l"
-                  valueType="libs"
-                  id="solaris.gnu.solink.libs.libs">
+                  id="solaris.gnu.solink.libs.libs"
+                  valueType="libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.solink.category.libs"
                   command="-L"
-                  valueType="stringList"
-                  id="solaris.gnu.solink.libs.paths">
+                  id="solaris.gnu.solink.libs.paths"
+                  valueType="stringList">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.solink"
@@ -3653,29 +3654,29 @@
                   defaultValue="-shared -fPIC"
                   name="%Option.Posix.Linker.Flags"
                   category="solaris.gnu.solink.category.other"
-                  valueType="string"
-                  id="solaris.gnu.solink.libs.flags">
+                  id="solaris.gnu.solink.libs.flags"
+                  valueType="string">
             </option>
             <option
                   name="%Option.Posix.Linker.XLinker"
                   category="solaris.gnu.solink.category.other"
                   command="-Xlinker"
-                  valueType="stringList"
-                  id="solaris.gnu.solink.options.other">
+                  id="solaris.gnu.solink.options.other"
+                  valueType="stringList">
             </option>
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.solink.category.other"
-                  valueType="userObjs"
-                  id="solaris.gnu.solink.userobjs">
+                  id="solaris.gnu.solink.userobjs"
+                  valueType="userObjs">
             </option>
          </tool>
       </target>
       <target
             isTest="false"
             name="%TargetName.solaris.lib"
-            parent="solaris.gnu"
             binaryParser="org.eclipse.cdt.core.ELF"
+            parent="solaris.gnu"
             defaultExtension="a"
             isAbstract="false"
             id="solaris.gnu.lib">
@@ -3733,11 +3734,11 @@
          </configuration>
          <tool
                natureFilter="both"
-               sources="o"
                name="%ToolName.archiver"
-               outputs="a"
-               outputPrefix="lib"
+               sources="o"
                command="ar"
+               outputPrefix="lib"
+               outputs="a"
                id="cdt.build.tool.solaris.gnu.lib">
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.lib"
@@ -3748,8 +3749,8 @@
                   defaultValue="-r"
                   name="%Option.Posix.Archiver.Flags"
                   category="solaris.gnu.lib.category.general"
-                  valueType="string"
-                  id="solaris.gnu.lib.flags">
+                  id="solaris.gnu.lib.flags"
+                  valueType="string">
             </option>
          </tool>
       </target>

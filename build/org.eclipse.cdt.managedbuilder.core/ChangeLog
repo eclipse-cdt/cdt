@@ -1,3 +1,27 @@
+2004-02-23 Sean Evoy
+	Fix for bug 52647.
+	In 1.2, the target stored the raw, overridden build command the user 
+	specified on the property page. This string may or may not have included 
+	arguments to make. The managed build info was responsible for parsing the 
+	command from the arguments and returning both to the makefile generator. 
+	The problem was that the logic was too light-weight to really parse a 
+	complex command line. That logic has been refactored to the property page itself, 
+	so the price of parsing is payed once.
+	
+	The Target and its public interface have been reworked to set and get the 
+	arguments for make. This is treated as a project-level setting. It cannot 
+	be defined in a manifest for now. There is also a capability to reset and 
+	test the args when checking for an overridden make command in a target.
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java 
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+
+	The arguments are now passed to the spawner that launches make correctly. 
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	
+	The ManagedBuildInfo is off the hook now. Rather than performing any 
+	parsing or foo-fa-raw, it simply delegates the lookup to the target.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+
 2004-02-17 Sean Evoy
 	Fix for critical bug 44163.
 	The managed build info would become confused when the project it was associated

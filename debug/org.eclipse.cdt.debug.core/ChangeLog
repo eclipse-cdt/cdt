@@ -1,3 +1,7 @@
+2004-08-04 Mikhail Khodjaiants
+	Fix for bug 69085: Arrays in the Expressions view 
+	* CArrayPartitionValue.java
+
 2004-06-29 Alain Magloire
 
 	Do not use the cache stackframe.

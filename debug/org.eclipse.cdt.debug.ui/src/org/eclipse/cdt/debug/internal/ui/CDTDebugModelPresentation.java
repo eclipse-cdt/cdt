@@ -478,6 +478,16 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 				if ( valueString.length() > 0 ) {
 					result.append( " = " ).append( valueString ); //$NON-NLS-1$
 				}
+				if ( isShowVariableTypeNames() ) {
+					String type = null;
+					try {
+						type = value.getReferenceTypeName();
+					}
+					catch( DebugException e ) {
+					}
+					if ( !isEmpty( type ) )
+						result.insert( 0, type + ' ' );
+				}
 			}
 		}
 		if ( !expression.isEnabled() ) {

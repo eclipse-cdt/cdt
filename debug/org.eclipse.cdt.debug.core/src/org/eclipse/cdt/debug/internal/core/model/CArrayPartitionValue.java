@@ -66,7 +66,7 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	 */
 	public String getReferenceTypeName() throws DebugException
 	{
-		return null;
+		return ( getParentVariable() != null ) ? getParentVariable().getReferenceTypeName() : null;
 	}
 
 	/* (non-Javadoc)
@@ -74,7 +74,7 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	 */
 	public String getValueString() throws DebugException
 	{
-		return null;
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

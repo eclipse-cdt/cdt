@@ -73,6 +73,4 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		}
 		return IMarker.SEVERITY_ERROR;
 	}
-
-	public abstract IPath getWorkingDirectory();
 }

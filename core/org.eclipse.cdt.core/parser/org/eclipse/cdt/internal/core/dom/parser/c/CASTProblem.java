@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
@@ -115,231 +114,231 @@ public class CASTProblem extends CASTNode implements IASTProblem {
         errorMessages = new HashMap();
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED),
+                        new Integer(IASTProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.uniqueNamePredefined")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_NAME_NOT_FOUND),
+                        new Integer(IASTProblem.SEMANTIC_NAME_NOT_FOUND),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.nameNotFound")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_NAME_NOT_PROVIDED),
+                        new Integer(IASTProblem.SEMANTIC_NAME_NOT_PROVIDED),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.nameNotProvided")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_INVALID_CONVERSION_TYPE),
+                        new Integer(IASTProblem.SEMANTIC_INVALID_CONVERSION_TYPE),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.invalidConversionType")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_MALFORMED_EXPRESSION),
+                        new Integer(IASTProblem.SEMANTIC_MALFORMED_EXPRESSION),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.malformedExpression")); //$NON-NLS-1$        
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_AMBIGUOUS_LOOKUP),
+                        new Integer(IASTProblem.SEMANTIC_AMBIGUOUS_LOOKUP),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.ambiguousLookup")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_INVALID_TYPE),
+                        new Integer(IASTProblem.SEMANTIC_INVALID_TYPE),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.invalidType")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_CIRCULAR_INHERITANCE),
+                        new Integer(IASTProblem.SEMANTIC_CIRCULAR_INHERITANCE),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.circularInheritance")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_INVALID_OVERLOAD),
+                        new Integer(IASTProblem.SEMANTIC_INVALID_OVERLOAD),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.invalidOverload")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_INVALID_TEMPLATE),
+                        new Integer(IASTProblem.SEMANTIC_INVALID_TEMPLATE),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.invalidTemplate")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_INVALID_USING),
+                        new Integer(IASTProblem.SEMANTIC_INVALID_USING),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.invalidUsing")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_BAD_VISIBILITY),
+                        new Integer(IASTProblem.SEMANTIC_BAD_VISIBILITY),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.badVisibility")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(
-                                IProblem.SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION),
+                                IASTProblem.SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.unableToResolveFunction")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SEMANTIC_INVALID_TEMPLATE_ARGUMENT),
+                        new Integer(IASTProblem.SEMANTIC_INVALID_TEMPLATE_ARGUMENT),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.invalidTemplateArgument")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(
-                                IProblem.SEMANTIC_INVALID_TEMPLATE_PARAMETER),
+                                IASTProblem.SEMANTIC_INVALID_TEMPLATE_PARAMETER),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.invalidTemplateParameter")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(
-                                IProblem.SEMANTIC_REDECLARED_TEMPLATE_PARAMETER),
+                                IASTProblem.SEMANTIC_REDECLARED_TEMPLATE_PARAMETER),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.redeclaredTemplateParameter")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(
-                                IProblem.SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION),
+                                IASTProblem.SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION),
                         ParserMessages
                                 .getString("ASTProblemFactory.error.semantic.pst.recursiveTemplateInstantiation")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_POUND_ERROR),
+                        new Integer(IASTProblem.PREPROCESSOR_POUND_ERROR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND),
+                        new Integer(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.inclusionNotFound")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_DEFINITION_NOT_FOUND),
+                        new Integer(IASTProblem.PREPROCESSOR_DEFINITION_NOT_FOUND),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.definitionNotFound")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN),
+                        new Integer(IASTProblem.PREPROCESSOR_INVALID_MACRO_DEFN),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.invalidMacroDefn")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN),
+                        new Integer(IASTProblem.PREPROCESSOR_INVALID_MACRO_REDEFN),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.invalidMacroRedefn")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_UNBALANCE_CONDITION),
+                        new Integer(IASTProblem.PREPROCESSOR_UNBALANCE_CONDITION),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.unbalancedConditional")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(
-                                IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
+                                IASTProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.conditionalEval")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR),
+                        new Integer(IASTProblem.PREPROCESSOR_MACRO_USAGE_ERROR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.macroUsage")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_CIRCULAR_INCLUSION),
+                        new Integer(IASTProblem.PREPROCESSOR_CIRCULAR_INCLUSION),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.circularInclusion")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_INVALID_DIRECTIVE),
+                        new Integer(IASTProblem.PREPROCESSOR_INVALID_DIRECTIVE),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.invalidDirective")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR),
+                        new Integer(IASTProblem.PREPROCESSOR_MACRO_PASTING_ERROR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.macroPasting")); //$NON-NLS-1$
         errorMessages
                 .put(
                         new Integer(
-                                IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST),
+                                IASTProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$       
         errorMessages
                 .put(
-                        new Integer(IProblem.PREPROCESSOR_INVALID_VA_ARGS),
+                        new Integer(IASTProblem.PREPROCESSOR_INVALID_VA_ARGS),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$       
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_INVALID_ESCAPECHAR),
+                        new Integer(IASTProblem.SCANNER_INVALID_ESCAPECHAR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_UNBOUNDED_STRING),
+                        new Integer(IASTProblem.SCANNER_UNBOUNDED_STRING),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.unboundedString")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_BAD_FLOATING_POINT),
+                        new Integer(IASTProblem.SCANNER_BAD_FLOATING_POINT),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.badFloatingPoint")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_BAD_HEX_FORMAT),
+                        new Integer(IASTProblem.SCANNER_BAD_HEX_FORMAT),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.badHexFormat")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_BAD_OCTAL_FORMAT),
+                        new Integer(IASTProblem.SCANNER_BAD_OCTAL_FORMAT),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.badOctalFormat")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_BAD_DECIMAL_FORMAT),
+                        new Integer(IASTProblem.SCANNER_BAD_DECIMAL_FORMAT),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.badDecimalFormat")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED),
+                        new Integer(IASTProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.assignmentNotAllowed")); //$NON-NLS-1$        
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_DIVIDE_BY_ZERO),
+                        new Integer(IASTProblem.SCANNER_DIVIDE_BY_ZERO),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.divideByZero")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_MISSING_R_PAREN),
+                        new Integer(IASTProblem.SCANNER_MISSING_R_PAREN),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.missingRParen")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR),
+                        new Integer(IASTProblem.SCANNER_EXPRESSION_SYNTAX_ERROR),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.expressionSyntaxError")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_ILLEGAL_IDENTIFIER),
+                        new Integer(IASTProblem.SCANNER_ILLEGAL_IDENTIFIER),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.illegalIdentifier")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION),
+                        new Integer(IASTProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.badConditionalExpression")); //$NON-NLS-1$        
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_UNEXPECTED_EOF),
+                        new Integer(IASTProblem.SCANNER_UNEXPECTED_EOF),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
         errorMessages
                 .put(
-                        new Integer(IProblem.SCANNER_BAD_CHARACTER),
+                        new Integer(IASTProblem.SCANNER_BAD_CHARACTER),
                         ParserMessages
                                 .getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
-        errorMessages.put(new Integer(IProblem.SYNTAX_ERROR), ParserMessages
+        errorMessages.put(new Integer(IASTProblem.SYNTAX_ERROR), ParserMessages
                 .getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
     }
 
@@ -365,7 +364,7 @@ public class CASTProblem extends CASTNode implements IASTProblem {
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.cdt.core.parser.IProblem#checkCategory(int)
+     * @see org.eclipse.cdt.core.parser.IASTProblem#checkCategory(int)
      */
     public boolean checkCategory(int bitmask) {
         return ((id & bitmask) != 0);
@@ -374,7 +373,7 @@ public class CASTProblem extends CASTNode implements IASTProblem {
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
+     * @see org.eclipse.cdt.core.parser.IASTProblem#getArguments()
      */
     public String getArguments() {
         return arg != null ? String.valueOf(arg) : ""; //$NON-NLS-1$

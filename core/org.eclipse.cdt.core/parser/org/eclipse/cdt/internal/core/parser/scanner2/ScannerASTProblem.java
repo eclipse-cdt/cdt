@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -18,12 +18,13 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
  * @author jcamelon
  */
-public class CPPASTProblem extends CPPASTNode implements IASTProblem {
+public class ScannerASTProblem extends ASTNode implements IASTProblem {
     private IASTNode parent;
 
     private ASTNodeProperty property;
@@ -74,7 +75,7 @@ public class CPPASTProblem extends CPPASTNode implements IASTProblem {
 
     private String message = null;
 
-    public CPPASTProblem(int id, char[] arg, boolean warn, boolean error) {
+    public ScannerASTProblem(int id, char[] arg, boolean warn, boolean error) {
         this.id = id;
         this.arg = arg;
         this.isWarning = warn;

@@ -33,7 +33,7 @@ public class ProcessList implements IProcessList {
 		InputStream in = null;
 		IPluginDescriptor desc = CCorePlugin.getDefault().getDescriptor();
 		try {
-			URL url = desc.find(new Path("$os$/listtasks.exe"));
+			URL url = desc.find(new Path("$os$/listtasks.exe")); //$NON-NLS-1$
 			url = Platform.resolve(url);
 			String path = url.getFile();
 			File file = new File(path);

@@ -1,3 +1,9 @@
+2004-03-01 James Ciesielski
+
+	Marked string as non-externalized
+	
+	* src/org/eclipse/cdt/internal/core/win32/ProcessList.java
+
 2004-02-17 Alain Magloire
 
 	Remove old Eclipse2.0 interface and

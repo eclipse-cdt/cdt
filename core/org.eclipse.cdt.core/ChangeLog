@@ -1,3 +1,12 @@
+2005-01-26 Alain Magloire
+	The line and offset information should be cache in the SourceManipulationInfo
+	* model/org/eclipse/cdt/iternal/core/BinaryElement.java
+	* model/org/eclipse/cdt/iternal/core/CElement.java
+	* model/org/eclipse/cdt/iternal/core/CModelBuilder.java
+	* model/org/eclipse/cdt/iternal/core/Namespace.java
+	* model/org/eclipse/cdt/iternal/core/SourceManipulation.java
+	* model/org/eclipse/cdt/iternal/core/SourceManipulationInfo.java
+
 2005-01-22 Alain Magloire
 	PR 38958
 	Part implementation of the CreateXXXOperation classes.

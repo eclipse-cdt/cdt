@@ -38,13 +38,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	protected String fName;
 
-	protected int fStartPos;
-	protected int fLength;
-	protected int fIdStartPos;
-	protected int fIdLength;
-	protected int fStartLine;
-	protected int fEndLine;
-
 	protected CElement(ICElement parent, String name, int type) {
 		fParent= parent;
 		fName= name;
@@ -194,45 +187,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	protected void addChild(ICElement e) throws CModelException {
-	}
-
-	public void setPos(int startPos, int length) {
-		fStartPos = startPos;
-		fLength = length;
-	}
-                
-	public int getStartPos() {
-		return fStartPos;
-	}
-
-	public int getLength() {
-		return fLength;
-	}
-        
-	public void setIdPos(int startPos, int length) {
-		fIdStartPos= startPos;
-		fIdLength= length;
-	}
-
-	public int getIdStartPos() {
-		return fIdStartPos;
-	}
-        
-	public int getIdLength() {
-		return fIdLength;
-	}
-
-	public int getStartLine() {
-		return fStartLine;
-	}
-
-	public int getEndLine() {
-		return fEndLine;
-	}
-
-	public void setLines(int startLine, int endLine) {
-		fStartLine = startLine;
-		fEndLine = endLine;
 	}
 
 	public IResource getUnderlyingResource() {

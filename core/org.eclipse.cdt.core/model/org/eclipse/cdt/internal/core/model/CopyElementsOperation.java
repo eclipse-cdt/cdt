@@ -77,11 +77,19 @@ public class CopyElementsOperation extends MultiOperation {
 	 * Returns the nested operation to use for processing this element
 	 */
 	protected CModelOperation getNestedOperation(ICElement element) {
-		ICElement dest = getDestinationParent(element);
-		ITranslationUnit unit = (ITranslationUnit)dest.getAncestor(ICElement.C_UNIT);
+		ITranslationUnit unit = getDestinationTranslationUnit(element);
 		String name = element.getElementName();
 		int type = element.getElementType();
 		return new CreateSourceReferenceOperation(unit, name, type, getSourceFor(element));
+	}
+
+	protected ITranslationUnit getDestinationTranslationUnit(ICElement element) {
+		ICElement dest = getDestinationParent(element);
+		return (ITranslationUnit)dest.getAncestor(ICElement.C_UNIT);		
+	}
+
+	protected ITranslationUnit getSourceTranslationUnit(ICElement element) {
+		return (ITranslationUnit)element.getAncestor(ICElement.C_UNIT);		
 	}
 
 	/**
@@ -115,7 +123,14 @@ public class CopyElementsOperation extends MultiOperation {
 		if (op == null) {
 			return;
 		}
+
 		boolean isInTUOperation = op instanceof CreateElementInTUOperation;
+
+		if (isInTUOperation && isMove()) {
+			DeleteElementsOperation deleteOp = new DeleteElementsOperation(new ICElement[] { element }, fForce);
+			executeNestedOperation(deleteOp, 1);
+		}
+
 		if (isInTUOperation) {
 			CreateElementInTUOperation inTUop = (CreateElementInTUOperation)op;
 			ICElement sibling = (ICElement) fInsertBeforeElements.get(element);
@@ -134,9 +149,9 @@ public class CopyElementsOperation extends MultiOperation {
 		}
 		executeNestedOperation(op, 1);
 
-		if (isInTUOperation && isMove()) {
-			DeleteElementsOperation deleteOp = new DeleteElementsOperation(new ICElement[] { element }, fForce);
-			executeNestedOperation(deleteOp, 1);
+		ITranslationUnit destUnit = getDestinationTranslationUnit(element);
+		if (!destUnit.isWorkingCopy()) {
+			destUnit.close();
 		}
 	}
 

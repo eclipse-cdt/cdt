@@ -19,6 +19,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /* package */
 class SourceManipulationInfo extends CElementInfo {
 
+	protected int fStartPos;
+	protected int fLength;
+	protected int fIdStartPos;
+	protected int fIdLength;
+	protected int fStartLine;
+	protected int fEndLine;
+
+
 	int modifiers;
 
 	protected SourceManipulationInfo(CElement element) {
@@ -27,13 +35,52 @@ class SourceManipulationInfo extends CElementInfo {
 		modifiers = 0;
 	}
 
+	public void setPos(int startPos, int length) {
+		fStartPos = startPos;
+		fLength = length;
+	}
+	
+	public int getStartPos() {
+		return fStartPos;
+	}
+
+	public int getLength() {
+		return fLength;
+	}
+
+	public void setIdPos(int startPos, int length) {
+		fIdStartPos= startPos;
+		fIdLength= length;
+	}
+
+	public int getIdStartPos() {
+		return fIdStartPos;
+	}
+
+	public int getIdLength() {
+		return fIdLength;
+	}
+
+	public int getStartLine() {
+		return fStartLine;
+	}
+
+	public int getEndLine() {
+		return fEndLine;
+	}
+
+	public void setLines(int startLine, int endLine) {
+		fStartLine = startLine;
+		fEndLine = endLine;
+	}
+
 	protected ISourceRange getSourceRange() {
-		return new SourceRange(getElement().getStartPos(),
-						getElement().getLength(),
-						getElement().getIdStartPos(),
-						getElement().getIdLength(), 
-						getElement().getStartLine(),
-						getElement().getEndLine());
+		return new SourceRange(fStartPos,
+						fLength,
+						fIdStartPos,
+						fIdLength, 
+						fStartLine,
+						fEndLine);
 	}
 
 	/**
@@ -45,8 +92,8 @@ class SourceManipulationInfo extends CElementInfo {
 		if (buffer == null) {
 			return null;
 		}
-		int offset = getElement().getStartPos();
-		int length = getElement().getLength();
+		int offset = fStartPos;
+		int length = fLength;
 		if (offset == -1 || length == 0 ) {
 			return null;
 		}

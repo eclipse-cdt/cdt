@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.Path;
 public class BinaryElement extends CElement implements IBinaryElement, ISourceManipulation, ISourceReference {
 
 	IAddress addr;
+	int fStartLine;
+	int fEndLine;
 
 	public BinaryElement(ICElement parent, String name, int type, IAddress a) {
 		super(parent, name, type);
@@ -157,6 +159,64 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	public IAddress getAddress() throws CModelException {
 		return addr;
 	}
+
+	/**
+	 * TODO: This should be in the info
+	 * @param line
+	 */
+	public void setLines(int startline, int endLine) {
+		fStartLine = startline;
+		fEndLine = endLine;
+	}
+
+	/**
+	 * TODO: This should be in the info
+	 * @param line
+	 */
+	public int getStartLine() {
+		return fStartLine;
+	}
+
+	/**
+	 * TODO: This should be in the info
+	 * @param line
+	 */
+	public int getEndLine() {
+		return fEndLine;
+	}
+
+	/**
+	 * @return
+	 */
+	private int getLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getStartPos() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @return
+	 */
+	private int getIdLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getIdStartPos() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getBinary()

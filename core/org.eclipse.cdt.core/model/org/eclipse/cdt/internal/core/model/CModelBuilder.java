@@ -317,13 +317,14 @@ public class CModelBuilder {
 	{				
 		// Template Declaration 
 		IASTDeclaration declaration = templateDeclaration.getOwnedDeclaration();
-		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration){
+		if (declaration instanceof IASTAbstractTypeSpecifierDeclaration){
 			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;
 			CElement element = createAbstractElement(parent, abstractDeclaration , true, true);
-			if(element != null){			
+			if (element instanceof SourceManipulation) {
+				SourceManipulation sourceRef = (SourceManipulation)element;
 				// set the element position		
-				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
-				element.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
+				sourceRef.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
+				sourceRef.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
 				// set the template parameters				
 				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
 				ITemplate classTemplate = (ITemplate) element;
@@ -333,10 +334,11 @@ public class CModelBuilder {
 			// special case for Structural parse
 			IASTClassSpecifier classSpecifier = (IASTClassSpecifier)declaration ;
 			CElement element = createClassSpecifierElement(parent, classSpecifier , true);
-			if(element != null){			
+			if (element instanceof SourceManipulation) {
+				SourceManipulation sourceRef = (SourceManipulation)element;
 				// set the element position		
-				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
-				element.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
+				sourceRef.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
+				sourceRef.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
 				// set the template parameters				
 				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
 				ITemplate classTemplate = (ITemplate) element;
@@ -346,11 +348,11 @@ public class CModelBuilder {
 		ITemplate template = null;
 		template = (ITemplate) createSimpleElement(parent, declaration, true);
 	 	 
- 		if(template != null){
-			CElement element = (CElement)template;
+ 		if (template instanceof SourceManipulation){
+			SourceManipulation sourceRef = (SourceManipulation)template;
 			// set the element position		
-			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
-			element.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
+			sourceRef.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
+			sourceRef.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
 			// set the template parameters
 			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
@@ -380,16 +382,16 @@ public class CModelBuilder {
 	
 	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate, boolean isDeclaration)throws ASTNotImplementedException, CModelException{
 		CElement element = null;
-		if(abstractDeclaration != null){
+		if (abstractDeclaration != null){
 			IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier();
 			// IASTEnumerationSpecifier
-			if ( typeSpec instanceof IASTEnumerationSpecifier){
+			if (typeSpec instanceof IASTEnumerationSpecifier) {
 				IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
 				IParent enumElement = createEnumeration (parent, enumSpecifier);
 				element = (CElement) enumElement;
 			}
 			// IASTClassSpecifier
-			else if (typeSpec instanceof IASTClassSpecifier){
+			else if (typeSpec instanceof IASTClassSpecifier) {
 				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
 				element = createClassSpecifierElement (parent, classSpecifier, isTemplate);
 			} else if (isDeclaration && typeSpec instanceof IASTElaboratedTypeSpecifier) {

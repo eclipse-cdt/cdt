@@ -36,15 +36,15 @@ public class Namespace extends SourceManipulation implements INamespace{
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		// TODO Auto-generated method stub
-		return (super.equals(other) 
-				&& (this.getStartPos() == ((Namespace)other).getStartPos())
-				&& (this.getLength() == ((Namespace)other).getLength())				
-		);
-	}
+
+//	/* (non-Javadoc)
+//	 * @see java.lang.Object#equals(java.lang.Object)
+//	 */
+//	public boolean equals(Object other) {
+//		return (super.equals(other) 
+//				&& (this.getStartPos() == ((Namespace)other).getStartPos())
+//				&& (this.getLength() == ((Namespace)other).getLength())				
+//		);
+//	}
 
 }

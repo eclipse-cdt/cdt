@@ -185,4 +185,28 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		newElements.put(this, info);
 	}
 
+	public void setPos(int startPos, int length) {
+		try {
+			getSourceManipulationInfo().setPos(startPos, length);
+		} catch (CModelException e) {
+			//
+		}
+	}
+	
+	public void setIdPos(int startPos, int length) {
+		try {
+			getSourceManipulationInfo().setIdPos(startPos, length);
+		} catch (CModelException e) {
+			//
+		}
+	}
+
+	public void setLines(int startLine, int endLine) {
+		try {
+			getSourceManipulationInfo().setLines(startLine, endLine);
+		} catch (CModelException e) {
+			//
+		}
+	}
+
 }

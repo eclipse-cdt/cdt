@@ -1076,24 +1076,27 @@ public class CDebugTarget extends CDebugElement
 	{
 		ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])getBreakpoints().values().toArray( new ICDIBreakpoint[0] );
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
-		try
+		if ( cdiBreakpoints.length > 0 )
 		{
-			bm.deleteBreakpoints( cdiBreakpoints );
-			Iterator it = getBreakpoints().keySet().iterator();
-			while( it.hasNext() )
+			try
 			{
-				((CBreakpoint)it.next()).decrementInstallCount();
+				bm.deleteBreakpoints( cdiBreakpoints );
+				Iterator it = getBreakpoints().keySet().iterator();
+				while( it.hasNext() )
+				{
+					((CBreakpoint)it.next()).decrementInstallCount();
+				}
+				getBreakpoints().clear();
 			}
-			getBreakpoints().clear();
+			catch( CoreException ce )
+			{
+				requestFailed( "Operation failed. Reason: ", ce );
+			}
+			catch( CDIException e )
+			{
+				requestFailed( "Operation failed. Reason: ", e );
+			}
 		}
-		catch( CoreException ce )
-		{
-			requestFailed( "Operation failed. Reason: ", ce );
-		}
-		catch( CDIException e )
-		{
-			requestFailed( "Operation failed. Reason: ", e );
-		}		
 	}
 
 	protected void removeBreakpoint( CBreakpoint breakpoint ) throws DebugException
@@ -1126,15 +1129,18 @@ public class CDebugTarget extends CDebugElement
 	{
 		ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])getTemporaryBreakpoints().toArray( new ICDIBreakpoint[0] );
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
-		try
+		if ( cdiBreakpoints.length > 0 )
 		{
-			bm.deleteBreakpoints( cdiBreakpoints );
-			getTemporaryBreakpoints().clear();
+			try
+			{
+				bm.deleteBreakpoints( cdiBreakpoints );
+				getTemporaryBreakpoints().clear();
+			}
+			catch( CDIException e )
+			{
+				logError( e );
+			}
 		}
-		catch( CDIException e )
-		{
-			logError( e );
-		}		
 	}
 
 	protected void changeBreakpointProperties( CBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException

@@ -28,8 +28,14 @@ public class TimeOut implements Runnable {
 //	long timerTime=0;
 	private int threadPriority = Thread.MIN_PRIORITY + 1;
 	boolean debug = false;
+	private String threadName = null;
 	
 	public TimeOut(){
+		reset();
+	}
+	
+	public TimeOut(String threadName){
+		this.threadName = threadName;
 		reset();
 	}
 	
@@ -86,7 +92,12 @@ public class TimeOut implements Runnable {
 
 	public void reset() {
 		enabled=false;
-		thread = new Thread(this, "Time Out Thread"); //$NON-NLS-1$
+		if (threadName!=null){
+			thread = new Thread(this, threadName);
+		}
+		else{
+			thread = new Thread(this, "Time Out Thread"); //$NON-NLS-1$
+		}
 		thread.setDaemon(true);
 		thread.setPriority(threadPriority); 
 		thread.start();

@@ -8,9 +8,12 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.ui.search.CSearchPage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -24,6 +27,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -39,8 +44,10 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	
 	private Combo fExternLinks;
 	private Button fExternEnabled;
+	private Button fIProblemMarkers;
 	
 	protected OverlayPreferenceStore fOverlayStore;
+	private Text fTextControl;
 	
 	public WorkInProgressPreferencePage(){
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -51,6 +58,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		ArrayList overlayKeys = new ArrayList();		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CSearchPage.EXTERNALMATCH_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSearchPage.EXTERNALMATCH_VISIBLE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, SourceIndexer.CDT_INDEXER_TIMEOUT));
 		
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -107,6 +115,13 @@ public class WorkInProgressPreferencePage extends PreferencePage
 			}
 		});
 		
+		Group indexerTimeoutGroup= new Group(result, SWT.NONE);
+		indexerTimeoutGroup.setLayout(new GridLayout());
+		indexerTimeoutGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		indexerTimeoutGroup.setText("Indexer Timeout"); //$NON-NLS-1$
+		
+		fTextControl = (Text) addTextField( indexerTimeoutGroup, "Time out (ms)","TimeOut",6,0,true);
+		
 		initialize(); 
 		
 		return result;
@@ -119,6 +134,8 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		
 		fExternLinks.select(fOverlayStore.getInt(CSearchPage.EXTERNALMATCH_VISIBLE));
 		fExternLinks.setEnabled(extEnabled);
+		
+		fTextControl.setText(fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
 		
 
 	}
@@ -154,11 +171,36 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		button.setLayoutData( data );
 		return button;
 	}
+	
+	private Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
+
+		Label labelControl = new Label(composite, SWT.NONE);
+		labelControl.setText(label);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
+		labelControl.setLayoutData(gd);
+
+		Text textControl = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
+		textControl.setLayoutData(gd);
+		textControl.setTextLimit(textLimit);
+		
+		return textControl;
+	}
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		fOverlayStore.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT, fTextControl.getText());
+		
 		fOverlayStore.propagate();
+		
+//		Store IProblem Marker value in CCorePlugin Preferences 
+		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
+		prefs.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT,fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
+		CCorePlugin.getDefault().savePluginPreferences();
+		
 		return true;
 	}
 	
@@ -168,6 +210,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, false);
 		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 0);
+		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT, "20000");
 	}
 	
 	/*

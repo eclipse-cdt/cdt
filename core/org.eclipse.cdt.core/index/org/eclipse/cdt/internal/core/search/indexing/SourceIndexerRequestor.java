@@ -61,10 +61,13 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author bgheorgh
@@ -85,10 +88,14 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	private IASTInclusion currentInclude = null;
 	private LinkedList includeStack = new LinkedList();
 	
-	public SourceIndexerRequestor(SourceIndexer indexer, IFile resourceFile) {
+	private IProgressMonitor pm = new NullProgressMonitor();
+	private  TimeOut timeoutThread = null;
+	
+	public SourceIndexerRequestor(SourceIndexer indexer, IFile resourceFile, TimeOut timeOut) {
 		super();
 		this.indexer = indexer;
 		this.resourceFile = resourceFile;
+		this.timeoutThread =  timeOut;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
@@ -588,11 +595,41 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#setTimeout(int)
+	 */
+	public void setTimeout(int timeout) {
+		timeoutThread.setTimeout(timeout);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#startTimer()
+	 */
+	public void startTimer() {
+		createProgressMonitor();
+		timeoutThread.startTimer();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#stopTimer()
+	 */
+	public void stopTimer() {
+		timeoutThread.stopTimer();
+		pm.setCanceled(false);
+	}
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
 	 */
 	public boolean parserTimeout() {
-		// TODO Auto-generated method stub
+		if ((pm != null) && (pm.isCanceled()))
+			return true;
 		return false;
 	}
+	/*
+	 * Creates a new progress monitor with each start timer
+	 */
+	private void createProgressMonitor() {
+		pm.setCanceled(false);
+		timeoutThread.setProgressMonitor(pm);
+	}
+	
+	
 	
 }

@@ -32,12 +32,14 @@ import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.processing.IJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.cdt.internal.core.sourcedependency.UpdateDependency;
+import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Preferences;
 
 
 public class IndexManager extends JobManager implements IIndexConstants {
@@ -66,6 +68,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public static Integer REBUILDING_STATE = new Integer(3);
 
 	public static boolean VERBOSE = false;
+	
+	private  TimeOut timeoutThread = null; 
 	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
@@ -410,8 +414,18 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			this.monitors = new HashMap(5);
 			this.indexStates = null;
 		}
+		
+		if (this.timeoutThread == null){
+			this.timeoutThread = new TimeOut("Indexer TimeOut Thread");  //$NON-NLS-1$
+			this.timeoutThread.setThreadPriority(Thread.MAX_PRIORITY);
+			
+			Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
+			prefs.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT,20000);
+		}
+		
 		this.indexNames = new SimpleLookupTable();
 		this.cCorePluginLocation = null;
+	
 	}
 	
 	public void saveIndex(IIndex index) throws IOException {
@@ -509,6 +523,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			}
 		}
 		
+		this.timeoutThread = null;
+		
 		super.shutdown();
 	}
 
@@ -572,5 +588,12 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			else if (indexState == REBUILDING_STATE) state = "REBUILDING"; //$NON-NLS-1$
 			JobManager.verbose("-> index state updated to: " + state + " for: "+indexName); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+	/**
+	 * @return
+	 */
+	public TimeOut getTimeout() {
+		// TODO Auto-generated method stub
+		return this.timeoutThread ;
 	}	
 }

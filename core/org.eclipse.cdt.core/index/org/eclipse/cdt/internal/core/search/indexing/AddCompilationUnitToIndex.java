@@ -26,7 +26,7 @@ public class AddCompilationUnitToIndex extends AddFileToIndex {
 	}
 	protected boolean indexDocument(IIndex index) throws IOException {
 		if (!initializeContents()) return false;
-		index.add(new IFileDocument(resource, this.contents), new SourceIndexer(resource));
+		index.add(new IFileDocument(resource, this.contents), new SourceIndexer(resource, manager.getTimeout()));
 		return true;
 	}
 	public boolean initializeContents() {

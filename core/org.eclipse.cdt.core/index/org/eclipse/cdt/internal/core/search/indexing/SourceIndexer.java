@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -57,10 +59,18 @@ public class SourceIndexer extends AbstractIndexer {
 	//public static final String[] FILE_TYPES= new String[] {"cpp","c", "cc", "cxx"}; //$NON-NLS-1$
 	
 	//protected DefaultProblemFactory problemFactory= new DefaultProblemFactory(Locale.getDefault());
+	public static final String CDT_INDEXER_TIMEOUT= "CDT_INDEXER_TIMEOUT"; //$NON-NLS-1$
+	
 	IFile resourceFile;
-		
-	SourceIndexer(IFile resourceFile)	{
-		this.resourceFile = resourceFile;
+	TimeOut timeOut = null;
+	
+	/**
+	 * @param resource
+	 * @param out
+	 */
+	public SourceIndexer(IFile resource, TimeOut timeOut) {
+		this.resourceFile = resource;
+		this.timeOut = timeOut;
 	}
 	/**
 	 * Returns the file types the <code>IIndexer</code> handles.
@@ -73,7 +83,7 @@ public class SourceIndexer extends AbstractIndexer {
 		// Add the name of the file to the index
 		output.addDocument(document);
 		// Create a new Parser
-		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile);
+		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile, timeOut);
 		//requestor.removeMarkers(resourceFile);
 		
 		//Get the scanner info
@@ -105,6 +115,12 @@ public class SourceIndexer extends AbstractIndexer {
 		}
 		
 		try{
+
+			// start timer
+			String timeOut = CCorePlugin.getDefault().getPluginPreferences().getString(CDT_INDEXER_TIMEOUT);
+			Integer timeOutValue = new Integer(timeOut);
+			requestor.setTimeout(timeOutValue.intValue());
+			requestor.startTimer();
 			boolean retVal = parser.parse();
 			
 			if (!retVal)
@@ -122,11 +138,15 @@ public class SourceIndexer extends AbstractIndexer {
 				org.eclipse.cdt.internal.core.model.Util.log(null, "Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		catch (ParseError e){
+			org.eclipse.cdt.internal.core.model.Util.log(null, "Parser Timeout on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		catch ( Exception ex ){
 			if (ex instanceof IOException)
 				throw (IOException) ex;
 		}
 		finally{
+			requestor.stopTimer();
 			//Release all resources
 			parser=null;
 			currentProject = null;

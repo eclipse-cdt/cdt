@@ -1,3 +1,7 @@
+2004-12-03 Mikhail Khodjaiants
+	Fix for bug 80106: Terminating during stepping state caused exception in CDT.
+	* CThread.java
+
 2004-12-01 Mikhail Khodjaiants
 	Partial fix for bug 77444: CDT does not handle address breakpoints across sessions.
 	* CBreakpointManager.java

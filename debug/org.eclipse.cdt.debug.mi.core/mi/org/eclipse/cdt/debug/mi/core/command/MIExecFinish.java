@@ -18,6 +18,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecFinish extends MICommand 
 {
 	public MIExecFinish() {
-		super("-exec-finish");
+		super("-exec-finish"); //$NON-NLS-1$
 	}
 }

@@ -52,18 +52,18 @@ public class MILocationReachedEvent extends MIStoppedEvent {
 			for (int i = 0; i < results.length; i++) {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
-				String str = "";
+				String str = ""; //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					str = ((MIConst)value).getString();
 				}
 
-				if (var.equals("thread-id")) {
+				if (var.equals("thread-id")) { //$NON-NLS-1$
 					try {
 						int id = Integer.parseInt(str.trim());
 						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
-				} else if (var.equals("frame")) {
+				} else if (var.equals("frame")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						MIFrame f = new MIFrame((MITuple)value);
 						setFrame(f);

@@ -28,21 +28,21 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 public class MIStackListArguments extends MICommand 
 {
 	public MIStackListArguments(boolean showValues) {
-		super("-stack-list-arguments");
+		super("-stack-list-arguments"); //$NON-NLS-1$
 		if (showValues) {
-			setParameters(new String[]{"1"});
+			setParameters(new String[]{"1"}); //$NON-NLS-1$
 		} else {
-			setParameters(new String[]{"0"});
+			setParameters(new String[]{"0"}); //$NON-NLS-1$
 		}
 	}
 
 	public MIStackListArguments(boolean showValues, int low, int high) {
-		super("-stack-list-arguments");
+		super("-stack-list-arguments"); //$NON-NLS-1$
 		String[] params = new String[3];
 		if (showValues) {
-			params[0] = "1";
+			params[0] = "1"; //$NON-NLS-1$
 		} else {
-			params[0] = "0";
+			params[0] = "0"; //$NON-NLS-1$
 		}
 		params[1] = Integer.toString(low);
 		params[2] = Integer.toString(high);

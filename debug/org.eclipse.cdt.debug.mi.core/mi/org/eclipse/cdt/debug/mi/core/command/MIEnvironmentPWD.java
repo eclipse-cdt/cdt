@@ -21,7 +21,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIEnvironmentPWD extends MICommand 
 {
 	public MIEnvironmentPWD() {
-		super("-environment-pwd");
+		super("-environment-pwd"); //$NON-NLS-1$
 	}
 
 	public MIInfo getMIInfo() throws MIException {

@@ -53,7 +53,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	void parseShared(String str, List aList) {
 		if (!hasProcessHeader) {
 			// Process the header and choose a type.
-			if (str.startsWith("DLL")) {
+			if (str.startsWith("DLL")) { //$NON-NLS-1$
 				isUnixFormat = false;
 			}
 			hasProcessHeader = true;
@@ -77,7 +77,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 			long from = 0;
 			long to = 0;
 			boolean syms = false;
-			String name = "";
+			String name = ""; //$NON-NLS-1$
 
 			for (int i = 0;(index = str.lastIndexOf(' ')) != -1 || i <= 3; i++) {
 				if (index == -1) {
@@ -125,8 +125,8 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 		if (index > 0) {
 			String sub = str.substring(index).trim();
 			// Go figure they do not print the "0x" to indicate hexadecimal!!
-			if (!sub.startsWith("0x")) {
-				sub = "0x" + sub;
+			if (!sub.startsWith("0x")) { //$NON-NLS-1$
+				sub = "0x" + sub; //$NON-NLS-1$
 			}
 			try {
 				from = Long.decode(sub).longValue();

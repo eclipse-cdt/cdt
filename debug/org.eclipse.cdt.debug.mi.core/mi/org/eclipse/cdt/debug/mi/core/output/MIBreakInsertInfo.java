@@ -34,24 +34,24 @@ public class MIBreakInsertInfo extends MIInfo {
 					String var = results[i].getVariable();
 					MIValue val = results[i].getMIValue();
 					MIBreakpoint bpt = null;
-					if (var.equals("wpt")) {
+					if (var.equals("wpt")) { //$NON-NLS-1$
 						if (val instanceof MITuple) {
 							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setEnabled(true);
 							bpt.setWriteWatchpoint(true);
 						}
-					} else if (var.equals("bkpt")) {
+					} else if (var.equals("bkpt")) { //$NON-NLS-1$
 						if (val instanceof MITuple) {
 							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setEnabled(true);
 						}
-					} else if (var.equals("hw-awpt")) {
+					} else if (var.equals("hw-awpt")) { //$NON-NLS-1$
 						if (val instanceof MITuple) {
 							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setAccessWatchpoint(true);
 							bpt.setEnabled(true);
 						}
-					} else if (var.equals("hw-rwpt")) {
+					} else if (var.equals("hw-rwpt")) { //$NON-NLS-1$
 						if (val instanceof MITuple) {
 							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setReadWatchpoint(true);

@@ -58,12 +58,12 @@ public class MIInferiorExitEvent extends MIDestroyedEvent {
 			for (int i = 0; i < results.length; i++) {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
-				String str = "";
+				String str = ""; //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					str = ((MIConst)value).getString();
 				}
 
-				if (var.equals("exit-code")) {
+				if (var.equals("exit-code")) { //$NON-NLS-1$
 					try {
 						code = Integer.decode(str.trim()).intValue();
 					} catch (NumberFormatException e) {

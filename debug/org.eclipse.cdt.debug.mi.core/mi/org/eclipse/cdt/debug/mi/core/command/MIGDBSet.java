@@ -16,6 +16,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIGDBSet extends MICommand 
 {
 	public MIGDBSet(String[] params) {
-		super("-gdb-set", params);
+		super("-gdb-set", params); //$NON-NLS-1$
 	}
 }

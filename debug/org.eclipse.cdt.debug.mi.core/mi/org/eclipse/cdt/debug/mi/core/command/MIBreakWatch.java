@@ -27,12 +27,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIBreakWatch extends MICommand
 {
 	public MIBreakWatch (boolean access, boolean read, String expr) {
-		super("-break-watch");
+		super("-break-watch");//$NON-NLS-1$
 		String[] opts = null;
 		if (access) {
-			opts = new String[] {"-a"};
+			opts = new String[] {"-a"}; //$NON-NLS-1$
 		} else if (read) {
-			opts = new String[] {"-r"};
+			opts = new String[] {"-r"}; //$NON-NLS-1$
 		}
 		if (opts != null) {
 			setOptions(opts);

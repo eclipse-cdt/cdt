@@ -23,7 +23,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarInfoNumChildrenInfo;
 public class MIVarInfoNumChildren extends MICommand 
 {
 	public MIVarInfoNumChildren(String name) {
-		super("-var-info-num-children", new String[]{name});
+		super("-var-info-num-children", new String[]{name}); //$NON-NLS-1$
 	}
 
 	public MIVarInfoNumChildrenInfo getMIVarInfoNumChildrenInfo() throws MIException {

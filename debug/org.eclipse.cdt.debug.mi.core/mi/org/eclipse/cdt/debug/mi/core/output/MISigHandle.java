@@ -10,11 +10,11 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MISigHandle {
 
-	String signal = "";
+	String signal = ""; //$NON-NLS-1$
 	boolean stop;
 	boolean print;
 	boolean pass;
-	String description = "";
+	String description = ""; //$NON-NLS-1$
 
 	public MISigHandle (String name, boolean stp, boolean prnt, boolean ps, String desc) {
 		signal = name;

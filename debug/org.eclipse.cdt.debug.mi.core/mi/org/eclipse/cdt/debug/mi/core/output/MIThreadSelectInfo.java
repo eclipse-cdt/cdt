@@ -33,7 +33,7 @@ public class MIThreadSelectInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("new-thread-id")) {
+					if (var.equals("new-thread-id")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getCString();
@@ -42,7 +42,7 @@ public class MIThreadSelectInfo extends MIInfo {
 							} catch (NumberFormatException e) {
 							}
 						}
-					} else if (var.equals("frame")) {
+					} else if (var.equals("frame")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MITuple) {
 							frame = new MIFrame((MITuple)value);

@@ -61,11 +61,11 @@ public class MIInfoSignalsInfo extends MIInfo {
 			// ~"Signal        Stop\tPrint\tPass to program\tDescription\n"
 			// ~"Use the \"handle\" command to change these tables.\n"
 			if (!str.startsWith("Signal ") && !str.startsWith("Use ")) {
-				String signal = "";
+				String signal = ""; //$NON-NLS-1$
 				boolean stop = false;
 				boolean print = false;
 				boolean pass = false;
-				String desc = "";
+				String desc = ""; //$NON-NLS-1$
 
 				StringTokenizer tokenizer = new StringTokenizer(str);
 				for (int i = 0; tokenizer.hasMoreTokens(); i++) {

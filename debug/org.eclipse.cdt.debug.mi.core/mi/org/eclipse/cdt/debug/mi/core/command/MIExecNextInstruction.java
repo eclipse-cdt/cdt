@@ -19,6 +19,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecNextInstruction extends MICommand 
 {
 	public MIExecNextInstruction() {
-		super("-exec-next-instruction");
+		super("-exec-next-instruction"); //$NON-NLS-1$
 	}
 }

@@ -25,7 +25,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarInfoExpressionInfo;
 public class MIVarInfoExpression extends MICommand 
 {
 	public MIVarInfoExpression(String name) {
-		super("-var-info-expression", new String[]{name});
+		super("-var-info-expression", new String[]{name}); //$NON-NLS-1$
 	}
 	
 	public MIVarInfoExpressionInfo getMIVarInfoExpressionInfo() throws MIException {

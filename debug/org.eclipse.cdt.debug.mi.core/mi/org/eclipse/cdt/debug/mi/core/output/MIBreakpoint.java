@@ -45,17 +45,17 @@ package org.eclipse.cdt.debug.mi.core.output;
 public class MIBreakpoint {
 
 	int number;
-	String type = "";
-	String disp = "";
+	String type = ""; //$NON-NLS-1$
+	String disp = ""; //$NON-NLS-1$
 	boolean enabled;
 	long address;
-	String func = ""; 
-	String file = "";
+	String func = "";  //$NON-NLS-1$
+	String file = ""; //$NON-NLS-1$
 	int line;
-	String cond = "";
+	String cond = ""; //$NON-NLS-1$
 	int times;
-	String what = "";
-	String threadId = "";
+	String what = ""; //$NON-NLS-1$
+	String threadId = ""; //$NON-NLS-1$
 	int ignore;
 
 	boolean isWpt;
@@ -181,74 +181,74 @@ public class MIBreakpoint {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("number")) {
+			if (var.equals("number")) { //$NON-NLS-1$
 				try {
 					number = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("type")) {
+			} else if (var.equals("type")) { //$NON-NLS-1$
 				type = str;
 				//type="hw watchpoint"
-				if (type.startsWith("hw")) {
+				if (type.startsWith("hw")) { //$NON-NLS-1$
 					isHdw = true;
 					isWWpt = true;
 					isWpt = true;
 				}
 				//type="acc watchpoint"
-				if (type.startsWith("acc")) {
+				if (type.startsWith("acc")) { //$NON-NLS-1$
 					isWWpt = true;
 					isRWpt = true;
 					isWpt = true;
 				}
 				//type="read watchpoint"
-				if (type.startsWith("read")) {
+				if (type.startsWith("read")) { //$NON-NLS-1$
 					isRWpt = true;
 					isWpt = true;
 				}
 				// ??
-				if (type.equals("watchpoint")) {
+				if (type.equals("watchpoint")) { //$NON-NLS-1$
 					isWpt = true;
 				}
 				// type="breakpoint"
 				// default ok.
-			} else if (var.equals("disp")) {
+			} else if (var.equals("disp")) { //$NON-NLS-1$
 				disp = str;
-			} else if (var.equals("enabled")) {
+			} else if (var.equals("enabled")) { //$NON-NLS-1$
 				enabled = str.equals("y");
-			} else if (var.equals("addr")) {
+			} else if (var.equals("addr")) { //$NON-NLS-1$
 				try {
 					address = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("func")) {
+			} else if (var.equals("func")) { //$NON-NLS-1$
 				func = str;
-			} else if (var.equals("file")) {
+			} else if (var.equals("file")) { //$NON-NLS-1$
 				file = str;
-			} else if (var.equals("thread")) {
+			} else if (var.equals("thread")) { //$NON-NLS-1$
 				threadId = str;
-			} else if (var.equals("line")) {
+			} else if (var.equals("line")) { //$NON-NLS-1$
 				try {
 					line = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("times")) {
+			} else if (var.equals("times")) { //$NON-NLS-1$
 				try {
 					times = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("what") || var.equals("exp")) {
+			} else if (var.equals("what") || var.equals("exp")) { //$NON-NLS-1$ //$NON-NLS-2$
 				what = str;
-			} else if (var.equals("ignore")) {
+			} else if (var.equals("ignore")) { //$NON-NLS-1$
 				try {
 					ignore = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("cond")) {
+			} else if (var.equals("cond")) { //$NON-NLS-1$
 				cond = str;
 			}
 		}

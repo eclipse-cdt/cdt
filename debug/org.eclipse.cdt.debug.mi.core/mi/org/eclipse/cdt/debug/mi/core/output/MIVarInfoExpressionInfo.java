@@ -9,8 +9,8 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIVarInfoExpressionInfo extends MIInfo {
 
-	String lang = "";
-	String exp = "";
+	String lang = ""; //$NON-NLS-1$
+	String exp = ""; //$NON-NLS-1$
 
 	public MIVarInfoExpressionInfo(MIOutput record) {
 		super(record);
@@ -34,14 +34,14 @@ public class MIVarInfoExpressionInfo extends MIInfo {
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					MIValue value = results[i].getMIValue();
-					String str = "";
+					String str = ""; //$NON-NLS-1$
 					if (value instanceof MIConst) {
 						str = ((MIConst)value).getString();
 					}
 
-					if (var.equals("lang")) {
+					if (var.equals("lang")) { //$NON-NLS-1$
 						lang = str;
-					} else if (var.equals("exp")) {
+					} else if (var.equals("exp")) { //$NON-NLS-1$
 						exp = str;
 					}
 				}

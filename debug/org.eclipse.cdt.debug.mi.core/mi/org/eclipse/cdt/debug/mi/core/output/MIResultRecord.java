@@ -9,15 +9,15 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIResultRecord {
 
-	public final static String DONE ="done";
-	public final static String RUNNING ="running";
-	public final static String CONNECTED ="connected";
-	public final static String ERROR ="error";
-	public final static String EXIT ="exit";
+	public final static String DONE ="done"; //$NON-NLS-1$
+	public final static String RUNNING ="running"; //$NON-NLS-1$
+	public final static String CONNECTED ="connected"; //$NON-NLS-1$
+	public final static String ERROR ="error"; //$NON-NLS-1$
+	public final static String EXIT ="exit"; //$NON-NLS-1$
 
 	static final MIResult[] nullResults = new MIResult[0];
 	MIResult[] results = nullResults;
-	String resultClass = "";
+	String resultClass = ""; //$NON-NLS-1$
 	int token = -1;
 
 	public int getToken() {

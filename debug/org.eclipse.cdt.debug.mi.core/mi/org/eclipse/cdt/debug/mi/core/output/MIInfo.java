@@ -43,7 +43,7 @@ public class MIInfo {
 		if (miOutput != null) {
 			return miOutput.toString();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	boolean isResultClass(String rc) {
@@ -64,7 +64,7 @@ public class MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("msg")) {
+					if (var.equals("msg")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							String s = ((MIConst)value).getCString();
@@ -74,6 +74,6 @@ public class MIInfo {
 				}
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

@@ -10,9 +10,9 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIAsm {
 	long address;
-	String function = "";
-	String opcode = "";
-	String args = "";
+	String function = ""; //$NON-NLS-1$
+	String opcode = ""; //$NON-NLS-1$
+	String args = ""; //$NON-NLS-1$
 	long offset;
 
 	public MIAsm (MITuple tuple) {
@@ -32,16 +32,16 @@ public class MIAsm {
 	}
 
 	public String getInstruction() {
-		return opcode + " " + args;
+		return opcode + " " + args; //$NON-NLS-1$
 	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('{');
-		buffer.append("address=\"" + Long.toHexString(address) +"\"");
-		buffer.append(",func-name=\"" + function + "\"");
+		buffer.append("address=\"" + Long.toHexString(address) +"\""); //$NON-NLS-2$
+		buffer.append(",func-name=\"" + function + "\""); //$NON-NLS-2$
 		buffer.append(",offset=\"").append(offset).append('"');
-		buffer.append(",inst=\"" + getInstruction() + "\"");
+		buffer.append(",inst=\"" + getInstruction() + "\""); //$NON-NLS-2$
 		buffer.append('}');
 		return buffer.toString();
 	}
@@ -51,7 +51,7 @@ public class MIAsm {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();

@@ -19,8 +19,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MIInferiorSignalExitEvent extends MIDestroyedEvent {
 
-	String sigName = "";
-	String sigMeaning = "";
+	String sigName = ""; //$NON-NLS-1$
+	String sigMeaning = ""; //$NON-NLS-1$
 
 	MIExecAsyncOutput exec = null;
 	MIResultRecord rr = null;
@@ -47,8 +47,8 @@ public class MIInferiorSignalExitEvent extends MIDestroyedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("signal-name=" + sigName + "\n");
-		buffer.append("signal-meaning=" + sigMeaning + "\n");
+		buffer.append("signal-name=" + sigName + "\n"); //$NON-NLS-2$
+		buffer.append("signal-meaning=" + sigMeaning + "\n"); //$NON-NLS-2$
 		return buffer.toString();
 	}
 
@@ -63,14 +63,14 @@ public class MIInferiorSignalExitEvent extends MIDestroyedEvent {
 			for (int i = 0; i < results.length; i++) {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
-				String str = "";
+				String str = ""; //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					str = ((MIConst)value).getString();
 				}
 
-				if (var.equals("signal-name")) {
+				if (var.equals("signal-name")) { //$NON-NLS-1$
 					sigName = str;
-				} else if (var.equals("signal-meaning")) {
+				} else if (var.equals("signal-meaning")) { //$NON-NLS-1$
 					sigMeaning = str;
 				}
 			}

@@ -23,8 +23,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MIErrorEvent extends MIStoppedEvent {
 
-	String msg = "";
-	String log = "";
+	String msg = ""; //$NON-NLS-1$
+	String log = ""; //$NON-NLS-1$
 	MIOOBRecord[] oobs;
 
 	public MIErrorEvent(MIResultRecord rr, MIOOBRecord[] o) {
@@ -49,12 +49,12 @@ public class MIErrorEvent extends MIStoppedEvent {
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					MIValue value = results[i].getMIValue();
-					String str = "";
+					String str = ""; //$NON-NLS-1$
 					if (value instanceof MIConst) {
 						str = ((MIConst)value).getString();
 					}
 
-					if (var.equals("msg")) {
+					if (var.equals("msg")) { //$NON-NLS-1$
 						msg = str;
 					}
 				}

@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIGDBShow extends MICommand {
 	public MIGDBShow(String[] params) {
-		super("-gdb-show", params);
+		super("-gdb-show", params); //$NON-NLS-1$
 	}
 
 	public MIGDBShowInfo getMIGDBShowInfo() throws MIException {

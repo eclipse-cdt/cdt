@@ -31,6 +31,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MITargetDownload extends MICommand 
 {
 	public MITargetDownload() {
-		super("-target-download");
+		super("-target-download"); //$NON-NLS-1$
 	}
 }

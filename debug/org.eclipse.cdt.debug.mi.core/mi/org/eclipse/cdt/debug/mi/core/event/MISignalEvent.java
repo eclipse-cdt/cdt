@@ -19,8 +19,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MISignalEvent extends MIStoppedEvent {
 
-	String sigName = "";
-	String sigMeaning = "";
+	String sigName = ""; //$NON-NLS-1$
+	String sigMeaning = ""; //$NON-NLS-1$
 
 	public MISignalEvent(MIExecAsyncOutput async) {
 		super(async);
@@ -66,22 +66,22 @@ public class MISignalEvent extends MIStoppedEvent {
 			for (int i = 0; i < results.length; i++) {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
-				String str = "";
+				String str = ""; //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					str = ((MIConst)value).getString();
 				}
 
-				if (var.equals("signal-name")) {
+				if (var.equals("signal-name")) { //$NON-NLS-1$
 					sigName = str;
-				} else if (var.equals("signal-meaning")) {
+				} else if (var.equals("signal-meaning")) { //$NON-NLS-1$
 					sigMeaning = str;
-				} else if (var.equals("thread-id")) {
+				} else if (var.equals("thread-id")) { //$NON-NLS-1$
 					try {
 						int id = Integer.parseInt(str.trim());
 						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
-				} else if (var.equals("frame")) {
+				} else if (var.equals("frame")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						MIFrame f = new MIFrame((MITuple)value);
 						setFrame(f);

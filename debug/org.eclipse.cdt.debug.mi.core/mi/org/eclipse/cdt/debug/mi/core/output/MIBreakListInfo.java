@@ -40,7 +40,7 @@ public class MIBreakListInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("BreakpointTable")) {
+					if (var.equals("BreakpointTable")) { //$NON-NLS-1$
 						parseTable(results[i].getMIValue(), aList);
 					}
 				}
@@ -54,7 +54,7 @@ public class MIBreakListInfo extends MIInfo {
 			MIResult[] table = ((MITuple)val).getMIResults();
 			for (int j = 0; j < table.length; j++) {
 				String variable = table[j].getVariable();
-				if (variable.equals("body")) {
+				if (variable.equals("body")) { //$NON-NLS-1$
 					parseBody(table[j].getMIValue(), aList);
 				}
 			}
@@ -66,7 +66,7 @@ public class MIBreakListInfo extends MIInfo {
 			MIResult[] bkpts = ((MIList)body).getMIResults();
 			for (int i = 0; i < bkpts.length; i++) {
 				String b = bkpts[i].getVariable();
-				if (b.equals("bkpt")) {
+				if (b.equals("bkpt")) { //$NON-NLS-1$
 					MIValue value = bkpts[i].getMIValue();
 					if (value instanceof MITuple) {
 						aList.add(new MIBreakpoint((MITuple)value));

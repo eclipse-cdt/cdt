@@ -97,7 +97,7 @@ public class MIParser {
 		List oobs = new ArrayList(1);
 		int id = -1;
 
-		StringTokenizer st = new StringTokenizer(buffer, "\n");
+		StringTokenizer st = new StringTokenizer(buffer, "\n"); //$NON-NLS-1$
 		while (st.hasMoreTokens()) {
 			StringBuffer token = new StringBuffer(st.nextToken());
 
@@ -236,7 +236,7 @@ public class MIParser {
 		} else {
 			// Badly format MI line, just pass it to the user as target stream
 			MIStreamRecord stream = new MITargetStreamOutput();
-			stream.setCString(buffer.toString() + "\n");
+			stream.setCString(buffer.toString() + "\n"); //$NON-NLS-1$
 			oob = stream;
 		}
 		return oob;

@@ -18,8 +18,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
-	String gdbResult = "";
-	String returnValue = "";
+	String gdbResult = ""; //$NON-NLS-1$
+	String returnValue = ""; //$NON-NLS-1$
 
 	public MIFunctionFinishedEvent(MIExecAsyncOutput async) {
 		super(async);
@@ -41,8 +41,8 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("gdb-result-var=" + gdbResult + "\n");
-		buffer.append("return-value=" + returnValue + "\n");
+		buffer.append("gdb-result-var=" + gdbResult + "\n"); //$NON-NLS-2$
+		buffer.append("return-value=" + returnValue + "\n"); //$NON-NLS-2$
 		buffer.append("thread-id=").append(getThreadId()).append('\n');
 		MIFrame f = getFrame();
 		if (f != null) {
@@ -65,22 +65,22 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 			for (int i = 0; i < results.length; i++) {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
-				String str = "";
+				String str = ""; //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					str = ((MIConst)value).getString();
 				}
 
-				if (var.equals("gdb-result-var")) {
+				if (var.equals("gdb-result-var")) { //$NON-NLS-1$
 					gdbResult = str;
-				} else if (var.equals("return-value")) {
+				} else if (var.equals("return-value")) { //$NON-NLS-1$
 					returnValue = str;
-				} else if (var.equals("thread-id")) {
+				} else if (var.equals("thread-id")) { //$NON-NLS-1$
 					try {
 						int id = Integer.parseInt(str.trim());
 						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
-				} else if (var.equals("frame")) {
+				} else if (var.equals("frame")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						MIFrame f = new MIFrame((MITuple)value);
 						setFrame(f);

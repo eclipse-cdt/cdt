@@ -63,21 +63,21 @@ public class MIRegisterValue {
 		MIRegisterValue arg = null;
 		if (args.length == 2) {
 			// Name
-			String aName = "";
+			String aName = ""; //$NON-NLS-1$
 			MIValue value = args[0].getMIValue();
 			if (value != null && value instanceof MIConst) {
 				aName = ((MIConst)value).getCString();
 			} else {
-				aName = "";
+				aName = ""; //$NON-NLS-1$
 			}
 
 			// Value
-			String aValue = "";
+			String aValue = ""; //$NON-NLS-1$
 			value = args[1].getMIValue();
 			if (value != null && value instanceof MIConst) {
 				aValue = ((MIConst)value).getCString();
 			} else {
-				aValue = "";
+				aValue = ""; //$NON-NLS-1$
 			}
 
 			try {

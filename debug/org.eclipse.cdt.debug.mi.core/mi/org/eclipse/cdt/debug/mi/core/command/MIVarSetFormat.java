@@ -24,7 +24,7 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
 public class MIVarSetFormat extends MICommand 
 {
 	public MIVarSetFormat(String name, int fmt) {
-		super("-var-set-format");
+		super("-var-set-format"); //$NON-NLS-1$
 		String format = "hexadecimal";
 		switch (fmt) {
 		case MIFormat.NATURAL:

@@ -13,7 +13,7 @@ public abstract class MIAsyncRecord extends MIOOBRecord {
 	final static MIResult[] nullResults = new MIResult[0];
 
 	MIResult[] results = null;
-	String asynClass = "";
+	String asynClass = ""; //$NON-NLS-1$
 	int token = 0;
 
 	public int getToken() {

@@ -23,7 +23,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 public class MIVarUpdate extends MICommand {
 
 	public MIVarUpdate() {
-		this("*");
+		this("*"); //$NON-NLS-1$
 	}
 	
 	public MIVarUpdate(String name) {

@@ -25,7 +25,7 @@ public class MIDataEvaluateExpressionInfo extends MIInfo{
 	}
 
 	void parse() {
-		expr = "";
+		expr = ""; //$NON-NLS-1$
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -33,7 +33,7 @@ public class MIDataEvaluateExpressionInfo extends MIInfo{
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("value")) {
+					if (var.equals("value")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							expr = ((MIConst)value).getCString();

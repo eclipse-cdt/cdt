@@ -74,7 +74,7 @@ public class MIStoppedEvent extends MIEvent {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
 
-				if (var.equals("thread-id")) {
+				if (var.equals("thread-id")) { //$NON-NLS-1$
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getString();
 						try {
@@ -82,7 +82,7 @@ public class MIStoppedEvent extends MIEvent {
 						} catch (NumberFormatException e) {
 						}
 					}
-				} else if (var.equals("frame")) {
+				} else if (var.equals("frame")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						frame = new MIFrame((MITuple)value);
 					}

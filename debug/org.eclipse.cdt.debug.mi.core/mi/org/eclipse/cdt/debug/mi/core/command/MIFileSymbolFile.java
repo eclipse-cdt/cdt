@@ -18,6 +18,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIFileSymbolFile extends MICommand 
 {
 	public MIFileSymbolFile(String file) {
-		super("-file-symbol-file", new String[]{file});
+		super("-file-symbol-file", new String[]{file}); //$NON-NLS-1$
 	}
 }

@@ -35,7 +35,7 @@ public class MIGDBShowSolibSearchPathInfo extends MIGDBShowInfo {
 	}
 
 	void parseDirectories(String d) {
-		String sep = System.getProperty("path.separator", ":");
+		String sep = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 		StringTokenizer st = new StringTokenizer(d, sep);
 		int count = st.countTokens();
 		dirs = new String[count];

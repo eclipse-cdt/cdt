@@ -9,7 +9,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  * GDB/MI const value represents a ios-c string.
  */
 public class MIConst extends MIValue {
-	String cstring = "";
+	String cstring = ""; //$NON-NLS-1$
 
 	public String getCString() {
 		return cstring;
@@ -68,25 +68,25 @@ public class MIConst extends MIValue {
 	private static String isoC(char c) {
 		String s = new Character(c).toString();
 		if (c == '"') {
-			s = "\"";
+			s = "\""; //$NON-NLS-1$
 		} else if (c == '\'') {
-			s = "\'";
+			s = "\'"; //$NON-NLS-1$
 		} else if (c == '?') {
-			s = "?";
+			s = "?"; //$NON-NLS-1$
 		} else if (c == 'a') {
-			s = "\007";
+			s = "\007"; //$NON-NLS-1$
 		} else if (c == 'b') {
-			s = "\b";
+			s = "\b"; //$NON-NLS-1$
 		} else if (c == 'f') {
-			s = "\f";
+			s = "\f"; //$NON-NLS-1$
 		} else if (c == 'n') {
-			s = System.getProperty("line.separator", "\n");
+			s = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ $NON-NLS-2$
 		} else if (c == 'r') {
-			s = "\r";
+			s = "\r"; //$NON-NLS-1$
 		} else if (c == 't') {
-			s = "\t";
+			s = "\t"; //$NON-NLS-1$
 		} else if (c == 'v') {
-			s = "\013";
+			s = "\013"; //$NON-NLS-1$
 		}
 		return s;
 	}

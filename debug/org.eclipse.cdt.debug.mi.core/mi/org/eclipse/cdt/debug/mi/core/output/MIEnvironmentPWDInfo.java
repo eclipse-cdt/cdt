@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIEnvironmentPWDInfo extends MIInfo {
 
-	String pwd = "";
+	String pwd = ""; //$NON-NLS-1$
 
 	public MIEnvironmentPWDInfo(MIOutput o) {
 		super(o);

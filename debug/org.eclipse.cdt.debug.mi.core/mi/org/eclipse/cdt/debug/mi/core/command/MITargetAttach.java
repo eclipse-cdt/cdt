@@ -17,6 +17,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MITargetAttach extends CLICommand 
 {
 	public MITargetAttach(int pid) {
-		super("attach " + Integer.toString(pid));
+		super("attach " + Integer.toString(pid)); //$NON-NLS-1$
 	}
 }

@@ -14,7 +14,7 @@ public class MICommand extends Command {
 	final String[] empty = new String[0];
 	String[] options = empty;
 	String[] parameters = empty;
-	String operation = "";
+	String operation = ""; //$NON-NLS-1$
 
 	public MICommand(String oper) {
 		this.operation = oper;
@@ -95,7 +95,7 @@ public class MICommand extends Command {
 			// Add a "--" separator if any parameters start with "-"
 			if (options != null && options.length > 0) {
 				for (int i = 0; i < parameters.length; i++) {
-					if (parameters[i].startsWith("-")) {
+					if (parameters[i].startsWith("-")) { //$NON-NLS-1$
 						buffer.append('-').append('-');
 						break;
 					}

@@ -19,6 +19,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIVarInfoType extends MICommand 
 {
 	public MIVarInfoType(String name) {
-		super("-var-info-type", new String[]{name});
+		super("-var-info-type", new String[]{name}); //$NON-NLS-1$
 	}
 }

@@ -31,7 +31,7 @@ public class MIVarInfoNumChildrenInfo extends MIInfo {
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 
-					if (var.equals("numchild")) {
+					if (var.equals("numchild")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getString();

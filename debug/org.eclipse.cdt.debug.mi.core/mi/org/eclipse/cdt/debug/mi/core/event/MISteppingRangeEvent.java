@@ -53,7 +53,7 @@ public class MISteppingRangeEvent extends MIStoppedEvent {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
 
-				if (var.equals("thread-id")) {
+				if (var.equals("thread-id")) { //$NON-NLS-1$
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getString();
 						try {
@@ -62,7 +62,7 @@ public class MISteppingRangeEvent extends MIStoppedEvent {
 						} catch (NumberFormatException e) {
 						}
 					}
-				} else if (var.equals("frame")) {
+				} else if (var.equals("frame")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						MIFrame f = new MIFrame((MITuple)value);
 						setFrame(f);

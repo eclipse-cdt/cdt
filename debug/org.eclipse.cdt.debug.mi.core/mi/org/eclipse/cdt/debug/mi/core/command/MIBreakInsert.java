@@ -61,7 +61,7 @@ public class MIBreakInsert extends MICommand
 
 	public MIBreakInsert(boolean isTemporary, boolean isHardware,
 			 String condition, int ignoreCount, String line) {
-		super("-break-insert");
+		super("-break-insert"); //$NON-NLS-1$
 
 		int i = 0;
 		if (isTemporary || isHardware) {
@@ -78,20 +78,20 @@ public class MIBreakInsert extends MICommand
 		
 		i = 0;
 		if (isTemporary) {
-			opts[i] = "-t";
+			opts[i] = "-t"; //$NON-NLS-1$
 			i++;
 		} else if (isHardware) {
-			opts[i] = "-h";
+			opts[i] = "-h"; //$NON-NLS-1$
 			i++;
 		}
 		if (condition != null && condition.length() > 0) {
-			opts[i] = "-c";
+			opts[i] = "-c"; //$NON-NLS-1$
 			i++;
 			opts[i] = condition;
 			i++;
 		}
 		if (ignoreCount > 0) {
-			opts[i] = "-i";
+			opts[i] = "-i"; //$NON-NLS-1$
 			i++;
 			opts[i] = Integer.toString(ignoreCount);
 			i++;

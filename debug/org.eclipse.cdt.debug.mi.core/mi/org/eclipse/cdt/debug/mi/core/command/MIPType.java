@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIPTypeInfo;
 public class MIPType extends CLICommand 
 {
 	public MIPType(String var) {
-		super("ptype " + var);
+		super("ptype " + var); //$NON-NLS-1$
 	}
 
 	public MIPTypeInfo getMIPtypeInfo() throws MIException {

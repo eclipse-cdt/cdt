@@ -30,7 +30,7 @@ public class MIVarShowFormatInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("name")) {
+					if (var.equals("name")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getString();

@@ -60,52 +60,52 @@ public class MIDataReadMemory extends MICommand {
 		int rows,
 		int cols,
 		Character asChar) {
-		super("-data-read-memory");
+		super("-data-read-memory"); //$NON-NLS-1$
 		if (offset != 0) {
-			setOptions(new String[] { "-o", Long.toString(offset)});
+			setOptions(new String[] { "-o", Long.toString(offset)}); //$NON-NLS-1$
 		}
 
-		String format = "x";
+		String format = "x"; //$NON-NLS-1$
 		switch (wordFormat) {
 			case MIFormat.UNSIGNED :
-				format = "u";
+				format = "u"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.FLOAT :
-				format = "f";
+				format = "f"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.ADDRESS :
-				format = "a";
+				format = "a"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.INSTRUCTION :
-				format = "i";
+				format = "i"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.CHAR :
-				format = "c";
+				format = "c"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.STRING :
-				format = "s";
+				format = "s"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.DECIMAL :
-				format = "d";
+				format = "d"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.BINARY :
-				format = "t";
+				format = "t"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.OCTAL :
-				format = "o";
+				format = "o"; //$NON-NLS-1$
 				break;
 
 			case MIFormat.HEXADECIMAL :
 			default :
-				format = "x";
+				format = "x"; //$NON-NLS-1$
 				break;
 		}
 

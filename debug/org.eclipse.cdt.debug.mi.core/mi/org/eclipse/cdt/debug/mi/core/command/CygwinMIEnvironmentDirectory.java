@@ -28,10 +28,10 @@ public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 
 			launcher.execute(
-				new Path("cygpath"),
-				new String[] { "-u", paths[i] },
+				new Path("cygpath"), //$NON-NLS-1$
+				new String[] { "-u", paths[i] }, //$NON-NLS-1$
 				new String[0],
-				new Path("."));
+				new Path(".")); //$NON-NLS-1$
 			if (launcher.waitAndRead(output, output) != CommandLauncher.OK)
 				newpaths[i] = paths[i];
 			else

@@ -38,7 +38,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 					String var = results[i].getVariable();
 					MIValue value = results[i].getMIValue();
 
-					if (var.equals("numchild")) {
+					if (var.equals("numchild")) { //$NON-NLS-1$
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getString();
 							try {
@@ -46,7 +46,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 							} catch (NumberFormatException e) {
 							}
 						}
-					} else if (var.equals("children")) {
+					} else if (var.equals("children")) { //$NON-NLS-1$
 						if (value instanceof MITuple) {
 							parseChildren((MITuple)value, aList);
 						}
@@ -61,7 +61,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 		MIResult[] results = tuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
-			if (var.equals("child")) {
+			if (var.equals("child")) { //$NON-NLS-1$
 				MIValue value = results[i].getMIValue();
 				if (value instanceof MITuple) {
 					aList.add(new MIVar((MITuple)value));

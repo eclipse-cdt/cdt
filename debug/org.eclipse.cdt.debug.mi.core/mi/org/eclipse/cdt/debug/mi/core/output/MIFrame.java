@@ -11,8 +11,8 @@ public class MIFrame {
 
 	int level;
 	long addr;
-	String func = "";
-	String file = "";
+	String func = ""; //$NON-NLS-1$
+	String file = ""; //$NON-NLS-1$
 	int line;
 	MIArg[] args = new MIArg[0];
 
@@ -46,18 +46,18 @@ public class MIFrame {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("level=\"" + level + "\"");
-		buffer.append(",addr=\"" + Long.toHexString(addr) + "\"");
-		buffer.append(",func=\"" + func + "\"");
-		buffer.append(",file=\"" + file + "\"");
-		buffer.append(",line=\"").append(line).append('"');
-		buffer.append(",args=[");
+		buffer.append("level=\"" + level + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",addr=\"" + Long.toHexString(addr) + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",func=\"" + func + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",file=\"" + file + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",line=\"").append(line).append('"'); //$NON-NLS-1$
+		buffer.append(",args=["); //$NON-NLS-1$
 		for (int i = 0; i < args.length; i++) {
 			if (i != 0) {
 				buffer.append(',');
 			}
-			buffer.append("{name=\"" + args[i].getName() + "\"");
-			buffer.append(",value=\"" + args[i].getValue() + "\"}");
+			buffer.append("{name=\"" + args[i].getName() + "\"");//$NON-NLS-1$//$NON-NLS-2$
+			buffer.append(",value=\"" + args[i].getValue() + "\"}");//$NON-NLS-1$//$NON-NLS-2$
 		}
 		buffer.append(']');
 		return buffer.toString();
@@ -68,27 +68,27 @@ public class MIFrame {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("level")) {
+			if (var.equals("level")) { //$NON-NLS-1$
 				try {
 					level = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("addr")) {
+			} else if (var.equals("addr")) { //$NON-NLS-1$
 				try {
 					addr = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("func")) {
+			} else if (var.equals("func")) { //$NON-NLS-1$
 				func = null;
 				if ( str != null ) {
 					str = str.trim();
-					if ( str.equals( "??" ) )
-						func = "";
+					if ( str.equals( "??" ) ) //$NON-NLS-1$
+						func = ""; //$NON-NLS-1$
 					else
 					{
 						// In some situations gdb returns the function names that include parameter types.
@@ -100,14 +100,14 @@ public class MIFrame {
 							func = str;
 					}
 				}
-			} else if (var.equals("file")) {
+			} else if (var.equals("file")) { //$NON-NLS-1$
 				file = str;
-			} else if (var.equals("line")) {
+			} else if (var.equals("line")) { //$NON-NLS-1$
 				try {
 					line = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("args")) {
+			} else if (var.equals("args")) { //$NON-NLS-1$
 				if (value instanceof MIList) {
 					args = MIArg.getMIArgs((MIList)value);
 				}

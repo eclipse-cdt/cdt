@@ -20,6 +20,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIFileExecFile extends MICommand 
 {
 	public MIFileExecFile(String file) {
-		super("-file-exec-file", new String[]{file});
+		super("-file-exec-file", new String[]{file}); //$NON-NLS-1$
 	}
 }

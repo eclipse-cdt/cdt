@@ -26,7 +26,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIDataListRegisterNames extends MICommand 
 {
 	public MIDataListRegisterNames() {
-		super("-data-list-register-names");
+		super("-data-list-register-names"); //$NON-NLS-1$
 	}
 
 	public MIDataListRegisterNames(int [] regnos) {

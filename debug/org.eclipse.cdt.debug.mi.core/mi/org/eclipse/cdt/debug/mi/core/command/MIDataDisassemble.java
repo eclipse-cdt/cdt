@@ -67,22 +67,22 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIDataDisassemble extends MICommand 
 {
 	public MIDataDisassemble(String start, String end, boolean mode) {
-		super("-data-disassemble");
-		setOptions(new String[]{"-s", start, "-e", end});
-		String mixed = "0";
+		super("-data-disassemble"); //$NON-NLS-1$
+		setOptions(new String[]{"-s", start, "-e", end}); //$NON-NLS-1$ //$NON-NLS-2$
+		String mixed = "0"; //$NON-NLS-1$
 		if (mode) {
-			mixed = "1";
+			mixed = "1"; //$NON-NLS-1$
 		}
 		setParameters(new String[]{mixed});
 	}
 
 	public MIDataDisassemble(String file, int linenum, int lines, boolean mode) {
-		super("-data-disassemble");
-		setOptions(new String[]{"-f", file, "-l",
-			 Integer.toString(linenum), "-n", Integer.toString(lines)});
-		String mixed = "0";
+		super("-data-disassemble"); //$NON-NLS-1$
+		setOptions(new String[]{"-f", file, "-l", //$NON-NLS-1$ //$NON-NLS-2$
+			 Integer.toString(linenum), "-n", Integer.toString(lines)}); //$NON-NLS-1$
+		String mixed = "0"; //$NON-NLS-1$
 		if (mode) {
-			mixed = "1";
+			mixed = "1"; //$NON-NLS-1$
 		}
 		setParameters(new String[]{mixed});	
 	}

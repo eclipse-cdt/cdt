@@ -12,9 +12,9 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIVar {
 
-	String name = "";
-	String type = "";
-	String exp = "";
+	String name = ""; //$NON-NLS-1$
+	String type = ""; //$NON-NLS-1$
+	String exp = ""; //$NON-NLS-1$
 	int numchild;
 
 
@@ -49,21 +49,21 @@ public class MIVar {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("numchild")) {
+			if (var.equals("numchild")) { //$NON-NLS-1$
 				try {
 					numchild = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("name")) {
+			} else if (var.equals("name")) { //$NON-NLS-1$
 				name = str;
-			} else if (var.equals("type")) {
+			} else if (var.equals("type")) { //$NON-NLS-1$
 				type = str;
-			} else if (var.equals("exp")) {
+			} else if (var.equals("exp")) { //$NON-NLS-1$
 				exp = str;
 			}
 		}

@@ -56,7 +56,7 @@ public class MIDataDisassembleInfo extends MIInfo {
 				buffer.append(array[i].toString());
 			}
 		}
-		buffer.append("]");
+		buffer.append("]"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 
@@ -70,7 +70,7 @@ public class MIDataDisassembleInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("asm_insns")) {
+					if (var.equals("asm_insns")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIList) {
 							parse((MIList)value, srcList, asmList);
@@ -91,7 +91,7 @@ public class MIDataDisassembleInfo extends MIInfo {
 		if (results != null && results.length > 0) {
 			for (int i = 0; i < results.length; i++) {
 				String var = results[i].getVariable();
-				if (var.equals("src_and_asm_line")) {
+				if (var.equals("src_and_asm_line")) { //$NON-NLS-1$
 					MIValue value = results[i].getMIValue();
 					if (value instanceof MITuple) {
 						srcList.add(new MISrcAsm((MITuple)value));

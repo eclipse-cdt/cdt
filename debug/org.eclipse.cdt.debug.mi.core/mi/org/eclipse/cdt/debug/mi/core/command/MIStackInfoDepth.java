@@ -22,11 +22,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
 public class MIStackInfoDepth extends MICommand 
 {
 	public MIStackInfoDepth() {
-		super("-stack-info-depth");
+		super("-stack-info-depth"); //$NON-NLS-1$
 	}
 
 	public MIStackInfoDepth(int maxDepth) {
-		super("-stack-info-depth", new String[]{Integer.toString(maxDepth)});
+		super("-stack-info-depth", new String[]{Integer.toString(maxDepth)}); //$NON-NLS-1$
 	}
 
 	public MIStackInfoDepthInfo getMIStackInfoDepthInfo() throws MIException {

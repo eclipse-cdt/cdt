@@ -10,7 +10,7 @@ package org.eclipse.cdt.debug.mi.core.output;
 public class MIMemory {
 	long addr;
 	long [] data = new long[0];
-	String ascii = "";
+	String ascii = ""; //$NON-NLS-1$
 
 	public MIMemory(MITuple tuple) {
 		parse(tuple);
@@ -30,8 +30,8 @@ public class MIMemory {
 
 	public String toSting() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("addr=\"" + Long.toHexString(addr) + "\"");
-		buffer.append("data=["); 
+		buffer.append("addr=\"" + Long.toHexString(addr) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("data=[");  //$NON-NLS-1$
 		for (int i = 0 ; i < data.length; i++) {
 			if (i != 0) {
 				buffer.append(',');
@@ -40,7 +40,7 @@ public class MIMemory {
 		}
 		buffer.append(']');
 		if (ascii.length() > 0) {
-			buffer.append(",ascii=\"" + ascii + "\"");
+			buffer.append(",ascii=\"" + ascii + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return buffer.toString();
 	}
@@ -50,21 +50,21 @@ public class MIMemory {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("addr")) {
+			if (var.equals("addr")) { //$NON-NLS-1$
 				try {
 					addr = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("data")) {
+			} else if (var.equals("data")) { //$NON-NLS-1$
 				if (value != null && value instanceof MIList) {
 					parseData((MIList)value);
 				}
-			} else if (var.equals("ascii")) {
+			} else if (var.equals("ascii")) { //$NON-NLS-1$
 				ascii = str;
 			}
 		}

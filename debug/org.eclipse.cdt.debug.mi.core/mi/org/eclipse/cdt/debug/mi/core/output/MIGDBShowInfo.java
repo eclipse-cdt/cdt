@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIGDBShowInfo extends MIInfo {
 
-	String value = "";
+	String value = ""; //$NON-NLS-1$
 
 	public MIGDBShowInfo(MIOutput o) {
 		super(o);
@@ -31,7 +31,7 @@ public class MIGDBShowInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("value")) {
+					if (var.equals("value")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							value = ((MIConst)val).getString();

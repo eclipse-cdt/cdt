@@ -19,6 +19,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecStep extends MICommand 
 {
 	public MIExecStep() {
-		super("-exec-step");
+		super("-exec-step"); //$NON-NLS-1$
 	}
 }

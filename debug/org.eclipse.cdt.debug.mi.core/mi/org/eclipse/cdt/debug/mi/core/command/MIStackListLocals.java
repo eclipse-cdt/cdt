@@ -23,11 +23,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 public class MIStackListLocals extends MICommand 
 {
 	public MIStackListLocals(boolean printValues) {
-		super("-stack-list-locals");
+		super("-stack-list-locals"); //$NON-NLS-1$
 		if (printValues) {
-			setParameters(new String[]{"1"});
+			setParameters(new String[]{"1"}); //$NON-NLS-1$
 		} else {
-			setParameters(new String[]{"0"});
+			setParameters(new String[]{"0"}); //$NON-NLS-1$
 		}
 	}
 

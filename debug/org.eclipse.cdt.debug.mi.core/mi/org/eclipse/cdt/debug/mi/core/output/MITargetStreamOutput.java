@@ -9,5 +9,5 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MITargetStreamOutput extends MIStreamRecord {
 
-	public static final String startTag = "@";
+	public static final String startTag = "@"; //$NON-NLS-1$
 }

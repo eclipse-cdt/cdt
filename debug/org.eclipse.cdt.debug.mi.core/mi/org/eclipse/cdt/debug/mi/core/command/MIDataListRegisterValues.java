@@ -30,33 +30,33 @@ public class MIDataListRegisterValues extends MICommand
 	}
 
 	public MIDataListRegisterValues(int fmt, int [] regnos) {
-		super("-data-list-register-values");
+		super("-data-list-register-values"); //$NON-NLS-1$
 
-		String format = "x";
+		String format = "x"; //$NON-NLS-1$
 		switch (fmt) {
 			case MIFormat.NATURAL:
-				format = "N";
+				format = "N"; //$NON-NLS-1$
 			break;
 
 			case MIFormat.RAW:
-				format = "r";
+				format = "r"; //$NON-NLS-1$
 			break;
 
 			case MIFormat.DECIMAL:
-				format = "d";
+				format = "d"; //$NON-NLS-1$
 			break;
 
 			case MIFormat.BINARY:
-				format = "t";
+				format = "t"; //$NON-NLS-1$
 			break;
 
 			case MIFormat.OCTAL:
-				format = "o";
+				format = "o"; //$NON-NLS-1$
 			break;
 
 			case MIFormat.HEXADECIMAL:
 			default:
-				format = "x";
+				format = "x"; //$NON-NLS-1$
 			break;
 		}
 

@@ -29,7 +29,7 @@ public class MIStackInfoDepthInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("depth")) {
+					if (var.equals("depth")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							String str = ((MIConst)val).getCString();

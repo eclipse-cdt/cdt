@@ -18,6 +18,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIEnvironmentCD extends MICommand 
 {
 	public MIEnvironmentCD(String path) {
-		super("-environment-cd", new String[]{path});
+		super("-environment-cd", new String[]{path}); //$NON-NLS-1$
 	}
 }

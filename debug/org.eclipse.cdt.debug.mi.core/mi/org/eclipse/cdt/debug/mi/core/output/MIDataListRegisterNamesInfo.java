@@ -41,7 +41,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("register-names")) {
+					if (var.equals("register-names")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIList) {
 							parseRegisters((MIList) value, aList);
@@ -66,7 +66,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 					realNameCount++;
 					aList.add(str);
 				} else {
-					aList.add("");
+					aList.add(""); //$NON-NLS-1$
 				}
 			}
 		}

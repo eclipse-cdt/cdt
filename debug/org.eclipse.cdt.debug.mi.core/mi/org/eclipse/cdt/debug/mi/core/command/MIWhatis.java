@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
 public class MIWhatis extends CLICommand 
 {
 	public MIWhatis(String var) {
-		super("whatis " + var);
+		super("whatis " + var); //$NON-NLS-1$
 	}
 
 	public MIWhatisInfo getMIWhatisInfo() throws MIException {

@@ -22,7 +22,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIGDBShowExitCode extends MIDataEvaluateExpression {
 
 	public MIGDBShowExitCode() {
-		super("$_exitcode");
+		super("$_exitcode"); //$NON-NLS-1$
 	}
 
 	public MIGDBShowExitCodeInfo getMIGDBShowExitCodeInfo() throws MIException {

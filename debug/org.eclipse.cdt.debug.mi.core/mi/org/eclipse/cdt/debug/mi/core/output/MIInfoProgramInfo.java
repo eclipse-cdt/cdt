@@ -52,7 +52,7 @@ public class MIInfoProgramInfo extends MIInfo {
 		if (str != null && str.length() > 0) {
 			str = str.replace('.', ' ');
 			str = str.trim();
-			if (str.startsWith("Using")) {
+			if (str.startsWith("Using")) { //$NON-NLS-1$
 				StringTokenizer st = new StringTokenizer(str);
 				while (st.hasMoreTokens()) {
 					String s = st.nextToken();

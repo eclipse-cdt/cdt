@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class CLICommand extends Command
 {
 
-	String operation = "";
+	String operation = ""; //$NON-NLS-1$
 
 	public CLICommand(String oper) {
 		operation = oper;
@@ -34,9 +34,9 @@ public class CLICommand extends Command
 	 * @return the text representation of this command
 	 */
 	public String toString(){
-		String str = getToken() + " " + operation;
-		if (str.endsWith("\n"))
+		String str = getToken() + " " + operation; //$NON-NLS-1$
+		if (str.endsWith("\n")) //$NON-NLS-1$
 			return str;
-		return str + "\n";
+		return str + "\n"; //$NON-NLS-1$
 	}
 }

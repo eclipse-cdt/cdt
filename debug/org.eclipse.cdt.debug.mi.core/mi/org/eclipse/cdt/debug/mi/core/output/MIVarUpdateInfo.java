@@ -34,7 +34,7 @@ public class MIVarUpdateInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("changelist")) {
+					if (var.equals("changelist")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MITuple) {
 							parseChangeList((MITuple)value, aList);
@@ -52,20 +52,20 @@ public class MIVarUpdateInfo extends MIInfo {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 			if (value instanceof MIConst) {
 				str = ((MIConst)value).getString();
 			}
-			if (var.equals("name")) {
+			if (var.equals("name")) { //$NON-NLS-1$
 				change = new MIVarChange(str);
 				aList.add(change);
-			} else if (var.equals("in_scope")) {
+			} else if (var.equals("in_scope")) { //$NON-NLS-1$
 				if (change != null) {
-					change.setInScope("true".equals(str));
+					change.setInScope("true".equals(str)); //$NON-NLS-1$
 				}
-			} else if (var.equals("type_changed")) {
+			} else if (var.equals("type_changed")) { //$NON-NLS-1$
 				if (change != null) {
-					change.setChanged("true".equals(str));
+					change.setChanged("true".equals(str)); //$NON-NLS-1$
 				}
 			}
 		}

@@ -43,15 +43,15 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 public class MIVarCreate extends MICommand 
 {
 	public MIVarCreate(String expression) {
-		this("-", "*", expression);
+		this("-", "*", expression); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public MIVarCreate(String name, String expression) {
-		this(name, "*", expression);
+		this(name, "*", expression); //$NON-NLS-1$
 	}
 
 	public MIVarCreate(String name, String frameAddr, String expression) {
-		super("-var-create", new String[]{name, frameAddr, expression});
+		super("-var-create", new String[]{name, frameAddr, expression}); //$NON-NLS-1$
 	}
 
 	public MIVarCreateInfo getMIVarCreateInfo() throws MIException {

@@ -16,10 +16,10 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MISharedLibrary extends CLICommand {
 
 	public MISharedLibrary() {
-		super("sharedlibrary");
+		super("sharedlibrary"); //$NON-NLS-1$
 	}
 
 	public MISharedLibrary(String name) {
-		super("sharedlibrary " + name);
+		super("sharedlibrary " + name); //$NON-NLS-1$
 	}
 }

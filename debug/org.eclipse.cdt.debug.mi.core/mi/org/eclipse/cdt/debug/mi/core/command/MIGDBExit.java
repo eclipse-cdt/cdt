@@ -16,6 +16,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIGDBExit extends MICommand 
 {
 	public MIGDBExit() {
-		super("-gdb-exit");
+		super("-gdb-exit"); //$NON-NLS-1$
 	}
 }

@@ -22,6 +22,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecStepInstruction extends MICommand 
 {
 	public MIExecStepInstruction() {
-		super("-exec-step-instruction");
+		super("-exec-step-instruction"); //$NON-NLS-1$
 	}
 }

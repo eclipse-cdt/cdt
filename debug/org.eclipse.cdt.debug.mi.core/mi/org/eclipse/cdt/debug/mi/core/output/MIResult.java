@@ -8,7 +8,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  * GDB/MI result sematic (Variable=Value)
  */
 public class MIResult {
-	String variable = "";
+	String variable = ""; //$NON-NLS-1$
 	MIValue value = null;
 		
 	public String getVariable() {
@@ -36,7 +36,7 @@ public class MIResult {
 			if (v.charAt(0) == '[' || v.charAt(0) =='{') {
 				buffer.append(v); 
 			} else {
-				buffer.append("\"" + value.toString() + "\""); 
+				buffer.append("\"" + value.toString() + "\"");  //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return buffer.toString();

@@ -18,6 +18,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecAbort extends CLICommand 
 {
 	public MIExecAbort() {
-		super("kill");
+		super("kill"); //$NON-NLS-1$
 	}
 }

@@ -19,6 +19,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIVarShowFormat extends MICommand 
 {
 	public MIVarShowFormat(String name) {
-		super("-var-show-format", new String[]{name});
+		super("-var-show-format", new String[]{name}); //$NON-NLS-1$
 	}
 }

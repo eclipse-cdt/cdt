@@ -18,10 +18,10 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecRun extends MICommand 
 {
 	public MIExecRun() {
-		super("-exec-run");
+		super("-exec-run"); //$NON-NLS-1$
 	}
 	
 	public MIExecRun(String[] args) {
-		super("-exec-run", args);
+		super("-exec-run", args); //$NON-NLS-1$
 	}
 }

@@ -20,9 +20,9 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 
 	int number;
-	String exp = "";
-	String oldValue = "";
-	String newValue = "";
+	String exp = ""; //$NON-NLS-1$
+	String oldValue = ""; //$NON-NLS-1$
+	String newValue = ""; //$NON-NLS-1$
 
 	public MIWatchpointTriggerEvent(MIExecAsyncOutput async) {
 		super(async);
@@ -54,9 +54,9 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("number=").append(number).append('\n');
-		buffer.append("expression=" + exp + "\n");
-		buffer.append("old=" + oldValue + "\n");
-		buffer.append("new=" + newValue + "\n");
+		buffer.append("expression=" + exp + "\n"); //$NON-NLS-2$
+		buffer.append("old=" + oldValue + "\n"); //$NON-NLS-2$
+		buffer.append("new=" + newValue + "\n"); //$NON-NLS-2$
 		buffer.append("thread-id=").append(getThreadId()).append('\n');
 		MIFrame f = getFrame();
 		if (f != null) {
@@ -79,15 +79,15 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
 
-				if (var.equals("wpt") || var.equals("hw-awpt") || var.equals("hw-rwpt")) {
+				if (var.equals("wpt") || var.equals("hw-awpt") || var.equals("hw-rwpt")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					if (value instanceof MITuple) {
 						parseWPT((MITuple) value);
 					}
-				} else if (var.equals("value")) {
+				} else if (var.equals("value")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						parseValue((MITuple) value);
 					}
-				} else if (var.equals("thread-id")) {
+				} else if (var.equals("thread-id")) { //$NON-NLS-1$
 					if (value instanceof MIConst) {
 						String str = ((MIConst) value).getString();
 						try {
@@ -96,7 +96,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 						} catch (NumberFormatException e) {
 						}
 					}
-				} else if (var.equals("frame")) {
+				} else if (var.equals("frame")) { //$NON-NLS-1$
 					if (value instanceof MITuple) {
 						MIFrame f = new MIFrame((MITuple) value);
 						setFrame(f);
@@ -112,7 +112,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
 
-			if (var.equals("number")) {
+			if (var.equals("number")) { //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					String str = ((MIConst) value).getString();
 					try {
@@ -120,7 +120,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 					} catch (NumberFormatException e) {
 					}
 				}
-			} else if (var.equals("exp")) {
+			} else if (var.equals("exp")) { //$NON-NLS-1$
 				if (value instanceof MIConst) {
 					exp = ((MIConst) value).getString();
 				}
@@ -133,16 +133,16 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 			if (value instanceof MIConst) {
 				str = ((MIConst) value).getString();
 			}
 
-			if (var.equals("old")) {
+			if (var.equals("old")) { //$NON-NLS-1$
 				oldValue = str;
-			} else if (var.equals("new")) {
+			} else if (var.equals("new")) { //$NON-NLS-1$
 				newValue = str;
-			} else if (var.equals("value")) {
+			} else if (var.equals("value")) { //$NON-NLS-1$
 				oldValue = newValue = str;
 			}
 		}

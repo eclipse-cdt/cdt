@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class MISrcAsm {
 	int line;
-	String file = "";
+	String file = ""; //$NON-NLS-1$
 	MIAsm[] asm;
 
 	public MISrcAsm(MITuple tuple) {
@@ -34,10 +34,10 @@ public class MISrcAsm {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("src_and_asm_line={");
-		buffer.append("line=\"").append(line).append('"');
-		buffer.append(",file=\"" + file + "\",");
-		buffer.append("line_asm_insn=[");
+		buffer.append("src_and_asm_line={"); //$NON-NLS-1$
+		buffer.append("line=\"").append(line).append('"'); //$NON-NLS-1$
+		buffer.append(",file=\"" + file + "\","); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("line_asm_insn=["); //$NON-NLS-1$
 		for (int i = 0; i < asm.length; i++) {
 			if (i != 0) {
 				buffer.append(',');
@@ -55,13 +55,13 @@ public class MISrcAsm {
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
-			String str = "";
+			String str = ""; //$NON-NLS-1$
 
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("line_asm_insn")) {
+			if (var.equals("line_asm_insn")) { //$NON-NLS-1$
 				if (value instanceof MIList) {
 					MIList list = (MIList)value;
 					MIValue[] values = list.getMIValues();
@@ -71,12 +71,12 @@ public class MISrcAsm {
 						}
 					}
 				}
-			} if (var.equals("line")) {
+			} if (var.equals("line")) { //$NON-NLS-1$
 				try {
 					line = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("file")) {
+			} else if (var.equals("file")) { //$NON-NLS-1$
 				file = str;
 			}
 		}

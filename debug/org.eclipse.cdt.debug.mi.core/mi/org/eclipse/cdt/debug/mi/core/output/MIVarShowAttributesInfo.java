@@ -9,7 +9,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIVarShowAttributesInfo extends MIInfo {
 
-	String attr = "";
+	String attr = ""; //$NON-NLS-1$
 
 	public MIVarShowAttributesInfo(MIOutput record) {
 		super(record);
@@ -21,7 +21,7 @@ public class MIVarShowAttributesInfo extends MIInfo {
 	}
 
 	public boolean isEditable() {
-		return attr.equals("editable");
+		return attr.equals("editable"); //$NON-NLS-1$
 	}
 
 	void parse() {
@@ -32,7 +32,7 @@ public class MIVarShowAttributesInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("attr")) {
+					if (var.equals("attr")) { //$NON-NLS-1$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							attr = ((MIConst)value).getString();

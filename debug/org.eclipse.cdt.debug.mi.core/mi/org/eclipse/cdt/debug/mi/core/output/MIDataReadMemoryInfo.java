@@ -83,47 +83,47 @@ public class MIDataReadMemoryInfo extends MIInfo {
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					MIValue value = results[i].getMIValue();
-					String str = "";
+					String str = ""; //$NON-NLS-1$
 					if (value != null && value instanceof MIConst) {
 						str = ((MIConst)value).getCString();
 					}
 
-					if (var.equals("addr")) {
+					if (var.equals("addr")) { //$NON-NLS-1$
 						try {
 							addr = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("nr-bytes")) {
+					} else if (var.equals("nr-bytes")) { //$NON-NLS-1$
 						try {
 							numBytes = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("total-bytes")) {
+					} else if (var.equals("total-bytes")) { //$NON-NLS-1$
 						try {
 							totalBytes = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("next-row")) {
+					} else if (var.equals("next-row")) { //$NON-NLS-1$
 						try {
 							nextRow = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("prev-row")) {
+					} else if (var.equals("prev-row")) { //$NON-NLS-1$
 						try {
 							prevRow = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("next-page")) {
+					} else if (var.equals("next-page")) { //$NON-NLS-1$
 						try {
 							nextPage = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("prev-page")) {
+					} else if (var.equals("prev-page")) { //$NON-NLS-1$
 						try {
 							prevPage = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
-					} else if (var.equals("memory")) {
+					} else if (var.equals("memory")) { //$NON-NLS-1$
 						if (value instanceof MIList) { 
 							parseMemory((MIList)value);
 						}

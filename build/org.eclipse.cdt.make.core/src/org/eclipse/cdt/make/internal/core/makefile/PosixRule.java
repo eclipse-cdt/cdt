@@ -8,22 +8,19 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
+
+import org.eclipse.cdt.make.core.makefile.IPosixRule;
+import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .POSIX
+ * The appliation shall ensure that this special target is specified without
+ * prerequisites or commands.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class PosixRule extends SpecialRule implements IPosixRule {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
-
+	public PosixRule() {
+		super(new Target(".POSIX:"), new String[0], new ICommand[0]);
+	}
 }

@@ -11,19 +11,10 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .SILENT
+ * Prerequisites of this special target are targets themselves; this shall case
+ * commands associated with them not to be written to the standard output before
+ * they are executed.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
-
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
-
+public interface ISilentRule extends ISpecialRule {
 }

@@ -8,22 +8,21 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
+
+import org.eclipse.cdt.make.core.makefile.ISilentRule;
+import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .SILENT
+ * Prerequisties of this special target are targets themselves; this shall cause
+ * commands associated with them not to be written to the standard output before
+ * they are executed.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class SilentRule extends SpecialRule implements ISilentRule {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	public SilentRule(String[] reqs) {
+		super(new Target(".SILENT"), reqs, new ICommand[0]);
+	}
 
 }

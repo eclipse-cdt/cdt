@@ -11,19 +11,10 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .DEFAULT
+ * If the makefile uses this special target, the application shall ensure that it is
+ * specified with commands, but without prerequisites.
+ * The commands shall be used by make if there are no other rules available to build a target.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
-
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
-
+public interface IDefaultRule extends ISpecialRule {
 }

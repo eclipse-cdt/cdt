@@ -11,12 +11,9 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
+ * .IGNORE
+ * Prerequisites of this special target are targets themselves; this shall cause errors
+ * from commands associated with them to be ignored in the same manner as specified by the -i option.
  */
-public interface IStatement {
-
-	int getStartLine();
-
-	int getEndLine();
-
-	String toString();
+public interface IIgnoreRule extends ISpecialRule {
 }

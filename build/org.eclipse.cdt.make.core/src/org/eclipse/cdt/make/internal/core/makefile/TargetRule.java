@@ -32,27 +32,27 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
 
 public class TargetRule extends Rule implements ITargetRule {
 
-	ITarget[] dependencies;
+	String[] prerequisites;
 
 	public TargetRule(ITarget target) {
-		this(target, new ITarget[0]);
+		this(target, new String[0], new ICommand[0]);
 	}
 
-	public TargetRule(ITarget target, ITarget[] deps) {
+	public TargetRule(ITarget target, String[] deps) {
 		this(target, deps, new ICommand[0]);
 	}
 
-	public TargetRule(ITarget target, ITarget[] deps, ICommand[] commands) {
+	public TargetRule(ITarget target, String[] reqs, ICommand[] commands) {
 		super(target, commands);
-		dependencies = deps;
+		prerequisites = reqs;
 	}
 
-	public ITarget[] getDependencies() {
-		return dependencies;
+	public String[] getPrerequisites() {
+		return prerequisites;
 	}
 
-	public void setDependecies(ITarget[] reqs) {
-		dependencies = reqs;
+	public void setDependecies(String[] reqs) {
+		prerequisites = reqs;
 	}
 
 	/**
@@ -60,17 +60,16 @@ public class TargetRule extends Rule implements ITargetRule {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(target);
-		if (buffer.length() > 0) {
-			buffer.append(": ");
-			for (int i = 0; i < dependencies.length; i++) {
-				buffer.append(dependencies[i]).append(' ');
-			}
-			buffer.append('\n');
-			ICommand[] cmds = getCommands();
-			for (int i = 0; i < cmds.length; i++) {
-				buffer.append(cmds[i].toString());
-			}
+		buffer.append(getTarget().toString());
+		buffer.append(':');
+		String[] reqs = getPrerequisites();
+		for (int i = 0; i < reqs.length; i++) {
+			buffer.append(' ').append(reqs[i]);
+		}
+		buffer.append('\n');
+		ICommand[] cmds = getCommands();
+		for (int i = 0; i < cmds.length; i++) {
+			buffer.append(cmds[i].toString());
 		}
 		return buffer.toString();
 	}

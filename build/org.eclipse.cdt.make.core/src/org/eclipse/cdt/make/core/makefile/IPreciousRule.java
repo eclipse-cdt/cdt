@@ -11,19 +11,9 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .PRECIOUS
+ * Prerequisites of this special target shall not be removed if make recieves an
+ * asynchronous events.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
-
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
-
+public interface IPreciousRule extends ISpecialRule {
 }

@@ -14,6 +14,7 @@ package org.eclipse.cdt.make.core.makefile;
  * ITarget
  */
 public interface ITarget {
+
 	String toString();
-	boolean isUptodate();
+
 }

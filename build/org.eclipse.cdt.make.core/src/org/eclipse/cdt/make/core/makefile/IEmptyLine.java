@@ -13,5 +13,5 @@ package org.eclipse.cdt.make.core.makefile;
 /**
  * IEmptyLine
  */
-public interface IEmptyLine extends IStatement {
+public interface IEmptyLine extends IDirective {
 }

@@ -8,22 +8,21 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
+
+import org.eclipse.cdt.make.core.makefile.IIgnoreRule;
+import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .IGNORE
+ * Prerequistes of this special target are targets themselves; this shall cause errors
+ * from commands associated with them to be ignored in the same manner as
+ * specified by the -i option.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class IgnoreRule extends SpecialRule implements IIgnoreRule {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	public IgnoreRule(String[] reqs) {
+		super(new Target(".IGNORE"), reqs, new ICommand[0]);
+	}
 
 }

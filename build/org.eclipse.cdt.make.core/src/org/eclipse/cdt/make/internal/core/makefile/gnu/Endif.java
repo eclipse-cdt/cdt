@@ -10,13 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
-
-
-public class Endif extends Statement {
-
+public class Endif extends Conditional {
 
 	public Endif() {
+		super();
 	}
 
 	public String toString() {

@@ -10,10 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import org.eclipse.cdt.make.internal.core.makefile.Statement;
 
 public class VPath extends Statement {
@@ -21,8 +17,9 @@ public class VPath extends Statement {
 	String pattern;
 	String[] directories;
 
-	public VPath(String line) {
-		parse(line);
+	public VPath(String pat, String[] dirs) {
+		pattern = pat;
+		directories = dirs;
 	}
 
 	public String toString() {
@@ -42,45 +39,5 @@ public class VPath extends Statement {
 
 	public String getPattern() {
 		return pattern;
-	}
-
-	/**
-	 * There are three forms of the "vpath" directive:
-	 *	"vpath PATTERN DIRECTORIES"
-	 * Specify the search path DIRECTORIES for file names that match PATTERN.
-	 * 
-	 * The search path, DIRECTORIES, is a list of directories to be
-	 * searched, separated by colons (semi-colons on MS-DOS and
-	 * MS-Windows) or blanks, just like the search path used in the `VPATH' variable.
-	 * 
-	 *	"vpath PATTERN"
-	 * Clear out the search path associated with PATTERN.
-	 * 
-	 *	"vpath"
-	 * Clear all search paths previously specified with `vpath' directives.
-	 */
-	protected void parse(String line) {
-		StringTokenizer st = new StringTokenizer(line);
-		int count = st.countTokens();
-		List dirs = new ArrayList(count);
-		if (count > 0) {
-			for (int i = 0; i < count; i++) {
-				if (count == 0) {
-					// ignore the "vpath" directive
-					st.nextToken();
-				} else if (count == 1) {
-					pattern = st.nextToken();
-				} else if (count == 3) {
-					String delim =  " \t\n\r\f" + GNUMakefile.PATH_SEPARATOR;
-					dirs.add(st.nextToken(delim));
-				} else {
-					dirs.add(st.nextToken());
-				}
-			}
-		}
-		directories = (String[]) dirs.toArray(new String[0]);
-		if (pattern == null) {
-			pattern = new String();
-		}
 	}
 }

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -17,8 +18,11 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
+import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -147,6 +151,25 @@ public class MakeCorePlugin extends Plugin {
 		}
 		return fTargetManager;
 	}
+
+	public IMakefile createMakefile(IFile file) {
+		GNUMakefile gnu = new GNUMakefile();
+		try {
+			gnu.parse(file.getLocation().toOSString());
+			String[] dirs = gnu.getIncludeDirectories();
+			String[] includes = new String[dirs.length + 1];
+			System.arraycopy(dirs, 0, includes, 0, dirs.length);
+			String cwd = file.getLocation().removeLastSegments(1).toOSString();
+			includes[dirs.length] = cwd;
+			gnu.setIncludeDirectories(includes);
+		} catch (IOException e) {
+		}
+		return gnu;
+		//
+		// base on a preference to chose GNU vs Posix 
+		//return PosixMakefile(file.getLocation);
+	}
+
 	public void shutdown() throws CoreException {
 		super.shutdown();
 		if ( fTargetManager != null) {
@@ -154,4 +177,5 @@ public class MakeCorePlugin extends Plugin {
 			fTargetManager = null;
 		}
 	}
+
 }

@@ -10,12 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core.makefile;
 
+import java.io.IOException;
+import java.io.Reader;
+
 
 /**
  * IMakefile
  */
-public interface IMakefile {
-	IStatement[] getStatements();
+public interface IMakefile extends IParent {
 	IRule[] getRules();
 	IRule[] getRule(String target);
 	IInferenceRule[] getInferenceRules();
@@ -24,5 +26,6 @@ public interface IMakefile {
 	ITargetRule[] getTargetRule(String target);
 	IMacroDefinition[] getMacroDefinitions();
 	IMacroDefinition[] getMacroDefinition(String name);
-	IStatement[] getBuiltins();
+	IDirective[] getBuiltins();
+	void parse(Reader makefile) throws IOException;
 }

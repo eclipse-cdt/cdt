@@ -11,19 +11,9 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .SUFFIXES
+ * Prerequesites of .SUFFIXES shall be appended to the list of known suffixes and are
+ * used in conjunction with the inference rules.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
-
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
-
+public interface ISuffixesRule extends ISpecialRule {
 }

@@ -8,22 +8,27 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile.gnu;
+
+
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ *   Here is the syntax of a static pattern rule:
+ *
+ *    TARGETS ...: VARIABLE-ASSIGNMENT
+ *    TARGETS ...: override VARIABLE-ASSIGNMENT
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class TargetVariable extends VariableDefinition {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	boolean override;
+
+	public TargetVariable(String target, String name, StringBuffer value, boolean override, int type) {
+		super(target, name, value, type);
+		this.override = override;
+	}
+
+	public boolean isOverride() {
+		return override;
+	}
 
 }

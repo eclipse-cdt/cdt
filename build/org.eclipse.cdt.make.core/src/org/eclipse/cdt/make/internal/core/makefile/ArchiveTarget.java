@@ -8,22 +8,26 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * IArchiveTarget
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class ArchiveTarget extends Target {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	String member;
+
+	public ArchiveTarget(String lib, String obj) {
+		super(lib);
+		member = obj;
+	}
+
+	public String getMember() {
+		return member;
+	}
+
+	public String getLibaryName() {
+		return toString();
+	}
 
 }

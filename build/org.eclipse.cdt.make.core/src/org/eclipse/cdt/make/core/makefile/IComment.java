@@ -13,7 +13,7 @@ package org.eclipse.cdt.make.core.makefile;
 /**
  * IComment
  */
-public interface IComment  extends IStatement {
+public interface IComment  extends IDirective {
 
 	final public static char POUND = '#';
 

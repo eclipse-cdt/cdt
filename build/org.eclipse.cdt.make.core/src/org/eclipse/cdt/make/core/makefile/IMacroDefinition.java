@@ -13,9 +13,19 @@ package org.eclipse.cdt.make.core.makefile;
 /**
  * IMacroDefinition
  */
-public interface IMacroDefinition  extends IStatement {
+public interface IMacroDefinition  extends IDirective {
 
-	public abstract String getName();
+	String getName();
 
-	public abstract String getValue();
+	StringBuffer getValue();
+
+	boolean isFromDefault();
+
+	boolean isFromMakefile();
+
+	boolean isFromEnviroment();
+
+	boolean isFromEnvironmentOverride();
+
+	boolean isFromCommand();
 }

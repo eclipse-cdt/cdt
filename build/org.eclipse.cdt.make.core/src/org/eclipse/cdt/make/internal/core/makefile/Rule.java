@@ -11,13 +11,12 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.ICommand;
-import org.eclipse.cdt.make.core.makefile.IInferenceRule;
 import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.ITarget;
 
-public abstract class Rule extends Statement implements IRule, IInferenceRule {
+public abstract class Rule extends Parent implements IRule {
 
-	ICommand[] commands;
 	ITarget target;
 
 	public Rule(ITarget tgt) {
@@ -26,15 +25,14 @@ public abstract class Rule extends Statement implements IRule, IInferenceRule {
 
 	public Rule(ITarget tgt, ICommand[] cmds) {
 		target = tgt;
-		commands = cmds;
+		addStatements(cmds);
 	}
 
 	public ICommand[] getCommands() {
-		return commands;
-	}
-
-	public void setCommand(ICommand[] cmds) {
-		commands = cmds;
+		IDirective[] stmts = getStatements();
+		ICommand[] cmds = new ICommand[stmts.length];
+		System.arraycopy(stmts, 0, cmds, 0, stmts.length);
+		return cmds;
 	}
 
 	public ITarget getTarget() {
@@ -43,20 +41,6 @@ public abstract class Rule extends Statement implements IRule, IInferenceRule {
 
 	public void setTarget(ITarget tgt) {
 		target = tgt;
-	}
-
-	public void addCommand(ICommand cmd) {
-		ICommand[] newCmds = new ICommand[commands.length + 1];
-		System.arraycopy(commands, 0, newCmds, 0, commands.length);
-		newCmds[commands.length] = cmd;
-		commands = newCmds;
-	}
-
-	public void addCommands(ICommand[] cmds) {
-		ICommand[] newCmds = new ICommand[commands.length + cmds.length];
-		System.arraycopy(commands, 0, newCmds, 0, commands.length);
-		System.arraycopy(cmds, 0, newCmds, commands.length, cmds.length);
-		commands = newCmds;
 	}
 
 	public boolean equals(Rule r) {

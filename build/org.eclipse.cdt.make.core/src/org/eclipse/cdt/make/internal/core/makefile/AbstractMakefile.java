@@ -17,7 +17,7 @@ import org.eclipse.cdt.make.core.makefile.IInferenceRule;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IRule;
-import org.eclipse.cdt.make.core.makefile.IStatement;
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
 
 /**
@@ -36,17 +36,15 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
  * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
  */
 
-public abstract class AbstractMakefile implements IMakefile {
+public abstract class AbstractMakefile extends Parent implements IMakefile {
 
 	public AbstractMakefile() {
 	}
 
-	public abstract IStatement[] getStatements();
-	public abstract IStatement[] getBuiltins();
-	public abstract void addStatement(IStatement statement);
+	public abstract IDirective[] getBuiltins();
 
 	public IRule[] getRules() {
-		IStatement[] stmts = getStatements();
+		IDirective[] stmts = getStatements();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IRule) {
@@ -112,7 +110,7 @@ public abstract class AbstractMakefile implements IMakefile {
 	}
 
 	public IMacroDefinition[] getMacroDefinitions() {
-		IStatement[] stmts = getStatements();
+		IDirective[] stmts = getStatements();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IMacroDefinition) {
@@ -134,7 +132,7 @@ public abstract class AbstractMakefile implements IMakefile {
 	}
 
 	public IMacroDefinition[] getBuiltinMacroDefinitions() {
-		IStatement[] stmts = getBuiltins();
+		IDirective[] stmts = getBuiltins();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IMacroDefinition) {
@@ -156,7 +154,7 @@ public abstract class AbstractMakefile implements IMakefile {
 	}
 
 	public IInferenceRule[] getBuiltinInferenceRules() {
-		IStatement[] stmts = getBuiltins();
+		IDirective[] stmts = getBuiltins();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IInferenceRule) {
@@ -177,9 +175,4 @@ public abstract class AbstractMakefile implements IMakefile {
 		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
 	}
 
-	public void addStatements(IStatement[] stmts) {
-		for (int i = 0; i < stmts.length; i++) {
-			addStatement(stmts[i]);
-		}
-	}
 }

@@ -10,6 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
@@ -73,16 +76,16 @@ public class Command extends Statement implements ICommand {
 
 	public String toString() {
 		StringBuffer cmd = new StringBuffer();
-		cmd.append((char) '\t');
+		cmd.append( '\t');
 		if (getPrefix() != 0) {
 			cmd.append(getPrefix());
 		}
-		cmd.append(command).append((char) '\n');
+		cmd.append(command).append('\n');
 		return cmd.toString();
 	}
 
 	public boolean equals(Command cmd) {
-		return cmd.getPrefix() == getPrefix() && cmd.toString().equals(toString());
+		return cmd.toString().equals(toString());
 	}
 
 	char getPrefix() {
@@ -96,7 +99,16 @@ public class Command extends Statement implements ICommand {
 		command = cmd.trim();
 		if (command.startsWith(HYPHEN_STRING) || command.startsWith(AT_STRING) || command.startsWith(PLUS_STRING)) {
 			prefix = command.charAt(0);
-			command = command.substring(1);
+			command = command.substring(1).trim();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.ICommand#execute(java.lang.String[], java.io.File)
+	 */
+	public Process execute(String shell, String[] envp, File dir) throws IOException {
+		String[] cmdArray = new String[] { shell, "-c", command};
+		return Runtime.getRuntime().exec(cmdArray, envp, dir);
+	}
+
 }

@@ -8,22 +8,20 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
+
+import org.eclipse.cdt.make.core.makefile.IPreciousRule;
+import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .PRECIOUS
+ * Prerequisites of this special target shall not be removed if make recieves an
+ * asynchronous events.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class PreciousRule extends SpecialRule implements IPreciousRule {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	public PreciousRule(String[] targets) {
+		super(new Target(".PRECIOUS:"), targets, new ICommand[0]);
+	}
 
 }

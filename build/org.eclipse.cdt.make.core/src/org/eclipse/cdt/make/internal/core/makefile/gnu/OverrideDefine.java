@@ -10,51 +10,25 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.MakefileUtil;
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
 
 
-public class OverrideDefine extends Statement {
+public class OverrideDefine extends DefineVariable {
 
-	String variable;
 
-	public OverrideDefine(String line) {
-		parse(line);
+	public OverrideDefine(String name, StringBuffer value) {
+		super(name, value);
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("override define");
-		sb.append(' ').append(variable);
+		StringBuffer sb = new StringBuffer("override define ");
+		sb.append(getName()).append('\n');
+		sb.append(getValue());
+		sb.append("endef");
 		return sb.toString();
 	}
 
-	public String getVariable() {
-		return variable;
+	public boolean isOverride() {
+		return true;
 	}
 
-	/**
-	 *  Format:
-	 * 	override define VARIABLE
-	 */
-	protected void parse(String line) {
-		line = line.trim();
-
-		// Pass over "override"
-		for (int i = 0; i < line.length(); i++) {
-			if (MakefileUtil.isSpace(line.charAt(i))) {
-				line = line.substring(i).trim();
-				break;
-			}
-		}
-
-		// Pass over "define"
-		for (int i = 0; i < line.length(); i++) {
-			if (MakefileUtil.isSpace(line.charAt(i))) {
-				line = line.substring(i).trim();
-				break;
-			}
-		}
-
-		variable = line;
-	}
 }

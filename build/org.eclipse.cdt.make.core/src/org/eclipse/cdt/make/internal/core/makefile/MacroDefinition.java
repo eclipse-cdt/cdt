@@ -17,30 +17,19 @@ import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 public class MacroDefinition extends Statement implements IMacroDefinition {
 	String name;
 	StringBuffer value;
-	char sepChar;
-
-	public MacroDefinition(String line) {
-		value = new StringBuffer();
-		int index = line.indexOf('=');
-		if (index != -1) {
-			int separator = index;
-			// Check for "+=",  ":="
-			if (index > 0) {
-				sepChar = line.charAt(index - 1);
-				if (sepChar == ':' || sepChar =='+' || sepChar == '?') {
-					separator = index - 1;
-				}
-			}
-			name = line.substring(0, separator).trim();
-			value.append(line.substring(index + 1));
-		} else {
-			name = line;
-		}
-	}
+	boolean fromCommand;
+	boolean fromDefault;
+	boolean fromMakefile;
+	boolean fromEnvironment;
+	boolean fromEnvironmentOverride;
 
 	public MacroDefinition(String n, String v) {
+		this(n, new StringBuffer(v));
+	}
+
+	public MacroDefinition(String n, StringBuffer v) {
 		name = n;
-		value = new StringBuffer(v);
+		value = v;
 	}
 
 	public String getName() {
@@ -51,16 +40,8 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 		name = (n == null) ? "" : n.trim() ;
 	}
 
-	public String getValue() {
-		return value.toString().trim();
-	}
-
-	public void setValue(String val) {
-		value = new StringBuffer(val);
-	}
-
-	public void append(String val) {
-		value.append(' ').append(val);
+	public StringBuffer getValue() {
+		return value;
 	}
 
 	/**
@@ -75,4 +56,60 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 	public boolean equals(MacroDefinition v) {
 		return v.getName().equals(getName());
 	}
+
+	public void setFromCommand(boolean from) {
+		fromCommand = from;
+	}
+
+	public void setFromDefault(boolean from) {
+		fromDefault = from;
+	}
+
+	public void setFromEnviroment(boolean from) {
+		fromEnvironment = from;
+	}
+
+	public void setFromEnviromentOverride(boolean from) {
+		fromEnvironmentOverride = from;
+	}
+
+	public void setFromMakefile(boolean from) {
+		fromMakefile = from;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromCommand()
+	 */
+	public boolean isFromCommand() {
+		return fromCommand;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromDefault()
+	 */
+	public boolean isFromDefault() {
+		return fromDefault;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromEnviroment()
+	 */
+	public boolean isFromEnviroment() {
+		return fromEnvironment;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromEnviroment()
+	 */
+	public boolean isFromEnvironmentOverride() {
+		return fromEnvironmentOverride;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromMakefile()
+	 */
+	public boolean isFromMakefile() {
+		return fromMakefile;
+	}
+
 }

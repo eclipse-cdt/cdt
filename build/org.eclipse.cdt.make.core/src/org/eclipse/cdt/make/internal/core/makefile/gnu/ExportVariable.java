@@ -8,22 +8,16 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-/**
- * There are two kinds of rules: Inference rules and target rules
- */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+public class ExportVariable extends VariableDefinition {
 
+	public ExportVariable(String name, StringBuffer value, int type) {
+		super(name, value, type);
+	}
+
+	public boolean isExport() {
+		return true;
+	}
 }

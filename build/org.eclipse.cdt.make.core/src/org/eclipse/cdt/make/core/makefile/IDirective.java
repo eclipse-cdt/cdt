@@ -11,19 +11,12 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public interface IDirective {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	int getStartLine();
 
+	int getEndLine();
+
+	String toString();
 }

@@ -10,16 +10,19 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import java.util.StringTokenizer;
+import java.io.IOException;
 
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.internal.core.makefile.Parent;
 
-public class Include extends Statement {
+public class Include extends Parent {
 
 	String[] filenames;
+	String[] dirs;
 
-	public Include(String line) {
-		parse(line);
+	public Include(String[] files, String[] directories) {
+		filenames = files;
+		dirs = directories;
 	}
 
 	public String toString() {
@@ -34,24 +37,29 @@ public class Include extends Statement {
 		return filenames;
 	}
 
-	/**
-	 *  Format of the include directive:
-	 * 	include filename1 filename2 ...
-	 */
-	protected void parse(String line) {
-		StringTokenizer st = new StringTokenizer(line);
-		int count = st.countTokens();
-		if (count > 0) {
-			filenames = new String[count - 1];
-			for (int i = 0; i < count; i++) {
-				if (i == 0) {
-					// ignore the "include" keyword.
-					continue;
-				}
-				filenames[i] = st.nextToken();
+	public IDirective[] getStatements() {
+		GNUMakefile gnu = new GNUMakefile();
+		clearStatements();
+		for (int i = 0; i < filenames.length; i++) {
+			// Try the current directory.
+			try {
+				gnu.parse(filenames[i]);
+				addStatements(gnu.getStatements());
+				continue;
+			} catch (IOException e) {
 			}
-		} else {
-			filenames = new String[0];
+			if (!filenames[i].startsWith(GNUMakefile.FILE_SEPARATOR) && dirs != null) {
+				for (int j = 0; j < dirs.length; j++) {
+					try {
+						String filename =  dirs[j] + GNUMakefile.FILE_SEPARATOR + filenames[i];
+						gnu.parse(filename);
+						addStatements(gnu.getStatements());
+						break;
+					} catch (IOException e) {
+					}
+				}
+			}
 		}
+		return super.getStatements();
 	}
 }

@@ -14,5 +14,6 @@ package org.eclipse.cdt.make.core.makefile;
  * ITargetRule
  */
 public interface ITargetRule extends IRule {
-	ITarget[] getDependencies();
+
+	String[] getPrerequisites();
 }

@@ -10,9 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import org.eclipse.cdt.make.core.makefile.IStatement;
+import org.eclipse.cdt.make.core.makefile.IDirective;
 
-public abstract class Statement implements IStatement {
+public abstract class Statement implements IDirective {
 
 	int endLine;
 	int startLine;
@@ -20,10 +20,14 @@ public abstract class Statement implements IStatement {
 	public Statement() {
 	}
 
+	public Statement(int start, int end) {
+		setLines(start, end);
+	}
+
 	public abstract String toString();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IStatement#getEndLine()
+	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getEndLine()
 	 */
 	public int getEndLine() {
 		return endLine;
@@ -34,7 +38,7 @@ public abstract class Statement implements IStatement {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IStatement#getStartLine()
+	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getStartLine()
 	 */
 	public int getStartLine() {
 		return startLine;

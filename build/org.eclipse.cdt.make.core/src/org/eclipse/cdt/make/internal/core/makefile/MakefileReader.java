@@ -42,7 +42,7 @@ public class MakefileReader extends LineNumberReader {
 			if (escapedLine && line.length() > 0) {
 				// Eat the spaces at the beginning.
 				int i = 0;
-				while (i < line.length() && (MakefileUtil.isSpace(line.charAt(i)))) {
+				while (i < line.length() && (Util.isSpace(line.charAt(i)))) {
 					i++ ;
 				}
 				line = line.substring(i);
@@ -61,10 +61,10 @@ public class MakefileReader extends LineNumberReader {
 			// When an escaped <newline> is found in a command line in a makefile,
 			// the command line shall contain the backslash, the <newline>, and  the next line,
 			// except that the first character of the next line shall not be included if it is a <tab>
-			if (MakefileUtil.isEscapedLine(line)) {
+			if (Util.isEscapedLine(line)) {
 				int index = line.lastIndexOf('\\');
 				if (index > 0) {
-					if (!escapedLine && MakefileUtil.isCommand(line)) {
+					if (!escapedLine && Util.isCommand(line)) {
 						escapedCommand = true;
 						buffer.append(line);
 					} else {

@@ -10,27 +10,20 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import java.io.File;
+import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.ISccsGetRule;
 
-import org.eclipse.cdt.make.core.makefile.ITarget;
+/**
+ * .SCCS_GET
+ * The application shall ensure that this special target is specified without
+ * prerequesites.
+ * The commands specifeied with this target shall replace the default
+ * commands associated with this special target.
+ */
+public class SccsGetRule extends SpecialRule implements ISccsGetRule {
 
-public class Target implements ITarget {
-
-	String target;
-
-	public Target(String t) {
-		target = t;
+	public SccsGetRule(ICommand[] cmds) {
+		super(new Target(".SCCS_GET"), new String[0], cmds);
 	}
 
-	public String toString() {
-		return target;
-	}
-
-	public boolean exits() {
-		return new File(target).exists();
-	}
-
-	public long lastModified() {
-		return new File(target).lastModified();
-	}
 }

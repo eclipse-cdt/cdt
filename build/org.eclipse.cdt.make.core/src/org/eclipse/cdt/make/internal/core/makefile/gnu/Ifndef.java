@@ -10,40 +10,20 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.MakefileUtil;
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+public class Ifndef extends Conditional {
 
-
-public class Ifndef extends Statement {
-
-	String variable;
-
-	public Ifndef(String line) {
-		parse(line);
+	public Ifndef(String var) {
+		super(var, "", "");
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer("ifndef");
-		sb.append(' ').append(variable);
+		sb.append(' ').append(getVariable());
 		return sb.toString();
 	}
 
 	public String getVariable() {
-		return variable;
+		return getConditional();
 	}
 
-	/**
-	 *  Format of the include directive:
-	 * 	ifeq condional-directive
-	 */
-	protected void parse(String line) {
-		line = line.trim();
-		for (int i = 0; i < line.length(); i++) {
-			if (MakefileUtil.isSpace(line.charAt(i))) {
-				line = line.substring(i).trim();
-				break;
-			}
-		}
-		variable = line;
-	}
 }

@@ -10,16 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.cdt.make.internal.core.makefile.Statement;
 
 public class UnExport extends Statement {
 
 	String variable;
 
-	public UnExport(String line) {
-		parse(line);
+	public UnExport(String var) {
+		variable = var;
 	}
 
 	public String toString() {
@@ -32,24 +30,4 @@ public class UnExport extends Statement {
 		return variable;
 	}
 
-	/**
-	 *  Format of the include directive:
-	 * 	export Variabe ...
-	 */
-	protected void parse(String line) {
-		StringTokenizer st = new StringTokenizer(line);
-		int count = st.countTokens();
-		if (count > 0) {
-			for (int i = 0; i < count; i++) {
-				if (i == 0) {
-					// ignore the "unexport" keyword.
-					continue;
-				}
-				variable = st.nextToken();
-			}
-		}
-		if (variable == null) {
-			variable = new String();
-		}
-	}
 }

@@ -10,34 +10,39 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.ISpecialRule;
 import org.eclipse.cdt.make.core.makefile.ITarget;
+import org.eclipse.cdt.make.core.makefile.ICommand;
 
-public class InferenceRule extends Rule {
+/**
+ * Targets that have special meaning for Make.
+ */
+public abstract class SpecialRule extends Rule implements ISpecialRule {
 
-	public InferenceRule(ITarget target) {
-		this(target, new Command[0]);
-	}
+	String[] prerequisites;
 
-	public InferenceRule(String tgt, ICommand[] cmds) {
-		this(new Target(tgt), cmds);
-	}
-
-	public InferenceRule(ITarget target, ICommand[] cmds) {
+	public SpecialRule(ITarget target, String[] reqs, ICommand[] cmds) {
 		super(target, cmds);
+		prerequisites = reqs;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	public String[] getPrerequisites() {
+		return prerequisites;
+	}
+
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(getTarget().toString()).append(":\n");
+		StringBuffer sb = new StringBuffer();
+		sb.append(target).append(":");
+		String[] reqs = getPrerequisites();
+		for (int i = 0; i < reqs.length; i++) {
+			sb.append(' ').append(reqs[i]);
+		}
+		sb.append('\n');
 		ICommand[] cmds = getCommands();
 		for (int i = 0; i < cmds.length; i++) {
-			buffer.append(cmds[i].toString());
+			sb.append(cmds[i]);
 		}
-		return buffer.toString();
+		return sb.toString();
 	}
 
 }

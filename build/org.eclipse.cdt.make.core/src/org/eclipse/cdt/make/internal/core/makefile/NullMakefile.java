@@ -10,7 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import org.eclipse.cdt.make.core.makefile.IStatement;
+import java.io.IOException;
+import java.io.Reader;
+
+import org.eclipse.cdt.make.core.makefile.IDirective;
 
 /**
  * Makefile : ( statement ) *
@@ -30,19 +33,30 @@ import org.eclipse.cdt.make.core.makefile.IStatement;
 
 public class NullMakefile extends AbstractMakefile {
 
-	public static IStatement[] empty = new IStatement[0];
+	public static IDirective[] empty = new IDirective[0];
 
 	public NullMakefile() {
 	}
 
-	public IStatement[] getStatements() {
+	public IDirective[] getStatements() {
 		return empty;
 	}
 
-	public IStatement[] getBuiltins() {
+	public IDirective[] getBuiltins() {
 		return empty;
 	}
 
-	public void addStatement(IStatement statement) {
+	public void addStatement(IDirective statement) {
 	}
+
+	public String toString() {
+		return new String();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.io.Reader)
+	 */
+	public void parse(Reader makefile) throws IOException {
+	}
+
 }

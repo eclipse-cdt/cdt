@@ -10,13 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
-
-
-public class Else extends Statement {
+public class Else extends Conditional {
 
 
 	public Else() {
+		super();
 	}
 
 	public String toString() {

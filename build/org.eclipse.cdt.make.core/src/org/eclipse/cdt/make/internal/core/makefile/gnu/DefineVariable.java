@@ -10,40 +10,23 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.MakefileUtil;
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
 
 
-public class Define extends Statement {
+public class DefineVariable extends VariableDefinition {
 
-	String variable;
+	public DefineVariable(String name, StringBuffer value) {
+		super(name, value);
+	}
 
-	public Define(String line) {
-		parse(line);
+	public boolean isMultiline() {
+		return true;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer("define");
-		sb.append(' ').append(variable);
+		sb.append(getName()).append('\n');
+		sb.append(getValue());
+		sb.append("endef");
 		return sb.toString();
-	}
-
-	public String getVariable() {
-		return variable;
-	}
-
-	/**
-	 *  Format of the include directive:
-	 * 	export Variabe ...
-	 */
-	protected void parse(String line) {
-		line = line.trim();
-		for (int i = 0; i < line.length(); i++) {
-			if (MakefileUtil.isSpace(line.charAt(i))) {
-				line = line.substring(i).trim();
-				break;
-			}
-		}
-		variable = line;
 	}
 }

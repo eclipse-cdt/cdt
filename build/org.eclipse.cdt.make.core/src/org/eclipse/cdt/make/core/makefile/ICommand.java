@@ -10,11 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core.makefile;
 
+import java.io.File;
+import java.io.IOException;
+
 
 /**
  * ICommand
  */
-public interface ICommand extends IStatement {
+public interface ICommand extends IDirective {
 	
 	final public static char HYPHEN = '-';
 
@@ -54,4 +57,11 @@ public interface ICommand extends IStatement {
 	 */
 	boolean shouldExecute();
 
+
+	/**
+	 * Executes the command in a separate process with the
+	 * specified environment and working directory.
+	 *
+	 */
+	Process execute(String shell, String[] envp, File dir) throws IOException;
 }

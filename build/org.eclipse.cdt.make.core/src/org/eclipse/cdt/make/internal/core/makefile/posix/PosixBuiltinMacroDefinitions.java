@@ -15,22 +15,22 @@ import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
 public class PosixBuiltinMacroDefinitions {
 	MacroDefinition[] macros =
 		new MacroDefinition[] {
-			new MacroDefinition("MAKE=make"),
-			new MacroDefinition("AR=ar"),
-			new MacroDefinition("ARFLAGS=-rv"),
-			new MacroDefinition("YACC=yacc"),
-			new MacroDefinition("YFLAGS="),
-			new MacroDefinition("LEX=lex"),
-			new MacroDefinition("LFLAGS="),
-			new MacroDefinition("LDFLAGS="),
-			new MacroDefinition("CC=c89"),
-			new MacroDefinition("CFLAGS=-O"),
-			new MacroDefinition("FC=fort77"),
-			new MacroDefinition("FFLAGS=-O 1"),
-			new MacroDefinition("GET=get"),
-			new MacroDefinition("GFLAGS="),
-			new MacroDefinition("SCCSFLAGS="),
-			new MacroDefinition("SCCSGETFLAGS=-s")};
+			new MacroDefinition("MAKE", "make"),
+			new MacroDefinition("AR", "ar"),
+			new MacroDefinition("ARFLAGS", "-rv"),
+			new MacroDefinition("YACC", "yacc"),
+			new MacroDefinition("YFLAGS", ""),
+			new MacroDefinition("LEX", "lex"),
+			new MacroDefinition("LFLAGS", ""),
+			new MacroDefinition("LDFLAGS", ""),
+			new MacroDefinition("CC", "c89"),
+			new MacroDefinition("CFLAGS", "-O"),
+			new MacroDefinition("FC", "fort77"),
+			new MacroDefinition("FFLAGS", "-O 1"),
+			new MacroDefinition("GET", "get"),
+			new MacroDefinition("GFLAGS", ""),
+			new MacroDefinition("SCCSFLAGS", ""),
+			new MacroDefinition("SCCSGETFLAGS", "-s")};
 
 	public MacroDefinition getMacroDefinition(String name) {
 		for (int i = 0; i < macros.length; i++) {

@@ -8,22 +8,21 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
+
+import org.eclipse.cdt.make.core.makefile.ISuffixesRule;
+import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .SUFFIXES
+ * Prerequesites of .SUFFIXES shall be appended tothe list of known suffixes and are
+ * used inconjucntion with the inference rules.
+ *
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class SuffixesRule extends SpecialRule implements ISuffixesRule {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	public SuffixesRule(String[] suffixes) {
+		super(new Target(".SUFFIXES:"), suffixes, new ICommand[0]);
+	}
 
 }

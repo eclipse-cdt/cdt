@@ -11,19 +11,10 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .SCCS_GET
+ * The application shall ensure that this special target is specified without prerequesites.
+ * The commands specified with this target shall replace the default
+ * commands associated with this special target.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
-
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
-
+public interface ISccsGetRule extends ISpecialRule {
 }

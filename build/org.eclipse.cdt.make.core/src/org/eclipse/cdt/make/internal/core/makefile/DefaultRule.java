@@ -8,22 +8,20 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.core.makefile;
+package org.eclipse.cdt.make.internal.core.makefile;
+
+import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.IDefaultRule;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * .DEFAULT
+ * If the makefile uses this special target, the application shall ensure that it is
+ * specified with commands, but without prerequisites.
  */
-public interface IRule extends IParent {
-	/**
-	 *  Array of command for the rule.
-	 * @return
-	 */
-	ICommand[] getCommands();
+public class DefaultRule extends SpecialRule implements IDefaultRule {
 
-	/**
-	 * The rule target name.
-	 * @return
-	 */
-	ITarget getTarget();
+	public DefaultRule(ICommand[] cmds) {
+		super(new Target(".DEFAULT"), new String[0], cmds);
+	}
 
 }

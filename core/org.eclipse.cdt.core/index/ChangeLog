@@ -1,3 +1,6 @@
+2003-07-28 Andrew Niefer
+	- added support for '?' wildcards in AbstractIndexer.bestPrefix
+
 2003-07-25 Bogdan Gheorghe
 	- Changed parser to COMPLETE mode
 	- Added functionRef, methodRef, typeRef, namespaceRef, fieldRef

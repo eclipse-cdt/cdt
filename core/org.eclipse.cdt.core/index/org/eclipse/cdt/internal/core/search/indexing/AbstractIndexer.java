@@ -14,9 +14,7 @@ package org.eclipse.cdt.internal.core.search.indexing;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -24,7 +22,6 @@ import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -393,6 +390,8 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		char[] 	result = null;
 		int 	pos    = 0;
 		
+		int wildPos, starPos, questionPos;
+		
 		//length of prefix + separator
 		int length = prefix.length;
 		
@@ -405,11 +404,22 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			//type name.
 			name = null;
 		} else if( matchMode == PATTERN_MATCH && name != null ){
-			int starPos = CharOperation.indexOf( '*', name );
-			switch( starPos ){
+			starPos     = CharOperation.indexOf( '*', name );
+			questionPos = CharOperation.indexOf( '?', name );
+
+			if( starPos >= 0 ){
+				if( questionPos >= 0 )
+					wildPos = ( starPos < questionPos ) ? starPos : questionPos;
+				else 
+					wildPos = starPos;
+			} else {
+				wildPos = questionPos;
+			}
+			 
+			switch( wildPos ){
 				case -1 : break;
-				case 0  : name = null;
-				default : name = CharOperation.subarray( name, 0, starPos );
+				case 0  : name = null;	break;
+				default : name = CharOperation.subarray( name, 0, wildPos ); break;
 			}
 		}
 		//add length for name
@@ -455,10 +465,21 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		if( containingTypes != null ){
 			for( int i = containingTypes.length - 1; i >= 0; i-- ){
 				if( matchMode == PATTERN_MATCH ){
-					int starPos = CharOperation.indexOf( '*', containingTypes[i] );
+					starPos     = CharOperation.indexOf( '*', containingTypes[i] );
+					questionPos = CharOperation.indexOf( '?', containingTypes[i] );
+
 					if( starPos >= 0 ){
+						if( questionPos >= 0 )
+							wildPos = ( starPos < questionPos ) ? starPos : questionPos;
+						else 
+							wildPos = starPos;
+					} else {
+						wildPos = questionPos;
+					}
+					
+					if( wildPos >= 0 ){
 						temp[ pos++ ] = SEPARATOR;
-						System.arraycopy( containingTypes[i], 0, temp, pos, starPos );
+						System.arraycopy( containingTypes[i], 0, temp, pos, wildPos );
 						pos += starPos;
 						break;
 					}

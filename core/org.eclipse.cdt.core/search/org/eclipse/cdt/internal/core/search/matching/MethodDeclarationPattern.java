@@ -72,6 +72,11 @@ public class MethodDeclarationPattern extends FunctionDeclarationPattern {
 		return AbstractIndexer.bestMethodPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 	}
 	
+	protected void resetIndexInfo(){
+		decodedSimpleName = null;
+		decodedQualifications = null;
+	}
+	
 	protected void decodeIndexEntry(IEntryResult entryResult) {
 		char[] word = entryResult.getWord();
 		int size = word.length;

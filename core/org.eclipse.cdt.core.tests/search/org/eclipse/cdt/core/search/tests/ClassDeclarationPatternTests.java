@@ -171,4 +171,68 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		assertEquals( CharOperation.compareWith( "typeRef/U/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
 	}
 	
+	public void testGloballyQualifiedItem(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::A", TYPE, DECLARATIONS, true );
+		assertTrue( pattern instanceof ClassDeclarationPattern );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		
+		assertEquals( matches.size(), 1 );
+
+		pattern = SearchEngine.createSearchPattern( "::u", TYPE, DECLARATIONS, true );
+		assertTrue( pattern instanceof ClassDeclarationPattern );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		matches = resultCollector.getMatches();
+		
+		assertEquals( matches.size(), 1 );		
+	}
+	
+	public void testClassReferences(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::A", TYPE, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 3 );
+	}
+	
+	public void testClassReferenceInFieldType(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::B::A", TYPE, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 1 );
+		
+		Match match = (Match) matches.iterator().next();
+		assertTrue( match.parent.equals( "NS::B" ) );
+	}
+	
+	public void testTypeReferenceVisibleByUsingDirective(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::NS2::a", STRUCT, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 1 );
+		
+		Match match = (Match) matches.iterator().next();
+		assertTrue( match.parent.equals( "NS::B" ) );
+	}
+	
+	public void testEnumerationReferenceVisibleByInheritance(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::B::e", ENUM, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 1 );
+
+		Match match = (Match) matches.iterator().next();
+		assertTrue( match.parent.equals( "NS3::C" ) );
+	}
+	
 }

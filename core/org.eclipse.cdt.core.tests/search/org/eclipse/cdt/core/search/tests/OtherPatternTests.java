@@ -13,12 +13,15 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.VariableDeclarationPattern;
+import org.eclipse.cdt.internal.ui.search.Match;
 
 /**
  * @author aniefer
@@ -65,6 +68,9 @@ public class OtherPatternTests extends BaseSearchTest {
 				
 		variablePattern = (VariableDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false );
 		assertEquals( CharOperation.compareWith( "typeRef/V/".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
+		
+		variablePattern = (VariableDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true );
+		assertEquals( CharOperation.compareWith( "typeRef/V/A".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
 	}
 	
 	public void testFieldIndexPrefix(){
@@ -82,6 +88,62 @@ public class OtherPatternTests extends BaseSearchTest {
 				
 		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", FIELD, REFERENCES, false );
 		assertEquals( CharOperation.compareWith( "fieldRef/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0);
+	}
+	
+	public void testNamespaceDeclaration(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS*", NAMESPACE, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		
+		assertEquals( matches.size(), 3 );
+	}
+	
+	public void testNamespaceReferenceInUsingDirective() {
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::NS2", NAMESPACE, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		
+		assertEquals( matches.size(), 1 );
+		
+		Match match = (Match) matches.iterator().next();
+		assertTrue( match.parent.equals( "NS::B" ) );
+	}
+	
+	public void testNamespaceReferenceInClassBaseClause(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS", NAMESPACE, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 2 );
+	}
+	
+	public void testFieldDeclaration(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 2 );
+		
+		Match match = (Match) matches.iterator().next();
+		assertTrue( match.parent.equals( "NS::B" ) );
+	}
+	
+	public void testVariableDeclaration(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 2 );
+		
+		Match match = (Match) matches.iterator().next();
+		assertTrue( match.parent.equals( "" ) );		
 	}
 
 }

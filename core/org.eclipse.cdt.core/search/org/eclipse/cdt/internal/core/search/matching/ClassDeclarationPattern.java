@@ -125,9 +125,15 @@ public class ClassDeclarationPattern extends CSearchPattern {
 					requestor.acceptClassDeclaration(path, decodedSimpleName, decodedContainingTypes);
 				}
 			}
-	}
+		}
 	}
 
+	protected void resetIndexInfo(){
+		decodedType = 0;
+		decodedSimpleName = null;
+		decodedContainingTypes = null;
+	}
+	
 	protected void decodeIndexEntry(IEntryResult entryResult) {	
 		char[] word = entryResult.getWord();
 		int size = word.length;

@@ -13,6 +13,8 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
@@ -65,4 +67,23 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		methodPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", METHOD, REFERENCES, false );
 		assertEquals( CharOperation.compareWith( "methodRef/".toCharArray(), methodPattern.indexEntryPrefix() ), 0);
 	}
+	
+	public void testMethodDeclaration() {
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::f", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		
+		assertEquals( matches.size(), 1 );
+	}
+	
+	public void testMethodDeclarationWithParams() {
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::f( A )", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getMatches();
+		
+		assertEquals( matches.size(), 1 );	}
 }

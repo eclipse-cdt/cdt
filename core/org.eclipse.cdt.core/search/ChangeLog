@@ -1,3 +1,9 @@
+2003-07-28 Andrew Niefer
+	- added abstract CSearchPattern.resetIndexInfo fix bug with searching with globally 
+	  qualified names
+	- fixed bug in CSearchPattern.matchQualifications to do with globally qualified names
+	- fixed bug in CSearchPattern.createFunctionPattern to do with parameter lists.
+
 2003-07-25 Bogdan Gheorghe
 	- Added refs to PathCollector
 	- Filled in feedIndexRequestor for the new search patterns

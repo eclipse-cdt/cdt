@@ -1,3 +1,19 @@
+2008-07-28 Andrew Niefer
+	-changes to resources/search/classDecl.cpp
+	-new search tests:
+		ClassDeclarationPatternTests.testClassReferenceInFieldType
+		ClassDeclarationPatternTests.testClassReferences
+		ClassDeclarationPatternTests.testEnumerationReferenceVisibleByInheritance
+		ClassDeclarationPatternTests.testGloballyQualifiedItem
+		ClassDeclarationPatternTests.testTypeReferenceVisibleByUsingDirective
+		FunctionMethodPatternTests.testMethodDeclaration
+		FunctionMethodPatternTests.testMethodDeclarationWithParams
+		OtherPatternTests.testFieldDeclaration
+		OtherPatternTests.testNamespaceDeclaration
+		OtherPatternTests.testNamespaceReferenceInClassBaseClause
+		OtherPatternTests.testNamespaceReferenceInUsingDirective
+		OtherPatternTests.testVariableDeclaration
+
 2003-07-28 John Camelon
 	Added/moved tests as necessary for bugfix 40842 & 40843. 
 

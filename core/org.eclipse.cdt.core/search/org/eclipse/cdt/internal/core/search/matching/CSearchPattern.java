@@ -170,7 +170,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		int index = patternString.indexOf( '(' );
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
-		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index - 1 );
+		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
 		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( nameString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		
@@ -372,7 +372,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		
 		for( int i = 1; i <= qualLength - root; i++ ){
-			if( !matchesName( qualifications[ qualLength - i - root ], candidate[ candidateLength - i ] ) ){
+			if( !matchesName( qualifications[ qualLength - i ], candidate[ candidateLength - i ] ) ){
 				return false;		
 			}
 		}
@@ -416,6 +416,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 
 		   /* retrieve and decode entry */	
 		   IEntryResult entry = entries[i];
+		   resetIndexInfo();
 		   decodeIndexEntry(entry);
 		   if (matchIndexEntry()){
 			   feedIndexRequestor(requestor, detailLevel, entry.getFileReferences(), input, scope);
@@ -427,6 +428,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
    * Feed the requestor according to the current search pattern
    */
    public abstract void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope)  throws IOException ;
+   
+   /**
+    * Called to reset any variables used in the decoding of index entries, 
+    * this ensures that the matchIndexEntry is not polluted by index info
+    * from previous entries.
+    */
+   protected abstract void resetIndexInfo();
+   
    /**
    * Decodes the index entry
    */

@@ -93,6 +93,11 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 		}
 	}
 
+	protected void resetIndexInfo(){
+		decodedSimpleName = null;
+		decodedContainingTypes = null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#decodeIndexEntry(org.eclipse.cdt.internal.core.index.IEntryResult)
 	 */

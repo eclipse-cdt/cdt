@@ -77,6 +77,11 @@ public class VariableDeclarationPattern extends CSearchPattern {
 		}	
 	}
 
+	protected void resetIndexInfo(){
+		decodedType = 0;
+		decodedSimpleName = null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#decodeIndexEntry(org.eclipse.cdt.internal.core.index.IEntryResult)
 	 */

@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.model;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -17,16 +17,30 @@ import org.eclipse.debug.core.DebugException;
 public interface IRunToLine
 {
 	/**
-	 * Returns whether this operation is currently available for this element.
+	 * Returns whether this operation is currently available for this file and line number.
 	 *
 	 * @return whether this operation is currently available
 	 */
-	public boolean canRunToLine( IResource resource, int lineNumber );
+	public boolean canRunToLine( IFile file, int lineNumber );
 
 	/**
 	 * Causes this element to run to specified location.
 	 *
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void runToLine( IResource resource, int lineNumber ) throws DebugException;
+	public void runToLine( IFile file, int lineNumber ) throws DebugException;
+
+	/**
+	 * Returns whether this operation is currently available for this file and line number.
+	 *
+	 * @return whether this operation is currently available
+	 */
+	public boolean canRunToLine( String fileName, int lineNumber );
+
+	/**
+	 * Causes this element to run to specified location.
+	 *
+	 * @exception DebugException on failure. Reasons include:
+	 */
+	public void runToLine( String fileName, int lineNumber ) throws DebugException;
 }

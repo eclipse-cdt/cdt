@@ -5,15 +5,16 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -67,7 +68,17 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 				try
 				{
 					IStorage storage = ((IStorageEditorInput)input).getStorage();
-					if ( storage != null && storage.getAdapter( IDisassemblyStorage.class ) != null )
+					if ( storage instanceof FileStorage )
+					{
+						IPath path = storage.getFullPath();
+						if ( path != null )
+						{
+							ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
+							int lineNumber = selection.getStartLine() + 1;
+							runToLine( path.lastSegment(), lineNumber );
+						}
+					}
+					else if ( storage != null && storage.getAdapter( IDisassemblyStorage.class ) != null )
 					{
 						IDisassemblyStorage disassemblyStorage = (IDisassemblyStorage)storage.getAdapter( IDisassemblyStorage.class );
 						ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
@@ -128,19 +139,40 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 		}
 	}
 
-	protected void runToLine( IResource resource, int lineNumber )
+	protected void runToLine( IFile file, int lineNumber )
 	{
 		IRunToLine target = (IRunToLine)getDebugTarget().getAdapter( IRunToLine.class );
 		if ( target != null )
 		{
-			if ( !target.canRunToLine( resource, lineNumber ) )
+			if ( !target.canRunToLine( file, lineNumber ) )
 			{
 				getTargetPart().getSite().getShell().getDisplay().beep();
 				return;
 			}
 			try
 			{
-				target.runToLine( resource, lineNumber );
+				target.runToLine( file, lineNumber );
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( e.getMessage(), e );
+			}
+		}
+	}
+
+	protected void runToLine( String fileName, int lineNumber )
+	{
+		IRunToLine target = (IRunToLine)getDebugTarget().getAdapter( IRunToLine.class );
+		if ( target != null )
+		{
+			if ( !target.canRunToLine( fileName, lineNumber ) )
+			{
+				getTargetPart().getSite().getShell().getDisplay().beep();
+				return;
+			}
+			try
+			{
+				target.runToLine( fileName, lineNumber );
 			}
 			catch( DebugException e )
 			{

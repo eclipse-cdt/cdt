@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.DebugUITools;
@@ -59,13 +59,13 @@ public class RunToLineRulerAction extends Action
 	public void update()
 	{
 		boolean enabled = false;
-		IResource resource = getResource();
+		IFile file = getFile();
 		int lineNumber = getLineNumber();
 		IDocumentProvider provider = getTextEditor().getDocumentProvider();
 		IDocument doc = provider.getDocument( getTextEditor().getEditorInput() );
-		if ( resource != null && lineNumber <= doc.getNumberOfLines() && lineNumber > 0 )
+		if ( file != null && lineNumber <= doc.getNumberOfLines() && lineNumber > 0 )
 		{
-			enabled = ( getTarget() != null && ((IRunToLine)getTarget()).canRunToLine( resource, lineNumber ) );
+			enabled = ( getTarget() != null && ((IRunToLine)getTarget()).canRunToLine( file, lineNumber ) );
 		}
 		setEnabled( enabled );
 	}
@@ -75,7 +75,7 @@ public class RunToLineRulerAction extends Action
 	 */
 	public void run()
 	{
-		runToLine( getResource(), getLineNumber() );
+		runToLine( getFile(), getLineNumber() );
 	}
 
 	/* (non-Javadoc)
@@ -139,7 +139,7 @@ public class RunToLineRulerAction extends Action
 		fTextEditor = textEditor;
 	}
 	
-	protected IResource getResource()
+	protected IFile getFile()
 	{
 		IEditorInput input = getTextEditor().getEditorInput();
 		if ( input != null && input instanceof IFileEditorInput )
@@ -154,16 +154,16 @@ public class RunToLineRulerAction extends Action
 		return getInfo().getLineOfLastMouseButtonActivity() + 1;
 	} 
 
-	protected void runToLine( IResource resource, int lineNumber )
+	protected void runToLine( IFile file, int lineNumber )
 	{
-		if ( !((IRunToLine)getTarget()).canRunToLine( resource, lineNumber ) )
+		if ( !((IRunToLine)getTarget()).canRunToLine( file, lineNumber ) )
 		{
 			getTextEditor().getSite().getShell().getDisplay().beep();
 			return;
 		}
 		try
 		{
-			((IRunToLine)getTarget()).runToLine( resource, lineNumber );
+			((IRunToLine)getTarget()).runToLine( file, lineNumber );
 		}
 		catch( DebugException e )
 		{

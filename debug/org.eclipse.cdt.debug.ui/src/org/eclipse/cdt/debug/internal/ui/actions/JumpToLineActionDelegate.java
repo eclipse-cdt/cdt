@@ -5,15 +5,16 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -93,7 +94,17 @@ public class JumpToLineActionDelegate extends AbstractEditorActionDelegate
 				try
 				{
 					IStorage storage = ((IStorageEditorInput)input).getStorage();
-					if ( storage != null && storage.getAdapter( IDisassemblyStorage.class ) != null )
+					if ( storage instanceof FileStorage )
+					{
+						IPath path = storage.getFullPath();
+						if ( path != null )
+						{
+							ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
+							int lineNumber = selection.getStartLine() + 1;
+							jumpToLine( path.lastSegment(), lineNumber );
+						}
+					}
+					else if ( storage != null && storage.getAdapter( IDisassemblyStorage.class ) != null )
 					{
 						IDisassemblyStorage disassemblyStorage = (IDisassemblyStorage)storage.getAdapter( IDisassemblyStorage.class );
 						ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
@@ -128,19 +139,40 @@ public class JumpToLineActionDelegate extends AbstractEditorActionDelegate
 		}
 	}
 
-	protected void jumpToLine( IResource resource, int lineNumber )
+	protected void jumpToLine( IFile file, int lineNumber )
 	{
 		IJumpToLine target = (IJumpToLine)getDebugTarget().getAdapter( IJumpToLine.class );
 		if ( target != null )
 		{
-			if ( !target.canJumpToLine( resource, lineNumber ) )
+			if ( !target.canJumpToLine( file, lineNumber ) )
 			{
 				getTargetPart().getSite().getShell().getDisplay().beep();
 				return;
 			}
 			try
 			{
-				target.jumpToLine( resource, lineNumber );
+				target.jumpToLine( file, lineNumber );
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( e.getMessage(), e );
+			}
+		}
+	}
+
+	protected void jumpToLine( String fileName, int lineNumber )
+	{
+		IJumpToLine target = (IJumpToLine)getDebugTarget().getAdapter( IJumpToLine.class );
+		if ( target != null )
+		{
+			if ( !target.canJumpToLine( fileName, lineNumber ) )
+			{
+				getTargetPart().getSite().getShell().getDisplay().beep();
+				return;
+			}
+			try
+			{
+				target.jumpToLine( fileName, lineNumber );
 			}
 			catch( DebugException e )
 			{

@@ -2104,7 +2104,7 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IRunToLine#canRunToLine(IResource, int)
 	 */
-	public boolean canRunToLine( IResource resource, int lineNumber )
+	public boolean canRunToLine( String fileName, int lineNumber )
 	{
 		// check if supports run to line
 		return canResume();
@@ -2113,12 +2113,12 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IRunToLine#runToLine(IResource, int)
 	 */
-	public void runToLine( IResource resource, int lineNumber ) throws DebugException
+	public void runToLine( String fileName, int lineNumber ) throws DebugException
 	{
-		if ( !canRunToLine( resource, lineNumber ) )
+		if ( !canRunToLine( fileName, lineNumber ) )
 			return;
 		setBreakpoints();
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber );
+		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
 		try
 		{
 			getCDITarget().runUntil( location );
@@ -2127,6 +2127,25 @@ public class CDebugTarget extends CDebugElement
 		{
 			targetRequestFailed( e.toString(), e );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRunToLine#canRunToLine(IResource, int)
+	 */
+	public boolean canRunToLine( IFile file, int lineNumber )
+	{
+		// check if supports run to line
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRunToLine#runToLine(IResource, int)
+	 */
+	public void runToLine( IFile file, int lineNumber ) throws DebugException
+	{
+		if ( !canRunToLine( file, lineNumber ) )
+			return;
+		runToLine( file.getLocation().lastSegment(), lineNumber );
 	}
 
 	/* (non-Javadoc)
@@ -2464,7 +2483,7 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(IResource, int)
 	 */
-	public boolean canJumpToLine( IResource resource, int lineNumber )
+	public boolean canJumpToLine( IFile file, int lineNumber )
 	{
 		// check if supports jump to line
 		return canResume();
@@ -2473,12 +2492,31 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(IResource, int)
 	 */
-	public void jumpToLine( IResource resource, int lineNumber ) throws DebugException
+	public void jumpToLine( IFile file, int lineNumber ) throws DebugException
 	{
-		if ( !canJumpToLine( resource, lineNumber ) )
+		if ( !canJumpToLine( file, lineNumber ) )
+			return;
+		jumpToLine( file.getLocation().lastSegment(), lineNumber );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(IResource, int)
+	 */
+	public boolean canJumpToLine( String fileName, int lineNumber )
+	{
+		// check if supports jump to line
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(IResource, int)
+	 */
+	public void jumpToLine( String fileName, int lineNumber ) throws DebugException
+	{
+		if ( !canJumpToLine( fileName, lineNumber ) )
 			return;
 		setBreakpoints();
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber );
+		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
 		try
 		{
 			getCDITarget().jump( location );

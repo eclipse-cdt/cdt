@@ -1322,7 +1322,8 @@ public class CVisitor {
 		} else if( statement instanceof IASTIfStatement ){
 		    if( !visitExpression( ((IASTIfStatement) statement ).getCondition(), action ) ) return false;
 		    if( !visitStatement( ((IASTIfStatement) statement ).getThenClause(), action ) ) return false;
-		    if( !visitStatement( ((IASTIfStatement) statement ).getElseClause(), action ) ) return false;
+		    if( ((IASTIfStatement) statement ).getElseClause() != null )
+		       if( !visitStatement( ((IASTIfStatement) statement ).getElseClause(), action ) ) return false;
 		} else if( statement instanceof IASTLabelStatement ){
 		    if( !visitName( ((IASTLabelStatement)statement).getName(), action ) ) return false;
 		} else if( statement instanceof IASTReturnStatement ){

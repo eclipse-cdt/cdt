@@ -243,10 +243,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    }
 
    /**
-    * This is the single entry point for setting parsePassed to false, and also
-    * making note what token offset we failed upon.
-    * 
-    * @throws EndOfFileException
+    * This is the single entry point for setting parsePassed to false
     */
    protected void failParse() {
       parsePassed = false;
@@ -1730,6 +1727,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     */
    protected IASTStatement parseIfStatement() throws EndOfFileException,
          BacktrackException {
+      IASTIfStatement result = null;
       IASTIfStatement if_statement = null;
       int start = LA(1).getOffset();
       if_loop: while (true) {
@@ -1767,6 +1765,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             new_if_statement.setThenClause(thenClause);
             thenClause.setParent(new_if_statement);
             thenClause.setPropertyInParent(IASTIfStatement.THEN);
+            ((ASTNode)new_if_statement).setLength( calculateEndOffset( thenClause ) - ((ASTNode)new_if_statement).getOffset() );
          }
          if (LT(1) == IToken.t_else) {
             consume(IToken.t_else);
@@ -1777,7 +1776,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                   if_statement.setElseClause(new_if_statement);
                   new_if_statement.setParent(if_statement);
                   new_if_statement.setPropertyInParent(IASTIfStatement.ELSE);
+                  ((ASTNode)if_statement).setLength( calculateEndOffset( new_if_statement ) - ((ASTNode)if_statement).getOffset() );
                }
+               if( result == null && if_statement != null )
+                  result = if_statement;
+               if( result == null ) 
+                  result = new_if_statement;
+               
                if_statement = new_if_statement;
                continue if_loop;
             }
@@ -1789,22 +1794,65 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                if_statement.setElseClause(new_if_statement);
                new_if_statement.setParent(if_statement);
                new_if_statement.setPropertyInParent(IASTIfStatement.ELSE);
-               ((ASTNode) new_if_statement)
-                     .setLength(calculateEndOffset(new_if_statement) - start);
+               ((ASTNode)if_statement).setLength( calculateEndOffset( new_if_statement ) - ((ASTNode)if_statement).getOffset() ) ;
             } else {
-               ((ASTNode) new_if_statement)
-                     .setLength(calculateEndOffset(new_if_statement) - start);
+               if( result == null && if_statement != null )
+                     result = if_statement;
+               if( result == null ) 
+                  result = new_if_statement;
                if_statement = new_if_statement;
             }
          } else {
             ((ASTNode) new_if_statement)
-                  .setLength(calculateEndOffset(new_if_statement) - start);
+                  .setLength(calculateEndOffset(thenClause) - start);
+            if (if_statement != null) {
+               if_statement.setElseClause(new_if_statement);
+               new_if_statement.setParent(if_statement);
+               new_if_statement.setPropertyInParent(IASTIfStatement.ELSE);
+               ((ASTNode) new_if_statement)
+                     .setLength(calculateEndOffset(new_if_statement) - start);
+            }
+            if( result == null && if_statement != null )
+                  result = if_statement;
+            if( result == null ) 
+               result = new_if_statement;
+
             if_statement = new_if_statement;
          }
          break if_loop;
       }
+      
+      reconcileLengths( result );
+      return result;
+   }
 
-      return if_statement;
+   /**
+    * @param result
+    */
+   protected void reconcileLengths(IASTIfStatement result) {
+      if( result == null ) return;
+      IASTIfStatement current = result;
+      while( current.getElseClause() instanceof IASTIfStatement )
+         current = (IASTIfStatement) current.getElseClause();
+      
+      while( current != null )
+      {
+	      ASTNode r = ((ASTNode)current);
+	      if( current.getElseClause() != null )
+	      {
+	         ASTNode else_clause = ((ASTNode)current.getElseClause() );
+	         r.setLength( else_clause.getOffset() + else_clause.getLength() - r.getOffset() );  
+	      }
+	      else
+	      {
+	         ASTNode then_clause = (ASTNode) current.getThenClause();
+	         r.setLength( then_clause.getOffset() + then_clause.getLength() - r.getOffset() );
+	      }
+	      if( current.getParent() != null && current.getParent() instanceof IASTIfStatement )
+	         current = (IASTIfStatement) current.getParent();
+	      else
+	         current = null;
+      }
    }
 
    /**

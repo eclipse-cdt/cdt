@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -151,10 +152,10 @@ public class DOMLocationTests extends AST2BaseTest {
     */
    private void assertSoleLocation(IASTNode n, int offset, int length) {
       IASTNodeLocation [] locations = n.getNodeLocations();
-      assertEquals( locations.length, 1 );
+      assertEquals( 1, locations.length );
       IASTNodeLocation nodeLocation = locations[0];
-      assertEquals( nodeLocation.getNodeOffset(), offset );
-      assertEquals( nodeLocation.getNodeLength(), length );
+      assertEquals( offset, nodeLocation.getNodeOffset() );
+      assertEquals( length, nodeLocation.getNodeLength() );
    }
    
    public void testBug83664() throws Exception {
@@ -232,9 +233,30 @@ public class DOMLocationTests extends AST2BaseTest {
          assertEquals( unaryExpression.getOperator(), IASTUnaryExpression.op_bracketedPrimary );
          IASTConditionalExpression conditional = (IASTConditionalExpression) unaryExpression.getOperand();
          assertSoleLocation( conditional,code.indexOf( "1?0:1"), "1?0:1".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+      }      
+   }
+   
+   public void testBug83737() throws Exception {
+      String code = "void f() {  if( a == 0 ) g( a ); else if( a < 0 ) g( a >> 1 ); else if( a > 0 ) g( *(&a + 2) ); }"; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p);
+         IASTFunctionDefinition definition = (IASTFunctionDefinition) tu.getDeclarations()[0];
+         IASTCompoundStatement statement = (IASTCompoundStatement) definition.getBody();
+         IASTIfStatement first_if = (IASTIfStatement) statement.getStatements()[0];
+         IASTIfStatement second_if = (IASTIfStatement) first_if.getElseClause();
+         IASTIfStatement third_if = (IASTIfStatement) second_if.getElseClause();
+         assertNull( third_if.getElseClause() );
+         int first_if_start = code.indexOf( "if( a == 0 )" ); //$NON-NLS-1$
+         int total_if_length = "if( a == 0 ) g( a ); else if( a < 0 ) g( a >> 1 ); else if( a > 0 ) g( *(&a + 2) );".length(); //$NON-NLS-1$
+         int total_if_end = first_if_start + total_if_length;
+         int second_if_start = code.indexOf( "if( a < 0 )"); //$NON-NLS-1$
+         int third_if_start = code.indexOf( "if( a > 0 )"); //$NON-NLS-1$
+         assertSoleLocation( first_if, first_if_start, total_if_length );
+         assertSoleLocation( second_if, second_if_start, total_if_end - second_if_start );
+         assertSoleLocation( third_if, third_if_start, total_if_end - third_if_start );
       }
       
    }
-   
 
 }

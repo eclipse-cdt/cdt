@@ -58,31 +58,37 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
-			MakefileEditor.MAKE_COMMENT,
-			MakefileEditor.MAKE_KEYWORD,
-			MakefileEditor.MAKE_MACRO_VAR,
-			MakefileEditor.MAKE_META_DATA
-		};
+			MakefilePartitionScanner.MAKEFILE_COMMENT,//MakefileEditor.MAKE_COMMENT,
+			MakefilePartitionScanner.MAKEFILE_IF_BLOCK,//MakefileEditor.MAKE_KEYWORD,
+			MakefilePartitionScanner.MAKEFILE_DEF_BLOCK,
+			MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK,
+			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT, //MakefileEditor.MAKE_MACRO_VAR,
+		};//MakefileEditor.MAKE_META_DATA };
 
 	}
 
-        /**
-         * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
-         */
-        public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-                ContentAssistant assistant = new ContentAssistant();
-                assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
-                assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefileEditor.MAKE_MACRO_VAR);
-                assistant.enableAutoActivation(true);
-                assistant.setAutoActivationDelay(500);
-                assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-                assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-                //Set to Carolina blue
-                assistant.setContextInformationPopupBackground(getColorManager().getColor(new RGB(0, 191, 255)));
-                                                                                                                             
-                return assistant;
-        }
+	/**
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
+	 */
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		ContentAssistant assistant = new ContentAssistant();
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT);
 
+		assistant.enableAutoActivation(true);
+		assistant.setAutoActivationDelay(500);
+
+		assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+		//Set to Carolina blue
+		assistant.setContextInformationPopupBackground(getColorManager().getColor(new RGB(0, 191, 255)));
+
+		return assistant;
+	}
 
 	protected IMakefileColorManager getColorManager() {
 		if (null == colorManager)
@@ -107,28 +113,28 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_COMMENT);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_COMMENT);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_COMMENT);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_COMMENT);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_MACRO_ASSIGNEMENT);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_MACRO_ASSIGNEMENT);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_INCLUDE_BLOCK);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_INCLUDE_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_IF_BLOCK);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_IF_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_DEF_BLOCK);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_DEF_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_OTHER);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_OTHER);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER);
 		return reconciler;
 	}
 

@@ -31,10 +31,6 @@ import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class MakefileEditor extends TextEditor {
-	public final static String MAKE_COMMENT = "make_comment"; //$NON-NLS-1$
-	public final static String MAKE_KEYWORD = "make_keyword"; //$NON-NLS-1$
-	public final static String MAKE_MACRO_VAR = "macro_var"; //$NON-NLS-1$
-	public final static String MAKE_META_DATA = "meta_data"; //$NON-NLS-1$
 
 	/**
 	 * The page that shows the outline.

@@ -101,7 +101,7 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsTerminate()
 	 */
 	public boolean supportsTerminate() {
-		return fAttached ? false : true;
+		return true;
 		
 	}
 	/**

@@ -11,7 +11,7 @@
 /*
  * Created on Oct 22, 2004
  */
-package org.eclipse.cdt.internal.core.parser2;
+package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import org.eclipse.cdt.core.parser.IProblem;
 

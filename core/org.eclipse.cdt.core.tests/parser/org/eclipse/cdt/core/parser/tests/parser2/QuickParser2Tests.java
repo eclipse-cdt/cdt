@@ -18,6 +18,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -28,11 +29,16 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser2.ANSIParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.GCCParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.IParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
-import org.eclipse.cdt.internal.core.parser2.GNUSourceParser;
+import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.c.GCCParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.GPLUSPLUSParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
 
 /**
  * @author jcamelon
@@ -107,18 +113,18 @@ public class QuickParser2Tests extends TestCase {
         parse(code.toString());
     }
 
-    private void parse( String code, boolean expectedToPass, ParserLanguage lang ) throws Exception
+    protected void parse( String code, boolean expectedToPass, ParserLanguage lang ) throws Exception
     {
         parse( code, expectedToPass, lang, false );
     }
-    private void parse( String code, boolean expectedToPass ) throws Exception
+    protected void parse( String code, boolean expectedToPass ) throws Exception
     {
         parse( code, expectedToPass, ParserLanguage.CPP );
     }
     /**
      * @param code
      */
-    private void parse(String code) throws Exception {
+    protected void parse(String code) throws Exception {
         parse( code, true, ParserLanguage.CPP );
     }
 
@@ -1278,8 +1284,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testCBool() throws Exception {
-        parse(
-                "_Bool x;", true, ParserLanguage.C); //$NON-NLS-1$
+        parse( "_Bool x;", true, ParserLanguage.C); //$NON-NLS-1$
     }
 
     public void testBug39678() throws Exception {
@@ -1378,26 +1383,39 @@ public class QuickParser2Tests extends TestCase {
      * @param c
      * @param d
      */
-    private void parse(String code, boolean expectedToPass, ParserLanguage lang, boolean gcc ) throws Exception {
-        IParserExtensionConfiguration config = null;
-        if( gcc ) 
-            config = new GCCParserExtensionConfiguration();
-        else
-            config = new ANSIParserExtensionConfiguration();
+    protected void parse(String code, boolean expectedToPass, ParserLanguage lang, boolean gcc ) throws Exception {
+        
         ProblemCollector collector = new ProblemCollector();
         IScanner scanner = ParserFactory.createScanner(new CodeReader(code
                 .toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE,
                 lang, NULL_REQUESTOR,
                 NULL_LOG, Collections.EMPTY_LIST);
-        GNUSourceParser parser2 = new GNUSourceParser(scanner, ParserMode.QUICK_PARSE, collector,
-                lang, NULL_LOG,
+        ISourceCodeParser parser2 = null;
+        if( lang == ParserLanguage.CPP )
+        {
+            ICPPParserExtensionConfiguration config = null;
+            if( gcc )
+                config = new GPLUSPLUSParserExtensionConfiguration();
+            else
+                config = new ANSICPPParserExtensionConfiguration();
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE, collector,
+                NULL_LOG,
                 config );
-        boolean answer = parser2.parse();
-        if (!answer && expectedToPass )
-            throw new ParserException("FAILURE"); //$NON-NLS-1$
+        }
+        else
+        {
+            ICParserExtensionConfiguration config = null;
+            if( gcc )
+                config = new GCCParserExtensionConfiguration();
+            else
+                config = new ANSICParserExtensionConfiguration();
+            
+            parser2 = new GNUCSourceParser( scanner, ParserMode.QUICK_PARSE, collector, 
+                NULL_LOG, config );
+        }
+        IASTTranslationUnit tu = parser2.parse();
         if( expectedToPass )
             assertTrue( collector.hasNoProblems() );
-            
     }
 
     public void testBug60142() throws Exception {

@@ -12,22 +12,19 @@
  * Created on Oct 22, 2004
  *
  */
-package org.eclipse.cdt.internal.core.parser2;
+package org.eclipse.cdt.internal.core.parser2.cpp;
 
 /**
  * @author jcamelon
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
-public interface IParserExtensionConfiguration {
+public interface ICPPParserExtensionConfiguration {
 	
-	public boolean allowRestrictPointerOperatorsCPP();
-	public boolean supportTypeofUnaryExpressionsCPP();
-	public boolean supportAlignOfUnaryExpressionCPP();
-	public boolean supportExtendedTemplateSyntaxCPP();
-	public boolean supportMinAndMaxOperatorsCPP();
+	public boolean allowRestrictPointerOperators();
+	public boolean supportTypeofUnaryExpressions();
+	public boolean supportAlignOfUnaryExpression();
+	public boolean supportExtendedTemplateSyntax();
+	public boolean supportMinAndMaxOperators();
 	public boolean supportStatementsInExpressions();
-	public boolean supportGCCStyleDesignatorsC();
+	
 
 }

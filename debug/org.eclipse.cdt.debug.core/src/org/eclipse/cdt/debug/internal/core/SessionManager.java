@@ -69,7 +69,9 @@ public class SessionManager implements IDebugEventSetListener
 		boolean terminate = true;
 		for ( int i = 0; i < targets.length; ++i )
 		{
-			if ( !targets[i].isTerminated() && !targets[i].isDisconnected() )
+			if ( targets[i].getAdapter( ICDITarget.class ) != null && 
+				 session.equals( ((ICDITarget)targets[i].getAdapter( ICDITarget.class )).getSession() ) && 
+				 !targets[i].isTerminated() && !targets[i].isDisconnected() )
 				terminate = false;
 		}		
 		if ( terminate )

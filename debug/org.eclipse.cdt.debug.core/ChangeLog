@@ -1,3 +1,8 @@
+2003-05-08 Mikhail Khodjaiants
+	In the "terminate" event handler of the session manager check the targets that 
+	belong to the current session.
+	* SessionManager.java
+
 2003-05-07 Mikhail Khodjaiants
 	Set the error status if the debug target is suspended because of an error.
 	* CDebugTarget.java

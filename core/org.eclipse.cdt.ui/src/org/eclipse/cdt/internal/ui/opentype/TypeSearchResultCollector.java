@@ -32,7 +32,7 @@ public class TypeSearchResultCollector extends BasicSearchResultCollector {
 		this.monitor = monitor;
 	}
 	
-	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException 
+	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node )
 	{
 		TypeSearchMatch result = new TypeSearchMatch();
 		return super.createMatch( result, fileResource, start, end, node );

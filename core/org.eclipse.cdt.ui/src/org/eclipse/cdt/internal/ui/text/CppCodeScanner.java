@@ -153,4 +153,23 @@ public final class CppCodeScanner extends AbstractCScanner {
 			super.adaptToPreferenceChange(event);
 		}
 	}
+	
+	public static String[] getKeywords(){
+		
+		int keysLength = fgKeywords.length;
+		int typesLength = fgTypes.length;
+		int preprocessorLength = fgPreprocessor.length;
+		int constsLength = fgConstants.length;
+		
+		String[] keywords = new String[keysLength + typesLength + preprocessorLength + constsLength];
+		
+	
+		
+		System.arraycopy(fgKeywords,0,keywords,0,keysLength);
+		System.arraycopy(fgTypes,0,keywords,keysLength,typesLength);
+		System.arraycopy(fgPreprocessor,0,keywords,(keysLength + typesLength),preprocessorLength);
+		System.arraycopy(fgConstants,0,keywords,(keysLength + typesLength + preprocessorLength),constsLength);
+	
+		return keywords;
+	}
 }

@@ -1,3 +1,7 @@
+2004-03-08 Bogdan Gheorghe
+	BasicSearchResultCollector patch from Chris Wiebe - adds setProgressMonitor method,
+	cleans up some of the CoreException warnings
+	
 2004-02-16 Andrew Niefer
 	fixed a couple of warnings
 	moved OrPattern from org.eclipse.cdt.internal.core.search.matching to org.eclipse.cdt.core.search

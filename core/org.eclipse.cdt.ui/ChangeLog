@@ -1,3 +1,18 @@
+2004-03-08 Bogdan Gheorghe
+	
+	Refactored the hyperlink-enabling MouseListener class out of CEditor.
+	Fixed Outline view not refreshing bug - reverted to an earlier version of
+	WorkingCopyManager.
+	Modified CPPCodeScanner to return the entire list of keywords for use with
+	the MouseListener hyperlink class.
+	
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/MouseClickListener.java
+	* src/org/eclipse/cdt/internal/ui/editor/WorkingCopyManager.java
+	* src/org/eclipse/cdt/internal/ui/opentype/TypeSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/text/CPPCodeScanner.java
+	
+	
 2004-03-07 Alain Magloire
 
 	Fix the point size of the icon in the CElementLabelProvider.

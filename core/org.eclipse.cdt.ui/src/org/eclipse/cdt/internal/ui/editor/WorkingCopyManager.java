@@ -42,7 +42,6 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	public WorkingCopyManager(CDocumentProvider provider) {
 		Assert.isNotNull(provider);
 		fDocumentProvider= provider;
-		fMap = new HashMap();
 	}
 
 	/*
@@ -82,13 +81,9 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	 */
 	public IWorkingCopy getWorkingCopy(IEditorInput input) {
 		IWorkingCopy unit= fMap == null ? null : (IWorkingCopy) fMap.get(input);
-		if(unit != null)
-			return unit;
-		IWorkingCopy copy = fDocumentProvider.getWorkingCopy(input);
-		if(copy != null)
-			fMap.put(input, copy);
-		return copy;
+		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
+	
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */

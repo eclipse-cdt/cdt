@@ -53,14 +53,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class BasicSearchResultCollector implements ICSearchResultCollector {
-		 IProgressMonitor fProgressMonitor = null;
+	 IProgressMonitor fProgressMonitor = null;
 
-		 public BasicSearchResultCollector() {
-		 }
-		 
-		 public BasicSearchResultCollector(IProgressMonitor monitor) {
-		 		 fProgressMonitor = monitor;
-		 }
+	 public BasicSearchResultCollector() {
+	 }
+	 
+	 public BasicSearchResultCollector(IProgressMonitor monitor) {
+	 		 fProgressMonitor = monitor;
+	 }
 
 	public void aboutToStart() {
 		results = new HashSet();
@@ -73,13 +73,17 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		 		 return fProgressMonitor;
 	}
 
-	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException 
+	 public void setProgressMonitor(IProgressMonitor monitor) {
+	 		 fProgressMonitor = monitor;
+	 }
+
+	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node )
 	{
 		BasicSearchMatch result = new BasicSearchMatch();
 		return createMatch( result, fileResource, start, end, node );
 	}
 	
-	public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException {
+	 public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) {
 		if( fileResource instanceof IResource )
 			result.resource = (IResource) fileResource;
 		else if( fileResource instanceof IPath )
@@ -90,7 +94,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		result.parentName = ""; //$NON-NLS-1$
 		
 		IASTOffsetableNamedElement offsetable = null;
-
+	
 		if( node instanceof IASTReference ){
 			offsetable = (IASTOffsetableNamedElement) ((IASTReference)node).getReferencedElement();
 			result.name = ((IASTReference)node).getName();
@@ -107,7 +111,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		} else if( offsetable instanceof IASTQualifiedNameElement ) {
 			names = ((IASTQualifiedNameElement) offsetable).getFullyQualifiedName();
 		}
-
+	
 		if( names != null ){
 			for( int i = 0; i < names.length - 1; i++ ){
 				if( i > 0 )

@@ -2,6 +2,8 @@
 	Fix for bug 51482, 61039 
 	* src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java
 	* src/org/eclipse/cdt/internal/ui/preferences/ColorEditor.java
+	Fix for bug 44552
+	Patch from Dave applied.
 	
 2004-06-08 Hoda Amer
 	Fixes for bugs 62780, 62783, 62784

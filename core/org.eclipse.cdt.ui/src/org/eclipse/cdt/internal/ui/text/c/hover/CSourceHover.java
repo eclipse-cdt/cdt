@@ -183,7 +183,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 					searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
 					
 					Set set = searchResultCollector.getSearchResults();
-					if (set != null) {
+					if (set != null && set.size() > 0 ) {
 						IMatch[] matches = new IMatch[set.size()];
 						set.toArray(matches);
 						IResource resource = matches[0].getResource();

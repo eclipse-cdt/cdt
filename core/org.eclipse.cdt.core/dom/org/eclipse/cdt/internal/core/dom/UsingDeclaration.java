@@ -20,12 +20,11 @@ package org.eclipse.cdt.internal.core.dom;
 public class UsingDeclaration extends Declaration {
 
 	private Name mappedName;
-	private IScope ownerScope;
 	boolean isTypename = false;
 	
 	public UsingDeclaration( IScope owner )
 	{
-		ownerScope = owner;
+		super( owner ); 
 	}
 	/**
 	 * @return String
@@ -40,13 +39,6 @@ public class UsingDeclaration extends Declaration {
 	 */
 	public void setMappedName(Name mapping) {
 		this.mappedName = mapping;
-	}
-
-	/**
-	 * @return IScope
-	 */
-	public IScope getOwnerScope() {
-		return ownerScope;
 	}
 
 	/**

@@ -23,12 +23,11 @@ import java.util.List;
 public class LinkageSpecification extends Declaration implements IScope {
 
 	private List declarations = new LinkedList();
-	private IScope ownerScope;
 	private String languageLinkage; 
 	
 	LinkageSpecification( IScope owner, String linkage )
 	{
-		ownerScope = owner; 
+		super( owner );
 		languageLinkage = linkage;
 	}
 
@@ -46,12 +45,6 @@ public class LinkageSpecification extends Declaration implements IScope {
 		return Collections.unmodifiableList( declarations );
 	}
 
-	/**
-	 * @return IScope
-	 */
-	public IScope getOwnerScope() {
-		return ownerScope;
-	}
 
 	/**
 	 * @return String

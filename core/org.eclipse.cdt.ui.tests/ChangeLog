@@ -1,3 +1,6 @@
+2003-04-11 John Camelon
+	Added DOMTests::testBug36247().  
+
 2003-04-11 Andrew Niefer
 	Moved ScannerFailedTest::testBug36316 to ScannerTestCase::testBug36316
 	Added ScannerFailedTest::testBug36047

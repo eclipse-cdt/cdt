@@ -57,7 +57,7 @@ public class CModelBuilder {
 		DOMBuilder domBuilder = new DOMBuilder();
 		String code = translationUnit.getBuffer().getContents();
 		Parser parser = new Parser(code, domBuilder, true);
-		if( ! parser.parse() ) throw new ParserException( "Parse failure" );
+		parser.parse();
 		long startTime = System.currentTimeMillis(); 
 		generateModelElements(domBuilder.getTranslationUnit());
 		System.out.println("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms" );

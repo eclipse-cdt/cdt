@@ -26,8 +26,9 @@ public class TemplateParameter extends Declaration implements ITemplateParameter
 	public final static int k_template = 4;
 	
 	
-	public TemplateParameter( int kind )
+	public TemplateParameter( IScope scope, int kind )
 	{
+		super( scope );
 		this.kind = kind; 
 	}
 	

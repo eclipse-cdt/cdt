@@ -1231,6 +1231,62 @@ public class DOMTests extends TestCase {
 		TranslationUnit tu = parse( "A::A():B( (char *)0 ){}", true ); 
 		assertEquals( tu.getDeclarations().size(), 1 );  
 	}
+	
+	public void testBug36247() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "class A {\n" ); 
+  		code.write( "INLINE_DEF int f ();\n" ); 
+		code.write( "INLINE_DEF A   g ();" ); 
+		code.write( "INLINE_DEF A * h ();" ); 
+		code.write( "};" );
+		TranslationUnit tu = parse(code.toString());
+		assertEquals( tu.getDeclarations().size(),1 );
+		SimpleDeclaration classDeclaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( classDeclaration.getDeclarators().size(), 0 );
+		assertEquals( classDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+		ClassSpecifier classSpec = (ClassSpecifier)classDeclaration.getTypeSpecifier();
+		PointerOperator po =null;
+		int number = 3;
+		assertEquals( classSpec.getDeclarations().size(), number );
+		for( int i = 0; i < number; ++i )
+		{
+			SimpleDeclaration subDeclaration = (SimpleDeclaration)classSpec.getDeclarations().get(i);
+			assertEquals( subDeclaration.getDeclarators().size(), 1 );
+			Declarator functionDeclarator = (Declarator)subDeclaration.getDeclarators().get(0);
+			assertNotNull( functionDeclarator.getParms());
+			assertEquals( 0, functionDeclarator.getParms().getDeclarations().size() );
+			List pointerOperators = functionDeclarator.getPointerOperators();  
+			switch( i )
+			{
+				case 0: 
+					assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+					assertEquals( functionDeclarator.getName().toString(), "f" );
+					assertEquals( pointerOperators.size(), 0 );
+					break;
+				case 1:
+					assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+					assertEquals( subDeclaration.getDeclSpecifier().getTypeName(), "A");
+					assertEquals( functionDeclarator.getName().toString(), "g" );
+					assertEquals( pointerOperators.size(), 0 );	
+					break;
+				case 2:
+					assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+					assertEquals( subDeclaration.getDeclSpecifier().getTypeName(), "A");
+					assertEquals( functionDeclarator.getName().toString(), "h" );
+					assertEquals( pointerOperators.size(), 1 );
+					po = (PointerOperator)pointerOperators.get(0);
+					assertFalse( po.isConst() ); 
+					assertFalse( po.isVolatile() );
+					assertEquals( po.getType(), PointerOperator.t_pointer );
+					break;
+				default:
+					break;
+			}
+			
+		}
+		
+	}
 	 
 }
 

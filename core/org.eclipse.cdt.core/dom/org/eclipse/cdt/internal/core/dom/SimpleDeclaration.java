@@ -12,6 +12,12 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.Cont
 	private DeclSpecifier declSpec = null;
 	private boolean isFunctionDefinition = false;
 	 
+	 
+	public SimpleDeclaration(IScope owner )
+	{
+		super( owner );
+	}
+	
 	public DeclSpecifier getDeclSpecifier()
 	{
 		if( declSpec == null )

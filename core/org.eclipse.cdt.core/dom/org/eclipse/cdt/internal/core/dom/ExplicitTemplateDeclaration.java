@@ -27,8 +27,9 @@ public class ExplicitTemplateDeclaration extends Declaration implements IScope {
 	public final static int k_specialization = 1;
 	public final static int k_instantiation = 2; 
 
-	public ExplicitTemplateDeclaration( int kind ) 
+	public ExplicitTemplateDeclaration( IScope scope, int kind ) 
 	{
+		super( scope );
 		this.kind = kind;
 	}
 

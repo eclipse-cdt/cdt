@@ -27,13 +27,12 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 	private final boolean exported;
 	private AccessSpecifier visibility = null; 
 	private Token firstToken, lastToken; 
-	private IScope ownerScope;  
 	private List declarations = new ArrayList(); 
 	private TemplateParameterList templateParms = null;                
 
 	public TemplateDeclaration( IScope ownerScope, Token exported )
 	{
-		this.ownerScope = ownerScope;
+		super( ownerScope );
 		this.firstToken = exported; 
 		this.exported = exported.getType() == Token.t_export ? true : false;
 	}
@@ -57,13 +56,6 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 	 */
 	public boolean isExported() {
 		return exported;
-	}
-
-	/**
-	 * @return IScope
-	 */
-	public IScope getOwnerScope() {
-		return ownerScope;
 	}
 
 	/**

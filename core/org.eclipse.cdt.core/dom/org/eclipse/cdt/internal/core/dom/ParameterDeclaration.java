@@ -16,8 +16,13 @@ import java.util.List;
  */
 public class ParameterDeclaration extends Declaration implements DeclSpecifier.Container, TypeSpecifier.IOwner {
 
-	DeclSpecifier declSpec = null; 
+	private DeclSpecifier declSpec = null; 
 	private TypeSpecifier typeSpecifier;
+	
+	public ParameterDeclaration( IScope scope )
+	{
+		super( scope );
+	}
 	
 	/**
 	 * Returns the typeSpecifier.

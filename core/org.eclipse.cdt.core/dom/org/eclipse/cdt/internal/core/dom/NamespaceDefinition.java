@@ -25,14 +25,13 @@ import org.eclipse.cdt.internal.core.parser.Token;
 public class NamespaceDefinition extends Declaration implements IScope, IOffsetable {
 
 	private List declarations = new LinkedList();
-	private IScope ownerScope;
 	private Name name = null;
 	private int startingOffset = 0, totalLength = 0;
 	private Token startToken = null;
 
 	public NamespaceDefinition( IScope owner )
 	{
-		ownerScope = owner;
+		super( owner );
 	}
 
 	/* (non-Javadoc)
@@ -56,13 +55,6 @@ public class NamespaceDefinition extends Declaration implements IScope, IOffseta
 	 */
 	public Name getName() {
 		return name;
-	}
-
-	/**
-	 * @return IScope
-	 */
-	public IScope getOwnerScope() {
-		return ownerScope;
 	}
 
 	/**

@@ -20,11 +20,10 @@ package org.eclipse.cdt.internal.core.dom;
 public class UsingDirective extends Declaration {
 
 	private Name namespaceName; 
-	private IScope ownerScope;
 	
 	public UsingDirective( IScope owner )
 	{
-		ownerScope = owner;
+		super( owner );
 	}
 
 	/**
@@ -41,12 +40,4 @@ public class UsingDirective extends Declaration {
 	public void setNamespaceName(Name namespaceName) {
 		this.namespaceName = namespaceName;
 	}
-
-	/**
-	 * @return IScope
-	 */
-	public IScope getOwnerScope() {
-		return ownerScope;
-	}
-
 }

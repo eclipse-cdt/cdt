@@ -20,8 +20,9 @@ public class ASMDefinition extends Declaration {
 
 	final private String assemblyCode;
 	
-	public ASMDefinition( String code )
+	public ASMDefinition( IScope scope, String code )
 	{
+		super( scope );
 		assemblyCode = code;
 	}
 	/**

@@ -1,4 +1,10 @@
 2003-04-11 John Camelon
+	Minimized the number of objects being returned from Parser callbacks.  
+	Fixed CModelBuilder to handle errors better. 
+	Reorganized the DOM Hierarchy to ensure that nodes were added to the tree on End() callbacks.  
+	Fixed defect 36247().
+
+2003-04-11 John Camelon
 	Fixed Bug 36243 DomBuilder Offsetable List 
 
 2003-04-10 John Camelon

@@ -107,21 +107,6 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 		return results;
 	}
 	
-	private void updateRegisters() throws DebugException
-	{
-		ICDIRegister[] cdiRegisters = getCDIRegisters();
-		int index = 0;
-		while( index < fRegisters.size() && index < cdiRegisters.length )
-		{
-			CRegister register = (CRegister)fRegisters.get( index );
-			if ( !cdiRegisters[index].equals( register.getCDIVariable() ) )
-			{
-				register.setCDIVariable( cdiRegisters[index] );
-			}
-			index++;
-		}
-	}
-	
 	protected void resetChangeFlags()
 	{
 		if ( fRegisters == null )

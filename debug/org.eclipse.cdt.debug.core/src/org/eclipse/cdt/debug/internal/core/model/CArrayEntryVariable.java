@@ -23,11 +23,6 @@ public class CArrayEntryVariable extends CModificationVariable
 	private int fIndex;
 
 	/**
-	 * The type name of this variable. Cached lazily.
-	 */
-	private String fReferenceTypeName = null;
-
-	/**
 	 * Constructor for CArrayEntryVariable.
 	 * @param target
 	 */

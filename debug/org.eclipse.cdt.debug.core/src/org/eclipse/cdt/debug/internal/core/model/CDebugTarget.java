@@ -360,10 +360,6 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
-	private void disableAddressBreakpoints()
-	{
-		
-	}
 	private boolean isTargetBreakpoint( IBreakpoint bp )
 	{
 		IProject project = bp.getMarker().getResource().getProject();

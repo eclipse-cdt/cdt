@@ -24,8 +24,6 @@ import org.eclipse.debug.core.model.IValue;
  */
 public abstract class CModificationVariable extends CVariable
 {
-	private static final String ERROR_MESSAGE = "Value modification failed - unable to generate value from expression: {0}";
-
 	/**
 	 * Constructor for CModificationVariable.
 	 * @param parent

@@ -22,7 +22,6 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICBreakpointManager;
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
@@ -56,7 +55,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
@@ -631,7 +629,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !isSuspended() ) 
 			return;
-		setBreakpoints();
 		try 
 		{
 			getCDITarget().resume();
@@ -757,6 +754,7 @@ public class CDebugTarget extends CDebugElement
 			catch( DebugException e )
 			{
 			}
+			DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
 		}
 	}
 
@@ -1016,12 +1014,14 @@ public class CDebugTarget extends CDebugElement
 			else if ( event instanceof ICDISuspendedEvent )
 			{
 				boolean pass = true;
+/*
 				if ( source instanceof ICDITarget && 
 					 ((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent &&
 					 applyDeferredBreakpoints() )
 				{
 					pass = handleInternalSuspendedEvent( (ICDISuspendedEvent)event );
 				}
+*/
 				if ( pass && (source instanceof ICDITarget || source instanceof ICDIThread) )
 				{
 					handleSuspendedEvent( (ICDISuspendedEvent)event );
@@ -1444,8 +1444,13 @@ public class CDebugTarget extends CDebugElement
 		{
 			handleErrorInfo( (ICDIErrorInfo)reason );
 		}
+		else if ( reason instanceof ICDISharedLibraryEvent )
+		{
+			handleSuspendedBySolibEvent( (ICDISharedLibraryEvent)reason );
+		}
+		
 	}
-
+/*
 	private boolean handleInternalSuspendedEvent( ICDISuspendedEvent event )
 	{
 		setRetryBreakpoints( true );
@@ -1546,7 +1551,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		return result;
 	}
-
+*/
 	private void handleResumedEvent( ICDIResumedEvent event )
 	{
 		setSuspended( false );
@@ -1636,6 +1641,11 @@ public class CDebugTarget extends CDebugElement
 			} 
 			CDebugUtils.error( status, this );
 		}
+	}
+
+	private void handleSuspendedBySolibEvent( ICDISharedLibraryEvent solibEvent )
+	{
+		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
 	private void handleExitedEvent( ICDIExitedEvent event )
@@ -2284,7 +2294,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !canRunToLine( fileName, lineNumber ) )
 			return;
-		setBreakpoints();
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
 		try
 		{
@@ -2601,7 +2610,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !canRunToAddress( address ) )
 			return;
-		setBreakpoints();
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
 		try
 		{
@@ -2618,9 +2626,15 @@ public class CDebugTarget extends CDebugElement
 		return fSetBreakpoints;
 	}
 
-	public void setRetryBreakpoints( boolean retry )
+	protected void setRetryBreakpoints( boolean retry )
 	{
 		fSetBreakpoints = retry;
+	}
+
+	public void setDeferredBreakpoints()
+	{
+		setRetryBreakpoints( true );
+		setBreakpoints();
 	}
 
 	/* (non-Javadoc)
@@ -2682,7 +2696,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !canJumpToLine( fileName, lineNumber ) )
 			return;
-		setBreakpoints();
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
 		try
 		{
@@ -2710,7 +2723,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !canJumpToAddress( address ) )
 			return;
-		setBreakpoints();
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
 		try
 		{
@@ -2778,7 +2790,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		setRunningInfo( info );
 	}
-
+/*
 	private boolean applyDeferredBreakpoints()
 	{
 		boolean result = false;
@@ -2791,4 +2803,5 @@ public class CDebugTarget extends CDebugElement
 		}
 		return result;
 	}
+*/
 }

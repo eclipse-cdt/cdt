@@ -50,6 +50,8 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 		CSharedLibrary library = new CSharedLibrary( getDebugTarget(), cdiLibrary );
 		fSharedLibraries.add( library );
 		library.fireCreationEvent();
+		if ( library.areSymbolsLoaded() )
+			((CDebugTarget)getDebugTarget()).setDeferredBreakpoints();
 	}
 
 	/* (non-Javadoc)
@@ -74,8 +76,8 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 		CSharedLibrary library = find( cdiLibrary );
 		if ( library != null )
 		{
-			((CDebugTarget)getDebugTarget()).setRetryBreakpoints( true );
 			library.fireChangeEvent( DebugEvent.STATE );
+			((CDebugTarget)getDebugTarget()).setDeferredBreakpoints();
 		}
 	}
 

@@ -1,4 +1,14 @@
 2003-09-09 Mikhail Khodjaiants
+	Removed the internal handling of the 'stop-on-shared-library-events' option - 
+	will be moved to the mi.
+	Try to set the deferred breakpoints only when:
+	- a shared library is loaded 
+	- the symbols of shared library are loaded
+	* CSharedLibararyManager.java
+	* CDebugTarget.java
+	* CThread.java
+
+2003-09-09 Mikhail Khodjaiants
 	Added the 'getSharedLibraryPaths' and 'setSharedLibraryPaths' methods 
 	to the 'ICDISharedLibraryManager' interface.
 	* ICDISharedLibraryManager.java

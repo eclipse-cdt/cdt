@@ -10,12 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
@@ -38,7 +36,6 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -430,7 +427,7 @@ public class CThread extends CDebugElement
 				if ( ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) ||
 					 source instanceof ICDITarget )
 				{
-					if ( !(((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent && applyDeferredBreakpoints()) )
+//					if ( !(((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent && applyDeferredBreakpoints()) )
 						handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 			}
@@ -497,7 +494,6 @@ public class CThread extends CDebugElement
 	{
 		if ( !isSuspended() )
 			return;
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().resume();
@@ -585,7 +581,6 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepInto() )
 			return;
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
@@ -610,7 +605,6 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepOver() )
 			return;
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
@@ -635,7 +629,6 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepReturn() )
 			return;
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().stepReturn();
@@ -838,7 +831,6 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepIntoInstruction() )
 			return;
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().stepIntoInstruction();
@@ -856,7 +848,6 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepOverInstruction() )
 			return;
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().stepOverInstruction();
@@ -1145,7 +1136,7 @@ public class CThread extends CDebugElement
 			((IResumeWithoutSignal)getDebugTarget()).resumeWithoutSignal();
 		}
 	}
-
+/*
 	private boolean applyDeferredBreakpoints()
 	{
 		boolean result = false;
@@ -1158,4 +1149,5 @@ public class CThread extends CDebugElement
 		}
 		return result;
 	}
+*/
 }

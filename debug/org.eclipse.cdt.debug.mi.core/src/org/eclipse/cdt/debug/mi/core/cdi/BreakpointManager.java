@@ -99,7 +99,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			boolean found = false;
 			int no = oldBreakpoints[i].getMIBreakpoint().getNumber();
 			for (int j = 0; j < newMIBreakpoints.length; j++) {
-				if (no == newMIBreakpoints[i].getNumber()) {
+				if (no == newMIBreakpoints[j].getNumber()) {
 					found = true;
 					break;
 				}
@@ -281,6 +281,9 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			resumeInferior(state);
 		}
 		((Breakpoint) breakpoint).getMIBreakpoint().setEnabled(true);
+		// Fire a changed Event.
+		MISession mi = s.getMISession();
+		mi.fireEvent(new MIBreakpointChangedEvent(((Breakpoint)breakpoint).getMIBreakpoint().getNumber()));
 	}
 
 	public void disableBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
@@ -308,6 +311,9 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			resumeInferior(state);
 		}
 		((Breakpoint) breakpoint).getMIBreakpoint().setEnabled(false);
+		// Fire a changed Event.
+		MISession mi = s.getMISession();
+		mi.fireEvent(new MIBreakpointChangedEvent(((Breakpoint)breakpoint).getMIBreakpoint().getNumber()));
 	}
 
 	public void setCondition(ICDIBreakpoint breakpoint, ICDICondition condition) throws CDIException {
@@ -353,6 +359,9 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		} finally {
 			resumeInferior(state);
 		}
+		// Fire a changed Event.
+		MISession mi = s.getMISession();
+		mi.fireEvent(new MIBreakpointChangedEvent(((Breakpoint)breakpoint).getMIBreakpoint().getNumber()));
 	}
 
 	/**

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.launch"
+   name="CDT Launch Plug-in"
+   version="0.0.1"
+   provider-name="QNX Software Systems Ltd."
+   class="org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin">
+
+   <runtime>
+      <library name="cdtlaunch.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+   </requires>
+
+
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="%LocalCDTLaunch.name"
+            delegate="org.eclipse.cdt.launch.internal.LocalCLaunchConfigurationDelegate"
+            modes="run,debug"
+            public="true"
+            id="org.eclipse.cdt.launch.localCLaunch">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icon/localCLaunch.gif"
+            configTypeID="org.eclipse.cdt.launch.LocalCLaunch"
+            id="org.eclipse.cdt.launch.localCLaunchImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.localCLaunch"
+            class="org.eclipse.cdt.launch.internal.ui.LocalCLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.localClaunchConfigurationTabGroup">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="org.eclipse.cdt.launch.shortcut1"
+            icon="org.eclipse.cdt.launch.shortcut1"
+            modes="run,debug"
+            class="org.eclipse.cdt.launch.LaunchShortcut1"
+            id="org.eclipse.cdt.launch.localCShortcut">
+      </shortcut>
+   </extension>
+
+</plugin>

@@ -1,5 +1,9 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.newparser.util.*;
+import org.eclipse.cdt.internal.core.newparser.util.Name;
+
+
 public class Declarator {
 	
 	public Declarator(DeclarationSpecifier.Container declaration) {

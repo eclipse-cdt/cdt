@@ -3,9 +3,12 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.newparser.util.*;
+
 public class SimpleDeclaration extends Declaration implements DeclarationSpecifier.Container{
 
-	private DeclarationSpecifier declSpec = null; 
+	private DeclarationSpecifier declSpec = null;
+	 
 	public DeclarationSpecifier getDeclSpecifier()
 	{
 		if( declSpec == null )
@@ -43,7 +46,7 @@ public class SimpleDeclaration extends Declaration implements DeclarationSpecifi
 
 	private List declarators = new LinkedList();
 	
-	public void addDeclarator(Declarator declarator) {
+	public void addDeclarator(Object declarator) {
 		declarators.add(declarator);
 	}
 

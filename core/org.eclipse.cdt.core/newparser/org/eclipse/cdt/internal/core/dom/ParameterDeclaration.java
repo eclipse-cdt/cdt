@@ -3,6 +3,8 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.newparser.util.*;
+
 /**
  * @author jcamelon
  *
@@ -16,7 +18,7 @@ public class ParameterDeclaration extends Declaration implements DeclarationSpec
 	DeclarationSpecifier declSpec = null; 
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.Container#getDeclSpecifier()
+	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#getDeclSpecifier()
 	 */
 	public DeclarationSpecifier getDeclSpecifier() {
 		if( declSpec == null )
@@ -26,14 +28,14 @@ public class ParameterDeclaration extends Declaration implements DeclarationSpec
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.Container#setDeclSpecifier(org.eclipse.cdt.internal.core.dom.DeclarationSpecifier)
+	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#setDeclSpecifier(org.eclipse.cdt.internal.core.dom.DeclarationSpecifier)
 	 */
 	public void setDeclSpecifier(DeclarationSpecifier in) {
 		declSpec = in; 
 	}
 	private List declarators = new LinkedList();
 	
-	public void addDeclarator(Declarator declarator) {
+	public void addDeclarator(Object declarator) {
 		declarators.add(declarator);
 	}
 

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.IScope;
+import org.eclipse.cdt.internal.core.newparser.util.Name;
 
 public class ClassSpecifier extends TypeSpecifier implements IScope {
 

@@ -4,6 +4,8 @@ package org.eclipse.cdt.internal.core.dom;
 import org.eclipse.cdt.core.dom.IScope;
 import org.eclipse.cdt.internal.core.newparser.IParserCallback;
 import org.eclipse.cdt.internal.core.newparser.Token;
+import org.eclipse.cdt.internal.core.newparser.util.*;
+import org.eclipse.cdt.internal.core.newparser.util.Name;
 
 /**
  * This is the parser callback that creates objects in the DOM.
@@ -29,7 +31,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsEnd()
 	 */
-	public void argumentsEnd() {
+	public void argumentsEnd(Object parameterDeclarationClause) {
 	}
 
 	/**
@@ -104,78 +106,8 @@ public class DOMBuilder implements IParserCallback
 			declSpec = new DeclarationSpecifier(); 
 			decl.setDeclSpecifier( declSpec ); 
 		}
-		
-		switch (specifier.getType()) {
-			case Token.t_auto:
-				declSpec.setAuto(true);
-				break;
-			case Token.t_register:
-				declSpec.setRegister(true);
-				break;
-			case Token.t_static:
-				declSpec.setStatic(true);
-				break;
-			case Token.t_extern:
-				declSpec.setExtern(true);
-				break;
-			case Token.t_mutable:
-				declSpec.setMutable(true);
-				break;
-			case Token.t_inline:
-				declSpec.setInline(true);
-				break;
-			case Token.t_virtual:
-				declSpec.setVirtual(true);
-				break;
-			case Token.t_explicit:
-				declSpec.setExplicit(true);
-				break;
-			case Token.t_typedef:
-				declSpec.setTypedef(true);
-				break;
-			case Token.t_friend:
-				declSpec.setFriend(true);
-				break;
-			case Token.t_const:
-				declSpec.setConst(true);
-				break;
-			case Token.t_volatile:
-				declSpec.setVolatile(true);
-				break;
-			case Token.t_char:
-				declSpec.setType(DeclarationSpecifier.t_char);
-				break;
-			case Token.t_wchar_t:
-				declSpec.setType(DeclarationSpecifier.t_wchar_t);
-				break;
-			case Token.t_bool:
-				declSpec.setType(DeclarationSpecifier.t_bool);
-				break;
-			case Token.t_short:
-				declSpec.setShort(true);
-				break;
-			case Token.t_int:
-				declSpec.setType(DeclarationSpecifier.t_int);
-				break;
-			case Token.t_long:
-			declSpec.setLong(true);
-				break;
-			case Token.t_signed:
-			declSpec.setUnsigned(false);
-				break;
-			case Token.t_unsigned:
-			declSpec.setUnsigned(true);
-				break;
-			case Token.t_float:
-			declSpec.setType(DeclarationSpecifier.t_float);
-				break;
-			case Token.t_double:
-			declSpec.setType(DeclarationSpecifier.t_double);
-				break;
-			case Token.t_void:
-			declSpec.setType(DeclarationSpecifier.t_void);
-				break;
-		}
+
+		declSpec.setType( specifier );		
 	}
 
 	/**
@@ -223,7 +155,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public Object simpleDeclarationBegin(Object container, Token firstToken) {
+	public Object simpleDeclarationBegin(Object container) {
 		SimpleDeclaration decl = new SimpleDeclaration();
 		((IScope)container).addDeclaration(decl);
 		return decl;
@@ -307,10 +239,10 @@ public class DOMBuilder implements IParserCallback
 	
 	public void baseSpecifierName( Object baseSpecifier )
 	{
-		((BaseSpecifier)baseSpecifier).setName(currName.getName());		
+		((BaseSpecifier)baseSpecifier).setName(currName.toString());		
 	}
 	
-	public Object parameterDeclarationBegin( Object container, Token firstToken )
+	public Object parameterDeclarationBegin( Object container )
 	{
 		ParameterDeclarationClause clause = (ParameterDeclarationClause)container; 
 		ParameterDeclaration pd = new ParameterDeclaration();

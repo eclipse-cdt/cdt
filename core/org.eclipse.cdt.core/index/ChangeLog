@@ -1,3 +1,16 @@
+2004-11-12 Bogdan Gheorghe
+	Fix for Bug 78414: IProblem count increased through indexing header files stand-alone
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexAllProject.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddCompilationUnitToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddFileToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddFolderToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/CleanEncounteredHeaders.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java	
+	
+	* parser/org/eclipse/cdt/internal/core/parser/problem/Problem.java
+	
 2004-11-02 Bogdan Gheorghe
 	Fixed a bug in the index merge.
 	

@@ -12,26 +12,43 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
+import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public abstract class AddFileToIndex extends IndexRequest {
 	IFile resource;
-	
+	private boolean checkEncounteredHeaders;
 
-	public AddFileToIndex(IFile resource, IPath indexPath, IndexManager manager) {
+	public AddFileToIndex(IFile resource, IPath indexPath, IndexManager manager, boolean checkEncounteredHeaders) {
 		super(indexPath, manager);
 		this.resource = resource;
+		this.checkEncounteredHeaders = checkEncounteredHeaders;
+	}
+	
+	public AddFileToIndex(IFile resource, IPath indexPath, IndexManager manager) {
+		this(resource,indexPath,manager,false);
 	}
 	
 	public boolean execute(IProgressMonitor progressMonitor) {
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
 	
-	
+		if (checkEncounteredHeaders) {
+			IProject resourceProject = resource.getProject();
+			/* Check to see if this is a header file */ 
+			ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,resource.getName());
+			
+			/* See if this file has been encountered before */
+			if (type.isHeader() &&
+				manager.haveEncounteredHeader(resourceProject.getFullPath(),resource.getLocation()))
+				return true;
+		}
 		/* ensure no concurrent write access to index */
 		IIndex index = manager.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
 		if (index == null) return true;

@@ -34,7 +34,8 @@ class AddFolderToIndex extends IndexRequest {
 	char[][] exclusionPattern;
 	ArrayList sourceFilesToIndex;
 	ArrayList headerFilesToIndex;
-
+	boolean cleanEncouteredHeaders;
+	
 	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, IndexManager manager) {
 		super(project.getFullPath(), manager);
 		this.folderPath = folderPath;
@@ -42,6 +43,17 @@ class AddFolderToIndex extends IndexRequest {
 		this.exclusionPattern = exclusionPattern;
 		this.sourceFilesToIndex = new ArrayList();
 		this.headerFilesToIndex = new ArrayList();
+		this.cleanEncouteredHeaders = false;
+	}
+	
+	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, IndexManager manager, boolean cleanEncounteredHeaders) {
+		super(project.getFullPath(), manager);
+		this.folderPath = folderPath;
+		this.project = project;
+		this.exclusionPattern = exclusionPattern;
+		this.sourceFilesToIndex = new ArrayList();
+		this.headerFilesToIndex = new ArrayList();
+		this.cleanEncouteredHeaders = cleanEncounteredHeaders;
 	}
 	
 	public boolean execute(IProgressMonitor progressMonitor) {
@@ -102,12 +114,15 @@ class AddFolderToIndex extends IndexRequest {
 	private void scheduleJobs() {
 		//Schedule the source jobs first, then the headers
 		for (int i=0; i<sourceFilesToIndex.size(); i++)
-			this.manager.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath);
+			this.manager.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath, false);
 		
 		for (int i=0;i<headerFilesToIndex.size(); i++)
-			this.manager.addSource((IFile)headerFilesToIndex.get(i), this.indexPath);
+			this.manager.addSource((IFile)headerFilesToIndex.get(i), this.indexPath, true);
 		
-		
+		if (cleanEncouteredHeaders){
+			CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.manager);
+			this.manager.request(cleanHeaders);
+		}
 	}
 
 	public String toString() {

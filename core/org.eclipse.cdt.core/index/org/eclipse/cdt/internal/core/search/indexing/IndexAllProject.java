@@ -82,7 +82,11 @@ public class IndexAllProject extends IndexRequest {
 			for (int i=0;i<sourceRoot.length;i++){
 				if (sourceRoot[i] instanceof SourceRoot){
 					ISourceEntry tempEntry = ((SourceRoot) sourceRoot[i]).getSourceEntry();
-					this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager));
+					
+					if ((i+1) != sourceRoot.length)
+						this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager));
+					else
+						this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager,true));
 				}
 			}
 			

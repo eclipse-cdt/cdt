@@ -234,6 +234,9 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,
 				inclusion.getFullFileName());
 
+		/* See if this file has been encountered before */
+		if (type.isHeader())
+			CCorePlugin.getDefault().getCoreModel().getIndexManager().haveEncounteredHeader(resourceProject.getFullPath(),new Path(inclusion.getFullFileName()));
 		
 	}
 

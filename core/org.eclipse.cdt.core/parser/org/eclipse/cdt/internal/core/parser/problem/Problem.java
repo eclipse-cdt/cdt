@@ -248,7 +248,11 @@ public class Problem implements IProblem {
 			msg = MessageFormat.format( msg, new Object [] { new String(arg) } );
 		}
 		
-		Object [] args = { msg, new String( originatingFileName ), new Integer( lineNumber ) };
+		Object [] args = null;
+		if (originatingFileName != null)
+			args = new Object []{ msg, new String( originatingFileName ), new Integer( lineNumber ) };
+		else
+			args = new Object []{ msg, new String(""), new Integer( lineNumber ) };
 		
 		message = ParserMessages.getFormattedString( PROBLEM_PATTERN, args ); 
 		

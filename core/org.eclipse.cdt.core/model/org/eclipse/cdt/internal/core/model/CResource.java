@@ -33,10 +33,6 @@ public abstract class CResource extends Parent implements ICResource {
 		return resource;
 	}
 
-	public IResource getCorrespondingResource() throws CModelException {
-		return resource;
-	}
-
 	public IResource getResource() throws CModelException {
 		return resource;
 	}

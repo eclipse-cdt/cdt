@@ -96,9 +96,9 @@ public class CDebugImages
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	private static final String T_LCL = "lcl16"; //$NON-NLS-1$
 	private static final String T_CTOOL = "ctool16"; //$NON-NLS-1$
-	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
-	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
-	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
+//	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
+//	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
+//	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED );
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED );

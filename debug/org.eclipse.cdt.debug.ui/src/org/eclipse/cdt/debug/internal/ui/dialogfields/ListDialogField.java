@@ -368,13 +368,6 @@ public class ListDialogField extends DialogField {
 		updateButtonState();
 	}
 	
-	private Button getButton(int index) {
-		if (fButtonControls != null && index >= 0 && index < fButtonControls.length) {
-			return fButtonControls[index];
-		}
-		return null;
-	}
-
 	/*
 	 * Updates the enable state of the all buttons
 	 */ 

@@ -463,7 +463,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			IProject project = cproject.getProject();
 			IPathEntryStore store = getPathEntryStore(project);
 			store.setRawPathEntries(project, newRawEntries);
-			resolvedMap.remove(cproject);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
@@ -647,6 +646,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				ICProject cproject = manager.create(project);
 				try {
 					IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
+					// Clear the old cache entries.
+					resolvedMap.remove(cproject);
 					IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
 					ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
 					if (deltas.length > 0) {

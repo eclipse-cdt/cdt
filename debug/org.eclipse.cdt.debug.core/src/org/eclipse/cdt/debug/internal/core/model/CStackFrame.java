@@ -80,6 +80,11 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	private List fExpressions;
 
 	/**
+	 * Need this flag to prevent evaluations on disposed frames. 
+	 */
+	private boolean fIsDisposed = false;
+
+	/**
 	 * Constructor for CStackFrame.
 	 */
 	public CStackFrame( CThread thread, ICDIStackFrame cdiFrame ) {
@@ -477,6 +482,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	}
 
 	protected void dispose() {
+		setDisposed( true );
 		getCDISession().getEventManager().removeEventListener( this );
 		disposeAllVariables();
 		disposeExpressions();
@@ -661,9 +667,11 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#evaluateExpression(java.lang.String)
 	 */
 	public IValue evaluateExpression( String expressionText ) throws DebugException {
-		CExpression expression = getExpression( expressionText );
-		if ( expression != null ) {
-			return expression.getValue( this );
+		if ( !isDisposed() ) {
+			CExpression expression = getExpression( expressionText );
+			if ( expression != null ) {
+				return expression.getValue( this );
+			}
 		}
 		return null;
 	}
@@ -718,7 +726,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	private CExpression getExpression( String expressionText ) throws DebugException {
+	private synchronized CExpression getExpression( String expressionText ) throws DebugException {
+		if ( isDisposed() ) {
+			return null;
+		}
 		if ( fExpressions == null ) {
 			fExpressions = new ArrayList( 5 );
 		}
@@ -739,5 +750,13 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return expression;
+	}
+
+	protected boolean isDisposed() {
+		return fIsDisposed;
+	}
+
+	private synchronized void setDisposed( boolean isDisposed ) {
+		fIsDisposed = isDisposed;
 	}
 }

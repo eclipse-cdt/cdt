@@ -1,3 +1,9 @@
+2004-11-18 Mikhail Khodjaiants
+	Worker threads can try to evaluate expressions on the stack frames that 
+	have already been disposed. A flag is added to identify that the stack 
+	frame is disposed.
+	* CStackFrame.java
+
 2004-11-19 Alain Magloire
 
 	Clear the confusion about sublist of stackframes.

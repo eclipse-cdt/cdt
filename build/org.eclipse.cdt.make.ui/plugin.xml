@@ -265,13 +265,14 @@
    </extension>
    <extension
          id="org.eclipse.cdt.make.editor"
-         name="MakeEditor"
+         name="MakefileEditor"
          point="org.eclipse.ui.editors">
       <editor
-            name="MakeFile Editor"
+            name="Makefile Editor"
             icon="icons/ctool16/makefile.gif"
-            filenames="Makefile"
-            class="org.eclipse.cdt.make.internal.ui.editor.MakeTextEditor"
+            filenames="Makefile, makefile"
+	    contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"
+            class="org.eclipse.cdt.make.internal.ui.editor.MakefileEditor"
             id="org.eclipse.cdt.make.editor">
       </editor>
    </extension>

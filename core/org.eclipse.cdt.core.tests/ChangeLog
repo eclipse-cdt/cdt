@@ -1,3 +1,12 @@
+2004-03-12 Sean Evoy
+	Corrected a target definition in the plugin manifest that was flagged 
+	as release when it should have been flagged as test. Also updated the 
+	tests to save the build information after changes that make the build 
+	information dirty.
+	
+	* plugin.xml
+	* build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
+
 2004-03-16 Alain Magloire
 
 	Test from Thomas Fletcher for the Error Parser

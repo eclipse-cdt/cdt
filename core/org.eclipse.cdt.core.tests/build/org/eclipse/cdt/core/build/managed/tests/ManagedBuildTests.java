@@ -41,7 +41,6 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
@@ -176,6 +175,8 @@ public class ManagedBuildTests extends TestCase {
 		targets[0].resetMakeCommand();
 		assertFalse(targets[0].hasOverridenMakeCommand());
 		assertEquals(oldMakeCmd, targets[0].getMakeCommand());
+		
+		ManagedBuildManager.saveBuildInfo(project, false);
 	}
 	
 	
@@ -219,12 +220,14 @@ public class ManagedBuildTests extends TestCase {
 		for (int i = 0; i < baseConfigs.length; ++i) {
 			newTarget.createConfiguration(baseConfigs[i], baseConfigs[i].getId() + "." + i);
 		}
-				
 		// Change the default configuration to the sub config
 		IConfiguration[] configs = newTarget.getConfigurations();
 		assertEquals(4, configs.length);
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
 		buildInfo.setDefaultConfiguration(newTarget.getConfiguration(configs[0].getId()));
+
+		// Save the build info
+		ManagedBuildManager.saveBuildInfo(project, false);		
 
 		// Use the plugin mechanism to discover the supplier of the path information
 		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
@@ -315,7 +318,7 @@ public class ManagedBuildTests extends TestCase {
 		// Open the test project
 		IProject project = createProject(projectName);
 		
-		// Make sure there is one and only one target with 2 configs
+		// Make sure there is one and only one target with 3 configs
 		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
 		assertEquals(1, definedTargets.length);
 		ITarget rootTarget = definedTargets[0];
@@ -359,7 +362,7 @@ public class ManagedBuildTests extends TestCase {
 		ManagedBuildManager.setOption(newConfig, options[1], enumVal);
 
 		// Save, close, reopen and test again
-		ManagedBuildManager.saveBuildInfo(project);
+		ManagedBuildManager.saveBuildInfo(project, false);
 		project.close(null);
 		ManagedBuildManager.removeBuildInfo(project);
 		project.open(null);
@@ -378,6 +381,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(3, definedConfigs.length);
 		assertEquals(definedConfigs[0].getName(), rootName);
 		assertEquals(definedConfigs[1].getName(), overrideName);
+		ManagedBuildManager.saveBuildInfo(project, false);
 	}
 	
 	public void testConfigurationReset() {
@@ -406,6 +410,7 @@ public class ManagedBuildTests extends TestCase {
 		
 		// Reset the config and retest
 		ManagedBuildManager.resetConfiguration(project, defaultConfig);
+		ManagedBuildManager.saveBuildInfo(project, false);
 		try {
 			checkRootTarget(defaultTarget);
 		} catch (BuildException e2) {
@@ -474,7 +479,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("z", options[0].getStringValue());
 		
 		// Save, close, reopen and test again
-		ManagedBuildManager.saveBuildInfo(project);
+		ManagedBuildManager.saveBuildInfo(project, true);
 		try {
 			project.close(null);
 		} catch (CoreException e) {
@@ -1202,7 +1207,7 @@ public class ManagedBuildTests extends TestCase {
 		rootTarget.setArtifactName(name);
 		
 		// Save, close, reopen and test again
-		ManagedBuildManager.saveBuildInfo(project);
+		ManagedBuildManager.saveBuildInfo(project, false);
 		project.close(null);
 		ManagedBuildManager.removeBuildInfo(project);
 		project.open(null);

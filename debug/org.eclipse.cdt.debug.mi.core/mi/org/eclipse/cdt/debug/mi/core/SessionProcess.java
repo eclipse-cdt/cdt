@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
+import org.eclipse.cdt.debug.mi.core.command.Command;
+import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 
 /**
  */
@@ -74,8 +76,13 @@ public class SessionProcess extends Process {
 				public void post() throws IOException {
 					// Throw away the newline.
 					String str = buf.toString().trim();
-					CLICommand cmd = new CLICommand(str);
 					buf.setLength(0);
+					Command cmd = null;
+					if (session.useExecConsole() && str.length() > 0) {
+						cmd = new MIInterpreterExecConsole(str);
+					} else {
+						cmd = new CLICommand(str);
+					}
 					try {
 						session.postCommand(cmd);
 					} catch (MIException e) {

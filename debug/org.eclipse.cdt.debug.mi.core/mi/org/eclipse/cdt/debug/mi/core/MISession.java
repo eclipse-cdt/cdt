@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
@@ -51,6 +52,7 @@ public class MISession extends Observable {
 	public final static int CORE = 2;
 
 	boolean terminated;
+	boolean useInterpreterExecConsole;
 
 	// hold the type of the session(post-mortem, attach etc ..)
 	int sessionType;
@@ -149,11 +151,20 @@ public class MISession extends Observable {
 
 			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(width, launchTimeout);
-			confirm.getMIInfo(); 
+			width.getMIInfo(); 
 
 			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(height, launchTimeout);
-			confirm.getMIInfo();
+			height.getMIInfo();
+
+			try {
+				MIInterpreterExecConsole echo = new  MIInterpreterExecConsole("echo"); //$NON-NLS-1$
+				postCommand(echo, launchTimeout);
+				echo.getMIInfo();
+				useInterpreterExecConsole = true;
+			} catch (MIException e) {
+				//
+			}
 
 		} catch (MIException exc) {
 			// Kill the Transmition thread.
@@ -244,6 +255,10 @@ public class MISession extends Observable {
 
 	public void setSessionType(int type) {
 		sessionType = type;
+	}
+
+	public boolean useExecConsole() {
+		return useInterpreterExecConsole;
 	}
 
 	/**

@@ -331,7 +331,12 @@ public class BreakpointManager extends Manager {
 						if (hasBreakpointChanged(miBps[j], allMIBreakpoints[i])) {
 							miBps[j] = allMIBreakpoints[i];
 							bp.setEnabled0(allMIBreakpoints[i].isEnabled());
-							// FIXME: do the conditions also.
+							// FIXME: We have a problem if the thread id change.
+							ICDICondition oldCond = bp.getCondition();
+							String[] tids = oldCond.getThreadIds();
+							Condition newCondition = new Condition(allMIBreakpoints[i].getIgnoreCount(),
+									allMIBreakpoints[i].getCondition(), tids);
+							bp.setCondition0(newCondition);
 							// Fire ChangedEvent
 							eventList.add(new MIBreakpointChangedEvent(miSession, no)); 
 						}
@@ -345,8 +350,13 @@ public class BreakpointManager extends Manager {
 				} else if (allMIBreakpoints[i].isTemporary()) {
 					type = ICDIBreakpoint.TEMPORARY;
 				}
+				String[] tids = null;
+				String tid = allMIBreakpoints[i].getThreadId();
+				if (tid != null && tid.length() > 0) {
+					tids = new String[] { tid };
+				}
 				Condition condition = new Condition(allMIBreakpoints[i].getIgnoreCount(),
-						allMIBreakpoints[i].getCondition(), new String[] {allMIBreakpoints[i].getThreadId()});
+						allMIBreakpoints[i].getCondition(), tids);
 				
 				if (allMIBreakpoints[i].isWatchpoint()) {
 					int watchType = 0;

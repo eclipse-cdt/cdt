@@ -1,3 +1,6 @@
+2004-11-07 Alain Magloire
+	Support for MIInterpreterExec
+
 2004-11-03 Alain Magloire
 	Partial fix for 77435
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java

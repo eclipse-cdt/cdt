@@ -46,7 +46,12 @@ public class MIConst extends MIValue {
 				}
 			} else {
 				if (escape) {
-					buffer.append(isoC(c));
+					if (isIsoCSpecialChar(c)) {
+						buffer.append(isoC(c));
+					} else {
+						buffer.append('\\');
+						buffer.append(c);
+					}
 				} else {
 					buffer.append(c);
 				}
@@ -95,5 +100,23 @@ public class MIConst extends MIValue {
 			s = "\013"; //$NON-NLS-1$
 		}
 		return s;
+	}
+
+	private static boolean isIsoCSpecialChar(char c) {
+		switch (c) {
+			case '"':
+			case '\'':
+			case '?':
+			case 'a':
+			case 'b':
+			case 'f':
+			case 'n':
+			case 'r':
+			case 't':
+			case 'v':
+				return true;
+		}
+		return false;
+		
 	}
 }

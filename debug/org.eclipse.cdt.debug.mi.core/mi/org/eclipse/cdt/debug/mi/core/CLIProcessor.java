@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.core;
  
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
+import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -36,6 +37,17 @@ public class CLIProcessor {
 	 */
 	void process(CLICommand cmd) {
 		String operation = cmd.getOperation().trim();
+		process(cmd.getToken(), operation);
+	}
+
+	void process(MIInterpreterExecConsole exec) {
+		String[] operations = exec.getParameters();
+		if (operations != null && operations.length > 0) {
+			process(exec.getToken(), operations[0]);
+		}
+	}
+
+	void process(int token, String operation) {
 		// Get the command name.
 		int indx = operation.indexOf(' ');
 		if (indx != -1) {
@@ -50,7 +62,7 @@ public class CLIProcessor {
 		if (type != -1) {
 			// if it was a step instruction set state running
 			session.getMIInferior().setRunning();
-			MIEvent event = new MIRunningEvent(session, cmd.getToken(), type);
+			MIEvent event = new MIRunningEvent(session, token, type);
 			session.fireEvent(event);
 		} else if (isSettingBreakpoint(operation) ||
 				   isSettingWatchpoint(operation) ||
@@ -65,7 +77,7 @@ public class CLIProcessor {
 		} else if (isDetach(operation)) {
 			// if it was a "detach" command change the state.
 			session.getMIInferior().setDisconnected();
-			MIEvent event = new MIDetachedEvent(session, cmd.getToken());
+			MIEvent event = new MIDetachedEvent(session, token);
 			session.fireEvent(event);
 		}
 	}

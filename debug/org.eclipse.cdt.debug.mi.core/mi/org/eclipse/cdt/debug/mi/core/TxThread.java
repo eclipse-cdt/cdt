@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
+import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 
 /**
  * Transmission command thread blocks on the command Queue
@@ -65,6 +66,8 @@ public class TxThread extends Thread {
 						// Process the Command line to recognise patterns we may need to fire event.
 						if (cmd instanceof CLICommand) {
 							cli.process((CLICommand)cmd);
+						} else if (cmd instanceof MIInterpreterExecConsole) {
+							cli.process((MIInterpreterExecConsole)cmd);
 						}
 				
 						// shove in the pipe

@@ -65,7 +65,10 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 			if (miBreakpoints != null && miBreakpoints.length > 0) {
 				List list = new ArrayList(miBreakpoints.length);
 				for (int i = 0; i < miBreakpoints.length; i++) {
-					list.add(miBreakpoints[i].getThreadId());
+					String tid = miBreakpoints[i].getThreadId();
+					if (tid != null && tid.length() > 0) {
+						list.add(miBreakpoints[i].getThreadId());
+					}
 				}
 				String[] tids = (String[]) list.toArray(new String[list.size()]);
 				int icount = miBreakpoints[0].getIgnoreCount();

@@ -271,10 +271,15 @@
             name="Makefile Editor"
             icon="icons/ctool16/makefile.gif"
             filenames="Makefile,makefile"
-	    contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"
+            contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileEditor"
             id="org.eclipse.cdt.make.editor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup>
+      </startup>
    </extension>
 
 </plugin>

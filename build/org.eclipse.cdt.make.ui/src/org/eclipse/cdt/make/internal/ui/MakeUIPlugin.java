@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -11,15 +13,18 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class MakeUIPlugin extends AbstractUIPlugin {
+public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 	//The shared instance.
 	private static MakeUIPlugin plugin;
 	//Resource bundle.
@@ -63,7 +68,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-	
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
@@ -146,7 +151,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
-	
+
 	/**
 	* Utility method with conventions
 	*/
@@ -177,5 +182,37 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			status = new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
 		}
 		ErrorDialog.openError(shell, title, message, status);
+	}
+
+	public void earlyStartup() {
+		final IProject[] oldProject = UpdateMakeProjectAction.getOldProjects();
+		if (oldProject.length > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					if (MessageDialog
+						.openQuestion(
+							getShell(),
+							"Update make projects",
+							"Older 'make' projects have been detected in your workspace. \n"
+								+ "These projects are no longer supported, "
+								+ "would you like to convert these now?")
+						== true) {
+						ProgressMonitorDialog pd = new ProgressMonitorDialog(getShell());
+						UpdateMakeProjectAction.run(false, pd, oldProject);
+					}
+				}
+			});
+		}
+		return;
+
+	}
+
+	protected Shell getShell() {
+		if (getActiveWorkbenchShell() != null) {
+			return getActiveWorkbenchShell();
+		} else {
+			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+			return windows[0].getShell();
+		}
 	}
 }

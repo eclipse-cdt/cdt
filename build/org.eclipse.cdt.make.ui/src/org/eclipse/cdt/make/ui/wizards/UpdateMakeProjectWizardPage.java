@@ -8,16 +8,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.ui.wizards;
 
-import java.util.Vector;
-
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.part.WizardCheckboxTablePart;
 import org.eclipse.cdt.make.internal.ui.wizards.StatusWizardPage;
-import org.eclipse.core.resources.ICommand;
+import org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -41,7 +36,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 
 	public class MakeProjectContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return getProjects();
+			return UpdateMakeProjectAction.getOldProjects();
 		}
 
 		public void dispose() {
@@ -112,31 +107,9 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		updateStatus(genStatus);
 	}
 
-	protected IProject[] getProjects() {
-		IProject[] project = MakeUIPlugin.getWorkspace().getRoot().getProjects();
-		Vector result = new Vector();
-		try {
-			for (int i = 0; i < project.length; i++) {
-				if (project[i].isAccessible()) {
-					IProjectDescription desc = project[i].getDescription();
-					ICommand builder[] = desc.getBuildSpec();
-					for (int j = 0; j < builder.length; j++) {
-						if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
-							result.add(project[i]);
-							break;
-						}
-					}
-				}
-			}
-		} catch (CoreException e) {
-			MakeUIPlugin.logException(e);
-		}
-
-		return (IProject[]) result.toArray(new IProject[result.size()]);
-	}
 
 	private IStatus validatePlugins() {
-		Object[] allModels = getProjects();
+		Object[] allModels = UpdateMakeProjectAction.getOldProjects();
 		if (allModels == null || allModels.length == 0) {
 			return createStatus(IStatus.ERROR, "No projects to update");
 		}

@@ -10,6 +10,7 @@ package org.eclipse.cdt.make.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
@@ -21,9 +22,11 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.wizards.UpdateMakeProjectWizard;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
@@ -83,6 +86,30 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		}
 
 	}
+	
+	public static IProject[] getOldProjects() {
+		IProject[] project = MakeUIPlugin.getWorkspace().getRoot().getProjects();
+		Vector result = new Vector();
+		try {
+			for (int i = 0; i < project.length; i++) {
+				if (project[i].isAccessible()) {
+					IProjectDescription desc = project[i].getDescription();
+					ICommand builder[] = desc.getBuildSpec();
+					for (int j = 0; j < builder.length; j++) {
+						if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
+							result.add(project[i]);
+							break;
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+			MakeUIPlugin.logException(e);
+		}
+
+		return (IProject[]) result.toArray(new IProject[result.size()]);
+	}
+
 
 	static public void run(boolean fork, IRunnableContext context, final IProject[] projects) {
 		try {

@@ -206,6 +206,10 @@ public class SearchEngine implements ICSearchConstants{
 			if( progressMonitor != null && progressMonitor.isCanceled() )
 				throw new InterruptedException();
 			
+			//indexer might have had a # files left to index subtask, replace that with searching again
+			if( progressMonitor != null )
+				progressMonitor.subTask( Util.bind( "engine.searching" ) );
+			
 			//TODO: BOG Filter Working Copies...
 			matchLocator.locateMatches( pathCollector.getPaths(), workspace, this.workingCopies, matches);
 		} finally {

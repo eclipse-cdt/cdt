@@ -14,11 +14,13 @@
 package org.eclipse.cdt.internal.core.search.processing;
 
 import java.util.HashSet;
+
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.search.indexing.IndexRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public abstract class JobManager implements Runnable {
@@ -33,7 +35,10 @@ public abstract class JobManager implements Runnable {
 	protected Thread thread;
 
 	/* flag indicating whether job execution is enabled or not */
-	private boolean enabled = true;
+	private static final int ENABLED = 1;
+	private static final int DISABLED = 0;
+	private static final int WAITING = 2;
+	private int enabled = ENABLED;
 
 	public static boolean VERBOSE = false;
 	/* flag indicating that the activation has completed */
@@ -42,6 +47,11 @@ public abstract class JobManager implements Runnable {
 	private int awaitingClients = 0;
 	
 	protected HashSet jobSet;
+	
+	protected IndexingJob indexJob = null;
+	
+	static private final IStatus OK_STATUS = new Status( IStatus.OK, "org.eclipse.cdt.core", IStatus.OK, "", null );
+	static private final IStatus ERROR_STATUS = new Status( IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, "", null );
 	
 	public static void verbose(String log) {
 		System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
@@ -71,7 +81,7 @@ public abstract class JobManager implements Runnable {
 	 */
 	public synchronized IJob currentJob() {
 
-		if (!enabled)
+		if ( enabled != ENABLED )
 			return null;
 
 		if (jobStart <= jobEnd) {
@@ -81,7 +91,7 @@ public abstract class JobManager implements Runnable {
 	}
 	
 	public synchronized void disable() {
-		enabled = false;
+		enabled = DISABLED;
 		if (VERBOSE)
 			JobManager.verbose("DISABLING background indexing"); //$NON-NLS-1$
 	}
@@ -94,7 +104,7 @@ public abstract class JobManager implements Runnable {
 		if (VERBOSE)
 			JobManager.verbose("DISCARD   background job family - " + jobFamily); //$NON-NLS-1$
 
-		boolean wasEnabled = isEnabled();
+		boolean wasEnabled = ( enabledState() == ENABLED );
 		try {
 			IJob currentJob;
 			// cancel current job if it belongs to the given family
@@ -137,7 +147,7 @@ public abstract class JobManager implements Runnable {
 				jobEnd = loc;
 			}
 		} finally {
-			if (wasEnabled)
+			if ( wasEnabled )
 				enable();
 		}
 		if (VERBOSE)
@@ -145,13 +155,24 @@ public abstract class JobManager implements Runnable {
 	}
 	
 	public synchronized void enable() {
-		enabled = true;
+		if( enabled == WAITING ){
+			//stop waiting, restore the indexing Job for progress
+			indexJob = new IndexingJob( thread, this );
+			indexJob.setTicks( jobSet.size() );
+		}
+		enabled = ENABLED;
 		if (VERBOSE)
 			JobManager.verbose("ENABLING  background indexing"); //$NON-NLS-1$
 	}
 	
-	public synchronized boolean isEnabled() {
+	public synchronized int enabledState() {
 		return enabled;
+	}
+	
+	public synchronized void pause(){
+		enabled = WAITING;
+		if( VERBOSE )
+			JobManager.verbose("WAITING  pausing background indexing"); //$NON-NLS-1$
 	}
 	/**
 	 * Advance to the next available job, once the current one has been completed.
@@ -167,6 +188,10 @@ public abstract class JobManager implements Runnable {
 				jobStart = 0;
 				jobEnd = -1;
 			}
+		}
+		if( indexJob != null && indexJob.tickDown() == 0 ){
+			indexJob.done( OK_STATUS );
+			indexJob = null;
 		}
 	}
 	/**
@@ -208,90 +233,106 @@ public abstract class JobManager implements Runnable {
 			progress.beginTask("", concurrentJobWork); //$NON-NLS-1$
 		boolean status = IJob.FAILED;
 		if (awaitingJobsCount() > 0) {
-			switch (waitingPolicy) {
-
-				case IJob.ForceImmediate :
-					if (VERBOSE)
-						JobManager.verbose("-> NOT READY - forcing immediate - " + searchJob);//$NON-NLS-1$
-					boolean wasEnabled = isEnabled();
-					try {
-						disable(); // pause indexing
-						status = searchJob.execute(progress == null ? null : new SubProgressMonitor(progress, concurrentJobWork));
-					} finally {
-						if (wasEnabled)
-							enable();
-					}
-					if (VERBOSE)
-						JobManager.verbose("FINISHED  concurrent job - " + searchJob); //$NON-NLS-1$
-					return status;
-					
-				case IJob.CancelIfNotReady :
-					if (VERBOSE)
-						JobManager.verbose("-> NOT READY - cancelling - " + searchJob); //$NON-NLS-1$
-					if (progress != null) progress.setCanceled(true);
-					if (VERBOSE)
-						JobManager.verbose("CANCELED concurrent job - " + searchJob); //$NON-NLS-1$
-					throw new OperationCanceledException();
-
-				case IJob.WaitUntilReady :
-					int awaitingWork;
-					IJob previousJob = null;
-					IJob currentJob;
-					IProgressMonitor subProgress = null;
-					int totalWork = this.awaitingJobsCount();
-					if (progress != null && totalWork > 0) {
-						subProgress = new SubProgressMonitor(progress, concurrentJobWork / 2);
-						subProgress.beginTask("", totalWork); //$NON-NLS-1$
-						concurrentJobWork = concurrentJobWork / 2;
-					}
-					int originalPriority = this.thread.getPriority();
-					try {
-						synchronized(this) {
-							
-							// use local variable to avoid potential NPE (see Bug 20435 NPE when searching java method)
-							Thread t = this.thread;
-							if (t != null) {
-								t.setPriority(Thread.currentThread().getPriority());
-							}
-							this.awaitingClients++;
-						}
-						while (((awaitingWork = awaitingJobsCount()) > 0)
-							    && (!jobShouldBeIgnored(jobToIgnore))) {
-							if (subProgress != null && subProgress.isCanceled())
-								throw new OperationCanceledException();
-							currentJob = currentJob();
-							// currentJob can be null when jobs have been added to the queue but job manager is not enabled
-							if (currentJob != null && currentJob != previousJob) {
-								if (VERBOSE)
-									JobManager.verbose("-> NOT READY - waiting until ready - " + searchJob);//$NON-NLS-1$
-								if (subProgress != null) {
-									subProgress.subTask(
-										Util.bind("manager.filesToIndex", Integer.toString(awaitingWork))); //$NON-NLS-1$
-									subProgress.worked(1);
-								}
-								previousJob = currentJob;
-							}
-							try {
-								Thread.sleep(50);
-							} catch (InterruptedException e) {
-							}
-						}
-					} finally {
-						synchronized(this) {
-							this.awaitingClients--;
-							
-							// use local variable to avoid potential NPE (see Bug 20435 NPE when searching java method)
-							Thread t = this.thread;
-							if (t != null) {
-								t.setPriority(originalPriority);
-							}
-						}
-					}
-					if (subProgress != null) {
-						subProgress.done();
-					}
+			if( enabledState() == WAITING ){
+				//the indexer is paused, resume now that we have been asked for something
+				enable();
 			}
-		}
+			boolean attemptPolicy = true;
+			policy: while( attemptPolicy ){
+				attemptPolicy = false;
+				switch (waitingPolicy) {
+	
+					case IJob.ForceImmediate :
+						if (VERBOSE)
+							JobManager.verbose("-> NOT READY - forcing immediate - " + searchJob);//$NON-NLS-1$
+						boolean wasEnabled = ( enabledState() == ENABLED );
+						try {
+							if( wasEnabled )
+								disable(); // pause indexing
+							status = searchJob.execute(progress == null ? null : new SubProgressMonitor(progress, concurrentJobWork));
+						} finally {
+							if(wasEnabled)
+								enable();
+						}
+						if (VERBOSE)
+							JobManager.verbose("FINISHED  concurrent job - " + searchJob); //$NON-NLS-1$
+						return status;
+						
+					case IJob.CancelIfNotReady :
+						if (VERBOSE)
+							JobManager.verbose("-> NOT READY - cancelling - " + searchJob); //$NON-NLS-1$
+						if (progress != null) progress.setCanceled(true);
+						if (VERBOSE)
+							JobManager.verbose("CANCELED concurrent job - " + searchJob); //$NON-NLS-1$
+						throw new OperationCanceledException();
+	
+					case IJob.WaitUntilReady :
+						int awaitingWork;
+						IJob previousJob = null;
+						IJob currentJob;
+						IProgressMonitor subProgress = null;
+						int totalWork = this.awaitingJobsCount();
+						if (progress != null && totalWork > 0) {
+							subProgress = new SubProgressMonitor(progress, concurrentJobWork / 2);
+							subProgress.beginTask("", totalWork); //$NON-NLS-1$
+							concurrentJobWork = concurrentJobWork / 2;
+						}
+						int originalPriority = this.thread.getPriority();
+						try {
+							synchronized(this) {
+								
+								// use local variable to avoid potential NPE (see Bug 20435 NPE when searching java method)
+								Thread t = this.thread;
+								if (t != null) {
+									t.setPriority(Thread.currentThread().getPriority());
+								}
+								this.awaitingClients++;
+							}
+							while (((awaitingWork = awaitingJobsCount()) > 0)
+								    && (!jobShouldBeIgnored(jobToIgnore))) {
+								if (subProgress != null && subProgress.isCanceled())
+									throw new OperationCanceledException();
+								currentJob = currentJob();
+								// currentJob can be null when jobs have been added to the queue but job manager is not enabled
+								if (currentJob != null && currentJob != previousJob) {
+									if (VERBOSE)
+										JobManager.verbose("-> NOT READY - waiting until ready - " + searchJob);//$NON-NLS-1$
+									if (subProgress != null) {
+										subProgress.subTask(
+											Util.bind("manager.filesToIndex", Integer.toString(awaitingWork))); //$NON-NLS-1$
+										subProgress.worked(1);
+									}
+									previousJob = currentJob;
+								}
+								
+								if( enabledState() == WAITING ){
+									//user canceled the index we are waiting on, force immediate
+									waitingPolicy = IJob.ForceImmediate;
+									attemptPolicy = true;
+									continue policy;
+								}
+								try {
+									Thread.sleep(50);
+								} catch (InterruptedException e) {
+								}
+							}
+						} finally {
+							synchronized(this) {
+								this.awaitingClients--;
+								
+								// use local variable to avoid potential NPE (see Bug 20435 NPE when searching java method)
+								Thread t = this.thread;
+								if (t != null) {
+									t.setPriority(originalPriority);
+								}
+							}
+							if (subProgress != null) {
+								subProgress.done();
+							}
+						}
+				}//switch
+			} //while
+		} // if
 		status = searchJob.execute(progress == null ? null : new SubProgressMonitor(progress, concurrentJobWork));
 		if (progress != null) {
 			progress.done();
@@ -324,11 +365,6 @@ public abstract class JobManager implements Runnable {
 			return;
 		}
 
-		IndexRequest tempJob = null;
-		if (job instanceof IndexRequest)
-			tempJob = (IndexRequest) job;
-		
-		
 		// append the job to the list of ones to process later on
 		int size = awaitingJobs.length;
 		if (++jobEnd == size) { // when growing, relocate jobs starting at position 0
@@ -342,6 +378,13 @@ public abstract class JobManager implements Runnable {
 			jobStart = 0;
 		}
 		awaitingJobs[jobEnd] = job;
+		
+		if( indexJob == null ){
+			indexJob = new IndexingJob( thread, this );
+		} else {
+			indexJob.tickUp();
+		}
+		
 		if (VERBOSE)
 			JobManager.verbose("REQUEST   background job - " + job); //$NON-NLS-1$
 
@@ -366,6 +409,7 @@ public abstract class JobManager implements Runnable {
 		
 		jobSet = new HashSet();
 	}
+
 	/**
 	 * Infinite loop performing resource indexing
 	 */
@@ -409,6 +453,10 @@ public abstract class JobManager implements Runnable {
 				}
 			}
 		} catch (RuntimeException e) {
+			if( indexJob != null ){
+				indexJob.done( ERROR_STATUS );
+				indexJob = null;
+			}
 			if (this.thread != null) { // if not shutting down
 				// log exception
 				org.eclipse.cdt.internal.core.model.Util.log(e, "Background Indexer Crash Recovery", ICLogConstants.PDE); //$NON-NLS-1$
@@ -420,6 +468,10 @@ public abstract class JobManager implements Runnable {
 			}
 			throw e;
 		} catch (Error e) {
+			if( indexJob != null ){
+				indexJob.done( ERROR_STATUS );
+				indexJob = null;
+			}
 			if (this.thread != null && !(e instanceof ThreadDeath)) {
 				// log exception
 				org.eclipse.cdt.internal.core.model.Util.log(e, "Background Indexer Crash Recovery", ICLogConstants.PDE); //$NON-NLS-1$

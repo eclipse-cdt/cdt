@@ -1,3 +1,9 @@
+2004-05-14 Andrew Niefer
+	bug 56411 - Added IndexingJob show that indexing shows up in the process view
+      - this allows for the index job to be cancelled, which pauses indexing until someone requests something
+      - if a request was waiting on the indexer and the indexer gets paused from a user canceling it, then the
+        request is forced immediate.
+
 2004-05-06 Bogdan Gheorghe
 	Added friend to ICSearchConstants
 	Created IMatchLocator to allow search users to pass in their own match locators

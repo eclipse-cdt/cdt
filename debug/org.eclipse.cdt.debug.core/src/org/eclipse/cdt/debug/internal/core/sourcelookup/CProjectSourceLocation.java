@@ -49,7 +49,7 @@ public class CProjectSourceLocation implements ICSourceLocation
 			if ( file.isAbsolute() )
 				return findFileByAbsolutePath( name );
 			else
-				return findFileByRelativePath( name );
+				return findFileByRelativePath( getProject(), name );
 		}
 		return null;
 	}
@@ -85,53 +85,33 @@ public class CProjectSourceLocation implements ICSourceLocation
 	{
 		return fProject;
 	}
-/*
-	private IFile findFile( IContainer parent, IPath name ) throws CoreException 
-	{
-		if ( name.isAbsolute() )
-		{
-			if ( name.toOSString().startsWith( parent.getLocation().toOSString() ) )
-			{
-				name = new Path( name.toOSString().substring( parent.getLocation().toOSString().length() + 1 ) );
-			}
-		}
-		IResource found = parent.findMember( name );
-		if ( found != null && found.getType() == IResource.FILE ) 
-		{
-			return (IFile)found;
-		}
-		IResource[] children= parent.members();
-		for ( int i= 0; i < children.length; i++ ) 
-		{
-			if ( children[i] instanceof IContainer ) 
-			{
-				return findFile( (IContainer)children[i], name );
-			}
-		}
-		return null;		
-	}
-*/
+
 	private Object findFileByAbsolutePath( String name )
 	{
 		IPath path = new Path( name );
 		return findFile( getProject(), path.toOSString() );
 	}
 
-	private Object findFileByRelativePath( String fileName )
+	private Object findFileByRelativePath( IContainer container, String fileName )
 	{
-		IPath path = getProject().getLocation().append( fileName );
+		IPath rootPath = container.getLocation();
+		IPath path = rootPath.append( fileName );
 		Object result = findFileByAbsolutePath( path.toOSString() );
 		if ( result == null )
 		{
 			try
 			{
-				IResource[] members = getProject().members();
+				IResource[] members = container.members();
 				for ( int i = 0; i < members.length; ++i )
 				{
 					if ( members[i] instanceof IFolder )
 					{
 						path = members[i].getLocation().append( fileName );
-						result = findFile( (IContainer)members[i], path.toOSString() );
+						result = findFileByAbsolutePath( path.toOSString() );
+						if ( result == null )
+						{
+							result = findFileByRelativePath( (IFolder)members[i], fileName );
+						}
 						if ( result != null )
 							break;
 					}

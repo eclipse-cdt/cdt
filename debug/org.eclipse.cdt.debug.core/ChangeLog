@@ -1,3 +1,7 @@
+2002-11-22 Mikhail Khodjaiants
+	Fix in the source locator's search algorithm.
+	* CProjectSourceLocator.java
+
 2002-11-21 Mikhail Khodjaiants
 	The memory view does not display values if the address expression is '0xFFFFFFFF'.
 	* CFormattedMemoryBlock.java

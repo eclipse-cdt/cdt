@@ -59,10 +59,13 @@
          </adapter>
       </factory>
    </extension>
-<!-- Implement our filters for C-View.  -->
+
+<!-- Implement our filters.  -->
    <extension
          point="org.eclipse.cdt.ui.CElementFilters">
+<!-- Implement our filters for C-View.  -->
       <filter
+            targetId="org.eclipse.cdt.ui.CView"
             selected="true"
             pattern=".*">
       </filter>
@@ -121,6 +124,23 @@
             description="%HideNonCElements.description"
             class="org.eclipse.cdt.internal.ui.filters.NonCElementFilter"
             id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
+      </filter>
+<!-- Outline Page -->
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%HideUsingDirective.label"
+            enabled="false"
+            description="%HideUsingDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.UsingDeclarationFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%HideMacroDirective.label"
+            enabled="false"
+            description="%HideMacroDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.MacroDirectiveFilter">
       </filter>
    </extension>
       <extension

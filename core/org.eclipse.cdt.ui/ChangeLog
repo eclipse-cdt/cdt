@@ -1,5 +1,15 @@
 2004-08-04 Alain Magloire
 
+	Provide filters for the Outliner.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/filters/MacroDirectiveFilter.java
+	* src/org/eclipse/cdt/internal/ui/filters/UsingDirectiveFilter.java
+	* plugin.properties
+	* plugin.xml
+
+2004-08-04 Alain Magloire
+
 	Fix ShowInCView class
 	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
 	* src/org/eclipse/cdt/ui/CElementGrouping.java

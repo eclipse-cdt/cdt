@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
@@ -68,6 +69,11 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
 	private ActionGroup fOpenViewActionGroup;
+	/**
+	 * Custom filter action group.
+	 * @since 3.0
+	 */
+	private CustomFiltersActionGroup fCustomFiltersActionGroup;
 
 	public class IncludeGroupingAction extends Action {
 		CContentOutlinePage outLine;
@@ -93,6 +99,10 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			if (oldValue != isChecked()) {
 				outLine.contentUpdated();
 			}
+		}
+
+		public boolean isIncludesGroupingEnabled () {
+			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES);
 		}
 
 	}
@@ -261,7 +271,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		fOpenViewActionGroup = new OpenViewActionGroup(this);
-		
+		// Custom filter group
+		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$
+
 		treeViewer.setInput(fInput);
 		WorkbenchHelp.setHelp(control, ICHelpContextIds.COUTLINE_VIEW);	
 	}
@@ -318,7 +330,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
 		fMemberFilterActionGroup.fillActionBars(actionBars);
-		
+
+		fCustomFiltersActionGroup.fillActionBars(actionBars);
+
 		IMenuManager menu= actionBars.getMenuManager();
 		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
 		
@@ -421,8 +435,4 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		contentUpdated();		
 	}
 	
-	public boolean isIncludesGroupingEnabled () {
-		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES);
-	}
-
 }

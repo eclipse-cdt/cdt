@@ -251,50 +251,37 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 	 		progressMonitor.run(true, true, runnable);
 	 		
 	 		IASTOffsetableNamedElement namedElement = storage.getNamedElement();
-	 		if( namedElement == null )
+	 		if( namedElement == null ){
 	 			MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ //$NON-NLS-2$
+	 			return;
+	 		}
 	 		
 			if( storage.getResource() != null )
 	 		{
-	 			open( storage.getResource(), namedElement.getNameOffset(), namedElement.getNameEndOffset() - namedElement.getNameOffset() );
+				int nameOffset = 0;
+				int nameEndOffset = 0;
+				
+				nameOffset = namedElement.getNameOffset();
+				nameEndOffset = namedElement.getNameEndOffset();
+				
+				open( storage.getResource(), nameOffset,  nameEndOffset - nameOffset );
 	 			return;
 	 		}
 	 		else
 	 		{
-	 			if( open( storage.getFileName(), namedElement.getNameOffset(), namedElement.getNameEndOffset() - namedElement.getNameOffset()) );
-	 				return;
+	 			String fileName = null;
+	 			int nameOffset = 0;
+				int nameEndOffset = 0;
+				
+				fileName = storage.getFileName();
+				nameOffset = namedElement.getNameOffset();
+				nameEndOffset = namedElement.getNameEndOffset();
+				
+	 			if (fileName != null){
+		 			 open( fileName,nameOffset,  nameEndOffset - nameOffset);
+	 			}
 	 		}
 
-//			BasicSearchResultCollector resultCollector =  new BasicSearchResultCollector(new NullProgressMonitor() );
-//
-//			SearchFor searchFor = getSearchForFromNode(((IASTNode)storage.getNamedElement()));
-//			ICSearchPattern pattern = SearchEngine.createSearchPattern( selNode.selText,searchFor,ICSearchConstants.DECLARATIONS,true);
-//			IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-//	 		//TODO: Change to Project Scope
-//			ICElement[] projectScopeElement = new ICElement[1];
-//			ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
-//			projectScopeElement[0] = unit.getCProject();//(ICElement)currentScope.getCProject();
-//			ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
-//			
-//			try {
-//				searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector, true);
-//			} catch (InterruptedException e) {
-//			}
-//	 		elementsFound.addAll(resultCollector.getSearchResults());	 
-//
-//	 		
-//	 		if (elementsFound.isEmpty() == true) {
-//	 			//TODO: Get rid of back up search when selection search improves
-//	 			//MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ 
-//	 			temporaryBackUpSearch();
-//	 			return;
-//	 		}
-//	
-//	 		IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
-//	 		if (selected != null) {
-//	 			open(selected);
-//	 			return;
-//	 		}
 		} catch(Exception x) {
 		 		 CUIPlugin.getDefault().log(x);
 		}
@@ -323,67 +310,6 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 		return fEditor.getSite().getShell();
 	}
 	
-
-	protected void temporaryBackUpSearch(){
-		
-		final SelSearchNode selNode = getSelectedStringFromEditor();
-		
-		if (selNode == null)
-			return;
-		
-		final ArrayList elementsFound = new ArrayList();
-		
-		IRunnableWithProgress runnable = new IRunnableWithProgress() 
-		{
-		 public void run(IProgressMonitor monitor) {
-		 
-		 	String selectedText = selNode.selText;
-			BasicSearchResultCollector  resultCollector =  new BasicSearchResultCollector(monitor);
-	 		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-	 		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
-
-			ICElement[] projectScopeElement = new ICElement[1];
-			projectScopeElement[0] = unit.getCProject();//(ICElement)currentScope.getCProject();
-			ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
-		
-			IFile resourceFile = fEditor.getInputFile();
-			OrPattern orPattern = new OrPattern();
-			// search for global variables, functions, classes, structs, unions, enums and macros
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
-		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, true ));
-			try {
-				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
-			} catch (InterruptedException e) {
-			}
-			elementsFound.addAll(resultCollector.getSearchResults());
-		 }
-	  };
-	  
-	  try {
- 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
- 		progressMonitor.run(true, true, runnable);
-
- 		if (elementsFound.isEmpty() == true) {
- 			MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ //$NON-NLS-2$ 
- 			return;
- 		}
-
- 		IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
- 		if (selected != null) {
- 			open(selected);
- 			return;
- 		}
-		} catch(Exception x) {
-		 		 CUIPlugin.getDefault().log(x);
-		}
-	}
 	
 	protected void open( IMatch element ) throws CModelException, PartInitException
 	{

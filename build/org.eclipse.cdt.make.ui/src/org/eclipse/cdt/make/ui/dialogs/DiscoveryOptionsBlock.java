@@ -248,7 +248,6 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		Composite composite = ControlFactory.createComposite(parent, tabColumns);
 		((GridLayout) composite.getLayout()).makeColumnsEqualWidth = false;
 		composite.setFont(font);
-		GridData gd;
 		setControl(composite);
 
 		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS);

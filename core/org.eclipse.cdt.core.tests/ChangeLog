@@ -8,6 +8,11 @@
 	Added testMethodDeclarationParameterMatching to FunctionMethodPatternTests.java
 	Added testEnumeratorReferences to OtherPatternTests
 	
+2003-09-09 Hoda Amer
+	-Seperated the Expression result type test in a new file : completeParseASTExpressionTests.
+	-Added more test cases for simple types.
+	-Added FailedCompleteParseASTExpressionTest for failed reference tests.  
+	
 2003-09-08 John Camelon
 	Added CompleteParseASTTest::testThrowStatement(), testScoping(), testEnumeratorReferences().
 	Removed LineNumberTest source as it is obsolete.  

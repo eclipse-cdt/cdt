@@ -23,13 +23,11 @@ import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -627,85 +625,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTField charA = (IASTField)sub.next();
 	}
 	
-	public void testExpressionResultValueWithSimpleTypes() throws Exception
-	{
-		Iterator i = parse ("int f(int, int); \n int f(int); \n int x = f(1, 2+3);").getDeclarations();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTFunction f2 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f1 );
-		 
-	}	
-
-	public void testExpressionResultValueWithReferenceTypes() throws Exception
-	{
-		Iterator i = parse ("class A{}a;  \n int f(A a); \n int x = f(a);").getDeclarations();
-		IASTVariable a  = (IASTVariable) i.next();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr2 = (IASTFunctionReference) references.next();
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr2.getReferencedElement(), f1 );
-		 
-	}	
-	public void testExpressionResultValueWithReferenceTypesAndPointers1() throws Exception
-	{
-		Iterator i = parse ("class A {}; \n A * pa; \n int f(A ia){} \n int x = f(*pa);").getDeclarations();
-		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTVariable a  = (IASTVariable) i.next();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTClassReference clr2 = (IASTClassReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr2 = (IASTFunctionReference) references.next();
-		assertEquals( clr1.getReferencedElement(), cl );
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr2.getReferencedElement(), f1 );
-		
-	}
-	public void testExpressionResultValueWithReferenceTypesAndPointers2() throws Exception
-	{
-		Iterator i = parse ("class A {}; \n A * pa; \n int f(A *ia){} \n int x = f(pa);").getDeclarations();
-		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTVariable a  = (IASTVariable) i.next();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTClassReference clr2 = (IASTClassReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr2 = (IASTFunctionReference) references.next();
-		assertEquals( clr1.getReferencedElement(), cl );
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr2.getReferencedElement(), f1 );
-	}
-	public void testExpressionResultValueWithReferenceTypesAndPointers3() throws Exception
-	{
-		Iterator i = parse ("class A {}; \n A * pa; \n int f(A ** ia){} \n int x = f(&pa);").getDeclarations();
-		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTVariable a  = (IASTVariable) i.next();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTClassReference clr2 = (IASTClassReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr2 = (IASTFunctionReference) references.next();
-		assertEquals( clr1.getReferencedElement(), cl );
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr2.getReferencedElement(), f1 );
-	}
 	
 	
 	public void testSimpleIfStatement() throws Exception

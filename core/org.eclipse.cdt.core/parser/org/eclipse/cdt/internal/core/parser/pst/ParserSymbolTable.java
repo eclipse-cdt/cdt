@@ -3132,6 +3132,10 @@ public class ParserSymbolTable {
 				param = (TypeInfo) iter.next();
 				paramType = ParserSymbolTable.getFlatTypeInfo( param ).getTypeSymbol();
 			
+				if( paramType == null ){
+					continue;
+				}
+				
 				ParserSymbolTable.getAssociatedScopes( paramType, associated );
 			
 				//if T is a pointer to a data member of class X, its associated namespaces and classes

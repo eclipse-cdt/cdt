@@ -6,6 +6,9 @@
 	Added ScannerExceptions in Preprocessor.java to PDE Error 
 	Log
 
+2003-09-09 Hoda Amer
+	Added more IASTExpression.Kind handling to CompleteParseASTFactory.getExpressionResultType()
+	
 2003-09-08 John Camelon
 	Made scoping support more robust in CompleteParse mode. 
 	Refactored ISourceElementRequestor (enter|exit)CodeBlock() to take IASTCodeScope rather than IASTScope. 

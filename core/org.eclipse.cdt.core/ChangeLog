@@ -1,3 +1,9 @@
+2004-07-17 Brad Jarvinen.
+
+	Fix Pr 70252
+
+	* src/org/eclipse/cdt/internal/errorparsers/GCCErrorParser.java
+
 2004-07-06 Alain Magloire
 
 	Fix PR 69199

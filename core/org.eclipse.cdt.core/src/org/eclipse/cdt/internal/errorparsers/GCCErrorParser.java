@@ -24,13 +24,17 @@ public class GCCErrorParser implements IErrorParser {
 		// (b)
 		// filename:lineno:column: description
 		//
-		// (b)
+		// (c)
 		// In file included from b.h:2,
 		//				 from a.h:3,
 		//				 from hello.c:3:
 		// c.h:2:15: missing ')' in macro parameter list
 		//
-		// (c)
+		// (d)
+		// In file included from hello.c:3:
+		// c.h:2:15: missing ')' in macro parameter list
+		//
+		// (e)
 		// h.c: In function `main':
 		// h.c:41: `foo' undeclared (first use in this function)
 		// h.c:41: (Each undeclared identifier is reported only once
@@ -150,13 +154,28 @@ public class GCCErrorParser implements IErrorParser {
 					 }
 
 					/*
+					 *	In file included from hello.c:3:
+					 *	 c.h:2:15: missing ')' in macro parameter list
+					 *
+					 * We reconstruct the multiline gcc errors to multiple errors:
+					 *    c.h:2:15: missing ')' in macro parameter list
+					 *    hello.c:3:  in inclusion c.h:2:15
+					 *     
+					 */
+					if (line.startsWith("In file included from ")) { //$NON-NLS-1$
+						// We want the last error in the chain, so continue.
+						eoParser.appendToScratchBuffer(line);
+						return false;
+					}
+
+					/*
 					 *	In file included from b.h:2,
 					 *					 from a.h:3,
 					 *					 from hello.c:3:
 					 *	 c.h:2:15: missing ')' in macro parameter list
 					 *
 					 * We reconstruct the multiline gcc errors to multiple errors:
-					 *    c.h:3:15: missing ')' in macro parameter list
+					 *    c.h:2:15: missing ')' in macro parameter list
 					 *    b.h:2:  in inclusion c.h:3:15
 					 *    a.h:3:  in inclusion b.h:2
 					 *    hello.c:3:  in inclusion a.h:3

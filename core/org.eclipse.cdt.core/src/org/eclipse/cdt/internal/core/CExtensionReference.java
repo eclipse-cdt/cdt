@@ -51,6 +51,10 @@ public class CExtensionReference implements ICExtensionReference {
 		return false;
 	}
 
+	public int hashCode() {
+		return fExtPoint.hashCode() + fId.hashCode();
+	}
+	
 	public void setExtensionData(String key, String value) throws CoreException {
 		getInfo().setAttribute(key, value);
 		if (!fDescriptor.isInitializing) {

@@ -58,4 +58,8 @@ public class COwner implements ICOwnerInfo {
 		}
 		return false;
 	}
+
+	public int hashCode() {
+		return getID().hashCode();
+	}
 }

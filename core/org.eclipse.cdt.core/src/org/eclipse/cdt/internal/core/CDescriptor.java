@@ -128,12 +128,12 @@ public class CDescriptor implements ICDescriptor {
 		if (!descriptionPath.toFile().exists()) {
 			fOwner = new COwner(manager.getOwnerConfiguration(project));
 			fOwner.configure(project, this);
-			isInitializing = false;
 			fManager.updateDescriptor(this);
 		} else {
 			String ownerId = readCDTProjectFile(descriptionPath);
 			fOwner = new COwner(manager.getOwnerConfiguration(ownerId));
 		}
+		isInitializing = false;
 	}
 
 	protected CDescriptor(CDescriptorManager manager, IProject project, COwner owner) throws CoreException {

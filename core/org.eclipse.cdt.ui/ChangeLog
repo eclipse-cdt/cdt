@@ -5,6 +5,22 @@
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java
 	* src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java
 
+2003-08-19 Sean Evoy
+	Switched the property page edit area to a scrolled composite instead of resizing
+	for large option sets. This actually makes the selection event code simpler.
+	* build/org/eclipse/cdt/ui/build/properties/BuildPropertyPage.java
+	
+	I added an accessor method for getting the internal Map in the settings store. 
+	The code was vulnerable because there was never a check to make sure the
+	Map had been instantiated before use.
+	* build/org/eclipse/cdt/ui/build/properties/BuildToolsSettingsStore.java
+	
+	Added some builtin symbols and include paths for the Gnu compilers.
+	* plugin.xml
+	
+	Fixed a spelling error in a category name.
+	* plugin.properties
+	
 2003-08-14 Sean Evoy
 	Added initial toolchain description for Solaris and Linux targets using Gnu tools.
 	* plugin.xml

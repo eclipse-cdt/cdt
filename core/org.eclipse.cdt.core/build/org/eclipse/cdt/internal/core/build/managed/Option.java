@@ -26,18 +26,20 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * 
  */
 public class Option extends BuildObject implements IOption {
-
-	private ITool tool;
-	private IOptionCategory category;
-	
-	private int valueType;
-	private Object value;
-	private Map enumCommands;
-	private String defaultEnumName;
-	private String command;
-	
-	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	// Static default return values
 	private static final String EMPTY_STRING = new String();
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+	// Private bookeeping attributes
+	private List builtIns;
+	private IOptionCategory category;
+	private String command;
+	private String defaultEnumName;
+	private Map enumCommands;
+	private ITool tool;
+	private Object value;
+	private int valueType;
+	
 	 
 	public Option(ITool tool) {
 		this.tool = tool;
@@ -103,7 +105,7 @@ public class Option extends BuildObject implements IOption {
 					enumCommands.put(optName, optCommand);
 					Boolean isDefault = new Boolean(enumElements[i].getAttribute(IOption.IS_DEFAULT));
 					if (isDefault.booleanValue()) {
-							defaultEnumName = optName; 
+						defaultEnumName = optName; 
 					}
 				}
 				value = enumList;
@@ -113,9 +115,17 @@ public class Option extends BuildObject implements IOption {
 			case IOption.PREPROCESSOR_SYMBOLS:
 			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
+				builtIns = new ArrayList();
 				IConfigurationElement[] valueElements = element.getChildren(IOption.LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
-					valueList.add(valueElements[i].getAttribute(IOption.VALUE));
+					IConfigurationElement valueElement = valueElements[i];
+					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(IOption.LIST_ITEM_BUILTIN));
+					if (isBuiltIn.booleanValue()) {
+						builtIns.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+					}
+					else {
+						valueList.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+					}
 				}
 				value = valueList;
 				break;
@@ -139,6 +149,16 @@ public class Option extends BuildObject implements IOption {
 		return bool.booleanValue();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
+	 */
+	public String[] getBuiltIns() {
+		// Return the list of built-ins as an array
+		return builtIns == null ?
+			   EMPTY_STRING_ARRAY:
+			   (String[])builtIns.toArray(new String[builtIns.size()]);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getCategory()
 	 */

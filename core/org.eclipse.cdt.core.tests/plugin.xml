@@ -56,7 +56,12 @@
                      value="a">
                </listOptionValue>
                <listOptionValue
-                     value="b">
+                     value="b"
+                     builtIn="false">
+               </listOptionValue>
+               <listOptionValue
+                     value="c"
+                     builtIn="true">
                </listOptionValue>
             </option>
             <option
@@ -142,12 +147,20 @@
                <listOptionValue
                      value="/opt/gnome/include">
                </listOptionValue>
+               <listOptionValue
+                     value="/usr/gnu/include"
+                     builtIn="true">
+               </listOptionValue>
             </option>
             <option
                   name="Defined Symbols"
                   command="-D"
                   valueType="definedSymbols"
                   id="sub.tool.opt.def.symbols">
+               <listOptionValue
+                     value="BUILTIN"
+                     builtIn="true">
+               </listOptionValue>
             </option>
             <option
                   name="More Includes"
@@ -155,7 +168,8 @@
                   valueType="includePath"
                   id="sub.tool.opts.inc.paths.more">
                <listOptionValue
-                     value="/home/tester/include">
+                     value="C:\home\tester/include"
+                     builtIn="false">
                </listOptionValue>
             </option>
          </tool>

@@ -1,3 +1,35 @@
+2003-08-19 Sean Evoy
+	In order to properly support the indexing feature, the scanner has to 
+	function as well as the version that ships with the toolset if possible. 
+	This is	made difficult by the fact that we are trying to be tool-agnostic. 
+	One of the things that the scanner should take into account when it runs 
+	is the "built-in" symbols and search paths that are defined for a compiler 
+	in a given toolchain. While we need to come up with a standard mechanism 
+	for the CDT in the future, the managed build system can provide a work-around 
+	in the near-term. The easiest solution is to add an optional attribute to a 
+	list element that flags the item as a built-in value. When clients like 
+	the indexer query the build model, they will receive the union of the built-in 
+	values and the user-defined values.
+	
+	Updated the comment for the IScannerInfo::getIncludesPaths() method to 
+	explain the content of the return value.
+	* parser/org/eclipse/cdt/core/parser/IScannerInfo.java	
+
+	Added code to answer the built-ins when IScannerInfo methods are called.
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java
+	
+	Updated the schema to include the new attribute
+	* schema/ManagedBuildTools.exsd
+
+	Added a public method to extract the built-in values for an option.	
+	* build/org/eclipse/cdt/core/build/managed/IOption.java
+	
+	Added the code to read, store and persist the built-in list values 
+	differently than standard list elements. Also added code to answer 
+	those built-ins to conform to the interface change.
+	* build/org/eclipse/cdt/internal/core/build/managed/Option.java
+	* build/org/eclipse/cdt/internal/core/build/managed/OptionReference.java
+
 2003-08-13 Sean Evoy
 	Changed text generated into makefile comments from the rather abstract 
 	term 'module' to the more meaningful 'subdirectory'.

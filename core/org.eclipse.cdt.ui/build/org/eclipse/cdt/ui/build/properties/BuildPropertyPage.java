@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -87,7 +88,8 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private SashForm sashForm;
 	private Group sashGroup;
 	private Composite settingsPageContainer;
-			 
+	private ScrolledComposite containerSC;
+				 
 	/*
 	 * Bookeeping variables
 	 */
@@ -148,36 +150,6 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 */
 	public BuildPropertyPage() {
 		configToPageListMap = new HashMap();
-	}
-
-	protected void constrainShellSize() {
-		// limit the shell size to the display size
-		Shell shell = getShell();
-		Point size = shell.getSize();
-		Rectangle bounds = shell.getDisplay().getClientArea();
-		int newX = Math.min(size.x, bounds.width);
-		int newY = Math.min(size.y, bounds.height);
-		if (size.x != newX || size.y != newY)
-			shell.setSize(newX, newY);
-
-		// move the shell origin as required
-		Point loc = shell.getLocation();
-
-		//Choose the position between the origin of the client area and 
-		//the bottom right hand corner
-		int x =
-			Math.max(
-				bounds.x,
-				Math.min(loc.x, bounds.x + bounds.width - size.x));
-		int y =
-			Math.max(
-				bounds.y,
-				Math.min(loc.y, bounds.y + bounds.height - size.y));
-		shell.setLocation(x, y);
-		
-		// record opening shell size
-		if (lastShellSize == null)
-			lastShellSize = getShell().getSize();
 	}
 
 	protected Control createContents(Composite parent)  {
@@ -272,9 +244,17 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 * Add the tabs relevant to the project to edit area tab folder.
 	 */
 	protected void createEditArea(Composite parent) {
+		containerSC = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		containerSC.setExpandHorizontal(true);
+		containerSC.setExpandVertical(true);
+		
 		// Add a container for the build settings page
-		settingsPageContainer = new Composite(parent, SWT.NULL);
+		settingsPageContainer = new Composite(containerSC, SWT.NULL);
 		settingsPageContainer.setLayout(new PageLayout());
+
+		containerSC.setContent(settingsPageContainer);
+		containerSC.setMinSize(settingsPageContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		settingsPageContainer.layout();
 	}
 	
 	protected void createSelectionArea (Composite parent) {
@@ -323,36 +303,6 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				currentSettingsPage.createControl(settingsPageContainer);
 			}
 		}
-
-		// Force calculation of the page's description label because
-		// label can be wrapped.
-		Point contentSize = currentSettingsPage.computeSize();
-		// Do we need resizing. Computation not needed if the
-		// first page is inserted since computing the dialog's
-		// size is done by calling dialog.open().
-		// Also prevent auto resize if the user has manually resized
-		Shell shell = getShell();
-		Point shellSize = shell.getSize();
-		if (oldPage != null) {
-			Rectangle rect = settingsPageContainer.getClientArea();
-			Point containerSize = new Point(rect.width, rect.height);
-			int hdiff = contentSize.x - containerSize.x;
-			int vdiff = contentSize.y - containerSize.y;
-
-			if (hdiff > 0 || vdiff > 0) {
-				if (shellSize.equals(getLastShellSize())) {
-					hdiff = Math.max(0, hdiff);
-					vdiff = Math.max(0, vdiff);
-					setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-					lastShellSize = shell.getSize();
-				} else {
-					currentSettingsPage.setSize(containerSize);
-				}
-			} else if (hdiff < 0 || vdiff < 0) {
-				currentSettingsPage.setSize(containerSize);
-			}
-
-		}
 		
 		// Make all the other pages invisible
 		Control[] children = settingsPageContainer.getChildren();
@@ -364,6 +314,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		currentSettingsPage.setVisible(true);
 		if (oldPage != null)
 			oldPage.setVisible(false);
+
+		// Set the size of the scrolled area
+		containerSC.setMinSize(currentSettingsPage.computeSize());
+		settingsPageContainer.layout();
 	}
 
 	/* (non-Javadoc)
@@ -533,18 +487,6 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Make sure the active configuration is selected
 		configSelector.select(0);
 		handleConfigSelection();
-	}
-	
-	/**
-	 * Changes the shell size to the given size, ensuring that
-	 * it is no larger than the display bounds.
-	 * 
-	 * @param width the shell width
-	 * @param height the shell height
-	 */
-	private void setShellSize(int width, int height) {
-		getShell().setSize(width, height);
-		constrainShellSize();
 	}
 	
 	/**

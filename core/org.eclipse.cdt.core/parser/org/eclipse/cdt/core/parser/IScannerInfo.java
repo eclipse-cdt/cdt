@@ -29,9 +29,12 @@ public interface IScannerInfo {
 	public Map getDefinedSymbols();
 
 	/**
-	 * Answers a <code>String</code> array containing all the known include 
-	 * search paths. If there are no paths defined, the receiver will 
-	 * return an empty array, never <code>null</code>
+	 * Answers a <code>String</code> array containing the union of all the 
+	 * built-in include search paths followed by the user-defined include 
+	 * search paths. 
+	 * 
+	 * If there are no paths defined, the receiver will return an empty 
+	 * array, never <code>null</code>
 	 * 
 	 * @return
 	 */

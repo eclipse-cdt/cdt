@@ -30,6 +30,8 @@ import org.w3c.dom.NodeList;
  */
 public class OptionReference implements IOption {
 
+	// List of built-in values a tool defines
+	private List builtIns;
 	// Used for all option references that override the command
 	private String command;
 	// The option this reference overrides
@@ -48,6 +50,7 @@ public class OptionReference implements IOption {
 	public OptionReference(ToolReference owner, IOption option) {
 		this.owner = owner;
 		this.option = option;
+		
 		// Until the option reference is changed, all values will be extracted from original option		
 		owner.addOptionReference(this);
 	}
@@ -84,10 +87,17 @@ public class OptionReference implements IOption {
 			case IOption.PREPROCESSOR_SYMBOLS:
 			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
+				builtIns = new ArrayList();
 				IConfigurationElement[] valueElements = element.getChildren(IOption.LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
-					valueList.add(valueElements[i].getAttribute(IOption.VALUE));
-				}
+					IConfigurationElement valueElement = valueElements[i];
+					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(IOption.LIST_ITEM_BUILTIN));
+					if (isBuiltIn.booleanValue()) {
+						builtIns.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+					}
+					else {
+						valueList.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+					}				}
 				value = valueList;
 				break;
 		}
@@ -119,11 +129,17 @@ public class OptionReference implements IOption {
 			case IOption.PREPROCESSOR_SYMBOLS:
 			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
+				builtIns = new ArrayList();
 				NodeList nodes = element.getElementsByTagName(IOption.LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
 					Node node = nodes.item(i);
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						valueList.add(((Element)node).getAttribute(IOption.VALUE));
+						Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+						if (isBuiltIn.booleanValue()) {
+							builtIns.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+						} else {
+							valueList.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+						}
 					}
 				}
 				value = valueList;
@@ -158,8 +174,19 @@ public class OptionReference implements IOption {
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
 					Element valueElement = doc.createElement(IOption.LIST_VALUE);
-					valueElement.setAttribute(IOption.VALUE, (String)iter.next());
+					valueElement.setAttribute(IOption.LIST_ITEM_VALUE, (String)iter.next());
+					valueElement.setAttribute(IOption.LIST_ITEM_BUILTIN, "false");
 					element.appendChild(valueElement);
+				}
+				// Serialize the built-ins that have been overridden
+				if (builtIns != null) {
+					iter = builtIns.listIterator();
+					while (iter.hasNext()) {
+						Element valueElement = doc.createElement(IOption.LIST_VALUE);
+						valueElement.setAttribute(IOption.LIST_ITEM_VALUE, (String)iter.next());
+						valueElement.setAttribute(IOption.LIST_ITEM_BUILTIN, "true");
+						element.appendChild(valueElement);
+					}
 				}
 				break;
 		}
@@ -267,6 +294,17 @@ public class OptionReference implements IOption {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
+	 */
+	public String[] getBuiltIns() {
+		// Return any overridden built-ins here, or the default set 
+		// from the option this is a reference to
+		return builtIns == null ?
+			   option.getBuiltIns():
+			   (String[])builtIns.toArray(new String[builtIns.size()]);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
 	 */
 	public String getSelectedEnum() throws BuildException {
@@ -371,5 +409,4 @@ public class OptionReference implements IOption {
 		else
 			throw new BuildException("bad value type");
 	}
-
 }

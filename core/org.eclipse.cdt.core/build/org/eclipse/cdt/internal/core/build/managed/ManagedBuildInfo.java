@@ -14,14 +14,15 @@ package org.eclipse.cdt.internal.core.build.managed;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
-import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
+import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -80,7 +81,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#addTarget(org.eclipse.cdt.core.build.managed.ITarget)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#addTarget(org.eclipse.cdt.core.build.managed.ITarget)
 	 */
 	public void addTarget(ITarget target) {
 		targetMap.put(target.getId(), target);
@@ -104,7 +105,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getBuildArtifactName()
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getBuildArtifactName()
 	 */
 	public String getBuildArtifactName() {
 		// Get the default target and use its value
@@ -133,7 +134,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getDefaultConfiguration()
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getDefaultConfiguration()
 	 */
 	public IConfiguration getDefaultConfiguration(ITarget target) {
 		// Get the default config associated with the defalt target
@@ -150,7 +151,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getDefaultTarget()
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getDefaultTarget()
 	 */
 	public ITarget getDefaultTarget() {
 		if (defaultTarget == null) {
@@ -160,7 +161,53 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getFlagsForSource(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getDefinedSymbols()
+	 */
+	public Map getDefinedSymbols() {
+		// Return the defined symbols for the default configuration
+		HashMap symbols = new HashMap();
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			IOption[] opts = tool.getOptions();
+			for (int j = 0; j < opts.length; j++) {
+				IOption option = opts[j];
+				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+					try {
+						ArrayList symbolList = new ArrayList();
+						symbolList.addAll(Arrays.asList(option.getBuiltIns()));
+						symbolList.addAll(Arrays.asList(option.getDefinedSymbols()));
+						Iterator iter = symbolList.listIterator();
+						while (iter.hasNext()) {
+							String symbol = (String) iter.next();
+							if (symbol.length() == 0){
+								continue;
+							}
+							String key = new String();
+							String value = new String();
+							int index = symbol.indexOf("=");
+							if (index != -1) {
+								key = symbol.substring(0, index).trim();
+								value = symbol.substring(index + 1).trim();
+							} else {
+								key = symbol.trim();
+							}
+							symbols.put(key, value);
+						}
+
+					} catch (BuildException e) {
+						// we should never get here
+						continue;
+					}
+				}
+			}
+		}
+		return symbols; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getFlagsForSource(java.lang.String)
 	 */
 	public String getFlagsForSource(String extension) {
 		// Get all the tools for the current config
@@ -183,7 +230,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getToolFlags(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFlags(java.lang.String)
 	 */
 	public String getFlagsForTarget(String extension) {
 		// Treat null extensions as an empty string
@@ -199,7 +246,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				try {
 					flags = tool.getToolFlags();
 				} catch (BuildException e) {
-					// TODO: handle exception
+					// Somehow the model is out of sync for this item. Keep iterating
+					continue;
 				}
 				return flags;
 			}
@@ -222,9 +270,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				IOption option = opts[j];
 				if (option.getValueType() == IOption.INCLUDE_PATH) {
 					try {
+						// Get all the built-in paths from the option
+						paths.addAll(Arrays.asList(option.getBuiltIns()));
+						// Get all the user-defined paths from the option
 						paths.addAll(Arrays.asList(option.getIncludePaths()));
 					} catch (BuildException e) {
-						// we should never get here
+						// we should never get here, but continue anyway
 						continue;
 					}
 				}
@@ -289,7 +340,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getOutputExtension(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String resourceExtension) {
 		// Get all the tools for the current config
@@ -349,21 +400,21 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return owner;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getTarget(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTarget(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public ITarget getTarget(String id) {
 		return (ITarget) targetMap.get(id);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getTargets(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTargets(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public List getTargets() {
 		return targets;	
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getToolForSource(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolForSource(java.lang.String)
 	 */
 	public String getToolForSource(String extension) {
 		// Get all the tools for the current config
@@ -379,7 +430,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getToolInvocation(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolInvocation(java.lang.String)
 	 */
 	public String getToolForTarget(String extension) {
 		// Treat a null argument as an empty string
@@ -418,7 +469,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public void setDefaultConfiguration(IConfiguration configuration) {
 		// Get the target associated with the argument
@@ -429,56 +480,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#setDefaultTarget(org.eclipse.cdt.core.build.managed.ITarget)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultTarget(org.eclipse.cdt.core.build.managed.ITarget)
 	 */
 	public void setDefaultTarget(ITarget target) {
 		if (defaultTarget != null && defaultTarget.getId().equals(target.getId())) {
 			return;
 		}
 		defaultTarget = target;		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getDefinedSymbols()
-	 */
-	public Map getDefinedSymbols() {
-		// Return the defined symbols for the default configuration
-		HashMap symbols = new HashMap();
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
-		for (int i = 0; i < tools.length; i++) {
-			ITool tool = tools[i];
-			IOption[] opts = tool.getOptions();
-			for (int j = 0; j < opts.length; j++) {
-				IOption option = opts[j];
-				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
-					try {
-						String[] symbolList = option.getDefinedSymbols();
-						for (int k = 0; k < symbolList.length; k++) {
-							String symbol = symbolList[k];
-							if (symbol.length() == 0){
-								continue;
-							}
-							String key = new String();
-							String value = new String();
-							int index = symbol.indexOf("=");
-							if (index != -1) {
-								key = symbol.substring(0, index).trim();
-								value = symbol.substring(index + 1).trim();
-							} else {
-								key = symbol.trim();
-							}
-							symbols.put(key, value);
-						}
-
-					} catch (BuildException e) {
-						// we should never get here
-						continue;
-					}
-				}
-			}
-		}
-		return symbols; 
 	}
 
 }

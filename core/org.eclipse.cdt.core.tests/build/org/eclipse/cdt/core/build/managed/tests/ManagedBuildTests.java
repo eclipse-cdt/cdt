@@ -114,8 +114,8 @@ public class ManagedBuildTests extends TestCase {
 	 */
 	public void testScannerInfoInterface(){
 		// These are the expected path settings
-		final String[] expectedPaths = {"/usr/include", "/opt/gnome/include", "/home/tester/include"};
-
+		final String[] expectedPaths = {"/usr/gnu/include", "/usr/include", "/opt/gnome/include", "C:\\home\\tester/include"};
+		
 		// Open the test project
 		IProject project = null;
 		try {
@@ -159,18 +159,23 @@ public class ManagedBuildTests extends TestCase {
 		// Check the build information right away
 		IScannerInfo currentSettings = provider.getScannerInformation(project);
 		Map currentSymbols = currentSettings.getDefinedSymbols();
-		assertTrue(currentSymbols.isEmpty());
+		// It should simply contain the built-in
+		assertTrue(currentSymbols.containsKey("BUILTIN"));
+		assertEquals((String)currentSymbols.get("BUILTIN"), "");
 		String[] currentPaths = currentSettings.getIncludePaths();
 		assertTrue(Arrays.equals(expectedPaths, currentPaths));
 		
 		// Now subscribe (note that the method will be called after a change
 		provider.subscribe(project, new IScannerInfoChangeListener () {
 			public void changeNotification(IResource project, IScannerInfo info) {
-				// Test the symbols 
+				// Test the symbols: expect "BUILTIN" from the manifest, and "DEBUG" and "GNOME=ME"
+				// from the overidden settings 
 				Map definedSymbols = info.getDefinedSymbols();
+				assertTrue(definedSymbols.containsKey("BUILTIN"));
 				assertTrue(definedSymbols.containsKey("DEBUG"));
 				assertTrue(definedSymbols.containsKey("GNOME"));
 				assertTrue(definedSymbols.containsValue("ME"));
+				assertEquals((String)definedSymbols.get("BUILTIN"), "");
 				assertEquals((String)definedSymbols.get("DEBUG"), "");
 				assertEquals((String)definedSymbols.get("GNOME"), "ME");
 				// Test the includes path
@@ -502,13 +507,16 @@ public class ManagedBuildTests extends TestCase {
 		// 4 Options are defined in the root tool
 		IOption[] options = rootTool.getOptions();
 		assertEquals(4, options.length);
-		// First option is a 2-element list
+		// First option is a 3-element list with 1 built-in
 		assertEquals("List Option in Top", options[0].getName());
 		assertEquals(IOption.STRING_LIST, options[0].getValueType());
 		String[] valueList = options[0].getStringListValue();
 		assertEquals(2, valueList.length);
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
+		String[] builtInList = options[0].getBuiltIns();
+		assertEquals(1, builtInList.length);
+		assertEquals("c", builtInList[0]);
 		assertEquals(options[0].getCommand(), "-L");
 		// Next option is a boolean in top
 		assertEquals("Boolean Option in Top", options[1].getName());
@@ -647,17 +655,25 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(2, incPath.length);
 		assertEquals("/usr/include", incPath[0]);
 		assertEquals("/opt/gnome/include", incPath[1]);
+		String[] builtInPaths = subOpts[0].getBuiltIns();
+		assertEquals(1, builtInPaths.length);
+		assertEquals("/usr/gnu/include", builtInPaths[0]);
 		assertEquals("-I", subOpts[0].getCommand());
+		// There are no user-defined preprocessor symbols
 		assertEquals("Defined Symbols", subOpts[1].getName());
 		assertEquals(IOption.PREPROCESSOR_SYMBOLS, subOpts[1].getValueType());
 		String[] defdSymbols = subOpts[1].getDefinedSymbols();
 		assertEquals(0, defdSymbols.length);
 		assertEquals("-D", subOpts[1].getCommand());
+		// But there is a builtin
+		String[] builtInSymbols = subOpts[1].getBuiltIns();
+		assertEquals(1, builtInSymbols.length);
+		assertEquals("BUILTIN", builtInSymbols[0]);
 		assertEquals("More Includes", subOpts[2].getName());
 		assertEquals(IOption.INCLUDE_PATH, subOpts[2].getValueType());
 		String[] moreIncPath = subOpts[2].getIncludePaths();
 		assertEquals(1, moreIncPath.length);
-		assertEquals("/home/tester/include", moreIncPath[0]);
+		assertEquals("C:\\home\\tester/include", moreIncPath[0]);
 		assertEquals("-I", subOpts[2].getCommand());
 
 		// Get the configs for this target

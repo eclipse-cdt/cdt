@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.build.properties;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
@@ -30,7 +31,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 
 	// List of listeners on the property store
 	private ListenerList listenerList;
-	private HashMap optionMap;
+	private Map optionMap;
 	private boolean dirtyFlag;
 	private IConfiguration owner;
 	
@@ -55,13 +56,15 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
 	 */
 	public boolean contains(String name) {
-		return optionMap.containsKey(name);
+		return getOptionMap().containsKey(name);
 	}
 
 	/**
+	 * Answers a <code>String</code> containing the strings passed in the 
+	 * argument separated by the DEFAULT_SEPERATOR
+	 * 
 	 * @param items An array of strings
-	 * @return a String containing the strings passed in the argument separated by the 
-	 * DEFAULT_SEPERATOR
+	 * @return 
 	 */
 	public static String createList(String[] items) {
 		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
@@ -95,7 +98,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
 	 */
 	public boolean getBoolean(String name) {
-		Object b = optionMap.get(name);
+		Object b = getOptionMap().get(name);
 		if (b instanceof Boolean)
 		{
 			return ((Boolean)b).booleanValue();
@@ -173,6 +176,19 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		return getDefaultLong(name);
 	}
 
+	/* (non-javadoc)
+	 * Answers the map containing the strings associated with each option 
+	 * ID.
+	 * 
+	 * @return
+	 */
+	private Map getOptionMap() {
+		if (optionMap == null) {
+			optionMap = new HashMap();
+		}
+		return optionMap;
+	}
+
 	private void getOptionsForCategory(IOptionCategory cat) {
 		IOptionCategory [] children = cat.getChildCategories();
 		// If there are child categories, add their options
@@ -180,9 +196,6 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 			getOptionsForCategory(children[i]);
 		}
 		// Else get the options for this category and add them to the map
-		if (optionMap == null) {
-			optionMap = new HashMap();
-		}
 		IOption [] options = cat.getOptions(owner);
 		for (int j = 0; j < options.length; ++j) {
 			IOption opt = options[j];
@@ -197,12 +210,12 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 						// Exception occurs if there's an option value type mismatch
 						break;
 					}
-					optionMap.put(name, value);
+					getOptionMap().put(name, value);
 					break;
 
 				case IOption.ENUMERATED :
 					value = createList(opt.getApplicableValues());
-					optionMap.put(name, value);					
+					getOptionMap().put(name, value);					
 					break;
 					
 				case IOption.STRING :
@@ -211,7 +224,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					optionMap.put(name, value);
+					getOptionMap().put(name, value);
 					break;
 					
 				case IOption.STRING_LIST :
@@ -220,7 +233,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					optionMap.put(name, value);
+					getOptionMap().put(name, value);
 					break;
 				case IOption.INCLUDE_PATH :
 					try {
@@ -228,7 +241,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					optionMap.put(name, value);
+					getOptionMap().put(name, value);
 					break;
 				case IOption.PREPROCESSOR_SYMBOLS :
 					try {
@@ -236,7 +249,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					optionMap.put(name, value);
+					getOptionMap().put(name, value);
 					break;
 				case IOption.LIBRARIES :
 					try {
@@ -244,7 +257,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					optionMap.put(name, value);
+					getOptionMap().put(name, value);
 					break;
 				default :
 					break;
@@ -256,7 +269,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
 	 */
 	public String getString(String name) {
-		Object s = optionMap.get(name);
+		Object s = getOptionMap().get(name);
 
 		if ( s instanceof String )
 		{
@@ -297,7 +310,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		for (int index = 0; index < tools.length; ++index) {
 			ITool tool = tools[index];
 			IOptionCategory cat = tool.getTopOptionCategory();
-			getOptionsForCategory(cat);					
+			getOptionsForCategory(cat);
 		}
 	}
 
@@ -305,10 +318,10 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
 	 */
 	public void putValue(String name, String value) {
-		Object oldValue = optionMap.get(name);
+		Object oldValue = getOptionMap().get(name);
 		if (oldValue == null || !oldValue.equals(value))
 		{
-			optionMap.put(name, value);
+			getOptionMap().put(name, value);
 			setDirty(true);
 		}
 	}
@@ -397,7 +410,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		Object oldValue = getString(name);
 		if (oldValue == null || !oldValue.equals(value))
 		{
-			optionMap.put(name, value);
+			getOptionMap().put(name, value);
 			setDirty(true);
 			firePropertyChangeEvent(name, oldValue, value);
 		}
@@ -410,10 +423,11 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		boolean oldValue = getBoolean(name);
 		if (oldValue != value)
 		{
-			optionMap.put(name, new Boolean(value));
+			getOptionMap().put(name, new Boolean(value));
 			setDirty(true);
 			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
 		}
 		
 	}
+
 }

@@ -23,7 +23,7 @@ public interface IOption extends IBuildObject {
 	public static final int PREPROCESSOR_SYMBOLS = 5;
 	public static final int LIBRARIES = 6;
 	
-	// Schema element names for options
+	// Schema attribute names for option elements
 	public static final String CATEGORY = "category";
 	public static final String COMMAND = "command";
 	public static final String DEFAULT_VALUE = "defaultValue";
@@ -37,7 +37,10 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_STRING = "string";
 	public static final String TYPE_STR_LIST = "stringList";
 	public static final String VALUE_TYPE = "valueType";
-	public static final String VALUE = "value";
+
+	// Schema attribute names for listOptionValue elements
+	public static final String LIST_ITEM_VALUE = "value";
+	public static final String LIST_ITEM_BUILTIN = "builtIn";
 
 	
 	/**
@@ -56,6 +59,16 @@ public interface IOption extends IBuildObject {
 	 * @throws BuildException
 	 */
 	public boolean getBooleanValue() throws BuildException;
+	
+	/**
+	 * Answers an array of strings containing the built-in values 
+	 * defined for a stringList, includePaths, definedSymbols, or libs
+	 * option. If none have been defined, the array will be empty but
+	 * never <code>null</code>.
+	 * 
+	 * @return
+	 */
+	public String[] getBuiltIns();
 		
 	/**
 	 * Returns the category for this option.

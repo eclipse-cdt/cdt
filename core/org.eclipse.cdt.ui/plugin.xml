@@ -642,15 +642,131 @@
                   id="cygwin.compiler.category.preprocessor">
             </optionCategory>
             <option
-                  name="Defined Symbols"
+                  defaultValue="false"
+                  name="Do not search system directories (-nostdinc)"
                   category="cygwin.compiler.category.preprocessor"
+                  command="-nostdinc"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.preprocessor.nostdinc">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Preprocess only (-E)"
+                  category="cygwin.compiler.category.preprocessor"
+                  command="-E"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.preprocessor.preprocess">
+            </option>
+            <option
+                  name="Answers (-A)"
+                  category="cygwin.compiler.category.preprocessor"
+                  command="-A"
+                  valueType="stringList"
+                  id="cygwin.gnu.preprocessor.answers">
+            </option>
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.compiler"
+                  name="Symbols"
+                  id="cygwin.gnu.compiler.category.symbols">
+            </optionCategory>
+            <option
+                  name="Defined symbols (-D)"
+                  category="cygwin.gnu.compiler.category.symbols"
                   command="-D"
                   valueType="definedSymbols"
                   id="cygwin.preprocessor.def.symbols">
+               <listOptionValue
+                     value="_X86_=1"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__OPTIMIZE__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__STDC_HOSTED__=1"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="i386"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__i386"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__i386__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__tune_i686__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__tune_pentiumpro__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__tune_pentium2__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__tune_pentium3__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__stdcall=__attribute__((__stdcall__))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__fastcall=__attribute__((__fastcall__))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__cdecl=__attribute__((__cdecl__))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="_stdcall=__attribute__((__stdcall__))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="_fastcall=__attribute__((__fastcall__))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="_cdecl=__attribute__((__cdecl__))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__declspec(x)=__attribute__((x))"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__CYGWIN32__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__CYGWIN__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="unix"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__unix__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__unix"
+                     builtIn="true">
+               </listOptionValue>
             </option>
             <option
-                  name="Undefined Symbols"
-                  category="cygwin.compiler.category.preprocessor"
+                  name="Undefined symbols (-U)"
+                  category="cygwin.gnu.compiler.category.symbols"
                   command="-U"
                   valueType="stringList"
                   id="cygwin.preprocessor.undef.symbol">
@@ -728,6 +844,10 @@
                   command="-I"
                   valueType="includePath"
                   id="cygwin.compiler.general.include.paths">
+               <listOptionValue
+                     value="C:\cygwin\usr\include\w32api"
+                     builtIn="true">
+               </listOptionValue>
             </option>
             <option
                   defaultValue="false"
@@ -736,16 +856,6 @@
                   command="-v"
                   valueType="boolean"
                   id="cygwin.compiler.general.verbose">
-            </option>
-            <optionCategory
-                  owner="org.eclipse.cdt.build.tool.cygwin.compiler"
-                  name="%OptionCategory.CLSum"
-                  id="cygwin.compiler.category.commandline">
-            </optionCategory>
-            <option
-                  name="Compiler Command Line"
-                  category="cygwin.compiler.category.commandline"
-                  id="cygwin.compiler.commandline.args">
             </option>
          </tool>
       </target>
@@ -794,16 +904,6 @@
                   command="-l"
                   valueType="libs"
                   id="cygwin.link.libs">
-            </option>
-            <optionCategory
-                  owner="org.eclipse.cdt.build.tool.cygwin.link"
-                  name="%OptionCategory.CLSum"
-                  id="cygwin.linker.category.commandline">
-            </optionCategory>
-            <option
-                  name="Linker Command Line"
-                  category="cygwin.linker.category.commandline"
-                  id="cygwin.linker.commandline.args">
             </option>
          </tool>
       </target>
@@ -984,6 +1084,66 @@
                   command="-D"
                   valueType="definedSymbols"
                   id="linux.gnu.compiler.preprocessor.def">
+               <listOptionValue
+                     value="__ELF__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="unix"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__gnu_linux__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="linux"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__unix__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__linux__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__unix"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__linux"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__OPTIMIZE__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__STDC_HOSTED__=1"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="_GNU_SOURCE"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="i386"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__i386"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__i386__"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="__tune_i386__"
+                     builtIn="true">
+               </listOptionValue>
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -994,8 +1154,16 @@
                   name="Include search paths (-I)"
                   category="linux.gnu.compiler.category.dirs"
                   command="-I"
-                  valueType="stringList"
+                  valueType="includePath"
                   id="linux.gnu.compiler.dirs.incpaths">
+               <listOptionValue
+                     value="/usr/local/include"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="/usr/include"
+                     builtIn="true">
+               </listOptionValue>
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
@@ -1441,6 +1609,58 @@
                   command="-D"
                   valueType="definedSymbols"
                   id="solaris.gnu.compiler.preprocessor.def">
+               <listOptionValue
+                     builtIn="true"
+                     value="sun">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="sparc">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="unix">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__svr4__">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__SVR4">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__GCC_NEW_VARARGS__">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__sun__">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__sparc__">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__unix__">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__sun">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__sparc">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__unix">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__OPTIMIZE__">
+               </listOptionValue>
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.compiler"
@@ -1451,8 +1671,16 @@
                   name="Include search paths (-I)"
                   category="solaris.gnu.compiler.category.dirs"
                   command="-I"
-                  valueType="stringList"
+                  valueType="includePath"
                   id="solaris.gnu.compiler.dirs.incpaths">
+               <listOptionValue
+                     value="/usr/local/include"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="/usr/include">
+               </listOptionValue>
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.compiler"

@@ -166,13 +166,6 @@ Two additional types exist to flag options of special relevance to the build mod
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="value" type="string">
-            <annotation>
-               <documentation>
-                  Overridden value assigned to the option by the end user.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
@@ -263,6 +256,11 @@ Two additional types exist to flag options of special relevance to the build mod
    </element>
 
    <element name="toolReference">
+      <annotation>
+         <documentation>
+            This is reserved for future use. It currently gets instantiated for saving tool settings.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="optionReference"/>
@@ -434,6 +432,13 @@ Two additional types exist to flag options of special relevance to the build mod
             <annotation>
                <documentation>
                   The contents of the list item.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="builtIn" type="boolean">
+            <annotation>
+               <documentation>
+                  This attribute flags the list value as a built-in value as opposed to something the user has entered. Built-ins will not be passed to clients that generate command lines (like the makefile generator). However, clients that need to take these settings into account (like the indexing service), will receive these settings. These values will appear grey in the UI.
                </documentation>
             </annotation>
          </attribute>

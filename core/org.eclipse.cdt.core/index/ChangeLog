@@ -1,3 +1,9 @@
+2004-11-17 Bogdan Gheorghe 
+	Fix for Bug 78678: Indexer stops reindexing file after repeated saves
+	
+	* index/org/eclipse/cdt/internal/core/search/processing/JobManager.java
+	
+	
 2004-11-12 Bogdan Gheorghe
 	Fix for Bug 78414: IProblem count increased through indexing header files stand-alone
 	

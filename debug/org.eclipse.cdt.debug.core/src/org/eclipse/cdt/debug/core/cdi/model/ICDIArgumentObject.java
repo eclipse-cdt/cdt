@@ -5,7 +5,6 @@
  */
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.model.*;
 
 /**
  */

@@ -1,5 +1,17 @@
 2003-06-12 Alain Magloire
 
+	Patch from Thomas Fletcher
+	Define a specific editing scope for the C/C++ Editor and define the framework for
+	adding in additional commands. Two commands added initially: comment and
+	uncomment. Removed some Java nomenclature from some of the C properties.
+	
+	* plugin.properties
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+
+2003-06-12 Alain Magloire
+
 	Patch From Thomas Fletcher, to clean up the working set.
 	
 	Removal of the homegrown working set implementation of filters and actions

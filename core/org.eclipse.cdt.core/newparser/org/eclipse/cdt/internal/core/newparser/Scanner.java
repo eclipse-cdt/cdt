@@ -1049,6 +1049,8 @@ public class Scanner {
 		if (throwExceptionOnEOFWithoutBalancedEndifs && (depth != 0))
 			throw new ScannerException("End of file encountered without terminating #endif");
 
+		// we're done
+		currentToken.setNext(Token.EOF);
 		return Token.EOF;
 	}
 

@@ -37,7 +37,7 @@ public class Parser {
 		quickParse = quick;
 		scanner.setQuickScan(quick);
 		scanner.setCallback(c);
-		fetchToken();
+		//fetchToken();
 	}
 
 	public Parser(Scanner s, IParserCallback c) throws Exception {
@@ -62,11 +62,16 @@ public class Parser {
 	
 	private static int parseCount = 0;
 	
-	public void parse() throws Exception {
+	private boolean parsePassed = true;
+	
+	public boolean parse() throws Exception {
 		long startTime = System.currentTimeMillis();
 		rTranslationUnit();
 		System.out.println("Parse " + (++parseCount) + ": "
-			+ ( System.currentTimeMillis() - startTime ) + "ms");
+			+ ( System.currentTimeMillis() - startTime ) + "ms"
+			+ ( parsePassed ? "" : " - parse failure" ));
+			
+		return parsePassed;
 	}
 
 	// The callback
@@ -84,13 +89,31 @@ public class Parser {
 	// translationUnit
 	// : ( definition )*
 	public void rTranslationUnit() throws Exception {
+		Token lastBacktrack = null;
 		callback.translationUnitBegin();
 		while (LT(1) != Token.tEOF) {
 			try {
 				rDefinition();
 			} catch (Backtrack b) {
-				// Do error recovery
-				throw new ParserException(LA(1));
+				// Mark as failure and try to reach a recovery point
+				parsePassed = false;
+				
+				if (lastBacktrack == null) {
+					// First backtrack, see if we can continue from here
+					lastBacktrack = LA(1);
+				} else if (lastBacktrack == LA(1)) {
+					// we haven't progressed from the last backtrack
+					// try and find tne next definition
+					for (int t = LT(1); t != Token.tEOF; t = LT(1)) {
+						consume();
+						// TO DO: we should really check for matching braces too
+						if (t == Token.tSEMI)
+							break;
+					}
+				} else {
+					// else we've progressed, start again from here
+					lastBacktrack = LA(1);
+				}
 			}
 		}
 		callback.translationUnitEnd();
@@ -789,7 +812,7 @@ public class Parser {
 		}
 		
 		for (;;) {
-			int mark = mark();
+			Token mark = mark();
 			try {
 				rTypeName();
 			} catch (Backtrack b) {
@@ -806,7 +829,7 @@ public class Parser {
 					break;
 				case Token.tSHIFTR:
 					// Need some magic here to split >> into > >
-					tokenBuffer[currToken].type = Token.tGT;
+					currToken.type = Token.tGT;
 					return;
 				default:
 					throw backtrack;
@@ -818,7 +841,7 @@ public class Parser {
 	// : argDeclList
 	// | functionArguments
 	public boolean rArgDeclListOrInit(boolean maybeInit) throws Exception {
-		int mark = mark();
+		Token mark = mark();
 		
 		if (maybeInit) {
 			try {
@@ -1273,7 +1296,7 @@ public class Parser {
 	public void rCastExpr() throws Exception {
 		// TODO: expression incomplete
 		if (LT(1) == Token.tLPAREN) {
-			int mark = mark();
+			Token mark = mark();
 			consume();
 			
 			try {
@@ -1356,7 +1379,7 @@ public class Parser {
 		consume(Token.t_sizeof);
 		
 		if (LT(1) == Token.tLPAREN) {
-			int mark = mark();
+			Token mark = mark();
 			consume();
 
 			try {
@@ -1419,7 +1442,7 @@ public class Parser {
 		if (LT(1) == Token.tLPAREN) {
 			consume();
 			
-			int mark = mark();
+			Token mark = mark();
 			try {
 				rTypeName();
 				
@@ -1819,7 +1842,7 @@ public class Parser {
 			consume();
 			return;
 		} else {
-			int mark = mark();
+			Token mark = mark();
 			try {
 				rDeclarationStatement();
 				return;
@@ -1871,25 +1894,29 @@ public class Parser {
 
 	static public final int maxToken = 2000;
 	
-	private Token [] tokenBuffer = new Token[maxToken];
-	private int currToken = 0;
-	private int lastToken = -1;
+	private Token currToken;
 	
 	private void fetchToken() throws Exception {
-		if (++lastToken > maxToken)
-			lastToken = 0;
-		tokenBuffer[lastToken] = scanner.nextToken();
+		scanner.nextToken();
 	}
 
 	protected Token LA(int i) throws Exception {
-		int j = i;
-		for (int la = currToken; j > 1; --j) {
-			if (++la > maxToken)
-				la = 0;
-			if (la > lastToken)
-				fetchToken();
+		if (i < 1)
+			// can't go backwards
+			return null;
+
+		if (currToken == null)
+			currToken = scanner.nextToken();
+		
+		Token retToken = currToken;
+		 
+		for (; i > 1; --i) {
+			if (retToken.getNext() == null)
+				scanner.nextToken();
+			retToken = retToken.getNext();
 		}
-		return tokenBuffer[currToken + i - 1];
+		
+		return retToken;
 	}
 
 	protected int LT(int i) throws Exception {
@@ -1897,12 +1924,11 @@ public class Parser {
 	}
 	
 	protected Token consume() throws Exception {
-		Token token = tokenBuffer[currToken];
-		if (++currToken > maxToken)
-			currToken = 0;
-		if (currToken > lastToken)
-			fetchToken();
-		return token;
+		if (currToken.getNext() == null)
+			scanner.nextToken();
+		Token retToken = currToken;
+		currToken = currToken.getNext();
+		return retToken;
 	}
 	
 	protected Token consume(int type) throws Exception {
@@ -1912,11 +1938,11 @@ public class Parser {
 			throw backtrack; //throw new SyntaxError();
 	}
 	
-	protected int mark() {
+	protected Token mark() {
 		return currToken;
 	}
 	
-	protected void backup(int mark) {
+	protected void backup(Token mark) {
 		currToken = mark;
 	}
 	

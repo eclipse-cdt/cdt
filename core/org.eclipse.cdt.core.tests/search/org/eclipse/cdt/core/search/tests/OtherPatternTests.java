@@ -46,58 +46,58 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 		
 	public void testNamespaceIndexPrefix(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
 		assertTrue( pattern instanceof NamespaceDeclarationPattern );
 		
 		NamespaceDeclarationPattern nsPattern = (NamespaceDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "namespaceDecl/c/B/A".toCharArray(), nsPattern.indexEntryPrefix() ), 0);
+		assertEquals( CharOperation.compareWith( "namespaceDecl/c/B/A".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 		
-		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", NAMESPACE, DECLARATIONS, true );
-		assertEquals( CharOperation.compareWith( "namespaceDecl/c/B/A/".toCharArray(), nsPattern.indexEntryPrefix() ), 0);
+		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "namespaceDecl/c/B/A/".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 				
-		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", NAMESPACE, REFERENCES, true );
-		assertEquals( CharOperation.compareWith( "namespaceRef/c/RT".toCharArray(), nsPattern.indexEntryPrefix() ), 0);
+		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", NAMESPACE, REFERENCES, true ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "namespaceRef/c/RT".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 				
-		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, REFERENCES, false );
-		assertEquals( CharOperation.compareWith( "namespaceRef/".toCharArray(), nsPattern.indexEntryPrefix() ), 0);
+		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, REFERENCES, false ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "namespaceRef/".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 	}
 	
 	public void testVariableIndexPrefix(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "c", VAR, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "c", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		assertTrue( pattern instanceof FieldDeclarationPattern );
 		
 		FieldDeclarationPattern variablePattern = (FieldDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "typeDecl/V/c".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
+		assertEquals( CharOperation.compareWith( "typeDecl/V/c".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 		
-		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "rt*", VAR, DECLARATIONS, true );
-		assertEquals( CharOperation.compareWith( "typeDecl/V/rt".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
+		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "rt*", VAR, DECLARATIONS, true ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "typeDecl/V/rt".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 				
-		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false );
-		assertEquals( CharOperation.compareWith( "typeRef/V/".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
+		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "typeRef/V/".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 		
-		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true );
-		assertEquals( CharOperation.compareWith( "typeRef/V/A".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
+		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "typeRef/V/A".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 	}
 	
 	public void testFieldIndexPrefix(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", FIELD, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", FIELD, DECLARATIONS, true ); //$NON-NLS-1$
 		assertTrue( pattern instanceof FieldDeclarationPattern );
 		
 		FieldDeclarationPattern fieldPattern = (FieldDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "fieldDecl/c/B/A".toCharArray(), fieldPattern.indexEntryPrefix() ), 0);
+		assertEquals( CharOperation.compareWith( "fieldDecl/c/B/A".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 		
-		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", FIELD, DECLARATIONS, true );
-		assertEquals( CharOperation.compareWith( "fieldDecl/c/B/A/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0);
+		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", FIELD, DECLARATIONS, true ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "fieldDecl/c/B/A/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 				
-		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", FIELD, REFERENCES, true );
-		assertEquals( CharOperation.compareWith( "fieldRef/c/RT".toCharArray(), fieldPattern.indexEntryPrefix() ), 0);
+		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", FIELD, REFERENCES, true ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "fieldRef/c/RT".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 				
-		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", FIELD, REFERENCES, false );
-		assertEquals( CharOperation.compareWith( "fieldRef/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0);
+		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", FIELD, REFERENCES, false ); //$NON-NLS-1$
+		assertEquals( CharOperation.compareWith( "fieldRef/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
 	}
 	
 	public void testNamespaceDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS*", NAMESPACE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS*", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -107,7 +107,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testNamespaceReferenceInUsingDirective() {
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::NS2", NAMESPACE, REFERENCES, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::NS2", NAMESPACE, REFERENCES, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -116,11 +116,11 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "NS::B" ) );
+		assertTrue( match.getParentName().equals( "NS::B" ) ); //$NON-NLS-1$
 	}
 	
 	public void testNamespaceReferenceInClassBaseClause(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS", NAMESPACE, REFERENCES, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS", NAMESPACE, REFERENCES, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -132,15 +132,15 @@ public class OtherPatternTests extends BaseSearchTest {
 		Iterator iter = sorted.iterator();
 		IMatch match = (IMatch) iter.next();
 		
-		assertTrue( match.getName().equals( "C" ) );
-		assertTrue( match.getParentName().equals( "NS3" ));
+		assertTrue( match.getName().equals( "C" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "NS3" )); //$NON-NLS-1$
 		match = (IMatch) iter.next();
-		assertTrue( match.getName().equals( "NS_B" ) );
-		assertTrue( match.getParentName().equals( "" ));
+		assertTrue( match.getName().equals( "NS_B" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "" )); //$NON-NLS-1$
 	}
 	
 	public void testFieldDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -148,11 +148,11 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "NS::B" ) );
+		assertTrue( match.getParentName().equals( "NS::B" ) ); //$NON-NLS-1$
 	}
 	
 	public void testVariableDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -160,11 +160,11 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 2 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "" ) );		
+		assertTrue( match.getParentName().equals( "" ) );		 //$NON-NLS-1$
 	}
 	
 	public void testParameterDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "index", VAR, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "index", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -172,13 +172,13 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 3 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "" ) );	
+		assertTrue( match.getParentName().equals( "" ) );	 //$NON-NLS-1$
 	}
 	
 	public void testOrPattern(){
 		OrPattern orPattern = new OrPattern();
-		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::B::e", ENUM, REFERENCES, true ) );
-		orPattern.addPattern( SearchEngine.createSearchPattern( "Hea*", CLASS, DECLARATIONS, true ) );
+		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::B::e", ENUM, REFERENCES, true ) ); //$NON-NLS-1$
+		orPattern.addPattern( SearchEngine.createSearchPattern( "Hea*", CLASS, DECLARATIONS, true ) ); //$NON-NLS-1$
 		
 		search( workspace, orPattern, scope, resultCollector );
 		
@@ -187,10 +187,10 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 3 );
 		
 		orPattern = new OrPattern();
-		orPattern.addPattern( SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true ) );
-		orPattern.addPattern( SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true ) );
-		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::NS2", NAMESPACE, REFERENCES, true ) );
-		orPattern.addPattern( SearchEngine.createSearchPattern( "A::B::f( A )", METHOD, DECLARATIONS, true ) );
+		orPattern.addPattern( SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true ) ); //$NON-NLS-1$
+		orPattern.addPattern( SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true ) ); //$NON-NLS-1$
+		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::NS2", NAMESPACE, REFERENCES, true ) ); //$NON-NLS-1$
+		orPattern.addPattern( SearchEngine.createSearchPattern( "A::B::f( A )", METHOD, DECLARATIONS, true ) ); //$NON-NLS-1$
 		
 		search( workspace, orPattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
@@ -198,7 +198,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 
 	public void testMacroPattern(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "FOO", MACRO, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "FOO", MACRO, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -206,52 +206,52 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getName().equals( "FOO" ) );
-		assertTrue( match.getParentName().equals( "" ));
+		assertTrue( match.getName().equals( "FOO" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "" )); //$NON-NLS-1$
 		
-		pattern = SearchEngine.createSearchPattern( "FOO", MACRO, ALL_OCCURRENCES, true );
+		pattern = SearchEngine.createSearchPattern( "FOO", MACRO, ALL_OCCURRENCES, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 	}
 	
 	public void testDerived(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", DERIVED, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", DERIVED, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getName().equals( "B" ) );
-		assertTrue( match.getParentName().equals( "NS" ));
+		assertTrue( match.getName().equals( "B" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "NS" )); //$NON-NLS-1$
 		
 
 	}
 	
 	public void testEnumerators(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", ENUMTOR, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", ENUMTOR, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getName().equals( "One" ) );
-		assertTrue( match.getParentName().equals( "NS::B" ));
+		assertTrue( match.getName().equals( "One" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "NS::B" )); //$NON-NLS-1$
 		
-		pattern = SearchEngine.createSearchPattern( "NS::B::Two", ENUMTOR, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "NS::B::Two", ENUMTOR, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		match = (IMatch) matches.iterator().next();
-		assertTrue( match.getName().equals( "Two" ) );
-		assertTrue( match.getParentName().equals( "NS::B" ) );
+		assertTrue( match.getName().equals( "Two" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "NS::B" ) ); //$NON-NLS-1$
 	}
 	
 	public void testEnumeratorReferences(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", ENUMTOR, REFERENCES, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", ENUMTOR, REFERENCES, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -259,12 +259,12 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getName().equals( "eE" ) );
-		assertTrue( match.getParentName().equals( "NS3::C" ));
+		assertTrue( match.getName().equals( "eE" ) ); //$NON-NLS-1$
+		assertTrue( match.getParentName().equals( "NS3::C" )); //$NON-NLS-1$
 	}
 	
 	public void testParameterReferences(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "index", VAR, REFERENCES, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "index", VAR, REFERENCES, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -273,76 +273,76 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testBug43129(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "externalInt", VAR, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "externalInt", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "externalInt", VAR, DEFINITIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externalInt", VAR, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 0 );
 		
-		pattern = SearchEngine.createSearchPattern( "externalIntWithInitializer", VAR, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externalIntWithInitializer", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "externalIntWithInitializer", VAR, DEFINITIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externalIntWithInitializer", VAR, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "externCInt", VAR, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externCInt", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "externCInt", VAR, DEFINITIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externCInt", VAR, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 0 );
 		
-		pattern = SearchEngine.createSearchPattern( "externCIntWithInitializer", VAR, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externCIntWithInitializer", VAR, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "externCIntWithInitializer", VAR, DEFINITIONS, true );
+		pattern = SearchEngine.createSearchPattern( "externCIntWithInitializer", VAR, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "forwardFunction", FUNCTION, ALL_OCCURRENCES, true );
+		pattern = SearchEngine.createSearchPattern( "forwardFunction", FUNCTION, ALL_OCCURRENCES, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 		
-		pattern = SearchEngine.createSearchPattern( "normalFunction", FUNCTION, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "normalFunction", FUNCTION, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "normalFunction", FUNCTION, DEFINITIONS, true );
+		pattern = SearchEngine.createSearchPattern( "normalFunction", FUNCTION, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "forwardMethod", METHOD, ALL_OCCURRENCES, true );
+		pattern = SearchEngine.createSearchPattern( "forwardMethod", METHOD, ALL_OCCURRENCES, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 		
-		pattern = SearchEngine.createSearchPattern( "staticField", FIELD, ALL_OCCURRENCES, true );
+		pattern = SearchEngine.createSearchPattern( "staticField", FIELD, ALL_OCCURRENCES, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 	}
 	
 	public void testNoResourceSearching() throws Exception {
-		String path = CTestPlugin.getDefault().getFileInPlugin(new Path("resources/search/include.h")).getAbsolutePath();
+		String path = CTestPlugin.getDefault().getFileInPlugin(new Path("resources/search/include.h")).getAbsolutePath(); //$NON-NLS-1$
 		
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Head", CLASS, REFERENCES, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Head", CLASS, REFERENCES, true ); //$NON-NLS-1$
 		
 		resultCollector.aboutToStart();
 
@@ -351,7 +351,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		try {
 			matchLocator.locateMatches( new String [] { path }, workspace, null );
-		} catch (InterruptedException e1) {
+		} catch (InterruptedException e1) { //boo
 		}
 		
 		resultCollector.done();
@@ -367,47 +367,47 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( match1.equals( match2 ) );
 		assertTrue( match2.equals( match1 ) );
 		
-		match1.setName( "IWasSaying" );
-		match1.setParentName( "boo" );
-		match1.setReturnType( "urns" );
+		match1.setName( "IWasSaying" ); //$NON-NLS-1$
+		match1.setParentName( "boo" ); //$NON-NLS-1$
+		match1.setReturnType( "urns" ); //$NON-NLS-1$
 		
 		assertFalse( match1.equals( match2 ) );
 		assertFalse( match2.equals( match1 ) );
 		
-		match2.setName( "IWasSaying" );
-		match2.setParentName( "boo" );
-		match2.setReturnType( "urns" );
+		match2.setName( "IWasSaying" ); //$NON-NLS-1$
+		match2.setParentName( "boo" ); //$NON-NLS-1$
+		match2.setReturnType( "urns" ); //$NON-NLS-1$
 		
 		assertTrue( match1.equals( match2 ) );
 	}
 	
 	public void testBug68235(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "bug68235::xTag", STRUCT, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "bug68235::xTag", STRUCT, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );		
 		
-		pattern = SearchEngine.createSearchPattern( "bug68235::yTag", STRUCT, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "bug68235::yTag", STRUCT, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "bug68235::xType", TYPEDEF, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "bug68235::xType", TYPEDEF, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "bug68235::yType", TYPEDEF, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "bug68235::yType", TYPEDEF, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "bug68235::xType", TYPEDEF, REFERENCES, true );
+		pattern = SearchEngine.createSearchPattern( "bug68235::xType", TYPEDEF, REFERENCES, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "bug68235::yType", TYPEDEF, REFERENCES, true );
+		pattern = SearchEngine.createSearchPattern( "bug68235::yType", TYPEDEF, REFERENCES, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );

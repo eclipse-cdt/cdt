@@ -29,8 +29,8 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
@@ -96,7 +96,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Collection of listeners for indexer deltas
 	 */
 	protected List indexChangeListeners = Collections.synchronizedList(new ArrayList());
-
+	public static final String INDEX_NOTIFICATION_NAME = Util.bind( "indexNotificationJob" ); //$NON-NLS-1$
+	
 	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".newindexmodel"; //$NON-NLS-1$
 	public final static String ACTIVATION = "enable"; //$NON-NLS-1$
 	public final static String PROBLEM_ACTIVATION = "problemEnable"; //$NON-NLS-1$
@@ -832,7 +833,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				}
 				
 				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
-				Job job = new Job("Update Index Listeners"){
+				Job job = new Job(INDEX_NOTIFICATION_NAME){
 					protected IStatus run(IProgressMonitor monitor)	{	
 						Platform.run(new ISafeRunnable() {
 							public void handleException(Throwable exception) {

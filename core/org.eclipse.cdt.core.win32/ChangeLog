@@ -1,3 +1,11 @@
+2002-11-06 Alex Chapiro
+
+	* library/Win32ProcessEx.c (GetJVMProc): Removed.
+	This is a fixing of Bug 25808.
+	Remove not portable fragment of code (conversion start directory to native
+	format) relying on passing of correct argument from Spawner.java. Attached
+	also find spawner.dll (Win32)
+
 2002-10-21  Alain Magloire
 
 	* library/Win32ProcessEx.c (waitFor): Get the exit value of the process

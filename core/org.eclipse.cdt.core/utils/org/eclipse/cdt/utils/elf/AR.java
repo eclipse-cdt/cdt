@@ -189,10 +189,6 @@ public class AR {
 			return new Elf(filename, elf_offset);
 		}
 
-		public Elf getElf(boolean filter_on) throws IOException {
-			return new Elf(filename, elf_offset, filter_on);
-		}
-
 		public byte[] getObjectData() throws IOException {
 			byte[] temp = new byte[(int) size];
 			if (efile != null) {

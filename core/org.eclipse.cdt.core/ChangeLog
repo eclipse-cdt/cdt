@@ -1,3 +1,14 @@
+2004-06-03 Alain Magloire
+
+	The Elf class should not depend of GNU
+	binutils tools like Addr2line or CPPFilt
+	It is an Elf Parser and the needs of those tools
+	are now part of IBinaryParser class
+	* utils/org/eclipse/cdt/uitls/elf/AR.java
+	* utils/org/eclipse/cdt/uitls/elf/Elf.java
+	* utils/org/eclipse/cdt/uitls/elf/ElfHelperjava
+	* utils/org/eclipse/cdt/uitls/elf/parser/ElfBinaryObject.java
+
 2004-06-01 Alain Magloire
 
 	A release of the CDT was distributed with

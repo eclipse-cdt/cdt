@@ -127,8 +127,6 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 
 	protected void loadSymbols(ElfHelper helper) throws IOException {
 		ArrayList list = new ArrayList();
-		// Hack should be remove when Elf is clean
-		helper.getElf().setCppFilter(false);
 
 		Addr2line addr2line = getAddr2line();
 		CPPFilt cppfilt = getCPPFilt();

@@ -22,7 +22,6 @@ public class Elf {
 	protected ELFhdr ehdr;
 	protected Section[] sections;
 	protected Addr2line addr2line;
-    protected boolean cppFiltEnabled = true;
 	protected CPPFilt cppFilt;
 	protected String file;
 	protected byte[] section_strtab;	
@@ -314,22 +313,6 @@ public class Elf {
 
         private Section sym_section;
 
-		private String cppFilt(String in) {
-            if (cppFiltEnabled) {
-				try {
-					if (in.indexOf("__") != -1 || in.indexOf("_._") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
-						if (cppFilt == null) {
-							cppFilt = new CPPFilt();
-						}
-						return cppFilt.getFunction(in);
-					}
-				} catch (IOException e) {
-					return in;
-				}
-            }
-			return in;
-		}
-
         public Symbol( Section section ) {
             sym_section = section;
         }
@@ -362,7 +345,7 @@ public class Elf {
 				try { 
 					Section sections[] = getSections();
 					Section symstr = sections[(int)sym_section.sh_link];
-					name = cppFilt(string_from_elf_section(symstr, (int)st_name ));
+					name = string_from_elf_section(symstr, (int)st_name );
 				} catch (IOException e ) {
 					return EMPTY_STRING;
 				}
@@ -370,118 +353,7 @@ public class Elf {
 			return name;
 		}
 
-		/**
-		 * Returns line information in the form of filename:line
-		 * and if the information is not available may return null
-		 * _or_ may return ??:??
-		 */
-		public String lineInfo() throws IOException {
-			if ( line == null ) {
-				if ( addr2line == null )
-					addr2line = new Addr2line(file);
-				long value = st_value;
-				// We try to get the nearest match
-				// since the symbol may not exactly align with debug info.
-				// In C line number 0 is invalid, line starts at 1 for file, we use
-				// this for validation.
-				for (int i = 0; i <= 20; i += 4, value += i) {
-					line = addr2line.getLine(value);
-					if (line != null) {
-						int colon = line.lastIndexOf(':');
-						String number = line.substring(colon + 1);
-						if (!number.startsWith("0")) { //$NON-NLS-1$
-							break; // bail out
-						}
-					}
-				}
-				func = addr2line.getFunction(value);
-			}
-			return line;
-		}
 		
-		public String lineInfo(long vma) throws IOException {
-			if ( addr2line == null )
-				addr2line = new Addr2line(file);
-			return addr2line.getLine(vma);
-		}
-		
-		/**
-		 * If the function is available from the symbol information,
-		 * this will return the function name. May return null if 
-		 * the function can't be determined.
-		 */
-		public String getFunction() throws IOException {
-			if ( func == null ) {
-				lineInfo();
-			}
-			return func;
-		}
-			
-		/**
-		 * If the filename is available from the symbol information,
-		 * this will return the base filename information. May
-		 * return null if the filename can't be determined.
-		 */
-		public String getFilename() throws IOException {
-			if ( line == null ) {
-				lineInfo();
-			}
-			int index1, index2;
-			if(line == null || (index1 = line.lastIndexOf(':')) == -1) {
-				return null;
-			}
-			// we do this because addr2line on win produces 
-			// <cygdrive/pathtoexc/C:/pathtofile:##>
-			
-			index2 = line.indexOf(':');
-			if ( index1 == index2 ) {
-				index2 = 0;
-			} else {
-				index2--;
-			}
-			return line.substring(index2, index1);
-		}
-
-		/**
-		 * Returns the line number of the function which is closest
-		 * associated with the address if it is available.
-		 * from the symbol information.  If it is not available,
-		 * then -1 is returned.
-		 */
-		public int getFuncLineNumber() throws IOException {
-			if ( line == null ) {
-				lineInfo();
-			}
-			int index;
-			if(line == null || (index = line.lastIndexOf(':')) == -1) {
-				return -1;
-			}
-			try {
-				int lineno = Integer.parseInt(line.substring(index + 1));
-				return (lineno == 0) ? -1 : lineno;
-			} catch(Exception e) {
-				return -1;
-			}
-		}
-		
-		/**
-		 * Returns the line number of the file if it is available
-		 * from the symbol information.  If it is not available,
-		 * then -1 is returned.  
-		 */
-		public int getLineNumber(long vma) throws IOException {
-			int index;
-			String ligne = lineInfo(vma);
-			if(ligne == null || (index = ligne.lastIndexOf(':')) == -1) {
-				return -1;
-			}
-			try {
-				int lineno = Integer.parseInt(ligne.substring(index + 1));
-				return (lineno == 0) ? -1 : lineno;
-			} catch(Exception e) {
-				return -1;
-			}
-		}
 	}
 
 	/**
@@ -628,11 +500,9 @@ public class Elf {
 		return (Dynamic[])dynList.toArray(new Dynamic[0]);
 	}
 
-    private void commonSetup( String file, long offset, boolean filton ) 
+    private void commonSetup( String file, long offset ) 
        throws IOException 
     {
-        this.cppFiltEnabled = filton;
-
 		try {
 	        efile = new ERandomAccessFile(file, "r"); //$NON-NLS-1$
     	    efile.setFileOffset( offset );
@@ -649,30 +519,14 @@ public class Elf {
     protected Elf () {
     }
 
-	public Elf (String file, long offset) throws IOException {
-        commonSetup( file, offset, true );
+    public Elf (String file, long offset) throws IOException {
+        commonSetup( file, offset);
     }
 
     public Elf (String file) throws IOException {
-        commonSetup( file, 0, true );
-    }
-     
-    public Elf (String file, long offset, boolean filton) throws IOException {
-        commonSetup( file, offset, filton );
+        commonSetup( file, 0);
     }
 
-    public Elf (String file, boolean filton) throws IOException {
-        commonSetup( file, 0, filton );
-    }
-
-    public boolean cppFilterEnabled() {
-        return cppFiltEnabled;
-    }
-
-    public void setCppFilter( boolean enabled ) {
-        cppFiltEnabled = enabled;
-    }
-  
 	public ELFhdr getELFhdr() throws IOException {	
 		return ehdr;		
 	}

@@ -104,11 +104,6 @@ public class ElfHelper {
 		commonSetup();
 	}
 
-	public ElfHelper(String filename, boolean filton) throws IOException {
-		elf = new Elf(filename, filton);
-		commonSetup();
-	}
-
 	/** Give back the Elf object that this helper is wrapping */
 	public Elf getElf() {
 		return elf;

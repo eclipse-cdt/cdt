@@ -21,12 +21,15 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
+import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListChangedRegistersInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
@@ -34,6 +37,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 
 	private List regList;
 	private boolean autoupdate;
+	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public RegisterManager(Session session) {
 		super(session);
@@ -171,10 +175,32 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 			}
 			int[] regnos = info.getRegisterNumbers();
 			List eventList = new ArrayList(regnos.length);
+			// Now that we know the registers changed
+			// call -var-update to update the value in gdb.
+			// And send the notification.
 			for (int i = 0 ; i < regnos.length; i++) {
 				Register reg = getRegister(regnos[i]);
 				if (reg != null) {
-					eventList.add(new MIRegisterChangedEvent(changed.getToken(), reg.getName(), regnos[i]));
+					String varName = reg.getMIVar().getVarName();
+					MIVarChange[] changes = noChanges;
+					MIVarUpdate update = factory.createMIVarUpdate(varName);
+					try {
+						mi.postCommand(update);
+						MIVarUpdateInfo updateInfo = update.getMIVarUpdateInfo();
+						if (updateInfo == null) {
+							throw new CDIException("No answer");
+						}
+						changes = updateInfo.getMIVarChanges();
+					} catch (MIException e) {
+						//throw new MI2CDIException(e);
+						//eventList.add(new MIVarDeletedEvent(varName));
+					}
+					for (int j = 0 ; j < changes.length; j++) {
+						String n = changes[j].getVarName();
+						if (changes[j].isInScope()) {
+							eventList.add(new MIRegisterChangedEvent(update.getToken(), reg.getName(), regnos[i]));
+						}
+					}
 				}
 			}
 			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);

@@ -1,13 +1,24 @@
 package org.eclipse.cdt.debug.mi.core.output;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
-public abstract class MIResult {
-	public abstract boolean interpret();
+public class MIResult {
+	String variable = "";
+	MIValue value = null;
+		
+	public String getVariable() {
+		return variable;
+	}
+	
+	public void setVariable(String var) {
+		variable = var;
+	}
+
+	public MIValue getMIValue() {
+		return value;
+	}
+	
+	public void setMIValue(MIValue val) {
+		value = val;
+	}
 }

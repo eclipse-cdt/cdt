@@ -89,7 +89,14 @@ public class MICommand extends Command
 				command += " --";
 			}
 			for (int i = 0; i < parameters.length; i++) {
-				command += " " + parameters[i];
+				if (parameters[i].indexOf('-') != -1 ||
+				    parameters[i].indexOf('\n') != -1 ||
+				    parameters[i].indexOf('\"') != -1||
+				    parameters[i].indexOf(' ') != -1) {
+					command += " \"" + parameters[i] + "\"";
+				} else {
+					command += " \"" + parameters[i] + "\"";
+				}
 			}
 		}
 		return command + "\n";

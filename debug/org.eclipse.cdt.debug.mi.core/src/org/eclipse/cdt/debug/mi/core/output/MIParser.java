@@ -6,9 +6,84 @@ import java.util.StringTokenizer;
 
 
 /**
+<pre>
+`OUTPUT ==>'
+     `( OUT-OF-BAND-RECORD )* [ RESULT-RECORD ] "(gdb)" NL'
+
+`RESULT-RECORD ==>'
+     ` [ TOKEN ] "^" RESULT-CLASS ( "," RESULT )* NL'
+
+`OUT-OF-BAND-RECORD ==>'
+     `ASYNC-RECORD | STREAM-RECORD'
+
+`ASYNC-RECORD ==>'
+     `EXEC-ASYNC-OUTPUT | STATUS-ASYNC-OUTPUT | NOTIFY-ASYNC-OUTPUT'
+
+`EXEC-ASYNC-OUTPUT ==>'
+     `[ TOKEN ] "*" ASYNC-OUTPUT'
+
+`STATUS-ASYNC-OUTPUT ==>'
+     `[ TOKEN ] "+" ASYNC-OUTPUT'
+
+`NOTIFY-ASYNC-OUTPUT ==>'
+     `[ TOKEN ] "=" ASYNC-OUTPUT'
+
+`ASYNC-OUTPUT ==>'
+     `ASYNC-CLASS ( "," RESULT )* NL'
+
+`RESULT-CLASS ==>'
+     `"done" | "running" | "connected" | "error" | "exit"'
+
+`ASYNC-CLASS ==>'
+     `"stopped" | OTHERS' (where OTHERS will be added depending on the
+     needs--this is still in development).
+
+`RESULT ==>'
+     ` VARIABLE "=" VALUE'
+
+`VARIABLE ==>'
+     ` STRING '
+
+`VALUE ==>'
+     ` CONST | TUPLE | LIST '
+
+`CONST ==>'
+     `C-STRING'
+
+`TUPLE ==>'
+     ` "{}" | "{" RESULT ( "," RESULT )* "}" '
+
+`LIST ==>'
+     ` "[]" | "[" VALUE ( "," VALUE )* "]" | "[" RESULT ( "," RESULT )*
+     "]" '
+
+`STREAM-RECORD ==>'
+     `CONSOLE-STREAM-OUTPUT | TARGET-STREAM-OUTPUT | LOG-STREAM-OUTPUT'
+
+`CONSOLE-STREAM-OUTPUT ==>'
+     `"~" C-STRING'
+
+`TARGET-STREAM-OUTPUT ==>'
+     `"@" C-STRING'
+
+`LOG-STREAM-OUTPUT ==>'
+     `"&" C-STRING'
+
+`NL ==>'
+     `CR | CR-LF'
+
+`TOKEN ==>'
+     _any sequence of digits_.
+
+`C-STRING ==>'
+     `""" SEVEN-BIT-ISO-C-STRING-CONTENT """'
+</pre>
  */
 public class MIParser {
 
+	/**
+	 * Construct the AST for MI.
+	 */
 	public MIOutput parse(String buffer) {
 		MIOutput mi = new MIOutput();
 		MIResultRecord rr = null;
@@ -33,12 +108,13 @@ public class MIParser {
 				token = token.substring(i);
 			}
 
+			// Process ResultRecord | Out-Of-Band Records
 			if (token.charAt(0) == '^') {
 					rr = processMIResultRecord(token.substring(1), id);
 			} else {
-					MIOOBRecord br = processMIOOBRecord(token.substring(1), id);
-					if (br != null) {
-						oobs.add(br);
+					MIOOBRecord band = processMIOOBRecord(token.substring(1), id);
+					if (band != null) {
+						oobs.add(band);
 					}
 			}
 		}
@@ -51,23 +127,29 @@ public class MIParser {
 	MIResultRecord processMIResultRecord(String buffer, int id) {
 		MIResultRecord rr = new MIResultRecord();
 		rr.setToken(id);
-		if (buffer.startsWith("done")) {
-			rr.setResultClass("done");
-		} else if (buffer.startsWith("error")) {
-			rr.setResultClass("error");
-		} else if (buffer.startsWith("exit")) {
-			rr.setResultClass("exit");
-		} else if (buffer.startsWith("running")) {
-			rr.setResultClass("running");
-		} else if (buffer.startsWith("connected")) {
-			rr.setResultClass("connected");
+		if (buffer.startsWith(MIResultRecord.DONE)) {
+			rr.setResultClass(MIResultRecord.DONE);
+			buffer = buffer.substring(MIResultRecord.DONE.length());
+		} else if (buffer.startsWith(MIResultRecord.ERROR)) {
+			rr.setResultClass(MIResultRecord.ERROR);
+			buffer = buffer.substring(MIResultRecord.ERROR.length());
+		} else if (buffer.startsWith(MIResultRecord.EXIT)) {
+			rr.setResultClass(MIResultRecord.EXIT);
+			buffer = buffer.substring(MIResultRecord.EXIT.length());
+		} else if (buffer.startsWith(MIResultRecord.RUNNING)) {
+			rr.setResultClass(MIResultRecord.RUNNING);
+			buffer = buffer.substring(MIResultRecord.RUNNING.length());
+		} else if (buffer.startsWith(MIResultRecord.CONNECTED)) {
+			rr.setResultClass(MIResultRecord.CONNECTED);
+			buffer = buffer.substring(MIResultRecord.CONNECTED.length());
 		} else {
 			// FIXME:
 			// Error throw an exception?
 		}
-		int i = buffer.indexOf( ',' );
-		if (i != -1) {
-			String s = buffer.substring(i + 1);
+
+		// Results are separated by commas.
+		if (buffer.charAt(0) == ',') {
+			String s = buffer.substring(1);
 			MIResult[] res = processMIResults(s);
 			rr.setResults(res);
 		}
@@ -75,10 +157,175 @@ public class MIParser {
 	}
 
 	MIOOBRecord processMIOOBRecord(String buffer, int id) {
-		return null;
+		MIOOBRecord oob = null;
+		char c = buffer.charAt(0);
+		if (c == '*' || c == '+' || c == '=') {
+			MIAsyncRecord async = null;
+			switch (c) {
+				case '*':
+					async = new MIExecAsyncOutput();
+				break;
+
+				case '+':
+					async = new MIStatusAsyncOutput();
+				break;
+
+				case '=':
+					async = new MINotifyAsyncOutput();
+				break;
+			}
+			async.setToken(id);
+			// Extract the Async-Class
+			int i = buffer.indexOf(',');
+			if (i != -1) {
+				String asyncClass = buffer.substring(1, i);
+				async.setAsyncClass(asyncClass);
+				buffer = buffer.substring(i + 1);
+			}
+			MIResult[] res = processMIResults(buffer);
+			async.setMIResults(res);
+			oob = async;
+		} else if (c == '~' || c == '@' || c == '&') {
+			MIStreamRecord stream = null;
+			switch (c) {
+				case '~':
+					stream = new MIConsoleStreamOutput();
+				break;
+
+				case '@':
+					stream = new MITargetStreamOutput();
+				break;
+
+				case '&':
+					stream = new MILogStreamOutput();
+				break;
+			}
+			stream.setCString(translate (new StringBuffer(buffer.substring(1))));
+			oob = stream;
+		}
+		return oob;
 	}
 
+	
 	MIResult[] processMIResults(String buffer) {
-		return new MIResult[0];
+		List aList = new ArrayList();
+		StringBuffer sb = new StringBuffer(buffer);
+		MIResult result = processMIResult(sb);
+		if (result != null) {
+			aList.add(result);
+		}
+		while (sb.length() > 0 && sb.charAt(0) == ',') {
+			sb.deleteCharAt(0);
+			result = processMIResult(sb);
+			if (result != null) {
+				aList.add(result);
+			}
+		}
+		return (MIResult[])aList.toArray(new MIResult[aList.size()]);
+	}
+
+	MIResult processMIResult(StringBuffer sb) {
+		MIResult result = new MIResult();
+		String buffer = sb.toString();
+		int equal;
+		if (Character.isLetter(buffer.charAt(0)) &&
+		    (equal = buffer.indexOf('=')) != -1) {
+			String variable = buffer.substring(0, equal);
+			result.setVariable(variable);
+			sb.delete(0, equal + 1);
+			MIValue value = processMIValue(sb);
+			result.setMIValue(value);
+		} else {
+			result.setVariable(buffer);
+			sb.setLength(0);
+		}
+		return result;
+	}
+
+	MIValue processMIValue(StringBuffer sb) {
+		MIValue value = null;
+		if (sb.charAt(0) == '{') {
+			sb.deleteCharAt(0);
+			value = processMITuple(sb);
+		} else if (sb.charAt(0) == '[') {
+			sb.deleteCharAt(0);
+			value = processMIList(sb);
+		} else if (sb.charAt(0) == '"') {
+			sb.deleteCharAt(0);
+			MIConst cnst = new MIConst();
+			cnst.setCString(translate(sb));
+			value = cnst;
+		}
+		return value;
+	}
+	
+	MIValue processMITuple(StringBuffer sb) {
+		MITuple tuple = new MITuple();
+		List aList = new ArrayList(1);
+		// Catch closing '}'
+		while (sb.length() > 0 && sb.charAt(0) != '}') {
+			MIResult res = processMIResult(sb);
+			if (res != null) {
+				aList.add(res);
+			}
+		}
+		MIResult[] results = (MIResult[])aList.toArray(new MIResult[aList.size()]);
+		tuple.setMIResults(results);
+		return tuple;
+	}
+	
+	MIValue processMIList(StringBuffer sb) {
+		// catch closing ']'
+		return new MIList();
+	}
+
+	// FIXME: TODO
+	// FIXME: Side effect in the loop
+	// FIXME: Deal with <repeat>
+	String translate(StringBuffer sb) {
+		boolean escape = false;
+		boolean quoteFound = false;
+		for (int i = 0; i < sb.length() || quoteFound; i++) {
+			switch (sb.charAt(i)) {
+				case '\\':
+					if (escape) {
+						sb.deleteCharAt(i - 1);
+						escape = false;
+					} else {
+						escape = true;
+					}
+					break;
+
+				case 'n':
+					if (escape) {
+						sb.setCharAt(i, '\n');
+						sb.deleteCharAt(i - 1);
+						escape = false;
+					}
+				break;
+
+				case 'r':
+					if (escape) {
+						sb.setCharAt(i, '\n');
+						sb.deleteCharAt(i - 1);
+						escape = false;
+					}
+				break;
+
+				case '"':
+					if (escape) {
+						sb.setCharAt(i, '"');
+						sb.deleteCharAt(i - 1);
+						escape = false;
+					} else {
+						quoteFound = true;
+					}
+				break;
+
+				default:
+					escape = false;
+			}
+		}
+		return sb.toString();
 	}
 }

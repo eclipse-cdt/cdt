@@ -1,13 +1,20 @@
 package org.eclipse.cdt.debug.mi.core.output;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class MITuple extends MIValue {
 
+	final static MIResult[] nullResults = new MIResult[0];
+	MIResult[] results = null;
+
+	public MIResult[] getMIResults() {
+		if (results == null) {
+			return nullResults;
+		}
+		return results;
+	}
+
+	public void setMIResults(MIResult[] res) {
+		results = res;
+	}
 }

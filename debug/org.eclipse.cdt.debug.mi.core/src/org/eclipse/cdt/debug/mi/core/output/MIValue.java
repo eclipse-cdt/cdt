@@ -8,6 +8,5 @@ package org.eclipse.cdt.debug.mi.core.output;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class MIValue {
-
+public abstract class MIValue {
 }

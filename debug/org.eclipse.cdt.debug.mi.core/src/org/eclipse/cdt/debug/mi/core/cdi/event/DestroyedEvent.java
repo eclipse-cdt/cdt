@@ -10,6 +10,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
+import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
@@ -20,7 +21,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibUnloadedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
 
 /**
  */
@@ -34,19 +35,29 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 		source = new Thread(session.getCurrentTarget(), ethread.getId());
 	}
 
-	public DestroyedEvent(Session s, MIVarChangedEvent var) {
+	public DestroyedEvent(Session s, MIVarDeletedEvent var) {
 		session = s;
-		VariableManager mgr = (VariableManager)session.getVariableManager();
+		VariableManager varMgr = (VariableManager)session.getVariableManager();
 		String varName = var.getVarName();
-		Variable variable = mgr.getVariable(varName);
+		Variable variable = varMgr.getVariable(varName);
 		if (variable!= null) {
 			source = variable;
 			try {
-				mgr.removeVariable(variable.getMIVar().getVarName());
+				varMgr.removeVariable(variable.getMIVar().getVarName());
 			} catch (CDIException e) {
 			}
 		} else {
-			source = new CObject(session.getCurrentTarget());
+			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
+			variable = expMgr.getExpression(varName);
+			if (variable != null) {
+				source = variable;
+				try {
+					expMgr.removeExpression(variable.getMIVar().getVarName());
+				} catch (CDIException e) {
+				}
+			} else {
+				source = new CObject(session.getCurrentTarget());
+			}
 		}
 	}
 

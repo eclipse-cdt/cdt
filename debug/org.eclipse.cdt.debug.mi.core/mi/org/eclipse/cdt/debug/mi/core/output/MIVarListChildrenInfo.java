@@ -53,9 +53,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 							}
 						}
 					} else if (var.equals("children")) { //$NON-NLS-1$
-						if (value instanceof MITuple) {
-							parseChildren((MITuple)value, aList);
-						}
+						parseChildren(value, aList);
 					}
 				}
 			}
@@ -63,14 +61,26 @@ public class MIVarListChildrenInfo extends MIInfo {
 		children = (MIVar[])aList.toArray(new MIVar[aList.size()]);
 	}
 
-	void parseChildren(MITuple tuple, List aList) {
-		MIResult[] results = tuple.getMIResults();
-		for (int i = 0; i < results.length; i++) {
-			String var = results[i].getVariable();
-			if (var.equals("child")) { //$NON-NLS-1$
-				MIValue value = results[i].getMIValue();
-				if (value instanceof MITuple) {
-					aList.add(new MIVar((MITuple)value));
+	/*
+	 * Some gdb MacOSX do not return a MITuple so we have
+	 * to check for different format.
+	 * See PR 81019
+	 */
+	void parseChildren(MIValue val, List aList) {
+		MIResult[] results = null;
+		if (val instanceof MITuple) {
+			results = ((MITuple)val).getMIResults();
+		} else if (val instanceof MIList) {
+			results = ((MIList)val).getMIResults();
+		}
+		if (results != null) {
+			for (int i = 0; i < results.length; i++) {
+				String var = results[i].getVariable();
+				if (var.equals("child")) { //$NON-NLS-1$
+					MIValue value = results[i].getMIValue();
+					if (value instanceof MITuple) {
+						aList.add(new MIVar((MITuple)value));
+					}
 				}
 			}
 		}

@@ -1,3 +1,7 @@
+2004-12-20 Alain Magloire
+	Fix for PR 81019 for MacOsX
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIVarListChildrenInfo.java
+
 2004-11-26 Alain Magloire
 	Make the deferred breakpoint on by default.
 	* cdi/org/eclipose/cdt/debug/mi/core/cdi/SharedLibraryManager.java

@@ -21,9 +21,11 @@ import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -89,27 +91,34 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		// super.doRun() just creates the project and does not assign a builder to it.
 		super.doRun(new SubProgressMonitor(monitor, 5));
 
-		// Add the managed build nature
+		// Add the managed build nature and builder
+		ICDescriptor desc = null;
 		try {
 			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_NATURE));
 			ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
-		} catch (CoreException e) {
-			// Bail out of the project creation
-		}
-		// Add the builder
-		try {
 			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_BUILDER));
 			ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
+			desc = CCorePlugin.getDefault().getCProjectDescription(newProject);
+			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
+			desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 		} catch (CoreException e) {
-			// Bail out of the project creation
+			ManagedBuilderUIPlugin.log(e);
 		}
-
+		
 		// Add the target to the project
 		ITarget newTarget = null;
 		try {
+			ManagedBuildManager.createBuildInfo(newProject);
 			ITarget parent = targetConfigurationPage.getSelectedTarget();
 			newTarget = ManagedBuildManager.createTarget(newProject, parent);
 			if (newTarget != null) {
+				try {
+					// org.eclipse.cdt.core.ELF or org.eclipse.cdt.core.PE
+					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
+				} catch (CoreException e) {
+					ManagedBuilderUIPlugin.log(e);
+				}
 				String artifactName = newProject.getName();
 				newTarget.setArtifactName(artifactName);
 				IConfiguration [] selectedConfigs = targetConfigurationPage.getSelectedConfigurations();
@@ -132,27 +141,14 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 				ManagedBuildManager.setNewProjectVersion(newProject);
 			}
 		} catch (BuildException e) {
-			// TODO Flag the error to the user
+			ManagedBuilderUIPlugin.log(e);
 		}
 
-		// Associate the project with the managed builder so the clients can get proper information
-		try {
-			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(newProject);
-			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
-			
-			desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-			// org.eclipse.cdt.core.ELF or org.eclipse.cdt.core.PE
-			desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
-		} catch (CoreException e) {
-			// TODO Flag the error to the user
-		}
-        
 		// Modify the project settings
 		if (newProject != null) {
 			optionPage.performApply(new SubProgressMonitor(monitor, 2));
 		}
-		
+
 		// Save the build options
 		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_SAVE));
 		ManagedBuildManager.saveBuildInfo(newProject, true);
@@ -171,8 +167,12 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunEpilogue(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void doRunEpilogue(IProgressMonitor monitor) {
-		// Auto-generated method stub
-
+		// Get my initializer to run
+		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(newProject);
+		if (initResult.getCode() != IStatus.OK) {
+			// At this point, I can live with a failure
+			ManagedBuilderUIPlugin.log(initResult);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -57,9 +57,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
 
 public class ManagedBuildCoreTests extends TestCase {
 	private static final boolean boolVal = true;
@@ -165,6 +167,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		IProject project = null;
 		try {
 			project = createProject(projectName);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
 		} catch (CoreException e) {
 			fail("Failed to open project in 'testMakeCommandManipulation': " + e.getLocalizedMessage());
 		}
@@ -204,12 +211,18 @@ public class ManagedBuildCoreTests extends TestCase {
 		IProject project = null;
 		try {
 			project = createProject(projectName);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
 		} catch (CoreException e) {
 			fail("Failed to open project in 'testScannerInfoInterface': " + e.getLocalizedMessage());
 		}
 		
 		//These are the expected path settings
 		 final String[] expectedPaths = new String[5];
+
 		 // This first path is a built-in, so it will not be manipulated by build manager
 		 expectedPaths[0] = "/usr/gnu/include";
 		 expectedPaths[1] = (new Path("/usr/include")).toOSString();
@@ -227,11 +240,13 @@ public class ManagedBuildCoreTests extends TestCase {
 			fail("Failed adding new target to project: " + e.getLocalizedMessage());
 		}
 		assertNotNull(newTarget);
+		
 		// Copy over the configs
 		IConfiguration[] baseConfigs = baseTarget.getConfigurations();
 		for (int i = 0; i < baseConfigs.length; ++i) {
 			newTarget.createConfiguration(baseConfigs[i], baseConfigs[i].getId() + "." + i);
 		}
+		
 		// Change the default configuration to the sub config
 		IConfiguration[] configs = newTarget.getConfigurations();
 		assertEquals(4, configs.length);
@@ -251,15 +266,6 @@ public class ManagedBuildCoreTests extends TestCase {
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		assertNotNull(provider);
 		
-		// Check the build information right away
-		IScannerInfo currentSettings = provider.getScannerInformation(project);
-		Map currentSymbols = currentSettings.getDefinedSymbols();
-		// It should simply contain the built-in
-		assertTrue(currentSymbols.containsKey("BUILTIN"));
-		assertEquals((String)currentSymbols.get("BUILTIN"), "");
-		String[] currentPaths = currentSettings.getIncludePaths();
-		assertTrue(Arrays.equals(expectedPaths, currentPaths));
-		
 		// Now subscribe (note that the method will be called after a change
 		provider.subscribe(project, new IScannerInfoChangeListener () {
 			public void changeNotification(IResource project, IScannerInfo info) {
@@ -278,7 +284,17 @@ public class ManagedBuildCoreTests extends TestCase {
 				assertTrue(Arrays.equals(expectedPaths, actualPaths));
 			}
 		});
+
+		// Check the build information before we change it
+		IScannerInfo currentSettings = provider.getScannerInformation(project);
 		
+		Map currentSymbols = currentSettings.getDefinedSymbols();
+		// It should simply contain the built-in
+		assertTrue(currentSymbols.containsKey("BUILTIN"));
+		assertEquals((String)currentSymbols.get("BUILTIN"), "");
+		String[] currentPaths = currentSettings.getIncludePaths();
+		assertTrue(Arrays.equals(expectedPaths, currentPaths));
+
 		// Add some defined symbols programmatically
 		String[] expectedSymbols = {"DEBUG", "GNOME = ME "};
 		IConfiguration defaultConfig = buildInfo.getDefaultConfiguration(newTarget);
@@ -329,6 +345,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		
 		// Open the test project
 		IProject project = createProject(projectName);
+		IProjectDescription description = project.getDescription();
+		// Make sure it has a managed nature
+		if (description != null) {
+			assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+		}
 		
 		// Make sure there is one and only one target with 3 configs
 		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
@@ -403,6 +424,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		IProject project = null;
 		try {
 			project = createProject(projectName);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
 		} catch (CoreException e) {
 			fail("Failed to open project: " + e.getLocalizedMessage());
 		}
@@ -483,7 +509,15 @@ public class ManagedBuildCoreTests extends TestCase {
 				target.createConfiguration(configs[i], target.getId() + "." + i);
 			}
 		}
-		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);		
+		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
+		
+		// Initialize the path entry container
+		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
+		if (initResult.getCode() != IStatus.OK) {
+			fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
+		}
+		
+		// Now test the results out
 		checkRootTarget(target);
 		
 		// Override the "String Option in Category" option value
@@ -541,6 +575,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		IProject project = null;
 		try {
 			project = createProject(projectName);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
 		} catch (CoreException e) {
 			fail("Failed to open project: " + e.getLocalizedMessage());
 		}
@@ -569,6 +608,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		}
 		try {
 			project = createProject(projectRename);
+			description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
 		} catch (CoreException e) {
 			fail("Failed to open renamed project: " + e.getLocalizedMessage());
 		}
@@ -618,6 +662,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		}
 		try {
 			project = createProject(projectName);
+			description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
 		} catch (CoreException e) {
 			fail("Failed to open re-renamed project: " + e.getLocalizedMessage());
 		}
@@ -643,6 +692,9 @@ public class ManagedBuildCoreTests extends TestCase {
 	}
 	
 	private void addManagedBuildNature (IProject project) {
+		// Create the buildinformation object for the project
+		ManagedBuildManager.createBuildInfo(project);
+		
 		// Add the managed build nature
 		try {
 			ManagedCProjectNature.addManagedNature(project, new NullProgressMonitor());
@@ -1316,10 +1368,10 @@ public class ManagedBuildCoreTests extends TestCase {
 			if (description != null) {
 				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
 			}
-
 		} catch (CoreException e) {
 			fail("Test failed on error parser project creation: " + e.getLocalizedMessage());
 		}
+		
 		// There should not be any targets defined for this project yet
 		assertEquals(0, ManagedBuildManager.getTargets(project).length);
 		
@@ -1339,6 +1391,14 @@ public class ManagedBuildCoreTests extends TestCase {
 		ITarget target = targets[0];
 		assertEquals(target, newTarget);
 		assertFalse(target.equals(targetDef));
+
+		// Initialize the path entry container
+		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
+		if (initResult.getCode() != IStatus.OK) {
+			fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
+		}
+		
+		// Test this out
 		checkErrorParsersTarget(target);
 		
 		// Save, close, reopen and test again
@@ -1456,3 +1516,4 @@ public class ManagedBuildCoreTests extends TestCase {
 	}
 	
 }
+

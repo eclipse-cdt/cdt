@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) Apr 21, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
@@ -52,21 +51,34 @@ import org.eclipse.core.runtime.Platform;
  * @since 2.0
  */
 public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
-
 	private static final String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
+	private static final String ERROR_HEADER = "PathEntryContainer error [";	//$NON-NLS-1$
+	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
+	private static final String TRACE_HEADER = "PathEntryContainer trace [";	//$NON-NLS-1$
+	
 	private ITarget defaultTarget;
 	private Vector entries;
+	private IProject project;
 	private ManagedBuildInfo info;
+	public static boolean VERBOSE = false;
 	
+	public static void outputTrace(String resourceName, String message) {
+		System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+	}
+
+	public static void outputError(String resourceName, String message) {
+		System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+	}
+
 	/**
 	 * Creates a new path container for the managed buildd project.
 	 * 
 	 * @param info the build information associated with the project
 	 */
-	public ManagedBuildCPathEntryContainer(ManagedBuildInfo info) {
+	public ManagedBuildCPathEntryContainer(IProject project) {
 		super();
-		this.info = info;
-		defaultTarget = info.getDefaultTarget();
+		this.project = project;
 		entries = new Vector();
 	}
 	
@@ -91,7 +103,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			}
 			
 			if (add) {
-				entries.add(CoreModel.newMacroEntry(new Path(""), macro, value));	//$NON-NLS-1$
+				entries.add(CoreModel.newMacroEntry(Path.EMPTY, macro, value));
 			}
 		}
 		
@@ -101,24 +113,12 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		// A little checking is needed to avoid adding duplicates
 		Iterator pathIter = paths.listIterator();
 		while (pathIter.hasNext()) {
-			boolean add = true;
 			String path = (String) pathIter.next();
-			// Make sure there is no other path with the same value
-			Iterator entryIter = entries.listIterator();
-			while (entryIter.hasNext()) {
-				IPathEntry entry = (IPathEntry) entryIter.next();
-				if (entry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-					if (((IIncludeEntry)entry).getFullIncludePath().equals(path)) {
-						add = false;
-						break;
-					}
-				}
-			}
-			if (add) {
-				entries.add(CoreModel.newIncludeEntry(new Path(""), null, new Path(path), true));	//$NON-NLS-1$
+			IPathEntry entry = CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, new Path(path), true);
+			if (!entries.contains(entry)) {
+				entries.add(entry);
 			}
 		}
-		
 	}
 
 	protected void calculateBuiltIns(ITarget defaultTarget, IConfiguration config) {
@@ -190,35 +190,38 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
 	 */
 	public IPathEntry[] getPathEntries() {
-		// TODO figure out when I can skip this step
-		if (entries.isEmpty()) {
-			// Load the toolchain-spec'd collector
-			defaultTarget = info.getDefaultTarget();
-			if (defaultTarget == null) {
-				// The build information has not been loaded yet
-				return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
-			}
-			ITarget parent = defaultTarget.getParent();
-			if (parent == null) {
-				// The build information has not been loaded yet
-				return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
-			}
-			// See if we can load a dynamic resolver
-			String baseTargetId = parent.getId();
-			IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(baseTargetId); 
-			if (collector != null) {
-				collector.setProject(info.getOwner().getProject());
-				calculateEntriesDynamically((IProject)info.getOwner(), collector);
-				addIncludePaths(collector.getIncludePaths());
-				addDefinedSymbols(collector.getDefinedSymbols());
+		info = (ManagedBuildInfo) ManagedBuildManager.getBuildInfo(project);
+
+		// Load the toolchain-spec'd collector
+		defaultTarget = info.getDefaultTarget();
+		if (defaultTarget == null) {
+			// The build information has not been loaded yet
+			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+		}
+		ITarget parent = defaultTarget.getParent();
+		if (parent == null) {
+			// The build information has not been loaded yet
+			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
+			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+		}
+		// See if we can load a dynamic resolver
+		String baseTargetId = parent.getId();
+		IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(baseTargetId); 
+		if (collector != null) {
+			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
+			collector.setProject(info.getOwner().getProject());
+			calculateEntriesDynamically((IProject)info.getOwner(), collector);
+			addIncludePaths(collector.getIncludePaths());
+			addDefinedSymbols(collector.getDefinedSymbols());
+		} else {
+			// If none supplied, use the built-ins
+			IConfiguration config = info.getDefaultConfiguration(defaultTarget);
+			if (config != null) {
+				calculateBuiltIns(defaultTarget, config);
+				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + config.getName());	//$NON-NLS-1$
 			} else {
-				// If none supplied, use the built-ins
-				IConfiguration config = info.getDefaultConfiguration(defaultTarget);
-				if (config != null) {
-					calculateBuiltIns(defaultTarget, config);
-				} else {
-					return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
-				}
+				ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
+				return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 			}
 		}
 		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);

@@ -141,7 +141,7 @@ public class ManagedBuilderPropertyPage extends PropertyPage implements ICOption
 		IProject project = getProject();
 		ITarget target = ManagedBuildManager.getSelectedTarget(project);
 		if (target == null) {
-			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project, true);
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			target = info.getDefaultTarget();
 			ManagedBuildManager.setSelectedTarget(project, target);
 		}

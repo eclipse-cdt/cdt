@@ -98,7 +98,7 @@ public class Target extends BuildObject implements ITarget {
 		this.cleanCommand = parent.getCleanCommand();
 
 		// Hook me up
-		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
+		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner);
 		buildInfo.addTarget(this);
 	}
 

@@ -48,7 +48,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 			//  page before the "C/C++ Build" page.
 
 			// Get the build information
-			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project, true);
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			target = info.getDefaultTarget();
 		}
 		if (target != null) {

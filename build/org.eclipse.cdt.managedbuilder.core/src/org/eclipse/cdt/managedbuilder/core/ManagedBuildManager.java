@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -54,9 +57,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -345,16 +351,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		ListIterator iter = listeners.listIterator();
 		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource, false));
+			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource));
 		}
 	}
 
 	/**
-	 * @param newProject
+	 * Adds the version of the managed build system to the project 
+	 * specified in the argument.
+	 * 
+	 * @param newProject the project to version
 	 */
 	public static void setNewProjectVersion(IProject newProject) {
 		// Get the build info for the argument
-		ManagedBuildInfo info = findBuildInfo(newProject, false);
+		ManagedBuildInfo info = findBuildInfo(newProject);
 		info.setVersion(buildInfoVersion.toString());		
 	}
 
@@ -570,7 +579,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return parentTarget; 
 			
 		if (resource instanceof IProject) {
-			// Must be an extension target (why?)
+			// Must be an extension target
 			if (owner != null)
 				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_null")); //$NON-NLS-1$
 		} else {
@@ -583,6 +592,54 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		// Passed validation so create the target.
 		return new Target(resource, parentTarget);
+	}
+	
+	/**
+	 * @param resource
+	 * @return
+	 */
+	public static IStatus initBuildInfoContainer(IResource resource) {
+		ManagedBuildInfo buildInfo = null;
+
+		// Get the build info associated with this project for this session
+		try {
+			buildInfo = findBuildInfo(resource.getProject());
+			initBuildInfoContainer(buildInfo);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+			return new Status(IStatus.ERROR, 
+				ManagedBuilderCorePlugin.getUniqueIdentifier(), 
+				-1, 
+				e.getLocalizedMessage(), 
+				e);
+		}
+		return new Status(IStatus.OK, 
+			ManagedBuilderCorePlugin.getUniqueIdentifier(), 
+			IStatus.OK, 
+			ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok", resource.getName()),	//$NON-NLS-1$ 
+			null);
+	}
+	
+	/* (non-Javadoc)
+	 * Private helper method to intialize the path entry container once and 
+	 * only once when the build info is first loaded or created.
+	 * 
+	 * @param info
+	 * @throws CoreException
+	 */
+	private static void initBuildInfoContainer(ManagedBuildInfo info) throws CoreException {
+		// Now associate the path entry container with the project
+		ICProject cProject = info.getCProject();
+		// This does not block the workspace or trigger delta events
+		IPathEntry[] entries = cProject.getRawPathEntries();
+		// Make sure the container for this project is in the path entries
+		List newEntries = new ArrayList(Arrays.asList(entries));
+		if (!newEntries.contains(ManagedBuildInfo.containerEntry)) {
+			// In this case we should trigger an init and deltas
+			newEntries.add(ManagedBuildInfo.containerEntry);
+			cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), new NullProgressMonitor());
+			info.setContainerCreated(true);
+		}
 	}
 	
 	private static boolean isVersionCompatible(IExtension extension) {
@@ -619,6 +676,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (!file.exists())
 			return null;
 	
+		// So there is a project file, load the information there
 		try {
 			InputStream stream = file.getContents();
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -655,9 +713,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
 		} catch (Exception e) {
+			ManagedBuilderCorePlugin.log(e);
 			buildInfo = null;
 		}
-
 		return buildInfo;
 	}
 
@@ -735,6 +793,36 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 	
+	/**
+	 * Creates a new build information object and associates it with the 
+	 * resource in the argument. Note that the information contains no 
+	 * build target or configuation information. It is the respoinsibility 
+	 * of the caller to populate it. It is also important to note that the 
+	 * caller is responsible for associating an IPathEntryContainer with the 
+	 * build information after it has been populated. 
+	 * <p>
+	 * The typical sequence of calls to add a new build information object to 
+	 * a managed build project is
+	 * <p><pre>
+	 * ManagedBuildManager.createBuildInfo(project);
+	 * &#047;&#047; Do whatever initialization you need here
+	 * ManagedBuildManager.createTarget(project);
+	 * ManagedBuildManager.initBuildInfoContainer(project);
+	 *   
+	 * @param resource The resource the build information is associated with
+	 */
+	public static void createBuildInfo(IResource resource) {
+		ManagedBuildInfo buildInfo = new ManagedBuildInfo(resource);
+		try {
+			// Associate the build info with the project for the duration of the session
+			resource.setSessionProperty(buildInfoProperty, buildInfo);
+		} catch (CoreException e) {
+			// There is no point in keeping the info around if it isn't associated with the project
+			ManagedBuilderCorePlugin.log(e);
+			buildInfo = null;
+		}
+	}
+	
 	private static IManagedConfigElementProvider createConfigProvider(
 		DefaultManagedConfigElement element) throws CoreException {
 
@@ -774,7 +862,17 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return false;
 	}
 
-	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
+	/* (non-Javadoc)
+	 * Provate helper method that first checks to see if a build information 
+	 * object has been associated with the project for the current workspace 
+	 * session. If one cannot be found, one is created from the project file 
+	 * associated with the argument. If there is no prject file or the load 
+	 * fails for some reason, the method will return <code>null</code> 
+	 *  
+	 * @param resource
+	 * @return
+	 */
+	private static ManagedBuildInfo findBuildInfo(IResource resource/*, boolean create*/) {
 		// I am sick of NPEs
 		if (resource == null) return null;
 
@@ -796,55 +894,40 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				buildInfo.updateOwner(resource);
 			}
 		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
 			return null;
 		}
 		
+		// Nothing in session store, so see if we can load it from cdtbuild
 		if (buildInfo == null && resource instanceof IProject) {
-			// Nothing in session store, so see if we can load it from cdtbuild
 			buildInfo = loadBuildInfo((IProject)resource);
-		}
-		
-		if (buildInfo == null && create) {
 			try {
-				// Create a new build info object for the project
-				buildInfo = new ManagedBuildInfo(resource, true);
-				// Associate the build info with the project for the duration of the session
-				resource.setSessionProperty(buildInfoProperty, buildInfo);
+				// Check if the project needs its container initialized
+				initBuildInfoContainer(buildInfo);
 			} catch (CoreException e) {
-				return null;
+				// We can live without a path entry container if the build information is valid
+				ManagedBuilderCorePlugin.log(e);
 			}
 		}
-
 		return buildInfo;
 	}
 	
 	/**
-	 * Answers the build information for the <code>IResource</code> in the
-	 * argument. If the <code>create</code> is true, then a new build information
-	 * repository will be created for the resource. 
-	 * 
-	 * @param resource
-	 * @param create
-	 * @return IManagedBuildInfo
-	 */
-	public static IManagedBuildInfo getBuildInfo(IResource resource, boolean create) {
-		return (IManagedBuildInfo) findBuildInfo(resource, create);
-	}
-
-	/**
-	 * Answers, but does not create, the managed build information for the 
+	 * Finds, but does not create, the managed build information for the 
 	 * argument.
 	 * 
-	 * @see ManagedBuildManager#getBuildInfo(IResource, boolean)
-	 * @param resource
-	 * @return IManagedBuildInfo
+	 * @see ManagedBuildManager#initBuildInfo(IResource)
+	 * @param resource The resource to search for managed build information on.
+	 * @return IManagedBuildInfo The build information object for the resource.
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
-		return (IManagedBuildInfo) findBuildInfo(resource, false);
+		return (IManagedBuildInfo) findBuildInfo(resource.getProject());
 	}
 
 	/**
-	 * @return
+	 * Answers the current version of the managed builder plugin.
+	 * 
+	 * @return the current version of the managed builder plugin
 	 */
 	public static PluginVersionIdentifier getBuildInfoVersion() {
 		return buildInfoVersion;
@@ -864,7 +947,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
 	public IScannerInfo getScannerInformation(IResource resource) {
-		return (IScannerInfo) getBuildInfo(resource.getProject(), false);
+		return (IScannerInfo) getBuildInfo(resource.getProject());
 	}
 
 	/* (non-Javadoc)

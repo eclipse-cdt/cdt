@@ -546,7 +546,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					IProject dep = refdProjects[i];
 					if (!dep.exists()) continue;
 					if (addDeps) {
-						buffer.append("dependents:" + NEWLINE); //$NON-NLS-1						
+						buffer.append("dependents:" + NEWLINE); //$NON-NLS-1$						
 						addDeps = false;
 					}
 					String buildDir = dep.getLocation().toString();
@@ -1163,7 +1163,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			}
 			
 			// Some echo implementations misbehave and put the -n and newline in the output
-			if (firstLine.startsWith("-n")) {
+			if (firstLine.startsWith("-n")) { //$NON-NLS-1$
 				// Create a vector with all the strings
 				Vector tokens = new Vector(dependencies.length);
 				for (int index = 1; index < dependencies.length; ++index) {
@@ -1184,7 +1184,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				} catch (ArrayIndexOutOfBoundsException e) {
 					secondLine = new String();
 				}
-				if (secondLine.startsWith("'")) {
+				if (secondLine.startsWith("'")) { //$NON-NLS-1$
 					// This is the Win32 implementation of echo (MinGW without MSYS)
 					outBuffer.append(secondLine.substring(1) + WHITESPACE);
 				} else {
@@ -1198,7 +1198,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				} catch (ArrayIndexOutOfBoundsException e) {
 					thirdLine = new String();
 				}
-				int lastIndex = thirdLine.lastIndexOf("'");
+				int lastIndex = thirdLine.lastIndexOf("'"); //$NON-NLS-1$
 				if (lastIndex != -1) {
 					if (lastIndex == 0) {
 						outBuffer.append(WHITESPACE);
@@ -1223,7 +1223,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					Iterator iter = tokens.listIterator(3);
 					while (iter.hasNext()) {
 						String nextElement = (String)iter.next();
-						if (nextElement.endsWith("\\")) {
+						if (nextElement.endsWith("\\")) { //$NON-NLS-1$
 							outBuffer.append(nextElement + NEWLINE + WHITESPACE);
 						} else {
 							outBuffer.append(nextElement + WHITESPACE);

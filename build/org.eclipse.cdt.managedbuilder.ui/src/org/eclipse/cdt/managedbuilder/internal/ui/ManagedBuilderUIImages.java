@@ -31,7 +31,7 @@ public class ManagedBuilderUIImages {
 	// Subdirectory (under the package containing this class) where 16 color images are
 	private static URL iconBaseURL = null;
 	static {
-		iconBaseURL = Platform.getBundle(ManagedBuilderUIPlugin.getUniqueIdentifier()).getEntry("icons/");
+		iconBaseURL = Platform.getBundle(ManagedBuilderUIPlugin.getUniqueIdentifier()).getEntry("icons/"); //$NON-NLS-1$
 	}	
 
 	private static final String NAME_PREFIX= ManagedBuilderUIPlugin.getUniqueIdentifier() + '.';

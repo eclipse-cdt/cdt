@@ -67,5 +67,11 @@
             id="org.eclipse.cdt.managedbuilder.core.genmakebuilder">
       </builder>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.PathEntryContainerInitializer">
+      <pathEntryContainerInitializer
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer"
+            id="org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"/>
+   </extension>
 
 </plugin>

@@ -28,6 +28,9 @@ public class NewManagedCProjectWizard extends NewManagedProjectWizard {
 		super(title, description);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
+	 */
 	public void addPages() {
 		// Add the default page for all new managed projects 
 		super.addPages();

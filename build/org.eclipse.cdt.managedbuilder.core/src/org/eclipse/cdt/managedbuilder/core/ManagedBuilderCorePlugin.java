@@ -13,11 +13,14 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 
 
 public class ManagedBuilderCorePlugin extends Plugin {
@@ -71,4 +74,26 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		// Turn on logging for plugin when debugging
+		super.start(context);
+		configurePluginDebugOptions();
+	}
+	
+	private static final String PATH_ENTRY = getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
+	
+	/**
+	 * 
+	 */
+	private void configurePluginDebugOptions() {
+		if (isDebugging()) {
+			String option = Platform.getDebugOption(PATH_ENTRY);
+			if (option != null) {
+				ManagedBuildCPathEntryContainer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			}
+		}
+	}
 }

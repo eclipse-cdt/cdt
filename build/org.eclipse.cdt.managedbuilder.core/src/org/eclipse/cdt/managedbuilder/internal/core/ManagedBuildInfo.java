@@ -42,13 +42,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -61,72 +57,34 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultConfig");	//$NON-NLS-1$
 	private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultTarget");	//$NON-NLS-1$
 	// The path container used for all managed projects
-	private static final IContainerEntry containerEntry = CoreModel.newContainerEntry(new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"));	//$NON-NLS-1$
+	public static final IContainerEntry containerEntry = CoreModel.newContainerEntry(new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"));	//$NON-NLS-1$
 
-	private ICProject cModelElement; 
+	private boolean containerCreated;
+	private ICProject cProject; 
 	private String defaultConfigIds;
 	private Map defaultConfigMap;
 	private ITarget defaultTarget;
 	private String defaultTargetId;
-	private ITarget selectedTarget;
 	private boolean isDirty;
-	private boolean rebuildNeeded;
 	private IResource owner;
+	private boolean rebuildNeeded;
+	private ITarget selectedTarget;
 	private Map targetMap;
 	private List targetList;
-	private String version;	
+	private String version;
 	
 
 	/**
-	 * For compatability.
+	 * Basic contructor used when the project is brand new.
 	 * 
 	 * @param owner
 	 */
 	public ManagedBuildInfo(IResource owner) {
-		this(owner, true);
-	}
-	
-	/**
-	 * Create a new managed build information for the IResource specified in the argument
-	 * 
-	 * @param owner
-	 * @param intializeEntries
-	 * @since 2.0
-	 */
-	public ManagedBuildInfo(IResource owner, boolean intializeEntries) {
 		this.owner = owner;
-		cModelElement = CoreModel.getDefault().create(owner.getProject());
-		
-		try {
-			IPathEntry[] entries = cModelElement.getRawPathEntries();
-			if (entries.length > 0 && entries[0].equals(containerEntry)) {
-				
-			} else {
-				Job initJob = new Job(ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.job.init", getOwner().getName())) {	//$NON-NLS-1$
-					protected IStatus run(IProgressMonitor monitor) {
-						try {
-							// Set the raw path entries
-							cModelElement.setRawPathEntries(new IPathEntry[]{containerEntry}, new NullProgressMonitor());
-						} catch (CModelException e) {
-							return new Status(IStatus.ERROR, 
-									ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-									-1, 
-									e.getLocalizedMessage(), 
-									e);
-						}
-						return new Status(IStatus.OK, 
-								ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-								IStatus.OK, 
-								ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok", getOwner().getName()),	//$NON-NLS-1$ 
-								null);	
-					}
+		cProject = CoreModel.getDefault().create(owner.getProject());
 
-				};
-				initJob.schedule();
-			}
-		} catch (CModelException e) {
-			ManagedBuilderCorePlugin.log(e);
-		}
+		// The container for this project has never been created
+		containerCreated = false;
 
 		// Does not need a save but should be rebuilt
 		isDirty = false;
@@ -150,10 +108,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			// Again, hitting this error just means the default config is not set
 			return;
 		}
-
-		if(intializeEntries) {
-			initializePathEntries();
-		}
 	}
 	
 	/**
@@ -164,16 +118,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param element
 	 */
 	public ManagedBuildInfo(IResource owner, Element element) {
-		this(owner, false);
+		this(owner);
+		// Container has already been created for this project
+		containerCreated = true;
 		
 		// Inflate the targets
 		NodeList targetNodes = element.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
 		for (int targIndex = targetNodes.getLength() - 1; targIndex >= 0; --targIndex) {
 			new Target(this, (Element)targetNodes.item(targIndex));
 		}
-		
-		initializePathEntries();
-		
+
 		// Switch the rebuild off since this is an existing project
 		rebuildNeeded = false;
 	}
@@ -242,7 +196,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return name;
 	}
 
-	
+	public ICProject getCProject() {
+		return cProject;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getCleanCommand()
@@ -436,9 +392,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private ArrayList getIncludePathEntries() {
 		// Extract the resolved paths from the project (if any)
 		ArrayList paths = new ArrayList();
-		if (cModelElement != null) {
+		if (cProject != null) {
 			try {
-				IPathEntry[] entries = cModelElement.getResolvedPathEntries();
+				IPathEntry[] entries = cProject.getResolvedPathEntries();
 				for (int index = 0; index < entries.length; ++index) {
 					int kind = entries[index].getEntryKind();
 					if (kind == IPathEntry.CDT_INCLUDE) {
@@ -505,9 +461,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 	private HashMap getMacroPathEntries() {
 		HashMap macros = new HashMap();
-		if (cModelElement != null) {
+		if (cProject != null) {
 			try {
-				IPathEntry[] entries = cModelElement.getResolvedPathEntries();
+				IPathEntry[] entries = cProject.getResolvedPathEntries();
 				for (int index = 0; index < entries.length; ++index) {
 					if (entries[index].getEntryKind() == IPathEntry.CDT_MACRO) {
 						IMacroEntry macro = (IMacroEntry) entries[index];
@@ -865,8 +821,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	private void initializePathEntries() {
 		try {
-			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(this);
-			CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cModelElement}, container, new NullProgressMonitor());
+			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(getOwner().getProject());
+			CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cProject}, container, new NullProgressMonitor());
 		} catch (CModelException e) {
 			ManagedBuilderCorePlugin.log(e);
 		}
@@ -908,19 +864,23 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		setDirty(false);
 	}
 
+	public void setContainerCreated(boolean isCreated) {
+		containerCreated = isCreated;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public void setDefaultConfiguration(IConfiguration configuration) {
 		// Sanity
-		if (configuration== null) return;
+		if (configuration == null) return;
 		
 		// Get the target associated with the argument
 		ITarget target = configuration.getTarget();
 		
 		// See if there is anything to be done
 		IConfiguration oldDefault = getDefaultConfiguration(target);
-		if (!configuration.equals(oldDefault)) {
+		if (defaultTarget == null || !configuration.equals(oldDefault)) {
 			// Make sure it is the default
 			setDefaultTarget(target);
 			// Make the argument the 
@@ -960,7 +920,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			defaultTarget = target;
 			defaultTargetId = target.getId();
 			persistDefaultTarget();
-			initializePathEntries();
+			if (containerCreated) {
+				initializePathEntries();
+			}
 		}
 	}
 	
@@ -1028,17 +990,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					target.updateOwner(resource);
 				}
 				// And finally update the cModelElement
-				cModelElement = CoreModel.getDefault().create(owner.getProject());
-				try {
-					CoreModel.setRawPathEntries(cModelElement, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
-				} catch (CModelException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				initializePathEntries();
-				
+				cProject = CoreModel.getDefault().create(owner.getProject());
+
 				// Save everything
 				setDirty(true);
+				setRebuildState(true);
 			}
 		}
 	}

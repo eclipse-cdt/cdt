@@ -1,0 +1,4 @@
+org.eclipse.cdt.managedbuilder.core/debug=true
+
+# Reports path entry container activity
+org.eclipse.cdt.managedbuilder.core/debug/pathEntry=false

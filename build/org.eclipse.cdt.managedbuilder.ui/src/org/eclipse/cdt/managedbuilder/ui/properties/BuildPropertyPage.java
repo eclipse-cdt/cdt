@@ -173,7 +173,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		GridData gd;
 
 		// Initialize the key data
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject(), true);
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info.getVersion() == null) {
 			// Display a message page instead of the properties control
 			final Label invalidInfo = new Label(composite, SWT.LEFT);

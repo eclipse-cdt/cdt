@@ -11,8 +11,12 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
 
 public class GCCErrorParser implements IErrorParser {
-
+	
 	public boolean processLine(String line, ErrorParserManager eoParser) {
+		return processLine(line, eoParser, IMarkerGenerator.SEVERITY_ERROR_RESOURCE);
+	}
+
+	public boolean processLine(String line, ErrorParserManager eoParser, int inheritedSeverity) {
 		// Known patterns.
 		// (a)
 		// filename:lineno: description
@@ -76,7 +80,6 @@ public class GCCErrorParser implements IErrorParser {
 					String fileName = line.substring(0, firstColon);
 					String varName = null;
 					String desc = line.substring(secondColon + 1).trim();
-					int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 					/* Then check for the column  */
 					int thirdColon= line.indexOf(':', secondColon + 1);
 					if (thirdColon != -1) {
@@ -183,7 +186,7 @@ public class GCCErrorParser implements IErrorParser {
 							buf += " in inclusion " + inclusionError; //$NON-NLS-1$
 							inclusionError = t;
 							// Call the parsing process again.
-							processLine(buf, eoParser);
+							processLine(buf, eoParser, extractSeverity(desc, inheritedSeverity));
 						}
 					}
 
@@ -200,9 +203,9 @@ public class GCCErrorParser implements IErrorParser {
 							}
 						}
 					}
-					
+
+					int severity = extractSeverity(desc, inheritedSeverity);
 					if (desc.startsWith("warning") || desc.startsWith("Warning")) { //$NON-NLS-1$ //$NON-NLS-2$
-						severity = IMarkerGenerator.SEVERITY_WARNING;
 						// Remove the warning.
 						String d = desc.substring("warning".length()).trim(); //$NON-NLS-1$
 						if (d.startsWith(":")) { //$NON-NLS-1$
@@ -232,5 +235,13 @@ public class GCCErrorParser implements IErrorParser {
 			}
 		}
 		return false;
+	}
+	
+	private int extractSeverity(String desc, int defaultSeverity) {
+		int severity = defaultSeverity; 
+		if (desc.startsWith("warning") || desc.startsWith("Warning")) { //$NON-NLS-1$ //$NON-NLS-2$
+			severity = IMarkerGenerator.SEVERITY_WARNING;
+		}
+		return severity;
 	}
 }

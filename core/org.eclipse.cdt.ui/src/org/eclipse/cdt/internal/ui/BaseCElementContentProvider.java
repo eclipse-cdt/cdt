@@ -456,7 +456,17 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 
 	protected IArchive[] getArchives(IArchiveContainer container) {
-		return container.getArchives();
+		ICElement[] celements = container.getChildren();
+		ArrayList list = new ArrayList(celements.length);
+		for (int i = 0; i < celements.length; i++) {
+			if (celements[i] instanceof IArchive) {
+				IArchive ar = (IArchive)celements[i];
+				list.add(ar);
+			}
+		}
+		IArchive[] ars = new IArchive[list.size()];
+		list.toArray(ars);
+		return ars;
 	}
 
 	/**

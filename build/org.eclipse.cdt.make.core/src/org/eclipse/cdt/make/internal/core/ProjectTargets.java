@@ -1,28 +1,27 @@
 package org.eclipse.cdt.make.internal.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -33,6 +32,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ProjectTargets {
+
+	private static final String MAKE_TARGET_KEY = MakeCorePlugin.getUniqueIdentifier() + ".buildtargets";
+	private static final String TARGETS_EXT = "targets"; //$NON-NLS-1$
 
 	private static final String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
 	private static final String TARGET_ELEMENT = "target"; //$NON-NLS-1$
@@ -49,67 +51,39 @@ public class ProjectTargets {
 
 	private IProject project;
 
-	public ProjectTargets(IProject project) {
+	public ProjectTargets(MakeTargetManager manager, IProject project) throws CoreException {
+		boolean writeTargets = false;
+		File targetFile = null;
+
 		this.project = project;
-	}
 
-	public ProjectTargets(MakeTargetManager manager, IProject project, InputStream input) throws CoreException {
-		this(project);
+		Document document = translateCDTProjectToDocument();
 
-		Document document = null;
-		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			document = parser.parse(input);
-		} catch (Exception e) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("ProjectTargets.error_reading_project_targets"), e)); //$NON-NLS-1$
+		//Historical ... fall back to the workspace and look in previous
+		// location
+		if (document == null || !document.hasChildNodes()) {
+			IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
+					TARGETS_EXT);
+			targetFile = targetFilePath.toFile();
+			try {
+				InputStream input = new FileInputStream(targetFile);
+				document = translateInputStreamToDocument(input);
+				writeTargets = true; // update cdtproject
+			} catch (FileNotFoundException ex) {
+				/* Ignore */
+			}
 		}
-		Node node = document.getFirstChild();
-		if (node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
-			NodeList list = node.getChildNodes();
-			for (int i = 0; i < list.getLength(); i++) {
-				node = list.item(i);
-				if (node.getNodeName().equals(TARGET_ELEMENT)) {
-					IContainer container = null;
-					NamedNodeMap attr = node.getAttributes();
-					String path = attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
-					if (path != null && !path.equals("")) { //$NON-NLS-1$
-						container = project.getFolder(path);
-					} else {
-						container = project;
-					}
-					try {
-						MakeTarget target =
-							new MakeTarget(
-								manager,
-								project,
-								attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(),
-								attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue());
-						target.setContainer(container);
-						String option = getString(node, TARGET_STOP_ON_ERROR);
-						if (option != null) {
-							target.setStopOnError(Boolean.valueOf(option).booleanValue());
-						}
-						option = getString(node, TARGET_USE_DEFAULT_CMD);
-						if (option != null) {
-							target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
-						}
-						option = getString(node, TARGET_COMMAND);
-						if (option != null) {
-							target.setBuildCommand(new Path(option));
-						}
-						option = getString(node, TARGET_ARGUMENTS);
-						if (option != null) {
-							target.setBuildArguments(option);
-						}
-						option = getString(node, TARGET);
-						if (option != null) {
-							target.setBuildTarget(option);
-						}
-						add(target);
-					} catch (CoreException e) {
-						MakeCorePlugin.log(e);
-					}
+
+		if (document != null) {
+			extractMakeTargetsFromDocument(document, manager);
+			if (writeTargets) {
+				try {
+					saveTargets();
+				} catch (IOException e) {
+					targetFile = null;
+				}
+				if (targetFile != null) {
+					targetFile.delete(); // removed old
 				}
 			}
 		}
@@ -154,7 +128,8 @@ public class ProjectTargets {
 	public void add(MakeTarget target) throws CoreException {
 		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+					MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		if (list == null) {
 			list = new ArrayList();
@@ -187,8 +162,14 @@ public class ProjectTargets {
 		return project;
 	}
 
-	protected Document getAsXML() {
-		Document doc = new DocumentImpl();
+	protected Document getAsXML() throws IOException {
+		Document doc;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		} catch (ParserConfigurationException ex) {
+			//This should never happen.
+			throw new IOException("Error creating new XML storage document"); //$NON-NLS-1$
+		}
 		Element targetsRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
 		doc.appendChild(targetsRootElement);
 		Iterator container = targetMap.entrySet().iterator();
@@ -229,14 +210,144 @@ public class ProjectTargets {
 		return targetElem;
 	}
 
-	public void saveTargets(OutputStream output) throws IOException {
-		Document doc = getAsXML();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setPreserveSpace(true);
-		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(output, "UTF8"), format); //$NON-NLS-1$
-		serializer.asDOMSerializer().serialize(doc);
+	public void saveTargets() throws IOException {
+		try {
+			Document doc = getAsXML();
+			//Historical method would save the output to the stream specified
+			//translateDocumentToOutputStream(doc, output);
+			translateDocumentToCDTProject(doc);
+		} catch (CoreException ex) {
+			throw new IOException(ex.getMessage());
+		}
+	}
+
+	/**
+	 * This output method saves the information into the .cdtproject metadata
+	 * file.
+	 * 
+	 * @param doc
+	 * @throws IOException
+	 */
+	protected void translateDocumentToCDTProject(Document doc) throws CoreException, IOException {
+		ICDescriptor descriptor;
+		descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
+
+		Element rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
+
+		//Nuke the children since we are going to write out new ones
+		NodeList kids = rootElement.getChildNodes();
+		for (int i = 0; i < kids.getLength(); i++) {
+			rootElement.removeChild(kids.item(i));
+		}
+
+		//Extract the root of our temporary document
+		Node node = doc.getFirstChild();
+		//Create a copy which is a part of the new document
+		Node appendNode = rootElement.getOwnerDocument().importNode(node, true);
+		//Put the copy into the document in the appropriate location
+		rootElement.appendChild(appendNode);
+
+		//Save the results
+		descriptor.saveProjectData();
+	}
+
+	/**
+	 * This method parses the .cdtproject file for the XML document describing
+	 * the build targets.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	protected Document translateCDTProjectToDocument() {
+		try {
+			ICDescriptor descriptor;
+			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
+
+			Element rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+			Element element = rootElement.getOwnerDocument().getDocumentElement();
+			NodeList list = rootElement.getChildNodes();
+			for (int i = 0; i < list.getLength(); i++) {
+				if ( list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+					Node appendNode = document.importNode(list.item(i), true);
+					document.appendChild(appendNode);
+				}
+			}
+			return document;
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	/**
+	 * This method parses the input stream for the XML document describing the
+	 * build targets.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	protected Document translateInputStreamToDocument(InputStream input) {
+		Document document = null;
+		try {
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+		} catch (Exception e) {
+			MakeCorePlugin.log(e);
+		}
+		return document;
+	}
+
+	/**
+	 * Extract the make target information which is contained in the XML
+	 * Document
+	 * 
+	 * @param document
+	 */
+	protected void extractMakeTargetsFromDocument(Document document, MakeTargetManager manager) {
+		Node node = document.getFirstChild();
+		if (node != null && node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
+			NodeList list = node.getChildNodes();
+			for (int i = 0; i < list.getLength(); i++) {
+				node = list.item(i);
+				if (node.getNodeName().equals(TARGET_ELEMENT)) {
+					IContainer container = null;
+					NamedNodeMap attr = node.getAttributes();
+					String path = attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
+					if (path != null && !path.equals("")) { //$NON-NLS-1$
+						container = project.getFolder(path);
+					} else {
+						container = project;
+					}
+					try {
+						MakeTarget target = new MakeTarget(manager, project, attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(),
+								attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue());
+						target.setContainer(container);
+						String option = getString(node, TARGET_STOP_ON_ERROR);
+						if (option != null) {
+							target.setStopOnError(Boolean.valueOf(option).booleanValue());
+						}
+						option = getString(node, TARGET_USE_DEFAULT_CMD);
+						if (option != null) {
+							target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
+						}
+						option = getString(node, TARGET_COMMAND);
+						if (option != null) {
+							target.setBuildCommand(new Path(option));
+						}
+						option = getString(node, TARGET_ARGUMENTS);
+						if (option != null) {
+							target.setBuildArguments(option);
+						}
+						option = getString(node, TARGET);
+						if (option != null) {
+							target.setBuildTarget(option);
+						}
+						add(target);
+					} catch (CoreException e) {
+						MakeCorePlugin.log(e);
+					}
+				}
+			}
+		}
 	}
 }

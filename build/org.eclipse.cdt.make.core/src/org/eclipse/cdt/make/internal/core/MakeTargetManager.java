@@ -11,9 +11,6 @@
 package org.eclipse.cdt.make.internal.core;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,8 +99,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		((MakeTarget)target).setName(name);
-		writeTargets(projectTargets);
-		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_CHANGED, target));
+		updateTarget((MakeTarget) target);
 	}
 
 	public IMakeTarget[] getTargets(IContainer container) throws CoreException {
@@ -242,14 +238,21 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 	}
 
+	protected void updateTarget(MakeTarget target) throws CoreException {
+	    if  (target.getContainer() != null ) { // target has not been added to manager.
+	    	IProject project = target.getContainer().getProject();
+			ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
+	    	if (projectTargets == null || !projectTargets.contains(target)) {
+	    		return; // target has not been added to manager.
+	    	}
+	    	writeTargets(projectTargets);
+	    	notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_CHANGED, target));
+	    }
+	}
+
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
-		IPath targetFilePath =
-			MakeCorePlugin.getDefault().getStateLocation().append(projectTargets.getProject().getName()).addFileExtension(
-				TARGETS_EXT);
-		File targetFile = targetFilePath.toFile();
 		try {
-			FileOutputStream file = new FileOutputStream(targetFile);
-			projectTargets.saveTargets(file);
+			projectTargets.saveTargets();
 		} catch (IOException e) {
 			throw new CoreException(
 				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.error_writing_file"), e)); //$NON-NLS-1$
@@ -257,24 +260,13 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected ProjectTargets readTargets(IProject project) throws CoreException {
-		IPath targetFilePath =
-			MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
-		File targetFile = targetFilePath.toFile();
-		ProjectTargets projectTargets = null;
-		if (targetFile.exists()) {
-			try {
-				projectTargets = new ProjectTargets(this, project, new FileInputStream(targetFile));
-			} catch (FileNotFoundException e) {
-			}
-		}
-		if (projectTargets == null) {
-			projectTargets = new ProjectTargets(project);
-		}
+		ProjectTargets projectTargets = new ProjectTargets(this, project);
 		projectMap.put(project, projectTargets);
 		return projectTargets;
 	}
 
 	protected void deleteTargets(IProject project) {
+		//Historical: We clean up after all other parts.
 		IPath targetFilePath =
 			MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();

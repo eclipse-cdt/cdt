@@ -1,39 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
-
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Autosaving on a manual build</title>
+<title>Autosaving on a build</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 
 <body>
 
-<h1>Autosaving on a manual build</h1>
+<h1>Autosaving on a build</h1>
 
 <p>You can let the CDT save modified files whenever you perform a manual build. 
 The files are saved before the build is performed so that the latest 
-version of your files is built.&nbsp; You can view the output of the make 
-utility in the C-Build view.</p>
+version of your files is built. You can view the output of the make 
+utility in the Console view.</p>
 
 <p>To save resources before manual builds:</p>
 <ol>
   <li>Click <b>Window &gt; Preferences</b>. </li>
   <li>Select <b>Workbench</b> from the list.<br>
-  <img src="../images/workbench_prop.png" width="318" height="270" onClick="changeSize(this,318,270);" 
-	alt="Screen Capture of Workbench Properties" title="click to toggle image size"></li>
-  <li>On the Workbench page, select the <b>Save all modified resources automatically 
-  prior to manual build</b> check box.<li>Click <b>OK</b>.</li>
-  <p>The CDT will now save your resources when you build a project.</ol>
+  <img src="../images/workbench_prop.png" alt="Workbench Properties options window"></li>
+  <li>On the Workbench page, select the <b>Save automatically before build</b> check box.<li>Click <b>OK</b>.</li>
+</ol>
+<p>The CDT will now save your resources when you build a project.</p>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>

@@ -54,7 +54,7 @@ build.</p>
 <p>Build-related information is displayed as follows:</p>
 
 <ul>
-  <li>The C-Build view displays the output of the make utility.</li>
+  <li>The Console view displays the output of the make utility.</li>
   <li>The Tasks view displays a list of compiler errors and warnings related to 
   your projects.</li>
   <li>Makefile actions are displayed in the Make Targets view.</li>
@@ -67,26 +67,26 @@ view</b>.</p>
 
 <p>You can either create a C project for which you supply the 
 
-<span class="filename">makefile</span> 
+<b>makefile</b> 
 or create a C project for which the CDT generates makefiles automatically.
 </p>
 
 <p>To create a new project, from the menu bar choose 
-<span class="guilabel">File > New > Project</span>.
+<b>File > New > Project</b>.
 In the dialog that appears:
 </p>
 
 <ul>
-<li>To create a project for which you supply the <span class="filename">makefile</span>,
+<li>To create a project for which you supply the <b>makefile</b>,
 select either
-<span class="guilabel">Standard Make C project</span> or 
+<b>Standard Make C project</b> or 
 
-<span class="guilabel">Standard Make C++ project</span>. 
+<b>Standard Make C++ project</b>. 
 </li>
 <li>To create a project for which the CDT supplies a basic 
-<span class="filename">makefile</span>, select either
-<span class="guilabel">Managed Make C project</span> or 
-<span class="guilabel">Managed Make C++ project</span>. 
+<b>makefile</b>, select either
+<b>Managed Make C project</b> or 
+<b>Managed Make C++ project</b>. 
 </li>
 </ul>
 
@@ -100,8 +100,8 @@ select either
 you can set the <i>build order</i>. 
 If your project refers to another project, the CDT must build the other project first.
 To set the build order, from the menu bar select
-<span class="guilabel">Window &gt; Preferences &gt; 
-Build Order</span>.
+<b>Window &gt; Preferences &gt; 
+Build Order</b>.
 <p>When you set the build order, the CDT does not rebuild projects 
 that depend 
 on a project; you must rebuild all projects to ensure all changes are 
@@ -114,7 +114,7 @@ propagated.
 
 <dd>You can set the CDT to perform an <i>automatic save</i> of all modified resources 
 when you perform a manual build; from the menu bar, select 
-<span class="guilabel">Windows &gt; Preferences &gt; Workbench</span>.
+<b>Windows &gt; Preferences &gt; Workbench</b>.
 By default, this feature is disabled.
 </dd>
 </dl>
@@ -122,32 +122,32 @@ By default, this feature is disabled.
 <h2>Controlling the building of your project</h2>
 
 <p>The C/C++ compiler that a project uses is controlled by the project's 
-<span class="guilabel">Properties</span> setting.
+<b>Properties</b> setting.
 To view a project's properties, right-click on the project and select 
-<span class="guilabel">Properties</span>.
+<b>Properties</b>.
 In the dialog that appears, the 
-<span class="guilabel">C/C++ Make Project</span> page enables you 
+<b>C/C++ Make Project</b> page enables you 
 to control a variety of settings, including:</p>
 
 <dl>
 <dt>Build Setting</dt>
 
-<dd>Controls whether the compiler will <span class="guilabel">Stop On Error</span>
-or <span class="guilabel">Keep Going On Error</span>.
-Choosing <span class="guilabel">Keep Going On Error</span> will force the compiler to 
+<dd>Controls whether the compiler will <b>Stop On Error</b>
+or <b>Keep Going On Error</b>.
+Choosing <b>Keep Going On Error</b> will force the compiler to 
 attempt to build all referenced projects even if the current project has errors.
 </dd>
 <dt>Build Command</dt>
 <dd>Controls which compiler is used.
-By default the compiler is <span class="command">C Builder</span> 
-(<span class="command">gcc</span>).</dd>
+By default the compiler is <b>C Builder</b> 
+(<b>gcc</b>).</dd>
 
 <dt>Workbench Build Behavior</dt>
 <dd>Controls the auto-build on save feature and what operations
 are performed during a build and rebuild.</dd>
 </dl>
 
-<p>The <span class="guilabel">External Tools Builders</span> page
+<p>The <b>External Tools Builders</b> page
 enables you to add, reorder, or remove external build tools.
 </p>
 
@@ -157,11 +157,11 @@ enables you to add, reorder, or remove external build tools.
 </p>
 
 <ul>
-<li>The <span class="guilabel">C-Build</span> view displays the output of the make utility.</li>
-<li>The <span class="guilabel">Tasks</span> view displays a list 
+<li>The <b>Console</b> view displays the output of the make utility.</li>
+<li>The <b>Tasks</b> view displays a list 
 of compiler errors and warnings related to your projects.  
 </li>
-<li>Build actions display in the <span class="guilabel">Make Targets</span> view.</li>
+<li>Build actions display in the <b>Make Targets</b> view.</li>
 
 </ul>
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">

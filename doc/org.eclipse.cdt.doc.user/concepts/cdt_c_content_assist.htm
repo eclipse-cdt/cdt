@@ -46,8 +46,7 @@ the relevance of each proposal is determined in the following order:</p>
 You trigger the Code completion feature when you call Content Assist (such as when you type <tt>Ctrl+Space</tt>), but you also invoke it when you type 
 &quot;<b>.</b>&quot;, &quot;<b>-></b>&quot; or &quot;<b>::</b>&quot;.</p>
 
-<p><img src="../images/contentAssist_example.gif" width="299" height="272" onClick="changeSize(this,299,272);" 
-     alt="C++ example showing Code Assist popup" title="click to toggle image size"></p>
+<p><img src="../images/contentAssist_example.png"  alt="C++ example showing Code Assist popup"></p>
 
 <p>You can view the signature of each item on the list in a pop-up by pointing 
 to it. You can then select an 
@@ -65,22 +64,20 @@ list of code elements and code templates that start with the letter combination 
 
 <p>You can then select a code template from the list and it is inserted directly into your code.</p>
 
-<img src="../images/editor_c_codetemplates_use.gif" width="242" height="167" onClick="changeSize(this,242,167);" 
-     alt="C++ example showing Code Assist popup" title="click to toggle image size"></p>
+<img src="../images/editor_c_codetemplates_use.png"  alt="C++ example showing Code Assist popup"></p>
 
 <p>For example, the code template <samp>do while statement</samp> contains the following code:</p>
 
-<p><pre>do {
-${cursor}
-} while (${condition});</pre></p>
+<p><img src="../images/codetemplates_example.png"  alt="Code Template showing do-while example"></p>
 
 <p> When you select the <samp>do</samp> code template from the list, you insert the following code:</p>
 
 <p><pre>do {
 } while (condition);</pre></p>
 
+
 <p>If the completion engine finds only one proposal in your templates, that proposal is inserted at the current cursor position.  
-For example if you create a new CPP file and type <tt>mai+CTRL+SPACE</tt> the following code is inserted at the cursor location:</p>
+For example if you create a new .cpp file and type <tt>mai+CTRL+SPACE</tt> the following code is inserted at the cursor location:</p>
 <p><pre>int
 main(int argc, char **argv) {
 	

@@ -4,33 +4,25 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Customizing the C-Build view</title>
+<title>Customizing the Console view</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 
 <body>
 
-<h1>Customizing the C-Build view</h1>
+<h1>Customizing the Console view</h1>
 
-<p>The C-Build view displays the output of the make utility.</p>
-<p>To set C-Build view preferences</p>
+<p>The Console view displays the output of the make utility.</p>
+<p>To set Console view preferences</p>
 <ol>
   <li>Click <b>Window &gt; Preferences</b>.</li>
   <li>Expand <b>C/C++</b>, and click <b>Build Console</b>.<br>
-  <img src="../images/BuildConsole.png" width="318" height="270" onClick="changeSize(this,318,270);" 
-       alt="Screen Capture of Build Console Properties" title="click to toggle image size"></li>
+  <img src="../images/BuildConsole.png"   alt="Build Console Properties"></li>
   <li>To display information on the latest build, select the <b>Always clear console before building</b> check box.</li>
-  <li>To open the C-Build view when a project is built, select the <b>Open console when building</b> check box.</li>
-  <li>To display the console if it is already open when a project is built, 
-  select the <b>Bring the console to top when building (if present)</b>.</li>
+  <li>To open the Console view when a project is built, select the <b>Open console when building</b> check box.</li>
+  <li>To display the console if it is already open when a project is built, select the <b>Bring the console to top when building (if present)</b> check box.</li>
+  <li>To change the number of lines the console stores in its history, enter a new value in the text field next to <b>Limit console output (# lines)</b>.</li>
+  <li>To change the number of spaces represented by a tab, enter the number in the txt field next to <b>Display tab width</b>.</li>
   <li>Click <b>OK</b>.</li>
 </ol>
 

@@ -39,14 +39,15 @@
 	<topic label="C/C++ Find and Replace" href="reference/cdt_u_find_replace.htm"/>
 	<topic label="C/C++ Preferences" href="reference/cdt_u_c_pref.htm">
 		<topic label="Build Console" href="reference/cdt_u_build_pref.htm"/>
+		<topic label="Code Templates" href="reference/cdt_u_code_temp.htm"/>
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
 			<topic label="General" href="reference/cdt_u_c_editor_gen.htm"/>
 			<topic label="Colors" href="reference/cdt_u_c_editor_color.htm"/>
 			<topic label="Content Assist" href="reference/cdt_u_c_editor_con_assist.htm"/>
+			<topic label="Hovers" href="reference/cdt_u_c_editor_hov.htm"/>
 			<topic label="Navigation" href="reference/cdt_u_c_editor_navigation.htm"/>
 		</topic>
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
-		<topic label="Code Templates" href="reference/cdt_u_code_temp.htm"/>
 		<topic label="Make Targets" href="reference/cdt_u_make_targets_pref.htm"/>
 		<topic label="New Make Projects properties" href="reference/cdt_o_proj_prop_pages.htm">
 			<topic label="Make Builder" href="reference/cdt_u_newproj_buildset.htm"/>

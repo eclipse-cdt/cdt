@@ -367,7 +367,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 		// Say goodbye to the nice user
 		buffer.append(NEWLINE);
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE + TAB + AT + ECHO + NEWLINE + NEWLINE);
+		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
 	}
 
 
@@ -587,7 +587,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE + TAB + AT + ECHO + NEWLINE + NEWLINE);
+		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE + NEWLINE);
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
@@ -1131,21 +1131,97 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (inBuffer != null) {
 			// Here are the tokens in the file
 			String[] dependencies = inBuffer.toString().split("\\s");	//$NON-NLS-1$
+			if (dependencies.length == 0) return;
 			
 			// If we are doing an incremental build, only update the files that do not have a comment
-			if (dependencies.length > 0 && !force) {
-				String firstLine = dependencies[0];
+			String firstLine = dependencies[0];
+			if (!force) {
 				if (firstLine.startsWith(COMMENT_SYMBOL)) {
 					return;
 				}
 			}
 
-			// Dummy targets to add to the makefile
+			// Put the generated comments in
 			outBuffer = addDefaultHeader();
-			outBuffer.append(inBuffer);
+			
+			// Some echo implementations misbehave and put the -n and newline in the output
+			if (firstLine.startsWith("-n")) {
+				// Create a vector with all the strings
+				Vector tokens = new Vector(dependencies.length);
+				for (int index = 1; index < dependencies.length; ++index) {
+					String token = dependencies[index];
+					if (token.length() > 0) {
+						tokens.add(token);
+					}
+				}
+				tokens.trimToSize();
+				
+				// Now let's parse:
+				// Win32 outputs -n '<path>/<file>.d <path>/'
+				// POSIX outputs -n <path>/<file>.d <path>/
+				// Get the dep file name
+				String secondLine;
+				try {
+					secondLine = (String) tokens.get(0);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					secondLine = new String();
+				}
+				if (secondLine.startsWith("'")) {
+					// This is the Win32 implementation of echo (MinGW without MSYS)
+					outBuffer.append(secondLine.substring(1) + WHITESPACE);
+				} else {
+					outBuffer.append(secondLine + WHITESPACE);
+				}
+				
+				// The relative path to the build goal comes next
+				String thirdLine;
+				try {
+					thirdLine = (String) tokens.get(1);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					thirdLine = new String();
+				}
+				int lastIndex = thirdLine.lastIndexOf("'");
+				if (lastIndex != -1) {
+					if (lastIndex == 0) {
+						outBuffer.append(WHITESPACE);
+					} else {
+						outBuffer.append(thirdLine.substring(0, lastIndex - 1));
+					}
+				} else {
+					outBuffer.append(thirdLine);
+				}
+				
+				// followed by the actual dependencies
+				String fourthLine;
+				try {
+					fourthLine = (String) tokens.get(2);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					fourthLine = new String();
+				}
+				outBuffer.append(fourthLine + WHITESPACE);
+				
+				// Now do the rest
+				try {
+					Iterator iter = tokens.listIterator(3);
+					while (iter.hasNext()) {
+						String nextElement = (String)iter.next();
+						if (nextElement.endsWith("\\")) {
+							outBuffer.append(nextElement + NEWLINE + WHITESPACE);
+						} else {
+							outBuffer.append(nextElement + WHITESPACE);
+						}
+					}
+				} catch (IndexOutOfBoundsException e) {					
+				}
+
+			} else {
+				outBuffer.append(inBuffer);
+			}
+			
 			outBuffer.append(NEWLINE);
 			save = true;
 			
+			// Dummy targets to add to the makefile
 			for (int i = 0; i < dependencies.length; ++i) {
 				IPath dep = new Path(dependencies[i]);
 				String extension = dep.getFileExtension();

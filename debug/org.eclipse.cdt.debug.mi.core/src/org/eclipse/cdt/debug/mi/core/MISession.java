@@ -275,9 +275,6 @@ public class MISession extends Observable {
 	 */
 	public synchronized void postCommand(Command cmd, long timeout) throws MIException {
 
-		// TRACING: print the command;
-		MIPlugin.getDefault().debugLog(cmd.toString());
-
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
 			throw new MIException("{R,T}xThread terminated");
@@ -288,8 +285,16 @@ public class MISession extends Observable {
 			// REMINDER: if we support -exec-interrupt
 			// Let it throught:
 			// if (cmd instanceof MIExecInterrupt) { }
+			// else
 			throw new MIException("Target is not suspended");
 		}
+
+		if (isTerminated()) {
+			throw new MIException("Session terminated");
+		}
+
+		// TRACING: print the command;
+		MIPlugin.getDefault().debugLog(cmd.toString());
 
 		txQueue.addCommand(cmd);
 
@@ -364,11 +369,20 @@ public class MISession extends Observable {
 		OutputStream outGDB = outChannel;
 		outChannel = null;
 
+		// Although we will close the pipe().  It is cleaner
+		// to give a chance to gdb to cleanup.
 		// send the exit(-gdb-exit).
-		try {
-			MIGDBExit exit = factory.createMIGDBExit();
-			postCommand(exit);
-		} catch (MIException e) {
+		MIGDBExit exit = factory.createMIGDBExit();
+		txQueue.addCommand(exit);
+
+		// Wait for the response
+		synchronized (exit) {
+			// RxThread will set the MIOutput on the cmd
+			// when the response arrive.
+			try {
+				exit.wait(2000);
+			} catch (InterruptedException e) {
+			}
 		}
 		
 		// Make sure gdb is killed.
@@ -446,14 +460,8 @@ public class MISession extends Observable {
 		} catch (InterruptedException e) {
 		}		
 
-		// Flush the queue.
-		queue.clearItems();
-
-		// Tell the observers that the session
-		// is finish, but we can not use the Event Thread.
-		// The Event Thread was  kill above.
+		// Tell the observers that the session is terminated
 		notifyObservers(new MIGDBExitEvent(0));
-
 	}
 
 	/**

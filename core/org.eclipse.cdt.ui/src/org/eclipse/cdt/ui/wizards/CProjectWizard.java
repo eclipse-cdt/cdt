@@ -120,6 +120,15 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	}
 
 	/**
+	 * Method isValidLocation.
+	 * @param projectFieldContents
+	 * @return IStatus
+	 */
+	protected IStatus isValidLocation(String projectFieldContents) {
+		return new Status(IStatus.OK, CUIPlugin.PLUGIN_ID, 0, "", null);
+	}
+
+	/**
 	 * Gets the project location path from the main page
 	 * Overwrite this method if you do not have a main page
 	 */

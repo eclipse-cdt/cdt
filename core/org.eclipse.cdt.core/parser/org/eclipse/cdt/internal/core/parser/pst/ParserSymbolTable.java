@@ -694,7 +694,18 @@ public class ParserSymbolTable {
 				return null;
 			} else if ( numFns == 1 ){
 				return (IParameterizedSymbol)functions.iterator().next();
-			} else{
+			} else if ( numFns == 2 ){
+				Iterator iter = functions.iterator();
+				while( iter.hasNext() ){
+					IParameterizedSymbol fn = (IParameterizedSymbol) iter.next();
+					if( fn.getTypeInfo().isForwardDeclaration() && fn.getTypeSymbol() != null ){
+						if( functions.contains( fn.getTypeSymbol() ) ){
+							return (IParameterizedSymbol) fn.getTypeSymbol();
+						}
+					}
+				}
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+			}else{
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 			}
 		}
@@ -725,6 +736,15 @@ public class ParserSymbolTable {
 
 		for( int i = numFns; i > 0; i-- ){
 			currFn = (IParameterizedSymbol) iterFns.next();
+			
+			if( bestFn != null ){
+				if( bestFn.isForwardDeclaration() && bestFn.getTypeSymbol() == currFn ){
+					bestFn = currFn;
+					continue;
+				} else if( currFn.isForwardDeclaration() && currFn.getTypeSymbol() == bestFn ){
+					continue;
+				}
+			}
 			
 			sourceParams = data.parameters.iterator();
 			

@@ -562,6 +562,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	pstType = TypeInfo.t_struct;
         else if( kind == ASTClassKind.UNION )
         	pstType = TypeInfo.t_union;
+        else if( kind == ASTClassKind.ENUM )
+            pstType = TypeInfo.t_enumeration;
         else
         	throw new ASTSemanticException();
         return pstType;

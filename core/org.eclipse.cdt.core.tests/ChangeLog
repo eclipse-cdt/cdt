@@ -1,3 +1,8 @@
+2003-10-28 Andrew Niefer
+	Added testBug44510() to CompleteParseASTTest
+	Added testBug44925() to CompleteParseASTTest
+	Added testBug44510() to ParserSymbolTableTest
+
 2003-10-24 John Camelon
 	Added testBug45476() to ScannerTestCase.  
 	Added testBug45477() to ScannerTestCase. 

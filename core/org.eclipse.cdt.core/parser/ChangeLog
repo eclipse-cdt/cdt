@@ -1,3 +1,7 @@
+2003-10-28 Andrew Niefer
+	Fixed Bug 44925 : Search: Elaborated type specifier 
+	Patially fixed Bug 44510 : C/C++ Search gives wrong results
+
 2003-10-24 John Camelon
 	Fixed Bug 45476 : preprocessor macro "defined" not handled correctly 
 	Fixed Bug 45477 : macro redefines prevent further parsing 

@@ -1,9 +1,8 @@
 <project default="zips">
 
-	<!--taskdef name="ftp" classname="org.apache.tools.ant.taskdefs.optional.net.FTP"/-->
-	
 	<target name="build" depends="zips,test,updateSite"/>
 	<target name="nightly" depends="build,upload,mail"/>
+	<target name="integration" depends="nightly,wswbmap"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -99,6 +98,15 @@
 		</ftp>
 	</target>
 
+	<target name="wswbmap" depends="init">
+		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
+		<replace file="cdt-map.txt" token="@buildId@" value="${buildId}"/>
+		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
+			remotedir="/home/www/tools/cdt/wswb" action="put" verbose="yes">
+			<fileset file="cdt-map.txt"/>
+		</ftp>
+	</target>
+	
 	<target name="mail" depends="init">	
 		<mail subject="CDT Build ${siteversion}.${timestamp} completed"
 			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">

@@ -37,10 +37,7 @@ public class CBuilder extends ACBuilder {
 	
 	private static final String BUILD_ERROR= "CBuilder.build_error";
 	
-	private ErrorParserManager fErrorParserManager;
-		
 	public CBuilder() {
-		fErrorParserManager= new ErrorParserManager(this);
 	}
 
     public IPath getWorkingDirectory() {
@@ -139,7 +136,9 @@ public class CBuilder extends ACBuilder {
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Parsing");
 				cos.flush();
-				fErrorParserManager.parse(cos.getContent());
+
+				ErrorParserManager epm= new ErrorParserManager(this);
+				epm.parse(cos.getContent());
 
 				if (errMsg != null) {
 					String errorDesc= CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());

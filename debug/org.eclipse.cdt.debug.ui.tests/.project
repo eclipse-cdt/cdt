@@ -3,21 +3,9 @@
 	<name>org.eclipse.cdt.debug.ui.tests</name>
 	<comment></comment>
 	<projects>
-		<project>org.apache.xerces</project>
 		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.core.linux</project>
-		<project>org.eclipse.cdt.core.qnx</project>
-		<project>org.eclipse.cdt.core.solaris</project>
-		<project>org.eclipse.cdt.core.win32</project>
 		<project>org.eclipse.cdt.debug.core</project>
 		<project>org.eclipse.cdt.debug.mi.core</project>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.swt</project>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.update.core</project>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

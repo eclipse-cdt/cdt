@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.PathVariableSelectionDialog;
+import org.eclipse.ui.internal.ide.dialogs.PathVariableSelectionDialog;
 
 /**
  */
@@ -358,7 +358,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		if (linkTargetField == null || linkTargetField.isDisposed())
 			return createStatus(IStatus.OK, "");	//$NON-NLS-1$
 	
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String linkTargetName = linkTargetField.getText();
 		IPath path = new Path(linkTargetName);
 	

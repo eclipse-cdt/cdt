@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.cdt.ui"
    name="%pluginName"
@@ -12,6 +13,11 @@
       </library>
    </runtime>
    <requires>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.apache.xerces"/>
@@ -336,7 +342,7 @@
       </actionSet>
    </extension>
    <extension
-         point="org.eclipse.ui.projectNatureImages">
+         point="org.eclipse.ui.ide.projectNatureImages">
       <image
             icon="icons/full/ovr16/c_ovr.gif"
             natureId="org.eclipse.cdt.core.cnature"

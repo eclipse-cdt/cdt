@@ -32,6 +32,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -109,7 +110,7 @@ public class EditorUtility {
 		if (file != null) {
 			IWorkbenchPage p= CUIPlugin.getActivePage();
 			if (p != null) {
-				IEditorPart editorPart= p.openEditor(file, null, activate);
+				IEditorPart editorPart = IDE.openEditor(p, file, activate);
 				initializeHighlightRange(editorPart);
 				return editorPart;
 			}

@@ -27,6 +27,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * @author aniefer
@@ -74,7 +75,7 @@ public class GotoMarkerAction extends Action {
 			//boo
 		}
 		if( editor != null ){
-			editor.gotoMarker( marker );
+			IDE.gotoMarker(editor, marker);
 		}
 	}
 	

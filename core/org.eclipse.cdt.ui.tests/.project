@@ -3,14 +3,8 @@
 	<name>org.eclipse.cdt.ui.tests</name>
 	<comment></comment>
 	<projects>
-		<project>org.apache.xerces</project>
+		<project>org.eclipse.cdt.core</project>
 		<project>org.eclipse.cdt.ui</project>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.swt</project>
-		<project>org.eclipse.ui</project>
-		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

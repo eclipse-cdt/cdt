@@ -42,6 +42,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
@@ -189,7 +190,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 				try {
 					IWorkbenchPage page = dw.getActivePage();
 					if (page != null)
-						page.openEditor(file);
+						IDE.openEditor(page, file, true);
 				} catch (PartInitException e) {
 					MessageDialog.openError(dw.getShell(),
 						CUIPlugin.getResourceString(OP_ERROR), e.getMessage());

@@ -3,14 +3,7 @@
 	<name>org.eclipse.cdt.core.qnx</name>
 	<comment></comment>
 	<projects>
-		<project>org.apache.xerces</project>
 		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.compare</project>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.debug.core</project>
-		<project>org.eclipse.search</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -39,17 +39,7 @@ public interface ICDIVariableManager extends ICDIManager {
 	 * @return ICDIVariableObject
 	 * @throws CDIException
 	 */
-	ICDIVariableObject getVariableObject(String filename, String function, String name) throws CDIException;
-
-	/**
-	 * Use the stackframe to return an ICDIVariableObject for name.
-	 *
-	 * @param stack
-	 * @param name
-	 * @return ICDIVariableObject
-	 * @throws CDIException
-	 */
-	ICDIVariableObject getVariableObject(ICDIStackFrame stack, String name) throws CDIException;
+	ICDIVariableObject getGlobalVariableObject(String filename, String function, String name) throws CDIException;
 
 	/**
 	 * Consider the variable object as an Array of type and range[start, start + length - 1]
@@ -98,16 +88,6 @@ public interface ICDIVariableManager extends ICDIManager {
 	 * @throws CDIException
 	 */
 	ICDIVariable createVariable(ICDIVariableObject var) throws CDIException;
-
-	/**
-	 * Method getArgumentObject.
-	 * Returns a argument Object that will hold the name and the stackframe.
-	 * @param stack
-	 * @param name
-	 * @return ICDIArgumentObject
-	 * @throws CDIException
-	 */
-	ICDIArgumentObject getArgumentObject(ICDIStackFrame stack, String name) throws CDIException;
 
 	/**
 	 * Method getArgumentObjects.

@@ -6,19 +6,29 @@ package org.eclipse.cdt.debug.core.tests;
  */
 
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.cdt.debug.testplugin.*;
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.debug.mi.core.*;
-import org.eclipse.cdt.debug.core.cdi.*;
-import org.eclipse.cdt.debug.core.cdi.model.*;
+
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.testplugin.CDebugHelper;
+import org.eclipse.cdt.debug.testplugin.CProjectHelper;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Peter Graves

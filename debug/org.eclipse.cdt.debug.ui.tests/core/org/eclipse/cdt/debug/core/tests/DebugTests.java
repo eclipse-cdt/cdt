@@ -6,7 +6,6 @@ package org.eclipse.cdt.debug.core.tests;
  */
 
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 

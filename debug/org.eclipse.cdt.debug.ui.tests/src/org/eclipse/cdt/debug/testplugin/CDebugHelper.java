@@ -54,8 +54,6 @@ public class CDebugHelper {
 		MIPlugin mi;
 		String  workspacePath= Platform.getLocation().toOSString();
 		ICDISession session;
-		String os = System.getProperty("os.name");
-		String exename;
 		mi=MIPlugin.getDefault();
 		
 		IBinary bins[] = project.getBinaryContainer().getBinaries();

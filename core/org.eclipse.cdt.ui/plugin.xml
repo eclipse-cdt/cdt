@@ -148,8 +148,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -168,6 +168,19 @@
             %StdCWizard.description
          </description>
       </wizard>
+<!-- For C Conversion Wizards -->      
+      <wizard
+            name="%UKtoCConversionWizard.name"
+            icon="icons/full/ctool16/newcc_app.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            class="org.eclipse.cdt.ui.wizards.conversion.UKtoCConversionWizard"
+            project="true"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.UKtoCConversionWizard">
+         <description>
+            %UKtoCConversionWizard.description
+         </description>
+      </wizard>
 <!-- For C++ Wizards -->
       <category
             name="%newCCWizardsCategory.name"
@@ -183,6 +196,30 @@
             id="org.eclipse.cdt.ui.wizards.StdCCWizard">
          <description>
             %StdCCWizard.description
+         </description>
+      </wizard>
+      <wizard
+            name="%CtoCCConversionWizard.name"
+            icon="icons/full/ctool16/newc_app.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            class="org.eclipse.cdt.ui.wizards.conversion.CtoCCConversionWizard"
+            project="true"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.CtoCCConversionWizard">
+         <description>
+            %CtoCCConversionWizard.description
+         </description>
+      </wizard>
+      <wizard
+            name="%UKtoCCConversionWizard.name"
+            icon="icons/full/ctool16/newcc_app.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            class="org.eclipse.cdt.ui.wizards.conversion.UKtoCCConversionWizard"
+            project="true"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.UKtoCCConversionWizard">
+         <description>
+            %UKtoCCConversionWizard.description
          </description>
       </wizard>
    </extension>
@@ -410,7 +447,7 @@
    <extension
          point="org.eclipse.cdt.core.CBuildConsole">
          <CBuildConsole class="org.eclipse.cdt.internal.ui.CConsole">
-         </CBuildConsole>
+      </CBuildConsole>
    </extension>
 
 </plugin>

@@ -233,10 +233,10 @@ public class Spawner extends Process {
 		}
 	}
 
-	private native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan);
-	private native int exec1( String[] cmdarray, String[] envp, String dir);
-	private native int raise(int pid, int sig);
-	private native int waitFor(int pid);
+	native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan);
+	native int exec1( String[] cmdarray, String[] envp, String dir);
+	native int raise(int pid, int sig);
+	native int waitFor(int pid);
 
 	static {
 		System.loadLibrary("spawner");

@@ -16,9 +16,11 @@ import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.Declarator;
+import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.EnumeratorDefinition;
 import org.eclipse.cdt.internal.core.dom.ExceptionSpecifier;
+import org.eclipse.cdt.internal.core.dom.ExplicitTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.Expression;
 import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
@@ -26,6 +28,8 @@ import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.PointerOperator;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
+import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
+import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.UsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.UsingDirective;
@@ -33,6 +37,7 @@ import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
+import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -115,6 +120,41 @@ public class DOMTests extends TestCase {
 		
 	}
 	
+	public void testTemplateSpecialization() throws Exception
+	{
+		TranslationUnit tu = parse( "template<> class stream<char> { /* ... */ };");
+		assertEquals( tu.getDeclarations().size(), 1 ); 
+		ExplicitTemplateDeclaration explicit = (ExplicitTemplateDeclaration)tu.getDeclarations().get( 0 );
+		assertNotNull( explicit ); 
+		assertEquals( explicit.getKind(), ExplicitTemplateDeclaration.k_specialization );
+		assertEquals( explicit.getDeclarations().size(), 1 );
+		SimpleDeclaration declaration = (SimpleDeclaration)explicit.getDeclarations().get(0);
+		assertNotNull( declaration );
+		ClassSpecifier classSpec = (ClassSpecifier)declaration.getTypeSpecifier();
+		assertNotNull( classSpec );
+		assertEquals( classSpec.getClassKey(), ClassKey.t_class );
+		assertEquals( classSpec.getName().toString(), "stream<char>" );
+		assertEquals( declaration.getDeclarators().size(), 0 );
+		assertEquals( classSpec.getDeclarations().size(), 0 );
+		
+	}
+	
+	public void testTemplateInstantiation() throws Exception
+	{
+		TranslationUnit tu = parse( "template class Array<char>;");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		ExplicitTemplateDeclaration explicit = (ExplicitTemplateDeclaration)tu.getDeclarations().get( 0 );
+		assertNotNull( explicit );
+		assertEquals( explicit.getKind(), ExplicitTemplateDeclaration.k_instantiation ); 
+		assertEquals( explicit.getDeclarations().size(), 1 );
+		SimpleDeclaration declaration = (SimpleDeclaration)explicit.getDeclarations().get(0);
+		assertNotNull( declaration );
+		ElaboratedTypeSpecifier classSpec = (ElaboratedTypeSpecifier)declaration.getTypeSpecifier();
+		assertNotNull( classSpec );
+		assertEquals( classSpec.getClassKey(), ClassKey.t_class );
+		assertEquals( classSpec.getName().toString(), "Array<char>");	
+	}
+	
 	public void testEnumSpecifier() throws Exception
 	{
 		Writer code = new StringWriter(); 
@@ -144,6 +184,28 @@ public class DOMTests extends TestCase {
 		SimpleDeclaration declaration2 = (SimpleDeclaration)declarations.get(1);
 		EnumerationSpecifier enumSpecifier2 = (EnumerationSpecifier)declaration2.getTypeSpecifier();
 		assertEquals( enumSpecifier2.getName().toString(), "hasAName" ); 
+		
+	}
+	
+	public void testTypedef() throws Exception
+	{
+		TranslationUnit tu = parse( "typedef const struct A * const cpStructA;");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertTrue( declaration.getDeclSpecifier().isTypedef() );
+		assertTrue( declaration.getDeclSpecifier().isConst() );
+		ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier) declaration.getTypeSpecifier();
+		assertEquals( elab.getClassKey(), ClassKey.t_struct ); 
+		assertEquals( elab.getName().toString(), "A" );
+		List declarators = declaration.getDeclarators(); 
+		assertEquals( declarators.size(), 1 );
+		Declarator declarator = (Declarator)declarators.get(0);
+		assertEquals( declarator.getName().toString(), "cpStructA");
+		assertEquals( declarator.getPointerOperators().size(), 1 );
+		PointerOperator po = (PointerOperator)declarator.getPointerOperators().get(0);
+		assertEquals( po.getType(), PointerOperator.t_pointer);
+		assertTrue( po.isConst() ); 
+		assertFalse( po.isVolatile());
 		
 	}
 	public void testUsingClauses() throws Exception
@@ -580,12 +642,13 @@ public class DOMTests extends TestCase {
 	public void testFunctionModifiers() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "void foo( void ) const throw ( yay, nay, we::dont::care );");
+		code.write( "virtual void foo( void ) const throw ( yay, nay, we::dont::care ) = 0;");
 		TranslationUnit translationUnit = parse( code.toString() );
 		List tudeclarations = translationUnit.getDeclarations(); 
 		assertEquals( 1, tudeclarations.size() ); 
 		SimpleDeclaration decl1 = (SimpleDeclaration)tudeclarations.get(0);
 		assertEquals( decl1.getDeclSpecifier().getType(), DeclSpecifier.t_void);
+		assertTrue( decl1.getDeclSpecifier().isVirtual() );
 		assertEquals( decl1.getDeclarators().size(), 1 );
 		Declarator declarator = (Declarator)decl1.getDeclarators().get(0);
 		assertEquals( declarator.getName().toString(), "foo");
@@ -600,6 +663,7 @@ public class DOMTests extends TestCase {
 		assertEquals( n.toString(), "nay");
 		n = (Name)typenames.get(2);
 		assertEquals( n.toString(), "we::dont::care");
+		assertTrue( declarator.isPureVirtual() );
 	}
 
 
@@ -694,6 +758,60 @@ public class DOMTests extends TestCase {
 		assertEquals( po5.getType(), PointerOperator.t_pointer );
 	}
 	
+	public void testBug26467() throws Exception
+	{
+		StringWriter code = new StringWriter(); 
+		code.write(	"struct foo { int fooInt; char fooChar;	};\n" );
+		code.write( "typedef struct foo fooStruct;\n" );
+		code.write( "typedef struct { int anonInt; char anonChar; } anonStruct;\n" );
+		
+		TranslationUnit tu = parse( code.toString() );
+		List tuDeclarations = tu.getDeclarations(); 
+		assertEquals( tuDeclarations.size(), 3 );
+		
+		SimpleDeclaration declaration = (SimpleDeclaration)tuDeclarations.get(0);
+		ClassSpecifier classSpec = (ClassSpecifier)declaration.getTypeSpecifier();
+		assertEquals( declaration.getDeclarators().size(), 0 );
+		assertEquals( classSpec.getClassKey(), ClassKey.t_struct);
+		assertEquals( classSpec.getName().toString(), "foo");
+		List subDeclarations = classSpec.getDeclarations();
+		assertEquals( subDeclarations.size(), 2 );
+		SimpleDeclaration subDeclaration = (SimpleDeclaration)subDeclarations.get(0);
+		assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_int);
+		assertEquals( subDeclaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)subDeclaration.getDeclarators().get(0)).getName().toString(), "fooInt" ); 
+		subDeclaration = (SimpleDeclaration)subDeclarations.get(1);
+		assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_char);
+		assertEquals( subDeclaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)subDeclaration.getDeclarators().get(0)).getName().toString(), "fooChar" ); 
+				
+		declaration = (SimpleDeclaration)tuDeclarations.get(1);
+		assertEquals( declaration.getDeclSpecifier().isTypedef(), true ); 
+		ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier)declaration.getTypeSpecifier();
+		assertEquals( elab.getClassKey(), ClassKey.t_struct);
+		assertEquals( elab.getName().toString(), "foo" );
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getName().toString(), "fooStruct" );
+		
+		declaration = (SimpleDeclaration)tuDeclarations.get(2);
+		assertEquals( declaration.getDeclSpecifier().isTypedef(), true ); 
+		classSpec = (ClassSpecifier) declaration.getTypeSpecifier();
+		assertEquals( classSpec.getClassKey(), ClassKey.t_struct );
+		assertNull( classSpec.getName() ); 
+		subDeclarations = classSpec.getDeclarations();
+		assertEquals( subDeclarations.size(), 2 ); 
+		subDeclaration = (SimpleDeclaration)subDeclarations.get(0);
+		assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_int);
+		assertEquals( subDeclaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)subDeclaration.getDeclarators().get(0)).getName().toString(), "anonInt" ); 
+		subDeclaration = (SimpleDeclaration)subDeclarations.get(1);
+		assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_char);
+		assertEquals( subDeclaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)subDeclaration.getDeclarators().get(0)).getName().toString(), "anonChar" ); 
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getName().toString(), "anonStruct" );	
+	}
+	
 	public void testASMDefinition() throws Exception
 	{
 		TranslationUnit tu = parse( "asm( \"mov ep1 ds2\");" );
@@ -772,6 +890,35 @@ public class DOMTests extends TestCase {
 		{
 			fail( "IOException thrown");
 		}				
+	}
+	
+	public void testTemplateDeclaration() throws Exception {
+		TranslationUnit tu = parse( "template<class T, typename Tibor = junk, class, typename> class myarray { /* ... */ };");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		TemplateDeclaration declaration = (TemplateDeclaration)tu.getDeclarations().get(0);
+		assertEquals( declaration.getTemplateParameters().size(), 4 );
+		TemplateParameter parameter = (TemplateParameter)declaration.getTemplateParameters().get(0);
+		assertEquals( parameter.getKind(), TemplateParameter.k_class);
+		assertEquals( parameter.getName().toString(), "T" ); 
+		assertNull( parameter.getTypeId());
+		parameter = (TemplateParameter)declaration.getTemplateParameters().get(1);
+		assertEquals( parameter.getKind(), TemplateParameter.k_typename);
+		assertEquals( parameter.getName().toString(), "Tibor" );
+		assertEquals( parameter.getTypeId().toString(), "junk");
+		parameter = (TemplateParameter)declaration.getTemplateParameters().get(2);
+		assertEquals( parameter.getKind(), TemplateParameter.k_class);
+		assertNull( parameter.getName() );
+		assertNull( parameter.getTypeId());
+		parameter = (TemplateParameter)declaration.getTemplateParameters().get(3);
+		assertEquals( parameter.getKind(), TemplateParameter.k_typename);
+		assertNull( parameter.getName() );
+		assertNull( parameter.getTypeId());
+		assertEquals( declaration.getDeclarations().size(), 1 );
+		SimpleDeclaration myArray = (SimpleDeclaration)declaration.getDeclarations().get(0);
+		ClassSpecifier classSpec = (ClassSpecifier)myArray.getTypeSpecifier();
+		assertEquals( classSpec.getClassKey(), ClassKey.t_class ); 
+		assertEquals( classSpec.getName().toString(), "myarray");
+		assertEquals( 0, classSpec.getDeclarations().size() );
 	}
 }
 

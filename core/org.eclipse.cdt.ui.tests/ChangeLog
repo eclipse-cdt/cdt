@@ -1,8 +1,12 @@
+2003-03-31 John Camelon
+	Added testWeirdStrings() and testNumerics() to ScannerTestCase. 
+	Added testTemplateSpecialization(), testTemplateDeclaration(), testBug26467(), 
+	  testTypedef() and testTemplateInstantiation() to DOMTests.
+
 2003-03-28 John Camelon
 	Added testConstructorChain() and testASMDefinition() to DOMTests.
 
 2003-03-27 Alain Magloire
-
 	Changes were done in the Core Model API, the hierarchy is now
 	ICModel
 		ICProject

@@ -173,6 +173,8 @@ public class Token {
 	static public final int t_xor = 127;
 	static public final int t_xor_eq = 128;
 	static public final int tSTRING = 129;
+	static public final int tFLOATINGPT = 130;
+	static public final int tLSTRING = 131;
 	
-	static public final int tLAST = tSTRING; 
+	static public final int tLAST = tLSTRING; 
 }

@@ -197,6 +197,45 @@ public class ScannerTestCase extends TestCase
 		return scanner.getCount();
 	}
 
+	public void testWeirdStrings()
+	{
+		try
+		{
+			initializeScanner( "Living Life L\"LONG\"");
+			validateIdentifier( "Living" );
+			validateIdentifier( "Life" );
+			validateString("LONG", true);
+			validateEOF();
+		}
+		catch( ScannerException se )
+		{
+			fail(EXCEPTION_THROWN + se.toString());
+		}
+		
+	}
+	
+	
+	public void testNumerics()
+	{
+		try
+		{
+			initializeScanner("3.0 0.9 .5 3. 4E5 2.01E-03");
+			validateFloatingPointLiteral( "3.0");
+			validateFloatingPointLiteral( "0.9");
+			validateFloatingPointLiteral( ".5");
+			validateFloatingPointLiteral( "3."); 
+			validateFloatingPointLiteral( "4E5");
+			validateFloatingPointLiteral( "2.01E-03" );
+			validateEOF();
+		}
+		catch( ScannerException se )
+		{
+			fail(EXCEPTION_THROWN + se.toString());
+		}
+		
+	}
+	
+	
 	Scanner scanner;
 
 	/**
@@ -993,12 +1032,32 @@ public class ScannerTestCase extends TestCase
 			assertTrue(false);
 		}
 	}
-
-	public void validateString(String expectedImage) throws ScannerException
+	
+	public void validateFloatingPointLiteral(String expectedImage) throws ScannerException
 	{
 		try {
 			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tSTRING);
+			assertTrue(t.type == Token.tFLOATINGPT);
+			assertTrue(t.image.equals(expectedImage));
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}
+	}
+	
+
+	public void validateString( String expectedImage ) throws ScannerException
+	{
+		validateString( expectedImage, false );
+	}
+
+	public void validateString(String expectedImage, boolean lString ) throws ScannerException
+	{
+		try {
+			Token t= scanner.nextToken();
+			if( lString )
+				assertTrue(t.type == Token.tLSTRING);
+			else
+				assertTrue(t.type == Token.tSTRING);
 			assertTrue(t.image.equals(expectedImage));
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);

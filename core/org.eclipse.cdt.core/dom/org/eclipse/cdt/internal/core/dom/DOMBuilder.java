@@ -723,4 +723,115 @@ public class DOMBuilder implements IParserCallback
 		ConstructorChainElementExpression exp = (ConstructorChainElementExpression)expression;
 		exp.getOwnerElement().addExpression( exp );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationBegin(java.lang.Object)
+	 */
+	public Object explicitInstantiationBegin(Object container) {
+		IScope scope = (IScope)container;
+		ExplicitTemplateDeclaration etd = new ExplicitTemplateDeclaration( ExplicitTemplateDeclaration.k_instantiation ); 
+		scope.addDeclaration(etd);
+		return etd;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationEnd(java.lang.Object)
+	 */
+	public void explicitInstantiationEnd(Object instantiation) {	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationBegin(java.lang.Object)
+	 */
+	public Object explicitSpecializationBegin(Object container) {
+		IScope scope = (IScope)container;
+		ExplicitTemplateDeclaration etd = new ExplicitTemplateDeclaration( ExplicitTemplateDeclaration.k_specialization); 
+		scope.addDeclaration(etd);
+		return etd;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationEnd(java.lang.Object)
+	 */
+	public void explicitSpecializationEnd(Object instantiation) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorPureVirtual(java.lang.Object)
+	 */
+	public void declaratorPureVirtual(Object declarator) {
+		Declarator d = (Declarator)declarator;
+		d.setPureVirtual(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
+	 */
+	public Object templateDeclarationBegin(Object container, boolean exported) {
+		return new TemplateDeclaration( (IScope)container, exported );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationAbort(java.lang.Object)
+	 */
+	public void templateDeclarationAbort(Object templateDecl) {
+		templateDecl = null; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
+	 */
+	public void templateDeclarationEnd(Object templateDecl) {
+		TemplateDeclaration decl = (TemplateDeclaration)templateDecl;
+		decl.getOwnerScope().addDeclaration(decl);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public Object templateTypeParameterBegin(Object templDecl, Token kind) {
+		TemplateParameter.ITemplateParameterList list = (TemplateParameter.ITemplateParameterList)templDecl;
+		int k; 
+		switch( kind.getType() )
+		{
+			case Token.t_class:
+				k = TemplateParameter.k_class;
+				break;
+			case Token.t_typename:
+				k= TemplateParameter.k_typename;
+				break;
+			default:
+				k = 0;  
+		}
+		return new TemplateParameter( list, k );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterName(java.lang.Object)
+	 */
+	public void templateTypeParameterName(Object typeParm) {
+		((TemplateParameter)typeParm).setName( currName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeInitialTypeId(java.lang.Object)
+	 */
+	public void templateTypeParameterInitialTypeId(Object typeParm) {
+		((TemplateParameter)typeParm).setTypeId( currName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterEnd(java.lang.Object)
+	 */
+	public void templateTypeParameterEnd(Object typeParm) {
+		TemplateParameter parm = ((TemplateParameter)typeParm);
+		parm.getContainer().addTemplateParameter(parm);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterAbort(java.lang.Object)
+	 */
+	public void templateTypeParameterAbort(Object typeParm) {
+		typeParm = null; 
+	}
 }

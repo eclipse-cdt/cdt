@@ -1,3 +1,11 @@
+2003-03-31 John Camelon
+	Updated Scanner to work for Strings literals like L"this string"
+	Updated Scanner to work for floating points literals.
+	Updated Scanner to be more forgiving on errors in QuickScan mode.
+	Got template instantiation and specialization working (w/callbacks and DOM). 
+	Updated Parser/Callbacks for handle pure virtual function declarations.
+	Added callback support for some template declarations (not all branches).  
+
 2003-03-28 John Camelon
 	Added AccessSpecifier and ClassKind to parser.util package and refactored callbacks. 
 	Better encapsulated ExceptionSpecification in the DOM. 

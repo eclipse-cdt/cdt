@@ -104,7 +104,8 @@ public class Declarator implements IExpressionOwner {
 	}
 	
 	boolean isConst = false; 
-	boolean isVolatile = false; 
+	boolean isVolatile = false;
+	boolean isPureVirtual = false; 
 	/**
 	 * @return boolean
 	 */
@@ -162,6 +163,21 @@ public class Declarator implements IExpressionOwner {
 	 */
 	public void setCtorChain(ConstructorChain ctorChain) {
 		this.ctorChain = ctorChain;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public boolean isPureVirtual() {
+		return isPureVirtual;
+	}
+
+	/**
+	 * Sets the isPureVirtual.
+	 * @param isPureVirtual The isPureVirtual to set
+	 */
+	public void setPureVirtual(boolean isPureVirtual) {
+		this.isPureVirtual = isPureVirtual;
 	}
 
 }

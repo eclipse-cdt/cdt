@@ -248,6 +248,151 @@ c, quick);
 		}
 	}
 	
+	/*
+	 * 
+	 * template-declaration:	export? template <template-parameter-list> declaration
+	 * explicit-instantiation:	template declaration
+	 * explicit-specialization:	template <> declaration
+	 * 
+	 * template-parameter-list:	template-parameter
+	 *							template-parameter-list , template-parameter
+	 * template-parameter:		type-parameter
+	 *							parameter-declaration
+	 * type-parameter:			class identifier?
+	 *							class identifier? = type-id
+	 * 							typename identifier?
+	 * 							typename identifier? = type-id
+	 *							template < template-parameter-list > class identifier?
+	 *							template < template-parameter-list > class identifier? = id-expression
+	 * template-id:				template-name < template-argument-list?>
+	 * template-name:			identifier
+	 * template-argument-list:	template-argument
+	 *							template-argument-list , template-argument
+	 * template-argument:		assignment-expression
+	 *							type-id
+	 *							id-expression
+	 * 
+	 * @param container
+	 */
+	protected void templateDeclaration( Object container ) throws Backtrack
+	{
+		boolean export = false; 
+		if( LT(1) == Token.t_export )
+		{
+			consume( Token.t_export ); 
+			export = true; 
+		}
+		
+		consume( Token.t_template );
+		if( LT(1) != Token.tLT )
+		{
+			// explicit-instantiation
+			Object instantiation = null; 
+			try { instantiation = callback.explicitInstantiationBegin( container ); } catch( Exception e ) { }
+			declaration( instantiation );
+			try { callback.explicitInstantiationEnd( instantiation ); } catch( Exception e ) { }
+			return;
+		}
+		else
+		{
+			consume( Token.tLT );
+			if( LT(1) == Token.tGT )
+			{
+				consume( Token.tGT ); 
+				// explicit-specialization
+				Object specialization = null;
+				try{ specialization = callback.explicitSpecializationBegin( container ); } catch( Exception e ) { }
+				declaration( specialization ); 
+				try{ callback.explicitSpecializationEnd( specialization ); } catch( Exception e ) { }
+				return;
+			}
+		}
+		
+		Object templateDeclaration = null;
+		try
+		{
+			try{ templateDeclaration = callback.templateDeclarationBegin( container, export ); } catch ( Exception e ) {}
+			templateParameterList( templateDeclaration );
+			consume( Token.tGT );
+			declaration( templateDeclaration ); 
+			try{ callback.templateDeclarationEnd( templateDeclaration ); } catch( Exception e ) {}
+			
+		} catch( Backtrack bt )
+		{
+			try { callback.templateDeclarationAbort( templateDeclaration ); } catch( Exception e ) {}
+		}
+	}
+
+	protected void templateParameterList( Object templateDeclaration ) throws EndOfFile, Backtrack {
+		// if we have gotten this far then we have a true template-declaration
+		// iterate through the template parameter list
+		for ( ; ; )
+		{
+			if( LT(1) == Token.tGT ) return; 
+			Object currentTemplateParm = null;
+			if( LT(1) == Token.t_class || LT(1) == Token.t_typename )
+			{
+				try
+				{
+					try{ 
+						currentTemplateParm = callback.templateTypeParameterBegin( 
+								templateDeclaration, consume() );
+					} catch( Exception e ) {} 
+					if( LT(1) == Token.tIDENTIFIER ) // optional identifier
+					{
+						identifier(); 
+						try { callback.templateTypeParameterName( currentTemplateParm );} catch( Exception e ) {}
+						if( LT(1) == Token.tASSIGN ) // optional = type-id
+						{
+							consume( Token.tASSIGN );
+							identifier(); // type-id
+							try{ callback.templateTypeParameterInitialTypeId( currentTemplateParm ); }catch( Exception e ) {}
+						}
+					}
+					try{ callback.templateTypeParameterEnd( currentTemplateParm );	} catch( Exception e ) {}
+					
+				} catch( Backtrack bt )
+				{
+					try{ callback.templateTypeParameterAbort( currentTemplateParm ); }catch( Exception e ) {}
+					throw bt;
+				}
+			}
+			else if( LT(1) == Token.t_template )
+			{
+				try
+				{
+					consume( Token.t_template );
+					consume( Token.tLT );
+					Object newTemplateDeclaration = null;
+					templateParameterList( newTemplateDeclaration ); 
+					consume( Token.tGT ); 
+					consume( Token.t_class );
+					if( LT(1) == Token.tIDENTIFIER ) // optional identifier
+					{
+						identifier(); 
+						if( LT(1) == Token.tASSIGN ) // optional = type-id
+						{
+							consume( Token.tASSIGN );
+							// id-expression()
+						}
+					}
+				}
+				catch( Backtrack bt )
+				{
+				}
+			}
+			else if( LT(1) == Token.tCOMMA )
+			{
+				consume( Token.tCOMMA );
+				continue;
+			}
+			else
+			{
+				parameterDeclaration( templateDeclaration );
+			}
+		}
+	}
+	
 	/**
 	 * declaration
 	 * : {"asm"} asmDefinition
@@ -286,8 +431,7 @@ c, quick);
 				return; 
 			case Token.t_export:
 			case Token.t_template:
-				// templateDeclaration();
-				consume();
+				templateDeclaration( container );
 				return; 
 			case Token.t_extern:
 				if( LT(2) == Token.tSTRING )
@@ -575,9 +719,10 @@ c, quick);
 						// this is an elaborated class specifier
 						Object elab = null; 
 						try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() );} catch( Exception e ) {} 
-						name(); 
+						className(); 
 						try{ callback.elaboratedTypeSpecifierName( elab ); } catch( Exception e ) {}
 						try{ callback.elaboratedTypeSpecifierEnd( elab );} catch( Exception e ) {}
+						encounteredTypename = true;
 						break;
 					}
 				case Token.t_enum:
@@ -610,6 +755,52 @@ c, quick);
 			callback.nameBegin(first);
 			callback.nameEnd(first);
 		} catch( Exception e ) {}
+	}
+	
+	
+	/* class-name: identifier | template-id
+	 * template-id: template-name < template-argument-list opt >
+	 * template-name : identifier
+	 */
+	protected void className() throws Backtrack
+	{	
+		Token first = LA(1);
+		if( LT(1)  == Token.tIDENTIFIER)
+		{
+			if( LT(2) == Token.tLT )
+			{
+				consume( Token.tIDENTIFIER );
+				consume( Token.tLT );
+				
+				// until we get all the names sorted out
+				int depth = 1;
+				Token last = null; 
+
+				while (depth > 0) {
+					last = consume();
+					switch ( last.getType()) {
+						case Token.tGT:
+							--depth;
+							break;
+						case Token.tLT:
+							++depth;
+						break;
+					}
+				}
+				
+				callback.nameBegin( first );
+				callback.nameEnd( last );
+				
+				
+			}
+			else
+			{
+				identifier();
+				return;
+			} 
+		}
+		else
+			throw backtrack;
 	}
 	
 	/**
@@ -822,7 +1013,7 @@ c, quick);
 								// this is most likely the definition of the constructor 
 								return declarator; 
 							}
-							
+														
 							// const-volatile marker on the method
 							if( LT(1) == Token.t_const || LT(1) == Token.t_volatile )
 							{
@@ -859,6 +1050,15 @@ c, quick);
 									}
 								}
 							}
+
+							// check for optional pure virtual							
+							if( LT(1) == Token.tASSIGN && LT(2) == Token.tINTEGER && LA(2).getImage().equals( "0") )
+							{
+								consume( Token.tASSIGN);
+								consume( Token.tINTEGER);
+								try{ callback.declaratorPureVirtual( declarator ); } catch( Exception e ) { }
+							}
+
 						}
 						break;
 					case Token.tLBRACKET:
@@ -1044,7 +1244,7 @@ c, quick);
 		
 		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
-			name();
+			className();
 			try{ callback.classSpecifierName(classSpec);} catch( Exception e ){}			
 		}
 		

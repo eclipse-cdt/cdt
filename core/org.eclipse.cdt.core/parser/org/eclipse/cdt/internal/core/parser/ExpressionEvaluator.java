@@ -622,4 +622,86 @@ public class ExpressionEvaluator implements IParserCallback {
 	public void constructorChainElementExpressionListElementEnd(Object expression) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationBegin(java.lang.Object)
+	 */
+	public Object explicitInstantiationBegin(Object container) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationEnd(java.lang.Object)
+	 */
+	public void explicitInstantiationEnd(Object instantiation) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationBegin(java.lang.Object)
+	 */
+	public Object explicitSpecializationBegin(Object container) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationEnd(java.lang.Object)
+	 */
+	public void explicitSpecializationEnd(Object instantiation) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorPureVirtual(java.lang.Object)
+	 */
+	public void declaratorPureVirtual(Object declarator) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
+	 */
+	public Object templateDeclarationBegin(Object container, boolean exported) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationAbort(java.lang.Object)
+	 */
+	public void templateDeclarationAbort(Object templateDecl) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
+	 */
+	public void templateDeclarationEnd(Object templateDecl) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public Object templateTypeParameterBegin(Object templDecl, Token kind) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterName(java.lang.Object)
+	 */
+	public void templateTypeParameterName(Object typeParm) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeInitialTypeId(java.lang.Object)
+	 */
+	public void templateTypeParameterInitialTypeId(Object typeParm) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterEnd(java.lang.Object)
+	 */
+	public void templateTypeParameterEnd(Object typeParm) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterAbort(java.lang.Object)
+	 */
+	public void templateTypeParameterAbort(Object typeParm) {
+	}
+
 }

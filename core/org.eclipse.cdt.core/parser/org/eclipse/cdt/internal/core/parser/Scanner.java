@@ -30,10 +30,6 @@ import java.util.Vector;
 /**
  * @author jcamelon
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 
 public class Scanner implements IScanner {
@@ -345,9 +341,6 @@ public class Scanner implements IScanner {
 	// these are scanner configuration aspects that we perhaps want to tweak
 	// eventually, these should be configurable by the client, but for now
 	// we can just leave it internal
-	private boolean throwExceptionPPError = true;
-	private boolean throwExceptionOnRedefinition = false;
-	private boolean throwExceptionOnBadUndefinition = false; 
 	private boolean throwExceptionOnBadPreprocessorSyntax = true;
 	private boolean throwExceptionOnInclusionNotFound = true;
 	private boolean throwExceptionOnBadMacroExpansion = true;
@@ -450,7 +443,7 @@ public class Scanner implements IScanner {
 	{
 	
 		count++;
-
+		boolean madeMistake = false; 
 		int c = getChar();
 
 		while (c != NOCHAR) {
@@ -463,14 +456,59 @@ public class Scanner implements IScanner {
 			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
 				c = getChar();
 				continue;
+			} else if (c == '"' || ( c == 'L' && ! madeMistake ) ) {
+			
+				boolean wideString = false; 
+				if( c == 'L' )
+				{
+					int oldChar =c;
+					wideString = true;
+					c = getChar(); 
+					if( c != '"' )
+					{
+						// we have made a mistake
+						ungetChar( c );
+						c = oldChar;
+						madeMistake = true; 
+						continue;
+					}
+				} 
+				 
+				// string
+				StringBuffer buff = new StringBuffer();
+				c = getChar();
+
+				while (c != '"' && c != '\n') {
+					buff.append((char) c);
+					c = getChar();
+				}
+
+				if (c != '\n') 
+				{
+					int type = wideString ? Token.tLSTRING : Token.tSTRING;
+					return newToken(
+						type,
+						buff.toString(),
+						currentContext);
+	
+				} else {
+					if (throwExceptionOnUnboundedString)
+						throw new ScannerException(
+							"Unbounded string found at offset "
+								+ currentContext.getOffset());
+				}
+		
 			} else if (
 				((c >= 'a') && (c <= 'z'))
 					|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
+						
+				if( madeMistake ) madeMistake = false;
 				// String buffer is slow, we need a better way such as memory mapped files
-				StringBuffer buff = new StringBuffer();
+				StringBuffer buff = new StringBuffer(); 
 				buff.append((char) c);
 
-				c = getChar();
+				c = getChar();				
+				
 				while (((c >= 'a') && (c <= 'z'))
 					|| ((c >= 'A') && (c <= 'Z'))
 					|| ((c >= '0') && (c <= '9'))
@@ -525,29 +563,7 @@ public class Scanner implements IScanner {
 				}
 
 				return newToken(tokenType, ident, currentContext);
-			} else if (c == '"') {
-				// string
-				StringBuffer buff = new StringBuffer();
-				c = getChar();
-
-				while (c != '"' && c != '\n') {
-					buff.append((char) c);
-					c = getChar();
-				}
-
-				if (c != '\n') {
-					return newToken(
-						Token.tSTRING,
-						buff.toString(),
-						currentContext);
-				} else {
-					if (throwExceptionOnUnboundedString)
-						throw new ScannerException(
-							"Unbounded string found at offset "
-								+ currentContext.getOffset());
-				}
-
-			} else if ((c >= '0') && (c <= '9')) {
+			} else if ((c >= '0') && (c <= '9') || c == '.' ) {
 				StringBuffer buff;
 				
 				if( pasting )
@@ -559,12 +575,20 @@ public class Scanner implements IScanner {
 				}
 				else
 					buff = new StringBuffer();
+				
+				
+				boolean hex = false;
+				boolean floatingPoint = ( c == '.' ) ? true : false;
+				boolean firstCharZero = ( c== '0' )? true : false; 
 					
 				buff.append((char) c);
 
 				c = getChar();
-				boolean hex = false;
+				
 				if (c == 'x') {
+					if( ! firstCharZero ) 
+						throw new ScannerException( "Invalid Hexidecimal @ offset " + currentContext.getOffset() );
+					
 					hex = true;
 					c = getChar();
 				}
@@ -575,8 +599,53 @@ public class Scanner implements IScanner {
 					buff.append((char) c);
 					c = getChar();
 				}
+				
+				if( c == '.' )
+				{
+					buff.append( (char)c);
+					if( floatingPoint || hex ) throw new ScannerException( "Invalid floating point @ offset " + currentContext.getOffset() );
+					floatingPoint = true;
+					c= getChar(); 
+					while ((c >= '0' && c <= '9') )
+					{
+						buff.append((char) c);
+						c = getChar();
+					}
+				}
+				
 
-				ungetChar(c);
+				if( c == 'e' || c == 'E' )
+				{
+					if( ! floatingPoint ) floatingPoint = true; 
+					// exponent type for flaoting point 
+					buff.append((char)c);
+					c = getChar(); 
+					
+					// optional + or - 
+					if( c == '+' || c == '-' )
+					{
+						buff.append( (char)c );
+						c = getChar(); 
+					}
+					
+					// digit sequence of exponent part 
+					while ((c >= '0' && c <= '9') )
+					{
+						buff.append((char) c);
+						c = getChar();
+					}
+					
+					// optional suffix 
+					if( c == 'l' || c == 'L' || c == 'f' || c == 'F' )
+					{
+						buff.append( (char)c );
+						c = getChar(); 
+					}
+					
+					
+				}
+
+				ungetChar( c );
 				
 				if( pasting )
 				{
@@ -598,8 +667,10 @@ public class Scanner implements IScanner {
 					}
 				}
 				
+				int tokenType = floatingPoint ? Token.tFLOATINGPT : Token.tINTEGER; 
+				
 				return newToken(
-					Token.tINTEGER,
+					tokenType,
 					buff.toString(),
 					currentContext);
 				
@@ -672,7 +743,7 @@ public class Scanner implements IScanner {
 							// definition 
 							String toBeUndefined = getNextIdentifier();
 							
-							if( ( definitions.remove(toBeUndefined) == null ) && throwExceptionOnBadUndefinition ) 
+							if( ( definitions.remove(toBeUndefined) == null ) && ! quickScan ) 
 								throw new ScannerException( "Attempt to #undef symbol " + toBeUndefined + " when it was never defined");
 							
 							skipOverTextUntilNewline();
@@ -764,7 +835,7 @@ public class Scanner implements IScanner {
 
 							String error = getRestOfPreprocessorLine();
 
-							if (throwExceptionPPError) {
+							if (!quickScan) {
 								throw new ScannerException("#error " + error);
 							}
 							c = getChar();
@@ -1385,7 +1456,7 @@ public class Scanner implements IScanner {
 		String key = getNextIdentifier();
 		int offset = currentContext.getOffset() - key.length() - currentContext.undoStackSize();
 
-		if (throwExceptionOnRedefinition) {
+		if (!quickScan) {
 			String checkForRedefinition = (String) definitions.get(key);
 			if (checkForRedefinition != null) {
 				throw new ScannerException(

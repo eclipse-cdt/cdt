@@ -32,7 +32,8 @@ public interface IParserCallback {
 	
 	public Object declaratorBegin(Object container);
 	public void declaratorId(Object declarator);
-	public void declaratorAbort( Object container, Object declarator ); 
+	public void declaratorAbort( Object container, Object declarator );
+	public void declaratorPureVirtual( Object declarator );
 	public void declaratorCVModifier( Object declarator, Token modifier );
 	public void declaratorThrowsException( Object declarator ); 
 	public void declaratorThrowExceptionName( Object declarator );
@@ -115,5 +116,21 @@ public interface IParserCallback {
 	
 	public Object	constructorChainElementExpressionListElementBegin( Object element ); 
 	public void		constructorChainElementExpressionListElementEnd( Object expression );
+	
+	public Object	explicitInstantiationBegin( Object container);
+	public void		explicitInstantiationEnd( Object instantiation ); 
+	
+	public Object	explicitSpecializationBegin( Object container );
+	public void		explicitSpecializationEnd( Object instantiation );
+
+	public Object	templateDeclarationBegin( Object container, boolean exported );
+	public void 	templateDeclarationAbort( Object templateDecl );
+	public void		templateDeclarationEnd( Object templateDecl );	
+	
+	public Object	templateTypeParameterBegin( Object templDecl, Token kind );
+	public void		templateTypeParameterName( Object typeParm );
+	public void		templateTypeParameterAbort( Object typeParm );
+	public void 	templateTypeParameterInitialTypeId( Object typeParm );
+	public void 	templateTypeParameterEnd( Object typeParm );
 	
 }

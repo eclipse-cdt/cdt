@@ -56,6 +56,8 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
 
 /**
  * This is the main entry point for getting at the build information
@@ -64,11 +66,15 @@ import org.w3c.dom.Node;
 public class ManagedBuildManager extends AbstractCExtension implements IScannerInfoProvider {
 
 	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
-	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
+	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	private static final String FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
 	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$ //$NON-NLS-2$
-	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
+	private static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
+	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision";	//$NON-NLS-1$
+	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
+	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
+	private static final String PROJECT_VERSION_ERROR ="ManagedBuildManager.error.project.version.error";	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that
 	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(2, 0, 0);
@@ -311,19 +317,26 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
-			Element rootElement = doc.createElement(ROOT_ELEM_NAME);	
-			doc.appendChild(rootElement);
+			
+			// Get the build information for the project
+			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
 
 			// Save the build info
-			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
 			if (buildInfo != null && (force == true || buildInfo.isDirty())) {
+				// For post-2.0 projects, there will be a version
+				String projectVersion = buildInfo.getVersion();
+				if (projectVersion != null) {
+					ProcessingInstruction instruction = doc.createProcessingInstruction(VERSION_ELEMENT_NAME, projectVersion);
+					doc.appendChild(instruction);
+				}
+				Element rootElement = doc.createElement(ROOT_NODE_NAME);	
+				doc.appendChild(rootElement);
 				buildInfo.serialize(doc, rootElement);
 		
 				// Transform the document to something we can save in a file
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
 				transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
-				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");	//$NON-NLS-1$
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
 				DOMSource source = new DOMSource(doc);
 				StreamResult result = new StreamResult(stream);
@@ -331,16 +344,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				
 				// Save the document
 				IFile projectFile = project.getFile(FILE_NAME);
-				InputStream inputStream = new ByteArrayInputStream(stream.toByteArray());
+				String utfString = stream.toString("UTF8");
 				if (projectFile.exists()) {
-					projectFile.setContents(inputStream, IResource.FORCE, null);
+					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes()), IResource.FORCE, null);
 				} else {
-					projectFile.create(inputStream, IResource.FORCE, null);
+					projectFile.create(new ByteArrayInputStream(utfString.getBytes()), IResource.FORCE, null);
 				}
 
 				// Close the streams
 				stream.close();
-				inputStream.close();
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -455,16 +467,28 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return new Target(resource, parentTarget);
 	}
 	
-	private static boolean isVersionCompatible(IPluginDescriptor descriptor) {
-		// Get the version of the manifest
-		PluginVersionIdentifier plugin = descriptor.getVersionIdentifier();
-		
+	private static boolean isVersionCompatible(IExtension extension) {
 		// We can ignore the qualifier
-		PluginVersionIdentifier version = new PluginVersionIdentifier(plugin.getMajorComponent(), 
-																	  plugin.getMinorComponent(), 
-																	  plugin.getServiceComponent());
+		PluginVersionIdentifier version = null;
+
+		// Get the version of the manifest
+		IConfigurationElement[] elements = extension.getConfigurationElements();
 		
-		return(buildInfoVersion.isCompatibleWith(version));
+		// Find the version string in the manifest
+		for (int index = 0; index < elements.length; ++index) {
+			IConfigurationElement element = elements[index];
+			if (element.getName().equals(REVISION_ELEMENT_NAME)) {
+				version = new PluginVersionIdentifier(element.getAttribute(VERSION_ELEMENT_NAME));
+				break;
+			}
+		}
+		
+		if (version == null) {
+			// This is a 1.2 manifest and we are compatible for now
+			return true;
+		} else {
+			return(buildInfoVersion.isCompatibleWith(version));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -481,9 +505,35 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			InputStream stream = file.getContents();
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(stream);
+			String fileVersion = null;
+			
+			// Get the first element in the project file
 			Node rootElement = document.getFirstChild();
-			if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
-				buildInfo = new ManagedBuildInfo(project, (Element)rootElement);
+			
+			// Since 2.0 this will be a processing instruction containing version
+			if (rootElement.getNodeType() != Node.PROCESSING_INSTRUCTION_NODE) {
+				// This is a 1.2 project and it must be updated
+
+			} else {
+				// Make sure that the version is compatible with the manager
+				fileVersion = rootElement.getNodeValue();
+				PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
+				if (!buildInfoVersion.isCompatibleWith(version)) {
+					throw new BuildException(ManagedBuilderCorePlugin.getResourceString(PROJECT_VERSION_ERROR)); 
+				}
+				if (buildInfoVersion.isGreaterThan(version)) {
+					// TODO Upgrade the project
+				}
+			}
+			
+			// Now get the project root element (there should be only one)
+			NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
+			if (nodes.getLength() > 0) {
+				Node node = nodes.item(0);
+				buildInfo = new ManagedBuildInfo(project, (Element)node);
+				if (fileVersion != null) {
+					buildInfo.setVersion(fileVersion);
+				}
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
 		} catch (Exception e) {
@@ -503,18 +553,17 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		// Get those extensions
 		IPluginDescriptor descriptor = ManagedBuilderCorePlugin.getDefault().getDescriptor();
-		
-		if (!isVersionCompatible(descriptor)) {
-			//The version of the Plug-in is greater than what the manager thinks it understands
-			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.version.higher"));	//$NON-NLS-1$
-		}
-		
-		// We can read the manifest
 		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
+				
 		// First call the constructors
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
+			// Can we read this manifest
+			if (!isVersionCompatible(extension)) {
+				//The version of the Plug-in is greater than what the manager thinks it understands
+				throw new BuildException(ManagedBuilderCorePlugin.getResourceString(MANIFEST_VERSION_ERROR));
+			}			
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			loadConfigElements(DefaultManagedConfigElement.convertArray(elements));
 		}
@@ -600,7 +649,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document document = parser.parse(stream);
 				Node rootElement = document.getFirstChild();
-				if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
+				if (rootElement.getNodeName().equals(ROOT_NODE_NAME)) {
 					return true;
 				} 
 			} catch (Exception e) {
@@ -672,8 +721,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return (IManagedBuildInfo) findBuildInfo(resource, false);
 	}
 
-	public static String getBuildInfoVersion() {
-		return buildInfoVersion.toString();
+	/**
+	 * @return
+	 */
+	public static PluginVersionIdentifier getBuildInfoVersion() {
+		return buildInfoVersion;
 	}
 
 	/*

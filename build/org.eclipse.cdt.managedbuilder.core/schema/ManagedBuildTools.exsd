@@ -17,6 +17,7 @@
             <element ref="tool"/>
             <element ref="configuration"/>
             <element ref="dynamicElementProvider"/>
+            <element ref="managedBuildRevision"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -537,6 +538,31 @@ Additional special types exist to flag options of special relevance to the build
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="managedBuildRevision">
+      <annotation>
+         <documentation>
+            &lt;p&gt;
+Version identifier for the managed build extension point. It is a string representation, consisting of three (3) tokens separated by a decimal point. The 3 tokens are positive integer numbers. For example, the following are valid version identifiers:
+ &lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;0.0.0&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;1.0.1234&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;1.9&lt;/code&gt; (interpreted as &lt;code&gt;1.9.0&lt;/code&gt;)&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;3&lt;/code&gt; (interpreted as &lt;code&gt;3.0.0&lt;/code&gt;)&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="fileVersion" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

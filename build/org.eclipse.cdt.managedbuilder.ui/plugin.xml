@@ -70,6 +70,9 @@
          id="cdt.managed.build.info"
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
+      <managedBuildRevision
+            fileVersion="2.0.0">
+      </managedBuildRevision>
       <target
             name="%TargetName.cygw"
             id="cygwin"

@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	
@@ -53,6 +53,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private IResource owner;
 	private Map targetMap;
 	private List targetList;
+	private String version;	//$NON-NLS-1$
 	
 	/**
 	 * Create a new managed build information for the IResource specified in the argument
@@ -94,13 +95,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public ManagedBuildInfo(IResource owner, Element element) {
 		this(owner);
 		
-		// Read in the top-level info objects
-		Node child = element.getFirstChild();
-		while (child != null) {
-			if (child.getNodeName().equals(ITarget.TARGET_ELEMENT_NAME)) {
-				new Target(this, (Element)child);
-			}
-			child = child.getNextSibling();
+		// Inflate the targets
+		NodeList targetNodes = element.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
+		for (int targIndex = targetNodes.getLength() - 1; targIndex >= 0; --targIndex) {
+			new Target(this, (Element)targetNodes.item(targIndex));
 		}
 	}
 
@@ -831,6 +829,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return (String[])objs.toArray(new String[objs.size()]);
 	}
 
+	/**
+	 * @return
+	 */
+	public String getVersion() {
+		return version;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isDirty()
 	 */
@@ -950,6 +955,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Remember the default target and configurations
 		persistDefaultTarget();
 		persistDefaultConfigurations();
+
 		// I'm clean now
 		setDirty(false);
 	}
@@ -1006,6 +1012,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/**
+	 * @param version
+	 */
+	public void setVersion(String version) {
+		if (version != null && !version.equals(this.version)) {
+			this.version = version;
+			setDirty(true);
+		}
+	}
+	
+	/**
 	 * Sets the owner of the receiver to be the <code>IResource</code> specified
 	 * in the argument.
 	 * 
@@ -1025,5 +1041,4 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 		}
 	}
-
 }

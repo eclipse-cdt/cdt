@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -26,21 +24,27 @@ public class PathEntry implements IPathEntry {
 		this.isExported = isExported;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IPathEntry#getEntryKind()
 	 */
 	public IPath getPath() {
 		return path;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IPathEntry#getEntryKind()
 	 */
 	public int getEntryKind() {
 		return entryKind;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IPathEntry#isExported()
 	 */
 	public boolean isExported() {
@@ -106,7 +110,7 @@ public class PathEntry implements IPathEntry {
 				return "mac"; //$NON-NLS-1$
 			case IPathEntry.CDT_CONTAINER :
 				return "con"; //$NON-NLS-1$
-			case IPathEntry.CDT_OUTPUT:
+			case IPathEntry.CDT_OUTPUT :
 				return "out"; //$NON-NLS-1$
 			default :
 				return "unknown"; //$NON-NLS-1$
@@ -122,31 +126,28 @@ public class PathEntry implements IPathEntry {
 			buffer.append(path.toString()).append(' ');
 		}
 		buffer.append('[');
-		switch (getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY :
-				buffer.append("CDT_LIBRARY"); //$NON-NLS-1$
-				break;
-			case IPathEntry.CDT_PROJECT :
-				buffer.append("CDT_PROJECT"); //$NON-NLS-1$
-				break;
-			case IPathEntry.CDT_SOURCE :
-				buffer.append("CDT_SOURCE"); //$NON-NLS-1$
-				break;
-			case IPathEntry.CDT_OUTPUT :
-				buffer.append("CDT_OUTPUT"); //$NON-NLS-1$
-				break;
-			case IPathEntry.CDT_INCLUDE :
-				buffer.append("CDT_INCLUDE"); //$NON-NLS-1$
-				break;
-			case IPathEntry.CDT_MACRO :
-				buffer.append("CDT_MACRO"); //$NON-NLS-1$
-				break;
-			case IPathEntry.CDT_CONTAINER :
-				buffer.append("CDT_CONTAINER"); //$NON-NLS-1$
-				break;
-		}
+		buffer.append(getKindString());
 		buffer.append(']');
 		return buffer.toString();
 	}
 
+	String getKindString() {
+		switch (getEntryKind()) {
+			case IPathEntry.CDT_LIBRARY :
+				return ("Library path"); //$NON-NLS-1$
+			case IPathEntry.CDT_PROJECT :
+				return ("Project path"); //$NON-NLS-1$
+			case IPathEntry.CDT_SOURCE :
+				return ("Source path"); //$NON-NLS-1$
+			case IPathEntry.CDT_OUTPUT :
+				return ("Output path"); //$NON-NLS-1$
+			case IPathEntry.CDT_INCLUDE :
+				return ("Include path"); //$NON-NLS-1$
+			case IPathEntry.CDT_MACRO :
+				return ("Symbol definition"); //$NON-NLS-1$
+			case IPathEntry.CDT_CONTAINER :
+				return ("Contributed paths"); //$NON-NLS-1$
+		}
+		return ("Unknown"); //$NON-NLS-1$
+	}
 }

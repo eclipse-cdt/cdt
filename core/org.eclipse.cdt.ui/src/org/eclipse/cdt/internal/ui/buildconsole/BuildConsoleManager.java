@@ -1,13 +1,11 @@
-/**********************************************************************
- * Copyright (c) 2002,2003,2004 QNX Software Systems and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2002,2003,2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.util.HashMap;
@@ -51,26 +49,27 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	public BuildConsoleManager() {
 	}
-	
+
 	/**
-	 * Notifies the console manager that console activity has started on the project
-	 * The manager will open the console if the preference is set to show the console, and notify listeners
+	 * Notifies the console manager that console activity has started on the
+	 * project The manager will open the console if the preference is set to
+	 * show the console, and notify listeners
 	 */
 	protected void startConsoleActivity(IProject project) {
 		Object[] list = listeners.getListeners();
 		if (list.length > 0) {
 			for (int i = 0; i < list.length; i++) {
-				IBuildConsoleListener listener = (IBuildConsoleListener) list[i];
+				IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
 				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project, ConsoleEvent.CONSOLE_START);
 				listener.consoleChange(event);
 			}
 		}
 		showConsole();
 	}
-		
+
 	/**
-	 * Opens the console view. If the view is already open, it is brought to
-	 * the front.
+	 * Opens the console view. If the view is already open, it is brought to the
+	 * front.
 	 */
 	protected void showConsole() {
 		CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
@@ -98,7 +97,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 							}
 						}
 						if (consoleView instanceof IConsoleView) {
-							((IConsoleView) consoleView).display(fConsole);
+							((IConsoleView)consoleView).display(fConsole);
 						}
 					}
 				}
@@ -109,7 +108,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	boolean shouldBringToTop(IViewPart consoleView) {
 		boolean bringToTop = false;
 		if (consoleView instanceof IConsoleView) {
-			IConsoleView cView = (IConsoleView) consoleView;
+			IConsoleView cView = (IConsoleView)consoleView;
 			return !cView.isPinned() && BuildConsolePreferencePage.isConsoleOnTop();
 		}
 		return bringToTop;
@@ -125,13 +124,13 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		IResource resource = event.getResource();
 		if (resource != null && resource.getType() == IResource.PROJECT) {
 			if (event.getType() == IResourceChangeEvent.PRE_DELETE || event.getType() == IResourceChangeEvent.PRE_CLOSE) {
-				IDocumentPartitioner partioner = (IDocumentPartitioner) fConsoleMap.remove(resource);
+				IDocumentPartitioner partioner = (IDocumentPartitioner)fConsoleMap.remove(resource);
 				partioner.disconnect();
 				Object[] list = listeners.getListeners();
 				if (list.length > 0) {
 					for (int i = 0; i < list.length; i++) {
-						IBuildConsoleListener listener = (IBuildConsoleListener) list[i];
-						ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject) resource, ConsoleEvent.CONSOLE_CLOSE);
+						IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
+						ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, ConsoleEvent.CONSOLE_CLOSE);
 						listener.consoleChange(consoleEvent);
 					}
 				}
@@ -140,50 +139,74 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	public void shutdown() {
-		infoColor.dispose();
-		outputColor.dispose();
-		errorColor.dispose();
+		if (infoColor != null) {
+			infoColor.dispose();
+			outputColor.dispose();
+			errorColor.dispose();
+		}
 		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
 		CUIPlugin.getWorkspace().removeResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+	}
+
+	private void runUI(Runnable run) {
+		Display display;
+		display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+			display.asyncExec(run);
+		} else {
+			run.run();
+		}
 	}
 
 	public void startup() {
 		fConsole = new BuildConsole(this);
 		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
 
-		// install colors
-		infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
-		infoStream = new BuildConsoleStream(fConsole);
-		infoStream.setColor(infoColor);
-		outputColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
-		outputStream = new BuildConsoleStream(fConsole);
-		outputStream.setColor(outputColor);
-		errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
-		errorStream = new BuildConsoleStream(fConsole);
-		errorStream.setColor(errorColor);
+		runUI(new Runnable() {
 
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				// install colors
+				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
+				infoStream = new BuildConsoleStream(fConsole);
+				infoStream.setColor(infoColor);
+				outputColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
+				outputStream = new BuildConsoleStream(fConsole);
+				outputStream.setColor(outputColor);
+				errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
+				errorStream = new BuildConsoleStream(fConsole);
+				errorStream.setColor(errorColor);
+			}
+		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();		
+		String property = event.getProperty();
 		// colors
-		if(property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR)) {
+		if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR)) {
 			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
 			infoStream.setColor(newColor);
 			infoColor.dispose();
 			infoColor = newColor;
-		} else if(property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR)) {
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR)) {
 			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
 			outputStream.setColor(newColor);
 			outputColor.dispose();
 			outputColor = newColor;
-		} else if(property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR)) {
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR)) {
 			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
 			errorStream.setColor(newColor);
 			errorColor.dispose();
@@ -208,8 +231,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	private BuildConsolePartitioner getConsolePartioner(IProject project) {
-		BuildConsolePartitioner partioner = (BuildConsolePartitioner) fConsoleMap.get(project);
-		if ( partioner == null) {
+		BuildConsolePartitioner partioner = (BuildConsolePartitioner)fConsoleMap.get(project);
+		if (partioner == null) {
 			partioner = new BuildConsolePartitioner(this);
 			fConsoleMap.put(project, partioner);
 		}
@@ -217,7 +240,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	/**
-	 * Returns the document for the projects console, or <code>null</code> if none.
+	 * Returns the document for the projects console, or <code>null</code> if
+	 * none.
 	 */
 	public IDocument getConsoleDocument(IProject project) {
 		Assert.isNotNull(project);

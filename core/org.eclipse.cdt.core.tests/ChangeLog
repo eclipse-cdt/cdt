@@ -1,3 +1,6 @@
+2004-10-4 Andrew Niefer
+	created regression source folder and a test framework for search and content assist tests
+
 2004-08-11 Bogdan Gheorghe
 	Modified indexer test to work with new forward declartion encoding.
 	

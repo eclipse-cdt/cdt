@@ -92,6 +92,16 @@ public class TreeParent extends TreeObject {
 			}
 		}
 		
+		// try finding the best parent possible
+		IASTNode parent = node.getParent();
+		TreeParent tree = null;
+		while (parent != null && tree == null) {
+			tree = findParentOfNode(parent);
+			if (tree != null) return tree;
+			
+			parent = parent.getParent();
+		}
+		
 		return null; // nothing found
 	}
 	

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -145,7 +146,10 @@ public class TreeObject implements IAdaptable {
 			}
 		}
 		
-		if ( node instanceof IASTSimpleDeclaration ) {
+		if ( node instanceof IASTProblemHolder ) {
+			buffer.append(START_OF_LIST);
+			buffer.append(((IASTProblemHolder)node).getProblem().getMessage());
+		} else if ( node instanceof IASTSimpleDeclaration ) {
 			String name = null;
 			IASTDeclarator[] decltors = ((IASTSimpleDeclaration)node).getDeclarators();
 			

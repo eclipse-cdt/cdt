@@ -28,6 +28,10 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -91,6 +95,20 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
 			for(int i=0; i<mods.length; i++)
 				addRoot(mods[i]);	
+		}
+		
+		if (declarator instanceof ICPPASTFunctionDeclarator) {
+			ICPPASTConstructorChainInitializer[] chainInit = ((ICPPASTFunctionDeclarator)declarator).getConstructorChain();
+			for(int i=0; i<chainInit.length; i++) {
+				addRoot(chainInit[i]);
+			}
+			
+			if( declarator instanceof ICPPASTFunctionTryBlockDeclarator ){
+				ICPPASTCatchHandler [] catchHandlers = ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
+				for( int i = 0; i < catchHandlers.length; i++ ){
+					addRoot(catchHandlers[i]);
+				}
+			}	
 		}
 		
 		return PROCESS_CONTINUE;

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 
@@ -44,6 +45,7 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 		processParameterDeclarations = true;
 		processDeclarators    = true;
 		processDeclSpecifiers = true;
+		processDesignators 	  = true;
 		processExpressions    = true;
 		processStatements     = true;
 		processTypeIds        = true;
@@ -100,6 +102,14 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
+	 */
+	public int processDesignator(ICASTDesignator designator) {
+		addRoot(designator);
+		return PROCESS_CONTINUE;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
 	public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
@@ -128,12 +138,6 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	 */
 	public int processInitializer(IASTInitializer initializer) {
 		addRoot(initializer);
-		if (initializer instanceof ICASTDesignatedInitializer) {
-			ICASTDesignator[] designators = ((ICASTDesignatedInitializer)initializer).getDesignators();
-			for (int i=0; i<designators.length; i++) {
-				addRoot(designators[i]);		
-			}
-		}
 		return PROCESS_CONTINUE;
 	}
 	

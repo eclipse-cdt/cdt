@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -262,7 +263,10 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
          } else if (node instanceof IASTSimpleDeclaration) {
        		imageKey = DOMASTPluginImages.IMG_IASTSimpleDeclaration;
          } else if (node instanceof IASTStatement) {
-            imageKey = DOMASTPluginImages.IMG_IASTStatement;
+         	if (node instanceof IASTProblemStatement)
+         		imageKey = DOMASTPluginImages.IMG_IASTProblem;
+         	else
+         		imageKey = DOMASTPluginImages.IMG_IASTStatement;
          } else if (node instanceof IASTTranslationUnit) {
             imageKey = DOMASTPluginImages.IMG_IASTTranslationUnit;
          } else if (node instanceof IASTTypeId) {

@@ -24,6 +24,10 @@ import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
+import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.drag.ResourceTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.drag.TransferDragSourceListener;
 import org.eclipse.cdt.internal.ui.editor.FileSearchAction;
 import org.eclipse.cdt.internal.ui.editor.FileSearchActionInWorkingSet;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
@@ -33,6 +37,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.LocalSelectionTransfer;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
@@ -123,7 +128,6 @@ import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.framelist.UpAction;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 
 
@@ -365,14 +369,31 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 */
 	void initDragAndDrop() {
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] {
-			ResourceTransfer.getInstance(),
-			FileTransfer.getInstance(),
-			LocalSelectionTransfer.getInstance(),
-			PluginTransfer.getInstance() };
 
-		viewer.addDragSupport(ops, transfers, new CViewDragAdapter((ISelectionProvider)viewer));
-		viewer.addDropSupport(ops, transfers, new CViewDropAdapter(viewer));
+		Transfer[] dragTransfers =
+			new Transfer[] {
+				ResourceTransfer.getInstance(),
+				FileTransfer.getInstance(),
+				LocalSelectionTransfer.getInstance(),
+				PluginTransfer.getInstance()};
+
+		TransferDragSourceListener[] dragListeners =
+			new TransferDragSourceListener[] {
+				new ResourceTransferDragAdapter(viewer),
+				new org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter(viewer),
+				new FileTransferDragAdapter(viewer)};
+
+		viewer.addDragSupport(ops, dragTransfers, new DelegatingDragAdapter(viewer, dragListeners));
+
+		Transfer[] dropTransfers =
+			new Transfer[] {
+				ResourceTransfer.getInstance(),
+				FileTransfer.getInstance(),
+				LocalSelectionTransfer.getInstance(),
+				PluginTransfer.getInstance()};
+
+		viewer.addDropSupport(ops, dropTransfers, new CViewDropAdapter(viewer));
+
 	}
 
 	/** 

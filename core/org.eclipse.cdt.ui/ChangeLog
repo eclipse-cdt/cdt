@@ -1,5 +1,27 @@
 2003-09-21 Alain Magloire
 
+	Patch contributed by Keith Campbell.
+
+	Patch to enable dragging non-resource selections from 
+	the C/C++ Projects view.
+
+	The code has been reorganized to use the delegation pattern found in the 
+	JDT and a new LocalSelectionTransfer specific to the CDT has been 
+	introduced to avoid potential incompatibilities of using 
+	org.eclipse.ui.views.navigator.LocalSelectionTransfer.
+
+	* src/org/eclipse/cdt/internal/ui/drag/DelegatingDraAdapter.java
+	* src/org/eclipse/cdt/internal/ui/drag/FileTransferDragAdapter.java
+	* src/org/eclipse/cdt/internal/ui/drag/LocalSelectionTransferDragAdapter.java
+	* src/org/eclipse/cdt/internal/ui/drag/ResourceTransferDragAdapter.java
+	* src/org/eclipse/cdt/internal/ui/drag/TransferDragSourceListener.java
+
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+
+	* src/org/eclipse/cdt/ui/LocalSelectionTransfer.java
+
+2003-09-21 Alain Magloire
+
 	Bug #41960, The asm editor did not know about '#' comment style
 
 	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmPartitionScanner.java

@@ -1,5 +1,10 @@
 2004-06-21 Chris Wiebe
 
+	This mini-patch gets rid of unnecessary "could not locate type" error
+	dialogs.
+
+2004-06-21 Chris Wiebe
+
 	- fix for bug #66108 (C++ browser cannot show members of class)
 	- all types now visible in the types view (ie not just classes & structs)
 	- runnables now use IProgressService.busyCursorWhile (prevents progress

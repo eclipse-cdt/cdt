@@ -186,7 +186,7 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 		if (location != null)
 			elem = info.getCElement();
 
-		if (elem == null) {
+		if (location == null) {
 			// could not resolve location
 			String title = OpenTypeMessages.getString("OpenTypeAction.errorTitle"); //$NON-NLS-1$
 			String message = OpenTypeMessages.getFormattedString("OpenTypeAction.errorTypeNotFound", info.getQualifiedTypeName().toString()); //$NON-NLS-1$

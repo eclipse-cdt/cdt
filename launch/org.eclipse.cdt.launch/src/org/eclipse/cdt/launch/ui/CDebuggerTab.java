@@ -4,6 +4,9 @@
  */
 package org.eclipse.cdt.launch.ui;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -128,6 +131,13 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		fDCombo.removeAll();
 		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
+		Arrays.sort(debugConfigs, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				ICDebugConfiguration ic1 = (ICDebugConfiguration) o1;
+				ICDebugConfiguration ic2 = (ICDebugConfiguration) o2;
+				return ic1.getName().compareTo(ic2.getName());
+			}
+		});
 		int x = 0;
 		int selndx = -1;
 		for (int i = 0; i < debugConfigs.length; i++) {

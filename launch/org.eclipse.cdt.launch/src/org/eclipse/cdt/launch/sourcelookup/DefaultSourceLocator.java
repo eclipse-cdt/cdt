@@ -14,10 +14,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.dom.DocumentImpl;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.ui.sourcelookup.CUISourceLocator;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;

@@ -12,7 +12,7 @@ package org.eclipse.cdt.make.internal.core.makefile;
 
 import java.io.File;
 
-import org.eclipse.cdt.make.core.makefile.*;
+import org.eclipse.cdt.make.core.makefile.ITarget;
 
 public class Target implements ITarget {
 

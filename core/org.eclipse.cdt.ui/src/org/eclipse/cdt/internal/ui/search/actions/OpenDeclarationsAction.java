@@ -11,25 +11,11 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.List;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParseError;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryError;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -46,107 +32,64 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
-import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IUpdate;
 
 
-public class OpenDeclarationsAction extends Action implements IUpdate {
+public class OpenDeclarationsAction extends SelectionParseAction implements IUpdate {
 		
-	private String fDialogTitle;
-	private String fDialogMessage;
-	protected CEditor fEditor;
+	//private String fDialogTitle;
+	//private String fDialogMessage;
 	SearchEngine searchEngine = null;
-	/**
-	 * Creates a new action with the given label and image.
-	 */
-	protected OpenDeclarationsAction() {
-		
-		setText(CEditorMessages.getString("OpenDeclarations.label")); //$NON-NLS-1$
-		setToolTipText(CEditorMessages.getString("OpenDeclarations.tooltip")); //$NON-NLS-1$
-		setDescription(CEditorMessages.getString("OpenDeclarations.description")); //$NON-NLS-1$
-		setDialogTitle(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
-		setDialogMessage(CEditorMessages.getString("OpenDeclarations.dialog.message")); //$NON-NLS-1$
 
-		searchEngine = new SearchEngine();
-	}
 	/**
 	 * Creates a new action with the given editor
 	 */
 	public OpenDeclarationsAction(CEditor editor) {
-		this();
-		fEditor = editor;
+		super( editor );
+		setText(CEditorMessages.getString("OpenDeclarations.label")); //$NON-NLS-1$
+		setToolTipText(CEditorMessages.getString("OpenDeclarations.tooltip")); //$NON-NLS-1$
+		setDescription(CEditorMessages.getString("OpenDeclarations.description")); //$NON-NLS-1$
+//		setDialogTitle(CEditorMessages.getString("OpenDeclarations.dialog.title")); //$NON-NLS-1$
+//		setDialogMessage(CEditorMessages.getString("OpenDeclarations.dialog.message")); //$NON-NLS-1$
+
+		searchEngine = new SearchEngine();
+	}
+
+//	protected void setDialogTitle(String title) {
+//		fDialogTitle= title;
+//	}
+//	
+//	protected void setDialogMessage(String message) {
+//		fDialogMessage= message;
+//	}
+	
+	protected SelSearchNode getSelectedStringFromEditor() {
+		ISelection selection = getSelection();
+		if( selection == null || !(selection instanceof ITextSelection) ) 
+	 		 return null;
+
+ 		return getSelection( (ITextSelection)selection );
 	}
 	
-	protected void setDialogTitle(String title) {
-		fDialogTitle= title;
-	}
-	
-	protected void setDialogMessage(String message) {
-		fDialogMessage= message;
-	}
-	 /**
-	  * Return the selected string from the editor
-	  * @return The string currently selected, or null if there is no valid selection
-	  */
-	 protected SelSearchNode getSelectedStringFromEditor() {
-		 if (fEditor.getSelectionProvider() == null) {
-		 		 return null;
-		 }
-	
-		 try {
-		 		 ISelectionProvider selectionProvider = fEditor.getSelectionProvider();
-		 			
-		 		 ITextSelection textSelection= (ITextSelection) selectionProvider.getSelection();
-		 		 String seltext = textSelection.getText();
-		 		 SelSearchNode sel = null;
-		 		 if (seltext.equals("")) //$NON-NLS-1$
-		 		 {
-		 		 		 int selStart =  textSelection.getOffset();
-		 		 		 IDocumentProvider prov = fEditor.getDocumentProvider();
-		 		 		 IDocument doc = prov.getDocument(fEditor.getEditorInput());
-		 		 		 //TODO: Change this to work with qualified identifiers
-		 		 		 sel = getSelection(doc, selStart);
-		 		 }
-		 		 else {
-		 		 	sel = new SelSearchNode();
-		 		 	sel.selText= seltext;
-		 		 	sel.selStart = textSelection.getOffset();
-		 		 	sel.selEnd = textSelection.getOffset() + textSelection.getLength();
-		 		 }
-		 		 return sel;
-		 } catch(Exception x) {
-		 		 return null;
-		 }
-	 }
-	 
-	private static class Storage
+	 private static class Storage
 	{
 		private IASTOffsetableNamedElement element;
 		private IResource resource;
@@ -197,16 +140,12 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 			return;
 		}
 		
-//		final ArrayList elementsFound = new ArrayList();
 		final Storage storage = new Storage();
 		
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() 
 		{
 			public void run(IProgressMonitor monitor) {
-//				IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-//		 		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
-			
 				IFile resourceFile = fEditor.getInputFile();
 				IParser parser = setupParser(resourceFile);
  		 		int selectionStart = selNode.selStart;
@@ -246,7 +185,7 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 	 		
 	 		IASTOffsetableNamedElement namedElement = storage.getNamedElement();
 	 		if( namedElement == null ){
-	 			MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ //$NON-NLS-2$
+	 			operationNotAvailable();
 	 			return;
 	 		}
 	 		
@@ -330,7 +269,7 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 			CEditor ed = (CEditor)part;
 			
 			try {					
-				IDocument document= ed.getDocumentProvider().getDocument(ed.getEditorInput());
+				//IDocument document= ed.getDocumentProvider().getDocument(ed.getEditorInput());
 				//if(line > 3) {
 				//	ed.selectAndReveal(document.getLineOffset(line - 3), 0);
 				//}
@@ -338,117 +277,46 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 			} catch (Exception e) {}
 		}
 	}
-	/**
-	 * Shows a dialog for resolving an ambigous C element.
-	 * Utility method that can be called by subclassers.
-	 */
-	protected IMatch selectCElement(List elements, Shell shell, String title, String message) {
-		
-		int nResults= elements.size();
-		
-		if (nResults == 0)
-			return null;
-		
-		if (nResults == 1)
-			return (IMatch) elements.get(0);
-			
-
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new CSearchResultLabelProvider(), false, false);
-		dialog.setTitle(title);
-		dialog.setMessage(message);
-		dialog.setElements(elements);
-		
-		if (dialog.open() == Window.OK) {
-			Object[] selection= dialog.getResult();
-			if (selection != null && selection.length > 0) {
-				nResults= selection.length;
-				for (int i= 0; i < nResults; i++) {
-					Object current= selection[i];
-					if (current instanceof IMatch)
-						return (IMatch) current;
-				}
-			}
-		}		
-		return null;
-	}	
+//	/**
+//	 * Shows a dialog for resolving an ambigous C element.
+//	 * Utility method that can be called by subclassers.
+//	 */
+//	protected IMatch selectCElement(List elements, Shell shell, String title, String message) {
+//		
+//		int nResults= elements.size();
+//		
+//		if (nResults == 0)
+//			return null;
+//		
+//		if (nResults == 1)
+//			return (IMatch) elements.get(0);
+//			
+//
+//		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new CSearchResultLabelProvider(), false, false);
+//		dialog.setTitle(title);
+//		dialog.setMessage(message);
+//		dialog.setElements(elements);
+//		
+//		if (dialog.open() == Window.OK) {
+//			Object[] selection= dialog.getResult();
+//			if (selection != null && selection.length > 0) {
+//				nResults= selection.length;
+//				for (int i= 0; i < nResults; i++) {
+//					Object current= selection[i];
+//					if (current instanceof IMatch)
+//						return (IMatch) current;
+//				}
+//			}
+//		}		
+//		return null;
+//	}	
 	
 
-	public SelSearchNode getSelection(IDocument doc, int fPos){
-		int pos= fPos;
-		char c;
-		int fStartPos =0, fEndPos=0;
-		String selectedWord=null;
-		
-		try{
-			while (pos >= 0) {
-				c= doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				--pos;
-			}
-			fStartPos= pos + 1;
-			
-			pos= fPos;
-			int length= doc.getLength();
-			while (pos < length) {
-				c= doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
-				++pos;
-			}
-			fEndPos= pos;
-			selectedWord = doc.get(fStartPos, (fEndPos - fStartPos));
-		}
-		catch(BadLocationException e){
-		}
-		
-		SelSearchNode sel = new SelSearchNode();
-		sel.selText = selectedWord;
-		sel.selStart = fStartPos;
-		sel.selEnd = fEndPos;
-	
-		return sel;		
-	}
-	 		 
-	 /* (non-Javadoc)
+	/* (non-Javadoc)
 	  * @see org.eclipse.ui.texteditor.IUpdate#update()
 	  */
 	 public void update() {
 	 		 setEnabled(getSelectedStringFromEditor() != null);
-	 }
-		 
-	 protected IParser setupParser(IFile resourceFile){
-		//Get the scanner info
-		IProject currentProject = resourceFile.getProject();
-		IScannerInfo scanInfo = new ScannerInfo();
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
-		if (provider != null){
-		  IScannerInfo buildScanInfo = provider.getScannerInformation(currentProject);
-		  if (buildScanInfo != null){
-			scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
-		  }
-		}
-		
-		//C or CPP?
-		ParserLanguage language = CoreModel.getDefault().hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
-		
-		IParser parser = null;
-		FileReader reader = null;
-		try {
-			reader = new FileReader(resourceFile.getLocation().toFile());
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		try
-		{
-			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( reader, resourceFile.getLocation().toOSString(), scanInfo, ParserMode.SELECTION_PARSE, language, new NullSourceElementRequestor(), ParserUtil.getScannerLogService(), null ), 
-							new NullSourceElementRequestor(), ParserMode.SELECTION_PARSE, language, ParserUtil.getParserLogService() );
-			
-		} catch( ParserFactoryError pfe ){}
-		
-	   return parser;
 	 }
 	 
 	 private SearchFor getSearchForFromNode(IASTNode node){
@@ -492,10 +360,6 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 		return searchFor;
 	}
 
-	 class SelSearchNode{
-	 	protected String selText;
-	 	protected int selStart;
-	 	protected int selEnd;
-	 }
+
 }
 

@@ -66,6 +66,12 @@ public interface IBinaryParser extends IAdaptable {
 		 * @return the binary contents.
 		 */
 		InputStream getContents();
+
+		/**
+		 * Return the binary parser
+		 * @return
+		 */
+		IBinaryParser getBinaryParser();
 	}
 
 	/**
@@ -208,6 +214,12 @@ public interface IBinaryParser extends IAdaptable {
 		 * @return
 		 */
 		int getLineNumber(long offset);
+		
+		/**
+		 * Return the binary object this symbol is from.
+		 * @return
+		 */
+		IBinaryObject getBinarObject();
 	}
 
 	/**

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +23,8 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -159,5 +162,43 @@ public class CDebugCorePlugin extends Plugin
 			throw new CoreException(status);
 		}
 		return dbgCfg;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException
+	{
+		resetBreakpointsInstallCount();
+		super.shutdown();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException
+	{
+		super.startup();
+		resetBreakpointsInstallCount();
+	}
+
+	protected void resetBreakpointsInstallCount()
+	{
+		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = bm.getBreakpoints( getUniqueIdentifier() );
+		for ( int i = 0; i < breakpoints.length; ++i )
+		{
+			if ( breakpoints[i] instanceof CBreakpoint )
+			{
+				try
+				{
+					((CBreakpoint)breakpoints[i]).resetInstallCount();
+				}
+				catch( CoreException e )
+				{
+					log( e.getStatus() );
+				}
+			}
+		}
 	}
 }

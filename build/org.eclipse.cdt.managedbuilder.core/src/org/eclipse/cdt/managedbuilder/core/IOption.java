@@ -130,6 +130,13 @@ public interface IOption extends IBuildObject {
 	public String getEnumCommand (String id);
 
 	/**
+	 * Answers the "name" associated with the enumeration id.
+	 *  
+	 * @return 
+	 */
+	public String getEnumName (String id);
+
+	/**
 	 * @param name
 	 * @return
 	 */

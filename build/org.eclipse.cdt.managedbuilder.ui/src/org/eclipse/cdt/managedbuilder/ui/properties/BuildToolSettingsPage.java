@@ -184,8 +184,15 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			IOption option = options[k];
 			switch (option.getValueType()) {
 				case IOption.BOOLEAN :
+					String boolCmd;
 					if (getPreferenceStore().getBoolean(option.getId())) {
-						buf.append(option.getCommand() + ITool.WHITE_SPACE);
+						boolCmd = option.getCommand();
+					} else {
+						// Note: getCommandFalse is new with CDT 2.0
+						boolCmd = option.getCommandFalse();
+					}
+					if (boolCmd != null && boolCmd.length() > 0) {
+						buf.append(boolCmd + ITool.WHITE_SPACE);
 					}
 					break;
 				case IOption.ENUMERATED :
@@ -199,10 +206,12 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					}
 					break;
 				case IOption.STRING :
+					String strCmd = option.getCommand();
 					String val = getPreferenceStore().getString(option.getId());
 					// add this string option value to the list
 					stringOptionsMap.put(option, val);
 					if (val.length() > 0) {
+						if (strCmd != null) buf.append(strCmd);
 						buf.append(val + ITool.WHITE_SPACE);
 					}
 					break;

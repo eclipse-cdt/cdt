@@ -533,19 +533,21 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 		initContextMenu();
 
-		// Make the Actions for the Context Menu
-		makeActions();
-		getActionGroup().fillActionBars(getViewSite().getActionBars());
-		updateActionBars((IStructuredSelection) viewer.getSelection());
-
 		//Add the property changes after all of the UI work has been done.
 		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
 		wsmanager.addPropertyChangeListener(workingSetListener);
 
 		viewer.addTreeListener(expansionListener);
 
+		// Needs to be done before the actions
 		getSite().setSelectionProvider(viewer);
 		getSite().getPage().addPartListener(partListener);
+
+		// Make the Actions for the Context Menu
+		makeActions();
+		getActionGroup().fillActionBars(getViewSite().getActionBars());
+		updateActionBars((IStructuredSelection) viewer.getSelection());
+
 
 		if (memento != null) {
 			restoreState(memento);

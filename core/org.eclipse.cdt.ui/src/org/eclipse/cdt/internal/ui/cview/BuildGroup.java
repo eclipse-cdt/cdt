@@ -44,8 +44,8 @@ public class BuildGroup extends CViewActionGroup {
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
-		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD.getId(), buildAction);
-		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(), rebuildAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(), buildAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.REBUILD_PROJECT.getId(), rebuildAction);
 	}
 
 	/**

@@ -207,6 +207,14 @@
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
          <action
+               label="%RunToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
+         </action>
+         <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
@@ -246,13 +254,13 @@
             </enablement>
          </action>
          <action
-               menubarPath="additions"
                label="%RunToLineAction.label"
                icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
-               helpContextId="run_to_line_action_context">
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate">
             <enablement>
                <pluginState
                      value="activated"

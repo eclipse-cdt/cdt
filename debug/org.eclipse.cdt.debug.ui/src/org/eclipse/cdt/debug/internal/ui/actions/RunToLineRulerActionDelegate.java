@@ -3,7 +3,6 @@
  * All Rights Reserved.
  * 
  */
-
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.jface.action.IAction;
@@ -16,9 +15,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * Enter type comment.
  * 
- * @since Aug 23, 2002
+ * @since Sep 19, 2002
  */
-public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDelegate
+public class RunToLineRulerActionDelegate extends AbstractRulerActionDelegate
 {
 	static final private String C_EDITOR_ID = "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
 
@@ -41,6 +40,6 @@ public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDele
 	 */
 	public IAction createAction( ITextEditor editor, IVerticalRulerInfo rulerInfo )
 	{
-		return new ManageBreakpointRulerAction( rulerInfo, editor );
+		return new RunToLineRulerAction( rulerInfo, editor );
 	}
 }

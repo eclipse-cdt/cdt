@@ -28,12 +28,13 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 		setTextEditor( editor );
 		setText( "Breakpoint &Properties..." );
 	}
+
 	/**
 	 * @see Action#run()
 	 */
 	public void run()
 	{
-		if (getBreakpoint() != null)
+		if ( getBreakpoint() != null )
 		{
 			Dialog d = new CBreakpointPropertiesDialog( getTextEditor().getEditorSite().getShell(), (ICBreakpoint)getBreakpoint() );
 			d.open();

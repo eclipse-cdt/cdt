@@ -443,4 +443,13 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter ) {
+		if ( IMemoryBlockRetrieval.class.equals( adapter ) )
+			return getMemoryBlockRetrieval();
+		return super.getAdapter( adapter );
+	}
 }

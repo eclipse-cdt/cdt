@@ -1,5 +1,12 @@
 2004-03-03 Alain Magloire
 
+	When changing the BinaryParser the BinaryRunners
+	were not restarted.
+
+	* model/org/eclipse/cdt/iternal/core/model/CModelManager.java
+
+2004-03-03 Alain Magloire
+
 	From Sean Sevoy.  Fix to VCErrorParser.java
 	PR 53253.
 

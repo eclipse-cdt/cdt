@@ -316,7 +316,7 @@ public class CModelManager implements IResourceChangeListener {
 			registerCModelDelta(delta); 
 		} else if (type == ICElement.C_BINARY) {
 			if (! ((IBinary)celement).isObject()) {
-//System.out.println("RELEASE Binary " + cfile.getElementName());
+System.out.println("RELEASE Binary " + celement.getElementName());
 				CProject cproj = (CProject)celement.getCProject();
 				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
 				container.removeChild(celement);
@@ -327,7 +327,7 @@ public class CModelManager implements IResourceChangeListener {
 		}
 
 		if (celement instanceof IParent) {
-			if ( peekAtInfo(celement) != null ) {
+			if (peekAtInfo(celement) != null) {
 				CElementInfo info = ((CElement)celement).getElementInfo();
 				if (info != null) {
 					ICElement[] children = info.getChildren();
@@ -344,14 +344,21 @@ public class CModelManager implements IResourceChangeListener {
 						if (pinfo.vLib != null) {
 							releaseCElement(pinfo.vLib);
 						}
+						IProject project = celement.getCProject().getProject();
+						BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
+						if (runner != null) {
+							runner.stop();
+						}
 					}
 				}
 			} else {
+				// If an entire folder was deleted we need to update the
+				// BinaryContainer/ArchiveContainer also.
 				ICProject cproject = celement.getCProject();
 				CProjectInfo info = (CProjectInfo)peekAtInfo(cproject);
 				if (info != null && info.vBin != null) {
 					if (peekAtInfo(info.vBin) != null) {
-						ICElement[] bins = info.getChildren();
+						ICElement[] bins = info.vBin.getChildren();
 						for (int i = 0; i < bins.length; i++) {
 							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
 								CElementDelta delta = new CElementDelta(getCModel());

@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser2.c.CVisitor;
@@ -814,6 +815,45 @@ public class AST2Tests extends AST2BaseTest {
         assertSame( col, col3 );
         assertSame( cp, cp3 );
         assertSame( red, red2 );
+    }
+    
+    public void testPointerToFunction() throws Exception
+    {
+        IASTTranslationUnit tu = parse( "int (*pfi)();", ParserLanguage.C ); //$NON-NLS-1$
+        assertEquals( tu.getDeclarations().size(), 1 );
+        IASTSimpleDeclaration d = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+        assertEquals( d.getDeclarators().size(), 1 );
+        IASTFunctionDeclarator f = (IASTFunctionDeclarator) d.getDeclarators().get(0);
+        assertNull( f.getName().toString() );
+        assertNotNull( f.getNestedDeclarator() );
+        assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
+        assertTrue( f.getPointerOperators().isEmpty() );
+        assertFalse( f.getNestedDeclarator().getPointerOperators().isEmpty() );
+        tu = parse( "int (*pfi)();", ParserLanguage.CPP ); //$NON-NLS-1$
+        assertEquals( tu.getDeclarations().size(), 1 );
+        d = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+        assertEquals( d.getDeclarators().size(), 1 );
+        f = (IASTFunctionDeclarator) d.getDeclarators().get(0);
+        assertNull( f.getName().toString() );
+        assertNotNull( f.getNestedDeclarator() );
+        assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
+    }
+    
+
+    public void testBasicPointerToMember() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer( "class X {\n"); //$NON-NLS-1$
+        buffer.append( "  public:\n"); //$NON-NLS-1$
+        buffer.append( "  void f(int);\n"); //$NON-NLS-1$
+        buffer.append( "  int a;\n"); //$NON-NLS-1$
+        buffer.append( "};\n"); //$NON-NLS-1$
+        buffer.append( "int X:: * pmi = &X::a;\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        assertEquals( tu.getDeclarations().size(), 2 );
+        IASTSimpleDeclaration p2m = (IASTSimpleDeclaration) tu.getDeclarations().get(1);
+        IASTDeclarator d = (IASTDeclarator) p2m.getDeclarators().get(0);
+        ICPPASTPointerToMember po = (ICPPASTPointerToMember) d.getPointerOperators().get(0);
+        assertEquals( po.getName().toString(), "X::"); //$NON-NLS-1$
     }
 }
 

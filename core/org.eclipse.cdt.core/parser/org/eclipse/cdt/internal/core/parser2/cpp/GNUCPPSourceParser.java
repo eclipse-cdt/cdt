@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -111,6 +112,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -570,8 +572,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
                 IASTPointerOperator po = null;
                 if (nameDuple != null) {
-                    //TODO - pointer to functions
-                    nameDuple.freeReferences();
+                    IASTName name = createName( nameDuple );
+                    ICPPASTPointerToMember p2m = createPointerToMember(isRestrict);
+                    ((ASTNode)p2m).setOffset( starOffset );
+                    p2m.setConst(isConst);
+                    p2m.setVolatile(isVolatile);
+                    p2m.setName( name );
+                    name.setParent( p2m );
+                    name.setPropertyInParent( ICPPASTPointerToMember.NAME );
+                    if( isRestrict )
+                    {
+                        IGPPASTPointerToMember newPo = (IGPPASTPointerToMember) p2m;
+                        newPo.setRestrict( isRestrict );
+                        p2m = newPo;
+                    }
+                    po = p2m;
+
                 } else {
                     po = createPointer(isRestrict);
                     ((ASTNode)po).setOffset( starOffset );
@@ -602,7 +618,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param isRestrict
      * @return
      */
-    private IASTPointerOperator createPointer(boolean gnu) {
+    protected ICPPASTPointerToMember createPointerToMember(boolean gnu) {
+        if( gnu ) return new GPPASTPointerToMember();
+        return new CPPASTPointerToMember();
+    }
+
+    /**
+     * @param isRestrict
+     * @return
+     */
+    protected IASTPointerOperator createPointer(boolean gnu) {
         if( gnu ) return new GPPASTPointer();
         return new CPPASTPointer();
     }
@@ -1516,7 +1541,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private IASTFunctionCallExpression createFunctionCallExpression() {
+    protected IASTFunctionCallExpression createFunctionCallExpression() {
         return new CPPASTFunctionCallExpression();
     }
 
@@ -1650,7 +1675,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICPPASTLiteralExpression createLiteralExpression() {
+    protected ICPPASTLiteralExpression createLiteralExpression() {
         return new CPPASTLiteralExpression();
     }
 
@@ -2696,7 +2721,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICPPASTParameterDeclaration createParameterDeclaration() {
+    protected ICPPASTParameterDeclaration createParameterDeclaration() {
         return new CPPASTParameterDeclaration();
     }
 
@@ -2707,7 +2732,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws EndOfFileException
      *             we could encounter EOF while looking ahead
      */
-    private boolean lookAheadForConstructorOrConversion(Flags flags) throws EndOfFileException {
+    protected boolean lookAheadForConstructorOrConversion(Flags flags) throws EndOfFileException {
         if (flags.isForParameterDeclaration())
             return false;
         if (LT(2) == IToken.tLPAREN
@@ -3109,7 +3134,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICPPASTSimpleDeclSpecifier createGPPSimpleDeclSpecifier() {
+    protected ICPPASTSimpleDeclSpecifier createGPPSimpleDeclSpecifier() {
         return new GPPASTSimpleDeclSpecifier();
     }
 
@@ -3302,7 +3327,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private IASTInitializerExpression createInitializerExpression() {
+    protected IASTInitializerExpression createInitializerExpression() {
         return new CPPASTInitializerExpresion();
     }
 
@@ -3390,14 +3415,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         if (LT(2) == IToken.tIDENTIFIER) {
                             IToken newMark = mark();
                             consume(IToken.tLPAREN);
-                            ITokenDuple queryName = null;
                             try {
                                 try {
-                                    queryName = name();
-                                    //TODO - when the Visitor is available
-                                    //find the IASTName relating to this in the AST
-                                    //if this is a type, failed = false
-                                    //if this is a value, failed = true
+                                    name();
                                     failed = false;
                                 } catch (Exception e) {
                                     int endOffset = (lastToken != null) ? lastToken
@@ -3412,8 +3432,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 failed = true;
                             }
 
-                            if (queryName != null)
-                                queryName.freeReferences();
                             backup(newMark);
                         }
                     }
@@ -3629,14 +3647,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICPPASTFunctionDeclarator createFunctionDeclarator() {
+    protected ICPPASTFunctionDeclarator createFunctionDeclarator() {
         return new CPPASTFunctionDeclarator();
     }
 
     /**
      * @return
      */
-    private IASTFieldDeclarator createFieldDeclarator() {
+    protected IASTFieldDeclarator createFieldDeclarator() {
         return new CPPASTFieldDeclarator();
     }
 

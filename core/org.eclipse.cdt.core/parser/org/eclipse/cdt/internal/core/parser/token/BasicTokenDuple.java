@@ -552,6 +552,7 @@ public class BasicTokenDuple implements ITokenDuple {
 		    if( token == last )
 		        break;
 			token = ( token != null ) ? token.getNext() : getFirstToken();
+			if( token == null ) break;
 			if( token.getType() == IToken.tLT )
 				token = TokenFactory.consumeTemplateIdArguments( token, last );
 			if( token.getType() == IToken.tCOLONCOLON  ){

@@ -84,10 +84,8 @@ import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser2.ASTNode;
 import org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
@@ -1084,12 +1082,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         for (;;) {
             IToken mark = mark();
 
-            ITokenDuple nameDuple = null;
             boolean isConst = false, isVolatile = false, isRestrict = false;
-            if (LT(1) == IToken.tIDENTIFIER) {
-                IToken t = identifier();
-                nameDuple = TokenFactory.createTokenDuple(t, t);
-            }
 
             if( LT(1) != IToken.tSTAR )
             {
@@ -1120,18 +1113,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
             }
 
-            IASTPointerOperator po = null;
-            if (nameDuple != null) {
-                nameDuple.freeReferences();
-            } else {
-                po = createPointer();
-                ((ASTNode)po).setOffset( startOffset );
-                ((ICASTPointer) po).setConst(isConst);
-                ((ICASTPointer) po).setVolatile(isVolatile);
-                ((ICASTPointer) po).setRestrict(isRestrict);
-            }
-            if (po != null) 
-                pointerOps.add(po);
+            IASTPointerOperator po = createPointer();
+            ((ASTNode)po).setOffset( startOffset );
+            ((ICASTPointer) po).setConst(isConst);
+            ((ICASTPointer) po).setVolatile(isVolatile);
+            ((ICASTPointer) po).setRestrict(isRestrict);
+            pointerOps.add(po);
         }
     }
 

@@ -8,21 +8,14 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom.ast.cpp;
+package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPointer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 
 /**
- * This is a pointer to member pointer operator for declarators.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface ICPPASTPointerToMember extends IASTPointer {
+public interface IGPPASTPointerToMember extends IGPPASTPointer,
+        ICPPASTPointerToMember {
 
-    public static final ASTNodeProperty NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
-    public void setName( IASTName name );
-    public IASTName getName();
-	
 }

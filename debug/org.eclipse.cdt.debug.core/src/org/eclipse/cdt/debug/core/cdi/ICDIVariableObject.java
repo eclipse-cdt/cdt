@@ -3,13 +3,19 @@
  * All Rights Reserved.
  * 
  */
+
 package org.eclipse.cdt.debug.core.cdi;
+
 
 /**
  * 
- * Represents a break condition.
- * 
- * @since Jul 9, 2002
  */
-public interface ICDIRegisterObject extends ICDIVariableObject {
+public interface ICDIVariableObject {
+
+	/**
+	 * Method getName.
+	 * @return String
+	 */
+	public String getName();
+
 }

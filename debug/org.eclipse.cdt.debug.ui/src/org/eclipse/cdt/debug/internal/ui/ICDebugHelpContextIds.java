@@ -33,4 +33,5 @@ public interface ICDebugHelpContextIds
 	// Preference pages
 	public static final String MEMORY_PREFERENCE_PAGE = PREFIX + "memory_preference_page_context"; //$NON-NLS-1$
 	public static final String REGISTERS_PREFERENCE_PAGE = PREFIX + "registers_preference_page_context"; //$NON-NLS-1$
+	public static final String C_DEBUG_PREFERENCE_PAGE = PREFIX + "c_debug_preference_page_context"; //$NON-NLS-1$
 }

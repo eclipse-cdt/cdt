@@ -81,6 +81,12 @@
             class="org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage"
             id="org.eclipse.cdt.debug.ui.RegistersViewPreferencePage">
       </page>
+      <page
+            name="%CDebugPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage"
+            id="org.eclipse.cdt.debug.ui.CDebugPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

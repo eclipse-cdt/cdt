@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -78,4 +79,16 @@ public interface ICDebugPreferenceConstants
 	 * The name of the font to use for the memory view
 	 */
 	public static final String MEMORY_FONT = "Memory.font"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether primitive types
+	 * types display hexidecimal values.
+	 */
+	public static final String PREF_SHOW_HEX_VALUES = ICDebugUIConstants.PLUGIN_ID + "cDebug.showHexValues"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether primitive types
+	 * types display char values.
+	 */
+	public static final String PREF_SHOW_CHAR_VALUES = ICDebugUIConstants.PLUGIN_ID + "cDebug.showCharValues"; //$NON-NLS-1$
 }

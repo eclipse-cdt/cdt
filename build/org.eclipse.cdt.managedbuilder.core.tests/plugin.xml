@@ -1599,7 +1599,7 @@
 		              archList="all">
 		          </targetPlatform>
 				  <builder
-				      id="cdt.managedbuild.target.testgnu.builder.lib.debug"
+				      id="cdt.managedbuild.target.testgnu.builder.lib.release"
 		              name="Rel B"
 		              command="make"
 		              arguments="-k">

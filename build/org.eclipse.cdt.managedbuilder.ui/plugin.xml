@@ -187,7 +187,7 @@
          <option
                name="%Option.Posix.Linker.XLinker"
                category="gnu.c.link.category.other"
-               command="-Xlinker,"
+               command="-Xlinker ${VALUE}"
                valueType="stringList"
                id="gnu.c.link.option.other">
          </option>
@@ -314,7 +314,7 @@
          <option
                name="%Option.Posix.Linker.XLinker"
                category="gnu.cpp.link.category.other"
-               command="-Xlinker "
+               command="-Xlinker ${VALUE}"
                valueType="stringList"
                id="gnu.cpp.link.option.other">
          </option>
@@ -575,7 +575,7 @@
          <option
                name="%Option.Posix.Linker.XLinker"
                category="macosx.c.link.category.other"
-               command="-Xlinker,"
+               command="-Xlinker ${VALUE}"
                valueType="stringList"
                id="macosx.c.link.option.other">
          </option>
@@ -680,7 +680,7 @@
          <option
                name="%Option.Posix.Linker.XLinker"
                category="macosx.cpp.link.category.other"
-               command="-Xlinker "
+               command="-Xlinker ${VALUE}"
                valueType="stringList"
                id="macosx.cpp.link.option.other">
          </option>
@@ -1576,7 +1576,7 @@
 		              archList="all">
 		          </targetPlatform>
 				  <builder
-				      id="cdt.managedbuild.target.gnu.builder.lib.debug"
+				      id="cdt.managedbuild.target.gnu.builder.lib.release"
 		              name="%BuilderName.Rel"
 		              command="make"
 		              arguments="-k"

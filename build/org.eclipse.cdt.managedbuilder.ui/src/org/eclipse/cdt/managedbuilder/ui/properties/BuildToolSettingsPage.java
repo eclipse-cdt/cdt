@@ -174,12 +174,16 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	}
 	
 	/**
-	 * Look for $(VALUE) in the command string
+	 * Look for ${VALUE} in the command string
 	 */
 	private String evaluateCommand( String command, String values ) {
 	    if( command == null ) return values.trim();
-	    if( command.indexOf( "$(" ) > 0 ) return command.replaceAll( "\\$\\([value|Value|VALUE]\\)", values.trim() ).trim(); //$NON-NLS-1$ //$NON-NLS-2$
-	    else return (new String(command + values)).trim();
+	    if( command.indexOf( "${" ) >= 0 ) {	//$NON-NLS-1$ 
+	    	return command.replaceAll( "\\$\\{[vV][aA][lL][uU][eE]\\}", values.trim() ).trim(); //$NON-NLS-1$
+	    }
+	    else {
+	    	return (new String(command + values)).trim();
+	    }
 	}
 
 	/**
@@ -544,17 +548,16 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			} catch (BuildException e) {}
 		}
 		
+		// Save the tool command if it has changed
 		// Get the actual value out of the field editor
 		String command = getToolSettingsPreferenceStore().getString(tool.getId());
-		if (command.length() == 0) {
-			return result;
-		}
-		
-		// Ask the build system manager to change the tool command
-		if ( isItResourceConfigPage ) {
-			ManagedBuildManager.setToolCommand(resConfig, tool, command);
-		} else {
-			ManagedBuildManager.setToolCommand(configuration, tool, command);
+		if (command.length() > 0 &&
+			(!command.equals(tool.getToolCommand()))) {
+			if ( isItResourceConfigPage ) {
+				ManagedBuildManager.setToolCommand(resConfig, tool, command);
+			} else {
+				ManagedBuildManager.setToolCommand(configuration, tool, command);
+			}
 		}
 		
 		return result;

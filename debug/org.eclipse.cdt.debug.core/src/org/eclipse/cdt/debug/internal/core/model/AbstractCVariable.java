@@ -10,6 +10,7 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.core.model; 
 
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.debug.core.DebugException;
 
@@ -18,11 +19,37 @@ import org.eclipse.debug.core.DebugException;
  */
 public abstract class AbstractCVariable extends CDebugElement implements ICVariable {
 
+	/**
+	 * The parent object this variable is contained in.
+	 */
+	private CDebugElement fParent;
+
 	/** 
 	 * Constructor for AbstractCVariable. 
 	 */
-	public AbstractCVariable( CDebugTarget target ) {
-		super( target );
+	public AbstractCVariable( CDebugElement parent ) {
+		super( (CDebugTarget)parent.getDebugTarget() );
+		setParent( parent );
+	}
+
+	protected CDebugElement getParent() {
+		return fParent;
+	}
+
+	private void setParent( CDebugElement parent ) {
+		fParent = parent;
+	}
+
+	protected ICStackFrame getStackFrame() {
+		CDebugElement parent = getParent();
+		if ( parent instanceof AbstractCValue ) {
+			AbstractCVariable pv = ((AbstractCValue)parent).getParentVariable();
+			if ( pv != null )
+				return pv.getStackFrame();
+		}
+		if ( parent instanceof CStackFrame )
+			return (CStackFrame)parent;
+		return null;
 	}
 
 	/**

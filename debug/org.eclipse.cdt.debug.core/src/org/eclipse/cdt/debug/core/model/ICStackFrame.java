@@ -66,4 +66,21 @@ public interface ICStackFrame extends IStackFrame, ICDebugElement {
 	 * @throws DebugException if this method fails.
 	 */
 	public IValue evaluateExpression( String expression ) throws DebugException;
+
+	/**
+	 * Evaluates the specified expression in the context of this stack frame 
+	 * and returns the evaluation result as a string.
+	 * 
+	 * @param expression the expression to evaluate
+	 * @return the evaluation result
+	 * @throws DebugException on failure. Reasons include:
+	 */
+	public String evaluateExpressionToString( String expression ) throws DebugException;
+
+	/**
+	 * Returns whether this stack frame can currently evaluate an expression.
+	 * 
+	 * @return whether this stack frame can currently evaluate an expression
+	 */
+	boolean canEvaluate();
 }

@@ -51,7 +51,7 @@ public class CArrayPartition extends AbstractCVariable {
 	 * Constructor for CArrayPartition. 
 	 */
 	private CArrayPartition( CDebugElement parent, ICDIVariable cdiVariable, int start, int end ) {
-		super( (CDebugTarget)parent.getDebugTarget() );
+		super( parent );
 		fStart = start;
 		fEnd = end;
 		fCDIVariable = cdiVariable;

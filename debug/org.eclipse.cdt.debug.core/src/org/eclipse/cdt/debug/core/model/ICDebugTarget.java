@@ -17,7 +17,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * C/C++ extension of <code>IDebugTarget</code>.
  */
 public interface ICDebugTarget extends IDebugTarget,
-									   ICExpressionEvaluator,
 									   IExecFileInfo,
 									   IRestart,
 									   IRunToLine,

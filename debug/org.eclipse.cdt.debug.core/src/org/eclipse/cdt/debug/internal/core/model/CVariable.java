@@ -307,11 +307,6 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	private boolean fIsEnabled = true;
 
 	/**
-	 * The parent object this variable is contained in.
-	 */
-	private CDebugElement fParent;
-
-	/**
 	 * The original internal variable.
 	 */
 	private InternalVariable fOriginal;
@@ -335,8 +330,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * Constructor for CVariable.
 	 */
 	protected CVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject ) {
-		super( (CDebugTarget)parent.getDebugTarget() );
-		setParent( parent );
+		super( parent );
 		if ( cdiVariableObject != null ) {
 			fName = cdiVariableObject.getName();
 			createOriginal( cdiVariableObject );
@@ -349,8 +343,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * Constructor for CVariable.
 	 */
 	protected CVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject, String errorMessage ) {
-		super( (CDebugTarget)parent.getDebugTarget() );
-		setParent( parent );
+		super( parent );
 		if ( cdiVariableObject != null ) {
 			fName = cdiVariableObject.getName();
 			createOriginal( cdiVariableObject );
@@ -699,14 +692,6 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 
 	private void setOriginal( InternalVariable original ) {
 		fOriginal = original;
-	}
-
-	protected CDebugElement getParent() {
-		return fParent;
-	}
-
-	private void setParent( CDebugElement parent ) {
-		fParent = parent;
 	}
 
 	private InternalVariable getShadow() {

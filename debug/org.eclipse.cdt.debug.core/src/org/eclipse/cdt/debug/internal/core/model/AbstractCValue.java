@@ -17,11 +17,21 @@ import org.eclipse.cdt.debug.core.model.ICValue;
  */
 public abstract class AbstractCValue extends CDebugElement implements ICValue {
 
+	/**
+	 * Parent variable.
+	 */
+	private AbstractCVariable fParent = null;
+
 	/** 
 	 * Constructor for AbstractCValue. 
 	 */
-	public AbstractCValue( CDebugTarget target ) {
-		super( target );
+	public AbstractCValue( AbstractCVariable parent ) {
+		super( (CDebugTarget)parent.getDebugTarget() );
+		fParent = parent;
+	}
+
+	public AbstractCVariable getParentVariable() {
+		return fParent;
 	}
 
 	abstract protected void setChanged( boolean changed );

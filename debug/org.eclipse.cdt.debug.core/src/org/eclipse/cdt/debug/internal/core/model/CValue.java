@@ -34,7 +34,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
-import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -43,11 +43,6 @@ import org.eclipse.debug.core.model.IVariable;
  * Represents the value of a variable in the CDI model.
  */
 public class CValue extends AbstractCValue {
-
-	/**
-	 * Parent variable.
-	 */
-	private CVariable fParent = null;
 
 	/**
 	 * Cached value.
@@ -68,8 +63,7 @@ public class CValue extends AbstractCValue {
 	 * Constructor for CValue.
 	 */
 	protected CValue( CVariable parent, ICDIValue cdiValue ) {
-		super( (CDebugTarget)parent.getDebugTarget() );
-		fParent = parent;
+		super( parent );
 		fCDIValue = cdiValue;
 	}
 
@@ -77,8 +71,7 @@ public class CValue extends AbstractCValue {
 	 * Constructor for CValue.
 	 */
 	protected CValue( CVariable parent, String message ) {
-		super( (CDebugTarget)parent.getDebugTarget() );
-		fParent = parent;
+		super( parent );
 		setStatus( ICDebugElementStatus.ERROR, message );
 	}
 
@@ -194,10 +187,6 @@ public class CValue extends AbstractCValue {
 		while( it.hasNext() ) {
 			((AbstractCVariable)it.next()).dispose();
 		}
-	}
-
-	public CVariable getParentVariable() {
-		return fParent;
 	}
 
 	private String processUnderlyingValue( ICDIValue cdiValue ) throws CDIException {
@@ -362,42 +351,41 @@ public class CValue extends AbstractCValue {
 		return null;
 	}
 
-  	private String getPointerValueString( ICDIPointerValue value ) throws CDIException
-  	{
- 		//TODO:IPF_TODO Workaround to solve incorrect handling of structures referenced by pointers or references
+	private String getPointerValueString( ICDIPointerValue value ) throws CDIException {
+		//TODO:IPF_TODO Workaround to solve incorrect handling of structures referenced by pointers or references
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
- 		IAddress address = factory.createAddress(value.pointerValue().toString());
- 		if ( address == null ) 
- 			return ""; //$NON-NLS-1$
-		CVariableFormat format = getParentVariable().getFormat(); 
-        if( CVariableFormat.NATURAL.equals( format ) ||
-            CVariableFormat.HEXADECIMAL.equals( format ) )
-            return address.toHexAddressString();
-		if( CVariableFormat.DECIMAL.equals( format ))
-  			return address.toString();
+		IAddress address = factory.createAddress( value.pointerValue().toString() );
+		if ( address == null )
+			return ""; //$NON-NLS-1$
+		CVariableFormat format = getParentVariable().getFormat();
+		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
+			return address.toHexAddressString();
+		if ( CVariableFormat.DECIMAL.equals( format ) )
+			return address.toString();
 		return null;
 	}
 
-  	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException
-  	{
-  		//NOTE: Reference should be displayed identically to address
- 		//TODO:IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
+  	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException {
+		//NOTE: Reference should be displayed identically to address
+		//TODO:IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
- 		IAddress address = factory.createAddress( value.referenceValue().toString() );
- 		if (address == null)
- 			return ""; //$NON-NLS-1$
-		CVariableFormat format = getParentVariable().getFormat(); 
-        if( CVariableFormat.NATURAL.equals( format ) ||
-            CVariableFormat.HEXADECIMAL.equals( format ) )
-            return address.toHexAddressString();
-        if( CVariableFormat.DECIMAL.equals( format ))
-            return address.toString();
+		BigInteger refValue = value.referenceValue();
+		if ( refValue == null )
+			return ""; //$NON-NLS-1$
+		IAddress address = factory.createAddress( refValue.toString() );
+		if ( address == null )
+			return ""; //$NON-NLS-1$
+		CVariableFormat format = getParentVariable().getFormat();
+		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
+			return address.toHexAddressString();
+		if ( CVariableFormat.DECIMAL.equals( format ) )
+			return address.toString();
 		return null;
 	}
 
 	private String getWCharValueString( ICDIWCharValue value ) throws CDIException {
-		if ( getParentVariable() != null ) {
-			int size = getParentVariable().sizeof();
+		if ( getParentVariable() instanceof CVariable ) {
+			int size = ((CVariable)getParentVariable()).sizeof();
 			if ( size == 2 ) {
 				CVariableFormat format = getParentVariable().getFormat(); 
 				if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
@@ -441,15 +429,17 @@ public class CValue extends AbstractCValue {
 	 * @see org.eclipse.cdt.debug.core.model.ICValue#evaluateAsExpression()
 	 */
 	public String evaluateAsExpression() {
-		ICExpressionEvaluator ee = (ICExpressionEvaluator)getDebugTarget().getAdapter( ICExpressionEvaluator.class );
 		String valueString = null;
-		if ( ee != null && ee.canEvaluate() ) {
-			try {
-				if ( getParentVariable() != null )
-					valueString = ee.evaluateExpressionToString( getParentVariable().getExpressionString() );
-			}
-			catch( DebugException e ) {
-				valueString = e.getMessage();
+		AbstractCVariable parent = getParentVariable();
+		if ( parent != null ) {
+			ICStackFrame frame = parent.getStackFrame(); 
+			if ( frame != null && frame.canEvaluate() ) {
+				try {
+					valueString = frame.evaluateExpressionToString( parent.getExpressionString() );
+				}
+				catch( DebugException e ) {
+					valueString = e.getMessage();
+				}
 			}
 		}
 		return valueString;

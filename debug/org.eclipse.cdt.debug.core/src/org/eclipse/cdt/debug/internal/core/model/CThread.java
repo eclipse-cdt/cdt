@@ -37,6 +37,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
@@ -830,6 +831,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			return this;
 		if ( adapter.equals( CDebugElementState.class ) )
 			return this;
+		if ( adapter == ICStackFrame.class ) {
+			try {
+				return (ICStackFrame)getTopStackFrame();
+			}
+			catch( DebugException e ) {
+				// do nothing
+			}
+		}
 		return super.getAdapter( adapter );
 	}
 

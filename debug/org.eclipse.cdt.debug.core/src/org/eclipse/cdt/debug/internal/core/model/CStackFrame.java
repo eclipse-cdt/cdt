@@ -655,4 +655,25 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			return e.getLocalizedMessage();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#evaluateExpressionToString(java.lang.String)
+	 */
+	public String evaluateExpressionToString( String expression ) throws DebugException {
+		try {
+			return getCDITarget().evaluateExpressionToString( expression );
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#canEvaluate()
+	 */
+	public boolean canEvaluate() {
+		CDebugTarget target = ((CDebugTarget)getDebugTarget());
+		return target.supportsExpressionEvaluation() && target.isSuspended();
+	}
 }

@@ -288,8 +288,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public long getStartAddress()
 	{
-		//IPF_TODO look into implementation
-		throw new RuntimeException("Method IMemoryBlock.getStartAddress shoud not be called in CDT debug");
+		return 0;
 	}
 
 	public IAddress getRealStartAddress()
@@ -301,6 +300,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		}
 		return factory.getZero();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
 	 */

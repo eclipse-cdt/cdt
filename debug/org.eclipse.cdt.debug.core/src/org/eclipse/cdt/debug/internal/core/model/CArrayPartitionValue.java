@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
-import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -31,11 +31,6 @@ public class CArrayPartitionValue extends AbstractCValue {
 	private ICDIVariable fCDIVariable;
 
 	/**
-	 * Parent variable.
-	 */
-	private AbstractCVariable fParent = null;
-
-	/**
 	 * List of child variables.
 	 */
 	private List fVariables = Collections.EMPTY_LIST;
@@ -48,9 +43,8 @@ public class CArrayPartitionValue extends AbstractCValue {
 	 * Constructor for CArrayPartitionValue.
 	 */
 	public CArrayPartitionValue( AbstractCVariable parent, ICDIVariable cdiVariable, int start, int end ) {
-		super( (CDebugTarget)parent.getDebugTarget() );
+		super( parent );
 		fCDIVariable = cdiVariable;
-		fParent = parent;
 		fStart = start;
 		fEnd = end;
 	}
@@ -134,28 +128,21 @@ public class CArrayPartitionValue extends AbstractCValue {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#computeDetail()
-	 */
 	public String evaluateAsExpression() {
-		ICExpressionEvaluator ee = (ICExpressionEvaluator)getDebugTarget().getAdapter( ICExpressionEvaluator.class );
 		String valueString = null;
-		if ( ee != null && ee.canEvaluate() ) {
-			try {
-				if ( getParentVariable() != null )
-					valueString = ee.evaluateExpressionToString( getParentVariable().getExpressionString() );
-			}
-			catch( DebugException e ) {
-				valueString = e.getMessage();
+		AbstractCVariable parent = getParentVariable();
+		if ( parent != null ) {
+			ICStackFrame frame = parent.getStackFrame(); 
+			if ( frame != null && frame.canEvaluate() ) {
+				try {
+					valueString = frame.evaluateExpressionToString( parent.getExpressionString() );
+				}
+				catch( DebugException e ) {
+					valueString = e.getMessage();
+				}
 			}
 		}
 		return valueString;
-	}
-
-	public AbstractCVariable getParentVariable() {
-		return fParent;
 	}
 
 	protected ICDIVariable getCDIVariable() {

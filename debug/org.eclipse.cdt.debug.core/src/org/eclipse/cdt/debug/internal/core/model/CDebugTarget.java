@@ -68,7 +68,6 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
-import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSignal;
@@ -760,8 +759,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
 	public IMemoryBlock getMemoryBlock( long startAddress, long length ) throws DebugException {
- 		//TODO:IPF_TODO look into implementation
- 		throw new RuntimeException("Method getMemoryBlock should not be called from CDT");
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -819,8 +817,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return this;
 		if ( adapter.equals( ICDITarget.class ) )
 			return fCDITarget;
-		if ( adapter.equals( ICExpressionEvaluator.class ) )
-			return this;
 		if ( adapter.equals( ICMemoryManager.class ) )
 			return getMemoryManager();
 		if ( adapter.equals( IDebuggerProcessSupport.class ) )
@@ -1289,26 +1285,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICExpressionEvaluator#evaluateExpressionToString(java.lang.String)
-	 */
-	public String evaluateExpressionToString( String expression ) throws DebugException {
-		try {
-			return getCDITarget().evaluateExpressionToString( expression );
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( e.getMessage(), null );
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICExpressionEvaluator#canEvaluate()
-	 */
-	public boolean canEvaluate() {
-		return supportsExpressionEvaluation() && isSuspended();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionListener#expressionAdded(org.eclipse.debug.core.model.IExpression)
 	 */
 	public void expressionAdded( IExpression expression ) {
@@ -1503,7 +1479,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#canRunToAddress(long)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#canRunToAddress(org.eclipse.cdt.core.IAddress)
 	 */
 	public boolean canRunToAddress( IAddress address ) {
 		// for now
@@ -1511,7 +1487,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToAddress(long, boolean)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToAddress(org.eclipse.cdt.core.IAddress, boolean)
 	 */
 	public void runToAddress( IAddress address, boolean skipBreakpoints ) throws DebugException {
 		if ( !canRunToAddress( address ) )
@@ -1607,7 +1583,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(long)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(org.eclipse.cdt.core.IAddress)
 	 */
 	public boolean canJumpToAddress( IAddress address ) {
 		// check if supports jump to address
@@ -1615,7 +1591,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(long)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(org.eclipse.cdt.core.IAddress)
 	 */
 	public void jumpToAddress( IAddress address ) throws DebugException {
 		if ( !canJumpToAddress( address ) )
@@ -1846,20 +1822,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return false;
 	}
 
- 	public IAddressFactory getAddressFactory()
- 	{
- 		if ( fAddressFactory == null )
- 		{
- 			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
- 			{
- 				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
- 				if ( cFile instanceof IBinary )
- 				{
- 					fAddressFactory = ((IBinary)cFile).getAddressFactory();
- 				}
- 			}
- 		}
- 		return fAddressFactory;
- 	}
-
+	public IAddressFactory getAddressFactory() {
+		if ( fAddressFactory == null ) {
+			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) ) {
+				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+				if ( cFile instanceof IBinary ) {
+					fAddressFactory = ((IBinary)cFile).getAddressFactory();
+				}
+			}
+		}
+		return fAddressFactory;
+	}
 }

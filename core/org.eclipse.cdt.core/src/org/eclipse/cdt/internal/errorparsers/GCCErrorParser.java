@@ -64,8 +64,9 @@ public class GCCErrorParser implements IErrorParser {
 						/* Then check for the column  */
 						int thirdColon= line.indexOf(':', secondColon + 1);
 						if (thirdColon != -1) {
+							String columnNumber = line.substring(secondColon + 1, thirdColon);
 							try {
-								col = Integer.parseInt(lineNumber);
+								col = Integer.parseInt(columnNumber);
 							} catch (NumberFormatException e) {
 							}
 						}

@@ -1,4 +1,8 @@
-2003-07-15
+2003-07-17 Peter Graves
+     Remove the usage of the assert, as it's a reserved keyword in 
+     Java 1.4 (Bugzilla 40377)
+
+2003-07-15 Peter Graves
      Clean up some left over stuff that was moved into org.eclipse.cdt.core.tests,
      and fixed the test.xml to point to the correct test suite.
      

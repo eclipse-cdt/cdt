@@ -137,12 +137,12 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e2);
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTextRange(), 2, 2);
-		assert(e2.getTextRange(), 4, 4);
+		tb_assert(e1.getTextRange(), 2, 2);
+		tb_assert(e2.getTextRange(), 4, 4);
 		assertEquals("Buffer content", "01yy345656789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 2, 0);
-		assert(e2.getTextRange(), 2, 3);
+		tb_assert(e1.getTextRange(), 2, 0);
+		tb_assert(e2.getTextRange(), 2, 3);
 	}
 	
 	public void testInsert2() throws Exception {
@@ -153,12 +153,12 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e2);
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTextRange(), 2, 2);
-		assert(e2.getTextRange(), 4, 2);
+		tb_assert(e1.getTextRange(), 2, 2);
+		tb_assert(e2.getTextRange(), 4, 2);
 		assertEquals("Buffer content", "01yyxx23456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 2, 0);
-		assert(e2.getTextRange(), 2, 0);
+		tb_assert(e1.getTextRange(), 2, 0);
+		tb_assert(e2.getTextRange(), 2, 0);
 	}
 	
 	public void testInsert3() throws Exception {
@@ -171,14 +171,14 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e3);
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTextRange(), 0, 3);
-		assert(e2.getTextRange(), 3, 2);
-		assert(e3.getTextRange(), 5, 1);
+		tb_assert(e1.getTextRange(), 0, 3);
+		tb_assert(e2.getTextRange(), 3, 2);
+		tb_assert(e3.getTextRange(), 5, 1);
 		assertEquals("Buffer content", "011xx2456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 0, 2);
-		assert(e2.getTextRange(), 2, 0);
-		assert(e3.getTextRange(), 2, 2);
+		tb_assert(e1.getTextRange(), 0, 2);
+		tb_assert(e2.getTextRange(), 2, 0);
+		tb_assert(e3.getTextRange(), 2, 2);
 	}
 	
 	public void testInsert4() throws Exception {
@@ -187,10 +187,10 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer length", 12, fBuffer.getLength());
-		assert(e1.getTextRange(), 0, 2);
+		tb_assert(e1.getTextRange(), 0, 2);
 		assertEquals("Buffer content", "xx0123456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 0, 0);
+		tb_assert(e1.getTextRange(), 0, 0);
 	}
 	
 	public void testInsert5() throws Exception {
@@ -199,10 +199,10 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer length", 12, fBuffer.getLength());
-		assert(e1.getTextRange(), 10, 2);
+		tb_assert(e1.getTextRange(), 10, 2);
 		assertEquals("Buffer content", "0123456789xx", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 10, 0);
+		tb_assert(e1.getTextRange(), 10, 0);
 	}
 	
 	public void testDelete1() throws Exception {
@@ -210,10 +210,10 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e1);
 		assertTrue("Can perform edits", fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTextRange(), 3, 0);
+		tb_assert(e1.getTextRange(), 3, 0);
 		assertEquals("Buffer content", "012456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 3, 1);
+		tb_assert(e1.getTextRange(), 3, 1);
 	}
 	
 	public void testDelete2() throws Exception {
@@ -225,14 +225,14 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e3);
 		assertTrue("Can perform edits", fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTextRange(), 3, 0);
-		assert(e2.getTextRange(), 3, 0);
-		assert(e3.getTextRange(), 3, 0);
+		tb_assert(e1.getTextRange(), 3, 0);
+		tb_assert(e2.getTextRange(), 3, 0);
+		tb_assert(e3.getTextRange(), 3, 0);
 		assertEquals("Buffer content", "0126789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 4, 1);
-		assert(e2.getTextRange(), 3, 1);
-		assert(e3.getTextRange(), 5, 1);
+		tb_assert(e1.getTextRange(), 4, 1);
+		tb_assert(e2.getTextRange(), 3, 1);
+		tb_assert(e3.getTextRange(), 5, 1);
 	}
 	
 	public void testDelete3() throws Exception {
@@ -242,12 +242,12 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e2);
 		assertTrue("Can perform edits", fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTextRange(), 3, 1);
-		assert(e2.getTextRange(), 4, 0);
+		tb_assert(e1.getTextRange(), 3, 1);
+		tb_assert(e2.getTextRange(), 4, 0);
 		assertEquals("Buffer content", "012x456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getTextRange(), 3, 0);
-		assert(e2.getTextRange(), 3, 1);
+		tb_assert(e1.getTextRange(), 3, 0);
+		tb_assert(e2.getTextRange(), 3, 1);
 	}
 	
 	public void testMove1() throws Exception {
@@ -256,11 +256,11 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer content", "0142356789", fBuffer.getContent());
-		assert(e1.getTargetRange(), 3, 2);
-		assert(e1.getSourceRange(), 2, 0);
+		tb_assert(e1.getTargetRange(), 3, 2);
+		tb_assert(e1.getSourceRange(), 2, 0);
 		doUndo(undo);
-		assert(e1.getSourceRange(), 2, 2);
-		assert(e1.getTargetRange(), 5, 0);
+		tb_assert(e1.getSourceRange(), 2, 2);
+		tb_assert(e1.getTargetRange(), 5, 0);
 	}
 	
 	public void testMove2() throws Exception {
@@ -269,11 +269,11 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer content", "0156234789", fBuffer.getContent());
-		assert(e1.getTargetRange(), 2, 2);
-		assert(e1.getSourceRange(), 7, 0);
+		tb_assert(e1.getTargetRange(), 2, 2);
+		tb_assert(e1.getSourceRange(), 7, 0);
 		doUndo(undo);
-		assert(e1.getSourceRange(), 5, 2);
-		assert(e1.getTargetRange(), 2, 0);
+		tb_assert(e1.getSourceRange(), 5, 2);
+		tb_assert(e1.getTargetRange(), 2, 0);
 	}
 
 	public void testMove3() throws Exception {
@@ -284,13 +284,13 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer content", "01x5623789", fBuffer.getContent());
-		assert(e1.getTargetRange(), 5, 2);
-		assert(e1.getSourceRange(), 2, 0);
-		assert(e2.getTextRange(), 2, 1);
+		tb_assert(e1.getTargetRange(), 5, 2);
+		tb_assert(e1.getSourceRange(), 2, 0);
+		tb_assert(e2.getTextRange(), 2, 1);
 		doUndo(undo);
-		assert(e1.getSourceRange(), 2, 2);
-		assert(e1.getTargetRange(), 7, 0);
-		assert(e2.getTextRange(), 4, 1);
+		tb_assert(e1.getSourceRange(), 2, 2);
+		tb_assert(e1.getTargetRange(), 7, 0);
+		tb_assert(e2.getTextRange(), 4, 1);
 	}
 	
 	public void testMove4() throws Exception {
@@ -301,13 +301,13 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer content", "0178234x69", fBuffer.getContent());
-		assert(e1.getTargetRange(), 2, 2);
-		assert(e1.getSourceRange(), 9, 0);
-		assert(e2.getTextRange(), 7, 1);
+		tb_assert(e1.getTargetRange(), 2, 2);
+		tb_assert(e1.getSourceRange(), 9, 0);
+		tb_assert(e2.getTextRange(), 7, 1);
 		doUndo(undo);
-		assert(e1.getSourceRange(), 7, 2);
-		assert(e1.getTargetRange(), 2, 0);
-		assert(e2.getTextRange(), 5, 1);
+		tb_assert(e1.getSourceRange(), 7, 2);
+		tb_assert(e1.getTargetRange(), 2, 0);
+		tb_assert(e2.getTextRange(), 5, 1);
 	}
 	
 	public void testMove5() throws Exception {
@@ -318,14 +318,14 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e2);
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTargetRange(), 2, 1);
-		assert(e1.getSourceRange(), 3, 0);
-		assert(e2.getTextRange(), 2, 1);
+		tb_assert(e1.getTargetRange(), 2, 1);
+		tb_assert(e1.getSourceRange(), 3, 0);
+		tb_assert(e2.getTextRange(), 2, 1);
 		assertEquals("Buffer content", "01x3456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getSourceRange(), 2, 1);
-		assert(e1.getTargetRange(), 3, 0);
-		assert(e2.getTextRange(), 2, 1);
+		tb_assert(e1.getSourceRange(), 2, 1);
+		tb_assert(e1.getTargetRange(), 3, 0);
+		tb_assert(e2.getTextRange(), 2, 1);
 	}
 	
 	public void testMove6() throws Exception {
@@ -336,14 +336,14 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e2);
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTargetRange(), 2, 1);
-		assert(e1.getSourceRange(), 3, 0);		// This gets normalized since a move from [2,1] -> 2 == [2,1] -> 3
-		assert(e2.getTextRange(), 2, 1);
+		tb_assert(e1.getTargetRange(), 2, 1);
+		tb_assert(e1.getSourceRange(), 3, 0);		// This gets normalized since a move from [2,1] -> 2 == [2,1] -> 3
+		tb_assert(e2.getTextRange(), 2, 1);
 		assertEquals("Buffer content", "01x3456789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getSourceRange(), 2, 1);
-		assert(e1.getTargetRange(), 3, 0);
-		assert(e2.getTextRange(), 2, 1);
+		tb_assert(e1.getSourceRange(), 2, 1);
+		tb_assert(e1.getTargetRange(), 3, 0);
+		tb_assert(e2.getTextRange(), 2, 1);
 	}
 	
 	public void testMove7() throws Exception {
@@ -354,13 +354,13 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer content", "01562x4789", fBuffer.getContent());
-		assert(e1.getTargetRange(), 4, 3);
-		assert(e1.getSourceRange(), 2, 0);
-		assert(e2.getTextRange(), 5, 1);
+		tb_assert(e1.getTargetRange(), 4, 3);
+		tb_assert(e1.getSourceRange(), 2, 0);
+		tb_assert(e2.getTextRange(), 5, 1);
 		doUndo(undo);
-		assert(e1.getSourceRange(), 2, 3);
-		assert(e1.getTargetRange(), 7, 0);
-		assert(e2.getTextRange(), 3, 1);
+		tb_assert(e1.getSourceRange(), 2, 3);
+		tb_assert(e1.getTargetRange(), 7, 0);
+		tb_assert(e2.getTextRange(), 3, 1);
 	}
 	
 	public void testMove8() throws Exception {
@@ -371,13 +371,13 @@ public class TextBufferTest extends TestCase {
 		assertTrue(fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
 		assertEquals("Buffer content", "05x7123489", fBuffer.getContent());
-		assert(e1.getTargetRange(), 1, 3);
-		assert(e1.getSourceRange(), 8, 0);
-		assert(e2.getTextRange(), 2, 1);
+		tb_assert(e1.getTargetRange(), 1, 3);
+		tb_assert(e1.getSourceRange(), 8, 0);
+		tb_assert(e2.getTextRange(), 2, 1);
 		doUndo(undo);
-		assert(e1.getSourceRange(), 5, 3);
-		assert(e1.getTargetRange(), 1, 0);
-		assert(e2.getTextRange(), 6, 1);
+		tb_assert(e1.getSourceRange(), 5, 3);
+		tb_assert(e1.getTargetRange(), 1, 0);
+		tb_assert(e2.getTextRange(), 6, 1);
 	}
 		
 	public void testMove9() throws Exception {
@@ -387,16 +387,16 @@ public class TextBufferTest extends TestCase {
 		fEditor.add(e2);
 		assertTrue("Can perform edits", fEditor.canPerformEdits());
 		UndoMemento undo= fEditor.performEdits(null);
-		assert(e1.getTargetRange(), 3, 1);
-		assert(e1.getSourceRange(), 2, 0);
-		assert(e2.getTargetRange(), 2, 3);
-		assert(e2.getSourceRange(), 1, 0);
+		tb_assert(e1.getTargetRange(), 3, 1);
+		tb_assert(e1.getSourceRange(), 2, 0);
+		tb_assert(e2.getTargetRange(), 2, 3);
+		tb_assert(e2.getSourceRange(), 1, 0);
 		assertEquals("Buffer content", "0421356789", fBuffer.getContent());
 		doUndo(undo);
-		assert(e1.getSourceRange(), 1, 1);
-		assert(e1.getTargetRange(), 3, 0);
-		assert(e2.getSourceRange(), 1, 3);
-		assert(e2.getTargetRange(), 5, 0);
+		tb_assert(e1.getSourceRange(), 1, 1);
+		tb_assert(e1.getTargetRange(), 3, 0);
+		tb_assert(e2.getSourceRange(), 1, 3);
+		tb_assert(e2.getTargetRange(), 5, 0);
 	}
 	
 	public void testMove10() throws Exception {
@@ -460,7 +460,7 @@ public class TextBufferTest extends TestCase {
 		assertBufferContent();
 	}
 	
-	private void assert(TextRange r, int offset, int length) {
+	private void tb_assert(TextRange r, int offset, int length) {
 		assertEquals("Offset", offset, r.getOffset());
 		assertEquals("Length", length, r.getLength());	
 	}

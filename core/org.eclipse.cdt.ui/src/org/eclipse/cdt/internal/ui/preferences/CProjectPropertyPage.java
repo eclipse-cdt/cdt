@@ -5,24 +5,32 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.BinaryParserBlock;
 import org.eclipse.cdt.ui.wizards.IndexerBlock;
 import org.eclipse.cdt.ui.wizards.SettingsBlock;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -34,6 +42,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	private TabFolder folder;
 	SettingsBlock settingsBlock;
 	IndexerBlock indexerBlock;
+	BinaryParserBlock binaryParserBlock;
 
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -70,6 +79,15 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 			item3.setImage(img3);
 		item3.setData(indexerBlock);
 		item3.setControl(indexerBlock.getControl(folder));
+		
+		binaryParserBlock = new BinaryParserBlock(this, getProject());
+		TabItem item4 = new TabItem(folder, SWT.NONE);
+		item4.setText(binaryParserBlock.getLabel());
+		Image img4 = binaryParserBlock.getImage();
+		if (img4 != null)
+			item4.setImage(img4);
+		item4.setData(binaryParserBlock);
+		item4.setControl(binaryParserBlock.getControl(folder));
 
 		WorkbenchHelp.setHelp(parent, ICHelpContextIds.PROJECT_PROPERTY_PAGE);	
 	}
@@ -91,6 +109,9 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		if (ok && indexerBlock != null) {
 			ok = indexerBlock.isValid();
 		}
+		if (ok && binaryParserBlock != null) {
+			ok = binaryParserBlock.isValid();
+		}
 		setValid(ok);
 	}
 
@@ -98,15 +119,38 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	 * @see PreferencePage#performOk
 	 */	
 	public boolean performOk() {
-		if (settingsBlock != null)
-			settingsBlock.doRun(getProject(), null);
-		if (indexerBlock != null) {
-			indexerBlock.doRun(getProject(), null);
+		Shell shell= getControl().getShell();
+		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				monitor.beginTask("Property changes", 20);
+				if (settingsBlock != null) {
+					settingsBlock.doRun(getProject(), monitor);
+				}
+				monitor.worked(2);
+				if (indexerBlock != null) {
+					indexerBlock.doRun(getProject(), monitor);
+				}
+				monitor.worked(10);
+				if (binaryParserBlock != null) {
+					binaryParserBlock.doRun(getProject(), monitor);
+				}
+				monitor.worked(19);
+				monitor.done();
+			}
+		};
+		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(runnable);
+		try {
+			new ProgressMonitorDialog(shell).run(false, true, op);
+		} catch (InvocationTargetException e) {
+			return false;
+		} catch (InterruptedException e) {
+			// cancelled
+			return false;
 		}
 		return true;
 	}
 		
-	private IProject getProject() {
+	IProject getProject() {
 		Object element= getElement();
 		if (element instanceof IProject) {
 			return (IProject)element;
@@ -122,6 +166,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		if (visible && folder != null) {
 			settingsBlock.setVisible(visible);
 			indexerBlock.setVisible(visible);
+			binaryParserBlock.setVisible(visible);
 			folder.setFocus();
 		}
 	}	

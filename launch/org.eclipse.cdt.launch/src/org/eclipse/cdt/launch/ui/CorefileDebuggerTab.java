@@ -164,6 +164,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 				return true;
 			}
 		}
+		setDebugConfig(null);
 		return false;
 	}
 

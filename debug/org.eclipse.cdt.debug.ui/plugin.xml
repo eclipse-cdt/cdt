@@ -48,6 +48,13 @@
             class="org.eclipse.cdt.debug.internal.ui.views.memory.MemoryView"
             id="org.eclipse.cdt.debug.ui.MemoryView">
       </view>
+      <view
+            name="%SharedLibrariesView.name"
+            icon="icons/full/cview16/sharedlibraries_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.sharedlibs.SharedLibrariesView"
+            id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -58,13 +65,15 @@
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.RegistersView">
          </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.MemoryView">
+         </view>
+         <view
+               relative="org.eclipse.debug.ui.VariableView"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
          </view>
       </perspectiveExtension>
    </extension>

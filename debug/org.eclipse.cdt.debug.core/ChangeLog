@@ -1,4 +1,13 @@
 2003-01-16 Mikhail Khodjaiants
+	Implementing the Shared Libraries view.
+	* ICSharedLibrary.java
+	* ICSharedLibraryManager.java
+	* CDebugElement.java
+	* CDebugTarget.java
+	* CSharedLibrary.java
+	* CSharedLibraryManager.java
+
+2003-01-16 Mikhail Khodjaiants
 	* ICDILoadedEvent.java: Removed.
 
 2003-01-16 Alain Magloire

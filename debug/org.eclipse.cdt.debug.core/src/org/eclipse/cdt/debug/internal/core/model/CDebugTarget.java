@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
+import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
@@ -69,6 +71,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
+import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
@@ -219,6 +222,11 @@ public class CDebugTarget extends CDebugElement
 	private DisassemblyManager fDisassemblyManager;
 
 	/**
+	 * A shared library manager for this target.
+	 */
+	private CSharedLibraryManager fSharedLibraryManager;
+
+	/**
 	 * Whether the debugger process is default.
 	 */
 	private boolean fIsDebuggerProcessDefault = false;
@@ -256,6 +264,7 @@ public class CDebugTarget extends CDebugElement
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
 		setThreadList( new ArrayList( 5 ) );
 		setDisassemblyManager( new DisassemblyManager( this ) );
+		setSharedLibraryManager( new CSharedLibraryManager( this ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
@@ -867,6 +876,8 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( DisassemblyManager.class ) )
 			return fDisassemblyManager;
+		if ( adapter.equals( ICSharedLibraryManager.class ) )
+			return fSharedLibraryManager;
 		return super.getAdapter( adapter );
 	}
 	
@@ -887,6 +898,10 @@ public class CDebugTarget extends CDebugElement
 				if ( source instanceof ICDIThread )
 				{
 					handleThreadCreatedEvent( (ICDICreatedEvent)event );
+				}
+				if ( source instanceof ICDISharedLibrary )
+				{
+					getSharedLibraryManager().sharedLibraryLoaded( (ICDISharedLibrary)source );
 				}
 			}
 			else if ( event instanceof ICDISuspendedEvent )
@@ -916,6 +931,10 @@ public class CDebugTarget extends CDebugElement
 				{
 					handleThreadTerminatedEvent( (ICDIDestroyedEvent)event );
 				}
+				if ( source instanceof ICDISharedLibrary )
+				{
+					getSharedLibraryManager().sharedLibraryUnloaded( (ICDISharedLibrary)source );
+				}
 			}
 			else if ( event instanceof ICDIDisconnectedEvent )
 			{
@@ -929,6 +948,10 @@ public class CDebugTarget extends CDebugElement
 				if ( source instanceof ICDITarget )
 				{
 					handleChangedEvent( (ICDIChangedEvent)event );
+				}
+				if ( source instanceof ICDISharedLibrary )
+				{
+					getSharedLibraryManager().symbolsLoaded( (ICDISharedLibrary)source );
 				}
 			}
 			else if ( event instanceof ICDIRestartedEvent )
@@ -1083,6 +1106,7 @@ public class CDebugTarget extends CDebugElement
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
 		disposeMemoryManager();
+		disposeSharedLibraryManager();
 		removeAllExpressions();
 		try
 		{
@@ -2074,6 +2098,21 @@ public class CDebugTarget extends CDebugElement
 	protected DisassemblyManager getDisassemblyManager()
 	{
 		return fDisassemblyManager;
+	}
+
+	protected void setSharedLibraryManager( CSharedLibraryManager libman )
+	{
+		fSharedLibraryManager = libman;
+	}
+	
+	protected CSharedLibraryManager getSharedLibraryManager()
+	{
+		return fSharedLibraryManager;
+	}
+
+	protected void disposeSharedLibraryManager()
+	{
+		fSharedLibraryManager.dispose();
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,17 @@
+2003-01-16 Mikhail Khodjaiants
+	Implementing the Shared Libraries view.
+	* SharedLibrariesView.java
+	* SharedLibrariesViewContentProvider.java
+	* SharedLibrariesViewEventHandler.java
+	* CDebugImages.java
+	* ICDebugHelpContextIds.java
+	* plugin.properties
+	* plugin.xml
+	* icons/full/cview16/sharedlibraries_view.gif
+	* icons/full/eview16/sharedlibraries_view.gif
+	* icons/full/obj16/sharedlibraryl_obj.gif
+	* icons/full/obj16/sharedlibraryu_obj.gif
+
 2003-01-15 Mikhail Khodjaiants
 	The 'getDefaultEditor' method returns 'null' for file names that don't have an extension and 
 	are not registered with some editor. Use the default text editor in this case.

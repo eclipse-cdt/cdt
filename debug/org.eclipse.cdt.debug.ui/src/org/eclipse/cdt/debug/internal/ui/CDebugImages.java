@@ -65,6 +65,8 @@ public class CDebugImages
 	public static final String IMG_OBJS_DISASSEMBLY = NAME_PREFIX + "disassembly_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "project_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FOLDER = NAME_PREFIX + "folder_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_LOADED_SHARED_LIBRARY = NAME_PREFIX + "sharedlibraryl_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SHARED_LIBRARY = NAME_PREFIX + "sharedlibraryu_obj.gif";	//$NON-NLS-1$
 
 	public static final String IMG_LCL_TYPE_NAMES = NAME_PREFIX + "tnames_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$
@@ -112,6 +114,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_DISASSEMBLY = createManaged( T_OBJ, IMG_OBJS_DISASSEMBLY );
 	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged( T_OBJ, IMG_OBJS_PROJECT );
 	public static final ImageDescriptor DESC_OBJS_FOLDER = createManaged( T_OBJ, IMG_OBJS_FOLDER );
+	public static final ImageDescriptor DESC_OBJS_LOADED_SHARED_LIBRARY = createManaged( T_OBJ, IMG_OBJS_LOADED_SHARED_LIBRARY );
+	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY = createManaged( T_OBJ, IMG_OBJS_SHARED_LIBRARY );
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE_LOCATION ); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION ); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$

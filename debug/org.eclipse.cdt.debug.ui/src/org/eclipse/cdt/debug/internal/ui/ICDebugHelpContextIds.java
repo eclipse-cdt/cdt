@@ -34,6 +34,7 @@ public interface ICDebugHelpContextIds
 	// Views
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
 	public static final String MEMORY_VIEW = PREFIX + "memory_view_context"; //$NON-NLS-1$
+	public static final String SHARED_LIBRARIES_VIEW = PREFIX + "shared_libraries_view_context"; //$NON-NLS-1$
 
 	// Preference pages
 	public static final String MEMORY_PREFERENCE_PAGE = PREFIX + "memory_preference_page_context"; //$NON-NLS-1$

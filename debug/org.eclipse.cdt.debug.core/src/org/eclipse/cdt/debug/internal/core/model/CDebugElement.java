@@ -123,7 +123,7 @@ public class CDebugElement extends PlatformObject
 	/**
 	 * Fires a debug event marking the creation of this element.
 	 */
-	protected void fireCreationEvent()
+	public void fireCreationEvent()
 	{
 		fireEvent( new DebugEvent( this, DebugEvent.CREATE ) );
 	}

@@ -68,10 +68,10 @@
    <topic href="reference/cdt_u_mem_view_pref.htm"
    	label="Memory view preferences"/>
 </context>
-<context id ="shared_lib_view">
+<context id ="modules_view">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_shared_lib_view.htm"
-   	label="Shared libraries view"/>
+   <topic href="reference/cdt_u_modules_view.htm"
+   	label="Modules view"/>
 </context>
 <context id ="signals_view">
    <description>Click below to see help.</description>

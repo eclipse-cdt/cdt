@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
-
+ 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
@@ -12,27 +12,44 @@
 <body>
 
 <h1>Memory view</h1>
-<p>The Memory view of the Debug perspective lets you inspect and change your process memory. The view 
-consists of four tabs that let you inspect multiple sections of memory. The 
-options described below are available when you right-click a memory value.</p>
+
+<p>The Memory view of the Debug
+perspective lets you monitor and modify your process memory. The process memory
+is presented as a list of so called <b>memory monitors</b>. Each monitor represents
+a section of memory specified by it's location called <b>base address</b>. Each
+memory monitor can be displayed in different predefined data formats -- <b>memory
+renderings</b>. The debugger supports four rendering types -- <b>hexadecimal</b>
+(default), <b>ascii</b>, <b>signed integer</b> and <b>unsigned integer</b>. The
+default rendering is displayed automatically on the monitor creation.</p>
+
+<p>The Memory view contains two
+panes -- the <b>Memory Monitors</b> pane and the <b>Memory Renderings</b> pane. The
+Memory Monitors pane displays the list of memory monitors added to the debug
+session currently selected in the Debug view. The content of the Memory
+Renderings pane is controlled by the selection in the Memory Monitors pane and
+consists of the tabs that display renderings. The Memory Renderings pane can be
+configured to display two renderings simultaneously.</p>
+
+<p>The following options are available.</p>
 <dl>
-  <dt>Auto-Refresh</dt>
-  <dd>Updates the memory address list each time execution stops.</dd>
-  <dt>Refresh</dt>
-  <dd>Updates the memory address list.</dd>
-  <dt>Clear</dt>
-  <dd>Clears the selected memory address.</dd>
-  <dt>Format</dt>
-  <dd>Specifies the number system in which to display memory values (Hexadecimal, Signed Decimal, or Unsigned Decimal).</dd>
-  <dt>Memory Unit Size</dt>
-  <dd>Specifies the memory address size (1 byte, 2 bytes, 4 bytes, 8 bytes).</dd>
-  <dt>Number of Columns</dt>
-  <dd>Specifies the numbers of columns displayed in the Registers view (1 column, 2 columns, 4 columns, 8 columns, 16 columns).</dd>
-  <dt>Show ASCII</dt>
-  <dd>Displays the selected value as ASCII.</dd>
-  <dt>Detail panel</dt>
-  <dd>Displays the raw output from GDB for the selected variable.</dd>
-</dl>
+
+<dt><strong>Toggle Memory Monitor Pane</strong></dt>
+<dd>Shows/hides the Memory Monitor pane.</dd>
+
+<dt><strong>Toggle Split Pane</strong></dt>
+<dd>Toggles the Memory Renderings pane split.</dd>
+
+<dt><strong>Link Memory Rendering Panes</strong></dt>
+<dd>Synchronizes the selection of two memory renderings.</dd>
+
+<dt><strong>Padded String</strong></dt>
+<dd>Specifies the string that represents the unretrievable memory.</dd>
+
+<dt><strong>Default Column Size</strong></dt>
+<dd>Specifies the default
+column size of the memory presentation (1 byte, 2 bytes, 4 bytes, 8 bytes). Can
+be overwritten by each rendering.  </dd>
+
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
@@ -42,7 +59,8 @@ options described below are available when you right-click a memory value.</p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_views.htm">Views</a></p>
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+
 </body>
 
 </html>

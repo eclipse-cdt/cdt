@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
-
+ 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
@@ -9,45 +9,60 @@
 <title>Working with memory</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
+ 
 <body>
 
 <h1>Working with memory</h1>
 
 <p>You can inspect and change process memory.</p>
 
-<p>The Memory view supports the same addressing as the C language. You 
-can address memory using expressions such as:</p>
+<p>The Memory view supports the same addressing as the C and C++ languages. You can address memory using expressions
+such as:</p>
+
 <ul>
-  <li> <samp>0x0847d3c</samp></li>
-  <li> <samp>(&amp;y)+1024</samp></li>
-  <li> <samp>*ptr</samp></li>
+ <li><samp>0x0847d3c</samp></li>
+ <li><samp>(&amp;y)+1024</samp></li>
+ <li><samp>*ptr</samp></li>
 </ul>
-<p>You can configure your output to display hexadecimal or decimal. You can also 
-set the number of display columns and the memory unit size. You can configure 
-each memory tab independently.</p>
-<p>You can customize the Memory view to colors and fonts displayed. You can also customize some of its behavior. The customizations affect 
-the entire <b>Memory</b> view.</p>
-<p>To  change process memory:</p>
-<p><b>Warning:</b> Changing  process memory can cause a program to crash.</p>
+
+<p> You can configure your output to
+display hexadecimal, ascii and/or signed/unsigned decimal. You can also set the
+size of the rendering columns. You can configure each memory monitor renderings
+independently.</p>
+
+<p> You can customize the Memory view to colors and fonts displayed.  </p>
+
+<p>To monitor process memory:</p>
 <ol>
-  <li>In the Debug view, select a process. Selecting a thread 
-  automatically selects the associated process. </li>
-  <li>In the Memory view, click a memory tab.</li>
-  <li>Do one of the following:</li>
-  <ul><li>In the <b>Address</b> box, type an address and press <b>Enter</b>.</li>
-  <li>In the memory view, type a new value for memory. The <b>Memory</b> 
-  view works in &quot;typeover&quot; mode. To jump from byte to byte use the arrow keys:<p>&nbsp;</li></ul>
+<li> In the Debug view, select a debug session. Selecting a thread or stack frame automatically
+selects the associated session.</li>
+
+<li> Select <strong>"Add Memory Monitor"</strong> in the context menu of the Memory Monitors pane.
+The <strong>"Memory Monitor"</strong> dialog appears.</li>
+
+<li> Type the address or expression that specifies the memory section you want to monitor and
+press <strong>"OK"</strong>. The monitor appears in the monitor list and the Memory Renderings
+pane displays the contents of memory locations beginning at the specified address.</li>
+
 </ol>
-<p>To change the appearance of the Memory view:</p>
+<p>To view memory in a different rendering: </p>
 <ol>
-  <li>Do one of the following:</li>
-  <ul><li>In the Memory view, click one of the tabs.</li>
-  <li>Click <b>Window &gt; Preferences</b>.</li></ul>
-  <li>In list of memory addresses, right-click, and select:</li>
-  <ul><li><b>Format &gt; Hexadecimal, Signed Decimal or Unsigned Decimal</b>.</li>
-  <li><b>Memory Unit Size &gt; 1, 2, 4, or 8 bytes</b></li>
-  <li><b>Number of Columns &gt; 1, 2, 4, 8, or 16</b> columns.</li></ul>
+<li> Select <strong>"Add Rendering"</strong> in the context menu of the Memory Renderings pane.
+The <strong>"Add Memory Rendering"</strong> dialog appears.</li>
+
+<li> Select renderings from the list and press <strong>"OK"</strong>.</li>
+</ol>
+<p>To change process memory:</p>
+
+<p><b>Warning:</b>
+Changing process memory can cause a program to crash.</p>
+
+<ol>
+ <li> In the Debug view, select a debug session. Selecting a thread or stack frame automatically
+     selects the associated session.</li>
+ <li> In the Memory Monitors pane, add a new monitor or select an existing monitor.</li>
+ <li> In the Memory Renderings pane add a new rendering or select an existing one.  </li>
+ <li> Type a new value for memory.  </li>
 </ol>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
@@ -61,7 +76,6 @@ the entire <b>Memory</b> view.</p>
 <br>
 <a href="../reference/cdt_o_dbg_view.htm">Debug views</a></p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
-
 
 </body>
 

@@ -19,7 +19,7 @@
 			<topic label="Registers view" href="reference/cdt_u_registersview.htm"/>
 			<topic label="Memory view" href="reference/cdt_u_memoryview.htm"/>
 			<topic label="Memory view preferences" href="reference/cdt_u_mem_view_pref.htm"/>
-			<topic label="Shared libraries view" href="reference/cdt_u_shared_lib_view.htm"/>
+			<topic label="Modules view" href="reference/cdt_u_modules_view.htm"/>
 			<topic label="Signals view" href="reference/cdt_u_signals_view.htm"/>
 			<topic label="Debug view" href="reference/cdt_u_dbg_view.htm"/>
 			<topic label="Debug preferences" href="reference/cdt_u_dbg_pref.htm"/>

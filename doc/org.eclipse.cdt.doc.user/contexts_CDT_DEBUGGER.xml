@@ -12,7 +12,7 @@
 	<!ENTITY registersViewPrefs "Registers view preferences">
 	<!ENTITY memoryView "Memory view">
 	<!ENTITY memoryViewPrefs "Memory view preferences">
-	<!ENTITY sharedLibsView "Shared Libraries view">
+	<!ENTITY ModulesView "Modules view">
 	<!ENTITY sharedLibsViewPrefs "Shared Libraries view preferences">
 	<!ENTITY signalsView "Signals view">
     <!ENTITY debugPrefs "Debug preferences">
@@ -50,10 +50,10 @@
    	label="&memoryViewPrefs;"/>
 </context>
 
-<context id ="shared_libraries_view_context">
+<context id ="modules_view_context">
    <description>Click below to see help</description>
-   <topic href="reference/cdt_u_shared_lib_view.htm"
-   	label="&sharedLibsView;"/>
+   <topic href="reference/cdt_u_modules_view.htm"
+   	label="&modulesView;"/>
 </context>
 
 <context id ="shared_libraries_preference_page_context">

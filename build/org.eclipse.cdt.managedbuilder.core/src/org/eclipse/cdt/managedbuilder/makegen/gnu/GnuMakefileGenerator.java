@@ -119,7 +119,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						if (!generator.isGeneratedResource(resource)) {
 							// This is a source file so just add its container
 							if (info.buildsFileType(ext)) {
-								generator.appendModifiedSubdirectory(resource);
+								generator.appendDeletedSubdirectory(resource);
 								generator.appendDeletedFile(resource);
 							}
 						}
@@ -214,6 +214,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private String buildTargetName;
 	private Vector buildTools;
 	private Vector deletedFileList;
+	private Vector deletedDirList;
 	private Vector dependencyMakefiles;
 	private String extension;
 	private IManagedBuildInfo info;
@@ -742,6 +743,27 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	/**
+	 * Adds the container of the argument to a list of subdirectories that are part 
+	 * of an incremental rebuild of the project. The makefile fragments for these 
+	 * directories will be regenerated as a result of the build.
+	 * 
+	 * @param resource
+	 */
+	protected void appendDeletedSubdirectory(IResource resource) {
+		IContainer container = resource.getParent();
+		// If the path contains a space relative to the project, reject it from the build
+		if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {	//$NON-NLS-1$
+			// Only add the container once
+			if (!getInvalidDirList().contains(container)) {
+				getInvalidDirList().add(container);
+			}
+		} else {
+			if (!getDeletedDirList().contains(container)) {
+				getDeletedDirList().add(container);
+			}
+		}
+	}
+	/**
 	 * If a file is removed from a source folder (either because of a delete 
 	 * or move action on the part of the user), the makefilegenerator has to
 	 * remove the dependency makefile along with the old build goal 
@@ -1070,6 +1092,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			populateFragmentMakefile(subDir);
 			checkCancel();
 		}
+		
+		// Remove deleted folders from generated build directory
+		iter = getDeletedDirList().listIterator();
+		while (iter.hasNext()) {
+			IContainer subDir = (IContainer) iter.next();
+			removeGeneratedDirectory(subDir);
+			checkCancel();
+		}
 
 		// How did we do
 		if (!getInvalidDirList().isEmpty()) {
@@ -1110,6 +1140,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 
+	/**
+	 * @return Returns the deletedDirList.
+	 */
+	private Vector getDeletedDirList() {
+		if (deletedDirList == null) {
+			deletedDirList = new Vector();
+		}
+		return deletedDirList;
+	}
+	
 	/* (non-Javadoc)
 	 * @return
 	 */
@@ -1749,6 +1789,26 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					null);
 		}
 		return status;
+	}
+
+	/* (non-Javadoc)
+	 * @param subDir
+	 */
+	private void removeGeneratedDirectory(IContainer subDir) {
+		IPath moduleRelativePath = subDir.getProjectRelativePath();
+		IPath buildRoot = getBuildWorkingDir();
+		if (buildRoot == null) {
+			return;
+		}
+		IPath moduleOutputPath = buildRoot.append(moduleRelativePath);
+		IFolder folder = project.getFolder(moduleOutputPath);
+		if (folder.exists()) {
+			try {
+				folder.delete(true, new SubProgressMonitor(monitor, 1));
+			} catch (CoreException e) {
+				// TODO Log this
+			}
+		}		
 	}
 
 	/* (non-Javadoc)

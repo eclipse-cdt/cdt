@@ -100,7 +100,6 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				IManagedBuilderMakefileGenerator.WHITESPACE +
 				buildFlags + 
 				IManagedBuilderMakefileGenerator.WHITESPACE +  
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				IManagedBuilderMakefileGenerator.IN_MACRO + 
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				">>" +  //$NON-NLS-1$

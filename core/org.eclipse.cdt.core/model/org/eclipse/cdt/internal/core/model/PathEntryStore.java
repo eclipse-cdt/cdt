@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -96,6 +97,9 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 	}
 
 	public void setRawPathEntries(IProject project, IPathEntry[] newRawEntries) throws CoreException {
+		if (Arrays.equals(newRawEntries, getRawPathEntries(project))) {
+			return;
+		}	
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
 		// Clear out all current children

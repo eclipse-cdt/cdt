@@ -484,7 +484,7 @@ public class CompletionEngine implements RelevanceConstants{
 			kinds[6] = IASTNode.LookupKind.FUNCTIONS;
 			kinds[7] = IASTNode.LookupKind.LOCAL_VARIABLES; 
 			
-			result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, null);
 			addToCompletions (result);
 	
 			List macros = lookupMacros(completionNode.getCompletionPrefix());
@@ -529,10 +529,11 @@ public class CompletionEngine implements RelevanceConstants{
 		if(completionNode.getCompletionPrefix().length() > 0 ) {
 			// 2. Lookup all types that could be used here
 			ILookupResult result;
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[2];
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[3];
 			kinds[0] = IASTNode.LookupKind.STRUCTURES; 				
-			kinds[1] = IASTNode.LookupKind.ENUMERATIONS; 				
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			kinds[1] = IASTNode.LookupKind.ENUMERATIONS;
+			kinds[2] = IASTNode.LookupKind.NAMESPACES;
+			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
 			addToCompletions(result);
 		} else // prefix is empty, we can not look for everything 
 		{
@@ -544,13 +545,6 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. basic completion on all types
 		completionOnTypeReference(completionNode);
 		// 2. Get the search scope node
-		if(completionNode.getCompletionPrefix().length() > 0) {
-			IASTScope searchNode = completionNode.getCompletionScope();
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-			kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-		}
 		// TODO
 		// 3. provide a template for constructor/ destructor
 		// 4. lookup methods
@@ -566,14 +560,6 @@ public class CompletionEngine implements RelevanceConstants{
 	private void completionOnVariableType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
 		completionOnTypeReference(completionNode);
-		// look for namespaces only if you have a prefix
-		if(completionNode.getCompletionPrefix().length() > 0){
-			IASTScope searchNode = completionNode.getCompletionScope();
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-			kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-		}
 	}
 	
 	private void completionOnSingleNameReference(IASTCompletionNode completionNode){
@@ -595,7 +581,7 @@ public class CompletionEngine implements RelevanceConstants{
 		String prefix = completionNode.getCompletionPrefix();
 		if(prefix.equals("("))
 			prefix = "";
-		ILookupResult result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, prefix, kinds, null);
 		addToCompletions(result);
 
 		List macros = lookupMacros(completionNode.getCompletionPrefix());
@@ -609,7 +595,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CLASSES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
 		addToCompletions(result);
 	}
 	private void completionOnNamespaceReference(IASTCompletionNode completionNode){
@@ -618,7 +604,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for namespaces
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
 		addToCompletions(result);
 	}
 	private void completionOnExceptionReference(IASTCompletionNode completionNode){
@@ -636,16 +622,14 @@ public class CompletionEngine implements RelevanceConstants{
 		List result = lookupMacros(completionNode.getCompletionPrefix());
 		addMacrosToCompletions(result.iterator());
 	}
-	private void completionOnFunctionReference(IASTCompletionNode completionNode){
 		// TODO: complete the lookups
-	}
 	private void completionOnConstructorReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// only lookup constructors
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CONSTRUCTORS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
 		addToCompletions(result);
 	}
 	private void completionOnKeyword(IASTCompletionNode completionNode){
@@ -734,10 +718,6 @@ public class CompletionEngine implements RelevanceConstants{
 			// CompletionOnMacroReference
 			completionOnMacroReference(completionNode);
 		}
-		else if(kind == CompletionKind.FUNCTION_REFERENCE){
-			// completionOnFunctionReference
-			completionOnFunctionReference(completionNode);
-		}
 		else if(kind == CompletionKind.CONSTRUCTOR_REFERENCE){
 			// completionOnConstructorReference
 			completionOnConstructorReference(completionNode);
@@ -782,8 +762,6 @@ public class CompletionEngine implements RelevanceConstants{
 			kindStr = "EXCEPTION_REFERENCE";
 		else if(kind == IASTCompletionNode.CompletionKind.MACRO_REFERENCE)
 			kindStr = "MACRO_REFERENCE";
-		else if(kind == IASTCompletionNode.CompletionKind.FUNCTION_REFERENCE)
-			kindStr = "FUNCTION_REFERENCE";
 		else if(kind == IASTCompletionNode.CompletionKind.CONSTRUCTOR_REFERENCE)
 			kindStr = "CONSTRUCTOR_REFERENCE";
 		else if(kind == IASTCompletionNode.CompletionKind.KEYWORD)

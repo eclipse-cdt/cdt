@@ -1132,6 +1132,7 @@ public class Scanner2 implements IScanner, IScannerData {
             if( ++branchStackPos == branches.length ){
                 int [] temp = new int [ branches.length << 1 ];
                 System.arraycopy( branches, 0, temp, 0, branches.length );
+                branches = temp;
             }
             branches[branchStackPos] = BRANCH_IF;
             return true;

@@ -79,9 +79,6 @@ public class MISession extends Observable {
 
 	MIInferior inferior;
 	
-	int cmdCount = 1;
-
-	
 	/**
 	 * Create the gdb session.
 	 *
@@ -256,7 +253,7 @@ public class MISession extends Observable {
 	public synchronized void postCommand(Command cmd, long timeout) throws MIException {
 
 		// TRACING: print the command;
-		MIPlugin.getDefault().debugLog(cmdCount++ + " " + cmd.toString());
+		MIPlugin.getDefault().debugLog(cmd.toString());
 
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
@@ -339,7 +336,7 @@ public class MISession extends Observable {
 		// Tell the observers that the session
 		// is finish, but we can not use the Event Thread.
 		// The Event Thread is being kill below.
-		notifyObservers(new MIGDBExitEvent());
+		notifyObservers(new MIGDBExitEvent(0));
 		
 		// {in,out}Channel is use as predicate/condition
 		// in the {RX,TX,Event}Thread to detect termination

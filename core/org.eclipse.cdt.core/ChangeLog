@@ -1,3 +1,8 @@
+2003-12-04 David Inglis
+	Fixed bug #48063
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	
 2003-11-20 Alain Magloire
 
 	Changes to the binaryParser.

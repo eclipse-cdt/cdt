@@ -1,3 +1,10 @@
+2004-02-03 Alain Magloire
+
+	Derived from a patch by Chris Songer.
+	Accept multiple selection when doing setting the format variables.
+
+	* src/org/eclipse/cdt/debug/internal/ui/actions/VariableFormatActionDelegate.java
+
 2004-01-30 Mikhail Khodjaiants
 	Fix for bug 50967:  Linux/SWT blows when double click on the register view. 
 	* ChangeRegisterValueAction.java

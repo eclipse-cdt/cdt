@@ -1,5 +1,27 @@
 2003-03-19 Alain Magloire
 
+	Some applications, like recursive code, have a very deep stackframes
+	bigger > 50.  This can turn out to be a problem, as the VariableManager
+	will try to update all the variables and there can be a lot of local
+	variable in all those stackframes.  We can not use:
+	"-var-update *"
+	either since on gdb-5.2.1, for reasons unknown to me this will make
+	gdb unstable/crash.  So the approach is to only update variables
+	in the current stackframe.
+	The advantage we only update a small set of variables.
+	The downside if we have side effects i.e. pointers pass to
+	argument and modifying the pointer affect the callees memory.
+	But this is a small price to pay and usually C/C++ programmer
+	are interrested to see changes of variables in the current stack
+	not changes 20 stack before.
+	
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	Method update() only check the variable in the scope of the
+	current stackframe(the highest stack).  This will include
+	any globals.
+
+2003-03-19 Alain Magloire
+
 	Base on PR/patch from Chris Songer.
 	Assigning a value to a register may have side-effects
 	on other registers.  When assigning, the action is now

@@ -242,16 +242,16 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 				switch(gdbType.getType()) {
 					case GDBType.ARRAY:
 						int d = ((GDBDerivedType)gdbType).getDimension();
-						aType = new ArrayType(target, typename, d);
+						aType = new ArrayType(target, gdbType.toString(), d);
 					break;
 					case GDBType.FUNCTION:
-						aType = new FunctionType(target, typename);
+						aType = new FunctionType(target, gdbType.toString());
 					break;
 					case GDBType.POINTER:
-						aType = new PointerType(target, typename);
+						aType = new PointerType(target, gdbType.toString());
 					break;
 					case GDBType.REFERENCE:
-						aType = new ReferenceType(target, typename);
+						aType = new ReferenceType(target, gdbType.toString());
 					break;
 				}
 				gdbType = ((GDBDerivedType)gdbType).getChild();

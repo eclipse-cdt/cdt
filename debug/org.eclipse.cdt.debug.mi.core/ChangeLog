@@ -1,3 +1,16 @@
+2003-01-28 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java (setMIBreakpoint):
+	New method.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java (update):
+	Reset the new MIBreakpoint on the Breakpoint object.
+	(containsBreakpoint): Removed.
+	(hasBreakpointChanged): Change arguments.
+	* src/org/eclipse/cdt/debug/mi/core/output/MIBreakpoint.java (parser):
+	Better check for watchpoints.
+	* src/org/eclipse/cdt/debug/mi/core/CLIProcessor.java (isChangeBreakpoint):
+	Check for "ignore" and "condition" cli commands.
+
 2003-01-27 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java (getTypeName):

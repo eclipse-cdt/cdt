@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.core.runtime.IPath;
 
-public class SourceEntry extends ACPathEntry implements ISourceEntry {
+public class SourceEntry extends APathEntry implements ISourceEntry {
 
 	IPath sourcePath;
 	IPath outputLocation;

@@ -13,18 +13,24 @@
 
 package org.eclipse.cdt.core.model;
 
-/**
- * @author alain
- */
-public interface ICPathContainer {
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
-	ICPathEntry[] getCPathEntries();
-	
+/**
+ */
+public abstract class PathEntryContainerInitializer {
+
 	/**
-	 * Answers a readable description of this container
-	 *
-	 * @return String - a string description of the container
+	 * Creates a new cpath container initializer.
 	 */
-	String getDescription();
-	
+	public PathEntryContainerInitializer() {
+	}
+
+	public abstract void initialize(IPath containerPath, ICProject project) throws CoreException;
+
+	public String getDescription(IPath containerPath, ICProject project) {
+		// By default, a container path is the only available description
+		return containerPath.makeRelative().toString();
+	}
+
 }

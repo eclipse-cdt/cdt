@@ -1,3 +1,9 @@
+2004-02-21 Alain Magloire
+
+	Refactor the ICPathEntry to IPathEntry for consistency.
+	Regroup the IPathEntry helper methods in PathEntryManager
+	To much files change in the refactoring to enumerate.
+
 2004-02-17 David Inglis
 	Fix PR 52095
 	

@@ -12,36 +12,36 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.model.ICPathEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 
-public class CPathEntry implements ICPathEntry {
+public class PathEntry implements IPathEntry {
 
 	public int entryKind;
 	public boolean isExported;
 
-	public CPathEntry(int entryKind, boolean isExported) {
+	public PathEntry(int entryKind, boolean isExported) {
 
 		this.entryKind = entryKind;
 		this.isExported = isExported;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICPathEntry#getEntryKind()
+	 * @see org.eclipse.cdt.core.IPathEntry#getEntryKind()
 	 */
 	public int getEntryKind() {
 		return entryKind;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICPathEntry#isExported()
+	 * @see org.eclipse.cdt.core.IPathEntry#isExported()
 	 */
 	public boolean isExported() {
 		return isExported;
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof ICPathEntry) {
-			ICPathEntry otherEntry = (ICPathEntry)obj;
+		if (obj instanceof IPathEntry) {
+			IPathEntry otherEntry = (IPathEntry)obj;
 			if (entryKind != otherEntry.getEntryKind()) {
 				return false;
 			}
@@ -59,19 +59,19 @@ public class CPathEntry implements ICPathEntry {
 	static int kindFromString(String kindStr) {
 
 		if (kindStr.equalsIgnoreCase("prj")) //$NON-NLS-1$
-			return ICPathEntry.CDT_PROJECT;
+			return IPathEntry.CDT_PROJECT;
 		if (kindStr.equalsIgnoreCase("var")) //$NON-NLS-1$
-			return ICPathEntry.CDT_VARIABLE;
+			return IPathEntry.CDT_VARIABLE;
 		if (kindStr.equalsIgnoreCase("src")) //$NON-NLS-1$
-			return ICPathEntry.CDT_SOURCE;
+			return IPathEntry.CDT_SOURCE;
 		if (kindStr.equalsIgnoreCase("lib")) //$NON-NLS-1$
-			return ICPathEntry.CDT_LIBRARY;
+			return IPathEntry.CDT_LIBRARY;
 		if (kindStr.equalsIgnoreCase("inc")) //$NON-NLS-1$
-			return ICPathEntry.CDT_INCLUDE;
+			return IPathEntry.CDT_INCLUDE;
 		if (kindStr.equalsIgnoreCase("mac")) //$NON-NLS-1$
-			return ICPathEntry.CDT_MACRO;
+			return IPathEntry.CDT_MACRO;
 		if (kindStr.equalsIgnoreCase("con")) //$NON-NLS-1$
-			return ICPathEntry.CDT_CONTAINER;
+			return IPathEntry.CDT_CONTAINER;
 		return -1;
 	}
 
@@ -81,19 +81,19 @@ public class CPathEntry implements ICPathEntry {
 	static String kindToString(int kind) {
 
 		switch (kind) {
-			case ICPathEntry.CDT_PROJECT :
+			case IPathEntry.CDT_PROJECT :
 				return "prj"; //$NON-NLS-1$
-			case ICPathEntry.CDT_SOURCE :
+			case IPathEntry.CDT_SOURCE :
 				return "src"; //$NON-NLS-1$
-			case ICPathEntry.CDT_LIBRARY :
+			case IPathEntry.CDT_LIBRARY :
 				return "lib"; //$NON-NLS-1$
-			case ICPathEntry.CDT_VARIABLE :
+			case IPathEntry.CDT_VARIABLE :
 				return "var"; //$NON-NLS-1$
-			case ICPathEntry.CDT_INCLUDE :
+			case IPathEntry.CDT_INCLUDE :
 				return "inc"; //$NON-NLS-1$
-			case ICPathEntry.CDT_MACRO :
+			case IPathEntry.CDT_MACRO :
 				return "mac"; //$NON-NLS-1$
-			case ICPathEntry.CDT_CONTAINER :
+			case IPathEntry.CDT_CONTAINER :
 				return "con"; //$NON-NLS-1$
 			default :
 				return "unknown"; //$NON-NLS-1$
@@ -107,25 +107,25 @@ public class CPathEntry implements ICPathEntry {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('[');
 		switch (getEntryKind()) {
-			case ICPathEntry.CDT_LIBRARY :
+			case IPathEntry.CDT_LIBRARY :
 				buffer.append("CDT_LIBRARY"); //$NON-NLS-1$
 				break;
-			case ICPathEntry.CDT_PROJECT :
+			case IPathEntry.CDT_PROJECT :
 				buffer.append("CDT_PROJECT"); //$NON-NLS-1$
 				break;
-			case ICPathEntry.CDT_SOURCE :
+			case IPathEntry.CDT_SOURCE :
 				buffer.append("CDT_SOURCE"); //$NON-NLS-1$
 				break;
-			case ICPathEntry.CDT_VARIABLE :
+			case IPathEntry.CDT_VARIABLE :
 				buffer.append("CDT_VARIABLE"); //$NON-NLS-1$
 				break;
-			case ICPathEntry.CDT_INCLUDE :
+			case IPathEntry.CDT_INCLUDE :
 				buffer.append("CDT_INCLUDE"); //$NON-NLS-1$
 				break;
-			case ICPathEntry.CDT_MACRO :
+			case IPathEntry.CDT_MACRO :
 				buffer.append("CDT_MACRO"); //$NON-NLS-1$
 				break;
-			case ICPathEntry.CDT_CONTAINER :
+			case IPathEntry.CDT_CONTAINER :
 				buffer.append("CDT_CONTAINER"); //$NON-NLS-1$
 				break;
 		}

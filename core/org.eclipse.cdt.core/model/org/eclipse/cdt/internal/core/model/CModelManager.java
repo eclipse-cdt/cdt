@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICPathContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
@@ -50,12 +49,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModelManager implements IResourceChangeListener {
 
-    /**
-     * Unique handle onto the CModel
-     */
-    final CModel cModel = new CModel();
+	/**
+	 * Unique handle onto the CModel
+	 */
+	final CModel cModel = new CModel();
     
-    public static HashSet OptionNames = new HashSet(20);
+	public static HashSet OptionNames = new HashSet(20);
         
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
@@ -112,10 +111,11 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	private HashMap sourceMappers = new HashMap();
 
+	// TODO: This should be in a preference/property page
 	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-
 	public static final String [] headerExtensions = {"h", "hh", "hpp", "H"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	
+	public static final String [] assemblyExtensions = {"s", "S"}; //$NON-NLS-1$ //$NON-NLS-2$
+
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
 	static CModelManager factory = null;
@@ -447,61 +447,53 @@ public class CModelManager implements IResourceChangeListener {
 	}
 	
 	public boolean isSharedLib(IFile file) {
-		try {
-			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file.getLocation());
-			return (bin.getType() == IBinaryFile.SHARED);
-		} catch (IOException e) {
+		ICElement celement = create(file);
+		if (celement instanceof IBinary) {
+			return ((IBinary)celement).isSharedLib();
 		}
 		return false;
 	}
 
 	public boolean isObject(IFile file) {
-		try {
-			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file.getLocation());
-			return (bin.getType() == IBinaryFile.OBJECT);
-		} catch (IOException e) {
+		ICElement celement = create(file);
+		if (celement instanceof IBinary) {
+			return ((IBinary)celement).isObject();
 		}
 		return false;
 	}
 
 	public boolean isExecutable(IFile file) {
-		try {
-			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file.getLocation());
-			return (bin.getType() == IBinaryFile.EXECUTABLE);
-		} catch (IOException e) {
-			//e.printStackTrace();
+		ICElement celement = create(file);
+		if (celement instanceof IBinary) {
+			return ((IBinary)celement).isExecutable();
 		}
 		return false;
 	}
 
 	public boolean isBinary(IFile file) {
-		try {
-			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file.getLocation());
-			return (bin.getType() == IBinaryFile.EXECUTABLE
-				|| bin.getType() == IBinaryFile.OBJECT
-				|| bin.getType() == IBinaryFile.SHARED
-				|| bin.getType() == IBinaryFile.CORE);
-		} catch (IOException e) {
-		}
-		return false;
+		ICElement celement = create(file);
+		return (celement instanceof IBinary);
 	}
 
 	public boolean isArchive(IFile file) {
-		try {
-			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file.getLocation());
-			return (bin.getType() == IBinaryFile.ARCHIVE);
-		} catch (IOException e) {
-		}
-		return false;
+		ICElement celement = create(file);
+		return(celement instanceof IArchive);
 	}
 
 	public boolean isTranslationUnit(IFile file) {
-		return isValidTranslationUnitName(file.getName());
+		return file != null && isValidTranslationUnitName(file.getName());
+	}
+
+	public boolean isSourceUnit(IFile file) {
+		return file != null && isValidSourceUnitName(file.getName());
+	}
+
+	public boolean isHeaderUnit(IFile file) {
+		return file != null && isValidHeaderUnitName(file.getName());
+	}
+
+	public boolean isAssemblyUnit(IFile file) {
+		return file != null && isValidAssemblyUnitName(file.getName());
 	}
 
 	public boolean isValidTranslationUnitName(String name){
@@ -513,7 +505,7 @@ public class CModelManager implements IResourceChangeListener {
 			return false;
 		}
 		String ext = name.substring(index + 1);
-		String[] cexts = getTranslationUnitExtensions();
+		String[] cexts = getHeaderExtensions();
 		for (int i = 0; i < cexts.length; i++) {
 			if (ext.equals(cexts[i]))
 				return true;
@@ -521,6 +513,57 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 	
+	public boolean isValidSourceUnitName(String name){
+		if (name == null) {
+			return false;
+		}
+		int index = name.lastIndexOf('.');
+		if (index == -1) {
+			return false;
+		}
+		String ext = name.substring(index + 1);
+		String[] cexts = getSourceExtensions();
+		for (int i = 0; i < cexts.length; i++) {
+			if (ext.equals(cexts[i]))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isValidHeaderUnitName(String name){
+		if (name == null) {
+			return false;
+		}
+		int index = name.lastIndexOf('.');
+		if (index == -1) {
+			return false;
+		}
+		String ext = name.substring(index + 1);
+		String[] cexts = getHeaderExtensions();
+		for (int i = 0; i < cexts.length; i++) {
+			if (ext.equals(cexts[i]))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isValidAssemblyUnitName(String name){
+		if (name == null) {
+			return false;
+		}
+		int index = name.lastIndexOf('.');
+		if (index == -1) {
+			return false;
+		}
+		String ext = name.substring(index + 1);
+		String[] cexts = getAssemblyExtensions();
+		for (int i = 0; i < cexts.length; i++) {
+			if (ext.equals(cexts[i]))
+				return true;
+		}
+		return false;
+	}
+
 	public String[] getHeaderExtensions() {
 		return headerExtensions;
 	}
@@ -529,12 +572,18 @@ public class CModelManager implements IResourceChangeListener {
 		return sourceExtensions;
 	}
 
+	public String[] getAssemblyExtensions() {
+		return assemblyExtensions;
+	}
+
 	public String[] getTranslationUnitExtensions() {
-		String[] headers = getHeaderExtensions();
 		String[] sources = getSourceExtensions();
-		String[] cexts = new String[headers.length + sources.length];
+		String[] headers = getHeaderExtensions();
+		String[] asm = getAssemblyExtensions();
+		String[] cexts = new String[headers.length + sources.length + asm.length];
 		System.arraycopy(sources, 0, cexts, 0, sources.length);
 		System.arraycopy(headers, 0, cexts, sources.length, headers.length);
+		System.arraycopy(asm, 0, cexts, sources.length + headers.length, asm.length);
 		return cexts;
 	}
 
@@ -886,25 +935,4 @@ public class CModelManager implements IResourceChangeListener {
 		this.getIndexManager().discardJobs(project.getName());
 	}
 
-	/**
-	 * @param containerPath
-	 * @param project
-	 * @return
-	 */
-	public ICPathContainer getCPathContainer(IPath containerPath, ICProject project) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @param containerPath
-	 * @param affectedProjects
-	 * @param respectiveContainers
-	 * @param monitor
-	 * @return
-	 */
-	public Object setCPatchContainer(IPath containerPath, ICProject[] affectedProjects, ICPathContainer[] respectiveContainers, IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.core.runtime.IPath;
 
 
-public class ProjectEntry extends CPathEntry implements IProjectEntry {
+public class ProjectEntry extends PathEntry implements IProjectEntry {
 
 	IPath projectPath;
 

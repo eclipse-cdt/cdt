@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.model;
 
 import org.eclipse.core.runtime.IPath;
 
-public interface IIncludeEntry extends ICPathEntry {
+public interface IIncludeEntry extends IPathEntry {
 
 	/**
 	 * Returns the affected resource by the include.

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.model;
 
 import org.eclipse.core.runtime.IPath;
 
-public interface IMacroEntry extends ICPathEntry {
+public interface IMacroEntry extends IPathEntry {
 
 	/**
 	 * Returns the absolute path from the worskspace root or

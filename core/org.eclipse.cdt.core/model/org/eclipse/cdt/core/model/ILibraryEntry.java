@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.model;
 
 import org.eclipse.core.runtime.IPath;
 
-public interface ILibraryEntry extends ICPathEntry {
+public interface ILibraryEntry extends IPathEntry {
 
 	/**
 	 * Returns the absolute path of the library

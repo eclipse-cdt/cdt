@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.core.runtime.IPath;
 
-public class LibraryEntry extends CPathEntry implements ILibraryEntry {
+public class LibraryEntry extends PathEntry implements ILibraryEntry {
 
 	IPath libraryPath;
 	IPath sourceAttachmentPath;

@@ -9,44 +9,48 @@
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
-public class IncludeEntry extends ACPathEntry implements IIncludeEntry {
+public class IncludeEntry extends APathEntry implements IIncludeEntry {
 
 	IPath resourcePath;
 	IPath includePath;
 	boolean isSystemInclude;
 
-	public IncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude,
-		boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
-		super(IIncludeEntry.CDT_INCLUDE, isRecursive, exclusionPatterns, isExported);
-		this.resourcePath = resourcePath;
+	public IncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude, boolean isRecursive,
+			IPath[] exclusionPatterns) {
+		super(IIncludeEntry.CDT_INCLUDE, isRecursive, exclusionPatterns, resourcePath == null || resourcePath.isEmpty());
+		this.resourcePath = resourcePath == null ? new Path("") : resourcePath;
 		this.includePath = includePath;
 		this.isSystemInclude = isSystemInclude;
 	}
 
 	/**
 	 * Returns the affected resource by the include.
+	 * 
 	 * @return IPath
 	 */
 	public IPath getResourcePath() {
 		return resourcePath;
 	}
- 
+
 	/**
 	 * Returns the include path
+	 * 
 	 * @return IPath
 	 */
 	public IPath getIncludePath() {
 		return includePath;
 	}
- 
+
 	/**
 	 * Whether or not it a system include path
+	 * 
 	 * @return boolean
 	 */
 	public boolean isSystemInclude() {
@@ -55,7 +59,7 @@ public class IncludeEntry extends ACPathEntry implements IIncludeEntry {
 
 	public boolean equals(Object obj) {
 		if (obj instanceof IIncludeEntry) {
-			IIncludeEntry otherEntry = (IIncludeEntry)obj;
+			IIncludeEntry otherEntry = (IIncludeEntry) obj;
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
@@ -84,5 +88,5 @@ public class IncludeEntry extends ACPathEntry implements IIncludeEntry {
 		}
 		return super.equals(obj);
 	}
- 
+
 }

@@ -13,22 +13,23 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.core.runtime.IPath;
 
-public class ContainerEntry extends CPathEntry implements IContainerEntry {
+public class ContainerEntry extends PathEntry implements IContainerEntry {
 
-	String id;
+	IPath path;
 
-	public ContainerEntry(String id, boolean isExported) {
+	public ContainerEntry(IPath path, boolean isExported) {
 		super(IContainerEntry.CDT_CONTAINER, isExported);
-		this.id = id;
+		this.path = path;
 	}
 
 	/**
 	 * Returns the id identifying this container.
-	 * @return String
+	 * @return IPath
 	 */
-	public String getId() {
-		return id;
+	public IPath getPath() {
+		return path;
 	}
 
 	public boolean equals(Object obj) {
@@ -37,12 +38,12 @@ public class ContainerEntry extends CPathEntry implements IContainerEntry {
 			if (!super.equals(container)) {
 				return false;
 			}
-			if (id == null) {
-				if (container.getId() != null) {
+			if (path == null) {
+				if (container.getPath() != null) {
 					return false;
 				}
 			} else {
-				if (!id.equals(container.getId())) {
+				if (!path.equals(container.getPath())) {
 					return false;
 				}
 			}

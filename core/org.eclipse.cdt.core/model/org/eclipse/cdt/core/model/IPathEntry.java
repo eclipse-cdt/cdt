@@ -13,7 +13,7 @@
 package org.eclipse.cdt.core.model;
 
 
-public interface ICPathEntry {
+public interface IPathEntry {
 
 	/**
 	 * Entry kind constant describing a path entry identifying a

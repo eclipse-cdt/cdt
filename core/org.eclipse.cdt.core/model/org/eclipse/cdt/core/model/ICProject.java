@@ -131,7 +131,7 @@ public interface ICProject extends ICContainer {
 	 * @exception CModelException if this element does not exist or if an
 	 *              exception occurs while accessing its corresponding resource
 	 */
-	ICPathEntry[] getResolvedCPathEntries() throws CModelException;
+	IPathEntry[] getResolvedPathEntries() throws CModelException;
 
 	/**
 	 * Returns the list of entries for the project. This corresponds to the exact set
@@ -142,12 +142,12 @@ public interface ICProject extends ICContainer {
 	 * @exception CModelException if this element does not exist or if an
 	 *              exception occurs while accessing its corresponding resource
 	 */
-	ICPathEntry[] getRawCPathEntries() throws CModelException;
+	IPathEntry[] getRawPathEntries() throws CModelException;
 
 	/**
 	 * Sets the entries for this project.
 	 *
-	 * @param entries a list of ICPathEntry[] entries
+	 * @param entries a list of IPathEntry[] entries
 	 * @param monitor the given progress monitor
 	 * @exception CModelException if the entries could not be set. Reasons include:
 	 * <ul>
@@ -155,6 +155,6 @@ public interface ICProject extends ICContainer {
 	 * <li> The entries are being modified during resource change event notification (CORE_EXCEPTION)
 	 * </ul>
 	 */
-	void setRawCPathEntries(ICPathEntry[] entries, IProgressMonitor monitor) throws CModelException;
+	void setRawPathEntries(IPathEntry[] entries, IProgressMonitor monitor) throws CModelException;
 
 }

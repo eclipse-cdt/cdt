@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.core.runtime.IPath;
 
-public class MacroEntry extends ACPathEntry implements IMacroEntry {
+public class MacroEntry extends APathEntry implements IMacroEntry {
 
 	IPath resourcePath;
 	String macroName;

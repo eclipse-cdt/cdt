@@ -1,0 +1,126 @@
+/**********************************************************************
+ * Created on Mar 25, 2003
+ *
+ * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
+
+package org.eclipse.cdt.internal.core.model;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+
+/**
+ */
+public class SetPathEntriesOperation extends CModelOperation {
+
+    /**
+     * An empty array of strings indicating that a project doesn't have any prerequesite projects.
+     */
+    static final String[] NO_PREREQUISITES = new String[0];
+
+	IPathEntry[] oldEntries;
+	IPathEntry[] newEntries;
+	ICProject cproject;
+
+	public SetPathEntriesOperation(ICProject project, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
+		super(project);
+		this.oldEntries = oldEntries;
+		this.newEntries = newEntries;
+		this.cproject = project;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#executeOperation()
+	 */
+	protected void executeOperation() throws CModelException {
+		//	project reference updated - may throw an exception if unable to write .cdtproject file
+		updateProjectReferencesIfNecessary();
+		PathEntryManager mgr = PathEntryManager.getDefault();
+		ICElementDelta[] deltas = mgr.saveRawPathEntries(cproject, oldEntries, newEntries);
+		for (int i = 0; i < deltas.length; i++) {
+			addDelta(deltas[i]);
+		}
+		done();
+	}
+
+	protected void updateProjectReferencesIfNecessary() throws CModelException {
+		PathEntryManager mgr = PathEntryManager.getDefault();
+		String[] oldRequired = mgr.projectPrerequisites(oldEntries);
+		String[] newRequired = mgr.projectPrerequisites(newEntries);
+
+		try {
+			IProject projectResource = cproject.getProject();
+			IProjectDescription description = projectResource.getDescription();
+
+			IProject[] projectReferences = description.getReferencedProjects();
+
+			HashSet oldReferences = new HashSet(projectReferences.length);
+			for (int i = 0; i < projectReferences.length; i++) {
+				String projectName = projectReferences[i].getName();
+				oldReferences.add(projectName);
+			}
+			HashSet newReferences = (HashSet) oldReferences.clone();
+
+			for (int i = 0; i < oldRequired.length; i++) {
+				String projectName = oldRequired[i];
+				newReferences.remove(projectName);
+			}
+			for (int i = 0; i < newRequired.length; i++) {
+				String projectName = newRequired[i];
+				newReferences.add(projectName);
+			}
+
+			Iterator iter;
+			int newSize = newReferences.size();
+
+			checkIdentity : {
+				if (oldReferences.size() == newSize) {
+					iter = newReferences.iterator();
+					while (iter.hasNext()) {
+						if (!oldReferences.contains(iter.next())) {
+							break checkIdentity;
+						}
+					}
+					return;
+				}
+			}
+			String[] requiredProjectNames = new String[newSize];
+			int index = 0;
+			iter = newReferences.iterator();
+			while (iter.hasNext()) {
+				requiredProjectNames[index++] = (String) iter.next();
+			}
+			Arrays.sort(requiredProjectNames); // ensure that if changed, the order is consistent
+
+			IProject[] requiredProjectArray = new IProject[newSize];
+			IWorkspaceRoot wksRoot = projectResource.getWorkspace().getRoot();
+			for (int i = 0; i < newSize; i++) {
+				requiredProjectArray[i] = wksRoot.getProject(requiredProjectNames[i]);
+			}
+
+			description.setReferencedProjects(requiredProjectArray);
+			projectResource.setDescription(description, this.fMonitor);
+
+		} catch (CoreException e) {
+			throw new CModelException(e);
+		}
+	}
+
+}

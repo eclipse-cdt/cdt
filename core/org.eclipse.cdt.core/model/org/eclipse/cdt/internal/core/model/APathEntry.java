@@ -14,13 +14,13 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.core.runtime.IPath;
 
-public abstract class ACPathEntry extends CPathEntry {
+public abstract class APathEntry extends PathEntry {
 
 	public static IPath[] NO_EXCLUSION_PATTERNS = {};
 	IPath[] exclusionPatterns;
 	boolean isRecursive;
 
-	public ACPathEntry (int kind, boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
+	public APathEntry (int kind, boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
 		super(kind, isExported);
 		this.exclusionPatterns = exclusionPatterns;
 		this.isRecursive = isRecursive;
@@ -43,8 +43,8 @@ public abstract class ACPathEntry extends CPathEntry {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof ACPathEntry) {
-			ACPathEntry otherEntry = (ACPathEntry)obj;
+		if (obj instanceof APathEntry) {
+			APathEntry otherEntry = (APathEntry)obj;
 			if (!super.equals(otherEntry)) {
 				return false;
 			}

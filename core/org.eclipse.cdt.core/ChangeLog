@@ -1,3 +1,14 @@
+2002-10-15 Alain Magloire
+	
+	By making the native methods package scope, the
+	compiler will not generate synthetic accessor
+	methods to access them in the Reaper inner class
+
+	* utils/../utils/spawner/Spawner.java (exec0):
+	(exec1): Change scope to be package.
+	(raise): Change scope to be package.
+	(waitFor): Change scope to be package.
+
 2002-10-13 Alain Magloire
 
 	Boosting the compiler error level to get unused imports.

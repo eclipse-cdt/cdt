@@ -15,15 +15,18 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeInfo;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -31,12 +34,10 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.wizards.*;
+import org.eclipse.cdt.internal.ui.wizards.BaseClassSelectionDialog;
 import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -46,9 +47,9 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LinkToFileGroup;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFieldGroup;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -106,7 +107,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private ICElement eSelection = null;
 	// default location where source files will be created
 	private IPath defaultSourceFolder = null;
-	
+	private ITypeSearchScope fClassScope = null;
+	private final int[] fClassTypes= { ICElement.C_CLASS, ICElement.C_STRUCT };
+	private IProject fSelectedProject = null;
+
 	// cache of newly-created files
 	private ITranslationUnit parentHeaderTU = null;
 	private ITranslationUnit parentBodyTU = null;
@@ -185,10 +189,15 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	public void init() {
 		eSelection = getSelectionCElement(currentSelection);
+		fSelectedProject = getSelectionProject(currentSelection);
+		
+		fClassScope = new TypeSearchScope();
+		fClassScope.add(fSelectedProject);
+
 		IResource resource = getSelectionResourceElement(currentSelection);
 		if (resource != null)
 			defaultSourceFolder = resource.getLocation().makeAbsolute();
-		if (hasCppNature && defaultSourceFolder != null) {
+		if (fSelectedProject != null && hasCppNature && defaultSourceFolder != null) {
 			fAccessButtons.setEnabled(false);
 			setPageComplete(false);
 		} else {
@@ -332,9 +341,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	private void classPageChangeControlPressed(DialogField field) {
 		if (field == fBaseClassDialogField) {
-		 		 		 ITypeInfo info= chooseBaseClass();
-		 		 		 if (info != null) {
-		 		 		 		 fBaseClassDialogField.setText(info.getQualifiedName());
+			ITypeInfo info= chooseBaseClass();
+	 		if (info != null) {
+	 			fBaseClassDialogField.setText(info.getQualifiedTypeName().getFullyQualifiedName());
 			}
 		}
 	}
@@ -463,19 +472,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			return elementsOfTypeClassInProject;
 		}
 		
-		ICProject cProject= eSelection.getCProject();
-		ICElement[] elements= new ICElement[] { cProject };
-		final ICSearchScope scope= SearchEngine.createCSearchScope(elements, true);
-		final int[] kinds= { ICElement.C_CLASS, ICElement.C_STRUCT };
-		final Collection typeList= new ArrayList();
-		
-		if (AllTypesCache.isCacheUpToDate()) {
-			// run without progress monitor
-			AllTypesCache.getTypes(scope, kinds, null, typeList);
-		} else {
-			IRunnableWithProgress runnable= new IRunnableWithProgress() {
+		if (!AllTypesCache.isCacheUpToDate(fClassScope)) {
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					AllTypesCache.getTypes(scope, kinds, monitor, typeList);
+					AllTypesCache.updateCache(fClassScope, monitor);
 					if (monitor.isCanceled()) {
 						throw new InterruptedException();
 					}
@@ -488,20 +488,17 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				String title= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.title"); //$NON-NLS-1$
 				String message= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.message"); //$NON-NLS-1$
 				ExceptionHandler.handle(e, title, message);
-				return null;
+				elementsOfTypeClassInProject = new ITypeInfo[0];
+				return elementsOfTypeClassInProject;
 			} catch (InterruptedException e) {
 				// cancelled by user
-				return null;
+				elementsOfTypeClassInProject = new ITypeInfo[0];
+				return elementsOfTypeClassInProject;
 			}
 		}
-		
-		if (typeList.isEmpty()) {
-			elementsOfTypeClassInProject= new ITypeInfo[0];
-		} else {
-			elementsOfTypeClassInProject= (ITypeInfo[]) typeList.toArray(new ITypeInfo[typeList.size()]);
-			Arrays.sort(elementsOfTypeClassInProject, TYPE_NAME_COMPARATOR);
-		}
-		
+
+		elementsOfTypeClassInProject = AllTypesCache.getTypes(fClassScope, fClassTypes);
+		Arrays.sort(elementsOfTypeClassInProject, TYPE_NAME_COMPARATOR);
 		return elementsOfTypeClassInProject;				
 	}
 	
@@ -577,8 +574,41 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
+
 		monitor.beginTask(NewWizardMessages.getString("NewTypeWizardPage.operationdesc"), 10); //$NON-NLS-1$
-		try{
+
+		try {
+			// resolve location of base class
+			String baseClassName = getBaseClassName();
+			ITypeInfo baseClass = null;
+			if ((baseClassName != null) && (baseClassName.length() > 0))
+			{
+				ITypeInfo[] classElements = findClassElementsInProject();
+				baseClass = findInList(classElements, new QualifiedTypeName(baseClassName));
+				if (baseClass != null && baseClass.getResolvedReference() == null) {
+					final ITypeInfo[] typesToResolve = new ITypeInfo[] { baseClass };
+					IRunnableWithProgress runnable = new IRunnableWithProgress() {
+						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
+							AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
+							if (progressMonitor.isCanceled()) {
+								throw new InterruptedException();
+							}
+						}
+					};
+					
+					try {
+						getContainer().run(true, true, runnable);
+					} catch (InvocationTargetException e) {
+						String title= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.title"); //$NON-NLS-1$
+						String message= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.message"); //$NON-NLS-1$
+						ExceptionHandler.handle(e, title, message);
+						return false;
+					} catch (InterruptedException e) {
+						// cancelled by user
+						return false;
+					}
+				}
+			}
 			
 			String lineDelimiter= null;	
 			lineDelimiter= System.getProperty("line.separator", "\n");  //$NON-NLS-1$ //$NON-NLS-2$
@@ -588,7 +618,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			monitor.worked(1);
 	
 			if(parentHeaderTU != null){
-		 		 		 		 String header = constructHeaderFileContent(parentHeaderTU, lineDelimiter);
+				String header = constructHeaderFileContent(parentHeaderTU, lineDelimiter, baseClass);
 				IWorkingCopy headerWC = parentHeaderTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 				headerWC.getBuffer().append(header);
 				synchronized(headerWC)	{
@@ -597,7 +627,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				}
 				//createdClass= (IStructure)headerWC.getElement(getNewClassName());				
 				createdClass= headerWC.getElement(getNewClassName());				
-		 		 		 		 headerWC.destroy();
+				headerWC.destroy();
 			}
 			if(parentBodyTU != null){
 				String body = constructBodyFileContent(lineDelimiter);
@@ -607,7 +637,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 					bodyWC.reconcile();
 					bodyWC.commit(true, monitor);
 				}
-		 		 		 		 bodyWC.destroy();
+				bodyWC.destroy();
 			}
 		
 			return true;	
@@ -781,41 +811,30 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	// ------------ Constructing File Contents -----------------
-	protected String constructHeaderFileContent(ITranslationUnit header, String lineDelimiter){
+	protected String constructHeaderFileContent(ITranslationUnit header, String lineDelimiter, ITypeInfo baseClass) {
 		StringBuffer text = new StringBuffer();
 		boolean extendingBase = false;
 		String baseClassName = getBaseClassName();
 		String baseClassFileName = ""; //$NON-NLS-1$
-		boolean systemIncludePath= false;
+		boolean systemIncludePath = false;
 		
-		if((baseClassName != null) && (baseClassName.length() > 0))
-		{
+		if (baseClass != null) {
 			extendingBase = true;
-			
-			ITypeInfo[] classElements = findClassElementsInProject();
-			ITypeInfo baseClass = findInList(baseClassName, null, classElements);
-			
-			if (baseClass != null) {
-				IPath projectPath= null;
-				IPath baseClassPath= null;
-				ICProject cProject= eSelection.getCProject();
-				if (cProject != null) {
-					projectPath= cProject.getPath();
-					baseClassPath= baseClass.resolveIncludePath(cProject);
-					if (baseClassPath != null && projectPath != null && !projectPath.isPrefixOf(baseClassPath)) {
-						systemIncludePath= true;
-					}
+			ITypeReference location = baseClass.getResolvedReference();
+			if (location != null) {
+				IPath projectPath = fSelectedProject.getFullPath();
+				IPath relativePath = location.getRelativeIncludePath(fSelectedProject);
+				if (!relativePath.equals(location.getLocation())) {
+					systemIncludePath = true;
+				} else {
+					if (projectPath.isPrefixOf(location.getPath()) && projectPath.isPrefixOf(header.getPath()))
+						relativePath = location.getRelativePath(header.getPath());
 				}
-				if (baseClassPath == null)
-					baseClassPath= resolveRelativePath(baseClass.getPath(), header.getPath(), projectPath);
-				
-				if (baseClassPath != null)
-					baseClassFileName= baseClassPath.toString();
-				else
-					baseClassFileName= baseClass.getFileName();
-			} else {
-				baseClassFileName = baseClassName + HEADER_EXT;
+				baseClassFileName = relativePath.toString();
 			}
+		}
+		if (baseClassFileName.length() == 0) {
+			baseClassFileName = baseClassName + HEADER_EXT;
 		}
 		
 		if(isIncludeGuard()){
@@ -898,25 +917,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 		
 		return text.toString();	 		
-	}
-	
-	private IPath resolveRelativePath(IPath baseClassPath, IPath headerPath, IPath projectPath) {
-		if (baseClassPath == null || headerPath == null || projectPath == null)
-			return baseClassPath;
-		
-		if (projectPath.isPrefixOf(baseClassPath) && projectPath.isPrefixOf(headerPath)) {
-			int segments= headerPath.matchingFirstSegments(baseClassPath);
-			if (segments > 0) {
-				IPath headerPrefix= headerPath.removeFirstSegments(segments).removeLastSegments(1);
-				IPath baseClassSuffix= baseClassPath.removeFirstSegments(segments);
-				IPath relativeBaseClassPath= new Path(""); //$NON-NLS-1$
-				for (int i= 0; i < headerPrefix.segmentCount(); ++i) {
-					relativeBaseClassPath= relativeBaseClassPath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
-				}
-				return relativeBaseClassPath.append(baseClassSuffix);
-			}
-		}
-		return baseClassPath;
 	}
 	
 	protected String constructBodyFileContent(String lineDelimiter){
@@ -1008,10 +1008,14 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}		
 
 		// must not exist
-		 		 ITypeInfo[] elementsFound= findClassElementsInProject();
-		if(foundInList(getNewClassName(), getContainerPath(linkedResourceGroupForHeader), elementsFound)){
+		ITypeInfo[] elementsFound = findClassElementsInProject();
+		QualifiedTypeName typeName = new QualifiedTypeName(getNewClassName());
+		if (foundInList(elementsFound, typeName)) {
 			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
 		}
+//		if(foundInList(getNewClassName(), getContainerPath(linkedResourceGroupForHeader), elementsFound)){
+//			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+//		}
 		return status;
 	}
 	/**
@@ -1039,29 +1043,51 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		} 
 
 		// if class does not exist, give warning 
-		 		 ITypeInfo[] elementsFound = findClassElementsInProject();
-		if(!foundInList(baseClassName, null, elementsFound)){
+		ITypeInfo[] elementsFound = findClassElementsInProject();
+		if (!foundInList(elementsFound, new QualifiedTypeName(baseClassName))) {
 			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.warning.BaseClassNotExists")); //$NON-NLS-1$
 		}
 		return status;		
 	}
 		
-		 /**
-		  * A comparator for simple type names
-		  */
-		 final static private Comparator TYPE_NAME_COMPARATOR= new Comparator() {
-		 		 public int compare(Object o1, Object o2) {
-		 		 		 return ((ITypeInfo)o1).getName().compareTo(((ITypeInfo)o2).getName());
-		 		 }
-		 };
-		 private ITypeInfo findInList(String name, IPath path, ITypeInfo[] elements) {
-		 		 if (elements == null || elements.length == 0)
-		 		 		 return null;
-		 		 return TypeInfo.findType(name, path, elements);
+	private boolean foundInList(ITypeInfo[] elements, IQualifiedTypeName typeName){
+		return (findInList(elements, typeName) != null);
 	}
 	
-		 private boolean foundInList(String name, IPath path, ITypeInfo[] elements){
-		 		 return (findInList(name, path, elements) != null);
-	}
+	private Comparator TYPE_NAME_COMPARATOR = new Comparator() {
+		 public int compare(Object o1, Object o2) {
+	 		 return ((ITypeInfo)o1).getName().compareTo(((ITypeInfo)o2).getName());
+		 }
+	};
 
+	private ITypeInfo findInList(ITypeInfo[] elements, IQualifiedTypeName typeName) {
+		if (elements == null || elements.length == 0)
+			return null;
+		
+		TypeInfo key = new TypeInfo(0, typeName, null);
+		int index = Arrays.binarySearch(elements, key, TYPE_NAME_COMPARATOR);
+		if (index >= 0 && index < elements.length) {
+			for (int i = index - 1; i >= 0; --i) {
+				ITypeInfo curr = elements[i];
+				if (key.getName().equals(curr.getName())) {
+					if (key.getQualifiedTypeName().equals(curr.getQualifiedTypeName())) {
+						return curr;
+					}
+				} else {
+					break;
+				}
+			}
+			for (int i = index; i < elements.length; ++i) {
+				ITypeInfo curr = elements[i];
+				if (key.getName().equals(curr.getName())) {
+					if (key.getQualifiedTypeName().equals(curr.getQualifiedTypeName())) {
+						return curr;
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		return null;
+	}	
 }

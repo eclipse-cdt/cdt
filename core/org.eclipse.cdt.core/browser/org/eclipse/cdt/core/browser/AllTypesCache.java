@@ -10,106 +10,98 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCache;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheDeltaListener;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacherJob;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheMessages;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * Manages a search cache for types in the workspace. Instead of returning objects of type <code>ICElement</code>
- * the methods of this class returns a list of the lightweight objects <code>TypeInfo</code>.
+ * Manages a search cache for types in the workspace. Instead of returning
+ * objects of type <code>ICElement</code> the methods of this class returns a
+ * list of the lightweight objects <code>TypeInfo</code>.
  * <P>
- * AllTypesCache runs asynchronously using a background job to rebuild the cache as needed.
- * If the cache becomes dirty again while the background job is running, the job is restarted.
+ * AllTypesCache runs asynchronously using a background job to rebuild the cache
+ * as needed. If the cache becomes dirty again while the background job is
+ * running, the job is restarted.
  * <P>
- * If <code>getTypes</code> is called in response to a user action, a progress dialog is shown.
- * If called before the background job has finished, getTypes waits
- * for the completion of the background job.
+ * If <code>getTypes</code> is called in response to a user action, a progress
+ * dialog is shown. If called before the background job has finished, getTypes
+ * waits for the completion of the background job.
  */
 public class AllTypesCache {
-	
-	private static final int INITIAL_DELAY= 5000;
-	private static TypeCache fgCache;
-	private static IWorkingCopyProvider fWorkingCopyProvider;
-	private static TypeCacheDeltaListener fgDeltaListener;
+
+	private static final int INITIAL_DELAY = 5000;
+	private static IWorkingCopyProvider fgWorkingCopyProvider;
+	private static TypeCacheManager fgTypeCacheManager;
+	private static IElementChangedListener fgElementChangedListener;
 	private static IPropertyChangeListener fgPropertyChangeListener;
-	private static boolean fBackgroundJobEnabled;
+	private static boolean fgEnableIndexing = true;
 
 	/** Preference key for enabling background cache */
-    public final static String ENABLE_BACKGROUND_TYPE_CACHE = "enableBackgroundTypeCache"; //$NON-NLS-1$
-	
-	/**
-	 * Defines a simple interface in order to provide
-	 * a level of abstraction between the Core and UI
-	 * code.
-	 */
-	public static interface IWorkingCopyProvider {
-		public IWorkingCopy[] getWorkingCopies();
-	}
+	public final static String ENABLE_BACKGROUND_TYPE_CACHE = "enableBackgroundTypeCache"; //$NON-NLS-1$
 	
 	/**
 	 * Initializes the AllTypesCache service.
 	 * 
 	 * @param provider A working copy provider.
 	 */
-	public static void initialize(IWorkingCopyProvider provider) {
+	public static void initialize(IWorkingCopyProvider workingCopyProvider) {
+		fgWorkingCopyProvider = workingCopyProvider;
+		fgTypeCacheManager = new TypeCacheManager(fgWorkingCopyProvider);
 
 		// load prefs
-		Preferences prefs= CCorePlugin.getDefault().getPluginPreferences();
+		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 		if (prefs.contains(ENABLE_BACKGROUND_TYPE_CACHE)) {
-			fBackgroundJobEnabled= prefs.getBoolean(ENABLE_BACKGROUND_TYPE_CACHE);
+			fgEnableIndexing = prefs.getBoolean(ENABLE_BACKGROUND_TYPE_CACHE);
 		} else {
 			prefs.setDefault(ENABLE_BACKGROUND_TYPE_CACHE, true);
 			prefs.setValue(ENABLE_BACKGROUND_TYPE_CACHE, true);
 			CCorePlugin.getDefault().savePluginPreferences();
-			fBackgroundJobEnabled= true;
+			fgEnableIndexing = true;
 		}
+		
+		// start jobs in background after INITIAL_DELAY
+		fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, INITIAL_DELAY);
 
-		fgCache= new TypeCache();
-		fWorkingCopyProvider = provider;
-		fgDeltaListener= new TypeCacheDeltaListener(fgCache, fWorkingCopyProvider, fBackgroundJobEnabled);
+		// add delta listener
+		fgElementChangedListener = new IElementChangedListener() {
+			public void elementChanged(ElementChangedEvent event) {
+				fgTypeCacheManager.processDelta(event.getDelta());
+				fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, 0);
+			}
+		};
+		CoreModel.getDefault().addElementChangedListener(fgElementChangedListener);
 
-		fgPropertyChangeListener= new IPropertyChangeListener() {
+		// add property change listener
+		fgPropertyChangeListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				String property= event.getProperty();		
+				String property = event.getProperty();
 				if (property.equals(ENABLE_BACKGROUND_TYPE_CACHE)) {
-					String value= (String)event.getNewValue();
-					fBackgroundJobEnabled= Boolean.valueOf(value).booleanValue();
-					fgDeltaListener.setBackgroundJobEnabled(fBackgroundJobEnabled);
-					if (!fBackgroundJobEnabled) {
-						// terminate all background jobs
-						IJobManager jobMgr = Platform.getJobManager();
-						jobMgr.cancel(TypeCacherJob.FAMILY);
+					String value = (String) event.getNewValue();
+					fgEnableIndexing = Boolean.valueOf(value).booleanValue();
+					if (!fgEnableIndexing) {
+						fgTypeCacheManager.cancelJobs();
+					} else {
+						fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, 0);
 					}
 				}
 			}
 		};
-		// add property change listener
 		prefs.addPropertyChangeListener(fgPropertyChangeListener);
-
-		if (fBackgroundJobEnabled) {
-			TypeCacherJob typeCacherJob = new TypeCacherJob(fgCache, fWorkingCopyProvider);
-			typeCacherJob.setSearchPaths(null);
-			typeCacherJob.setPriority(Job.BUILD);
-			typeCacherJob.schedule(INITIAL_DELAY);
-		}
-		// add delta listener
-		CoreModel.getDefault().addElementChangedListener(fgDeltaListener);
 	}
 	
 	/**
@@ -117,69 +109,161 @@ public class AllTypesCache {
 	 */
 	public static void terminate() {
 		// remove delta listener
-		CoreModel.getDefault().removeElementChangedListener(fgDeltaListener);
+		if (fgElementChangedListener != null)
+			CoreModel.getDefault().removeElementChangedListener(fgElementChangedListener);
 		
-		// terminate all background jobs
-		IJobManager jobMgr = Platform.getJobManager();
-		jobMgr.cancel(TypeCacherJob.FAMILY);
+		// remove property change listener
+		if (fgPropertyChangeListener != null)
+			CCorePlugin.getDefault().getPluginPreferences().removePropertyChangeListener(fgPropertyChangeListener);
+
+		// terminate all running jobs
+		if (fgTypeCacheManager != null) {
+			fgTypeCacheManager.cancelJobs();
+		}
 	}
 	
-	/*
-	 * Returns the actual type cache.
+	/**
+	 * Returns all types in the workspace.
 	 */
-	public static TypeCache getCache() {
-		return fgCache;
+	public static ITypeInfo[] getAllTypes() {
+		final Collection fAllTypes = new ArrayList();
+		TypeSearchScope workspaceScope = new TypeSearchScope(true);
+		IProject[] projects = workspaceScope.getEnclosingProjects();
+		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
+			public void visit(ITypeInfo info) {
+				fAllTypes.add(info);
+			}
+		};
+		for (int i = 0; i < projects.length; ++i) {
+			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+		}
+		return (ITypeInfo[]) fAllTypes.toArray(new ITypeInfo[fAllTypes.size()]);
+	}
+	
+	/**
+	 * Returns all types in the given scope.
+	 * 
+	 * @param scope The search scope
+	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS,
+	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
+	 */
+	public static ITypeInfo[] getTypes(ITypeSearchScope scope, int[] kinds) {
+		final Collection fTypesFound = new ArrayList();
+		final ITypeSearchScope fScope = scope;
+		final int[] fKinds = kinds;
+		IProject[] projects = scope.getEnclosingProjects();
+		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
+			public void visit(ITypeInfo info) {
+				if (info.isEnclosed(fScope) && ArrayUtil.contains(fKinds, info.getCElementType())) {
+					fTypesFound.add(info);
+				}
+			}
+		};
+		for (int i = 0; i < projects.length; ++i) {
+			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+		}
+		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
+	}
+	
+	/**
+	 * Returns all types matching name in the given scope.
+	 * 
+	 * @param scope The search scope
+	 * @param qualifiedName The qualified type name
+	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS,
+	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
+	 */
+	public static ITypeInfo[] getTypes(ITypeSearchScope scope, IQualifiedTypeName qualifiedName, int[] kinds) {
+		final Collection fTypesFound = new ArrayList();
+		final ITypeSearchScope fScope = scope;
+		final int[] fKinds = kinds;
+		final IQualifiedTypeName fQualifiedName = qualifiedName;
+		IProject[] projects = scope.getEnclosingProjects();
+		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
+			public void visit(ITypeInfo info) {
+				if (fQualifiedName.equals(info.getQualifiedTypeName())
+						&& ArrayUtil.contains(fKinds, info.getCElementType())) {
+					fTypesFound.add(info);
+				}
+			}
+		};
+		for (int i = 0; i < projects.length; ++i) {
+			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+		}
+		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
 	}
 	
 	/**
 	 * Returns true if the type cache is up to date.
 	 */
-	public static boolean isCacheUpToDate() {
-		return !fgCache.isDirty();
+	public static boolean isCacheUpToDate(ITypeSearchScope scope) {
+		forceDeltaComplete();
+		
+		IProject[] projects = scope.getEnclosingProjects();
+		for (int i = 0; i < projects.length; ++i) {
+			IProject project = projects[i];
+			if (project.exists() && project.isOpen()) {
+				if (!fgTypeCacheManager.getCache(project).isUpToDate())
+					return false;
+			}
+		}
+		return true;
+	}
+
+	private static void forceDeltaComplete() {
+		if (fgWorkingCopyProvider != null) {
+			IWorkingCopy[] workingCopies = fgWorkingCopyProvider.getWorkingCopies();
+			for (int i = 0; i < workingCopies.length; ++i) {
+				IWorkingCopy wc = workingCopies[i];
+				try {
+					synchronized (wc) {
+						wc.reconcile();
+					}
+				} catch (CModelException ex) {
+				}
+			}
+		}
 	}
 	
 	/**
-	 * Returns all types in the given scope.
-	 * @param scope The search scope
-	 * @param kinds Array containing CElement types:
-	 * C_NAMESPACE, C_CLASS, C_UNION, C_ENUMERATION, C_TYPEDEF
-	 * @param monitor Progress monitor to display search progress
-	 * @param typesFound The resulting <code>TypeInfo</code> elements are added to this collection
-	 */		
-	public static void getTypes(ICSearchScope scope, int[] kinds, IProgressMonitor monitor, Collection typesFound) {
-		if (!isCacheUpToDate()) {
-			// start job if not already running
-			IJobManager jobMgr = Platform.getJobManager();
-			Job[] jobs = jobMgr.find(TypeCacherJob.FAMILY);
-			if (jobs.length == 0) {
-				// boost priority since action was user-initiated
-				TypeCacherJob typeCacherJob = new TypeCacherJob(fgCache, fWorkingCopyProvider);
-				typeCacherJob.setSearchPaths(null);
-				typeCacherJob.setPriority(Job.SHORT);
-				typeCacherJob.schedule();
-			}
-			
-			// wait for job to finish
-			jobs = jobMgr.find(TypeCacherJob.FAMILY);
-			try {
-				for (int i = 0; i < jobs.length; ++i) {
-					TypeCacherJob job = (TypeCacherJob) jobs[i];
-					job.join(monitor);
-				}
-				if (monitor != null)
-					monitor.done();
-			} catch (InterruptedException ex) {
-				return;
-			}
+	 * Updates the type cache.
+	 * 
+	 * @param monitor the progress monitor
+	 */
+	public static void updateCache(ITypeSearchScope scope, IProgressMonitor monitor) {
+		// schedule jobs to update cache
+		IProject[] projects = scope.getEnclosingProjects();
+		monitor.beginTask(TypeCacheMessages.getString("AllTypesCache.updateCache.taskName"), projects.length); //$NON-NLS-1$
+		for (int i = 0; i < projects.length; ++i) {
+			IProject project = projects[i];
+			// wait for any running jobs to finish
+			fgTypeCacheManager.getCache(project).reconcileAndWait(true, Job.SHORT, monitor);
 		}
-		
-		boolean isWorkspaceScope= scope.equals(SearchEngine.createWorkspaceScope());
-		for (Iterator typesIter= fgCache.getAllTypes().iterator(); typesIter.hasNext(); ) {
-			ITypeInfo info= (ITypeInfo) typesIter.next();
-			if ( ArrayUtil.contains(kinds, info.getType()) &&
-				(isWorkspaceScope || info.isEnclosed(scope)) ) {
-				typesFound.add(info);
-			}
+		monitor.done();
+	}
+
+	/**
+	 * Resolves a type location.
+	 * 
+	 * @param info the type to search for
+	 * @param monitor the progress monitor
+	 */
+	public static ITypeReference resolveTypeLocation(ITypeInfo info, IProgressMonitor monitor) {
+		ITypeReference location = info.getResolvedReference();
+		if (location == null) {
+			// cancel background jobs
+			IProject project = info.getEnclosingProject();
+			fgTypeCacheManager.getCache(project).cancelJobs();
+
+			// start the search job
+			fgTypeCacheManager.getCache(project).locateTypeAndWait(info, Job.SHORT, monitor);
+
+			// get the newly parsed location
+			location = info.getResolvedReference();
+
+			// resume background jobs
+			fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, 0);
 		}
+		return location;
 	}
 }

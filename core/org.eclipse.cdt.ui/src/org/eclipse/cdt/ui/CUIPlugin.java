@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -341,7 +342,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				registerAdapters();
 				CPluginImages.initialize();
 				
-				AllTypesCache.initialize(new AllTypesCache.IWorkingCopyProvider() {
+				AllTypesCache.initialize(new IWorkingCopyProvider() {
 					public IWorkingCopy[] getWorkingCopies() {
 						return CUIPlugin.getSharedWorkingCopies();
 					}

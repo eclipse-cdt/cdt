@@ -52,6 +52,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_UNION= NAME_PREFIX + "union_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TYPEDEF= NAME_PREFIX + "typedef_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENUMERATION= NAME_PREFIX + "enum_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_UNKNOWN_TYPE= NAME_PREFIX + "unknown_type_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENUMERATOR= NAME_PREFIX + "enumerator_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION= NAME_PREFIX + "function_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PUBLIC_METHOD= NAME_PREFIX + "method_public_obj.gif"; //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_UNION= createManaged(T_OBJ, IMG_OBJS_UNION);
 	public static final ImageDescriptor DESC_OBJS_TYPEDEF= createManaged(T_OBJ, IMG_OBJS_TYPEDEF);
 	public static final ImageDescriptor DESC_OBJS_ENUMERATION= createManaged(T_OBJ, IMG_OBJS_ENUMERATION);
+	public static final ImageDescriptor DESC_OBJS_UNKNOWN_TYPE= createManaged(T_OBJ, IMG_OBJS_UNKNOWN_TYPE);
 	public static final ImageDescriptor DESC_OBJS_ENUMERATOR= createManaged(T_OBJ, IMG_OBJS_ENUMERATOR);
 	public static final ImageDescriptor DESC_OBJS_FUNCTION= createManaged(T_OBJ, IMG_OBJS_FUNCTION);
 	public static final ImageDescriptor DESC_OBJS_PUBLIC_METHOD= createManaged(T_OBJ, IMG_OBJS_PUBLIC_METHOD);

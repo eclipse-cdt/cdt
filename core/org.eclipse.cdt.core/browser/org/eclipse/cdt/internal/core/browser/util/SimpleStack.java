@@ -56,6 +56,12 @@ public class SimpleStack {
     	return items.get(top);
     }
     
+    public Object bottom() {
+    	if (items.size() == 0)
+    		return null;
+    	return items.get(0);
+    }
+
     public boolean isEmpty() {
     	return (items.size() == 0);
     }

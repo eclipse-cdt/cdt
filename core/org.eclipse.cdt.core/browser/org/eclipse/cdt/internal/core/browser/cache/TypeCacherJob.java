@@ -10,29 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser.cache;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.AllTypesCache.IWorkingCopyProvider;
-import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.internal.core.browser.util.DelegatedProgressMonitor;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
-import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 
 
 /**
@@ -40,169 +29,197 @@ import org.eclipse.core.runtime.jobs.Job;
  * @see org.eclipse.core.runtime.jobs.Job
  * @since 3.0
  */
-public class TypeCacherJob extends Job {
-
-	/**
-	 * An "identity rule" that forces jobs to be queued.
-	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule
-	 * @since 3.0
-	 */
-	final static ISchedulingRule MUTEX_RULE= new ISchedulingRule() {
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == this;
-		}			
-	};
+public class TypeCacherJob extends BasicJob {
 	
-	/**
-	 * Constant identifying the job family identifier for the background job.
-	 * @see IJobManager#join(Object, IProgressMonitor)
-	 * @since 3.0
-	 */
-	public static final Object FAMILY= new Object();
+	public static final Object FAMILY = new Object();
+	private IndexManager fIndexManager;
+	private ITypeCache fTypeCache;
+	private TypeCacheDelta[] fDeltas;
+	private boolean fEnableIndexing;
 
-	private Set fSearchPaths= new HashSet(50);
-	private TypeCache fTypeCache;
-	private IWorkingCopyProvider fWorkingCopyProvider;
-	private DelegatedProgressMonitor fProgressMonitor= new DelegatedProgressMonitor();
-
-	public TypeCacherJob(TypeCache cache, IWorkingCopyProvider provider) {
-		super(TypeCacheMessages.getString("TypeCacherJob.jobName")); //$NON-NLS-1$
+	public TypeCacherJob(ITypeCache typeCache, TypeCacheDelta[] deltas, boolean enableIndexing) {
+		super(TypeCacheMessages.getString("TypeCacherJob.defaultJobName"), FAMILY); //$NON-NLS-1$
+		fTypeCache = typeCache;
+		fDeltas = deltas;
+		fEnableIndexing = enableIndexing;
+		fIndexManager = CModelManager.getDefault().getIndexManager();
 		setPriority(BUILD);
 		setSystem(true);
-		//setRule(MUTEX_RULE);
-		fTypeCache= cache;
-		fWorkingCopyProvider= provider;
+		setRule(typeCache);
+		setName(TypeCacheMessages.getFormattedString("TypeCacherJob.jobName", fTypeCache.getProject().getName())); //$NON-NLS-1$
+	}
+	
+	public ITypeCache getCache() {
+		return fTypeCache;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
-	 */
-	public boolean belongsTo(Object family) {
-		return family == FAMILY;
+	public TypeCacheDelta[] getDeltas() {
+		return fDeltas;
 	}
-	
-	public void setSearchPaths(Set paths) {
-		fSearchPaths.clear();
-		if (paths != null)
-			fSearchPaths.addAll(paths);
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(IProgressMonitor)
 	 */
-	public IStatus run(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
-			return Status.CANCEL_STATUS;
-
-		fProgressMonitor.init();
-		fProgressMonitor.addDelegate(monitor);
+	protected IStatus runWithDelegatedProgress(IProgressMonitor monitor) throws InterruptedException {
+		boolean success = false;
+		long startTime = System.currentTimeMillis();
+		trace("TypeCacherJob: started"); //$NON-NLS-1$
 		
 		try {
-			search(fProgressMonitor);
-			fProgressMonitor.done();
-		} catch(InterruptedException ex) {
-			return Status.CANCEL_STATUS;
-		} catch (OperationCanceledException ex) {
-			return Status.CANCEL_STATUS;
-		} finally {
-			fProgressMonitor.removeAllDelegates();
-			fProgressMonitor.init();
-		}
+			int totalWork = 100;
+			monitor.beginTask(TypeCacheMessages.getString("TypeCacherJob.taskName"), totalWork); //$NON-NLS-1$
+			
+			// figure out what needs to be flushed
+			TypeSearchScope flushScope = new TypeSearchScope();
+			if (fDeltas != null) {
+				for (int i = 0; i < fDeltas.length; ++i) {
+					TypeCacheDelta delta = fDeltas[i];
+					prepareToFlush(delta, flushScope);
+				}
+			}
 
+			if (monitor.isCanceled())
+				throw new InterruptedException();
+
+			// flush the cache
+			int flushWork = 0;
+			if (!flushScope.isEmpty()) {
+				flushWork = totalWork / 4;
+				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, flushWork);
+				flush(flushScope, subMonitor);
+			}
+			
+			// update the cache
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, totalWork - flushWork);
+			update(flushScope, subMonitor);
+			
+			if (monitor.isCanceled())
+				throw new InterruptedException();
+		} finally {
+			long executionTime = System.currentTimeMillis() - startTime;
+			if (success)
+				trace("TypeCacherJob: completed ("+ executionTime + " ms)"); //$NON-NLS-1$ //$NON-NLS-2$
+			else
+				trace("TypeCacherJob: aborted ("+ executionTime + " ms)"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			monitor.done();
+		}
+		
 		return Status.OK_STATUS;
 	}
 	
-	/**
-	 * Forwards progress info to the progress monitor and
-	 * blocks until the job is finished.
-	 * 
-	 * @param monitor Optional progress monitor.
-	 * @throws InterruptedException
-	 * 
-	 * @see Job#join
-	 */
-	public void join(IProgressMonitor monitor) throws InterruptedException {
-		fProgressMonitor.addDelegate(monitor);
-		super.join();
-	}
-	
-	private void search(IProgressMonitor monitor) throws InterruptedException {
+	private void flush(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
+		// flush the cache
+		boolean success = true;
+		IProject project = fTypeCache.getProject();
 
-		monitor.beginTask(TypeCacheMessages.getString("TypeCacherJob.taskName"), 100); //$NON-NLS-1$
-
-		IWorkspace workspace= CCorePlugin.getWorkspace();
-		if (workspace == null)
-			throw new InterruptedException();
-
-		ICSearchScope scope= new CWorkspaceScope();
+		monitor.beginTask("", 100); //$NON-NLS-1$
 		
-		// search for types and #include references
-		TypeSearchPattern pattern= new TypeSearchPattern();
-		for (Iterator pathIter= fSearchPaths.iterator(); pathIter.hasNext(); ) {
-			IPath path= (IPath) pathIter.next();
-			pattern.addDependencySearch(path);
-		}
-		TypeSearchPathCollector pathCollector= new TypeSearchPathCollector();
-		
-		CModelManager modelManager= CModelManager.getDefault();
-		IndexManager indexManager= modelManager.getIndexManager();
-	
-		if (monitor.isCanceled())
-			throw new InterruptedException();
-
-		SubProgressMonitor subMonitor= new SubProgressMonitor(monitor, 5);
-		
-		/* index search */
-		indexManager.performConcurrentJob( 
-			new PatternSearchJob(
-				pattern,
-				scope,
-				pathCollector,
-				indexManager
-			),
-		    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-			subMonitor,
-			null );
-		
-		if (monitor.isCanceled())
-			throw new InterruptedException();
-		
-		if (!fSearchPaths.isEmpty()) {
-			// flush all affected files from cache
-			fTypeCache.flush(fSearchPaths);
-			Set dependencyPaths= pathCollector.getDependencyPaths();
-			if (dependencyPaths != null && !dependencyPaths.isEmpty()) {
-				fTypeCache.flush(dependencyPaths);
+		fTypeCache.flush(scope);
+		if (!scope.encloses(project)) {
+			if (project.exists() && project.isOpen()) {
+				success = false;
+				if (fEnableIndexing) {
+					success = fIndexManager.performConcurrentJob(
+						new IndexerDependenciesJob(fIndexManager, fTypeCache, scope),
+						ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, monitor, null);
+				}
 			}
 		}
 
-		Set allSearchPaths= pathCollector.getPaths();
-		if (allSearchPaths == null)
-			allSearchPaths= new HashSet();
-		
-		// remove cached files
-		allSearchPaths.removeAll(fTypeCache.getAllFiles());
-		
-		if (monitor.isCanceled())
+		if (!success || monitor.isCanceled()) {
 			throw new InterruptedException();
-
-		subMonitor= new SubProgressMonitor(monitor, 95);
+		}
 		
-		IWorkingCopy[] workingCopies= null;
-		if (fWorkingCopyProvider != null)
-			workingCopies= fWorkingCopyProvider.getWorkingCopies();
-
-		TypeMatchCollector collector= new TypeMatchCollector(fTypeCache, subMonitor);
-		TypeMatchLocator matchLocator= new TypeMatchLocator(collector);
-		matchLocator.locateMatches(allSearchPaths, workspace, workingCopies);
-		
-		if (monitor.isCanceled())
-			throw new InterruptedException();
-
-		fTypeCache.markAsDirty(false);
 		monitor.done();
 	}
+	
+	private void update(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
+		boolean success = true;
+		IProject project = fTypeCache.getProject();
+		
+		monitor.beginTask("", 100); //$NON-NLS-1$
+		if (project.exists() && project.isOpen()) {
+			success = false;
+			if (fEnableIndexing) {
+				success = fIndexManager.performConcurrentJob(
+						new IndexerTypesJob(fIndexManager, fTypeCache, scope),
+						ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, monitor, null);
+			}
+		}
+
+		if (!success || monitor.isCanceled()) {
+			throw new InterruptedException();
+		}
+		
+		monitor.done();
+	}
+	
+	private static final int PATH_ENTRY_FLAGS = ICElementDelta.F_ADDED_PATHENTRY_SOURCE
+		| ICElementDelta.F_REMOVED_PATHENTRY_SOURCE
+		| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
+		| ICElementDelta.F_CHANGED_PATHENTRY_MACRO
+		| ICElementDelta.F_PATHENTRY_REORDER;
+	
+	private void prepareToFlush(TypeCacheDelta cacheDelta, ITypeSearchScope scope) {
+		ITypeSearchScope deltaScope = cacheDelta.getScope();
+		if (deltaScope != null)
+			scope.add(deltaScope);
+
+		ICElementDelta delta = cacheDelta.getCElementDelta();
+		if (delta != null) {
+			ICElement elem = delta.getElement();
+			boolean added = (delta.getKind() == ICElementDelta.ADDED);
+			boolean removed = (delta.getKind() == ICElementDelta.REMOVED);
+			boolean contentChanged = ((delta.getFlags() & ICElementDelta.F_CONTENT) != 0);
+			boolean pathEntryChanged = ((delta.getFlags() & PATH_ENTRY_FLAGS) != 0);
+			
+			switch (elem.getElementType()) {
+				case ICElement.C_MODEL:	{
+					if (added || removed) {
+						scope.add(elem);
+					}
+				}
+				break;
+				
+				case ICElement.C_PROJECT: {
+					if (added || removed || pathEntryChanged) {
+						scope.add(elem);
+					}
+				}
+				break;
+				
+				case ICElement.C_CCONTAINER: {
+					if (added || removed || pathEntryChanged) {
+						scope.add(elem);
+					}
+				}
+				break;
+				
+				case ICElement.C_UNIT: {
+					if (added || removed || pathEntryChanged || contentChanged) {
+						scope.add(elem);
+					}
+				}
+				break;
+				
+				case ICElement.C_INCLUDE:
+				case ICElement.C_NAMESPACE:
+				case ICElement.C_TEMPLATE_CLASS:
+				case ICElement.C_CLASS:
+				case ICElement.C_STRUCT:
+				case ICElement.C_UNION:
+				case ICElement.C_ENUMERATION:
+				case ICElement.C_TYPEDEF:
+				{
+					//TODO handle working copies
+					if (added || removed) {
+						scope.add(elem);
+					}
+				}
+				break;
+			}
+		}
+	}
 }
+

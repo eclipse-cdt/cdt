@@ -18,7 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.browser.*;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -49,11 +52,10 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 		private static final char END_SYMBOL = '<';
 		private static final char ANY_STRING = '*';
-		private final static String scopeResolutionOperator = "::"; //$NON-NLS-1$
-
-		private StringMatcher fMatcher;
-		private StringMatcher fQualifierMatcher;
-		private StringMatcher fScopedQualifierMatcher;
+		
+		private StringMatcher fNameMatcher = null;
+		private StringMatcher[] fSegmentMatchers = null;
+		private boolean fMatchRootQualifier = false;
 		private Collection fVisibleTypes = new HashSet();
 		private boolean fShowLowLevelTypes = false;
 		
@@ -61,26 +63,42 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		 * @see FilteredList.FilterMatcher#setFilter(String, boolean)
 		 */
 		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-			int qualifierIndex = pattern.lastIndexOf(scopeResolutionOperator);
+			// parse pattern into segments
+			QualifiedTypeName qualifiedName = new QualifiedTypeName(pattern);
+			String[] segments = qualifiedName.segments();
+			int length = segments.length;
 
-			// type			
-			if (qualifierIndex == -1) {
-				fQualifierMatcher = null;
-				fScopedQualifierMatcher = null;
-				fMatcher = new StringMatcher(adjustPattern(pattern), ignoreCase, ignoreWildCards);
-			// qualified type
-			} else {
-				String prefixPattern = pattern.substring(0, qualifierIndex + scopeResolutionOperator.length());
-				fQualifierMatcher = new StringMatcher(adjustPattern(prefixPattern), ignoreCase, ignoreWildCards);
-				StringBuffer buf = new StringBuffer();
-				buf.append(ANY_STRING);
-				buf.append(scopeResolutionOperator);
-				buf.append(prefixPattern);
-				String scopedPattern = buf.toString();
-				fScopedQualifierMatcher = new StringMatcher(adjustPattern(scopedPattern), ignoreCase, ignoreWildCards);
-				String namePattern = pattern.substring(qualifierIndex + scopeResolutionOperator.length());
-				fMatcher = new StringMatcher(adjustPattern(namePattern), ignoreCase, ignoreWildCards);
+			// append wildcard to innermost segment
+			segments[length-1] = adjustPattern(segments[length-1]);
+			
+			fMatchRootQualifier = false;
+			fSegmentMatchers = new StringMatcher[length];
+			int count = 0;
+			for (int i = 0; i < length; ++i) {
+				if (segments[i].length() > 0) {
+					// create StringMatcher for this segment
+					fSegmentMatchers[count++] = new StringMatcher(segments[i], ignoreCase, ignoreWildCards);
+				} else if (i == 0) {
+					// allow outermost segment to be blank (e.g. "::foo*")
+					fMatchRootQualifier = true;
+				} else {
+					// skip over blank segments (e.g. treat "foo::::b*" as "foo::b*")
+				}
 			}
+			if (count != length) {
+				if (count > 0) {
+					// resize array
+					StringMatcher[] newMatchers = new StringMatcher[count];
+					System.arraycopy(fSegmentMatchers, 0, newMatchers, 0, count);
+					fSegmentMatchers = newMatchers;
+				} else {
+					// fallback to wildcard (should never get here)
+					fSegmentMatchers = new StringMatcher[1];
+					fSegmentMatchers[0] = new StringMatcher(String.valueOf(ANY_STRING), ignoreCase, ignoreWildCards);
+				}
+			}
+			// match simple name with innermost segment
+			fNameMatcher = fSegmentMatchers[fSegmentMatchers.length-1];
 		}
 		
 		public void setVisibleTypes(Collection visibleTypes) {
@@ -100,18 +118,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			return fShowLowLevelTypes;
 		}
 
-		private boolean isLowLevelType(ITypeInfo info) { 
-			String[] enclosingNames = info.getEnclosingNames();
-			// filter out low-level system types eg __FILE
-			if (enclosingNames != null) {
-				for (int i = 0; i < enclosingNames.length; ++i) {
-					if (enclosingNames[i].startsWith("_")) //$NON-NLS-1$
-						return true;
-				}
-			}
-			return info.getName().startsWith("_"); //$NON-NLS-1$
-		}
-
 		/*
 		 * @see FilteredList.FilterMatcher#match(Object)
 		 */
@@ -120,39 +126,80 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 				return false;
 
 			TypeInfo info = (TypeInfo) element;
+			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
 			
-			if (fVisibleTypes != null && !fVisibleTypes.contains(new Integer(info.getType())))
+			if (fVisibleTypes != null && !fVisibleTypes.contains(new Integer(info.getCElementType())))
 				return false;
 
-			if (!fShowLowLevelTypes && isLowLevelType(info))
+			if (!fShowLowLevelTypes && qualifiedName.isLowLevel())
 				return false;
 
-			if (!fMatcher.match(info.getName()))
+			if (!fMatchRootQualifier && !fNameMatcher.match(qualifiedName.getName()))
 				return false;
 
-			if (fQualifierMatcher == null)
-				return true;
-			
-			if (fQualifierMatcher.match(info.getQualifiedName()))
-				return true;
-			else
-				return fScopedQualifierMatcher.match(info.getQualifiedName());
+			return matchQualifiedName(qualifiedName);
 		}
-		
-		private String adjustPattern(String pattern) {
+
+		private boolean matchQualifiedName(IQualifiedTypeName qualifiedName) {
+			String[] segments = qualifiedName.segments();
+			boolean matchFound = false;
+			boolean moreNames = true;
+			int matchOffset = 0;
+			while (!matchFound && moreNames) {
+				matchFound = true;
+				for (int i = 0; i < fSegmentMatchers.length; ++i) {
+					int dropOut = 0;
+					if (i < (segments.length - matchOffset)) {
+						// ok to continue
+//						dropOut = false;
+					} else {
+						++dropOut;
+					}
+					
+					if (matchOffset + i >= segments.length) {
+						++dropOut;
+					}
+
+					if (dropOut > 0) {
+						if (dropOut != 2) {
+							// shouldn't get here
+							matchFound = false;
+							moreNames = false;
+						}
+						matchFound = false;
+						moreNames = false;
+						break;
+					}
+					
+					StringMatcher matcher = fSegmentMatchers[i];
+					String name = segments[matchOffset + i];
+					if (name == null || !matcher.match(name)) {
+						matchFound = false;
+						break;
+					}
+				}
+				
+				if (fMatchRootQualifier) {
+					// must match outermost name (eg ::foo)
+					moreNames = false;
+				} else {
+					++matchOffset;
+				}
+			}
+			return matchFound;
+		}
+
+		private static String adjustPattern(String pattern) {
 			int length = pattern.length();
 			if (length > 0) {
 				switch (pattern.charAt(length - 1)) {
 					case END_SYMBOL:
-						pattern = pattern.substring(0, length - 1);
-						break;
+						return pattern.substring(0, length - 1);
 					case ANY_STRING:
-						break;
-					default:
-						pattern = pattern + ANY_STRING;
+						return pattern;
 				}
 			}
-			return pattern;
+			return pattern + ANY_STRING;
 		}
 	}
 	
@@ -183,7 +230,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final String SETTINGS_SHOW_LOWLEVEL = "show_lowlevel"; //$NON-NLS-1$
 
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY);
-	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_CONTAINER_ONLY + TypeInfoLabelProvider.SHOW_ROOT_POSTFIX);
+	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_ENCLOSING_TYPE_ONLY + TypeInfoLabelProvider.SHOW_PATH);
 	
 	private static final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
 	private static final StringComparator fStringComparator = new StringComparator();
@@ -319,7 +366,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			break;
 			default:
 				return;
-		};
+		}
 		Image icon = TypeInfoLabelProvider.getTypeIcon(type);
 
 		Composite composite = new Composite(parent, SWT.NONE);

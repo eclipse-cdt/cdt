@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IProject;
 
 /**
  * Type information.
@@ -24,7 +20,23 @@ public interface ITypeInfo {
 	/**
 	 * Gets the CElement type.
 	 */
-	public int getType();
+	public int getCElementType();
+
+	/**
+	 * Sets the CElement type.
+	 */
+	public void setCElementType(int type);
+
+	/**
+	 * Returns true if the element type is unknown.
+	 */
+	public boolean isUndefinedType();
+	
+	/**
+	 * Returns true if this type can enclose other types,
+	 * i.e. it is a namespace, class, or struct.
+	 */
+	public boolean isQualifierType();
 
 	/**
 	 * Gets the type name.
@@ -32,81 +44,37 @@ public interface ITypeInfo {
 	public String getName();
 
 	/**
-	 * Gets the enclosing type names.
+	 * Gets the qualified type name.
 	 */
-	public String[] getEnclosingNames();
+	public IQualifiedTypeName getQualifiedTypeName();
 
 	/**
-	 * Gets the resource where type is located.
+	 * Gets the enclosing type.
 	 */
-	public IResource getResource();
+	public ITypeInfo getEnclosingType();
 	
 	/**
-	 * Gets the relative path where type is located.
+	 * Gets the enclosing project.
 	 */
-	public IPath getPath();
-
-	/**
-	 * Gets the absolute path where type is located.
-	 */
-	public IPath getLocation();
-
-	/**
-	 * Gets the start offset of type position.
-	 */
-	public int getStartOffset();
+	public IProject getEnclosingProject();
 	
 	/**
-	 * Gets the end offset of type position.
+	 * Returns true if type is enclosed in the given scope.
 	 */
-	public int getEndOffset();
-
-	/**
-	 * Returns true if type is enclosed in the given scope
-	 */
-	public boolean isEnclosed(ICSearchScope scope);
-
-	/**
-	 * Gets the filename where this type is located.
-	 */
-	public String getFileName();
+	public boolean isEnclosed(ITypeSearchScope scope);
 	
 	/**
-	 * Gets the fully qualified type container name: Includes enclosing type names, but
-	 * not filename. Identifiers are separated by colons.
+	 * Adds a source reference.
 	 */
-	public String getParentName();
-	
-	/**
-	 * Gets the type qualified name: Includes enclosing type names, but
-	 * not filename. Identifiers are separated by colons.
-	 */
-	public String getQualifiedName();
+	public void addReference(ITypeReference location);
 
 	/**
-	 * Gets the fully qualified type container name: Filename or
-	 * enclosing type name with filename.
-	 * All identifiers are separated by colons.
+	 * Returns all known source references.
 	 */
-	public String getQualifiedParentName();
-	
-	/**
-	 * Gets the fully qualified type name: Includes enclosing type names and
-	 * filename. All identifiers are separated by colons.
-	 */
-	public String getFullyQualifiedName();
-	
-	/**
-	 * Gets the CElement which corresponds to this type.
-	 */
-	public ICElement getCElement();
+	public ITypeReference[] getReferences();
 
-	/** Gets the include path for this type.
-	 * 
-	 * @param cProject the C Project to use as a reference.
-	 * @return The path to this type, relative to the longest
-	 * matching include path in the given project, or
-	 * <code>null</code> if not found.
+	/**
+	 * Returns parsed source location with offset and length.
 	 */
-	public IPath resolveIncludePath(ICProject cProject);
+	public ITypeReference getResolvedReference();
 }

@@ -8,25 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - adapted for use in CDT
- *******************************************************************************/
+ ***************************************************************f****************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 public class TypeInfoLabelProvider extends LabelProvider {
 
-	public static final int SHOW_FULLYQUALIFIED=	0x01;
-	public static final int SHOW_FILENAME_POSTFIX=	0x02;
-	public static final int SHOW_FILENAME_ONLY=		0x04;
-	public static final int SHOW_ROOT_POSTFIX=		0x08;
-	public static final int SHOW_TYPE_ONLY=			0x10;
-	public static final int SHOW_TYPE_CONTAINER_ONLY=	0x20;
+	public static final int SHOW_TYPE_ONLY= 0x01;
+	public static final int SHOW_ENCLOSING_TYPE_ONLY= 0x02;
+	public static final int SHOW_PATH= 0x04;
 
 	private static final Image HEADER_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT_HEADER);
 	private static final Image SOURCE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT);
@@ -37,6 +37,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	private static final Image TYPEDEF_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TYPEDEF);
 	private static final Image UNION_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_UNION);
 	private static final Image ENUM_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_ENUMERATION);
+	private static final Image UNKNOWN_TYPE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_UNKNOWN_TYPE);
 
 	private int fFlags;
 	
@@ -56,43 +57,33 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			return super.getText(element);
 		
 		ITypeInfo typeRef= (ITypeInfo) element;
+		IQualifiedTypeName qualifiedName = typeRef.getQualifiedTypeName();
 		
 		StringBuffer buf= new StringBuffer();
 		if (isSet(SHOW_TYPE_ONLY)) {
 			String name= typeRef.getName();
 			if (name != null && name.length() > 0)
 				buf.append(name);
-		} else if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
-			String name= typeRef.getQualifiedParentName();
-			if (name != null && name.length() > 0)
-				buf.append(name);
-		} else if (isSet(SHOW_FILENAME_ONLY)) {
-			String name= typeRef.getFileName();
-			if (name != null && name.length() > 0)
-				buf.append(name);
-		} else {
-			if (isSet(SHOW_FULLYQUALIFIED)) {
-				String name= typeRef.getFullyQualifiedName();
-				if (name != null && name.length() > 0)
-					buf.append(name);
-			}
-			else {
-				String name= typeRef.getParentName();
-				if (name != null && name.length() > 0)
-					buf.append(name);
-			}
-		
-			if (isSet(SHOW_FILENAME_POSTFIX)) {
-				String name= typeRef.getFileName();
-				if (name != null && name.length() > 0) {
-					buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.dash")); //$NON-NLS-1$
-					buf.append(name);
-				}
+		} else if (isSet(SHOW_ENCLOSING_TYPE_ONLY)) {
+			IQualifiedTypeName parentName= qualifiedName.getEnclosingTypeName();
+			if (parentName != null) {
+				buf.append(parentName.getFullyQualifiedName());
+			} else {
+				buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.globalScope")); //$NON-NLS-1$
 			}
 		}
-
-		if (isSet(SHOW_ROOT_POSTFIX)) {
-			IPath path= typeRef.getPath();
+		
+		if (isSet(SHOW_PATH)) {
+			IPath path = null;
+			ITypeReference ref = typeRef.getResolvedReference();
+			if (ref != null) {
+				path = ref.getPath();
+			} else {
+				IProject project = typeRef.getEnclosingProject();
+				if (project != null) {
+					path = project.getFullPath();
+				}
+			}
 			if (path != null) {
 				buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.dash"));//$NON-NLS-1$
 				buf.append(path.toString());
@@ -109,31 +100,26 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			return super.getImage(element);	
 
 		ITypeInfo typeRef= (ITypeInfo) element;
-		if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
-			return getContainerIcon(typeRef);
-		} else if (isSet(SHOW_FILENAME_ONLY)) {
-			return getFileIcon(typeRef.getPath());
-		} else {
-			return getTypeIcon(typeRef.getType());
-		}
-	}
-
-	public static Image getContainerIcon(ITypeInfo typeRef)
-	{
-		//TODO get enclosing types and parent type icon
-		return getFileIcon(typeRef.getPath());
-	}
-
-	public static Image getFileIcon(IPath path)
-	{
-		if (path != null) {
-			if (CoreModel.isValidHeaderUnitName(path.lastSegment())) {
-				return HEADER_ICON;
+		if (isSet(SHOW_ENCLOSING_TYPE_ONLY)) {
+			ITypeInfo parentInfo = typeRef.getEnclosingType();
+			if (parentInfo != null) {
+				return getTypeIcon(parentInfo.getCElementType());
+			} else {
+				IPath path = null;
+				ITypeReference ref = typeRef.getResolvedReference();
+				if (ref != null) {
+					path = ref.getPath();
+					if (CoreModel.isValidHeaderUnitName(path.lastSegment())) {
+						return HEADER_ICON;
+					}
+				}
+				return SOURCE_ICON;
 			}
 		}
-		return SOURCE_ICON;
+
+		return getTypeIcon(typeRef.getCElementType());
 	}
-	
+
 	public static Image getTypeIcon(int type)
 	{
 		switch (type)
@@ -160,7 +146,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			return TYPEDEF_ICON;
 
 		default:
-			return CLASS_ICON;
+			return UNKNOWN_TYPE_ICON;
 		}
 	}
 }

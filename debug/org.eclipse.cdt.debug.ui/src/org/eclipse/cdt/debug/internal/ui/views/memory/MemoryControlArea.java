@@ -7,9 +7,9 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -474,58 +474,27 @@ public class MemoryControlArea extends Composite
 	{
 		if ( getMemoryManager() != null )
 		{
-			IDebugTarget target = (IDebugTarget)getMemoryManager().getAdapter( IDebugTarget.class );
-			if ( target != null )
+			if ( getMemoryBlock() == null )
 			{
-				ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
-				String newExpression = convertToHexString( evaluateExpression( ee, fAddressText.getText().trim() ) );
-				if ( newExpression != null )
-				{
-					fAddressText.setText( newExpression );
-					handleAddressEnter();
-				}
-			}
-		}
-		fAddressText.forceFocus();
-	}
-	
-	private String evaluateExpression( ICExpressionEvaluator ee, String expression )
-	{
-		String result = null;
-		if ( ee != null && ee.canEvaluate() )
-		{
-			try
-			{
-				result = ee.evaluateExpressionToString( expression );
-			}
-			catch( DebugException e )
-			{
-				CDebugUIPlugin.errorDialog( "Unable to evaluate expression.", e.getStatus() );
-			}
-		}
-		return result;
-	}
-	
-	private String convertToHexString( String value )
-	{
-		String result = null;
-		if ( value != null )
-		{
-			if ( !value.startsWith( "0x" ) )
-			{
+				String expression = fAddressText.getText().trim();
 				try
 				{
-					result = "0x" + Long.toHexString( Long.parseLong( value ) );
+					removeBlock();
+					if ( expression.length() > 0 )
+					{
+						createBlock( expression );
+					}
 				}
-				catch( NumberFormatException e )
+				catch( DebugException e )
 				{
+					CDebugUIPlugin.errorDialog( "Unable to get memory block.", e.getStatus() );
 				}
 			}
-			else
+			if ( getMemoryBlock() != null )
 			{
-				result = value;
+				fAddressText.setText( CDebugUIUtils.toHexAddressString( getMemoryBlock().getStartAddress() ) );
+				handleAddressEnter();
 			}
 		}
-		return result;
 	}
 }

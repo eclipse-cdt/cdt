@@ -834,7 +834,7 @@ public class CCorePlugin extends Plugin {
 				List list = new ArrayList(extensions.length);
 				for (int i = 0; i < extensions.length; i++) {
 					String parserID = extensions[i].getUniqueIdentifier();
-					if ((id == null && parserID == null) || (id != null && parserID.equals(id))) {
+					if ((id == null && parserID != null) || (id != null && id.equals(parserID))) {
 						IConfigurationElement[] configElements = extensions[i]. getConfigurationElements();
 						for (int j = 0; j < configElements.length; j++) {
 							IErrorParser parser = (IErrorParser)configElements[j].createExecutableExtension("class"); //$NON-NLS-1$

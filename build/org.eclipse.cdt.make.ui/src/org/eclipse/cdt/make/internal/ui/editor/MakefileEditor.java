@@ -12,20 +12,30 @@ package org.eclipse.cdt.make.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class MakefileEditor extends TextEditor {
+public class MakefileEditor extends TextEditor implements ISelectionChangedListener{
 
 	/**
 	 * The page that shows the outline.
@@ -36,6 +46,7 @@ public class MakefileEditor extends TextEditor {
 	private MakefileContentOutlinePage getOutlinePage() {
 		if (page == null) {
 			page = new MakefileContentOutlinePage(this);
+			page.addSelectionChangedListener(this);
 			page.setInput(getEditorInput());
 		}
 		return page;
@@ -107,6 +118,72 @@ public class MakefileEditor extends TextEditor {
 		setAction("Uncomment", a); //$NON-NLS-1$
 		markAsStateDependentAction("Uncomment", true); //$NON-NLS-1$ 
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		ISelection selection = event.getSelection();
+		if (selection.isEmpty()) {
+			resetHighlightRange();
+		} else if (selection instanceof IStructuredSelection){                                                                                                                         
+			if (!isActivePart() && MakeUIPlugin.getActivePage() != null) {
+				MakeUIPlugin.getActivePage().bringToTop(this);
+			}                                                                                                                 
+			Object element =  ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof IDirective) {
+				IDirective statement = (IDirective)element;
+				setSelection(statement, !isActivePart());
+			}
+		}
+	}
+
+	/**
+	 * Returns whether the editor is active.
+	 */
+	private boolean isActivePart() {
+		IWorkbenchWindow window= getSite().getWorkbenchWindow();
+		IPartService service= window.getPartService();
+		IWorkbenchPart part= service.getActivePart();
+		return part != null && part.equals(this);
+	}
+
+	private void setSelection(IDirective directive, boolean moveCursor) {
+		int startLine = directive.getStartLine() - 1;
+		int endLine = directive.getEndLine() - 1;
+		try {
+			IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+			int start = doc.getLineOffset(startLine);
+			int len = doc.getLineLength(endLine) - 1;
+			int length = (doc.getLineOffset(endLine) + len) - start;
+			setHighlightRange(start, length, true);
+			if (moveCursor) {
+				// Let see if we can move the cursor at the position also
+				String var = directive.toString().trim();
+				for (len = 0; len < var.length(); len++) {
+					char c = var.charAt(len);
+					if (! (Character.isLetterOrDigit(c) || c == '.' || c == '_')) {
+						break;
+					}
+				}
+				if (len > 0) {
+					var = var.substring(0, len);
+				}
+				len = doc.search(start, var, true, true, true);
+				length = var.length();
+				if (len > -1 && length > 0) {
+					getSourceViewer().revealRange(len, length);
+					// Selected region begins one index after offset
+					getSourceViewer().setSelectedRange(len, length);
+				}
+
+			}
+		} catch (IllegalArgumentException x) {
+			resetHighlightRange();
+		} catch (BadLocationException e) {
+			resetHighlightRange();
+		}
 	}
 
 }

@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -72,10 +73,24 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 		return null;
 	}
 
+	/**
+	 * Returns the active workbench window or <code>null</code> if none
+	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
+	/**
+	 * Returns the active workbench page or <code>null</code> if none.
+	 */
+	public static IWorkbenchPage getActivePage() {
+		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getActivePage();
+		}
+		return null;
+	}
+ 
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.

@@ -30,19 +30,16 @@ import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -222,19 +219,8 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		TreeViewer viewer = getTreeViewer();
-
-		/*
-		 * We might want to implement our own content provider.
-		 * This content provider should be able to work on a dom like tree
-		 * structure that resembles the file contents.
-		 */
 		viewer.setContentProvider(new MakefileContentProvider());
-
-		/*
-		 * We probably also need our own label provider.
-		 */
 		viewer.setLabelProvider(new MakefileLabelProvider());
-
 		if (fInput != null) {
 			viewer.setInput(fInput);
 		}
@@ -246,37 +232,6 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	public void setInput(Object input) {
 		fInput = input;
 		update();
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on ContentOutlinePage
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-
-		super.selectionChanged(event);
-
-		ISelection selection = event.getSelection();
-		if (selection.isEmpty()) {
-			fEditor.resetHighlightRange();
-		} else if (selection instanceof IStructuredSelection){
-			Object element =  ((IStructuredSelection) selection).getFirstElement();
-			if (element instanceof IDirective) {
-				IDirective statement = (IDirective)element;
-				int startLine = statement.getStartLine() - 1;
-				int endLine = statement.getEndLine() - 1;
-				try {
-					IDocument doc = fEditor.getDocumentProvider().getDocument(fInput);
-					int start = doc.getLineOffset(startLine);
-					int len = doc.getLineLength(endLine) - 1;
-					int length = (doc.getLineOffset(endLine) + len) - start;
-					fEditor.setHighlightRange(start, length, true);
-				} catch (IllegalArgumentException x) {
-					fEditor.resetHighlightRange();
-				} catch (BadLocationException e) {
-					fEditor.resetHighlightRange();
-				}
-			}
-		}
 	}
 
 	/**
@@ -294,6 +249,17 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 				control.setRedraw(true);
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
+	 */
+	public void setActionBars(IActionBars actionBars) {
+		super.setActionBars(actionBars);
+		IToolBarManager toolBarManager= actionBars.getToolBarManager();
+
+		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
+		toolBarManager.add(action);
 	}
 
 }

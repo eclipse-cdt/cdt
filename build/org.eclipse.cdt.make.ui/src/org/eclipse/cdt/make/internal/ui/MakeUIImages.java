@@ -47,6 +47,7 @@ public class MakeUIImages {
 	public static final ImageDescriptor DESC_OBJ_ERROR = createManaged(OBJ, IMG_OBJS_ERROR);
 
 
+	// For the outliner label provider.
 	public static final String IMG_TOOLS_MAKE_TARGET_BUILD = NAME_PREFIX + "target_build.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOLS_MAKE_TARGET_ADD = NAME_PREFIX + "target_add.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOLS_MAKE_TARGET_DELETE = NAME_PREFIX + "target_delete.gif"; //$NON-NLS-1$
@@ -69,6 +70,8 @@ public class MakeUIImages {
 
 	public static final String IMG_OBJS_MAKEFILE_INCLUDE = NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_INCLUDE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INCLUDE);
+
+	public static final String IMG_TOOLS_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif";
 
 	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
 

@@ -107,7 +107,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private Map providerParsers = new HashMap();
 	private String initialProviderParserId = null;
 	private boolean fCreatePathContainer = false;
-
+	
 	public DiscoveryOptionsBlock() {
 		super(MakeUIPlugin.getResourceString(DIALOG_TITLE));
 		setDescription(MakeUIPlugin.getResourceString(DIALOG_DESCRIPTION));
@@ -147,6 +147,10 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
+		// Missing builder info
+		if (!fInitialized) {
+			return;
+		}
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -164,7 +168,13 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 						needsSCNature = false;
 						fCreatePathContainer = true;
 					}
-					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
+					try {
+						buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
+					} catch (CoreException e) {
+						// disabled builder... just log it 
+						MakeCorePlugin.log(e);
+						return;
+					}
 					if (fCreatePathContainer) {
 						createDiscoveredPathContainer(project, monitor);
 						// create a new discovered scanner config store
@@ -223,6 +233,10 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
+		// Missing builder info
+		if (!fInitialized) {
+			return;
+		}
 		IScannerConfigBuilderInfo info;
 		// Populate with the default values
 		if (getContainer().getProject() != null) {
@@ -267,7 +281,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 */
 	public void createControl(Composite parent) {
 		// Create the composite control for the tab
-		int tabColumns = 2;
+		int tabColumns = 1;
 		Font font = parent.getFont();
 		Composite composite = ControlFactory.createComposite(parent, tabColumns);
 		((GridLayout)composite.getLayout()).makeColumnsEqualWidth = false;
@@ -302,16 +316,17 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			showMissingBuilder = true;
 		}
 
+		if (showMissingBuilder || (!needsSCNature && !fInitialized)) {
+			ControlFactory.createEmptySpace(parent);
+			ControlFactory.createLabel(parent, MakeUIPlugin.getResourceString(MISSING_BUILDER_MSG));
+			return false;
+		}
+
 		Group scGroup = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(SC_GROUP_LABEL), numColumns);
 		scGroup.setFont(parent.getFont());
 		((GridData)scGroup.getLayoutData()).grabExcessHorizontalSpace = true;
 		((GridData)scGroup.getLayoutData()).horizontalSpan = numColumns;
 		((GridData)scGroup.getLayoutData()).horizontalAlignment = GridData.FILL;
-
-		if (showMissingBuilder || (!needsSCNature && !fInitialized)) {
-			ControlFactory.createLabel(scGroup, MakeUIPlugin.getResourceString(MISSING_BUILDER_MSG));
-			return false;
-		}
 
 		// Add checkbox
 		scEnabledButton = ControlFactory.createCheckBox(scGroup, MakeUIPlugin.getResourceString(SC_ENABLED_LABEL));
@@ -506,6 +521,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		esiProviderCommand.setEnabled(isScannerConfigDiscoveryEnabled() && isProviderCommandEnabled()
 				&& !useDefaultESIProviderCmd());
 		esiProviderParserComboBox.setEnabled(isScannerConfigDiscoveryEnabled() && isProviderCommandEnabled());
+		enableProblemGenerationButton.setEnabled(isScannerConfigDiscoveryEnabled());
 	}
 
 	private boolean useDefaultESIProviderCmd() {
@@ -574,13 +590,14 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		}
 		buildInfo.setESIProviderArguments(args);
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
 	 */
 	public boolean isValid() {
-		if (isProviderCommandEnabled() == true && useDefaultESIProviderCmd() == false) {
+		if (fInitialized && isProviderCommandEnabled() && !useDefaultESIProviderCmd()) {
 			String cmd = getSIProviderCommandLine();
 			if (cmd == null || cmd.length() == 0) {
 				return false;

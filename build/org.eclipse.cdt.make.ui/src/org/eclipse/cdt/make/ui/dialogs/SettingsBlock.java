@@ -1,15 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
-
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -80,7 +77,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_BUILD_INCREMENTAL_TARGET = PREFIX + ".makeWorkbench.incrementalBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_FULL_TARGET = PREFIX + ".makeWorkbench.fullBuildTarget"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_CLEAN_TARGET = PREFIX + ".makeWorkbench.cleanTarget"; //$NON-NLS-1$
-	
+
 	Button stopOnErrorButton;
 
 	Button defButton;
@@ -128,6 +125,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_DEFAULT));
 		defButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
 					buildCommand.setEnabled(false);
@@ -147,10 +145,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
 		buildCommand = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		
+
 		((GridData) (buildCommand.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (buildCommand.getLayoutData())).grabExcessHorizontalSpace = true;
 		buildCommand.addListener(SWT.Modify, new Listener() {
+
 			public void handleEvent(Event e) {
 				getContainer().updateContainer();
 			}
@@ -174,6 +173,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 	protected void createWorkBenchBuildControls(Composite parent) {
 		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				targetAuto.setEnabled(autoButton.getSelection());
 				targetFull.setEnabled(fullButton.getSelection());
@@ -196,19 +196,19 @@ public class SettingsBlock extends AbstractCOptionPage {
 		autoButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_AUTO));
 		autoButton.addSelectionListener(selectionAdapter);
 		autoButton.setSelection(fBuildInfo.isAutoBuildEnable());
-//		if (!MakeUIPlugin.getWorkspace().isAutoBuilding()) {
-//			autoButton.setEnabled(false);
-//		}
+		//		if (!MakeUIPlugin.getWorkspace().isAutoBuilding()) {
+		//			autoButton.setEnabled(false);
+		//		}
 		targetAuto = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
 		targetAuto.setText(fBuildInfo.getAutoBuildTarget());
 		((GridData) (targetAuto.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetAuto.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetAuto, MakeUIPlugin.getResourceString(MAKE_BUILD_AUTO_TARGET));
-		String noteTitle= MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.note"); //$NON-NLS-1$
-		String noteMessage= MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.autobuildMessage"); //$NON-NLS-1$
-		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), group, noteTitle, noteMessage);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
+		String noteTitle = MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.note"); //$NON-NLS-1$
+		String noteMessage = MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.autobuildMessage"); //$NON-NLS-1$
+		Composite noteControl = createNoteComposite(JFaceResources.getDialogFont(), group, noteTitle, noteMessage);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
 		noteControl.setLayoutData(gd);
 		incrButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_INCR));
 		incrButton.addSelectionListener(selectionAdapter);
@@ -238,54 +238,49 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 	}
 
-	protected Composite createNoteComposite(
-			Font font,
-			Composite composite,
-			String title,
-			String message) {
-			Composite messageComposite = new Composite(composite, SWT.NONE);
-			GridLayout messageLayout = new GridLayout();
-			messageLayout.numColumns = 2;
-			messageLayout.marginWidth = 0;
-			messageLayout.marginHeight = 0;
-			messageComposite.setLayout(messageLayout);
-			messageComposite.setLayoutData(
-				new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-			messageComposite.setFont(font);
+	protected Composite createNoteComposite(Font font, Composite composite, String title, String message) {
+		Composite messageComposite = new Composite(composite, SWT.NONE);
+		GridLayout messageLayout = new GridLayout();
+		messageLayout.numColumns = 2;
+		messageLayout.marginWidth = 0;
+		messageLayout.marginHeight = 0;
+		messageComposite.setLayout(messageLayout);
+		messageComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		messageComposite.setFont(font);
 
-			final Label noteLabel = new Label(messageComposite, SWT.BOLD);
-			noteLabel.setText(title);
-			noteLabel.setFont(JFaceResources.getBannerFont());
-			noteLabel.setLayoutData(
-				new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		final Label noteLabel = new Label(messageComposite, SWT.BOLD);
+		noteLabel.setText(title);
+		noteLabel.setFont(JFaceResources.getBannerFont());
+		noteLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-			final IPropertyChangeListener fontListener =
-				new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
-						noteLabel.setFont(
-							JFaceResources.getFont(JFaceResources.BANNER_FONT));
-					}
+		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+					noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
 				}
-			};
-			JFaceResources.getFontRegistry().addListener(fontListener);
-			noteLabel.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent event) {
-					JFaceResources.getFontRegistry().removeListener(fontListener);
-				}
-			});
+			}
+		};
+		JFaceResources.getFontRegistry().addListener(fontListener);
+		noteLabel.addDisposeListener(new DisposeListener() {
 
-			Label messageLabel = new Label(messageComposite, SWT.WRAP);
-			messageLabel.setText(message);
-			messageLabel.setFont(font);
-			return messageComposite;
-		}
+			public void widgetDisposed(DisposeEvent event) {
+				JFaceResources.getFontRegistry().removeListener(fontListener);
+			}
+		});
+
+		Label messageLabel = new Label(messageComposite, SWT.WRAP);
+		messageLabel.setText(message);
+		messageLabel.setFont(font);
+		return messageComposite;
+	}
 	public void addControlAccessibleListener(Control control, String controlName) {
 		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(controlName));
 	}
 	private class ControlAccessibleListener extends AccessibleAdapter {
+
 		private String controlName;
-		ControlAccessibleListener(String name){
+		ControlAccessibleListener(String name) {
 			controlName = name;
 		}
 		public void getName(AccessibleEvent e) {
@@ -306,6 +301,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		((GridData) (buildLocation.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (buildLocation.getLayoutData())).grabExcessHorizontalSpace = true;
 		buildLocation.addListener(SWT.Modify, new Listener() {
+
 			public void handleEvent(Event e) {
 				getContainer().updateContainer();
 			}
@@ -313,17 +309,14 @@ public class SettingsBlock extends AbstractCOptionPage {
 		Button browse = new Button(group, SWT.NONE);
 		browse.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE));
 		browse.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
-				ContainerSelectionDialog dialog =
-					new ContainerSelectionDialog(
-						getShell(),
-						getContainer().getProject(),
-						true,
+				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(), true,
 						MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					Object[] selection = dialog.getResult();
 					if (selection.length > 0) {
-						buildLocation.setText(((IPath) selection[0]).toOSString());
+						buildLocation.setText( ((IPath)selection[0]).toOSString());
 					}
 				}
 			}
@@ -363,17 +356,28 @@ public class SettingsBlock extends AbstractCOptionPage {
 	}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {
+		// Missing builder info
+		if (fBuildInfo == null) {
+			return;
+		}
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		IWorkspace workspace = MakeUIPlugin.getWorkspace();
 		// To avoid multi-build
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(MakeUIPlugin.getResourceString("SettingsBlock.monitor.applyingSettings"), 1); //$NON-NLS-1$
-				IMakeBuilderInfo info;
+				IMakeBuilderInfo info = null;
 				if (getContainer().getProject() != null) {
-					info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
+					try {
+						info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
+					} catch (CoreException e) {
+						// disabled builder... just log it 
+						MakeCorePlugin.log(e);
+						return;
+					}
 				} else {
 					info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
 				}
@@ -423,6 +427,10 @@ public class SettingsBlock extends AbstractCOptionPage {
 	}
 
 	public void performDefaults() {
+		// Missing builder info
+		if (fBuildInfo == null) {
+			return;
+		}
 		IMakeBuilderInfo info;
 		if (getContainer().getProject() != null) {
 			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);

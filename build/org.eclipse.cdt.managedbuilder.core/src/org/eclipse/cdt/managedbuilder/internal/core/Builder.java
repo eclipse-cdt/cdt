@@ -523,7 +523,12 @@ public class Builder extends BuildObject implements IBuilder {
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionBuilder(superClassId);
 				if (superClass == null) {
-					// TODO:  Report error
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"superClass",	//$NON-NLS-1$
+							superClassId,
+							"builder",	//$NON-NLS-1$
+							getId());
 				}
 			}
 		}

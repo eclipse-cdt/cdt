@@ -294,10 +294,20 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			if (ownerId != null)
+			if (ownerId != null) {
 				owner = tool.getOptionCategory(ownerId);
-			else
+				if (owner == null) {
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"owner",	//$NON-NLS-1$
+							ownerId,
+							"optionCategory",	//$NON-NLS-1$
+							getId());
+				}
+			}
+			if (owner == null) {
 				owner = tool;
+			}
 			
 			// Hook me in
 			if (owner instanceof Tool)

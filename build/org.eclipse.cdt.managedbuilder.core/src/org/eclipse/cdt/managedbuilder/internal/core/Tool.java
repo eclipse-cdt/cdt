@@ -1496,7 +1496,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionTool(superClassId);
 				if (superClass == null) {
-					// TODO:  Report error
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"superClass",	//$NON-NLS-1$
+							superClassId,
+							"tool",	//$NON-NLS-1$
+							getId());
 				}
 			}
 			//  Call resolveReferences on our children

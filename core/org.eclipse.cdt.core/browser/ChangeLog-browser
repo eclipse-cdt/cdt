@@ -1,3 +1,10 @@
+2004-07-06 Chris Wiebe
+
+	This patch prevents some NPEs from happening in the class browser.  I
+	suggest this should be applied to both HEAD and CDT_2_0 branch.
+
+	* browser/org/eclipse/cdt/core/browser/TypeInfo.java
+
 2004-06-22 Alain Magloire
 	Part of PR 68246.
 	Close the inputstream to release resource handle

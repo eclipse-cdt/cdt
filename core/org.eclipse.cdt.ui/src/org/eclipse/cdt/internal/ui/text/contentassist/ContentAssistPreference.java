@@ -146,24 +146,23 @@ public class ContentAssistPreference {
 		if (jcp == null)
 			return;
 			
-		if (AUTOACTIVATION_TRIGGERS_DOT.equals(key)) {
+		if ( (AUTOACTIVATION_TRIGGERS_DOT.equals(key)) 
+		     || (AUTOACTIVATION_TRIGGERS_ARROW.equals(key))
+			 || (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) ){
 			boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
-			if (useDotAsTrigger){
-				String triggers= "."; //$NON-NLS-1$
-				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
-			}
-		} else if (AUTOACTIVATION_TRIGGERS_ARROW.equals(key)) {
 			boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
-			if (useArrowAsTrigger){
-				String triggers= ">"; //$NON-NLS-1$
-				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
-			}
-		} else if (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) {
 			boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-			if (useDoubleColonAsTrigger){
-				String triggers= ":"; //$NON-NLS-1$
-				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			String triggers = "";
+			if (useDotAsTrigger){
+				triggers += "."; //$NON-NLS-1$
 			}
+			if (useArrowAsTrigger){
+				triggers += ">"; //$NON-NLS-1$
+			}
+			if (useDoubleColonAsTrigger){
+				triggers += ":"; //$NON-NLS-1$
+			}
+			jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		} else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {
 			//boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
 			//jcp.restrictProposalsToVisibility(enabled);

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests.scanner2;
 
 import java.util.List;
 
+import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -162,12 +163,12 @@ public class BaseScanner2Test extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			if( lString )
-				assertTrue(t.getType() == IToken.tLSTRING);
+				assertEquals(IToken.tLSTRING, t.getType());
 			else
-				assertTrue(t.getType() == IToken.tSTRING);
-			assertTrue(t.getImage().equals(expectedImage));
+				assertEquals(IToken.tSTRING, t.getType());
+			assertEquals(expectedImage, t.getImage());
 		} catch (EndOfFileException e) {
-			assertTrue(false);
+			fail("EOF received");
 		} 
 	}
 
@@ -175,7 +176,7 @@ public class BaseScanner2Test extends TestCase {
 	{
 		try {
 			IToken t= scanner.nextToken();
-			assertTrue(t.getType() == tokenType);
+			assertEquals(tokenType, t.getType());
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		} 
@@ -200,12 +201,17 @@ public class BaseScanner2Test extends TestCase {
 		} 
 	}
 
+	public static void assertCharArrayEquals(char[] expected, char[] actual) {
+		if (!CharArrayUtils.equals(expected, actual))
+			throw new ComparisonFailure(null, new String(expected), new String(actual));
+	}
+	
 	public void validateDefinition(String name, String value)
 	{
 		Object expObject = scanner.getRealDefinitions().get(name.toCharArray());
 		assertNotNull(expObject);
 		assertTrue(expObject instanceof ObjectStyleMacro);
-		assertTrue(CharArrayUtils.equals(value.toCharArray(), ((ObjectStyleMacro)expObject).expansion));
+		assertCharArrayEquals(value.toCharArray(), ((ObjectStyleMacro)expObject).expansion);
 	}
 
 	public void validateDefinition(String name, int value)
@@ -233,8 +239,8 @@ public class BaseScanner2Test extends TestCase {
     {
 		try {
 			IToken t= scanner.nextToken();
-			assertTrue(t.getType() == IToken.tLCHAR );
-			assertEquals( t.getImage(), string ); 
+			assertEquals(IToken.tLCHAR, t.getType());
+			assertEquals(t.getImage(), string); 
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}		

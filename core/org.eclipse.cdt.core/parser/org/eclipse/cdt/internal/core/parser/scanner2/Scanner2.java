@@ -248,13 +248,31 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		if (nextToken == null)
 			finished = true;
-		else if (lastToken.getType() == IToken.tSTRING) {
+		else if (nextToken.getType() == IToken.tPOUNDPOUND) {
+			// time for a pasting
+			IToken token2 = fetchToken();
+			if (token2 == null) {
+				nextToken = null;
+				finished = true;
+			} else {
+				String t1 = lastToken.getImage();
+				String t2 = token2.getImage();
+				char[] pb = new char[t1.length() + t2.length()];
+				t1.getChars(0, t1.length(), pb, 0);
+				t2.getChars(0, t2.length(), pb, t1.length());
+				pushContext(pb);
+				lastToken = oldToken;
+				nextToken = null;
+				return nextToken();
+			}
+		} else if (lastToken.getType() == IToken.tSTRING) {
 			while (nextToken != null && nextToken.getType() == IToken.tSTRING) {
 				// Concatenate the adjacent strings
 				String t1 = lastToken.getImage();
 				String t2 = nextToken.getImage();
 				lastToken = new ImagedToken(IToken.tSTRING, t1 + t2);
-				oldToken.setNext(lastToken);
+				if (oldToken != null)
+					oldToken.setNext(lastToken);
 				nextToken = fetchToken();
 			}
 		}
@@ -1425,7 +1443,26 @@ public class Scanner2 implements IScanner, IScannerData {
 								escaped = false;
 						}
 					}
-
+					break;
+				case '\'':
+					escaped = false;
+					loop:
+					while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
+						switch (buffer[bufferPos[bufferStackPos]]) {
+							case '\\':
+								escaped = !escaped;
+								continue;
+							case '\'':
+								if (escaped) {
+									escaped = false;
+									continue;
+								}
+								break loop;
+							default:
+								escaped = false;
+						}
+					}
+					break;
 			}
 		}
 		--bufferPos[bufferStackPos];
@@ -1594,9 +1631,23 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (argparens == 0)
 						break;
 					--argparens;
-				} else if (c == ',')
-					if (argparens == 0)
+				} else if (c == ',') {
+					if (argparens == 0) {
 						break;
+					}
+				} else {
+					// start of next macro arg
+					--bufferPos[bufferStackPos];
+					continue;
+				}
+				
+				skipOverWhiteSpace();
+				while (++bufferPos[bufferStackPos] < limit) {
+					if (buffer[bufferPos[bufferStackPos]] != '\n')
+						break;
+					skipOverWhiteSpace();
+				}
+				--bufferPos[bufferStackPos];
 			}
 			
 			char[] arg = emptyCharArray;

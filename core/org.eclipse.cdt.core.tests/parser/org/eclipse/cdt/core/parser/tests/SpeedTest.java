@@ -44,12 +44,12 @@ public class SpeedTest extends TestCase {
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
 			long time = testParse(reader, false, info, ParserLanguage.CPP);
-			if (i > 0)
+			if (i > 4)
 				totalTime += time;
 		}
 		
-		if (n > 0) {
-			System.out.println("Average Time: " + (totalTime / (n - 1)) + " millisecs");
+		if (n > 5) {
+			System.out.println("Average Time: " + (totalTime / (n - 5)) + " millisecs");
 		}
 	}
 

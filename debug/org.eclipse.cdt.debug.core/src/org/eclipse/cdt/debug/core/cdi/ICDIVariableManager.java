@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIExpressionManager extends ICDISessionObject
+public interface ICDIVariableManager extends ICDISessionObject
 {
 	
 	/**

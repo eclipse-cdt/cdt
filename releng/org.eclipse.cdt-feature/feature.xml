@@ -4,10 +4,10 @@
       label="%featureName"
       version="1.0.0"
       provider-name="%providerName"
-      os="win32"
-      ws="win32"
+      os="solaris"
+      ws="motif"
       nl="en_US"
-      arch="x86"
+      arch="sparc"
       image="eclipse_update_120.jpg">
 
    <description>
@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.platform" version="2.0.1" match="compatible"/>
+      <import plugin="org.eclipse.platform" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin
@@ -73,6 +73,30 @@
          download-size="0"
          install-size="0"
          version="1.0.0">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.core.qnx"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.core.solaris"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
    </plugin>
 
    <plugin

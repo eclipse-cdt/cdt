@@ -18,54 +18,103 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTForStatement extends IASTStatement {
 
+    /**
+     * <code>INITEXPRESSION</code> represents the relationship between a <code>IASTForStatement</code> and its <code>IASTExpression</code> initializer.
+     */
     public static final ASTNodeProperty INITEXPRESSION = new ASTNodeProperty("initExpression");  //$NON-NLS-1$
+    /**
+     * <code>INITDECLARATION</code> represents the relationship between a <code>IASTForStatement</code> and its <code>IASTDeclaration</code> initializer.
+     */
     public static final ASTNodeProperty INITDECLARATION = new ASTNodeProperty("initDeclaration");  //$NON-NLS-1$
+    /**
+     * <code>CONDITION</code> represents the relationship between a <code>IASTForStatement</code> and its <code>IASTExpression</code> condition.
+     */
     public static final ASTNodeProperty CONDITION = new ASTNodeProperty("condition");  //$NON-NLS-1$
+    /**
+     * <code>ITERATION</code> represents the relationship between a <code>IASTForStatement</code> and its <code>IASTExpression</code> iteration expression.
+     */
     public static final ASTNodeProperty ITERATION = new ASTNodeProperty("iteration");  //$NON-NLS-1$
+    /**
+     * <code>BODY</code> represents the relationship between a <code>IASTForStatement</code> and its <code>IASTStatement</code> body. 
+     */
     public static final ASTNodeProperty BODY = new ASTNodeProperty("body"); //$NON-NLS-1$
 
 	/**
-	 * The initial expression for the loop. Returns null if there is
+	 * Get the initial expression for the loop. Returns null if there is
 	 * none. You can not have both an initial expression and an initial
 	 * declaration.
 	 * 
-	 * @return
+	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getInitExpression();
 	
+	/**
+	 * Set the initial expression for the loop.
+	 * 
+	 * @param expression <code>IASTExpression</code>
+	 */
 	public void setInit(IASTExpression expression);
 
 	/**
-	 * The initial declaration for the loop. Returns null if there is
+	 * Get the initial declaration for the loop. Returns null if there is
 	 * none. You can not have both an initial declaration and an initial
 	 * declaration.
 	 * 
-	 * @return
+	 * @return <code>IASTDeclaration</code>
 	 */
 	public IASTDeclaration getInitDeclaration();	
+	/**
+	 * Set the intiial declaration for the loop. 
+	 * 
+	 * @param declaration <code>IASTDeclaration</code>
+	 */
 	public void setInit(IASTDeclaration declaration);
 
 	/**
-	 * The condition for the loop.
+	 * Get the condition expression for the loop.
 	 * 
-	 * @return
+	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getCondition();
 	
+	/**
+	 * Set the condition expression for the loop.
+	 * 
+	 * @param condition <code>IASTExpression</code>
+	 */
 	public void setCondition(IASTExpression condition);
 
 	/**
-	 * The expression that is evaluated after the completion of an iteration
+	 * Get the expression that is evaluated after the completion of an iteration
 	 * of the loop.
 	 * 
-	 * @return
+	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getIterationExpression();
 
+	/**
+	 * Set the expression that is evaluated after the completion of an iteration of the loop.
+	 * 
+	 * @param iterator <code>IASTExpression</code>
+	 */
 	public void setIterationExpression(IASTExpression iterator);
 	
+	/**
+	 * Get the statements that this for loop controls. 
+	 * 
+	 * @return <code>IASTStatement</code>
+	 */
 	public IASTStatement getBody();
+	/**
+	 * Set the body of the for loop. 
+	 * 
+	 * @param statement <code>IASTStatement</code>
+	 */
 	public void setBody( IASTStatement statement );
 	
+	/**
+	 * Get the <code>IScope</code> represented by this for loop.
+	 * @return <code>IScope</code>
+	 */
 	public IScope getScope();	
 }

@@ -11,13 +11,30 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * This interface represents the name of a function style macro parameter.
+ * This is not an IASTName, as there are not any bindings for 
+ * 
  * @author jcamelon
  */
 public interface IASTFunctionStyleMacroParameter extends IASTNode {
 
-   public static final IASTFunctionStyleMacroParameter[] EMPTY_PARAMETER_ARRAY = new IASTFunctionStyleMacroParameter[0];
-   
-   public String getParameter();
-   public void   setParameter( String value );
-   
+	/**
+	 * Constant <code>EMPTY_PARAMETER_ARRAY</code> is used to return anempty array.
+	 */
+	public static final IASTFunctionStyleMacroParameter[] EMPTY_PARAMETER_ARRAY = new IASTFunctionStyleMacroParameter[0];
+
+	/**
+	 * Get the parameter name. 
+	 * 
+	 * @return String name
+	 */
+	public String getParameter();
+
+	/**
+	 * Set the parameter name.
+	 * 
+	 * @param value String
+	 */
+	public void setParameter(String value);
+
 }

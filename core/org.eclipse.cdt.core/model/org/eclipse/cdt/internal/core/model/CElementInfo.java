@@ -95,6 +95,20 @@ class CElementInfo {
 	}
 
 	/**
+	 * @see ICElement.isStructureKnown()
+	 */
+	public boolean isReadOnly () {
+		try {
+			IResource r = getElement().getUnderlyingResource();
+			if (r != null) {
+				return r.isReadOnly();
+			}
+		} catch (CModelException e) {
+		}
+		return true;
+	}
+
+	/**
 	 * Returns an array with all the same elements as the specified array except for
 	 * the element to remove. Assumes that the deletion is contained in the array.
 	 */

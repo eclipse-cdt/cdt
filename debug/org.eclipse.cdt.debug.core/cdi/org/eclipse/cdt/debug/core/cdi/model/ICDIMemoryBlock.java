@@ -28,12 +28,11 @@ public interface ICDIMemoryBlock extends ICDIObject {
      * Bit mask used to indicate a byte is read-only.
      */
 	public static final byte READ_ONLY	= 0x01;
-	
+
 	/**
 	 * Bit mask used to indicate a byte is valid.
 	 */
 	public static final byte VALID	= 0x02;
-	
 
 	/**
 	 * Returns the start address of this memory block.
@@ -48,7 +47,12 @@ public interface ICDIMemoryBlock extends ICDIObject {
 	 * @return the length of this memory block in bytes
 	 */	
 	long getLength();
-	
+
+	/**
+	 * @return The size of each memory word in bytes.
+	 */
+	int getWordSize();
+
 	/**
 	 * Returns the values of the bytes currently contained
 	 * in this this memory block.

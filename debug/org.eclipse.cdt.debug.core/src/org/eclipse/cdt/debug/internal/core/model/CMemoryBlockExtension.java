@@ -57,13 +57,24 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 
 	private HashSet fChanges = new HashSet();
 
+	private int fWordSize;
+
+
 	/** 
 	 * Constructor for CMemoryBlockExtension. 
 	 */
 	public CMemoryBlockExtension( CDebugTarget target, String expression, BigInteger baseAddress ) {
+		this(target, expression, baseAddress, 1);
+	}
+
+	/** 
+	 * Constructor for CMemoryBlockExtension. 
+	 */
+	public CMemoryBlockExtension( CDebugTarget target, String expression, BigInteger baseAddress, int wordSize ) {
 		super( target );
 		fExpression = expression;
 		fBaseAddress = baseAddress;
+		fWordSize = wordSize;
 	}
 
 	/* (non-Javadoc)
@@ -127,7 +138,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 							disposeCDIBlock();
 							fBytes = null;
 						}
-						setCDIBlock( createCDIBlock( address, length ) );
+						setCDIBlock( createCDIBlock( address, length, fWordSize ) );
 					}
 					bytes = getCDIBlock().getBytes();
 				}
@@ -246,8 +257,8 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		}
 	}
 
-	private ICDIMemoryBlock createCDIBlock( BigInteger address, long length ) throws CDIException {
-		ICDIMemoryBlock block = ((CDebugTarget)getDebugTarget()).getCDITarget().createMemoryBlock( address.toString(), (int)length );
+	private ICDIMemoryBlock createCDIBlock( BigInteger address, long length, int wordSize ) throws CDIException {
+		ICDIMemoryBlock block = ((CDebugTarget)getDebugTarget()).getCDITarget().createMemoryBlock( address.toString(), (int)length, wordSize );
 		block.setFrozen( false );
 		getCDISession().getEventManager().addEventListener( this );
 		return block;
@@ -390,8 +401,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressibleSize()
 	 */
 	public int getAddressibleSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return fWordSize;
 	}
 
 	/* (non-Javadoc)

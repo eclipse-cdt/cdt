@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import java.math.BigInteger;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
@@ -26,24 +24,14 @@ public interface ICDIMemoryBlockManagement {
 
 	/**
 	 * Returns a memory block specified by given identifier.
-	 * 
+	 * total = units * wordSize;
 	 * @param address 
-	 * @param length - how much for address
+	 * @param units - number of units
+	 * @param wordSize - The size of each memory word in bytes
 	 * @return a memory block with the specified identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIMemoryBlock createMemoryBlock(String address, int length)
-		throws CDIException;
-
-	/**
-	 * Returns a memory block specified by given identifier.
-	 * 
-	 * @param address 
-	 * @param length - how much for address
-	 * @return a memory block with the specified identifier
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	ICDIMemoryBlock createMemoryBlock(BigInteger address, int length)
+	ICDIMemoryBlock createMemoryBlock(String address, int units, int wordSize)
 		throws CDIException;
 
 	/**

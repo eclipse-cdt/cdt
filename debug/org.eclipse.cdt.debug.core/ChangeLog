@@ -1,3 +1,9 @@
+2005-03-23 Alain Magloire
+	Change is the ICDIMemoryBlock&& ICDIMemoryManagement API
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlock.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlockManagement.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CMemoryBlockExtension.java
+
 2005-03-21 Mikhail Khodjaiants
 	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
 	* MappingSourceContainer.java: new

@@ -1,3 +1,11 @@
+2004-01-28 Alain Magloire
+
+	First draft of the OpenType by Chris Wiebe.
+
+	* icons/full/opentype16/opentype.gif	
+	* src/org/eclipse/cdt/internal/ui/opentype/*.java
+	* src/org/eclipse/cdt/internal/ui/opentype/dialogs/*.java
+ 
 2004-01-27 John Camelon
 	Updated COMPLETION_PARSE clients to use SINGLE_NAME_REFERENCE rather than STATEMENT_START.  
 

@@ -414,6 +414,18 @@
             command="org.eclipse.cdt.ui.edit.opendecl"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.openType.name"
+            description="%ActionDefinition.openType.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.navigate.opentype">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+T"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.navigate.opentype"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"
@@ -469,6 +481,17 @@
                class="org.eclipse.cdt.internal.ui.search.OpenCSearchPageAction"
                menubarPath="org.eclipse.search.menu/dialogGroup"
                id="org.eclipse.cdt.ui.actions.OpenCSearchPage">
+         </action>
+         <action
+               label="%OpenTypeAction.label"
+               icon="icons/full/opentype16/opentype.gif"
+               class="org.eclipse.cdt.internal.ui.opentype.OpenTypeAction"
+               menubarPath="navigate/open.ext2"
+               toolbarPath="org.eclipse.search.searchActionSet/Search"
+               id="org.eclipse.cdt.ui.actions.OpenType"
+               definitionId="org.eclipse.cdt.ui.navigate.opentype"
+               enablesFor="*"
+               tooltip="%OpenTypeAction.tooltip">
          </action>
          <menu
                label="%searchMenu.label"

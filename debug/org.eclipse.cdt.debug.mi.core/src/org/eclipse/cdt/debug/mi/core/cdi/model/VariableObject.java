@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 
@@ -14,10 +15,10 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 
 	String name;
 	int position;
-	StackFrame frame;
+	ICDIStackFrame frame;
 	int stackdepth;
 
-	public VariableObject(ICDITarget target, String n, StackFrame stack, int pos, int depth) {
+	public VariableObject(ICDITarget target, String n, ICDIStackFrame stack, int pos, int depth) {
 		super(target);
 		name = n;
 		frame = stack;
@@ -29,7 +30,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		return target;
 	}
 
-	public StackFrame getStackFrame() {
+	public ICDIStackFrame getStackFrame() {
 		return frame;
 	}
 

@@ -1,4 +1,8 @@
 2002-11-19 Mikhail Khodjaiants
+	Added enablement condition to some actions.
+	*plugin.xml
+
+2002-11-19 Mikhail Khodjaiants
 	Fix for bug 26693.
 	* SwitchToDisassemblyActionDelegate.java
 

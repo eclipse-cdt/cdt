@@ -273,6 +273,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
          <action
                label="%EnableBreakpoint.label"
@@ -280,6 +286,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
          <action
                label="%AddBreakpoint.label"
@@ -287,6 +299,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
       </viewerContribution>
       <viewerContribution
@@ -332,6 +350,12 @@
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
       </objectContribution>
       <viewerContribution
@@ -388,6 +412,12 @@
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                tooltip="%RestartAction.tooltip">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
@@ -399,6 +429,12 @@
                helpContextId="show_full_paths_action_context"
                label="%ShowFullPathsAction.label"
                tooltip="%ShowFullPathsAction.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
          <action
                toolbarPath="renderGroup"
@@ -411,6 +447,12 @@
                helpContextId="switch_to_disassembly_action_context"
                label="%SwitchToDisassemblyAction.label"
                tooltip="%SwitchToDisassemblyAction.tooltip">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
          <action
                toolbarPath="renderGroup"
@@ -423,6 +465,12 @@
                helpContextId="show_debugger_console_action_context"
                label="%ShowDebuggerConsoleAction.label"
                tooltip="%ShowDebuggerConsoleAction.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
       </viewContribution>
       <viewContribution
@@ -438,6 +486,12 @@
                helpContextId="show_full_paths_action_context"
                label="%ShowFullPathsAction.label"
                tooltip="%ShowFullPathsAction.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
       </viewContribution>
       <viewContribution
@@ -473,6 +527,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
          </action>
       </editorContribution>
    </extension>

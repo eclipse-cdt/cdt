@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -2516,7 +2517,7 @@ abstract class BaseScanner implements IScanner {
       skipToNewLine();
    }
 
-   protected void handlePPInclude(int pos2, boolean next, int startingLineNumber) {
+   protected void handlePPInclude(int pos2, boolean include_next, int startingLineNumber) {
       char[] buffer = bufferStack[bufferStackPos];
       int limit = bufferLimit[bufferStackPos];
 
@@ -2535,13 +2536,17 @@ abstract class BaseScanner implements IScanner {
 
       int nameLine = 0, endLine = 0;
       char c = buffer[pos];
-      if (c == '\n')
+      int start;
+      int length;
+      
+      switch (c) {
+      case '\n' :
          return;
-      if (c == '"') {
+      case '"' :
          nameLine = getLineNumber(bufferPos[bufferStackPos]);
          local = true;
-         int start = bufferPos[bufferStackPos] + 1;
-         int length = 0;
+         start = bufferPos[bufferStackPos] + 1;
+         length = 0;
          boolean escaped = false;
          while (++bufferPos[bufferStackPos] < limit) {
             ++length;
@@ -2561,11 +2566,12 @@ abstract class BaseScanner implements IScanner {
          nameOffset = start;
          nameEndOffset = start + length;
          endOffset = start + length + 1;
-      } else if (c == '<') {
+         break;
+      case '<' : 
          nameLine = getLineNumber(bufferPos[bufferStackPos]);
          local = false;
-         int start = bufferPos[bufferStackPos] + 1;
-         int length = 0;
+         start = bufferPos[bufferStackPos] + 1;
+         length = 0;
 
          while (++bufferPos[bufferStackPos] < limit
                && buffer[bufferPos[bufferStackPos]] != '>')
@@ -2575,7 +2581,8 @@ abstract class BaseScanner implements IScanner {
          nameEndOffset = start + length;
 
          filename = new String(buffer, start, length);
-      } else {
+         break;
+      default: 
          // handle macro expansions
          int startPos = pos;
          int len = 1;
@@ -2619,6 +2626,7 @@ abstract class BaseScanner implements IScanner {
                }
             }
          }
+         break;
       }
 
       if (filename == null || filename == EMPTY_STRING) {
@@ -2636,79 +2644,89 @@ abstract class BaseScanner implements IScanner {
                EMPTY_CHAR_ARRAY, local, startOffset, startingLineNumber,
                nameOffset, nameEndOffset, nameLine, endOffset, endLine, false);
          quickParsePushPopInclusion(inclusion);
-      } else {
-         CodeReader reader = null;
+         return;
+      }
+      
+      CodeReader reader = null;
+	  File parentFile = null;
+	  if (local || include_next) {
+			// we need to know what the current directory is!
+			File file = new File(String.valueOf(getCurrentFilename()));
+			parentFile = file.getParentFile();
+	  }
 
-         if (local) {
-            // create an include path reconciled to the current directory
-            File file = new File(String.valueOf(getCurrentFilename()));
-            File parentFile = file.getParentFile();
-            if (parentFile != null) {
-               String absolutePath = parentFile.getAbsolutePath();
-               String finalPath = ScannerUtility.createReconciledPath(
-                     absolutePath, filename);
-               reader = (CodeReader) fileCache.get(finalPath.toCharArray());
-               if (reader == null) {
-                  reader = createReaderDuple(finalPath);
-                  if (reader != null && reader.filename != null)
-                     fileCache.put(reader.filename, reader);
-               }
-               if (reader != null) {
-                  pushContext(reader.buffer, new InclusionData(reader,
-                        createInclusionConstruct(fileNameArray,
-                        reader.filename, local, startOffset,
-                        startingLineNumber, nameOffset, nameEndOffset,
-                        nameLine, endOffset, endLine, false)));
-                  return;
-               }
-            }
-         }
+	  if (local && !include_next) {
+			// create an include path reconciled to the current directory
+
+			if (parentFile != null) {
+				String absolutePath = parentFile.getAbsolutePath();
+				String finalPath = ScannerUtility.createReconciledPath(
+						absolutePath, filename);
+				reader = (CodeReader) fileCache.get(finalPath.toCharArray());
+				if (reader == null) {
+					reader = createReaderDuple(finalPath);
+					if (reader != null && reader.filename != null)
+						fileCache.put(reader.filename, reader);
+				}
+				if (reader != null) {
+					pushContext(reader.buffer, new InclusionData(reader,
+							createInclusionConstruct(fileNameArray,
+									reader.filename, local, startOffset,
+									startingLineNumber, nameOffset,
+									nameEndOffset, nameLine, endOffset,
+									endLine, false)));
+					return;
+				}
+			}
+		}
 
          // iterate through the include paths
          // foundme has odd logic but if we're not include_next, then we are
          // looking for the
-         // first occurance, otherwise, we're looking for the one after us
-         boolean foundme = !next;
+         // first occurance, otherwise, we're looking for the one after the
+			// current directory
+         boolean foundme = !include_next;
          if (includePaths != null)
             for (int i = 0; i < includePaths.length; ++i) {
-               String finalPath = ScannerUtility.createReconciledPath(
-                     includePaths[i], filename);
-               if (!foundme) {
-                  if (finalPath
-                        .equals(((InclusionData) bufferData[bufferStackPos]).reader.filename)) {
-                     foundme = true;
-                     continue;
-                  }
-               } else {
-                  reader = (CodeReader) fileCache.get(finalPath.toCharArray());
-                  if (reader == null) {
-                     reader = createReaderDuple(finalPath);
-                     if (reader != null && reader.filename != null)
-                        fileCache.put(reader.filename, reader);
-                  }
-                  if (reader != null) {
-                     Object inclusion = createInclusionConstruct(fileNameArray,
-                           reader.filename, local, startOffset,
-                           startingLineNumber, nameOffset, nameEndOffset,
-                           nameLine, endOffset, endLine, false);
-                     pushContext(reader.buffer, new InclusionData(reader,
-                           inclusion));
-                     return;
-                  }
-               }
-            }
+				if (!foundme) {
+					try {
+						String path = new File(includePaths[i])
+								.getCanonicalPath();
+						String parent = parentFile.getCanonicalPath();
+						if (path.equals(parent))
+							foundme = true;
+					} catch (IOException e) {
+					}
+					continue;
+				}
+				String finalPath = ScannerUtility.createReconciledPath(
+						includePaths[i], filename);
+				reader = (CodeReader) fileCache.get(finalPath.toCharArray());
+				if (reader == null) {
+					reader = createReaderDuple(finalPath);
+					if (reader != null && reader.filename != null)
+						fileCache.put(reader.filename, reader);
+				}
+				if (reader != null) {
+					pushContext(reader.buffer, new InclusionData(reader,
+							createInclusionConstruct(fileNameArray,
+									reader.filename, local, startOffset,
+									startingLineNumber, nameOffset,
+									nameEndOffset, nameLine, endOffset,
+									endLine, false)));
+					return;
+				}
+			}
 
          if (reader == null)
             handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND,
                   startOffset, fileNameArray);
-      }
-
    }
 
    /**
-    * @param finalPath
-    * @return
-    */
+	 * @param finalPath
+	 * @return
+	 */
    protected abstract CodeReader createReaderDuple(String finalPath);
 
    /**
@@ -4301,7 +4319,7 @@ abstract class BaseScanner implements IScanner {
    protected ParserLanguage getLanguage() {
       return language;
    }
-   
+
    protected CodeReader getMainReader()
    {
       if (bufferData != null && bufferData[0] != null

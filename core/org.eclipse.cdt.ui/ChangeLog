@@ -1,3 +1,18 @@
+2003-08-28 Alain Magloire
+
+	Changes to be able to see external file in the CEditor.  The main problem
+	was that the way the Core/Model ICElement and IWorkingCopy was designed
+	they always assume that files are inside the workspace .... So to always have
+	an IFile.  One of the problem was the CContentOutliner.   We provid and
+	extern WorkingCopy: CFileWorkingCopy.  But this should be revisited.
+
+	Changes aslo to the OpenIncludAction to use the IScannerInfo to search
+	for headers.
+
+	* src/org/eclipse/cdt/internal/ui/CFileElmentWorkingCopy.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutliner.java
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java
+
 2003-08-27 Thomas Fletcher
 	
 	Update code completion to include () for functions and methods and

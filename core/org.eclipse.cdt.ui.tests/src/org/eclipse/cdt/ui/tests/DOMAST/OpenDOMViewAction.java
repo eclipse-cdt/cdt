@@ -35,7 +35,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDelegate, IObjectActionDelegate {
 
-	private static final String VIEW_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMAST"; //$NON-NLS-1$
+	public static final String VIEW_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMAST"; //$NON-NLS-1$
 	IViewPart viewPart = null;
 	ISelection selection = null;
 	IFile file = null;

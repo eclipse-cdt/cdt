@@ -85,6 +85,7 @@ public class TreeObject implements IAdaptable {
 	
 	public String getFilename()
 	{
+		if ( node == null ) return ""; //$NON-NLS-1$
 	   IASTNodeLocation [] location = node.getNodeLocations();
 	   if( location[0] instanceof IASTFileLocation )
 	      return ((IASTFileLocation)location[0]).getFileName();

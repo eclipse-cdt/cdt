@@ -18,11 +18,16 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
+import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTObjectMacro;
 
 /**
  * @author dsteffle
@@ -110,7 +115,8 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int processName(IASTName name) {
-		addRoot(name);
+		if ( name.toString() != null )
+			addRoot(name);
 		return PROCESS_CONTINUE;
 	}
 	
@@ -139,7 +145,39 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 		return PROCESS_CONTINUE;
 	}
 	
+	private void mergeNode(ASTNode node) {
+		addRoot(node); // TODO Devin need to figure out how to merge these based on location
+		
+		if (node instanceof ASTObjectMacro)
+			addRoot(((ASTObjectMacro)node).getName());
+	}
+	
+	private void mergeMacros(IASTPreprocessorMacroDefinition[] macros) {
+		for(int i=0; i<macros.length; i++) {
+			if (macros[i] instanceof ASTNode)
+			mergeNode((ASTNode)macros[i]);
+		}
+	}
+	
+	private void mergePreprocessorProblems(IASTProblem[] problems) {
+		for(int i=0; i<problems.length; i++) {
+			if (problems[i] instanceof ASTNode)
+			mergeNode((ASTNode)problems[i]);
+		}
+	}
+	
 	public TreeParent getTree() {
+		if (root.getNode() instanceof IASTTranslationUnit) {
+			IASTTranslationUnit tu = (IASTTranslationUnit)root.getNode();
+			
+			// merge macro definitions to the tree
+			mergeMacros(tu.getMacroDefinitions());
+			
+			// merge preprocessor problems to the tree
+			mergePreprocessorProblems(tu.getPreprocesorProblems());
+			
+		}
+		
 		return root;
 	}
 

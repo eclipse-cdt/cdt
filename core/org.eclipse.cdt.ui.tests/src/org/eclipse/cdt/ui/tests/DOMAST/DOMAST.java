@@ -463,6 +463,8 @@ public class DOMAST extends ViewPart {
             }
             ((CEditor) aPart).selectAndReveal(((TreeObject) obj).getOffset(),
                   ((TreeObject) obj).getLength());
+
+            aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(OpenDOMViewAction.VIEW_ID));
          }
       }
    }

@@ -77,7 +77,13 @@
          <visibility>
          	<or>
 				<objectState name="extension" value="cpp"/>
-				<objectState name="extension" value="c"/>				         	
+				<objectState name="extension" value="CPP"/>
+				<objectState name="extension" value="c"/>
+				<objectState name="extension" value="C"/>
+				<objectState name="extension" value="cc"/>
+				<objectState name="extension" value="CC"/>
+				<objectState name="extension" value="cxx"/>
+				<objectState name="extension" value="CXX"/>
          	</or>
          </visibility>
       </viewerContribution>

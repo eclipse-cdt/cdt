@@ -1,5 +1,12 @@
 2003-01-10 Alain Magloire
 
+	* src/.../mi/core/cdi/BreakpointManager.java (update): fix subscript
+	(setCondition): Fire a ChangedEvent.
+	(enableBreakpoint): Fire a ChangedEvent.
+	(disableBreakpoint): Fire a ChangedEvent.
+
+2003-01-10 Alain Magloire
+
 	* src/.../mi/core/cdi/model/CTarget.java (runUntil): Address breakpoint
 	needs a "*" prefix.
 

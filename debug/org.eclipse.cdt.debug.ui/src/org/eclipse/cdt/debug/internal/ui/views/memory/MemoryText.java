@@ -126,24 +126,6 @@ public class MemoryText
 		fText.getCaret().setVisible( true );
 	}
 	
-	private void refresh( Point[] zones, String[] items )
-	{
-		int count = ( zones.length < items.length ) ? zones.length : items.length;
-		for ( int i = 0; i < count; ++i )
-		{
-			fText.replaceTextRange( zones[i].x, 
-							  		zones[i].y - zones[i].x + 1,
-							  		items[i] );
-/*
-			fText.setStyleRange( new StyleRange( zones[i].x, 
-										   		 zones[i].y - zones[i].x + 1,
-										   		 getDirtyColor(),
-										   		 getBackgroundColor() ) );
-*/
-			fText.redrawRange( zones[i].x, zones[i].y - zones[i].x + 1, false );
-		}
-	}
-
 	protected void handleVerifyKey( VerifyEvent event ) 
 	{
 		if ( event.character == SWT.LF ||
@@ -190,11 +172,6 @@ public class MemoryText
 	private Color getChangedColor()
 	{
 		return CDebugUIPlugin.getPreferenceColor( ICDebugPreferenceConstants.MEMORY_CHANGED_RGB );
-	}
-	
-	private Color getDirtyColor()
-	{
-		return CDebugUIPlugin.getPreferenceColor( ICDebugPreferenceConstants.MEMORY_DIRTY_RGB );
 	}
 	
 	public void changeFont()

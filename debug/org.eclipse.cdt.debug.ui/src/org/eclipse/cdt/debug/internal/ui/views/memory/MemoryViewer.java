@@ -161,12 +161,6 @@ public class MemoryViewer extends ContentViewer
 		return fTabFolder;
 	}
 	
-	private MemoryControlArea getMemoryControlArea( int index )
-	{
-		CTabItem item = fTabFolder.getItem( index );
-		return ( item != null ) ? (MemoryControlArea)item.getControl() : null;
-	}
-	
 	private MemoryControlArea getMemoryControlArea( IFormattedMemoryBlock block )
 	{
 		CTabItem[] tabItems = fTabFolder.getItems();

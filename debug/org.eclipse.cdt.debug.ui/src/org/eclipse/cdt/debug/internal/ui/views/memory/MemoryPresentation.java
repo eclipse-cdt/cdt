@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Display;
  */
 public class MemoryPresentation
 {
-	static final private char NOT_AVAILABLE_CHAR = '?';
-
 	private static final int INTERVAL_BETWEEN_ADDRESS_AND_DATA = 2;
 	private static final int INTERVAL_BETWEEN_DATA_ITEMS = 1;
 	private static final int INTERVAL_BETWEEN_DATA_AND_ASCII = 1;
@@ -163,14 +161,6 @@ public class MemoryPresentation
 		return result.toString();
 	}
 
-	private String resize( String item, char ch, int size )
-	{
-		char[] chars = new char[size - item.length()];
-		for ( int i = 0; i < chars.length; ++i )
-			chars[i] = ch;
-		return String.valueOf( chars ).concat( item );
-	}
-
 	private int getRowLength()
 	{
 		return getAddressLength() + 
@@ -185,16 +175,6 @@ public class MemoryPresentation
 		return 10;
 	}
 	
-	private boolean isInAddressZone( int offset )
-	{
-		if ( getRowLength() != 0 )
-		{
-			int pos = offset % getRowLength();
-			return ( pos >= 0 && pos < getAddressLength() ); 
-		}
-		return false;
-	}
-
 	private boolean isInAsciiArea( int offset )
 	{
 		if ( displayASCII() && getRowLength() != 0 )
@@ -259,13 +239,6 @@ public class MemoryPresentation
 		return 0;
 	}
 
-	private char getPaddingCharacter()
-	{
-		if ( getMemoryBlock() != null )
-			return getMemoryBlock().getPaddingCharacter();
-		return '.';
-	}
-	
 	protected boolean displayASCII()
 	{
 		if ( canDisplayAscii() )

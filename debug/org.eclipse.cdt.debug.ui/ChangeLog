@@ -1,4 +1,11 @@
 2003-04-08 Mikhail Khodjaiants
+	Removed unused private methods and members.
+	* CDebugEditor.java
+	* MemoryPresentation.java
+	* MemoryText.java
+	* MemoryViewer.java
+
+2003-04-08 Mikhail Khodjaiants
 	Preserving the registers tree structure during the debug session.
 	* ViewerState.java: new
 	* RegistersView.java

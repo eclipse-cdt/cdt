@@ -95,7 +95,7 @@ public class CDebugEditor extends CEditor
 		/** The attach source button */
 		private Button fAttachButton = null;
 		/** The preference change listener */
-		private IPropertyChangeListener fPropertyChangeListener;
+//		private IPropertyChangeListener fPropertyChangeListener;
 
 		private IEditorInput fInput = null;
 

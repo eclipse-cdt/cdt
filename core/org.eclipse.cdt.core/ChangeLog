@@ -1,3 +1,8 @@
+2005-02-24 Alain Magloire
+	Part of 79596
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* plugin.properties
+	
 2005-02-21 Alain Magloire
 	Adapt the ResolverModel code to the IContentTypeManager.
 	* src/orgeclipse/cdt/core/internal/filetype/ResolverModel.java

@@ -1,3 +1,6 @@
+2003-09-05 John Camelon
+	Updated CompleteParseASTTest::testSimpleForLoop()
+
 2003-09-04 John Camelon
     Updated ASTFailedTests::testBug39702() to fail more accurately.
     Added testSimpleFunctionBody(), testSimpleForLoop() to CompleteParseASTTest.java.

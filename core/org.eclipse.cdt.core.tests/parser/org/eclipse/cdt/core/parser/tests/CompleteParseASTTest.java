@@ -595,6 +595,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTFunction f = (IASTFunction) i.next();
 		assertFalse( i.hasNext() );
 		assertEquals( callback.getReferences().size(), 5 );
+		i = parse( "const int FIVE = 5;  void f() {  int x = 0; for( int i = 0; i < FIVE; ++i )  x += i;  }").getDeclarations();
+		five = (IASTVariable) i.next();
+		f = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 5 );
+		
+		i = parse( "class A { }; void f() {  for( int i = 0; i < (A*)0; ++i ) { A anA; } }").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		f = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() ); 
+		assertEquals( callback.getReferences().size(), 4 );
 	}
 
 	public void testBug42541() throws Exception

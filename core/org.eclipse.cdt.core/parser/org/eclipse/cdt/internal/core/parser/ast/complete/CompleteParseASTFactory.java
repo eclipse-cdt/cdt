@@ -1667,7 +1667,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IContainerSymbol newScope = pst.newContainerSymbol("");
 		newScope.setContainingSymbol(symbol);
 		
-		return new ASTCodeScope( newScope );
+		ASTCodeScope codeScope = new ASTCodeScope( newScope );
+		try
+        {
+            attachSymbolExtension( newScope, codeScope );
+        }
+        catch (ExtensionException e)
+        {
+        }
+		return codeScope;
 	}
 
 	/* (non-Javadoc)

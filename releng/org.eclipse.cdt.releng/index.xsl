@@ -11,8 +11,8 @@
 	    <body>
 	        <h2>CDT 1.2 Build Page</h2>
 	        <p>
-		    The nightly builds are currently run every weeknight,
-		    Monday to Friday at 3:00 a.m. EDT/EST.
+		    The nightly builds are currently run twice a week
+		    Monday and Thursday at 4:00 a.m. EDT/EST.
 
 		    To get download and install the builds, add the following
 		    as a site bookmark in Eclipse's Update Manager perspective:
@@ -36,8 +36,7 @@
 		</p>
 		<h3>Builds</h3>
 		<p>
-		    The builds are currently being run every weeknight. The
-		    reports from the automated build verification test suites
+		    The reports from the automated build verification test suites
 		    are linked below.
 		</p>
 		<ul>

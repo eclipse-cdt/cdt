@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <project name="CDT Build Bootstrap" default="main">
 
-    <property name="build.version" value="1.2.0"/>
+    <property name="build.branch" value="1.2"/>
+    <property name="build.tag" value="cdt_1_2"/>
+
     <property name="build.server" value="update.eclipse.org"/>
-    <property name="build.remotedir" value="/home/www/tools/cdt/updates/builds/1.2"/>
+    <property name="build.remotedir" value="/home/www/tools/cdt/updates/builds/${build.branch}"/>
     <!--property name="build.userid" value="userid on server"/-->
     <!--property name="build.password" value="password on server"/-->
 

@@ -1,3 +1,8 @@
+2003-11-13 Mikhail Khodjaiants
+	Use 'StringBuffer' instead of 'String' when generating stack frame labels.
+	Added a label for dummy stack frames instead of using the name provided by the rendered object.
+	* CDTDebugModelPresentation.java 
+
 2003-11-05 Mikhail Khodjaiants
 	The argument type of the 'getBreakpointAddress' of 'ICBreakpointManager' is changed from 
 	'ICBreakpoint' to 'ICBreakpointManager'.

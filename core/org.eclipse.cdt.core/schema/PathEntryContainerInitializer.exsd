@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="pathEntryContainerInitializer" name="%PathEntryContainerInitializer"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="pathEntryContainerInitializer" name="Path Entry Container Initializers"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="CProject" name="%CProject.name"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="CProject" name="C/C++ Project Description"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point]
@@ -55,6 +55,13 @@
             <annotation>
                <documentation>
                   This is a nature ID which the owner has. This is used to restore a ICDescriptor which has been deleted.  If this is not provided the descriptor will be restore with no owner. A project with multiple natures will use the first matching nature searched in the reverse order in the Project Description.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="platform" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

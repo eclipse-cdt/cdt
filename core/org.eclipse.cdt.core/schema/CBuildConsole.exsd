@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="CBuildConsole" name="CBuildConsole"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="CBuildConsole" name="C/C++ Build Console"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

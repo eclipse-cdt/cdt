@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="ProcessList" name="%ProcessList.name"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="ProcessList" name="Process List Query Exentsion"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point]

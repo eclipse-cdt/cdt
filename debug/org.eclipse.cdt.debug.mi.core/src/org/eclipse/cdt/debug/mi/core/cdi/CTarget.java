@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MICommand;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
-import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNext;
@@ -36,7 +36,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
@@ -107,8 +106,8 @@ public class CTarget  implements ICDITarget {
 			// Resetting threads may change the value of
 			// some variables like Register.  Send an update
 			// To generate changeEvents.
-			VariableManager varMgr = session.getVariableManager();
-			varMgr.update();
+			RegisterManager regMgr = session.getRegisterManager();
+			regMgr.update();
 		}
 
 		// We should be allright now.
@@ -468,27 +467,23 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
 	 */
 	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIDataListRegisterNames registers = 
-			factory.createMIDataListRegisterNames();
-		try {
-			mi.postCommand(registers);
-			MIDataListRegisterNamesInfo info =
-				registers.getMIDataListRegisterNamesInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-			String[] names = info.getRegisterNames();
-			RegisterObject[] regs = new RegisterObject[names.length];
-			for (int i = 0; i < names.length; i++) {
-				regs[i] = new RegisterObject(names[i], i);
-			}
-			return regs;
-		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
-		}
+		RegisterManager mgr = session.getRegisterManager();
+		return mgr.getRegisterObjects();
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getRegisters(ICDIRegisterObject[])
+	*/
+	public ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) throws CDIException {
+		ICDIRegister[] registers = null;
+		RegisterManager mgr = session.getRegisterManager();
+		registers = new ICDIRegister[regs.length];
+		for (int i = 0; i < registers.length; i++) {
+				registers[i] = mgr.createRegister(regs[i]);
+		}
+		return registers;
+	}
+
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSharedLibraries()

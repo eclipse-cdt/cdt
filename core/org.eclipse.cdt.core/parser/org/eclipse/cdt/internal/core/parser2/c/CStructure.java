@@ -14,8 +14,11 @@ package org.eclipse.cdt.internal.core.parser2.c;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,66 +33,77 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
  * @author aniefer
  */
 public class CStructure implements ICompositeType {
-	final private IASTDeclSpecifier declSpecifier;
+	private IASTElaboratedTypeSpecifier[] declarations = null;
+	private ICASTCompositeTypeSpecifier definition;
+	//final private IASTDeclSpecifier declSpecifier;
 	
 	public CStructure( IASTDeclSpecifier declSpec ){
-		declSpec = checkForDefinition( declSpec );
-		this.declSpecifier = declSpec;
+	    if( declSpec instanceof IASTCompositeTypeSpecifier )
+	        definition = (ICASTCompositeTypeSpecifier) declSpec;
+	    else {
+	        declarations = new IASTElaboratedTypeSpecifier[] { (IASTElaboratedTypeSpecifier) declSpec };
+	    }
 	}
 	
-	private IASTDeclSpecifier checkForDefinition( IASTDeclSpecifier declSpec ){
-		if( declSpec instanceof ICASTCompositeTypeSpecifier )
-			return declSpec;
-		
+    public IASTNode getPhysicalNode(){
+        return ( definition != null ) ? (IASTNode)definition : (IASTNode)declarations[0];
+    }
+	private ICASTCompositeTypeSpecifier checkForDefinition( IASTElaboratedTypeSpecifier declSpec ){
 		IASTDeclSpecifier spec = CVisitor.findDefinition( (ICASTElaboratedTypeSpecifier) declSpec );
 		if( spec != null && spec instanceof ICASTCompositeTypeSpecifier ){
-			declSpec = spec;
 			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) spec;
 			((CASTName)compTypeSpec.getName()).setBinding( this );
+			return compTypeSpec;
 		}
-		return declSpec;
+		return null;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		if( declSpecifier instanceof ICASTCompositeTypeSpecifier )
-			return ((ICASTCompositeTypeSpecifier)declSpecifier).getName().toString();
-		else if( declSpecifier instanceof ICASTElaboratedTypeSpecifier )
-			return ((ICASTElaboratedTypeSpecifier)declSpecifier).getName().toString();
-		
-		return ""; //$NON-NLS-1$
+		if( definition != null )
+			return definition.getName().toString();
+
+		return declarations[0].getName().toString();
+	}
+	public char[] getNameCharArray() {
+		if( definition != null )
+			return ((CASTName)definition.getName()).toCharArray();
+
+		return ((CASTName)declarations[0].getName()).toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CVisitor.getContainingScope( declSpecifier );
+	    IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ( ( definition != null ) ? (IASTNode)definition : declarations[0] );
+		return CVisitor.getContainingScope( declSpec );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
 	public List getFields() {
-		if( !( declSpecifier instanceof ICASTCompositeTypeSpecifier ) ){
-			//error
-			return null;
-		}
-		
-		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpecifier;
-		List members = compositeTypeSpec.getMembers();
-		int size = members.size();
+	    if( definition == null ){
+	        ICASTCompositeTypeSpecifier temp = checkForDefinition( declarations[0] );
+	        if( temp == null )
+	            return null;
+	        definition = temp;
+	    }
+
+		IASTDeclaration[] members = definition.getMembers();
+		int size = members.length;
 		List fields = new ArrayList( size );
 		if( size > 0 ){
 
 			for( int i = 0; i < size; i++ ){
-				IASTNode node = (IASTNode) members.get(i);
+				IASTNode node = members[i];
 				if( node instanceof IASTSimpleDeclaration ){
-					List declarators = ((IASTSimpleDeclaration)node).getDeclarators();
-					for( int j = 0; j < declarators.size(); j++ ){
-						IASTDeclarator declarator = (IASTDeclarator) declarators.get(i);
+					IASTDeclarator[] declarators = ((IASTSimpleDeclaration)node).getDeclarators();
+					for( int j = 0; j < declarators.length; j++ ){
+						IASTDeclarator declarator = declarators[i];
 						IBinding binding = declarator.getName().resolveBinding();
 						if( binding != null )
 							fields.add( binding );
@@ -105,21 +119,22 @@ public class CStructure implements ICompositeType {
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public IField findField(String name) {
-		if( !( declSpecifier instanceof ICASTCompositeTypeSpecifier ) ){
-			//error
-			return null;
-		}
-		
-		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpecifier;
-		List members = compositeTypeSpec.getMembers();
-		int size = members.size();
+	    if( definition == null ){
+	        ICASTCompositeTypeSpecifier temp = checkForDefinition( declarations[0] );
+	        if( temp == null )
+	            return null;
+	        definition = temp;
+	    }
+
+		IASTDeclaration[] members = definition.getMembers();
+		int size = members.length;
 		if( size > 0 ){
 			for( int i = 0; i < size; i++ ){
-				IASTNode node = (IASTNode) members.get(i);
+				IASTNode node = members[i];
 				if( node instanceof IASTSimpleDeclaration ){
-					List declarators = ((IASTSimpleDeclaration)node).getDeclarators();
-					for( int j = 0; j < declarators.size(); j++ ){
-						IASTDeclarator declarator = (IASTDeclarator) declarators.get(j);
+					IASTDeclarator[] declarators = ((IASTSimpleDeclaration)node).getDeclarators();
+					for( int j = 0; j < declarators.length; j++ ){
+						IASTDeclarator declarator = declarators[j];
 						if( name.equals( declarator.getName().toString() ) ){
 							IBinding binding = declarator.getName().resolveBinding();
 							if( binding instanceof IField )

@@ -9,10 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -35,10 +31,10 @@ public class CASTSimpleDeclaration extends CASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
      */
-    public List getDeclarators() {
-        if( declarators == null ) return Collections.EMPTY_LIST;
+    public IASTDeclarator[] getDeclarators() {
+        if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         removeNullDeclarators();
-        return Arrays.asList( declarators );
+        return declarators;
     }
     
     public void addDeclarator( IASTDeclarator d )

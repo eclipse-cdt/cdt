@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.parser2.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -27,19 +28,25 @@ public class CEnumerator implements IEnumerator {
     public CEnumerator( IASTEnumerator enumtor ){
 		this.enumerator= enumtor;
 	}
+    
+    public IASTNode getPhysicalNode(){
+        return enumerator;
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
         return enumerator.getName().toString();
     }
+    public char[] getNameCharArray(){
+        return ((CASTName) enumerator.getName()).toCharArray();
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        // TODO Auto-generated method stub
-        return null;
+        return CVisitor.getContainingScope( enumerator );
     }
 
 }

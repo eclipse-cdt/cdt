@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -54,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -67,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -121,7 +125,7 @@ public class CVisitor {
 	protected static final int AT_BEGINNING = 1;
 	protected static final int AT_NEXT = 2; 
 
-	static protected void createBinding( CASTName name ){
+	static protected void createBinding( IASTName name ){
 		IBinding binding = null;
 		IASTNode parent = name.getParent();
 		
@@ -144,21 +148,22 @@ public class CVisitor {
 		} else if( parent instanceof IASTEnumerator ) {
 		    binding = createBinding( (IASTEnumerator) parent );
 		}
-		name.setBinding( binding );
+		((CASTName)name).setBinding( binding );
 	}
 
 	private static IBinding createBinding( ICASTEnumerationSpecifier enumeration ){
-	    return new CEnumeration( enumeration );
+	    IEnumeration binding = new CEnumeration( enumeration );
+	    ((ICScope)binding.getScope()).addBinding( binding );
+	    return binding; 
 	}
 	private static IBinding createBinding( IASTEnumerator enumerator ){
-	    return new CEnumerator( enumerator );
+	    IEnumerator binding = new CEnumerator( enumerator ); 
+	    ((ICScope)binding.getScope()).addBinding( binding );
+	    return binding;
 	}
 	private static IBinding createBinding( IASTStatement statement ){
 	    if( statement instanceof IASTGotoStatement ){
 	        IScope scope = getContainingScope( statement );
-	        while( scope != null && !( scope instanceof ICFunctionScope) ){
-	            scope = scope.getParent();
-	        }
 	        if( scope != null && scope instanceof ICFunctionScope ){
 	            CFunctionScope functionScope = (CFunctionScope) scope;
 	            List labels = functionScope.getLabels();
@@ -170,7 +175,9 @@ public class CVisitor {
 	            }
 	        }
 	    } else if( statement instanceof IASTLabelStatement ){
-	        return new CLabel( (IASTLabelStatement) statement );
+	        IBinding binding = new CLabel( (IASTLabelStatement) statement );
+	        ((ICFunctionScope) binding.getScope()).addBinding( binding );
+	        return binding;
 	    }
 	    return null;
 	}
@@ -178,17 +185,19 @@ public class CVisitor {
 		IASTNode parent = elabTypeSpec.getParent();
 		if( parent instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) parent;
-			if( declaration.getDeclarators().size() == 0 ){
+			if( declaration.getDeclarators().length == 0 ){
 				//forward declaration
 				IBinding binding = resolveBinding( elabTypeSpec, CURRENT_SCOPE | TAGS );
-				if( binding == null )
+				if( binding == null ){
 					binding = new CStructure( elabTypeSpec );
+					((ICScope) binding.getScope()).addBinding( binding );
+				}
 				return binding;
 			} 
 			return resolveBinding( elabTypeSpec, COMPLETE | TAGS );
 		} else if( parent instanceof IASTTypeId || parent instanceof IASTParameterDeclaration ){
 			IASTNode blockItem = getContainingBlockItem( parent );
-			return findBinding( blockItem, (CASTName) elabTypeSpec.getName(), COMPLETE | TAGS );
+			return findBinding( blockItem, elabTypeSpec.getName(), COMPLETE | TAGS );
 		}
 		return null;
 	}
@@ -228,12 +237,14 @@ public class CVisitor {
 	 * @param parent
 	 * @return
 	 */
-	private static IBinding createBinding(IASTDeclarator declarator, CASTName name) {
+	private static IBinding createBinding(IASTDeclarator declarator, IASTName name) {
 		IBinding binding = null;
 		IASTNode parent = declarator.getParent();
 		if( declarator instanceof IASTFunctionDeclarator ){
 			binding = resolveBinding( parent, CURRENT_SCOPE );
-			if( binding == null )
+			if( binding != null )
+			    ((CFunction)binding).addDeclarator( (IASTFunctionDeclarator) declarator );
+			else
 				binding = new CFunction( (IASTFunctionDeclarator) declarator );
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			binding = createBinding( (IASTSimpleDeclaration) parent, name );
@@ -245,7 +256,10 @@ public class CVisitor {
 	}
 
 	private static IBinding createBinding( ICASTCompositeTypeSpecifier compositeTypeSpec ){
-		return new CStructure( compositeTypeSpec );
+	    ICompositeType binding = new CStructure( compositeTypeSpec );
+	    ICScope scope = (ICScope) binding.getScope();
+	    scope.addBinding( binding );
+		return binding;
 	}
 	
 
@@ -257,10 +271,17 @@ public class CVisitor {
 		IBinding binding = null;
 		if( simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
 			binding = new CTypeDef( name );
+			((ICScope) binding.getScope()).addBinding( binding );
 		} else if( simpleDeclaration.getParent() instanceof ICASTCompositeTypeSpecifier ){
 			binding = new CField( name );
+			((ICScope) binding.getScope()).addBinding( binding );
 		} else {
-			binding = new CVariable( name );
+		    CScope scope = (CScope) CVisitor.getContainingScope( simpleDeclaration );
+		    binding = scope.getBinding( ICScope.NAMESPACE_TYPE_OTHER, name.toCharArray() );
+		    if( binding == null ){
+		        binding = new CVariable( name );
+		        scope.addBinding( binding );
+		    }
 		}
  
 		return binding;
@@ -282,31 +303,31 @@ public class CVisitor {
 			IASTFunctionDeclarator functionDeclartor = functionDef.getDeclarator();
 			IASTName name = functionDeclartor.getName();
 			IASTNode blockItem = getContainingBlockItem( node );
-			return findBinding( blockItem, (CASTName) name, bits );
+			return findBinding( blockItem, name, bits );
 		} else if( node instanceof IASTIdExpression ){
 			IASTNode blockItem = getContainingBlockItem( node );
-			return findBinding( blockItem, (CASTName) ((IASTIdExpression)node).getName(), bits );
+			return findBinding( blockItem, ((IASTIdExpression)node).getName(), bits );
 		} else if( node instanceof ICASTTypedefNameSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
-			return findBinding( blockItem, (CASTName) ((ICASTTypedefNameSpecifier)node).getName(), bits );
+			return findBinding( blockItem, ((ICASTTypedefNameSpecifier)node).getName(), bits );
 		} else if( node instanceof ICASTElaboratedTypeSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
-			return findBinding( blockItem, (CASTName) ((ICASTElaboratedTypeSpecifier)node).getName(), bits );
+			return findBinding( blockItem, ((ICASTElaboratedTypeSpecifier)node).getName(), bits );
 		} else if( node instanceof ICASTCompositeTypeSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
-			return findBinding( blockItem, (CASTName) ((ICASTCompositeTypeSpecifier)node).getName(), bits );
+			return findBinding( blockItem, ((ICASTCompositeTypeSpecifier)node).getName(), bits );
 		} else if( node instanceof IASTParameterDeclaration ){
 			IASTParameterDeclaration param = (IASTParameterDeclaration) node;
 			IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
-			if( fDtor.getParent() instanceof IASTFunctionDefinition ){
-				return null;
-			}
-			IASTFunctionDeclarator fdef = findDefinition( fDtor );
-			if( fdef != null ){
-				int index = fDtor.getParameters().indexOf( param );
-				if( index >= 0 && index < fdef.getParameters().size() ){
-					IASTParameterDeclaration pdef = (IASTParameterDeclaration) fdef.getParameters().get( index );
-					return pdef.getDeclarator().getName().resolveBinding();
+			IFunction function = (IFunction) fDtor.getName().resolveBinding();
+			if( function.getPhysicalNode() != fDtor ) {
+			    IASTParameterDeclaration [] ps = fDtor.getParameters();
+			    int index = -1;
+			    for( index = 0; index < ps.length; index++ )
+			        if( ps[index] == param ) break; 
+				List params = function.getParameters();
+				if( index >= 0 && index < params.size() ){
+				    return (IBinding) params.get( index );
 				}
 			}
 		} else if( node instanceof IASTTypeId ){
@@ -325,6 +346,22 @@ public class CVisitor {
 		return null;
 	}
 	
+	public static IScope getContainingScope( IASTNode node ){
+	    if( node instanceof IASTDeclaration )
+	        return getContainingScope( (IASTDeclaration) node );
+	    else if( node instanceof IASTStatement )
+	        return getContainingScope( (IASTStatement) node );
+	    else if( node instanceof IASTDeclSpecifier )
+	        return getContainingScope( (IASTDeclSpecifier) node );
+	    else if( node instanceof IASTParameterDeclaration )
+	        return getContainingScope( (IASTParameterDeclaration) node );
+	    else if( node instanceof IASTEnumerator ){
+	        //put the enumerators in the same scope as the enumeration
+	        return getContainingScope( (IASTEnumerationSpecifier) node.getParent() );
+	    }
+	    
+	    return null;
+	}
 	/**
 	 * @param declaration
 	 * @return
@@ -335,6 +372,10 @@ public class CVisitor {
 			return ((IASTTranslationUnit)parent).getScope();
 		} else if( parent instanceof IASTDeclarationStatement ){
 			return getContainingScope( (IASTStatement) parent );
+		} else if( parent instanceof IASTForStatement ){
+		    return ((IASTForStatement)parent).getScope();
+		} else if( parent instanceof IASTCompositeTypeSpecifier ){
+		    return ((IASTCompositeTypeSpecifier)parent).getScope();
 		}
 		
 		return null;
@@ -342,19 +383,31 @@ public class CVisitor {
 	
 	public static IScope getContainingScope( IASTStatement statement ){
 		IASTNode parent = statement.getParent();
-		if( parent instanceof IASTStatement ){
-			return getContainingScope( (IASTStatement)parent );
+		IScope scope = null;
+		if( parent instanceof IASTCompoundStatement ){
+		    IASTCompoundStatement compound = (IASTCompoundStatement) parent;
+		    scope = compound.getScope();
+		} else if( parent instanceof IASTStatement ){
+			scope = getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
 			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
-			return function.getFunctionScope();
+			scope = function.getFunctionScope();
 		}
 		
-		return null;
+		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
+		    //labels have function scope
+		    while( scope != null && !(scope instanceof ICFunctionScope) ){
+		        scope = scope.getParent();
+		    }
+		}
+		
+		return scope;
 	}
 	
 	public static IScope getContainingScope( IASTDeclSpecifier compTypeSpec ){
-		return null;
+	    IASTNode parent = compTypeSpec.getParent();
+	    return getContainingScope( (IASTSimpleDeclaration) parent );
 	}
 
 	/**
@@ -392,24 +445,34 @@ public class CVisitor {
 		return getContainingBlockItem( parent );
 	}
 	
-	protected static IBinding findBinding( IASTNode blockItem, CASTName name, int bits ){
+	protected static IBinding findBinding( IASTNode blockItem, IASTName name, int bits ){
 		IBinding binding = null;
 		while( blockItem != null ){
 			
 			IASTNode parent = blockItem.getParent();
-			List list = null;
+			IASTNode [] nodes = null;
+			ICScope scope = null;
 			if( parent instanceof IASTCompoundStatement ){
 				IASTCompoundStatement compound = (IASTCompoundStatement) parent;
-				list = compound.getStatements();
+				nodes = compound.getStatements();
+				scope = (ICScope) compound.getScope();
 			} else if ( parent instanceof IASTTranslationUnit ){
 				IASTTranslationUnit translation = (IASTTranslationUnit) parent;
-				list = translation.getDeclarations();
+				nodes = translation.getDeclarations();
+				scope = (ICScope) translation.getScope();
 			}
 			
-			if( list != null ){
-				for( int i = 0; i < list.size(); i++ ){
-					IASTNode node = (IASTNode) list.get(i);
-					if( node == blockItem )
+			if( scope != null ){
+			    int namespaceType = (bits & TAGS) != 0 ? ICScope.NAMESPACE_TYPE_TAG 
+			            							   : ICScope.NAMESPACE_TYPE_OTHER;
+			    binding = scope.getBinding( namespaceType, name.toCharArray() );
+			    if( binding != null )
+			        return binding;
+			}
+			if( nodes != null ){
+				for( int i = 0; i < nodes.length; i++ ){
+					IASTNode node = nodes[i];
+					if( node == null || node == blockItem )
 						break;
 					if( node instanceof IASTDeclarationStatement ){
 						IASTDeclarationStatement declStatement = (IASTDeclarationStatement) node;
@@ -453,15 +516,13 @@ public class CVisitor {
 		return null;
 	}
 	
-	private static IBinding checkForBinding( IASTDeclaration declaration, CASTName name ){
+	private static IBinding checkForBinding( IASTDeclaration declaration, IASTName name ){
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
-			List declarators = simpleDeclaration.getDeclarators();
-			int size = declarators.size();
-
-			for( int i = 0; i < size; i++ ){
-				IASTDeclarator declarator = (IASTDeclarator) declarators.get(i);
-				CASTName declaratorName = (CASTName) declarator.getName();
+			IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
+			for( int i = 0; i < declarators.length; i++ ){
+				IASTDeclarator declarator = declarators[i];
+				IASTName declaratorName = declarator.getName();
 				if( CharArrayUtils.equals( declaratorName.toCharArray(), name.toCharArray() ) ){
 					return declaratorName.resolveBinding();
 				}
@@ -470,26 +531,27 @@ public class CVisitor {
 			//decl spec 
 			IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
 			if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
-				CASTName elabName = (CASTName) ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+				IASTName elabName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
 				if( CharArrayUtils.equals( elabName.toCharArray(), name.toCharArray() ) ){
 					return elabName.resolveBinding();
 				}
 			} else if( declSpec instanceof ICASTCompositeTypeSpecifier ){
-				CASTName compName = (CASTName) ((ICASTCompositeTypeSpecifier)declSpec).getName();
+				IASTName compName = ((ICASTCompositeTypeSpecifier)declSpec).getName();
 				if( CharArrayUtils.equals( compName.toCharArray(), name.toCharArray() ) ){
 					return compName.resolveBinding();
 				}
 			} else if( declSpec instanceof ICASTEnumerationSpecifier ){
 			    ICASTEnumerationSpecifier enumeration = (ICASTEnumerationSpecifier) declSpec;
-			    CASTName eName = (CASTName) enumeration.getName();
+			    IASTName eName = enumeration.getName();
 			    if( CharArrayUtils.equals( eName.toCharArray(), name.toCharArray() ) ){
 					return eName.resolveBinding();
 				}
 			    //check enumerators too
-			    List list = enumeration.getEnumerators();
-			    for( int i = 0; i < list.size(); i++ ) {
-			        IASTEnumerator enumerator = (IASTEnumerator) list.get(i);
-			        eName = (CASTName) enumerator.getName();
+			    IASTEnumerator [] list = enumeration.getEnumerators();
+			    for( int i = 0; i < list.length; i++ ) {
+			        IASTEnumerator enumerator = list[i];
+			        if( enumerator == null ) break;
+			        eName = enumerator.getName();
 			        if( CharArrayUtils.equals( eName.toCharArray(), name.toCharArray() ) ){
 						return eName.resolveBinding();
 					}
@@ -498,18 +560,19 @@ public class CVisitor {
 			}
 		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
-			IASTFunctionDeclarator declarator = functionDef.getDeclarator();
+			CASTFunctionDeclarator declarator = (CASTFunctionDeclarator) functionDef.getDeclarator();
 			
 			//check the function itself
-			CASTName declName = (CASTName) declarator.getName();
+			IASTName declName = declarator.getName();
 			if( CharArrayUtils.equals( declName.toCharArray(), name.toCharArray() ) ){
 				return declName.resolveBinding();
 			}
 			//check the parameters
-			List parameters = declarator.getParameters();
-			for( int i = 0; i < parameters.size(); i++ ){
-				IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) parameters.get(i);
-				declName = (CASTName) parameterDeclaration.getDeclarator().getName();
+			IASTParameterDeclaration []  parameters = declarator.getParameters();
+			for( int i = 0; i < parameters.length; i++ ){
+				IASTParameterDeclaration parameterDeclaration = parameters[i];
+				if( parameterDeclaration == null ) break;
+				declName = parameterDeclaration.getDeclarator().getName();
 				if( CharArrayUtils.equals( declName.toCharArray(), name.toCharArray() ) ){
 					return declName.resolveBinding();
 				}
@@ -518,7 +581,7 @@ public class CVisitor {
 		return null;
 	}
 	
-	private static IBinding checkForBinding( IASTStatement statement, CASTName name ){
+	private static IBinding checkForBinding( IASTStatement statement, IASTName name ){
 		if( statement instanceof IASTDeclarationStatement ){
 			return checkForBinding( ((IASTDeclarationStatement)statement).getDeclaration(), name );
 		} else if( statement instanceof IASTForStatement ){
@@ -531,20 +594,19 @@ public class CVisitor {
 	}
 	
 	protected static IASTDeclarator findDefinition( IASTDeclarator declarator, int beginAtLoc ){
-	    return (IASTDeclarator) findDefinition( declarator, declarator.getName().toString(), beginAtLoc );
+	    return (IASTDeclarator) findDefinition( declarator, declarator.getName().toCharArray(), beginAtLoc );
 	}
 	protected static IASTFunctionDeclarator findDefinition( IASTFunctionDeclarator declarator ){
-		return (IASTFunctionDeclarator) findDefinition( declarator, declarator.getName().toString(), AT_BEGINNING );
+		return (IASTFunctionDeclarator) findDefinition( declarator, declarator.getName().toCharArray(), AT_NEXT );
 	}
 	protected static IASTDeclSpecifier findDefinition( ICASTElaboratedTypeSpecifier declSpec ){
-		String elabName = declSpec.getName().toString();
-		return (IASTDeclSpecifier) findDefinition(declSpec, elabName, AT_BEGINNING);
+		return (IASTDeclSpecifier) findDefinition(declSpec, declSpec.getName().toCharArray(), AT_BEGINNING);
 	}
 
-	private static IASTNode findDefinition(IASTNode decl, String declName, int beginAtLoc) {
+	private static IASTNode findDefinition(IASTNode decl, char [] declName, int beginAtLoc) {
 		IASTNode blockItem = getContainingBlockItem( decl );
 		IASTNode parent = blockItem.getParent();
-		List list = null;
+		IASTNode [] list = null;
 		if( parent instanceof IASTCompoundStatement ){
 			IASTCompoundStatement compound = (IASTCompoundStatement) parent;
 			list = compound.getStatements();
@@ -554,8 +616,8 @@ public class CVisitor {
 		}
 		boolean begun = ( beginAtLoc == AT_BEGINNING );
 		if( list != null ){
-			for( int i = 0; i < list.size(); i++ ){
-				IASTNode node = (IASTNode) list.get(i);
+			for( int i = 0; i < list.length; i++ ){
+				IASTNode node = list[i];
 				if( node == blockItem ){
 				    begun = true;
 					continue;
@@ -576,18 +638,16 @@ public class CVisitor {
 						IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
 						if( simpleDecl.getDeclSpecifier() instanceof ICASTCompositeTypeSpecifier ){
 							ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier();
-							IASTName name = compTypeSpec.getName();
-							if( name.toString().equals( declName ) ){
+							if( CharArrayUtils.equals( compTypeSpec.getName().toCharArray(), declName ) ){
 								return compTypeSpec;
 							}
 						}
 					} else if( node instanceof IASTSimpleDeclaration && decl instanceof IASTDeclarator ){
 					    IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
-					    List dtors = simpleDecl.getDeclarators();
-					    for( int j = 0; j < dtors.size(); j++ ){
-					        IASTDeclarator dtor = (IASTDeclarator) dtors.get( j );
-					        if( dtor.getName().toString().equals( declName ) ){
-					            return dtor;
+					    IASTDeclarator [] dtors = simpleDecl.getDeclarators();
+					    for( int j = 0; dtors != null && j < dtors.length; j++ ){
+					        if( CharArrayUtils.equals( dtors[j].getName().toCharArray(), declName ) ){
+					            return dtors[j];
 					        }
 					    }
 					}
@@ -602,9 +662,9 @@ public class CVisitor {
 	}
 	
 	public static void visitTranslationUnit( IASTTranslationUnit tu, BaseVisitorAction action ){
-		List decls = tu.getDeclarations();
-		for( int i = 0; i < decls.size(); i++ ){
-			if( !visitDeclaration( (IASTDeclaration) decls.get(i), action ) ) return;
+		IASTDeclaration[] decls = tu.getDeclarations();
+		for( int i = 0; i < decls.length; i++ ){
+			if( !visitDeclaration( decls[i], action ) ) return;
 		}
 	}
 	
@@ -621,9 +681,9 @@ public class CVisitor {
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declaration;
 			if( !visitDeclSpecifier( simpleDecl.getDeclSpecifier(), action ) ) return false;
-			List list = simpleDecl.getDeclarators();
-			for( int i = 0; i < list.size(); i++ ){
-				if( !visitDeclarator( (IASTDeclarator) list.get(i), action ) ) return false;
+			IASTDeclarator [] list = simpleDecl.getDeclarators();
+			for( int i = 0; list != null && i < list.length; i++ ){
+				if( !visitDeclarator( list[i], action ) ) return false;
 			}
 		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition fnDef = (IASTFunctionDefinition) declaration;
@@ -646,9 +706,9 @@ public class CVisitor {
 		    if( !visitInitializer( declarator.getInitializer(), action ) ) return false;
 		
 		if( declarator instanceof IASTFunctionDeclarator ){
-			List list = ((IASTFunctionDeclarator)declarator).getParameters();
-			for( int i = 0; i < list.size(); i++ ){
-				IASTParameterDeclaration param = (IASTParameterDeclaration) list.get(i);
+		    IASTParameterDeclaration [] list = ((IASTFunctionDeclarator)declarator).getParameters();
+			for( int i = 0; i < list.length; i++ ){
+				IASTParameterDeclaration param = list[i];
 				if( !visitDeclSpecifier( param.getDeclSpecifier(), action ) ) return false;
 				if( !visitDeclarator( param.getDeclarator(), action ) ) return false;
 			}
@@ -664,9 +724,10 @@ public class CVisitor {
 	    if( initializer instanceof IASTInitializerExpression ){
 	        if( !visitExpression( ((IASTInitializerExpression) initializer).getExpression(), action ) ) return false;
 	    } else if( initializer instanceof IASTInitializerList ){
-	        List list = ((IASTInitializerList) initializer).getInitializers();
-	        for( int i = 0; i < list.size(); i++ )
-	            if( !visitInitializer( (IASTInitializer) list.get(i), action ) ) return false;
+	        IASTInitializer [] list = ((IASTInitializerList) initializer).getInitializers();
+	        for( int i = 0; i < list.length; i++ ){
+	            if( !visitInitializer( list[i], action ) ) return false;
+	        }
 	    }
 	    return true;
 	}
@@ -687,9 +748,9 @@ public class CVisitor {
 			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
 			if( !visitName( compTypeSpec.getName(), action ) ) return false;
 			
-			List list = compTypeSpec.getMembers();
-			for( int i = 0; i < list.size(); i++ ){
-				if( !visitDeclaration( (IASTDeclaration) list.get(i), action ) ) return false;
+			IASTDeclaration [] list = compTypeSpec.getMembers();
+			for( int i = 0; i < list.length; i++ ){
+				if( !visitDeclaration( list[i], action ) ) return false;
 			}
 		} else if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
 			if( !visitName( ((ICASTElaboratedTypeSpecifier) declSpec).getName(), action ) ) return false;
@@ -698,11 +759,10 @@ public class CVisitor {
 		} else if( declSpec instanceof ICASTEnumerationSpecifier ){
 		    ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) declSpec;
 		    if( !visitName( enumSpec.getName(), action ) ) return false;
-		    List list = enumSpec.getEnumerators();
-		    for( int i = 0; i < list.size(); i++ ){
-		        if( !visitEnumerator( (IASTEnumerator) list.get(i), action ) ) return false;
+		    IASTEnumerator [] list = enumSpec.getEnumerators();
+		    for( int i = 0; i < list.length; i++ ){
+		        if( !visitEnumerator( list[i], action ) ) return false;
 		    }
-		    
 		}
 		return true;
 	}
@@ -720,9 +780,10 @@ public class CVisitor {
 			if( !action.processStatement( statement ) ) return false;
 		
 		if( statement instanceof IASTCompoundStatement ){
-			List list = ((IASTCompoundStatement) statement).getStatements();
-			for( int i = 0; i < list.size(); i++ ){
-				if( !visitStatement( (IASTStatement) list.get(i), action ) ) return false;
+			IASTStatement [] list = ((IASTCompoundStatement) statement).getStatements();
+			for( int i = 0; i < list.length; i++ ){
+			    if( list[i] == null ) break;
+				if( !visitStatement( list[i], action ) ) return false;
 			}
 		} else if( statement instanceof IASTDeclarationStatement ){
 			if( !visitDeclaration( ((IASTDeclarationStatement)statement).getDeclaration(), action ) ) return false;
@@ -784,9 +845,10 @@ public class CVisitor {
 		    if( !visitExpression( ((IASTConditionalExpression)expression).getNegativeResultExpression(), action ) ) return false;
 		    if( !visitExpression( ((IASTConditionalExpression)expression).getPositiveResultExpression(), action ) ) return false;
 		} else if( expression instanceof IASTExpressionList ){
-			List list = ((IASTExpressionList)expression).getExpressions();
-			for( int i = 0; i < list.size(); i++){
-			    if( !visitExpression( (IASTExpression) list.get(i), action ) ) return false;
+			IASTExpression[] list = ((IASTExpressionList)expression).getExpressions();
+			for( int i = 0; i < list.length; i++){
+			    if( list[i] == null ) break;
+			    if( !visitExpression( list[i], action ) ) return false;
 			}
 		} else if( expression instanceof IASTFieldReference ){
 		    if( !visitExpression( ((IASTFieldReference)expression).getFieldOwner(), action ) ) return false;

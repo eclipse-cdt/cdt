@@ -21,6 +21,7 @@ public interface IBinding {
 	 * @return name
 	 */
 	public String getName();
+	public char[] getNameCharArray();
 	
 	/**
 	 * Every name has a scope.
@@ -28,5 +29,6 @@ public interface IBinding {
 	 * @return the scope of this name
 	 */
 	public IScope getScope();
-	
+
+	public IASTNode getPhysicalNode();
 }

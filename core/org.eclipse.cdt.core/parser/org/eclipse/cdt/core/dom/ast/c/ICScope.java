@@ -10,15 +10,20 @@
  *******************************************************************************/
 
 /*
- * Created on Nov 17, 2004
+ * Created on Nov 25, 2004
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * @author aniefer
  */
-public interface ICBlockScope extends IScope {
-
+public interface ICScope extends IScope {
+    public static final int NAMESPACE_TYPE_TAG = 0;
+    public static final int NAMESPACE_TYPE_OTHER = 1;
+    
+    void addBinding( IBinding binding );
+    public IBinding getBinding( int namespaceType, char [] name );
 }

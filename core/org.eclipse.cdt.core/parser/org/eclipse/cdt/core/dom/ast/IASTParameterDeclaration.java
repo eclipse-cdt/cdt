@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTParameterDeclaration extends IASTNode {
+    public static final IASTParameterDeclaration [] EMPTY_PARAMETERDECLARATION_ARRAY = new IASTParameterDeclaration[0];
 
 	ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty( "Decl Specifier"); //$NON-NLS-1$
     ASTNodeProperty DECLARATOR = new ASTNodeProperty( "Declarator"); //$NON-NLS-1$

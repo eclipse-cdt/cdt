@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -74,22 +76,19 @@ public class AST2Tests extends AST2BaseTest {
 		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C );
 		IScope globalScope = tu.getScope();
 
-		List declarations = tu.getDeclarations();
+		IASTDeclaration[] declarations = tu.getDeclarations();
 
 		// int x
-		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) declarations
-				.get(0);
+		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) declarations[0];
 		IASTSimpleDeclSpecifier declspec_x = (IASTSimpleDeclSpecifier) decl_x
 				.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_x.getType());
-		IASTDeclarator declor_x = (IASTDeclarator) decl_x.getDeclarators().get(
-				0);
+		IASTDeclarator declor_x = decl_x.getDeclarators()[0];
 		IASTName name_x = declor_x.getName();
 		assertEquals("x", name_x.toString()); //$NON-NLS-1$
 
 		// function - void f()
-		IASTFunctionDefinition funcdef_f = (IASTFunctionDefinition) declarations
-				.get(1);
+		IASTFunctionDefinition funcdef_f = (IASTFunctionDefinition) declarations[1];
 		IASTSimpleDeclSpecifier declspec_f = (IASTSimpleDeclSpecifier) funcdef_f
 				.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_void, declspec_f.getType());
@@ -99,8 +98,7 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals("f", name_f.toString()); //$NON-NLS-1$
 
 		// parameter - int y
-		IASTParameterDeclaration decl_y = (IASTParameterDeclaration) declor_f
-				.getParameters().get(0);
+		IASTParameterDeclaration decl_y = declor_f.getParameters()[0];
 		IASTSimpleDeclSpecifier declspec_y = (IASTSimpleDeclSpecifier) decl_y
 				.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_y.getType());
@@ -111,15 +109,13 @@ public class AST2Tests extends AST2BaseTest {
 		// int z
 		IASTCompoundStatement body_f = (IASTCompoundStatement) funcdef_f
 				.getBody();
-		IASTDeclarationStatement declstmt_z = (IASTDeclarationStatement) body_f
-				.getStatements().get(0);
+		IASTDeclarationStatement declstmt_z = (IASTDeclarationStatement) body_f.getStatements()[0];
 		IASTSimpleDeclaration decl_z = (IASTSimpleDeclaration) declstmt_z
 				.getDeclaration();
 		IASTSimpleDeclSpecifier declspec_z = (IASTSimpleDeclSpecifier) decl_z
 				.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_z.getType());
-		IASTDeclarator declor_z = (IASTDeclarator) decl_z.getDeclarators().get(
-				0);
+		IASTDeclarator declor_z = decl_z.getDeclarators()[0];
 		IASTName name_z = declor_z.getName();
 		assertEquals("z", name_z.toString()); //$NON-NLS-1$
 
@@ -145,7 +141,7 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(func_f.getFunctionScope(), var_y.getScope());
 
 		IVariable var_z = (IVariable) name_z.resolveBinding();
-		assertEquals(func_f.getFunctionScope(), var_z.getScope());
+		assertEquals(((ICFunctionScope)func_f.getFunctionScope()).getBodyScope(), var_z.getScope());
 
 		// make sure the variable referenced is the same one we declared above
 		assertEquals(var_x, name_ref_x.resolveBinding());
@@ -165,7 +161,7 @@ public class AST2Tests extends AST2BaseTest {
 		buff.append("}"); //$NON-NLS-1$
 
 		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C );
-		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations().get(0);
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations()[0];
 		IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)decl.getDeclSpecifier();
 		
 		// it's a typedef
@@ -174,29 +170,26 @@ public class AST2Tests extends AST2BaseTest {
 		IASTName name_struct = type.getName();
 		assertNull("", name_struct.toString()); //$NON-NLS-1$
 		// member - x
-		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) type
-				.getMembers().get(0);
+		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) type.getMembers()[0];
 		IASTSimpleDeclSpecifier spec_x = (IASTSimpleDeclSpecifier) decl_x
 				.getDeclSpecifier();
 		// it's an int
 		assertEquals(IASTSimpleDeclSpecifier.t_int, spec_x.getType());
-		IASTDeclarator tor_x = (IASTDeclarator) decl_x
-				.getDeclarators().get(0);
+		IASTDeclarator tor_x = decl_x.getDeclarators()[0];
 		IASTName name_x = tor_x.getName();
 		assertEquals("x", name_x.toString()); //$NON-NLS-1$
 
 		// declarator S
-		IASTDeclarator tor_S = (IASTDeclarator) decl.getDeclarators().get(0);
+		IASTDeclarator tor_S = decl.getDeclarators()[0];
 		IASTName name_S = tor_S.getName();
 		assertEquals("S", name_S.toString()); //$NON-NLS-1$
 
 		// function f
-		IASTFunctionDefinition def_f = (IASTFunctionDefinition) tu
-				.getDeclarations().get(1);
+		IASTFunctionDefinition def_f = (IASTFunctionDefinition) tu.getDeclarations()[1];
 		// f's body
 		IASTCompoundStatement body_f = (IASTCompoundStatement) def_f.getBody();
 		// the declaration statement for myS
-		IASTDeclarationStatement declstmt_myS = (IASTDeclarationStatement)body_f.getStatements().get(0);
+		IASTDeclarationStatement declstmt_myS = (IASTDeclarationStatement)body_f.getStatements()[0];
 		// the declaration for myS
 		IASTSimpleDeclaration decl_myS = (IASTSimpleDeclaration)declstmt_myS.getDeclaration();
 		// the type specifier for myS
@@ -204,11 +197,11 @@ public class AST2Tests extends AST2BaseTest {
 		// the type name for myS
 		IASTName name_type_myS = type_spec_myS.getName();
 		// the declarator for myS
-		IASTDeclarator tor_myS = (IASTDeclarator)decl_myS.getDeclarators().get(0);
+		IASTDeclarator tor_myS = decl_myS.getDeclarators()[0];
 		// the name for myS
 		IASTName name_myS = tor_myS.getName();
 		// the assignment expression statement
-		IASTExpressionStatement exprstmt = (IASTExpressionStatement)body_f.getStatements().get(1);
+		IASTExpressionStatement exprstmt = (IASTExpressionStatement)body_f.getStatements()[1];
 		// the assignment expression
 		IASTBinaryExpression assexpr = (IASTBinaryExpression)exprstmt.getExpression();
 		// the field reference to myS.x
@@ -286,12 +279,12 @@ public class AST2Tests extends AST2BaseTest {
     
     public void testMultipleDeclarators() throws Exception {
 		IASTTranslationUnit tu = parse( "int r, s;" , ParserLanguage.C ); //$NON-NLS-1$
-		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations().get(0);
-		List declarators = decl.getDeclarators();
-		assertEquals( 2, declarators.size() );
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations()[0];
+		IASTDeclarator[] declarators = decl.getDeclarators();
+		assertEquals( 2, declarators.length );
 		
-		IASTDeclarator dtor1 = (IASTDeclarator) declarators.get(0);
-		IASTDeclarator dtor2 = (IASTDeclarator) declarators.get(1);
+		IASTDeclarator dtor1 = declarators[0];
+		IASTDeclarator dtor2 = declarators[1];
 		
 		IASTName name1 = dtor1.getName();
 		IASTName name2 = dtor2.getName();
@@ -311,29 +304,29 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//struct A;
-    	IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu.getDeclarations()[0];
     	IASTElaboratedTypeSpecifier compTypeSpec = (IASTElaboratedTypeSpecifier) decl1.getDeclSpecifier();
-    	assertEquals( 0, decl1.getDeclarators().size() );
+    	assertEquals( 0, decl1.getDeclarators().length );
     	IASTName nameA1 = compTypeSpec.getName();
     	
     	//void f() {
-    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations()[1];
     	IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef.getBody();
-    	assertEquals( 2, compoundStatement.getStatements().size() );
+    	assertEquals( 2, compoundStatement.getStatements().length );
     	
     	//   struct A;
-    	IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement.getStatements().get( 0 );
+    	IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement.getStatements()[0];
     	IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) declStatement.getDeclaration();
     	compTypeSpec = (IASTElaboratedTypeSpecifier) decl2.getDeclSpecifier();
-    	assertEquals( 0, decl2.getDeclarators().size() );
+    	assertEquals( 0, decl2.getDeclarators().length );
     	IASTName nameA2 = compTypeSpec.getName();
     	
     	//   struct A * a;
-    	declStatement = (IASTDeclarationStatement) compoundStatement.getStatements().get(1);
+    	declStatement = (IASTDeclarationStatement) compoundStatement.getStatements()[1];
     	IASTSimpleDeclaration decl3 = (IASTSimpleDeclaration) declStatement.getDeclaration();
     	compTypeSpec = (IASTElaboratedTypeSpecifier) decl3.getDeclSpecifier();
     	IASTName nameA3 = compTypeSpec.getName();
-    	IASTDeclarator dtor = (IASTDeclarator) decl3.getDeclarators().get(0);
+    	IASTDeclarator dtor = decl3.getDeclarators()[0];
     	IASTName namea = dtor.getName();
     	assertEquals( 1, dtor.getPointerOperators().size() );
     	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
@@ -361,22 +354,22 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//struct A;
-    	IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu.getDeclarations()[0];
     	IASTElaboratedTypeSpecifier compTypeSpec = (IASTElaboratedTypeSpecifier) decl1.getDeclSpecifier();
-    	assertEquals( 0, decl1.getDeclarators().size() );
+    	assertEquals( 0, decl1.getDeclarators().length );
     	IASTName nameA1 = compTypeSpec.getName();
     	
     	//void f() {
-    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations()[1];
     	IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef.getBody();
-    	assertEquals( 1, compoundStatement.getStatements().size() );
+    	assertEquals( 1, compoundStatement.getStatements().length );
     	  	
     	//   struct A * a;
-    	IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement.getStatements().get(0);
+    	IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement.getStatements()[0];
     	IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) declStatement.getDeclaration();
     	compTypeSpec = (IASTElaboratedTypeSpecifier) decl2.getDeclSpecifier();
     	IASTName nameA2 = compTypeSpec.getName();  	
-    	IASTDeclarator dtor = (IASTDeclarator) decl2.getDeclarators().get(0);
+    	IASTDeclarator dtor = decl2.getDeclarators()[0];
     	IASTName namea = dtor.getName();
     	assertEquals( 1, dtor.getPointerOperators().size() );
     	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
@@ -403,37 +396,37 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//struct A;
-    	IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
     	IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
-    	assertEquals( 0, decl.getDeclarators().size() );
+    	assertEquals( 0, decl.getDeclarators().length );
     	IASTName name_A1 = elabTypeSpec.getName();
     	
     	//struct A * a;
-    	decl = (IASTSimpleDeclaration) tu.getDeclarations().get(1);
+    	decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
     	elabTypeSpec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
     	IASTName name_A2 = elabTypeSpec.getName();  	
-    	IASTDeclarator dtor = (IASTDeclarator) decl.getDeclarators().get(0);
+    	IASTDeclarator dtor = decl.getDeclarators()[0];
     	IASTName name_a = dtor.getName();
     	assertEquals( 1, dtor.getPointerOperators().size() );
     	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
     	
     	//struct A {
-    	decl = (IASTSimpleDeclaration) tu.getDeclarations().get(2);
+    	decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
     	ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) decl.getDeclSpecifier();
     	IASTName name_Adef = compTypeSpec.getName();
     	
     	//   int i;
-    	decl = (IASTSimpleDeclaration) compTypeSpec.getMembers().get(0);
-    	dtor = (IASTDeclarator) decl.getDeclarators().get(0);
+    	decl = (IASTSimpleDeclaration) compTypeSpec.getMembers()[0];
+    	dtor = decl.getDeclarators()[0];
     	IASTName name_i = dtor.getName();
     
     	//void f() {
-    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations().get(3);
+    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations()[3];
     	IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef.getBody();
-    	assertEquals( 1, compoundStatement.getStatements().size() );
+    	assertEquals( 1, compoundStatement.getStatements().length );
     	
     	//   a->i;
-		IASTExpressionStatement exprstmt = (IASTExpressionStatement)compoundStatement.getStatements().get(0);
+		IASTExpressionStatement exprstmt = (IASTExpressionStatement)compoundStatement.getStatements()[0];
 		IASTFieldReference fieldref = (IASTFieldReference)exprstmt.getExpression();
 		IASTIdExpression id_a = (IASTIdExpression) fieldref.getFieldOwner();
 		IASTName name_aref = id_a.getName();
@@ -466,16 +459,16 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
-        IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+        IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) tu.getDeclarations()[0];
         IASTCompositeTypeSpecifier typeSpec = (IASTCompositeTypeSpecifier) declaration.getDeclSpecifier();
         IASTName x_1 = typeSpec.getName();
         
-        IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
-        IASTParameterDeclaration param = (IASTParameterDeclaration) fdef.getDeclarator().getParameters().get(0);
+        IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[1];
+        IASTParameterDeclaration param = fdef.getDeclarator().getParameters()[0];
         IASTName x_2 = param.getDeclarator().getName();
         
         IASTCompoundStatement compound = (IASTCompoundStatement) fdef.getBody();
-        IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compound.getStatements().get(0);
+        IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compound.getStatements()[0];
         declaration = (IASTSimpleDeclaration) declStatement.getDeclaration();
         IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) declaration.getDeclSpecifier();
         IASTName x_3 = elab.getName();
@@ -500,26 +493,26 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//void f(
-    	IASTSimpleDeclaration f_decl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
-    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) f_decl.getDeclarators().get(0);
+    	IASTSimpleDeclaration f_decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) f_decl.getDeclarators()[0];
     	IASTName f_name1 = dtor.getName();
     	//        int a );
-    	IASTParameterDeclaration param = (IASTParameterDeclaration) dtor.getParameters().get(0);
+    	IASTParameterDeclaration param = dtor.getParameters()[0];
     	IASTDeclarator paramDtor = param.getDeclarator();
     	IASTName name_param1 = paramDtor.getName();
     	
     	//void f( 
-    	IASTFunctionDefinition f_defn = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTFunctionDefinition f_defn = (IASTFunctionDefinition) tu.getDeclarations()[1];
     	dtor = f_defn.getDeclarator();
     	IASTName f_name2 = dtor.getName();
     	//        int b );
-    	param = (IASTParameterDeclaration) dtor.getParameters().get(0);
+    	param = dtor.getParameters()[0];
     	paramDtor = param.getDeclarator();
     	IASTName name_param2 = paramDtor.getName();
     	
     	//   b;
     	IASTCompoundStatement compound = (IASTCompoundStatement) f_defn.getBody();
-    	IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements().get(0);
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements()[0];
     	IASTIdExpression idexp = (IASTIdExpression) expStatement.getExpression();
     	IASTName name_param3 = idexp.getName();
     	
@@ -553,14 +546,14 @@ public class AST2Tests extends AST2BaseTest {
     	StringBuffer buffer = new StringBuffer( "void f( int a, int b ) { }  \n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
-    	IASTFunctionDefinition fDef = (IASTFunctionDefinition) tu.getDeclarations().get(0);
+    	IASTFunctionDefinition fDef = (IASTFunctionDefinition) tu.getDeclarations()[0];
     	IASTFunctionDeclarator fDtor = fDef.getDeclarator();
     	IASTName fName = fDtor.getName();
     	
-    	IASTParameterDeclaration a = (IASTParameterDeclaration) fDtor.getParameters().get( 0 );
+    	IASTParameterDeclaration a = fDtor.getParameters()[0];
     	IASTName name_a = a.getDeclarator().getName();
     	
-    	IASTParameterDeclaration b = (IASTParameterDeclaration) fDtor.getParameters().get( 1 );
+    	IASTParameterDeclaration b = fDtor.getParameters()[1];
     	IASTName name_b = b.getDeclarator().getName();
     	
     	IFunction function = (IFunction) fName.resolveBinding();
@@ -588,23 +581,23 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//void f();
-    	IASTSimpleDeclaration fdecl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
-    	IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) fdecl.getDeclarators().get(0);
+    	IASTSimpleDeclaration fdecl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    	IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) fdecl.getDeclarators()[0];
     	IASTName name_f = fdtor.getName();
     	
     	//void g() {
-    	IASTFunctionDefinition gdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTFunctionDefinition gdef = (IASTFunctionDefinition) tu.getDeclarations()[1];
     	
     	//   f();
     	IASTCompoundStatement compound = (IASTCompoundStatement) gdef.getBody();
-    	IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements().get(0);
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements()[0];
     	IASTFunctionCallExpression fcall = (IASTFunctionCallExpression) expStatement.getExpression();
     	IASTIdExpression fcall_id = (IASTIdExpression) fcall.getFunctionNameExpression();
     	IASTName name_fcall = fcall_id.getName();
     	assertNull( fcall.getParameterExpression() );
     	
     	//void f() {}
-    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(2);
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[2];
     	fdtor = fdef.getDeclarator();
     	IASTName name_fdef = fdtor.getName();
     	
@@ -629,15 +622,15 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//void f() {
-    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(0);
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[0];
     	IASTCompoundStatement compound = (IASTCompoundStatement) fdef.getBody();
     	
     	//   for( 
-    	IASTForStatement for_stmt = (IASTForStatement) compound.getStatements().get(0);
+    	IASTForStatement for_stmt = (IASTForStatement) compound.getStatements()[0];
     	//        int i = 0;
     	assertNull( for_stmt.getInitExpression() );
     	IASTSimpleDeclaration initDecl = (IASTSimpleDeclaration) for_stmt.getInitDeclaration();
-    	IASTDeclarator dtor = (IASTDeclarator) initDecl.getDeclarators().get(0);
+    	IASTDeclarator dtor = initDecl.getDeclarators()[0];
     	IASTName name_i = dtor.getName();
     	//                   i < 5;
     	IASTBinaryExpression exp = (IASTBinaryExpression) for_stmt.getCondition();
@@ -653,7 +646,7 @@ public class AST2Tests extends AST2BaseTest {
     	
     	//      i;
     	compound = (IASTCompoundStatement) for_stmt.getBody();
-    	IASTExpressionStatement exprSt = (IASTExpressionStatement) compound.getStatements().get(0);
+    	IASTExpressionStatement exprSt = (IASTExpressionStatement) compound.getStatements()[0];
     	IASTIdExpression id_i3 = (IASTIdExpression) exprSt.getExpression();
     	IASTName name_i4 = id_i3.getName();
     	
@@ -677,13 +670,13 @@ public class AST2Tests extends AST2BaseTest {
     	
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
-    	IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
     	IASTCompositeTypeSpecifier compType = (IASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier();
-    	IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) compType.getMembers().get(0);
-    	IASTName name_x1 = ((IASTDeclarator) decl_x.getDeclarators().get(0)).getName();
-    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) compType.getMembers()[0];
+    	IASTName name_x1 = decl_x.getDeclarators()[0].getName();
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[1];
     	IASTCompoundStatement body = (IASTCompoundStatement) fdef.getBody();
-    	IASTExpressionStatement expStatement = (IASTExpressionStatement) body.getStatements().get(0);
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) body.getStatements()[0];
     	IASTFieldReference fieldRef = (IASTFieldReference) expStatement.getExpression();
     	IASTName name_x2 = fieldRef.getFieldName();
     	
@@ -743,26 +736,26 @@ public class AST2Tests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
-        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations().get( 0 );
-        assertEquals( decl.getDeclarators().size(), 0 );
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        assertEquals( decl.getDeclarators().length, 0 );
         ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) decl.getDeclSpecifier();
-        IASTEnumerator e1 = (IASTEnumerator) enumSpec.getEnumerators().get(0);
-        IASTEnumerator e2 = (IASTEnumerator) enumSpec.getEnumerators().get(1);
-        IASTEnumerator e3 = (IASTEnumerator) enumSpec.getEnumerators().get(2);
+        IASTEnumerator e1 = enumSpec.getEnumerators()[0];
+        IASTEnumerator e2 = enumSpec.getEnumerators()[1];
+        IASTEnumerator e3 = enumSpec.getEnumerators()[2];
         IASTName name_hue = enumSpec.getName();
         
-        decl = (IASTSimpleDeclaration) tu.getDeclarations().get(1);
-        IASTDeclarator dtor = (IASTDeclarator) decl.getDeclarators().get(0);
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        IASTDeclarator dtor = decl.getDeclarators()[0];
         IASTName name_col = dtor.getName();
-        dtor = (IASTDeclarator) decl.getDeclarators().get(1);
+        dtor = decl.getDeclarators()[1];
         IASTName name_cp = dtor.getName();
         IASTElaboratedTypeSpecifier spec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
         assertEquals( spec.getKind(), IASTElaboratedTypeSpecifier.k_enum );
         IASTName name_hue2 = spec.getName();
         
-        IASTFunctionDefinition fn = (IASTFunctionDefinition) tu.getDeclarations().get(2);
+        IASTFunctionDefinition fn = (IASTFunctionDefinition) tu.getDeclarations()[2];
         IASTCompoundStatement compound = (IASTCompoundStatement) fn.getBody();
-        IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements().get(0);
+        IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements()[0];
         IASTBinaryExpression exp = (IASTBinaryExpression) expStatement.getExpression();
         assertEquals( exp.getOperator(), IASTBinaryExpression.op_assign );
         IASTIdExpression id1 = (IASTIdExpression) exp.getOperand1();
@@ -770,7 +763,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTName r_col = id1.getName();
         IASTName r_blue = id2.getName();
         
-        expStatement = (IASTExpressionStatement) compound.getStatements().get(1);
+        expStatement = (IASTExpressionStatement) compound.getStatements()[1];
         exp = (IASTBinaryExpression) expStatement.getExpression();
         assertEquals( exp.getOperator(), IASTBinaryExpression.op_assign );
         id1 = (IASTIdExpression) exp.getOperand1();
@@ -779,7 +772,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTName r_cp = id1.getName();
         IASTName r_col2 = id2.getName();
         
-        IASTIfStatement ifStatement = (IASTIfStatement) compound.getStatements().get(2);
+        IASTIfStatement ifStatement = (IASTIfStatement) compound.getStatements()[2];
         exp = (IASTBinaryExpression) ifStatement.getCondition();
         ue = (IASTUnaryExpression) exp.getOperand1();
         id1 = (IASTIdExpression) ue.getOperand();
@@ -820,20 +813,20 @@ public class AST2Tests extends AST2BaseTest {
     public void testPointerToFunction() throws Exception
     {
         IASTTranslationUnit tu = parse( "int (*pfi)();", ParserLanguage.C ); //$NON-NLS-1$
-        assertEquals( tu.getDeclarations().size(), 1 );
-        IASTSimpleDeclaration d = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
-        assertEquals( d.getDeclarators().size(), 1 );
-        IASTFunctionDeclarator f = (IASTFunctionDeclarator) d.getDeclarators().get(0);
+        assertEquals( tu.getDeclarations().length, 1 );
+        IASTSimpleDeclaration d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        assertEquals( d.getDeclarators().length, 1 );
+        IASTFunctionDeclarator f = (IASTFunctionDeclarator) d.getDeclarators()[0];
         assertNull( f.getName().toString() );
         assertNotNull( f.getNestedDeclarator() );
         assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
         assertTrue( f.getPointerOperators().isEmpty() );
         assertFalse( f.getNestedDeclarator().getPointerOperators().isEmpty() );
         tu = parse( "int (*pfi)();", ParserLanguage.CPP ); //$NON-NLS-1$
-        assertEquals( tu.getDeclarations().size(), 1 );
-        d = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
-        assertEquals( d.getDeclarators().size(), 1 );
-        f = (IASTFunctionDeclarator) d.getDeclarators().get(0);
+        assertEquals( tu.getDeclarations().length, 1 );
+        d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        assertEquals( d.getDeclarators().length, 1 );
+        f = (IASTFunctionDeclarator) d.getDeclarators()[0];
         assertNull( f.getName().toString() );
         assertNotNull( f.getNestedDeclarator() );
         assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
@@ -849,9 +842,9 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append( "};\n"); //$NON-NLS-1$
         buffer.append( "int X:: * pmi = &X::a;\n"); //$NON-NLS-1$
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
-        assertEquals( tu.getDeclarations().size(), 2 );
-        IASTSimpleDeclaration p2m = (IASTSimpleDeclaration) tu.getDeclarations().get(1);
-        IASTDeclarator d = (IASTDeclarator) p2m.getDeclarators().get(0);
+        assertEquals( tu.getDeclarations().length, 2 );
+        IASTSimpleDeclaration p2m = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        IASTDeclarator d = p2m.getDeclarators()[0];
         ICPPASTPointerToMember po = (ICPPASTPointerToMember) d.getPointerOperators().get(0);
         assertEquals( po.getName().toString(), "X::"); //$NON-NLS-1$
     }

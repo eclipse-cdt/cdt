@@ -107,6 +107,14 @@ public class CPPASTQualifiedName extends CPPASTNode implements ICPPASTQualifiedN
         removeNullNames();
         return Arrays.asList( names );
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
+     */
+    public char[] toCharArray() {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
     
 }

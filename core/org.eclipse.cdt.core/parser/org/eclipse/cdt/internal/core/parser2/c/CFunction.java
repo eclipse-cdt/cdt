@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -26,37 +27,67 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @author aniefer
  */
 public class CFunction implements IFunction {
-	final private IASTFunctionDeclarator declarator;
+	private IASTFunctionDeclarator [] declarators = null;
+	private IASTFunctionDeclarator definition;
+	
 	final private IScope functionScope;
 
 	public CFunction( IASTFunctionDeclarator declarator ){
-		declarator = checkForDefinition( declarator );
-		this.declarator = declarator;
+	    if( declarator.getParent() instanceof IASTFunctionDefinition )
+	        definition = declarator;
+	    else {
+	        declarators = new IASTFunctionDeclarator [] { declarator };
+	    }
+
 		this.functionScope = new CFunctionScope( this );
 	}
 	
-	private IASTFunctionDeclarator checkForDefinition( IASTFunctionDeclarator dtor ){
-		if( dtor.getParent() instanceof IASTFunctionDefinition )
-			return dtor;
-		
-		IASTFunctionDeclarator def = CVisitor.findDefinition( dtor );
-		if( def != null && def != dtor ){
-			dtor = def;
-			((CASTName)dtor.getName()).setBinding( this );
-		}
-		return dtor;
-	}
+    public IASTNode getPhysicalNode(){
+        return ( definition != null ) ? definition : declarators[0];
+    }
+    public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
+        if( fnDeclarator instanceof IASTFunctionDefinition )
+            definition = fnDeclarator;
+        else {
+            if( declarators == null ){
+                declarators = new IASTFunctionDeclarator[] { fnDeclarator };
+            	return;
+            }
+            for( int i = 0; i < declarators.length; i++ ){
+                if( declarators[i] == null ){
+                    declarators[i] = fnDeclarator;
+                    return;
+                }
+            }
+            IASTFunctionDeclarator tmp [] = new IASTFunctionDeclarator [ declarators.length * 2 ];
+            System.arraycopy( declarators, 0, tmp, 0, declarators.length );
+            tmp[ declarators.length ] = fnDeclarator;
+            declarators = tmp;
+        }
+    }
+//	private IASTFunctionDeclarator checkForDefinition( IASTFunctionDeclarator dtor ){
+//		if( dtor.getParent() instanceof IASTFunctionDefinition )
+//			return dtor;
+//		
+//		IASTFunctionDeclarator def = CVisitor.findDefinition( dtor );
+//		if( def != null && def != dtor ){
+//			dtor = def;
+//			((CASTName)dtor.getName()).setBinding( this );
+//		}
+//		return dtor;
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
 	public List getParameters() {
-		List params = declarator.getParameters();
-		int size = params.size();
+	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
+		IASTParameterDeclaration[] params = dtor.getParameters();
+		int size = params.length;
 		List result = new ArrayList( size );
 		if( size > 0 ){
 			for( int i = 0; i < size; i++ ){
-				IASTParameterDeclaration p = (IASTParameterDeclaration) params.get(i);
+				IASTParameterDeclaration p = params[i];
 				result.add( p.getDeclarator().getName().resolveBinding() );
 			}
 		}
@@ -67,14 +98,20 @@ public class CFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return declarator.getName().toString();
+	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
+		return dtor.getName().toString();
+	}
+	public char[] getNameCharArray(){
+	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
+	    return ((CASTName) dtor.getName()).toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CVisitor.getContainingScope( (IASTDeclaration) declarator.getParent() );
+	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
+		return CVisitor.getContainingScope( (IASTDeclaration) dtor.getParent() );
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +121,7 @@ public class CFunction implements IFunction {
 		return functionScope;
 	}
 	
-	public IASTDeclaration getDeclaration(){
-	    return (IASTDeclaration) declarator.getParent();
-	}
+//	public IASTDeclaration getDeclaration(){
+//	    return (IASTDeclaration) declarator.getParent();
+//	}
 }

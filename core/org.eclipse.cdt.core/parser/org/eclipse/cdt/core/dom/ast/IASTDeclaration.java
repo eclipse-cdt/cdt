@@ -16,5 +16,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTDeclaration extends IASTNode {
+    public static final IASTDeclaration [] EMPTY_DECLARATION_ARRAY = new IASTDeclaration[0];
 
 }

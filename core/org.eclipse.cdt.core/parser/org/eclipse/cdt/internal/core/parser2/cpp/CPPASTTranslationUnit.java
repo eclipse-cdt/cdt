@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -49,10 +47,10 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations()
      */
-    public List getDeclarations() {
-        if( decls == null ) return Collections.EMPTY_LIST;
+    public IASTDeclaration[] getDeclarations() {
+        if( decls == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         removeNullDeclarations();
-        return Arrays.asList( decls );
+        return decls;
     }
 
     /**

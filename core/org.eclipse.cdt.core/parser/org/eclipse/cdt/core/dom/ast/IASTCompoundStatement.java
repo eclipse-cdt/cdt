@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * This represents a block of statements.
@@ -26,8 +25,9 @@ public interface IASTCompoundStatement extends IASTStatement {
 	 * 
 	 * @return List of IASTStatement
 	 */
-	public List getStatements();
+	public IASTStatement[] getStatements();
 	
 	public void addStatement( IASTStatement statement );
 	
+	public IScope getScope();
 }

@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 
@@ -25,10 +21,10 @@ public class CPPASTExpressionList extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTExpressionList#getExpressions()
      */
-    public List getExpressions() {
-        if( expressions == null ) return Collections.EMPTY_LIST;
+    public IASTExpression [] getExpressions() {
+        if( expressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
         removeNullExpressions();
-        return Arrays.asList( expressions );
+        return expressions;
     }
 
     /* (non-Javadoc)

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -31,6 +32,10 @@ public class CTypeDef implements ITypedef {
 	public CTypeDef( IASTName name ){
 		this.name = name;
 	}
+	
+    public IASTNode getPhysicalNode(){
+        return name;
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
@@ -52,6 +57,9 @@ public class CTypeDef implements ITypedef {
 	 */
 	public String getName() {
 		return name.toString();
+	}
+	public char[] getNameCharArray(){
+	    return ((CASTName) name).toCharArray();
 	}
 
 	/* (non-Javadoc)

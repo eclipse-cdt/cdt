@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * This is a declarator for a function.
@@ -25,7 +24,7 @@ public interface IASTFunctionDeclarator extends IASTDeclarator {
 	 * 
 	 * @return List of IASTParameterDeclaration
 	 */
-	public List getParameters();
+	public IASTParameterDeclaration[] getParameters();
 	
 	public void addParameterDeclaration( IASTParameterDeclaration parameter );
 	

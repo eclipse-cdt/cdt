@@ -14,11 +14,18 @@ package org.eclipse.cdt.internal.core.parser2.c;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser2.c.CVisitor.BaseVisitorAction;
 
 /**
@@ -27,11 +34,46 @@ import org.eclipse.cdt.internal.core.parser2.c.CVisitor.BaseVisitorAction;
  */
 public class CFunctionScope implements ICFunctionScope {
 	private final CFunction function;
+	private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
 	
 	public CFunctionScope( CFunction function ){
 		this.function = function;
 	}
 	
+	public void addBinding( IBinding binding ) {
+	    //only labels have function scope 
+	    if( !(binding instanceof ILabel) )
+	        return;
+	    if( bindings == CharArrayObjectMap.EMPTY_MAP )
+	        bindings = new CharArrayObjectMap(1);
+	    bindings.put( binding.getNameCharArray(), binding );
+    }
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(int, char[])
+     */
+    public IBinding getBinding( int namespaceType, char[] name ) {
+        if( namespaceType == ICScope.NAMESPACE_TYPE_OTHER )
+            return getBinding( name );
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
+     */
+    public IBinding getBinding( char[] name ) {
+        return (IBinding) bindings.get( name );
+    }
+
+    
+	public IScope getBodyScope(){
+	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) function.getPhysicalNode();
+	    IASTFunctionDefinition fdef = (IASTFunctionDefinition) fdtor.getParent();
+	    IASTStatement statement = fdef.getBody();
+	    if( statement instanceof IASTCompoundStatement ){
+	        return ((IASTCompoundStatement)statement).getScope();
+	    }
+	    return null;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
 	 */
@@ -48,16 +90,18 @@ public class CFunctionScope implements ICFunctionScope {
 
 	public List getLabels(){
 	    FindLabelsAction action = new FindLabelsAction();
-	    CVisitor.visitDeclaration( function.getDeclaration(), action );
+	    IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) function.getPhysicalNode();
+	    if( dtor.getParent() instanceof IASTFunctionDefinition )
+	        CVisitor.visitDeclaration( (IASTDeclaration) dtor.getParent(), action );
 	    
-	    List bindings = new ArrayList();
+	    List list = new ArrayList();
 	    for( int i = 0; i < action.labels.size(); i++ ){
 	        IASTLabelStatement labelStatement = (IASTLabelStatement) action.labels.get(i);
 	        IBinding binding = labelStatement.getName().resolveBinding();
 	        if( binding != null )
-	            bindings.add( binding );
+	            list.add( binding );
 	    }
-	    return bindings;
+	    return list;
 	}
 	
 	static private class FindLabelsAction extends BaseVisitorAction {
@@ -75,4 +119,6 @@ public class CFunctionScope implements ICFunctionScope {
             return true;
         }
 	}
+
+
 }

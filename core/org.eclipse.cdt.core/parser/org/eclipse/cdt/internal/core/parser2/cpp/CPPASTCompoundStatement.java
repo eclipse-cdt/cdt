@@ -10,12 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * @author jcamelon
@@ -46,10 +43,10 @@ public class CPPASTCompoundStatement extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#getStatements()
      */
-    public List getStatements() {
-        if( statements == null ) return Collections.EMPTY_LIST;
+    public IASTStatement[] getStatements() {
+        if( statements == null ) return IASTStatement.EMPTY_STATEMENT_ARRAY;
         removeNullStatements();
-        return Arrays.asList( statements );
+        return statements;
     }
 
     /* (non-Javadoc)
@@ -69,6 +66,14 @@ public class CPPASTCompoundStatement extends CPPASTNode implements
                 statements[i] = old[i];
         }
         statements[ currentIndex++ ] = statement;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#resolveScope()
+     */
+    public IScope getScope() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

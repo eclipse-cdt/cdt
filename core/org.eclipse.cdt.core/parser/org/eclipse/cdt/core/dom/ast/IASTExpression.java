@@ -16,5 +16,5 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTExpression extends IASTNode {
-
+    public static final IASTExpression [] EMPTY_EXPRESSION_ARRAY = new IASTExpression[0]; 
 }

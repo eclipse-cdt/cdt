@@ -26,7 +26,7 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * 
 	 * @return List of IASTDeclaration
 	 */
-	public List getDeclarations();
+	public IASTDeclaration[] getDeclarations();
 	
 	public void addDeclaration( IASTDeclaration declaration );
 	

@@ -55,10 +55,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#getParameters()
      */
-    public List getParameters() {
-        if( parameters == null ) return Collections.EMPTY_LIST;
+    public IASTParameterDeclaration [] getParameters() {
+        if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
         removeNullParameters();
-        return Arrays.asList( parameters );
+        return parameters;
     }
 
     /* (non-Javadoc)

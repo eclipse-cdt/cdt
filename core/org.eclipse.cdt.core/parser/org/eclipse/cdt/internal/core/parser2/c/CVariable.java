@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -31,30 +32,32 @@ public class CVariable implements IVariable {
 	final IASTName name;
 	
 	public CVariable( IASTName name ){
-	    name = checkForDefinition( name );
+//	    name = checkForDefinition( name );
 		this.name = name;
 	}
-	
-	private IASTName checkForDefinition( IASTName nm ){
-	    IASTDeclarator dtor = (IASTDeclarator) nm.getParent();
-	    IASTSimpleDeclaration dcl = (IASTSimpleDeclaration) dtor.getParent();
-	    IASTDeclSpecifier declSpec = dcl.getDeclSpecifier();
-	    if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern ){
-	        IASTDeclarator prev = dtor, tmp = CVisitor.findDefinition( dtor, CVisitor.AT_BEGINNING );
-	        while( tmp != null && tmp != prev ){
-	            CASTName n = (CASTName) tmp.getName();
-	            IASTDeclSpecifier spec = ((IASTSimpleDeclaration)tmp.getParent()).getDeclSpecifier();
-	            if( spec.getStorageClass() != IASTDeclSpecifier.sc_extern ){
-	                nm = n;
-	            }
-	            n.setBinding( this );
-	            prev = tmp;
-	            tmp = CVisitor.findDefinition( tmp, CVisitor.AT_NEXT );
-	        }
-	    }
-	    
-	    return nm;
-	}
+    public IASTNode getPhysicalNode(){
+        return name;
+    }	
+//	private IASTName checkForDefinition( IASTName nm ){
+//	    IASTDeclarator dtor = (IASTDeclarator) nm.getParent();
+//	    IASTSimpleDeclaration dcl = (IASTSimpleDeclaration) dtor.getParent();
+//	    IASTDeclSpecifier declSpec = dcl.getDeclSpecifier();
+//	    if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern ){
+//	        IASTDeclarator prev = dtor, tmp = CVisitor.findDefinition( dtor, CVisitor.AT_BEGINNING );
+//	        while( tmp != null && tmp != prev ){
+//	            CASTName n = (CASTName) tmp.getName();
+//	            IASTDeclSpecifier spec = ((IASTSimpleDeclaration)tmp.getParent()).getDeclSpecifier();
+//	            if( spec.getStorageClass() != IASTDeclSpecifier.sc_extern ){
+//	                nm = n;
+//	            }
+//	            n.setBinding( this );
+//	            prev = tmp;
+//	            tmp = CVisitor.findDefinition( tmp, CVisitor.AT_NEXT );
+//	        }
+//	    }
+//	    
+//	    return nm;
+//	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
@@ -80,6 +83,9 @@ public class CVariable implements IVariable {
 	 */
 	public String getName() {
 		return name.toString();
+	}
+	public char[]getNameCharArray(){
+	    return ((CASTName)name).toCharArray();
 	}
 
 	/* (non-Javadoc)

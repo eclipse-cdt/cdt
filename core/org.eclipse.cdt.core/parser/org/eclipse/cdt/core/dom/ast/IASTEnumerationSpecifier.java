@@ -9,7 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * @author jcamelon
@@ -20,6 +19,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier {
      * @author jcamelon
      */
     public interface IASTEnumerator extends IASTNode {
+        public static final IASTEnumerator[] EMPTY_ENUMERATOR_ARRAY = new IASTEnumerator[0];
 
         public static final ASTNodeProperty ENUMERATOR_NAME = new ASTNodeProperty( "Enumerator Name"); //$NON-NLS-1$
         public void setName( IASTName name );
@@ -33,7 +33,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier {
     
     public static final ASTNodeProperty ENUMERATOR = new ASTNodeProperty( "Enumerator" ); //$NON-NLS-1$
     public void addEnumerator( IASTEnumerator enumerator );
-    public List getEnumerators();
+    public IASTEnumerator[] getEnumerators();
     
     public static final ASTNodeProperty ENUMERATION_NAME = new ASTNodeProperty( "Enum Name"); //$NON-NLS-1$
     public void setName( IASTName name );

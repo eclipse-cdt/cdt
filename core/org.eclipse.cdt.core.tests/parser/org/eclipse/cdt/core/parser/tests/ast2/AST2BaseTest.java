@@ -184,9 +184,9 @@ public class AST2BaseTest extends TestCase {
         buffer.append( code );
         buffer.append( ";\n}"); //$NON-NLS-1$
         IASTTranslationUnit tu = parse( buffer.toString(), language );
-        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations().get(0);
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
         IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
-        IASTExpressionStatement s = (IASTExpressionStatement) cs.getStatements().get( 1 );
+        IASTExpressionStatement s = (IASTExpressionStatement) cs.getStatements()[1];
         return s.getExpression();
     }
 

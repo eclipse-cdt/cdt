@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 
 /**
@@ -86,10 +87,10 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getMembers()
      */
-    public List getMembers() {
-        if( declarations == null ) return Collections.EMPTY_LIST;
+    public IASTDeclaration[] getMembers() {
+        if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         removeNullDeclarations();
-        return Arrays.asList( declarations );
+        return declarations;
 
     }
 
@@ -146,5 +147,13 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
     private int currentIndex2 = 0;    
     private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] baseSpecs = null;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getScope()
+     */
+    public IScope getScope() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

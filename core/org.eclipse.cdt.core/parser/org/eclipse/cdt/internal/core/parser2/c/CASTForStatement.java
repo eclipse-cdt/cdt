@@ -13,12 +13,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * @author jcamelon
  */
 public class CASTForStatement extends CASTNode implements IASTForStatement {
-
+    private IScope scope = null;
+    
     private IASTExpression initialExpression;
     private IASTDeclaration initDeclaration;
     private IASTExpression condition;
@@ -94,6 +96,15 @@ public class CASTForStatement extends CASTNode implements IASTForStatement {
     public void setBody(IASTStatement statement) {
         body = statement;
 
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getScope()
+     */
+    public IScope getScope() {
+        if( scope == null )
+            scope = new CScope( this );
+        return scope;
     }
 
 }

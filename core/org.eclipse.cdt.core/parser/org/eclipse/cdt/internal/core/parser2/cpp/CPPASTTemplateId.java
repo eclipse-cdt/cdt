@@ -116,4 +116,12 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
+     */
+    public char[] toCharArray() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

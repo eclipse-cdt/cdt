@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.parser2.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
@@ -29,6 +30,9 @@ public class CEnumeration implements IEnumeration {
 		this.enumSpec = spec;
 	}
 	
+    public IASTNode getPhysicalNode(){
+        return enumSpec;
+    }
 	private ICASTEnumerationSpecifier checkForDefinition( ICASTEnumerationSpecifier spec ){
 	    return spec;
 	}
@@ -39,13 +43,15 @@ public class CEnumeration implements IEnumeration {
     public String getName() {
         return enumSpec.getName().toString();
     }
+    public char[] getNameCharArray(){
+        return ((CASTName) enumSpec.getName()).toCharArray();
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        // TODO Auto-generated method stub
-        return null;
+        return CVisitor.getContainingScope( enumSpec );
     }
 
 }

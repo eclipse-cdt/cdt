@@ -9,12 +9,9 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 
 /**
@@ -57,15 +54,16 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 
     private int currentIndex = 0;
     private IASTDeclaration [] declarations = null;
+    private IScope scope = null;
     private static final int DEFAULT_DECLARATIONS_LIST_SIZE = 4;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getMembers()
      */
-    public List getMembers() {
-        if( declarations == null ) return Collections.EMPTY_LIST;
+    public IASTDeclaration [] getMembers() {
+        if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         removeNullDeclarations();
-        return Arrays.asList( declarations );
+        return declarations;
     }
 
     /* (non-Javadoc)
@@ -102,6 +100,15 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         for( int i = 0; i < newSize; ++i )
             declarations[i] = old[i];
         currentIndex = newSize;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getScope()
+     */
+    public IScope getScope() {
+        if( scope == null )
+            scope = new CCompositeTypeScope( this );
+        return scope;
     }
 
 }

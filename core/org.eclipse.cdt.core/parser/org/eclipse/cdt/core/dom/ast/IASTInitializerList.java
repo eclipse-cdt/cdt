@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * This is an an initializer that is a list of initializers.
@@ -25,7 +24,7 @@ public interface IASTInitializerList extends IASTInitializer {
 	 * 
 	 * @return
 	 */
-	public List getInitializers();
+	public IASTInitializer[] getInitializers();
 	
 	public void addInitializer( IASTInitializer initializer );
 }

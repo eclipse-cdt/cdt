@@ -28,4 +28,5 @@ public interface IASTName extends IASTNode {
 	 */
 	public IBinding resolveBinding();
 	
+	public char[] toCharArray();
 }

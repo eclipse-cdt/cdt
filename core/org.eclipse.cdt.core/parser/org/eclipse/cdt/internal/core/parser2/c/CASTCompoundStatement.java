@@ -9,12 +9,9 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * @author jcamelon
@@ -39,16 +36,17 @@ public class CASTCompoundStatement extends CASTNode implements
 
     
     private IASTStatement [] statements = null;
+    private IScope scope = null;
     private static final int DEFAULT_STATEMENT_LIST_SIZE = 8;
 
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#getStatements()
      */
-    public List getStatements() {
-        if( statements == null ) return Collections.EMPTY_LIST;
+    public IASTStatement[] getStatements() {
+        if( statements == null ) return IASTStatement.EMPTY_STATEMENT_ARRAY;
         removeNullStatements();
-        return Arrays.asList( statements );
+        return statements;
     }
 
     /* (non-Javadoc)
@@ -68,6 +66,15 @@ public class CASTCompoundStatement extends CASTNode implements
                 statements[i] = old[i];
         }
         statements[ currentIndex++ ] = statement;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#resolveBinding()
+     */
+    public IScope getScope() {
+        if( scope == null )
+            scope = new CScope( this );
+        return scope;
     }
 
 }

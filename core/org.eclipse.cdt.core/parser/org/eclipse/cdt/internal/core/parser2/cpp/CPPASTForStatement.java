@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * @author jcamelon
@@ -95,6 +96,14 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement {
     public void setBody(IASTStatement statement) {
         body = statement;
 
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getScope()
+     */
+    public IScope getScope() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

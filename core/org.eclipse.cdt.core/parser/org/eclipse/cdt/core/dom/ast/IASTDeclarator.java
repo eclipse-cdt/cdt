@@ -16,6 +16,7 @@ import java.util.List;
  * @author Doug Schaefer
  */
 public interface IASTDeclarator extends IASTNode {
+    public static final IASTDeclarator[] EMPTY_DECLARATOR_ARRAY = new IASTDeclarator[0];
 
 	ASTNodeProperty POINTER_OPERATOR = new ASTNodeProperty( "Pointer Operator"); //$NON-NLS-1$
     ASTNodeProperty INITIALIZER = new ASTNodeProperty( "Initializer"); //$NON-NLS-1$

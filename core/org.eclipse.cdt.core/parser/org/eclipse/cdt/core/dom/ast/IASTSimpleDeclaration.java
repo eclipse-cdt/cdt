@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * This is a simple declaration which contains a sequence of declSpecifiers
@@ -38,7 +37,7 @@ public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
 	 * 
 	 * @return list of IASTDeclarator
 	 */
-	public List getDeclarators();
+	public IASTDeclarator[] getDeclarators();
 	
 	public void addDeclarator( IASTDeclarator declarator );
 	

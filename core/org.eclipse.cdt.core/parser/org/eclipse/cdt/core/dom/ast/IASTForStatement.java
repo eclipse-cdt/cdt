@@ -68,4 +68,5 @@ public interface IASTForStatement extends IASTStatement {
 	public IASTStatement getBody();
 	public void setBody( IASTStatement statement );
 	
+	public IScope getScope();	
 }

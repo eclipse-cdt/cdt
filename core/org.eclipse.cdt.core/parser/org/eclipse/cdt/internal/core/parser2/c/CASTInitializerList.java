@@ -9,10 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 
@@ -28,10 +24,10 @@ public class CASTInitializerList extends CASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
      */
-    public List getInitializers() {
-        if( initializers == null ) return Collections.EMPTY_LIST;
+    public IASTInitializer[] getInitializers() {
+        if( initializers == null ) return IASTInitializer.EMPTY_INIALIZER_ARRAY;
         removeNullInitializers();
-        return Arrays.asList( initializers );
+        return initializers;
     }
     
     public void addInitializer( IASTInitializer d )

@@ -10,15 +10,15 @@
  *******************************************************************************/
 
 /*
- * Created on Nov 17, 2004
+ * Created on Nov 25, 2004
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
-import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author aniefer
  */
-public interface ICFileScope extends IScope {
-
+public interface ICCompositeTypeScope extends ICScope {
+    public IBinding getBinding( char[] name );
 }

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.parser2.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -28,7 +29,9 @@ public class CLabel implements ILabel {
     public CLabel( IASTLabelStatement statement ){
         labelStatement = statement;
     }
-    
+    public IASTNode getPhysicalNode(){
+        return labelStatement;
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ILabel#getLabelStatement()
      */
@@ -41,6 +44,9 @@ public class CLabel implements ILabel {
      */
     public String getName() {
         return labelStatement.getName().toString();
+    }
+    public char[] getNameCharArray(){
+        return ((CASTName) labelStatement.getName()).toCharArray();
     }
 
     /* (non-Javadoc)

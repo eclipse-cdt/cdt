@@ -9,10 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 
@@ -49,10 +45,10 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#getParameters()
      */
-    public List getParameters() {
-        if( parameters == null ) return Collections.EMPTY_LIST;
+    public IASTParameterDeclaration[] getParameters() {
+        if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
         removeNullParameters();
-        return Arrays.asList( parameters );
+        return parameters;
     }
 
     /* (non-Javadoc)

@@ -9,8 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -29,7 +27,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     private int currentIndex = 0;
     
     //Binding
-    private CFileScope compilationUnit = null;
+    private CScope compilationUnit = null;
     
     public void addDeclaration( IASTDeclaration d )
     {
@@ -52,10 +50,10 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations()
      */
-    public List getDeclarations() {
-        if( decls == null ) return Collections.EMPTY_LIST;
+    public IASTDeclaration[] getDeclarations() {
+        if( decls == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         removeNullDeclarations();
-        return Arrays.asList( decls );
+        return decls;
     }
 
     /**
@@ -80,7 +78,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      */
     public IScope getScope() {
     	if( compilationUnit == null )
-    		compilationUnit = new CFileScope();
+    		compilationUnit = new CScope( this );
         return compilationUnit;
     }
     

@@ -9,7 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * @author jcamelon
@@ -18,7 +17,7 @@ public interface IASTExpressionList extends IASTExpression {
 
     public static final ASTNodeProperty NESTED_EXPRESSION = new ASTNodeProperty( "Nested Expression"); //$NON-NLS-1$
 
-    public List getExpressions();
+    public IASTExpression [] getExpressions();
     
     public void addExpression( IASTExpression expression );
 }

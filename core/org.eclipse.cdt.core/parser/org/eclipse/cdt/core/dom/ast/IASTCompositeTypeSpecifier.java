@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * @author Doug Schaefer
@@ -46,7 +45,9 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier {
 	 * 
 	 * @return List of IASTDeclaration
 	 */
-	public List getMembers();
+	public IASTDeclaration[] getMembers();
 	
 	public void addMemberDeclaration( IASTDeclaration declaration );
+	
+	public IScope getScope();
 }

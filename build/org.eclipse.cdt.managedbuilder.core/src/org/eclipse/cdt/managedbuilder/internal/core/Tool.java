@@ -424,10 +424,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			resolved = true;
 //			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// Tool doesn't have any references, but children might
-			Iterator optionIter = options.iterator();
-			while (optionIter.hasNext()) {
-				Option current = (Option)optionIter.next();
-				current.resolveReferences();
+			if (options != null) {
+				Iterator optionIter = options.iterator();
+				while (optionIter.hasNext()) {
+					Option current = (Option)optionIter.next();
+					current.resolveReferences();
+				}
 			}
 			Iterator catIter = categoryMap.values().iterator();
 			while (catIter.hasNext()) {

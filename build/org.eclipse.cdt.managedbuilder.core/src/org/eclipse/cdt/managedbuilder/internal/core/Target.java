@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -36,6 +37,7 @@ public class Target extends BuildObject implements ITarget {
 	// Build model elements that come from the plugin or project files	
 	private String artifactName;
 	private String binaryParserId;
+	private String errorParserIds;
 	private String cleanCommand;
 	private List configList;
 	private Map configMap;
@@ -89,6 +91,7 @@ public class Target extends BuildObject implements ITarget {
 		setName(parent.getName());
 		setArtifactName(parent.getArtifactName());
 		this.binaryParserId = parent.getBinaryParserId();
+		this.errorParserIds = parent.getErrorParserIds();
 		this.defaultExtension = parent.getArtifactExtension();
 		this.isTest = parent.isTestTarget();
 		this.cleanCommand = parent.getCleanCommand();
@@ -124,6 +127,9 @@ public class Target extends BuildObject implements ITarget {
 		
 		// Get the ID of the binary parser
 		binaryParserId = element.getAttribute(BINARY_PARSER);
+		
+		// Get the semicolon separated list of IDs of the error parsers
+		errorParserIds = element.getAttribute(ERROR_PARSERS);
 
 		// Get the default extension
 		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
@@ -208,6 +214,11 @@ public class Target extends BuildObject implements ITarget {
 		
 		// Get the clean command
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
+		
+		// Get the semicolon separated list of IDs of the error parsers
+		if (element.hasAttribute(ERROR_PARSERS)) {
+			errorParserIds = element.getAttribute(ERROR_PARSERS);
+		}
 		
 		// Get the make command and arguments
 		if (element.hasAttribute(MAKE_COMMAND)) {
@@ -316,6 +327,9 @@ public class Target extends BuildObject implements ITarget {
 		}
 		if (makeArguments != null) {
 			element.setAttribute(MAKE_ARGS, makeArguments);
+		}
+		if (errorParserIds != null) {
+			element.setAttribute(ERROR_PARSERS, errorParserIds);
 		}
 
 		// Serialize the configuration settings
@@ -694,6 +708,46 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getErrorParserIds()
+	 */
+	public String getErrorParserIds() {
+		if (errorParserIds == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getErrorParserIds();
+			}
+		}
+		return errorParserIds;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getErrorParserList()
+	 */
+	public String[] getErrorParserList() {
+		String parserIDs = getErrorParserIds();
+		String[] errorParsers = null;
+		if (parserIDs != null) {
+			// Check for an empty string
+			if (parserIDs.length() == 0) {
+				errorParsers = new String[0];
+			} else {
+				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
+				List list = new ArrayList(tok.countTokens());
+				while (tok.hasMoreElements()) {
+					list.add(tok.nextToken());
+				}
+				String[] strArr = {""};
+				errorParsers = (String[]) list.toArray(strArr);
+			}
+		} else {
+			// If no error parsers are specified by the target, the default is 
+			// all error parsers
+			errorParsers = CCorePlugin.getDefault().getAllErrorParsersIDs();
+		}
+		return errorParsers;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
 	 */
 	public IConfiguration getConfiguration(String id) {
@@ -815,6 +869,18 @@ public class Target extends BuildObject implements ITarget {
 	public void setMakeCommand(String command) {
 		if (command != null && !getMakeCommand().equals(command)) {
 			makeCommand = command;
+			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setErrorParserIds()
+	 */
+	public void setErrorParserIds(String ids) {
+		if (ids == null) return;
+		String currentIds = getErrorParserIds();
+		if (currentIds == null || !(currentIds.equals(ids))) {
+			errorParserIds = ids;
 			isDirty = true;
 		}
 	}

@@ -20,6 +20,7 @@ public interface ITarget extends IBuildObject {
 	public static final String TARGET_ELEMENT_NAME = "target";	//$NON-NLS-1$
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
 	public static final String BINARY_PARSER = "binaryParser";	//$NON-NLS-1$
+	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
 	public static final String DEFAULT_EXTENSION = "defaultExtension";	//$NON-NLS-1$
 	public static final String EXTENSION = "extension";	//$NON-NLS-1$
@@ -77,6 +78,20 @@ public interface ITarget extends IBuildObject {
 	 * @return String
 	 */
 	public String getBinaryParserId();
+
+	/**
+	 * Answers the semicolon separated list of unique IDs of the error parsers associated with the target.
+	 * 
+	 * @return String
+	 */
+	public String getErrorParserIds();
+
+	/**
+	 * Answers the ordered list of unique IDs of the error parsers associated with the target.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getErrorParserList();
 	
 	/**
 	 * Answers the OS-specific command to remove files created by the build
@@ -239,6 +254,14 @@ public interface ITarget extends IBuildObject {
 	 */
 	public void setMakeCommand(String command);
 
+
+	/**
+	 * Sets the semicolon separated list of error parser ids
+	 * 
+	 * @param ids
+	 */
+	public void setErrorParserIds(String ids);
+	
 	/**
 	 * Sets the resource that owns the receiver.
 	 * 

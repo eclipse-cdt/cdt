@@ -238,4 +238,20 @@ public interface IManagedBuildInfo {
 	 * @param target
 	 */
 	public void setDefaultTarget(ITarget target);
+	
+	/**
+	 * Set the currently selected target.  This is used while the project
+	 * property pages are displayed
+	 * 
+	 * @param target
+	 */
+	public void setSelectedTarget(ITarget target);
+	
+	/**
+	 * Get the currently selected target.  This is used while the project
+	 * property pages are displayed
+	 * 
+	 * @return target
+	 */
+	public ITarget getSelectedTarget();
 }

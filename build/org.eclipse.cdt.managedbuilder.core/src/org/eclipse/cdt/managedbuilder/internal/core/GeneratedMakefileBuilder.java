@@ -390,8 +390,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}
 			
-				// Hook up an error parser
-				ErrorParserManager epm = new ErrorParserManager(this);
+				// Hook up an error parser manager
+				String[] errorParsers = info.getDefaultTarget().getErrorParserList(); 
+				ErrorParserManager epm = new ErrorParserManager(getProject(), this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();

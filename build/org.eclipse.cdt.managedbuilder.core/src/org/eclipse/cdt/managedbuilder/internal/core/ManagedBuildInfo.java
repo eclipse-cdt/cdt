@@ -49,6 +49,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private Map defaultConfigMap;
 	private ITarget defaultTarget;
 	private String defaultTargetId;
+	private ITarget selectedTarget;
 	private boolean isDirty;
 	private IResource owner;
 	private Map targetMap;
@@ -995,6 +996,20 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			defaultTargetId = target.getId();
 			persistDefaultTarget();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setSelectedTarget(org.eclipse.cdt.core.build.managed.ITarget)
+	 */
+	public void setSelectedTarget(ITarget target) {
+		selectedTarget = target;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getSelectedTarget()
+	 */
+	public ITarget getSelectedTarget() {
+		return selectedTarget;
 	}
 
 	/* (non-Javadoc)

@@ -218,6 +218,43 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 	
+	/**
+	 * Sets the currently selected target.  This is used while the project
+	 * property pages are displayed
+	 * 
+	 * @param project
+	 * @param target
+	 */
+	public static void setSelectedTarget(IProject project, ITarget target) {
+		if (project == null || target == null) {
+			return;
+		}
+		// Set the default in build information for the project 
+		IManagedBuildInfo info = getBuildInfo(project);
+		if (info != null) {
+			info.setSelectedTarget(target);
+		}
+	}
+	
+	/**
+	 * Gets the currently selected target.  This is used while the project
+	 * property pages are displayed
+	 * 
+	 * @param project
+	 * @return target
+	 */
+	public static ITarget getSelectedTarget(IProject project) {
+		if (project == null) {
+			return null;
+		}
+		// Set the default in build information for the project 
+		IManagedBuildInfo info = getBuildInfo(project);
+		if (info != null) {
+			return info.getSelectedTarget();
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * 
 	 * @param config

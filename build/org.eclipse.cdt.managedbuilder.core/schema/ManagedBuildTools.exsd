@@ -465,6 +465,13 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="errorParsers" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default list of error parsers to be used by projects created from this target.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -1,5 +1,12 @@
 2002-11-14 Alain Magloire
 
+	This is needed in post-mortem, application doing a 
+	very deep recursion and crashing the stack size, for example
+	on GNU/Linux it may reach 200000 levels deep.  Trying to
+	bring in the UI a bactrace tree of 200000 nodes is useless.
+	The UI could check the count and do the appropriate action
+	by showing ranges etc ..
+
 	* src/.../mi/core/cdi/CThread.java (getStackFrame):
 	new method with a hi and low.
 	(getStackFrameCount): new method.

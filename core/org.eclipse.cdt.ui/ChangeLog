@@ -1,4 +1,14 @@
 2005-02-25 Alain Magloire
+	Fix PR 82292: Code template variable not working.
+	* src/org/eclipse/cdt/internal/corext/template/c/CContext.java
+	* src/org/eclipse/cdt/internal/corext/template/c/CContextType.java
+	* src/org/eclipse/cdt/internal/corext/template/c/TemplateMessage.properties
+	* src/org/eclipse/cdt/internal/corext/template/c/TranslationUnitContext.java
+	* src/org/eclipse/cdt/internal/corext/template/c/TranslationUnitContextType.java
+	* src/org/eclipse/cdt/internal/ui/text/contentassit/CCompletionProcessor.java
+	* templates/default-templates.xml
+
+2005-02-25 Alain Magloire
 	Fix PR 69572: Key binding action for Matching Bracket ... Ctrl+Shift+P
 	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

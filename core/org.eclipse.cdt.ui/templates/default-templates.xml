@@ -26,7 +26,7 @@ All Rights Reserved.
 	<!ENTITY printtostderr "print to standard error">
 	<!ENTITY authorname "author name">
 	<!ENTITY commentText "To change this generated comment edit the template variable &quot;comment&quot;:
- * Window&gt;Preferences&gt;C&gt;Templates.">
+ * Window&gt;Preferences&gt;C&gt;Editor&gt;Templates.">
 	
 ]>
 

@@ -41,8 +41,6 @@ public class CContextType extends TranslationUnitContextType {
 		addResolver(new File());
 		addResolver(new ReturnType());
 		addResolver(new Method());
-		addResolver(new Type());
-		addResolver(new Package());
 		addResolver(new Project());
 		addResolver(new Arguments());
 

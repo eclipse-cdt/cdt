@@ -97,7 +97,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 	
-	
+	protected IWorkingCopyManager fManager;
 	private CEditor fEditor;
 	private char[] fProposalAutoActivationSet;
 	private CCompletionProposalComparator fComparator;
@@ -123,7 +123,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	
 	public CCompletionProcessor(IEditorPart editor) {
 		fEditor = (CEditor) editor;
-	
+		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
 		// Needed for search
 		searchResultCollector = new BasicSearchResultCollector ();
 		resultCollector = new ResultCollector();
@@ -257,7 +257,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	}
 	
 	private ICompletionProposal[] internalComputeCompletionProposals(ITextViewer viewer, int offset) {
-		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
 		IWorkingCopy unit = fManager.getWorkingCopy(fEditor.getEditorInput());
 		
 		IDocument document = viewer.getDocument();
@@ -373,7 +372,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		if (fTemplateEngine != null) {
 			try {
 				fTemplateEngine.reset();
-				fTemplateEngine.complete(viewer, fCurrentOffset, null);
+				fTemplateEngine.complete(viewer, fCurrentOffset, fCurrentSourceUnit);
 			} catch (Exception x) {
 				CUIPlugin.getDefault().log(x);
 			}

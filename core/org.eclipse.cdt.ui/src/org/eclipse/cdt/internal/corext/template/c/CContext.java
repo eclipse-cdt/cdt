@@ -39,8 +39,7 @@ public class CContext extends TranslationUnitContext {
 	 * @param unit the compilation unit (may be <code>null</code>).
 	 */
 	public CContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength,
-		ITranslationUnit translationUnit)
-	{
+		ITranslationUnit translationUnit) {
 		super(type, document, completionOffset, completionLength, translationUnit);
 	}
 

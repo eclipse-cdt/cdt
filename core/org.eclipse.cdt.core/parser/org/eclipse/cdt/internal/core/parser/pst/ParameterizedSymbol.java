@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -24,7 +23,6 @@ import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
-import org.eclipse.cdt.utils.debug.stabs.TypeInformation;
 
 /**
  * @author aniefer

@@ -1,3 +1,6 @@
+2004-03-09 Bogdan Gheorghe
+	Workaround to get DependencyTests working on integration builds. 
+	
 2004-03-03 John Camelon
 	Updated tests to deal with IASTUsingDeclaration interface changes.  
 

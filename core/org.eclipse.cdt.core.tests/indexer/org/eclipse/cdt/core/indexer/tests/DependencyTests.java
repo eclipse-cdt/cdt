@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -583,11 +585,16 @@ import org.eclipse.core.runtime.Platform;
 
 
    private String[] convertToLocalPath(String[] model) {
-	   IPath defaultPath = new Path("");//Platform.getInstanceLocation();
+	   IPath defaultPath = Platform.getLocation();
+	   String pathString = defaultPath.toOSString();
+       if (pathString.charAt(pathString.length() - 1) == '\\')
+       {
+       	 pathString = pathString.substring(0, pathString.length() - 1);
+       }
 	   String[] tempLocalArray = new String[model.length];
 	   for (int i=0;i<model.length;i++){
 		   StringBuffer buffer = new StringBuffer();
-		   buffer.append(defaultPath.toOSString());
+		   buffer.append(pathString);
 		   buffer.append(model[i]);
 		   tempLocalArray[i]=buffer.toString();
 	   }

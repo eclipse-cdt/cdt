@@ -153,6 +153,8 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) {
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
+						MIEvent event = new MIStoppedEvent();
+						session.fireEvent(event);
 					}
 				}
 

@@ -1,3 +1,10 @@
+2003-06-24 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/errorparser/GCCErrorParser.java:
+	New scheme to detect, preprocessor errors.
+	* src/org/eclipse/cdt/core/ErrorParserManager.java:
+	Provide a scratch buffer for the error parser classes.
+
 2003-06-20 Sean Evoy
 	Added two new value types to the ManagedBuildTools schema for include paths 
 	and defined symbols.

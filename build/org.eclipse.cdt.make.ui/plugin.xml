@@ -462,7 +462,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%MakefileEditor.name"
-            icon="icons/ctool16/makefile.gif"
+            icon="icons/obj16/makefile.gif"
             extensions="mk"
             filenames="Makefile,makefile,GNUMakefile"
             contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"

@@ -25,7 +25,7 @@ public interface ICDISharedLibraryManager extends ICDIManager {
 	ICDISharedLibrary[] getSharedLibraries() throws CDIException;
 
 	/**
-	 * load symbols for the specified shared libraries.
+	 * Loads symbols for the specified shared libraries.
 	 * 
 	 * @return the array of loaded shared libraries
 	 * @throws CDIException on failure. Reasons include:
@@ -33,7 +33,7 @@ public interface ICDISharedLibraryManager extends ICDIManager {
 	void loadSymbols(ICDISharedLibrary[] libs) throws CDIException;
 
 	/**
-	 * load symbols of all the shared libs.
+	 * Loads symbols of all shared libraries.
 	 * 
 	 * @return the array of loaded shared libraries
 	 * @throws CDIException on failure. Reasons include:
@@ -41,19 +41,64 @@ public interface ICDISharedLibraryManager extends ICDIManager {
 	void loadSymbols() throws CDIException;
 
 	/**
-	 * return the search paths for shared libraries.
+	 * Returns the search paths for shared libraries.
 	 * 
-	 * @return String[]
+	 * @return the array of the search paths
 	 * @throws CDIException
 	 */
 	String[] getSharedLibraryPaths() throws CDIException;
 
 	/**
-	 * Reset the shared libs paths to libpaths.
-	 * @param libpaths
+	 * Sets the shared libs paths to libpaths.
+	 * 
+	 * @param array of search paths
 	 * @throws CDIException
 	 */
 	void setSharedLibraryPaths(String[] libpaths) throws CDIException;
 
+	/**
+	 * Sets the "automatically load symbols from shared libraries" mode.
+	 *  
+	 * @param set
+	 * @throws CDIException
+	 */
+	void setAutoLoadSymbols(boolean set) throws CDIException;
 
+	/**
+	 * Returns the current autoloading mode.
+	 * 
+	 * @return the current autoloading mode
+	 * @throws CDIException
+	 */
+	boolean isAutoLoadSymbols() throws CDIException;
+
+	/**
+	 * Returns whether this manager supports autoloading.
+	 * 
+	 * @return whether this manager supports autoloading
+	 */
+	boolean supportsAutoLoadSymbols();
+
+	/**
+	 * Sets the "stop on shared library events" mode.
+	 * 
+	 * @param set
+	 * @throws CDIException
+	 */
+	void setStopOnSolibEvents(boolean set) throws CDIException;
+
+	/**
+	 * Returns the current mode of shared library events handling.
+	 * 
+	 * @return the current mode of shared library events handling
+	 * @throws CDIException
+	 */
+	boolean isStopOnSolibEvents() throws CDIException;
+
+	/**
+	 * Returns whether this manager supports shared library events handling.
+	 * 
+	 * @return whether this manager supports shared library events handling
+	 */
+	boolean supportsStopOnSolibEvents();
 }

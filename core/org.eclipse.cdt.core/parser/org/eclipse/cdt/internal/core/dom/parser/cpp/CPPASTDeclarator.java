@@ -10,10 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * @author jcamelon
@@ -110,4 +112,33 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
         this.name = name;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarators ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        IASTPointerOperator [] ptrOps = getPointerOperators();
+        for ( int i = 0; i < ptrOps.length; i++ ) {
+            if( !ptrOps[i].accept( action ) ) return false;
+        }
+        
+        if( getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
+    		nestedDeclarator == null )
+		{
+            if( name != null ) if( !name.accept( action ) ) return false;
+		}
+        
+        if( nestedDeclarator != null ) if( !nestedDeclarator.accept( action ) ) return false;
+        
+        return postAccept( action );
+    }
+    
+    protected boolean postAccept( ASTVisitor action ){
+        if( initializer != null ) if( !initializer.accept( action ) ) return false;
+        return true;
+    }
 }

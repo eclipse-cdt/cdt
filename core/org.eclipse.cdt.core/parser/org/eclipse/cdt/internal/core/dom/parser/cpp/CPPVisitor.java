@@ -18,24 +18,17 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -43,10 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -57,17 +47,13 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
-import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -85,38 +71,25 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -128,7 +101,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -138,7 +110,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public class CPPVisitor implements ICPPASTVisitor {
+public class CPPVisitor {
 
 	/**
 	 * @param name
@@ -712,12 +684,12 @@ public class CPPVisitor implements ICPPASTVisitor {
 		return null;
 	}
 	
-	public static class CollectProblemsAction extends CPPBaseVisitorAction {
+	public static class CollectProblemsAction extends CPPASTVisitor {
 		{
-			processDeclarations = true;
-			processExpressions = true;
-			processStatements = true;
-			processTypeIds = true;
+			shouldVisitDeclarations = true;
+			shouldVisitExpressions = true;
+			shouldVisitStatements = true;
+			shouldVisitTypeIds = true;
 		}
 		
 		private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
@@ -760,7 +732,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
-		public int processDeclaration(IASTDeclaration declaration) {
+		public int visit(IASTDeclaration declaration) {
 			if ( declaration instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)declaration).getProblem());
 
@@ -769,7 +741,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
-		public int processExpression(IASTExpression expression) {
+		public int visit(IASTExpression expression) {
 			if ( expression instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)expression).getProblem());
 
@@ -779,7 +751,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
-		public int processStatement(IASTStatement statement) {
+		public int visit(IASTStatement statement) {
 			if ( statement instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)statement).getProblem());
 
@@ -789,7 +761,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
-		public int processTypeId(IASTTypeId typeId) {
+		public int visit(IASTTypeId typeId) {
 			if ( typeId instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)typeId).getProblem());
 
@@ -797,7 +769,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		}
 	}
 	
-	public static class CollectDeclarationsAction extends CPPBaseVisitorAction {
+	public static class CollectDeclarationsAction extends CPPASTVisitor {
 	    private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName [] decls;
 		private IBinding binding;
@@ -815,7 +787,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 			this.binding = binding;
 			this.decls = new IASTName[ DEFAULT_LIST_SIZE ];
 			
-			processNames = true;
+			shouldVisitNames = true;
 			if( binding instanceof ILabel )
 				kind = KIND_LABEL;
 			else if( binding instanceof ICompositeType || 
@@ -833,7 +805,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 				kind = KIND_OBJ_FN;
 		}
 		
-		public int processName( IASTName name ){
+		public int visit( IASTName name ){
 			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
 			
 			ASTNodeProperty prop = name.getPropertyInParent();
@@ -920,7 +892,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		}
 
 	}
-	public static class CollectReferencesAction extends CPPBaseVisitorAction {
+	public static class CollectReferencesAction extends CPPASTVisitor {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName [] refs;
 		private IBinding binding;
@@ -938,7 +910,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 			this.binding = binding;
 			this.refs = new IASTName[ DEFAULT_LIST_SIZE ];
 			
-			processNames = true;
+			shouldVisitNames = true;
 			if( binding instanceof ILabel )
 				kind = KIND_LABEL;
 			else if( binding instanceof ICompositeType || 
@@ -955,7 +927,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 				kind = KIND_OBJ_FN;
 		}
 		
-		public int processName( IASTName name ){
+		public int visit( IASTName name ){
 			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
 			
 			ASTNodeProperty prop = name.getPropertyInParent();
@@ -1069,503 +1041,503 @@ public class CPPVisitor implements ICPPASTVisitor {
 		}
 	}
 
-	private IASTTranslationUnit tu = null;
-	public CPPVisitor( ICPPASTTranslationUnit tu ){
-	    this.tu = tu; 
-	}
-	
-	public void visitTranslationUnit( BaseVisitorAction action ){
-		IASTDeclaration [] decls = tu.getDeclarations();
-		for( int i = 0; i < decls.length; i++ ){
-			if( !visitDeclaration( decls[i], action ) ) return;
-		}
-	}
-
-	public boolean visitNamespaceDefinition( ICPPASTNamespaceDefinition namespace, BaseVisitorAction action ){
-	    if( action instanceof CPPBaseVisitorAction && ((CPPBaseVisitorAction)action).processNamespaces ){
-	        switch( ((CPPBaseVisitorAction)action).processNamespace( namespace ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-	    }
-	        
-		if( !visitName( namespace.getName(), action ) ) return false;
-		IASTDeclaration [] decls = namespace.getDeclarations();
-		for( int i = 0; i < decls.length; i++ ){
-			if( !visitDeclaration( decls[i], action ) ) return false;
-		}
-	   return true;
-	}
-	/**
-	 * @param declaration
-	 * @param action
-	 * @return
-	 */
-	public boolean visitDeclaration(IASTDeclaration declaration, BaseVisitorAction action) {
-	    if( declaration instanceof ICPPASTNamespaceDefinition )
-	        return visitNamespaceDefinition( (ICPPASTNamespaceDefinition) declaration, action );
-	    
-		if( action.processDeclarations ) {
-		    switch( action.processDeclaration( declaration ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-		
-		if( declaration instanceof IASTSimpleDeclaration ){
-			IASTSimpleDeclaration simple = (IASTSimpleDeclaration) declaration;
-			if( !visitDeclSpecifier( simple.getDeclSpecifier(), action ) ) return false;
-			IASTDeclarator [] dtors = simple.getDeclarators();
-			for( int i = 0; i < dtors.length; i++ ){
-				if( !visitDeclarator( dtors[i], action) ) return false;
-			}
-		} else if( declaration instanceof IASTFunctionDefinition ){
-			IASTFunctionDefinition function = (IASTFunctionDefinition) declaration;
-			if( !visitDeclSpecifier( function.getDeclSpecifier(), action ) ) return false;
-			if( !visitDeclarator( function.getDeclarator(), action ) ) return false;
-			if( !visitStatement( function.getBody(), action ) ) return false;
-		} else if( declaration instanceof ICPPASTUsingDeclaration ){
-			if( !visitName( ((ICPPASTUsingDeclaration)declaration).getName(), action ) ) return false;
-		} else if( declaration instanceof ICPPASTUsingDirective ){
-			if( !visitName( ((ICPPASTUsingDirective)declaration).getQualifiedName(), action ) ) return false;
-		} else if( declaration instanceof ICPPASTNamespaceAlias ){
-			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
-			if( !visitName( alias.getAlias(), action ) ) return false;
-			if( !visitName( alias.getQualifiedName(), action ) ) return false;
-		} else if( declaration instanceof ICPPASTLinkageSpecification ){
-			IASTDeclaration [] decls = ((ICPPASTLinkageSpecification) declaration).getDeclarations();
-			for( int i = 0; i < decls.length; i++ ){
-				if( !visitDeclaration( decls[i], action ) ) return false;
-			}
-		} else if( declaration instanceof ICPPASTTemplateDeclaration ){
-			ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) declaration;
-			ICPPASTTemplateParameter [] params = template.getTemplateParameters();
-			for( int i = 0; i < params.length; i++ ){
-				if( !visitTemplateParameter( params[i], action ) ) return false;
-			}
-			if( !visitDeclaration( template.getDeclaration(), action ) ) return false;
-		} else if( declaration instanceof ICPPASTTemplateSpecialization ){
-			if( !visitDeclaration( ((ICPPASTTemplateSpecialization) declaration).getDeclaration(), action ) ) return false;
-		}
-		return true;
-	}
-
-	/**
-	 * @param name
-	 * @param action
-	 * @return
-	 */
-	public boolean visitName(IASTName name, BaseVisitorAction action) {
-		if( action.processNames ){
-		    switch( action.processName( name ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-		if( name instanceof ICPPASTQualifiedName ){
-			IASTName [] names = ((ICPPASTQualifiedName)name).getNames();
-			for( int i = 0; i < names.length; i++ ){
-				if( i == names.length - 1 ){
-					if( names[i].toCharArray().length > 0 && !visitName( names[i], action ) ) return false;
-				} else if( !visitName( names[i], action ) ) return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @param declSpecifier
-	 * @param action
-	 * @return
-	 */
-	public boolean visitDeclSpecifier(IASTDeclSpecifier declSpecifier, BaseVisitorAction action) {
-		if( action.processDeclSpecifiers ){
-		    switch( action.processDeclSpecifier( declSpecifier ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-		if( declSpecifier instanceof ICPPASTCompositeTypeSpecifier ){
-			ICPPASTCompositeTypeSpecifier composite = (ICPPASTCompositeTypeSpecifier) declSpecifier;
-			if( !visitName( composite.getName(), action ) ) return false;
-			ICPPASTBaseSpecifier [] bases = composite.getBaseSpecifiers();
-			for( int i = 0; i < bases.length; i++ ) {
-				if( !visitBaseSpecifier( bases[i], action ) ) return false;
-			}
-			IASTDeclaration [] decls = composite.getMembers();
-			for( int i = 0; i < decls.length; i++ ){
-				if( !visitDeclaration( decls[i], action ) ) return false;
-			}
-		} else if( declSpecifier instanceof ICPPASTElaboratedTypeSpecifier ){
-			if( !visitName( ((ICPPASTElaboratedTypeSpecifier) declSpecifier).getName(), action ) ) return false;
-		} else if( declSpecifier instanceof IASTEnumerationSpecifier ){
-			IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpecifier;
-			if( !visitName( enumeration.getName(), action ) ) return false;
-			IASTEnumerator [] etors = enumeration.getEnumerators();
-			for( int i = 0; i < etors.length; i++ ){
-				if( !visitEnumerator( etors[i], action ) ) return false;
-			}
-		} else if( declSpecifier instanceof ICPPASTNamedTypeSpecifier ){
-			if( !visitName( ((ICPPASTNamedTypeSpecifier)declSpecifier).getName(), action ) ) return false;
-		} else if( declSpecifier instanceof IGPPASTSimpleDeclSpecifier ) {
-			IASTExpression typeOf = ((IGPPASTSimpleDeclSpecifier)declSpecifier).getTypeofExpression();
-			if( typeOf != null )
-				if( !visitExpression( typeOf, action ) ) return false;
-		}
-		return true;
-	}
-
-	/**
-	 * @param declarator
-	 * @param action
-	 * @return
-	 */
-	public boolean visitDeclarator(IASTDeclarator declarator, BaseVisitorAction action) {
-		if( action.processDeclarators ){
-		    switch( action.processDeclarator( declarator ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-		IASTPointerOperator [] ptrs = declarator.getPointerOperators();
-		if( ptrs.length > 0 ){
-			for( int i = 0; i < ptrs.length; i++ ){
-				if( ptrs[i] instanceof ICPPASTPointerToMember ){
-					if( !visitName( ((ICPPASTPointerToMember) ptrs[i]).getName(), action ) ) return false;
-				}
-			}
-		}
-		
-		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
-			declarator.getNestedDeclarator() == null )
-		{
-			if( !visitName( declarator.getName(), action ) ) return false;
-		}
-		
-		if( declarator.getNestedDeclarator() != null )
-			if( !visitDeclarator( declarator.getNestedDeclarator(), action ) ) return false;
-		
-		if( declarator instanceof ICPPASTFunctionDeclarator ){
-			ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) declarator;
-		    IASTParameterDeclaration [] list = fdtor.getParameters();
-			for( int i = 0; i < list.length; i++ ){
-			    if( !visitParameterDeclaration( list[i], action ) ) return false;
-			}
-			ICPPASTConstructorChainInitializer [] ctorChain = fdtor.getConstructorChain();
-			for( int i = 0; i < ctorChain.length; i++ ){
-				if( !visitName( ctorChain[i].getMemberInitializerId(), action ) ) return false;
-				if( !visitExpression( ctorChain[i].getInitializerValue(), action ) ) return false;
-			}
-			IASTTypeId [] typeIds = fdtor.getExceptionSpecification();
-			for( int i = 0; i < typeIds.length; i++ ){
-				if( !visitTypeId( typeIds[i], action ) ) return false;
-			}
-			
-			if( declarator instanceof ICPPASTFunctionTryBlockDeclarator ){
-				ICPPASTCatchHandler [] catchHandlers = ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
-				for( int i = 0; i < catchHandlers.length; i++ ){
-					if( !visitStatement( catchHandlers[i], action ) ) return false;
-				}
-			}
-			
-		}
-		if( declarator instanceof IASTArrayDeclarator ){
-			IASTArrayModifier [] mods = ((IASTArrayDeclarator) declarator).getArrayModifiers();
-			for( int i = 0; i < mods.length; i++ ){
-				if( mods[i].getConstantExpression() != null && !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
-			}
-		}
-		
-		if( declarator.getInitializer() != null )
-		    if( !visitInitializer( declarator.getInitializer(), action ) ) return false;
-		    
-		if( declarator instanceof IASTFieldDeclarator )
-			if( ! visitExpression( ((IASTFieldDeclarator) declarator).getBitFieldSize(), action ) ) return false;
-			
-		return true;
-	}
-	
-	private boolean visitIfStatement( IASTIfStatement ifStatement, BaseVisitorAction action ){
-		while( ifStatement != null ){
-			if( action.processStatements ){
-			    switch( action.processStatement( ifStatement ) ){
-			        case BaseVisitorAction.PROCESS_ABORT : return false;
-			        case BaseVisitorAction.PROCESS_SKIP  : return true;
-			        default : break;
-			    }
-		    }	
-		    if( !visitExpression( ifStatement.getCondition(), action ) ) return false;
-		    if( !visitStatement( ifStatement.getThenClause(), action ) ) return false;
-		    if( ifStatement.getElseClause() != null ){
-		    	IASTStatement statement = ifStatement.getElseClause();
-		       	if( statement instanceof IASTIfStatement ){
-		       		ifStatement = (IASTIfStatement) statement;
-		       		continue;
-		       	} 
-		       	if( !visitStatement( statement, action ) ) return false;
-		    }
-		    ifStatement = null;
-		}
-		return true;
-	}
-	/**
-	 * @param body
-	 * @param action
-	 * @return
-	 */
-	public boolean visitStatement(IASTStatement statement, BaseVisitorAction action) {
-		//handle if's in a non-recursive manner to avoid stack overflows in case of huge number of elses
-		if( statement instanceof IASTIfStatement )
-			return visitIfStatement( (IASTIfStatement) statement, action );
-		
-		if( action.processStatements ){
-		    switch( action.processStatement( statement ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-		if( statement instanceof IASTCompoundStatement ){
-			IASTStatement [] list = ((IASTCompoundStatement) statement).getStatements();
-			for( int i = 0; i < list.length; i++ ){
-			    if( list[i] == null ) break;
-				if( !visitStatement( list[i], action ) ) return false;
-			}
-		} else if( statement instanceof IASTDeclarationStatement ){
-			if( !visitDeclaration( ((IASTDeclarationStatement)statement).getDeclaration(), action ) ) return false;
-		} else if( statement instanceof IASTExpressionStatement ){
-		    if( !visitExpression( ((IASTExpressionStatement)statement).getExpression(), action ) ) return false;
-		} else if( statement instanceof IASTCaseStatement ){
-		    if( !visitExpression( ((IASTCaseStatement)statement).getExpression(), action ) ) return false;
-		} else if( statement instanceof IASTDoStatement ){
-		    if( !visitStatement( ((IASTDoStatement)statement).getBody(), action ) ) return false;
-		    if( !visitExpression( ((IASTDoStatement)statement).getCondition(), action ) ) return false;
-		} else if( statement instanceof IASTGotoStatement ){
-		    if( !visitName( ((IASTGotoStatement)statement).getName(), action ) ) return false;
-		} else if( statement instanceof IASTLabelStatement ){
-		    if( !visitName( ((IASTLabelStatement)statement).getName(), action ) ) return false;
-		} else if( statement instanceof IASTReturnStatement ){
-		    if( !visitExpression( ((IASTReturnStatement) statement ).getReturnValue(), action ) ) return false;
-		} else if( statement instanceof IASTSwitchStatement ){
-		    if( !visitExpression( ((IASTSwitchStatement) statement ).getController(), action ) ) return false;
-		    if( !visitStatement( ((IASTSwitchStatement) statement ).getBody(), action ) ) return false;
-		} else if( statement instanceof IASTWhileStatement ){
-		    IASTWhileStatement whileStatement = (IASTWhileStatement) statement;
-			if( whileStatement.getCondition() != null && !visitExpression( (whileStatement ).getCondition(), action ) ) return false;
-		    if( !visitStatement( (whileStatement ).getBody(), action ) ) return false;
-		    if( whileStatement instanceof ICPPASTWhileStatement )
-		    {
-		    	ICPPASTWhileStatement cppWhile = ((ICPPASTWhileStatement)whileStatement);
-		    	if ( cppWhile.getConditionDeclaration() != null && !visitDeclaration( cppWhile.getConditionDeclaration(), action ) ) return false; 
-		    }
-		} else if( statement instanceof IASTForStatement ){
-		    IASTForStatement s = (IASTForStatement) statement;
-		    if( s.getInitDeclaration() != null )
-		        if( !visitDeclaration( s.getInitDeclaration(), action ) ) return false;
-		    if( s.getInitExpression() != null )
-		        if( !visitExpression( s.getInitExpression(), action ) ) return false;
-		    if( !visitExpression( s.getCondition(), action ) ) return false;
-		    if( !visitExpression( s.getIterationExpression(), action ) ) return false;
-		    if( !visitStatement( s.getBody(), action ) ) return false;
-		} else if( statement instanceof ICPPASTCatchHandler ){
-			if( !visitDeclaration( ((ICPPASTCatchHandler) statement).getDeclaration(), action ) ) return false;
-			if( !visitStatement( ((ICPPASTCatchHandler) statement).getCatchBody(), action ) ) return false;
-		} else if( statement instanceof ICPPASTTryBlockStatement ){
-			if( !visitStatement( ((ICPPASTTryBlockStatement)statement).getTryBody(), action ) ) return false;
-			ICPPASTCatchHandler [] handlers = ((ICPPASTTryBlockStatement)statement).getCatchHandlers();
-			for( int i = 0; i < handlers.length; i++ ){
-				if( !visitStatement( handlers[i], action ) ) return false;
-			}
-		}
-		
-		return true;
-	}
-
-	/**
-	 * @param typeOf
-	 * @param action
-	 * @return
-	 */
-	public boolean visitExpression(IASTExpression expression, BaseVisitorAction action) {
-		if( action.processExpressions ){
-		    switch( action.processExpression( expression ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-		if( expression instanceof IASTArraySubscriptExpression ){
-		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getArrayExpression(), action ) ) return false;
-		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getSubscriptExpression(), action ) ) return false;
-		} else if( expression instanceof IASTBinaryExpression ){
-		    if( !visitExpression( ((IASTBinaryExpression)expression).getOperand1(), action ) ) return false;
-		    if( !visitExpression( ((IASTBinaryExpression)expression).getOperand2(), action ) ) return false;
-		} else if( expression instanceof IASTConditionalExpression){
-		    if( !visitExpression( ((IASTConditionalExpression)expression).getLogicalConditionExpression(), action ) ) return false;
-		    if( !visitExpression( ((IASTConditionalExpression)expression).getNegativeResultExpression(), action ) ) return false;
-		    if( !visitExpression( ((IASTConditionalExpression)expression).getPositiveResultExpression(), action ) ) return false;
-		} else if( expression instanceof IASTExpressionList ){
-			IASTExpression[] list = ((IASTExpressionList)expression).getExpressions();
-			for( int i = 0; i < list.length; i++){
-			    if( list[i] == null ) break;
-			    if( !visitExpression( list[i], action ) ) return false;
-			}
-		} else if( expression instanceof IASTFieldReference ){
-		    if( !visitExpression( ((IASTFieldReference)expression).getFieldOwner(), action ) ) return false;
-		    if( !visitName( ((IASTFieldReference)expression).getFieldName(), action ) ) return false;
-		} else if( expression instanceof IASTFunctionCallExpression ){
-		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getFunctionNameExpression(), action ) ) return false;
-		    if( ((IASTFunctionCallExpression)expression).getParameterExpression() != null )
-		    	if( !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
-		} else if( expression instanceof IASTIdExpression ){
-		    if( !visitName( ((IASTIdExpression)expression).getName(), action ) ) return false;
-		} else if( expression instanceof IASTTypeIdExpression ){
-		    if( !visitTypeId( ((IASTTypeIdExpression)expression).getTypeId(), action ) ) return false;
-		} else if( expression instanceof IASTCastExpression ){
-		    if( !visitTypeId( ((IASTCastExpression)expression).getTypeId(), action ) ) return false;
-		    if( !visitExpression( ((IASTCastExpression)expression).getOperand(), action ) ) return false;
-		} else if( expression instanceof IASTUnaryExpression ){
-		    if( !visitExpression( ((IASTUnaryExpression)expression).getOperand(), action ) ) return false;
-		} else if( expression instanceof IGNUASTCompoundStatementExpression ){
-		    if( !visitStatement( ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement(), action ) ) return false;
-		} else if( expression instanceof ICPPASTDeleteExpression ){
-			if( !visitExpression( ((ICPPASTDeleteExpression)expression).getOperand(), action ) )  return false;
-		} else if( expression instanceof ICPPASTNewExpression ) {
-			ICPPASTNewExpression newExp = (ICPPASTNewExpression) expression;
-			if( newExp.getNewPlacement() != null )
-				if( !visitExpression( newExp.getNewPlacement(), action ) ) return false;
-			if( newExp.getTypeId() != null )
-				if( !visitTypeId( newExp.getTypeId(), action ) ) return false;
-			IASTExpression [] exps = newExp.getNewTypeIdArrayExpressions();
-			for( int i = 0; i < exps.length; i++ ){
-				if( !visitExpression( exps[i], action ) ) return false;
-			}
-			if( newExp.getNewInitializer() != null )
-				if( !visitExpression( newExp.getNewInitializer(), action ) ) return false;
-		} else if( expression instanceof ICPPASTSimpleTypeConstructorExpression ){
-			if( !visitExpression( ((ICPPASTSimpleTypeConstructorExpression)expression).getInitialValue(), action ) ) return false;
-		} else if( expression instanceof ICPPASTTypenameExpression ){
-			if( !visitName( ((ICPPASTTypenameExpression)expression).getName(), action ) ) return false;
-			if( !visitExpression( ((ICPPASTTypenameExpression)expression).getInitialValue(), action ) )  return false;
-		}
-		return true;	
-	}
-	
-	/**
-	 * @param typeId
-	 * @param action
-	 * @return
-	 */
-	public boolean visitTypeId(IASTTypeId typeId, BaseVisitorAction action) {
-		if( action.processTypeIds ){
-		    switch( action.processTypeId( typeId ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
-		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
-		return true;
-	}
-
-	/**
-	 * @param initializer
-	 * @param action
-	 * @return
-	 */
-	public boolean visitInitializer(IASTInitializer initializer, BaseVisitorAction action) {
-		if( action.processInitializers ){
-		    switch( action.processInitializer( initializer ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-	    if( initializer instanceof IASTInitializerExpression ){
-	        if( !visitExpression( ((IASTInitializerExpression) initializer).getExpression(), action ) ) return false;
-	    } else if( initializer instanceof IASTInitializerList ){
-	        IASTInitializer [] list = ((IASTInitializerList) initializer).getInitializers();
-	        for( int i = 0; i < list.length; i++ ){
-	            if( !visitInitializer( list[i], action ) ) return false;
-	        }
-	    } else if( initializer instanceof ICPPASTConstructorInitializer ){
-	    	if( !visitExpression( ((ICPPASTConstructorInitializer) initializer).getExpression(), action ) ) return false;
-	    }
-	    return true;
-	}
-
-	/**
-	 * @param enumerator
-	 * @param action
-	 * @return
-	 */
-	public boolean visitEnumerator(IASTEnumerator enumerator, BaseVisitorAction action) {
-		if( action.processEnumerators ){
-		    switch( action.processEnumerator( enumerator ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-	    if( !visitName( enumerator.getName(), action ) ) return false;
-	    if( enumerator.getValue() != null )
-	        if( !visitExpression( enumerator.getValue(), action ) ) return false;
-	    return true;
-	}
-
-	/**
-	 * @param specifier
-	 * @param action
-	 * @return
-	 */
-	public boolean visitBaseSpecifier(ICPPASTBaseSpecifier specifier, BaseVisitorAction action) {
-		if( action instanceof CPPBaseVisitorAction && ((CPPBaseVisitorAction)action).processBaseSpecifiers ){
-		    switch( ((CPPBaseVisitorAction)action).processBaseSpecifier( specifier ) ){
-	            case BaseVisitorAction.PROCESS_ABORT : return false;
-	            case BaseVisitorAction.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
-			
-	    if( !visitName( specifier.getName(), action ) ) return false;
-	    return true;
-	}
-
-	public boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, BaseVisitorAction action ){
-	    if( action.processParameterDeclarations ){
-	    	switch( action.processParameterDeclaration( parameterDeclaration ) ){
-		        case BaseVisitorAction.PROCESS_ABORT : return false;
-		        case BaseVisitorAction.PROCESS_SKIP  : return true;
-		        default : break;
-		    }
-	    }
-	    
-	    if( !visitDeclSpecifier( parameterDeclaration.getDeclSpecifier(), action ) ) return false;
-	    if( !visitDeclarator( parameterDeclaration.getDeclarator(), action ) ) return false;
-	    return true;
-	}
-	
-	/**
-	 * @param parameter
-	 * @param action
-	 * @return
-	 */
-	public boolean visitTemplateParameter(ICPPASTTemplateParameter parameter, BaseVisitorAction action) {
-		return true;
-	}
+//	private IASTTranslationUnit tu = null;
+//	public CPPVisitor( ICPPASTTranslationUnit tu ){
+//	    this.tu = tu; 
+//	}
+//	
+//	public void visitTranslationUnit( ASTVisitor action ){
+//		IASTDeclaration [] decls = tu.getDeclarations();
+//		for( int i = 0; i < decls.length; i++ ){
+//			if( !visitDeclaration( decls[i], action ) ) return;
+//		}
+//	}
+//
+//	public boolean visitNamespaceDefinition( ICPPASTNamespaceDefinition namespace, ASTVisitor action ){
+//	    if( action instanceof CPPASTVisitor && ((CPPASTVisitor)action).processNamespaces ){
+//	        switch( ((CPPASTVisitor)action).processNamespace( namespace ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//	    }
+//	        
+//		if( !visitName( namespace.getName(), action ) ) return false;
+//		IASTDeclaration [] decls = namespace.getDeclarations();
+//		for( int i = 0; i < decls.length; i++ ){
+//			if( !visitDeclaration( decls[i], action ) ) return false;
+//		}
+//	   return true;
+//	}
+//	/**
+//	 * @param declaration
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitDeclaration(IASTDeclaration declaration, ASTVisitor action) {
+//	    if( declaration instanceof ICPPASTNamespaceDefinition )
+//	        return visitNamespaceDefinition( (ICPPASTNamespaceDefinition) declaration, action );
+//	    
+//		if( action.processDeclarations ) {
+//		    switch( action.processDeclaration( declaration ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//		
+//		if( declaration instanceof IASTSimpleDeclaration ){
+//			IASTSimpleDeclaration simple = (IASTSimpleDeclaration) declaration;
+//			if( !visitDeclSpecifier( simple.getDeclSpecifier(), action ) ) return false;
+//			IASTDeclarator [] dtors = simple.getDeclarators();
+//			for( int i = 0; i < dtors.length; i++ ){
+//				if( !visitDeclarator( dtors[i], action) ) return false;
+//			}
+//		} else if( declaration instanceof IASTFunctionDefinition ){
+//			IASTFunctionDefinition function = (IASTFunctionDefinition) declaration;
+//			if( !visitDeclSpecifier( function.getDeclSpecifier(), action ) ) return false;
+//			if( !visitDeclarator( function.getDeclarator(), action ) ) return false;
+//			if( !visitStatement( function.getBody(), action ) ) return false;
+//		} else if( declaration instanceof ICPPASTUsingDeclaration ){
+//			if( !visitName( ((ICPPASTUsingDeclaration)declaration).getName(), action ) ) return false;
+//		} else if( declaration instanceof ICPPASTUsingDirective ){
+//			if( !visitName( ((ICPPASTUsingDirective)declaration).getQualifiedName(), action ) ) return false;
+//		} else if( declaration instanceof ICPPASTNamespaceAlias ){
+//			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
+//			if( !visitName( alias.getAlias(), action ) ) return false;
+//			if( !visitName( alias.getQualifiedName(), action ) ) return false;
+//		} else if( declaration instanceof ICPPASTLinkageSpecification ){
+//			IASTDeclaration [] decls = ((ICPPASTLinkageSpecification) declaration).getDeclarations();
+//			for( int i = 0; i < decls.length; i++ ){
+//				if( !visitDeclaration( decls[i], action ) ) return false;
+//			}
+//		} else if( declaration instanceof ICPPASTTemplateDeclaration ){
+//			ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) declaration;
+//			ICPPASTTemplateParameter [] params = template.getTemplateParameters();
+//			for( int i = 0; i < params.length; i++ ){
+//				if( !visitTemplateParameter( params[i], action ) ) return false;
+//			}
+//			if( !visitDeclaration( template.getDeclaration(), action ) ) return false;
+//		} else if( declaration instanceof ICPPASTTemplateSpecialization ){
+//			if( !visitDeclaration( ((ICPPASTTemplateSpecialization) declaration).getDeclaration(), action ) ) return false;
+//		}
+//		return true;
+//	}
+//
+//	/**
+//	 * @param name
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitName(IASTName name, ASTVisitor action) {
+//		if( action.processNames ){
+//		    switch( action.processName( name ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//		if( name instanceof ICPPASTQualifiedName ){
+//			IASTName [] names = ((ICPPASTQualifiedName)name).getNames();
+//			for( int i = 0; i < names.length; i++ ){
+//				if( i == names.length - 1 ){
+//					if( names[i].toCharArray().length > 0 && !visitName( names[i], action ) ) return false;
+//				} else if( !visitName( names[i], action ) ) return false;
+//			}
+//		}
+//		return true;
+//	}
+//
+//	/**
+//	 * @param declSpecifier
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitDeclSpecifier(IASTDeclSpecifier declSpecifier, ASTVisitor action) {
+//		if( action.processDeclSpecifiers ){
+//		    switch( action.processDeclSpecifier( declSpecifier ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//		if( declSpecifier instanceof ICPPASTCompositeTypeSpecifier ){
+//			ICPPASTCompositeTypeSpecifier composite = (ICPPASTCompositeTypeSpecifier) declSpecifier;
+//			if( !visitName( composite.getName(), action ) ) return false;
+//			ICPPASTBaseSpecifier [] bases = composite.getBaseSpecifiers();
+//			for( int i = 0; i < bases.length; i++ ) {
+//				if( !visitBaseSpecifier( bases[i], action ) ) return false;
+//			}
+//			IASTDeclaration [] decls = composite.getMembers();
+//			for( int i = 0; i < decls.length; i++ ){
+//				if( !visitDeclaration( decls[i], action ) ) return false;
+//			}
+//		} else if( declSpecifier instanceof ICPPASTElaboratedTypeSpecifier ){
+//			if( !visitName( ((ICPPASTElaboratedTypeSpecifier) declSpecifier).getName(), action ) ) return false;
+//		} else if( declSpecifier instanceof IASTEnumerationSpecifier ){
+//			IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpecifier;
+//			if( !visitName( enumeration.getName(), action ) ) return false;
+//			IASTEnumerator [] etors = enumeration.getEnumerators();
+//			for( int i = 0; i < etors.length; i++ ){
+//				if( !visitEnumerator( etors[i], action ) ) return false;
+//			}
+//		} else if( declSpecifier instanceof ICPPASTNamedTypeSpecifier ){
+//			if( !visitName( ((ICPPASTNamedTypeSpecifier)declSpecifier).getName(), action ) ) return false;
+//		} else if( declSpecifier instanceof IGPPASTSimpleDeclSpecifier ) {
+//			IASTExpression typeOf = ((IGPPASTSimpleDeclSpecifier)declSpecifier).getTypeofExpression();
+//			if( typeOf != null )
+//				if( !visitExpression( typeOf, action ) ) return false;
+//		}
+//		return true;
+//	}
+//
+//	/**
+//	 * @param declarator
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitDeclarator(IASTDeclarator declarator, ASTVisitor action) {
+//		if( action.processDeclarators ){
+//		    switch( action.processDeclarator( declarator ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//		IASTPointerOperator [] ptrs = declarator.getPointerOperators();
+//		if( ptrs.length > 0 ){
+//			for( int i = 0; i < ptrs.length; i++ ){
+//				if( ptrs[i] instanceof ICPPASTPointerToMember ){
+//					if( !visitName( ((ICPPASTPointerToMember) ptrs[i]).getName(), action ) ) return false;
+//				}
+//			}
+//		}
+//		
+//		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
+//			declarator.getNestedDeclarator() == null )
+//		{
+//			if( !visitName( declarator.getName(), action ) ) return false;
+//		}
+//		
+//		if( declarator.getNestedDeclarator() != null )
+//			if( !visitDeclarator( declarator.getNestedDeclarator(), action ) ) return false;
+//		
+//		if( declarator instanceof ICPPASTFunctionDeclarator ){
+//			ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) declarator;
+//		    IASTParameterDeclaration [] list = fdtor.getParameters();
+//			for( int i = 0; i < list.length; i++ ){
+//			    if( !visitParameterDeclaration( list[i], action ) ) return false;
+//			}
+//			ICPPASTConstructorChainInitializer [] ctorChain = fdtor.getConstructorChain();
+//			for( int i = 0; i < ctorChain.length; i++ ){
+//				if( !visitName( ctorChain[i].getMemberInitializerId(), action ) ) return false;
+//				if( !visitExpression( ctorChain[i].getInitializerValue(), action ) ) return false;
+//			}
+//			IASTTypeId [] typeIds = fdtor.getExceptionSpecification();
+//			for( int i = 0; i < typeIds.length; i++ ){
+//				if( !visitTypeId( typeIds[i], action ) ) return false;
+//			}
+//			
+//			if( declarator instanceof ICPPASTFunctionTryBlockDeclarator ){
+//				ICPPASTCatchHandler [] catchHandlers = ((ICPPASTFunctionTryBlockDeclarator)declarator).getCatchHandlers();
+//				for( int i = 0; i < catchHandlers.length; i++ ){
+//					if( !visitStatement( catchHandlers[i], action ) ) return false;
+//				}
+//			}
+//			
+//		}
+//		if( declarator instanceof IASTArrayDeclarator ){
+//			IASTArrayModifier [] mods = ((IASTArrayDeclarator) declarator).getArrayModifiers();
+//			for( int i = 0; i < mods.length; i++ ){
+//				if( mods[i].getConstantExpression() != null && !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
+//			}
+//		}
+//		
+//		if( declarator.getInitializer() != null )
+//		    if( !visitInitializer( declarator.getInitializer(), action ) ) return false;
+//		    
+//		if( declarator instanceof IASTFieldDeclarator )
+//			if( ! visitExpression( ((IASTFieldDeclarator) declarator).getBitFieldSize(), action ) ) return false;
+//			
+//		return true;
+//	}
+//	
+//	private boolean visitIfStatement( IASTIfStatement ifStatement, ASTVisitor action ){
+//		while( ifStatement != null ){
+//			if( action.processStatements ){
+//			    switch( action.processStatement( ifStatement ) ){
+//			        case ASTVisitor.PROCESS_ABORT : return false;
+//			        case ASTVisitor.PROCESS_SKIP  : return true;
+//			        default : break;
+//			    }
+//		    }	
+//		    if( !visitExpression( ifStatement.getCondition(), action ) ) return false;
+//		    if( !visitStatement( ifStatement.getThenClause(), action ) ) return false;
+//		    if( ifStatement.getElseClause() != null ){
+//		    	IASTStatement statement = ifStatement.getElseClause();
+//		       	if( statement instanceof IASTIfStatement ){
+//		       		ifStatement = (IASTIfStatement) statement;
+//		       		continue;
+//		       	} 
+//		       	if( !visitStatement( statement, action ) ) return false;
+//		    }
+//		    ifStatement = null;
+//		}
+//		return true;
+//	}
+//	/**
+//	 * @param body
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitStatement(IASTStatement statement, ASTVisitor action) {
+//		//handle if's in a non-recursive manner to avoid stack overflows in case of huge number of elses
+//		if( statement instanceof IASTIfStatement )
+//			return visitIfStatement( (IASTIfStatement) statement, action );
+//		
+//		if( action.processStatements ){
+//		    switch( action.processStatement( statement ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//		if( statement instanceof IASTCompoundStatement ){
+//			IASTStatement [] list = ((IASTCompoundStatement) statement).getStatements();
+//			for( int i = 0; i < list.length; i++ ){
+//			    if( list[i] == null ) break;
+//				if( !visitStatement( list[i], action ) ) return false;
+//			}
+//		} else if( statement instanceof IASTDeclarationStatement ){
+//			if( !visitDeclaration( ((IASTDeclarationStatement)statement).getDeclaration(), action ) ) return false;
+//		} else if( statement instanceof IASTExpressionStatement ){
+//		    if( !visitExpression( ((IASTExpressionStatement)statement).getExpression(), action ) ) return false;
+//		} else if( statement instanceof IASTCaseStatement ){
+//		    if( !visitExpression( ((IASTCaseStatement)statement).getExpression(), action ) ) return false;
+//		} else if( statement instanceof IASTDoStatement ){
+//		    if( !visitStatement( ((IASTDoStatement)statement).getBody(), action ) ) return false;
+//		    if( !visitExpression( ((IASTDoStatement)statement).getCondition(), action ) ) return false;
+//		} else if( statement instanceof IASTGotoStatement ){
+//		    if( !visitName( ((IASTGotoStatement)statement).getName(), action ) ) return false;
+//		} else if( statement instanceof IASTLabelStatement ){
+//		    if( !visitName( ((IASTLabelStatement)statement).getName(), action ) ) return false;
+//		} else if( statement instanceof IASTReturnStatement ){
+//		    if( !visitExpression( ((IASTReturnStatement) statement ).getReturnValue(), action ) ) return false;
+//		} else if( statement instanceof IASTSwitchStatement ){
+//		    if( !visitExpression( ((IASTSwitchStatement) statement ).getController(), action ) ) return false;
+//		    if( !visitStatement( ((IASTSwitchStatement) statement ).getBody(), action ) ) return false;
+//		} else if( statement instanceof IASTWhileStatement ){
+//		    IASTWhileStatement whileStatement = (IASTWhileStatement) statement;
+//			if( whileStatement.getCondition() != null && !visitExpression( (whileStatement ).getCondition(), action ) ) return false;
+//		    if( !visitStatement( (whileStatement ).getBody(), action ) ) return false;
+//		    if( whileStatement instanceof ICPPASTWhileStatement )
+//		    {
+//		    	ICPPASTWhileStatement cppWhile = ((ICPPASTWhileStatement)whileStatement);
+//		    	if ( cppWhile.getConditionDeclaration() != null && !visitDeclaration( cppWhile.getConditionDeclaration(), action ) ) return false; 
+//		    }
+//		} else if( statement instanceof IASTForStatement ){
+//		    IASTForStatement s = (IASTForStatement) statement;
+//		    if( s.getInitDeclaration() != null )
+//		        if( !visitDeclaration( s.getInitDeclaration(), action ) ) return false;
+//		    if( s.getInitExpression() != null )
+//		        if( !visitExpression( s.getInitExpression(), action ) ) return false;
+//		    if( !visitExpression( s.getCondition(), action ) ) return false;
+//		    if( !visitExpression( s.getIterationExpression(), action ) ) return false;
+//		    if( !visitStatement( s.getBody(), action ) ) return false;
+//		} else if( statement instanceof ICPPASTCatchHandler ){
+//			if( !visitDeclaration( ((ICPPASTCatchHandler) statement).getDeclaration(), action ) ) return false;
+//			if( !visitStatement( ((ICPPASTCatchHandler) statement).getCatchBody(), action ) ) return false;
+//		} else if( statement instanceof ICPPASTTryBlockStatement ){
+//			if( !visitStatement( ((ICPPASTTryBlockStatement)statement).getTryBody(), action ) ) return false;
+//			ICPPASTCatchHandler [] handlers = ((ICPPASTTryBlockStatement)statement).getCatchHandlers();
+//			for( int i = 0; i < handlers.length; i++ ){
+//				if( !visitStatement( handlers[i], action ) ) return false;
+//			}
+//		}
+//		
+//		return true;
+//	}
+//
+//	/**
+//	 * @param typeOf
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitExpression(IASTExpression expression, ASTVisitor action) {
+//		if( action.processExpressions ){
+//		    switch( action.processExpression( expression ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//		if( expression instanceof IASTArraySubscriptExpression ){
+//		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getArrayExpression(), action ) ) return false;
+//		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getSubscriptExpression(), action ) ) return false;
+//		} else if( expression instanceof IASTBinaryExpression ){
+//		    if( !visitExpression( ((IASTBinaryExpression)expression).getOperand1(), action ) ) return false;
+//		    if( !visitExpression( ((IASTBinaryExpression)expression).getOperand2(), action ) ) return false;
+//		} else if( expression instanceof IASTConditionalExpression){
+//		    if( !visitExpression( ((IASTConditionalExpression)expression).getLogicalConditionExpression(), action ) ) return false;
+//		    if( !visitExpression( ((IASTConditionalExpression)expression).getNegativeResultExpression(), action ) ) return false;
+//		    if( !visitExpression( ((IASTConditionalExpression)expression).getPositiveResultExpression(), action ) ) return false;
+//		} else if( expression instanceof IASTExpressionList ){
+//			IASTExpression[] list = ((IASTExpressionList)expression).getExpressions();
+//			for( int i = 0; i < list.length; i++){
+//			    if( list[i] == null ) break;
+//			    if( !visitExpression( list[i], action ) ) return false;
+//			}
+//		} else if( expression instanceof IASTFieldReference ){
+//		    if( !visitExpression( ((IASTFieldReference)expression).getFieldOwner(), action ) ) return false;
+//		    if( !visitName( ((IASTFieldReference)expression).getFieldName(), action ) ) return false;
+//		} else if( expression instanceof IASTFunctionCallExpression ){
+//		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getFunctionNameExpression(), action ) ) return false;
+//		    if( ((IASTFunctionCallExpression)expression).getParameterExpression() != null )
+//		    	if( !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
+//		} else if( expression instanceof IASTIdExpression ){
+//		    if( !visitName( ((IASTIdExpression)expression).getName(), action ) ) return false;
+//		} else if( expression instanceof IASTTypeIdExpression ){
+//		    if( !visitTypeId( ((IASTTypeIdExpression)expression).getTypeId(), action ) ) return false;
+//		} else if( expression instanceof IASTCastExpression ){
+//		    if( !visitTypeId( ((IASTCastExpression)expression).getTypeId(), action ) ) return false;
+//		    if( !visitExpression( ((IASTCastExpression)expression).getOperand(), action ) ) return false;
+//		} else if( expression instanceof IASTUnaryExpression ){
+//		    if( !visitExpression( ((IASTUnaryExpression)expression).getOperand(), action ) ) return false;
+//		} else if( expression instanceof IGNUASTCompoundStatementExpression ){
+//		    if( !visitStatement( ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement(), action ) ) return false;
+//		} else if( expression instanceof ICPPASTDeleteExpression ){
+//			if( !visitExpression( ((ICPPASTDeleteExpression)expression).getOperand(), action ) )  return false;
+//		} else if( expression instanceof ICPPASTNewExpression ) {
+//			ICPPASTNewExpression newExp = (ICPPASTNewExpression) expression;
+//			if( newExp.getNewPlacement() != null )
+//				if( !visitExpression( newExp.getNewPlacement(), action ) ) return false;
+//			if( newExp.getTypeId() != null )
+//				if( !visitTypeId( newExp.getTypeId(), action ) ) return false;
+//			IASTExpression [] exps = newExp.getNewTypeIdArrayExpressions();
+//			for( int i = 0; i < exps.length; i++ ){
+//				if( !visitExpression( exps[i], action ) ) return false;
+//			}
+//			if( newExp.getNewInitializer() != null )
+//				if( !visitExpression( newExp.getNewInitializer(), action ) ) return false;
+//		} else if( expression instanceof ICPPASTSimpleTypeConstructorExpression ){
+//			if( !visitExpression( ((ICPPASTSimpleTypeConstructorExpression)expression).getInitialValue(), action ) ) return false;
+//		} else if( expression instanceof ICPPASTTypenameExpression ){
+//			if( !visitName( ((ICPPASTTypenameExpression)expression).getName(), action ) ) return false;
+//			if( !visitExpression( ((ICPPASTTypenameExpression)expression).getInitialValue(), action ) )  return false;
+//		}
+//		return true;	
+//	}
+//	
+//	/**
+//	 * @param typeId
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitTypeId(IASTTypeId typeId, ASTVisitor action) {
+//		if( action.processTypeIds ){
+//		    switch( action.processTypeId( typeId ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
+//		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
+//		return true;
+//	}
+//
+//	/**
+//	 * @param initializer
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitInitializer(IASTInitializer initializer, ASTVisitor action) {
+//		if( action.processInitializers ){
+//		    switch( action.processInitializer( initializer ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//	    if( initializer instanceof IASTInitializerExpression ){
+//	        if( !visitExpression( ((IASTInitializerExpression) initializer).getExpression(), action ) ) return false;
+//	    } else if( initializer instanceof IASTInitializerList ){
+//	        IASTInitializer [] list = ((IASTInitializerList) initializer).getInitializers();
+//	        for( int i = 0; i < list.length; i++ ){
+//	            if( !visitInitializer( list[i], action ) ) return false;
+//	        }
+//	    } else if( initializer instanceof ICPPASTConstructorInitializer ){
+//	    	if( !visitExpression( ((ICPPASTConstructorInitializer) initializer).getExpression(), action ) ) return false;
+//	    }
+//	    return true;
+//	}
+//
+//	/**
+//	 * @param enumerator
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitEnumerator(IASTEnumerator enumerator, ASTVisitor action) {
+//		if( action.processEnumerators ){
+//		    switch( action.processEnumerator( enumerator ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//	    if( !visitName( enumerator.getName(), action ) ) return false;
+//	    if( enumerator.getValue() != null )
+//	        if( !visitExpression( enumerator.getValue(), action ) ) return false;
+//	    return true;
+//	}
+//
+//	/**
+//	 * @param specifier
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitBaseSpecifier(ICPPASTBaseSpecifier specifier, ASTVisitor action) {
+//		if( action instanceof CPPASTVisitor && ((CPPASTVisitor)action).processBaseSpecifiers ){
+//		    switch( ((CPPASTVisitor)action).processBaseSpecifier( specifier ) ){
+//	            case ASTVisitor.PROCESS_ABORT : return false;
+//	            case ASTVisitor.PROCESS_SKIP  : return true;
+//	            default : break;
+//	        }
+//		}
+//			
+//	    if( !visitName( specifier.getName(), action ) ) return false;
+//	    return true;
+//	}
+//
+//	public boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, ASTVisitor action ){
+//	    if( action.processParameterDeclarations ){
+//	    	switch( action.processParameterDeclaration( parameterDeclaration ) ){
+//		        case ASTVisitor.PROCESS_ABORT : return false;
+//		        case ASTVisitor.PROCESS_SKIP  : return true;
+//		        default : break;
+//		    }
+//	    }
+//	    
+//	    if( !visitDeclSpecifier( parameterDeclaration.getDeclSpecifier(), action ) ) return false;
+//	    if( !visitDeclarator( parameterDeclaration.getDeclarator(), action ) ) return false;
+//	    return true;
+//	}
+//	
+//	/**
+//	 * @param parameter
+//	 * @param action
+//	 * @return
+//	 */
+//	public boolean visitTemplateParameter(ICPPASTTemplateParameter parameter, ASTVisitor action) {
+//		return true;
+//	}
 
 	/**
 	 * Generate a function type for an implicit function.
@@ -1931,7 +1903,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
 		CollectProblemsAction action = new CollectProblemsAction();
-		tu.getVisitor().visitTranslationUnit(action);
+		tu.accept(action);
 		
 		return action.getProblems();
 	}
@@ -1943,13 +1915,13 @@ public class CPPVisitor implements ICPPASTVisitor {
 	 */
 	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
 		CollectReferencesAction action = new CollectReferencesAction( binding );
-		tu.getVisitor().visitTranslationUnit( action );
+		tu.accept( action );
 		return action.getReferences();
 	}
 	
 	public static IASTName[] getDeclarations( IASTTranslationUnit tu, IBinding binding ){
 	    CollectDeclarationsAction action = new CollectDeclarationsAction( binding );
-	    tu.getVisitor().visitTranslationUnit( action );
+	    tu.accept( action );
 	    return action.getDeclarations();
 	}
 }

@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
@@ -50,4 +51,17 @@ public class CASTTypeIdInitializerExpression extends CASTNode implements
         i = initializer;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( t != null ) if( !t.accept( action ) ) return false;
+        if( i != null ) if( !i.accept( action ) ) return false;
+        return true;
+    }
 }

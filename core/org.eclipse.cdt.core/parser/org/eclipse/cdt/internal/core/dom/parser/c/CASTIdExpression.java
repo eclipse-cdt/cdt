@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
@@ -33,4 +34,16 @@ public class CASTIdExpression extends CASTNode implements IASTIdExpression {
         this.name = name;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+      
+        if( name != null ) if( !name.accept( action ) ) return false;
+        return true;
+    }
 }

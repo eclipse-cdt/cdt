@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
@@ -33,4 +34,8 @@ public class CASTArrayModifier extends CASTNode implements IASTArrayModifier {
         this.exp = expression;
     }
 
+    public boolean accept( ASTVisitor action ){      
+        if( exp != null ) if( !exp.accept( action ) ) return false;
+        return true;
+    }
 }

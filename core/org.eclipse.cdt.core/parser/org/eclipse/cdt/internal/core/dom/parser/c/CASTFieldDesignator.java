@@ -9,7 +9,9 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 
 /**
@@ -34,4 +36,15 @@ public class CASTFieldDesignator extends CASTNode implements
         this.name = name;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action instanceof CASTVisitor && ((CASTVisitor)action).shouldVisitDesignators ){
+		    switch( ((CASTVisitor)action).visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( name != null ) if( !name.accept( action ) ) return false;
+        return true;
+    }
 }

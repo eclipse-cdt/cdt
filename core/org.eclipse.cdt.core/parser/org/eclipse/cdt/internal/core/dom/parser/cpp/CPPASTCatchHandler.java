@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -66,4 +67,16 @@ public class CPPASTCatchHandler extends CPPASTNode implements
         return declaration;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitStatements ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( declaration != null ) if( !declaration.accept( action ) ) return false;
+        if( body != null ) if( !body.accept( action ) ) return false;
+        return true;
+    }
 }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -96,4 +97,21 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
     private ICPPASTTemplateParameter [] parameters = null;
     private static final int DEFAULT_PARMS_LIST_SIZE = 4;
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        ICPPASTTemplateParameter [] params = getTemplateParameters();
+        for ( int i = 0; i < params.length; i++ ) {
+            if( !params[i].accept( action ) ) return false;
+        }
+        
+        if( declaration != null ) if( !declaration.accept( action ) ) return false;
+        return true;
+    }
 }

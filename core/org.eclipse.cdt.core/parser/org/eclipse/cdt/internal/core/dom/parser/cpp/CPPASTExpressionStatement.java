@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 
@@ -32,6 +33,18 @@ public class CPPASTExpressionStatement extends CPPASTNode implements
      */
     public void setExpression(IASTExpression expression) {
         this.expression = expression;
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitStatements ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( expression != null ) if( !expression.accept( action ) ) return false;
+        return true;
     }
 
 }

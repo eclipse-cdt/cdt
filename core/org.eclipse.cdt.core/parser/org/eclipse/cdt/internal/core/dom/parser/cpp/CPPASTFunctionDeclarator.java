@@ -11,7 +11,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -246,4 +248,24 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
         return scope;
     }
     
+    protected boolean postAccept( ASTVisitor action ){
+        IASTParameterDeclaration [] params = getParameters();
+        for ( int i = 0; i < params.length; i++ ) {
+            if( !params[i].accept( action ) ) return false;
+        }
+        
+        ICPPASTConstructorChainInitializer [] chain = getConstructorChain();
+        for ( int i = 0; i < chain.length; i++ ) {
+            if( !chain[i].accept( action ) ) return false;
+        }
+        
+        IASTInitializer initializer = getInitializer();
+        if( initializer != null ) if( !initializer.accept( action ) ) return false;
+        
+        IASTTypeId[] ids = getExceptionSpecification();
+        for ( int i = 0; i < ids.length; i++ ) {
+            if( !ids[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 }

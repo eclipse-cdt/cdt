@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -77,5 +78,20 @@ public class CASTFunctionDefinition extends CASTNode implements
 			scope = new CFunctionScope( this );
 		return scope;
 	}
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
+        if( declarator != null ) if( !declarator.accept( action ) ) return false;
+        if( bodyStatement != null ) if( !bodyStatement.accept( action ) ) return false;
+        return true;
+    }
 
 }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
@@ -33,5 +34,12 @@ public class CPPASTArrayModifier extends CPPASTNode implements
      */
     public void setConstantExpression(IASTExpression expression) {
         exp = expression;
+    }
+    
+    public boolean accept( ASTVisitor action ){
+        if( exp != null )
+            if( !exp.accept( action ) ) return false;
+            
+        return true;
     }
 }

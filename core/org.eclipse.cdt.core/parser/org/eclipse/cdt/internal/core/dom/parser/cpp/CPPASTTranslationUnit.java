@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -31,17 +32,16 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -60,8 +60,6 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     private ICPPNamespace binding = null;
 
     private ICPPScope scope = null;
-    
-    private ICPPASTVisitor visitor = null;
 
     private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
 
@@ -165,20 +163,20 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return resolver.getLocations(offset, length);
     }
 
-    private class CPPFindNodeForOffsetAction extends CPPVisitor.CPPBaseVisitorAction {
+    private class CPPFindNodeForOffsetAction extends CPPASTVisitor {
     	{
-    		processNames          = true;
-    		processDeclarations   = true;
-    		processInitializers   = true;
-    		processParameterDeclarations = true;
-    		processDeclarators    = true;
-    		processDeclSpecifiers = true;
-    		processExpressions    = true;
-    		processStatements     = true;
-    		processTypeIds        = true;
-    		processEnumerators    = true;
-    		processBaseSpecifiers = true;
-    		processNamespaces     = true;
+    		shouldVisitNames          = true;
+    		shouldVisitDeclarations   = true;
+    		shouldVisitInitializers   = true;
+    		shouldVisitParameterDeclarations = true;
+    		shouldVisitDeclarators    = true;
+    		shouldVisitDeclSpecifiers = true;
+    		shouldVisitExpressions    = true;
+    		shouldVisitStatements     = true;
+    		shouldVisitTypeIds        = true;
+    		shouldVisitEnumerators    = true;
+    		shouldVisitBaseSpecifiers = true;
+    		shouldVisitNamespaces     = true;
     	}
     	
     	IASTNode foundNode = null;
@@ -216,7 +214,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
     	 */
-    	public int processDeclaration(IASTDeclaration declaration) {
+    	public int visit(IASTDeclaration declaration) {
     		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
 			// TODO take out fix below for bug 86993 check for: !(declaration instanceof ICPPASTLinkageSpecification)
     		if (declaration instanceof ASTNode && !(declaration instanceof ICPPASTLinkageSpecification) && ((ASTNode)declaration).getOffset() > offset)
@@ -228,7 +226,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
     	 */
-    	public int processDeclarator(IASTDeclarator declarator) {
+    	public int visit(IASTDeclarator declarator) {
     		int ret = processNode(declarator);
     		
     		IASTPointerOperator[] ops = declarator.getPointerOperators();
@@ -268,35 +266,35 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
     	 */
-    	public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
+    	public int visit(IASTDeclSpecifier declSpec) {
     		return processNode(declSpec);
     	}
     	
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
     	 */
-    	public int processEnumerator(IASTEnumerator enumerator) {
+    	public int visit(IASTEnumerator enumerator) {
     		return processNode((IASTNode)enumerator);
     	}
     	
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
     	 */
-    	public int processExpression(IASTExpression expression) {
+    	public int visit(IASTExpression expression) {
     		return processNode(expression);
     	}
     	
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
     	 */
-    	public int processInitializer(IASTInitializer initializer) {
+    	public int visit(IASTInitializer initializer) {
     		return processNode(initializer);
     	}
     	
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
     	 */
-    	public int processName(IASTName name) {
+    	public int visit(IASTName name) {
     		if ( name.toString() != null )
     			return processNode(name);
     		return PROCESS_CONTINUE;
@@ -305,7 +303,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
     	 */
-    	public int processParameterDeclaration(
+    	public int visit(
     			IASTParameterDeclaration parameterDeclaration) {
     		return processNode(parameterDeclaration);
     	}
@@ -313,14 +311,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
     	 */
-    	public int processStatement(IASTStatement statement) {
+    	public int visit(IASTStatement statement) {
     		return processNode(statement);
     	}
     	
     	/* (non-Javadoc)
     	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
     	 */
-    	public int processTypeId(IASTTypeId typeId) {
+    	public int visit(IASTTypeId typeId) {
     		return processNode(typeId);
     	}
 
@@ -352,7 +350,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 			globalOffset = result == null ? globalOffset : result.getGlobalOffset();
     		if (globalOffset >= 0) {
 	    		CPPFindNodeForOffsetAction nodeFinder = new CPPFindNodeForOffsetAction(globalOffset, realLength);
-	    		getVisitor().visitTranslationUnit(nodeFinder);
+	    		accept(nodeFinder);
 	    		node = nodeFinder.getNode();
     		}
 		}
@@ -453,15 +451,6 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
        if( resolver == null ) return EMPTY_STRING;
        return new String( resolver.getUnpreprocessedSignature(locations) );
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getVisitor()
-     */
-    public IASTVisitor getVisitor() {
-        if( visitor == null )
-            visitor = new CPPVisitor( this );
-        return visitor;
-    }
     
 	/*
 	 * (non-Javadoc)
@@ -473,4 +462,19 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 			return EMPTY_STRING;
 		return new String(resolver.getTranslationUnitPath());
 	}
+	
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitTranslationUnit){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        IASTDeclaration [] ds = getDeclarations();
+        for( int i = 0; i < ds.length; i++ ){
+            if( !ds[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 }

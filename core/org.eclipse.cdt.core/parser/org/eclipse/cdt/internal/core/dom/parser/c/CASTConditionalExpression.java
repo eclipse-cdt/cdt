@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
@@ -64,4 +65,18 @@ public class CASTConditionalExpression extends CASTNode implements
         this.negative = expression;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( condition != null ) if( !condition.accept( action ) ) return false;
+        if( postive != null ) if( !postive.accept( action ) ) return false;
+        if( negative != null ) if( !negative.accept( action ) ) return false;
+        return true;
+    }
 }

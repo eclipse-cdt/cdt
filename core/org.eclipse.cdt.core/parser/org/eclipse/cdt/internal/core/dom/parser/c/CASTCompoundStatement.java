@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -75,6 +76,21 @@ public class CASTCompoundStatement extends CASTNode implements
         if( scope == null )
             scope = new CScope( this );
         return scope;
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitStatements ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        IASTStatement [] s = getStatements();
+        for ( int i = 0; i < s.length; i++ ) {
+            if( !s[i].accept( action ) ) return false;
+        }
+        return true;
     }
 
 }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 
@@ -79,5 +80,20 @@ public class CPPASTLinkageSpecification extends CPPASTNode implements
     private int currentIndex = 0;    
     private IASTDeclaration [] declarations = null;
     private static final int DEFAULT_DECLARATIONS_LIST_SIZE = 4;
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        IASTDeclaration [] decls = getDeclarations();
+        for( int i = 0; i < decls.length; i++ )
+            if( !decls[i].accept( action ) ) return false;
+        return true;
+    }
 
 }

@@ -46,6 +46,8 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -85,12 +87,12 @@ public class CompleteParser2Tests extends TestCase {
 
     private static final NullLogService NULL_LOG = new NullLogService();
     
-    static private class CPPNameCollector extends CPPVisitor.CPPBaseVisitorAction {
+    static private class CPPNameCollector extends CPPASTVisitor {
         {
-            processNames = true;
+            shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int processName( IASTName name ){
+        public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -101,12 +103,12 @@ public class CompleteParser2Tests extends TestCase {
         }
         public int size() { return nameList.size(); } 
     }
-    static protected class CNameCollector extends CVisitor.CBaseVisitorAction {
+    static protected class CNameCollector extends CASTVisitor {
         {
-            processNames = true;
+            shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int processName( IASTName name ){
+        public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -215,7 +217,7 @@ public class CompleteParser2Tests extends TestCase {
     {
     	IASTTranslationUnit tu = parse( "namespace A { }"); //$NON-NLS-1$
     	CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 1 );
 		assertTrue( col.getName(0).resolveBinding() instanceof ICPPNamespace );
@@ -225,7 +227,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "namespace A { } namespace A { }"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 2 );
 		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -236,7 +238,7 @@ public class CompleteParser2Tests extends TestCase {
     {
         IASTTranslationUnit tu = parse( "namespace A { namespace B { } }"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 2 );
 		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -249,7 +251,7 @@ public class CompleteParser2Tests extends TestCase {
     {
         IASTTranslationUnit tu = parse( "class A { };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 1 );
 		assertTrue( col.getName(0).resolveBinding() instanceof ICPPClassType );
@@ -259,7 +261,7 @@ public class CompleteParser2Tests extends TestCase {
     {
         IASTTranslationUnit tu = parse( "class A { };  class B : public A { };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 3 );
 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -278,7 +280,7 @@ public class CompleteParser2Tests extends TestCase {
     {
         IASTTranslationUnit tu = parse( "namespace N { class A { }; } class B : protected virtual N::A { };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 6 );
 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -301,7 +303,7 @@ public class CompleteParser2Tests extends TestCase {
     {
         IASTTranslationUnit tu = parse( "int x;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 1 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -315,7 +317,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { }; A x;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -329,7 +331,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "namespace N { class A { }; } N::A x;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 6 );
  		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -346,7 +348,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { }; A x, y, z;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -364,7 +366,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { double x; };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 2 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -380,7 +382,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n using namespace A::B;\n using A::B::x;using A::B::C;using A::B::C::y;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 21 );
  		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -400,7 +402,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "namespace A { enum E { e1, e2, e3 }; E varE;}"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 7 );
  		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -422,7 +424,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "void foo( void );"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 2 );
  		IFunction foo = (IFunction) col.getName(0).resolveBinding();
@@ -437,7 +439,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { public: \n class B { }; }; const A::B &  foo( A * myParam );"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 8 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -464,7 +466,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { void foo(); };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 2 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -477,7 +479,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class U { }; class A { U foo( U areDumb ); };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 6 );
  		ICPPClassType U = (ICPPClassType) col.getName(0).resolveBinding();
@@ -496,7 +498,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "namespace N { int foo(void); } class A { static int bar(void); }; using N::foo; using ::A::bar;" ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 12 );
  		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -514,7 +516,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "extern \"C\" { int foo(); }"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 1 );
  		IFunction foo = (IFunction) col.getName(0).resolveBinding();
@@ -526,7 +528,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "namespace A { namespace B {	enum e1{e_1,e_2};	int x;	class C	{	static int y = 5;	}; }} "); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 8 );
  		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -551,7 +553,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "namespace N{ class A {}; }	using namespace N;	class B: public A{};"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -569,7 +571,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "typedef int myInt;\n myInt var;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		ITypedef myInt = (ITypedef) col.getName(0).resolveBinding();
@@ -584,7 +586,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A{ }; typedef A ** A_DOUBLEPTR;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -626,7 +628,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "namespace A { } \n class A::B { };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col );
+        tu.accept( col );
         
         ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
@@ -649,7 +651,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A; class A * a;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -663,7 +665,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A; A * anA;class A { };"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 4 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -683,7 +685,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "void foo();\n void foo( int );\n"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		IFunction foo1 = (IFunction) col.getName(0).resolveBinding();
@@ -696,7 +698,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "int x; int y = x;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -709,7 +711,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "int x = 5; void foo( int sub = x ) { }"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 4 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -720,7 +722,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "namespace A { int x = 666; } int y  = A::x;"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 6 );
  		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -733,7 +735,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "int x = 5;\n class A \n{ public : \n int a; \n A() : a( x ) { } };");  //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 6 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -748,7 +750,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "const int x = 5; int y [ x ]; "); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -763,7 +765,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A { }; A * anA;"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -777,7 +779,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A { }; void foo( void ) throw ( A );"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 4 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -788,7 +790,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "typedef int A; int B; int C; int D; int P; int*p = new  (P) (A)[B][C][D];" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 11 );
  		ITypedef A = (ITypedef) col.getName(0).resolveBinding();
@@ -817,7 +819,7 @@ public class CompleteParser2Tests extends TestCase {
 //		assertNotNull( dtor.getInitializer() );
 //		
 //		CPPNameCollector col = new CPPNameCollector();
-// 		tu.getVisitor().visitTranslationUnit( col );
+// 		tu.accept( col );
 // 		
 // 		assertEquals( col.size(), 3 );
 // 		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -830,7 +832,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "const int max = 5;\n int * x = new int[max];"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		IVariable max = (IVariable) col.getName(0).resolveBinding();
@@ -842,7 +844,7 @@ public class CompleteParser2Tests extends TestCase {
 		// Used to cause AST Semantic exception
 		IASTTranslationUnit tu = parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 9 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -864,7 +866,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A{ public: A(); }; \n  A::A() {}; \n" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -878,7 +880,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A{ public: ~A(); }; \n  A::~A() {}; \n" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -892,7 +894,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A { }; namespace N { class B : public A { struct A {}; }; }"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -912,7 +914,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class A { int f1(); }; const int x = 4; int f() { return x; } int A::f1() { return x; }"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 9 );
  		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -929,7 +931,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "const int FIVE = 5;  void f() {  int x = 0; for( int i = 0; i < FIVE; ++i ) { x += i; }  }"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 9 );
  		IVariable FIVE = (IVariable) col.getName(0).resolveBinding();
@@ -945,7 +947,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "union{ int v; char a; } id;" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 4 );
  		
@@ -978,7 +980,7 @@ public class CompleteParser2Tests extends TestCase {
 		assertTrue( ifstmt.getElseClause() instanceof IASTCompoundStatement );
 		
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 4 );
  		
@@ -990,7 +992,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "const bool T = true; void foo() { int x = 0; while( T ) {  ++x;  if( x == 100 ) break; } }"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 6 );
  		IVariable T = (IVariable) col.getName(0).resolveBinding();
@@ -1014,7 +1016,7 @@ public class CompleteParser2Tests extends TestCase {
 										"   blah : ;                        " + //$NON-NLS-1$
 										"}                                  "); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 7 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -1030,7 +1032,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "const int x = 3; int counter = 0; void foo() { do { ++counter; } while( counter != x ); } "); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 6 );
  		IVariable x = (IVariable) col.getName(0).resolveBinding();
@@ -1043,7 +1045,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { }; void foo() throw ( A ) { throw A; throw; } "); //$NON-NLS-1$
 	    CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 4 );
  		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
@@ -1055,7 +1057,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "void foo() { int x = 3; if( x == 1 ) { int x = 4; } else int x = 2; }");  //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		IVariable x1 = (IVariable) col.getName(1).resolveBinding();
@@ -1071,7 +1073,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "enum E { e1, e2, e3 }; E anE = e1;"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 7 );
  		IEnumeration E = (IEnumeration) col.getName(0).resolveBinding();
@@ -1091,7 +1093,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "void foo(); void foo() { } class SearchMe { };"); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 3 );
  		IFunction foo = (IFunction) col.getName(0).resolveBinding();
@@ -1103,7 +1105,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }" );  //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 10 );
  		ICompositeType B = (ICompositeType) col.getName(0).resolveBinding();
@@ -1116,7 +1118,7 @@ public class CompleteParser2Tests extends TestCase {
 	public void testBug43503A() throws Exception {
 	    IASTTranslationUnit tu = parse("class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} "); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 8 );
  		ICPPClassType SD_01 = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1143,7 +1145,7 @@ public class CompleteParser2Tests extends TestCase {
 
 		IASTTranslationUnit tu = parse( code.toString() );
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 12 );
  		ICompositeType OperatorOverload = (ICompositeType) col.getName(0).resolveBinding();
@@ -1161,7 +1163,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "class A { static int x; }; int A::x = 5;" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
@@ -1175,7 +1177,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "const int w = 2; int x[ 5 ]; int y = sizeof ( x[w] );" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 5 );
  		IVariable w = (IVariable) col.getName(0).resolveBinding();
@@ -1214,7 +1216,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buff.toString() );
 		
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 17 );
  		ICompositeType SD_02 = (ICompositeType) col.getName(0).resolveBinding();
@@ -1236,7 +1238,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 	    IASTTranslationUnit tu = parse( "struct Sample { int size() const; }; extern const Sample * getSample(); int trouble() {  return getSample()->size(); } " ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
- 		tu.getVisitor().visitTranslationUnit( col );
+ 		tu.accept( col );
  		
  		assertEquals( col.size(), 7 );
  		ICompositeType sample = (ICompositeType) col.getName(0).resolveBinding();
@@ -1252,7 +1254,7 @@ public class CompleteParser2Tests extends TestCase {
 	{ 
 	    IASTTranslationUnit tu = parse( "struct Sample{int size() const; }; struct Sample; " ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 3 );
 		ICompositeType sample = (ICompositeType) col.getName(0).resolveBinding();
@@ -1266,7 +1268,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "class B{ B(); ~B(); }; B::B(){} B::~B(){}" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 9 );
 		ICPPClassType B = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1281,7 +1283,7 @@ public class CompleteParser2Tests extends TestCase {
 	public void testBug44342() throws Exception {
 		IASTTranslationUnit tu = parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} "); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 10 );
 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1344,7 +1346,7 @@ public class CompleteParser2Tests extends TestCase {
 							"void main(){ int i = initialize(); }" ); //$NON-NLS-1$
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 7 );
 		IFunction init1 = (IFunction) col.getName(0).resolveBinding();
@@ -1364,7 +1366,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buffer.toString() );	
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 7 );
 		ICPPClassType myClass = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1388,7 +1390,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buffer.toString() );	
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 12 );
 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1420,7 +1422,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buffer.toString() );	
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 5 );
 		ICPPClassType s = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1444,7 +1446,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buffer.toString() );	
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 13 );
 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -1468,7 +1470,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buffer.toString() );	
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 5 );
 		IFunction x = (IFunction) col.getName(0).resolveBinding();
@@ -1488,7 +1490,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( buffer.toString() );	
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 3 );
 		IFunction foo = (IFunction) col.getName(0).resolveBinding();
@@ -1500,7 +1502,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ); //$NON-NLS-1$
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 9 );
 		IProblemBinding p = (IProblemBinding) col.getName(0).resolveBinding();
@@ -1523,7 +1525,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse ("class A{ int getX() {return x[1];} int x[10];};"); //$NON-NLS-1$
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 4 );
 		
@@ -1548,7 +1550,7 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "void f( char * ){} \n" ); //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( writer.toString() );		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 4 );
 		IFunction f1 = (IFunction) col.getName(0).resolveBinding();
@@ -1567,7 +1569,7 @@ public class CompleteParser2Tests extends TestCase {
 		
 		IASTTranslationUnit tu = parse( writer.toString() );		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 4 );
 		IFunction f1 = (IFunction) col.getName(0).resolveBinding();
@@ -1586,7 +1588,7 @@ public class CompleteParser2Tests extends TestCase {
 		
 		IASTTranslationUnit tu = parse( writer.toString() );		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 3 );
 		
@@ -1611,7 +1613,7 @@ public class CompleteParser2Tests extends TestCase {
 		
 		IASTTranslationUnit tu = parse( writer.toString() );		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 11 );
 		IVariable i = (IVariable)col.getName(1).resolveBinding();
@@ -1629,7 +1631,7 @@ public class CompleteParser2Tests extends TestCase {
 		parse( writer.toString() );
 		IASTTranslationUnit tu = parse( writer.toString() );		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 4 );
 		ICPPField pfi = (ICPPField)col.getName(2).resolveBinding();
@@ -1648,7 +1650,7 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		IASTTranslationUnit tu = parse( "typedef struct blah sb;"); //$NON-NLS-1$		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 2 );
 		
@@ -1680,7 +1682,7 @@ public class CompleteParser2Tests extends TestCase {
 		IASTTranslationUnit tu = parse( writer.toString() );
 		
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 
 		assertEquals( col.size(), 10 );
 		
@@ -1704,7 +1706,7 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "void X::f( T ) { }  " ); //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( writer.toString() );
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 10 );
 		ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1724,7 +1726,7 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "class AltG3 : AltG2 {  int x;};"); //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( writer.toString() );
 		CPPNameCollector col = new CPPNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 7 );
 		ICPPClassType G2 = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1746,7 +1748,7 @@ public class CompleteParser2Tests extends TestCase {
 		
 		IASTTranslationUnit tu = parse( writer.toString(), true, ParserLanguage.C );
 		CNameCollector col = new CNameCollector();
-		tu.getVisitor().visitTranslationUnit( col );
+		tu.accept( col );
 		
 		assertEquals( col.size(), 9 );
 		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();

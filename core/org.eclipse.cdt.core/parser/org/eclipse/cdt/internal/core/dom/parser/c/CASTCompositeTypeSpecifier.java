@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -118,4 +119,20 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclSpecifiers ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( name != null ) if( !name.accept( action ) ) return false;
+           
+        IASTDeclaration [] decls = getMembers();
+        for( int i = 0; i < decls.length; i++ )
+            if( !decls[i].accept( action ) ) return false;
+            
+        return true;
+    }
 }

@@ -40,5 +40,6 @@ public interface IASTNode {
 	
 	public void setPropertyInParent( ASTNodeProperty property );
 	
+	public boolean accept( ASTVisitor visitor );
 
 }

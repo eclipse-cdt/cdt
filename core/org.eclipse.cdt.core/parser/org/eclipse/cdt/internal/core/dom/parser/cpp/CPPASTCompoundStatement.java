@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -79,4 +80,18 @@ public class CPPASTCompoundStatement extends CPPASTNode implements
         return scope;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitStatements ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        IASTStatement [] s = getStatements();
+        for ( int i = 0; i < s.length; i++ ) {
+            if( !s[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 }

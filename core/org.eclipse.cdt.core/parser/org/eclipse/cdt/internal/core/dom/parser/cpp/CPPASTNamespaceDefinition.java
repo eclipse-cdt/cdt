@@ -10,10 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 
@@ -95,5 +97,23 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
             return e.getProblem();
         }
 	}
+
+    public boolean accept( ASTVisitor action ){
+        if( action instanceof CPPASTVisitor &&
+            ((CPPASTVisitor)action).shouldVisitNamespaces ){
+		    switch( ((CPPASTVisitor)action).visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( name != null ) if( !name.accept( action ) ) return false;
+        IASTDeclaration [] decls = getDeclarations();
+        for ( int i = 0; i < decls.length; i++ )
+            if( !decls[i].accept( action ) ) return false;    
+
+        return true;
+    }
 
 }

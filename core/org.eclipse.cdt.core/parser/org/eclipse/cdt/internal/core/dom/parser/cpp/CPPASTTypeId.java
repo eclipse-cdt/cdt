@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -50,4 +51,17 @@ public class CPPASTTypeId extends CPPASTNode implements IASTTypeId {
         this.absDecl = abstractDeclarator;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitTypeIds ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( declSpec != null ) if( !declSpec.accept( action ) ) return false;
+        if( absDecl != null ) if( !absDecl.accept( action ) ) return false;
+        return true;
+    }
 }

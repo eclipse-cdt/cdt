@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.tests.DOMAST;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,10 +19,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,11 +44,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	boolean wasForward = true;
 	int index = 0;
 	
-    static protected class CNameCollector extends CVisitor.CBaseVisitorAction {
+    static protected class CNameCollector extends CASTVisitor {
         private static final int REGULAR_NAME_ADD = -1;
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		{
-            processNames = true;
+            shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
         
@@ -100,7 +99,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
             return PROCESS_CONTINUE;
 		}
 		
-        public int processName( IASTName name ){
+        public int visit( IASTName name ){
         	return processName(name, REGULAR_NAME_ADD);
         }
         public IASTName getName( int idx ){
@@ -121,7 +120,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         			}
         		}
         		// if couldn't find the proper place to put the name, then add default
-        		processName(name);
+        		visit(name);
         	}
         }
         
@@ -148,11 +147,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         }
     }
     
-    static protected class CPPNameCollector extends CPPVisitor.CPPBaseVisitorAction {
+    static protected class CPPNameCollector extends CPPASTVisitor {
         private static final int REGULAR_NAME_ADD = -1;
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		{
-            processNames = true;
+            shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
         
@@ -205,7 +204,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
             return PROCESS_CONTINUE;
 		}
 		
-        public int processName( IASTName name ){
+        public int visit( IASTName name ){
         	return processName(name, REGULAR_NAME_ADD);
         }
         public IASTName getName( int idx ){
@@ -226,7 +225,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
         			}
         		}
         		// if couldn't find the proper place to put the name, then add default
-        		processName(name);
+        		visit(name);
         	}
         }
         
@@ -277,11 +276,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		if (matchingNames == null && tu != null) {
 			if (lang == ParserLanguage.CPP) {
 				CPPNameCollector col = new CPPNameCollector(findString, caseSensitive, wholeWord, regExSearch);
-				tu.getVisitor().visitTranslationUnit(col);
+				tu.accept(col);
 				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
 			} else {
 				CNameCollector col = new CNameCollector(findString, caseSensitive, wholeWord, regExSearch);
-				tu.getVisitor().visitTranslationUnit(col);
+				tu.accept(col);
 				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
 			}
 		}

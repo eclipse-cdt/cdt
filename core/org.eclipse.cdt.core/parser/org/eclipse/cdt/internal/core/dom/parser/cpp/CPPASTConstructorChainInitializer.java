@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -51,4 +52,9 @@ public class CPPASTConstructorChainInitializer extends CPPASTNode implements
         value = expression;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( name != null ) if( !name.accept( action ) ) return false;
+        if( value != null ) if( !value.accept( action ) ) return false;
+        return true;
+    }
 }

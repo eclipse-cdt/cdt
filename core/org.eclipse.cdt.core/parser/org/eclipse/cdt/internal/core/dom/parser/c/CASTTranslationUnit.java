@@ -10,6 +10,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -30,9 +31,9 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -54,8 +55,6 @@ public class CASTTranslationUnit extends CASTNode implements
 
 	// Binding
 	private CScope compilationUnit = null;
-
-	private CVisitor visitor = null;
 
 	private ILocationResolver resolver;
 
@@ -158,19 +157,19 @@ public class CASTTranslationUnit extends CASTNode implements
 		return resolver.getLocations(offset, length);
 	}
 
-	private class CFindNodeForOffsetAction extends CVisitor.CBaseVisitorAction {
+	private class CFindNodeForOffsetAction extends CASTVisitor {
 		{
-			processNames = true;
-			processDeclarations = true;
-			processInitializers = true;
-			processParameterDeclarations = true;
-			processDeclarators = true;
-			processDeclSpecifiers = true;
-			processDesignators = true;
-			processExpressions = true;
-			processStatements = true;
-			processTypeIds = true;
-			processEnumerators = true;
+			shouldVisitNames = true;
+			shouldVisitDeclarations = true;
+			shouldVisitInitializers = true;
+			shouldVisitParameterDeclarations = true;
+			shouldVisitDeclarators = true;
+			shouldVisitDeclSpecifiers = true;
+			shouldVisitDesignators = true;
+			shouldVisitExpressions = true;
+			shouldVisitStatements = true;
+			shouldVisitTypeIds = true;
+			shouldVisitEnumerators = true;
 		}
 
 		IASTNode foundNode = null;
@@ -213,7 +212,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
-		public int processDeclaration(IASTDeclaration declaration) {
+		public int visit(IASTDeclaration declaration) {
 			// use declarations to determine if the search has gone past the
 			// offset (i.e. don't know the order the visitor visits the nodes)
 			if (declaration instanceof ASTNode
@@ -228,7 +227,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 		 */
-		public int processDeclarator(IASTDeclarator declarator) {
+		public int visit(IASTDeclarator declarator) {
 			int ret = processNode(declarator);
 
 			IASTPointerOperator[] ops = declarator.getPointerOperators();
@@ -250,7 +249,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
 		 */
-		public int processDesignator(ICASTDesignator designator) {
+		public int visit(ICASTDesignator designator) {
 			return processNode(designator);
 		}
 
@@ -259,7 +258,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 		 */
-		public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
+		public int visit(IASTDeclSpecifier declSpec) {
 			return processNode(declSpec);
 		}
 
@@ -268,7 +267,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 		 */
-		public int processEnumerator(IASTEnumerator enumerator) {
+		public int visit(IASTEnumerator enumerator) {
 			return processNode((IASTNode) enumerator);
 		}
 
@@ -277,7 +276,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
-		public int processExpression(IASTExpression expression) {
+		public int visit(IASTExpression expression) {
 			return processNode(expression);
 		}
 
@@ -286,7 +285,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 		 */
-		public int processInitializer(IASTInitializer initializer) {
+		public int visit(IASTInitializer initializer) {
 			return processNode(initializer);
 		}
 
@@ -295,7 +294,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 		 */
-		public int processName(IASTName name) {
+		public int visit(IASTName name) {
 			if (name.toString() != null)
 				return processNode(name);
 			return PROCESS_CONTINUE;
@@ -306,7 +305,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 		 */
-		public int processParameterDeclaration(
+		public int visit(
 				IASTParameterDeclaration parameterDeclaration) {
 			return processNode(parameterDeclaration);
 		}
@@ -316,7 +315,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
-		public int processStatement(IASTStatement statement) {
+		public int visit(IASTStatement statement) {
 			return processNode(statement);
 		}
 
@@ -325,7 +324,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		 * 
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
-		public int processTypeId(IASTTypeId typeId) {
+		public int visit(IASTTypeId typeId) {
 			return processNode(typeId);
 		}
 
@@ -358,7 +357,7 @@ public class CASTTranslationUnit extends CASTNode implements
 			globalOffset = result == null ? globalOffset : result.getGlobalOffset();
     		if (globalOffset >= 0) {
 	    		CFindNodeForOffsetAction nodeFinder = new CFindNodeForOffsetAction(globalOffset, realLength);
-	    		getVisitor().visitTranslationUnit(nodeFinder);
+	    		accept(nodeFinder);
 	    		node = nodeFinder.getNode();
     		}
 		}
@@ -474,17 +473,6 @@ public class CASTTranslationUnit extends CASTNode implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getVisitor()
-	 */
-	public IASTVisitor getVisitor() {
-		if (visitor == null)
-			visitor = new CVisitor(this);
-		return visitor;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getFilePath()
 	 */
 	public String getFilePath() {
@@ -492,4 +480,19 @@ public class CASTTranslationUnit extends CASTNode implements
 			return EMPTY_STRING;
 		return new String(resolver.getTranslationUnitPath());
 	}
+	
+	 public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitTranslationUnit){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        IASTDeclaration [] ds = getDeclarations();
+        for( int i = 0; i < ds.length; i++ ){
+            if( !ds[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 }

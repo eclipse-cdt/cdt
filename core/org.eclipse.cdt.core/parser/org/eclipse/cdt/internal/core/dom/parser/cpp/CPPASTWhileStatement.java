@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -66,4 +67,17 @@ public class CPPASTWhileStatement extends CPPASTNode implements
 		condition2 = declaration;
 	}
 
+	public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitStatements ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( condition != null ) if( !condition.accept( action ) ) return false;
+        if( condition2 != null ) if( !condition2.accept( action ) ) return false;
+        if( body != null ) if( !body.accept( action ) ) return false;
+        return true;
+    }
 }

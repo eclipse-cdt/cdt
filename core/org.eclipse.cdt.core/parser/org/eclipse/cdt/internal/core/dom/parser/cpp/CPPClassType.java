@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -27,18 +26,16 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -132,19 +129,19 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         return definition;
     }
     
-	private class FindDefinitionAction extends CPPVisitor.CPPBaseVisitorAction {
+	private class FindDefinitionAction extends CPPASTVisitor {
 	    private char [] nameArray = CPPClassType.this.getNameCharArray();
 	    public IASTName result = null;
 	    
 	    {
-	        processNames          = true;
-			processDeclarations   = true;
-			processDeclSpecifiers = true;
-			processDeclarators    = true;
-			processNamespaces     = true;
+	        shouldVisitNames          = true;
+			shouldVisitDeclarations   = true;
+			shouldVisitDeclSpecifiers = true;
+			shouldVisitDeclarators    = true;
+			shouldVisitNamespaces     = true;
 	    }
 	    
-	    public int processName( IASTName name ){
+	    public int visit( IASTName name ){
 	        if( name.getParent() instanceof ICPPASTCompositeTypeSpecifier &&
 	            CharArrayUtils.equals( name.toCharArray(), nameArray ) ) 
 	        {
@@ -157,10 +154,10 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	        return PROCESS_CONTINUE; 
 	    }
 	    
-		public int processDeclaration( IASTDeclaration declaration ){ 
+		public int visit( IASTDeclaration declaration ){ 
 		    return (declaration instanceof IASTSimpleDeclaration ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
 		}
-		public int processDeclSpecifier( IASTDeclSpecifier declSpec ){
+		public int visit( IASTDeclSpecifier declSpec ){
 		    return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
 		}
 		public int processDeclarators( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
@@ -169,18 +166,12 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	private void checkForDefinition(){
 		FindDefinitionAction action = new FindDefinitionAction();
 		IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
-		ICPPASTVisitor visitor = (ICPPASTVisitor) node.getTranslationUnit().getVisitor();
-		if( node instanceof ICPPASTNamespaceDefinition ){
-		    visitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, action );
-		    definition = action.result;
-		} else if( node instanceof IASTCompoundStatement ){
-		    //a local class, nowhere else to look if we don't find it here...
-		    visitor.visitStatement( (IASTStatement) node, action );
-		    definition = action.result;
-		    return;
-		}
+
+		node.accept( action );
+	    definition = action.result;
+		
 		if( definition == null ){
-		    visitor.visitTranslationUnit( action );
+			node.getTranslationUnit().accept( action );
 		    definition = action.result;
 		}
 		

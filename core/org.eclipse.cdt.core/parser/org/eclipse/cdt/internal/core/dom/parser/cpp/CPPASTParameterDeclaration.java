@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -51,4 +52,17 @@ public class CPPASTParameterDeclaration extends CPPASTNode implements
         this.declarator = declarator;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitParameterDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( declSpec != null ) if( !declSpec.accept( action ) ) return false;
+        if( declarator != null ) if( !declarator.accept( action ) ) return false;    
+        return true;
+    }
 }

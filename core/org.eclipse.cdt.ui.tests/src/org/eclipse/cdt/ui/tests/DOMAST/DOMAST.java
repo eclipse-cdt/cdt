@@ -32,11 +32,11 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor.CBaseVisitorAction;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor.CPPBaseVisitorAction;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
@@ -98,7 +98,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * This is a simple DOM AST View used for development testing.
@@ -353,10 +352,10 @@ public class DOMAST extends ViewPart {
 	         start=System.currentTimeMillis();
 	         if (lang == ParserLanguage.CPP) {
 	            action = new CPPPopulateASTViewAction(tu, monitor);
-	            tu.getVisitor().visitTranslationUnit( (CPPBaseVisitorAction) action);
+	            tu.accept( (CPPASTVisitor) action);
 	         } else {
 	            action = new CPopulateASTViewAction(tu, monitor);
-	            tu.getVisitor().visitTranslationUnit( (CBaseVisitorAction) action);
+	            tu.accept( (CASTVisitor) action);
 	         }
 	         monitor.worked(2);
              System.out.println("[DOM AST View] done " + GENERATING_INITIAL_TREE + ": " + (System.currentTimeMillis()- start) );

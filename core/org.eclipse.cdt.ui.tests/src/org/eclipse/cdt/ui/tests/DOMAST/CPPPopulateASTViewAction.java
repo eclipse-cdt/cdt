@@ -31,13 +31,13 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor.CPPBaseVisitorAction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,21 +45,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * @author dsteffle
  */
-public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IPopulateDOMASTAction {
+public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulateDOMASTAction {
 	private static final int INITIAL_INCLUDE_STATEMENT_SIZE = 8;
 	{
-		processNames          = true;
-		processDeclarations   = true;
-		processInitializers   = true;
-		processParameterDeclarations = true;
-		processDeclarators    = true;
-		processDeclSpecifiers = true;
-		processExpressions    = true;
-		processStatements     = true;
-		processTypeIds        = true;
-		processEnumerators    = true;
-		processBaseSpecifiers = true;
-		processNamespaces     = true;
+		shouldVisitNames          = true;
+		shouldVisitDeclarations   = true;
+		shouldVisitInitializers   = true;
+		shouldVisitParameterDeclarations = true;
+		shouldVisitDeclarators    = true;
+		shouldVisitDeclSpecifiers = true;
+		shouldVisitExpressions    = true;
+		shouldVisitStatements     = true;
+		shouldVisitTypeIds        = true;
+		shouldVisitEnumerators    = true;
+		shouldVisitBaseSpecifiers = true;
+		shouldVisitNamespaces     = true;
 	}
 
 	TreeParent root = null;
@@ -102,14 +102,14 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
-	public int processDeclaration(IASTDeclaration declaration) {
+	public int visit(IASTDeclaration declaration) {
 		return addRoot(declaration);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 	 */
-	public int processDeclarator(IASTDeclarator declarator) {
+	public int visit(IASTDeclarator declarator) {
 		int ret = addRoot(declarator);
 		
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
@@ -142,42 +142,42 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
 	 */
-	public int processBaseSpecifier(ICPPASTBaseSpecifier specifier) {
+	public int visit(ICPPASTBaseSpecifier specifier) {
 		return addRoot(specifier);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
-	public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
+	public int visit(IASTDeclSpecifier declSpec) {
 		return addRoot(declSpec);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
-	public int processEnumerator(IASTEnumerator enumerator) {
+	public int visit(IASTEnumerator enumerator) {
 		return addRoot(enumerator);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
-	public int processExpression(IASTExpression expression) {
+	public int visit(IASTExpression expression) {
 		return addRoot(expression);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 	 */
-	public int processInitializer(IASTInitializer initializer) {
+	public int visit(IASTInitializer initializer) {
 		return addRoot(initializer);
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
-	public int processName(IASTName name) {
+	public int visit(IASTName name) {
 		if (name.toString() != null)
 			return addRoot(name);
 		return PROCESS_CONTINUE;
@@ -186,14 +186,14 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processNamespace(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
-	public int processNamespace(ICPPASTNamespaceDefinition namespace) {
+	public int visit(ICPPASTNamespaceDefinition namespace) {
 		return addRoot(namespace);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 	 */
-	public int processParameterDeclaration(
+	public int visit(
 			IASTParameterDeclaration parameterDeclaration) {
 		return addRoot(parameterDeclaration);
 	}
@@ -201,14 +201,14 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
-	public int processStatement(IASTStatement statement) {
+	public int visit(IASTStatement statement) {
 		return addRoot(statement);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
-	public int processTypeId(IASTTypeId typeId) {
+	public int visit(IASTTypeId typeId) {
 		return addRoot(typeId);
 	}
 

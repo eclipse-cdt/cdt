@@ -10,7 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 /**
@@ -63,6 +65,20 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
      */
     public void setName(IASTName name) {
         this.name = name;
+    }
+    
+    public boolean accept( ASTVisitor action ){
+        if( action instanceof CPPASTVisitor &&
+            ((CPPASTVisitor)action).shouldVisitBaseSpecifiers ){
+		    switch( ((CPPASTVisitor)action).visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( !name.accept( action ) ) return false;
+        return true;
     }
 
 }

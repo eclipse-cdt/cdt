@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
@@ -79,6 +80,22 @@ public class CASTDesignatedInitializer extends CASTNode implements
      */
     public void setOperandInitializer(IASTInitializer rhs) {
         this.rhs = rhs;
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitInitializers ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        ICASTDesignator [] ds = getDesignators();
+        for ( int i = 0; i < ds.length; i++ ) {
+            if( !ds[i].accept( action ) ) return false;
+        }
+        if( rhs != null ) if( !rhs.accept( action ) ) return false;
+        return true;
     }
 
 }

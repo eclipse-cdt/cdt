@@ -9,8 +9,10 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 
 /**
  * @author jcamelon
@@ -34,5 +36,11 @@ public class CASTFieldDeclarator extends CASTDeclarator implements
         bitFieldSize = size;
     }
 
-
+    protected boolean postAccept( ASTVisitor action ){
+        if( bitFieldSize != null ) if( !bitFieldSize.accept( action ) ) return false;
+        
+        IASTInitializer initializer = getInitializer();
+        if( initializer != null ) if( !initializer.accept( action ) ) return false;
+        return true;
+    }
 }

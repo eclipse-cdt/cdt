@@ -9,7 +9,9 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 
 /**
@@ -48,4 +50,16 @@ public class CASTArrayRangeDesignator extends CASTNode implements
         ceiling = expression;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action instanceof CASTVisitor && ((CASTVisitor)action).shouldVisitDesignators ){
+		    switch( ((CASTVisitor)action).visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( floor != null ) if( !floor.accept( action ) ) return false;
+        if( ceiling != null ) if( !ceiling.accept( action ) ) return false;
+        return true;
+    }
 }

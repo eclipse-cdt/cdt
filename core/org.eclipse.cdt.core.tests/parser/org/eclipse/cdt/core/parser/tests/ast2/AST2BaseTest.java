@@ -32,7 +32,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -222,12 +224,12 @@ public class AST2BaseTest extends TestCase {
         return s.getExpression();
     }
 
-    static protected class CNameCollector extends CVisitor.CBaseVisitorAction {
+    static protected class CNameCollector extends CASTVisitor {
         {
-            processNames = true;
+            shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int processName( IASTName name ){
+        public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }
@@ -251,12 +253,12 @@ public class AST2BaseTest extends TestCase {
         assertEquals( count, num );
     }
 
-    static protected class CPPNameCollector extends CPPVisitor.CPPBaseVisitorAction {
+    static protected class CPPNameCollector extends CPPASTVisitor {
         {
-            processNames = true;
+            shouldVisitNames = true;
         }
         public List nameList = new ArrayList();
-        public int processName( IASTName name ){
+        public int visit( IASTName name ){
             nameList.add( name );
             return PROCESS_CONTINUE;
         }

@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 
@@ -66,4 +67,19 @@ public class CASTExpressionList extends CASTNode implements IASTExpressionList {
     private IASTExpression [] expressions = null;
     private static final int DEFAULT_EXPRESSIONLIST_SIZE = 4;
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+      
+        IASTExpression [] exps = getExpressions();
+        for( int i = 0; i < exps.length; i++ )
+            if( !exps[i].accept( action ) ) return false;
+
+        return true;
+    }
 }

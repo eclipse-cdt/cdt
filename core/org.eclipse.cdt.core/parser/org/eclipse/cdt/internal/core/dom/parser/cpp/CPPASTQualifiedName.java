@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -166,6 +167,23 @@ public class CPPASTQualifiedName extends CPPASTNode implements
    public void setValue(String string) {
       this.signature = string;
 
+   }
+   
+   public boolean accept( ASTVisitor action ){
+       if( action.shouldVisitNames ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+       IASTName [] ns = getNames();
+       for ( int i = 0; i < ns.length; i++ ) {
+           if( i == names.length - 1 ){
+               if( names[i].toCharArray().length > 0 && !names[i].accept( action ) ) return false;
+           } else if( !names[i].accept( action ) ) return false;
+       }
+       return true;
    }
 
 }

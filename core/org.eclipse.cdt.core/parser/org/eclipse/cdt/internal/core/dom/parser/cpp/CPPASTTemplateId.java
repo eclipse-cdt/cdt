@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -128,4 +129,20 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
         return EMPTY_STRING;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitNames ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( templateName != null ) if( !templateName.accept( action ) ) return false;
+        
+        IASTNode [] nodes = getTemplateArguments();
+        for ( int i = 0; i < nodes.length; i++ ) {
+            if( !nodes[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 }

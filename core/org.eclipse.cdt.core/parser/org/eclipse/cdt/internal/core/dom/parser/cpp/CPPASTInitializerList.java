@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 
@@ -68,5 +69,20 @@ public class CPPASTInitializerList extends CPPASTNode implements
     
     private IASTInitializer [] initializers = null;
     private static final int DEFAULT_INITIALIZERS_LIST_SIZE = 4;
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitInitializers ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        IASTInitializer [] list = getInitializers();
+        for ( int i = 0; i < list.length; i++ ) {
+            if( !list[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 
 }

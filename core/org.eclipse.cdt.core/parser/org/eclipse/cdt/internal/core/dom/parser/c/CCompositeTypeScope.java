@@ -17,8 +17,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -74,12 +72,8 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
     public IBinding[] find( String name ) {
-        IASTNode node = getPhysicalNode();
-        IASTTranslationUnit tu = node.getTranslationUnit();
-        IASTVisitor visitor = tu.getVisitor();
-        
         CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
-        visitor.visitDeclSpecifier( compositeTypeSpec, action );
+        compositeTypeSpec.accept( action );
         
         IASTName [] names = action.getNames();
         IBinding [] result = null;

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 
@@ -64,4 +65,14 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
     private ICPPASTCatchHandler [] catchHandlers = null;
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
 
+    protected boolean postAccept( ASTVisitor action ){
+        if( !super.postAccept( action ) ) return false;
+        
+        ICPPASTCatchHandler [] handlers = getCatchHandlers();
+        for ( int i = 0; i < handlers.length; i++ ) {
+            if( !handlers[i].accept( action ) ) return false;
+        }
+        return true;
+    }
+    
 }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -52,4 +53,17 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return parameterDeclarations;
 	}
 
+    protected boolean postAccept( ASTVisitor action ){
+        IASTName [] ns = getParameterNames();
+        for ( int i = 0; i < ns.length; i++ ) {
+            if( !ns[i].accept( action ) ) return false;
+        }
+        
+        IASTDeclaration [] params = getParameterDeclarations();
+        for ( int i = 0; i < params.length; i++ ) {
+            if( !params[i].accept( action ) ) return false;
+        }
+
+        return true;
+    }
 }

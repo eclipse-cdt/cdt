@@ -73,7 +73,5 @@ public interface IASTTranslationUnit extends IASTNode {
    
    public String getUnpreprocessedSignature( IASTNodeLocation [] locations );
    
-   public IASTVisitor getVisitor();
-
    public String getFilePath();
 }

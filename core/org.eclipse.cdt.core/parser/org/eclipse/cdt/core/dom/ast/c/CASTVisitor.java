@@ -10,22 +10,15 @@
  *******************************************************************************/
 
 /*
- * Created on Feb 22, 2005
+ * Created on Mar 8, 2005
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 
-/**
- * @author aniefer
- */
-public interface ICASTVisitor extends IASTVisitor {
-    
-	public static abstract class CBaseVisitorAction extends BaseVisitorAction {
-		public boolean processDesignators    = false;
-		
-        public int processDesignator( ICASTDesignator designator )  { return PROCESS_CONTINUE; }
-	}
 
-	public boolean visitDesignator( ICASTDesignator designator, BaseVisitorAction action );
+public abstract class CASTVisitor extends ASTVisitor {
+	public boolean shouldVisitDesignators    = false;
+	
+    public int visit( ICASTDesignator designator )  { return PROCESS_CONTINUE; }
 }

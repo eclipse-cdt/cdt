@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
@@ -49,4 +50,17 @@ public class CASTArraySubscriptExpression extends CASTNode implements
         this.subscript = expression;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( array != null ) if( !array.accept( action ) ) return false;
+        if( subscript != null ) if( !subscript.accept( action ) ) return false;
+        return true;
+    }
 }

@@ -10,6 +10,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -62,4 +63,7 @@ public class CASTNode extends ASTNode implements IASTNode {
         return (IASTTranslationUnit) node;
     }
 
+    public boolean accept( ASTVisitor action ){
+        return true;
+    }
 }

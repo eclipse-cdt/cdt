@@ -51,7 +51,7 @@ public class GCCTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 33 );
         ICompositeType x = (ICompositeType) collector.getName( 0 ).resolveBinding();
@@ -92,7 +92,7 @@ public class GCCTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 5 );
         IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
@@ -119,7 +119,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 12 );
         
@@ -157,7 +157,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 16 );
         IVariable loop1 = (IVariable) collector.getName( 0 ).resolveBinding();
@@ -191,7 +191,7 @@ public class GCCTests extends AST2BaseTest {
 
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 11 );
         IVariable nResult = (IVariable) collector.getName( 1 ).resolveBinding();
@@ -219,7 +219,7 @@ public class GCCTests extends AST2BaseTest {
         
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 11 );
         IVariable f = (IVariable) collector.getName( 0 ).resolveBinding();
@@ -249,7 +249,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 19 );
         IFunction buggy = (IFunction) collector.getName(0).resolveBinding();
@@ -284,7 +284,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 7 );
         IVariable winds = (IVariable) collector.getName( 1 ).resolveBinding();
@@ -310,7 +310,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 15 );
         ITypedef uint64 = (ITypedef) collector.getName( 0 ).resolveBinding();
@@ -348,7 +348,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 34 );
         IVariable aa = (IVariable) collector.getName( 0 ).resolveBinding();
@@ -390,7 +390,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 11 );
         IVariable i = (IVariable) collector.getName( 0 ).resolveBinding();
@@ -419,7 +419,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 14 );
         IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
@@ -459,7 +459,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 36 );
         IField    y = (IField) collector.getName( 1 ).resolveBinding();
@@ -504,7 +504,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 43 );
         IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
@@ -550,7 +550,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 10 );
         IField node = (IField) collector.getName( 3 ).resolveBinding();
@@ -579,7 +579,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 25 );
         ICompositeType foo = (ICompositeType) collector.getName( 0 ).resolveBinding();
@@ -621,7 +621,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 6 );
         IFunction sub = (IFunction) collector.getName( 0 ).resolveBinding();
@@ -663,7 +663,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 95 );
         IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
@@ -703,7 +703,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 22 );
         ICompositeType s1 = (ICompositeType) collector.getName( 0 ).resolveBinding();
@@ -741,7 +741,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 27 );
         ICompositeType F = (ICompositeType) collector.getName( 0 ).resolveBinding();
@@ -779,7 +779,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 14 );
         ICompositeType F = (ICompositeType) collector.getName( 0 ).resolveBinding();
@@ -810,7 +810,7 @@ public class GCCTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         CNameCollector collector = new CNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector );
+        tu.accept( collector );
         
         assertEquals( collector.size(), 11 );
         IEnumeration foo = (IEnumeration) collector.getName( 0 ).resolveBinding();

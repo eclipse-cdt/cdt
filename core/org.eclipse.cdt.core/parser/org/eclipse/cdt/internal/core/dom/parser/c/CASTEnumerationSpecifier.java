@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 
@@ -85,6 +86,22 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
      */
     public String getUnpreprocessedSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclSpecifiers ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( name != null ) if( !name.accept( action ) ) return false;
+        IASTEnumerator[] etors = getEnumerators();
+        for ( int i = 0; i < etors.length; i++ ) {
+            if( !etors[i].accept( action ) ) return false;
+        }
+        return true;
     }
 
 }

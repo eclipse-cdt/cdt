@@ -9,8 +9,9 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 
 /**
  * @author jcamelon
@@ -84,4 +85,11 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
         varArgs = value;
     }
 
+    protected boolean postAccept( ASTVisitor action ){
+        IASTParameterDeclaration [] params = getParameters();
+        for ( int i = 0; i < params.length; i++ ) {
+            if( !params[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 }

@@ -379,7 +379,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
 
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         assertEquals(collector.size(), 13);
         ICPPNamespace A = (ICPPNamespace) collector.getName(0).resolveBinding();
@@ -409,7 +409,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
 
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         assertEquals(collector.size(), 6);
         IVariable vA = (IVariable) collector.getName(0).resolveBinding();
@@ -423,7 +423,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         tu = parse(buffer.toString(), ParserLanguage.CPP);
         collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         cA = (ICompositeType) collector.getName(1).resolveBinding();
         IBinding A = collector.getName(3).resolveBinding();
@@ -442,7 +442,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         assertEquals(collector.size(), 9);
         ICompositeType A = (ICompositeType) collector.getName(0)
@@ -472,7 +472,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
         IFunction f1 = (IFunction) collector.getName(0).resolveBinding();
         IFunction f2 = (IFunction) collector.getName(2).resolveBinding();
 
@@ -492,7 +492,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
         ICPPClassType anonStruct = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
         ICPPField x = (ICPPField) collector.getName(1).resolveBinding();
@@ -517,7 +517,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         ICPPClassType A1 = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
@@ -542,7 +542,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         ICPPClassType A1 = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
@@ -568,7 +568,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         ICPPClassType A1 = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
@@ -589,7 +589,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         ICPPClassType x = (ICPPClassType) collector.getName(0).resolveBinding();
 
@@ -605,7 +605,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IFunction f = (IFunction) collector.getName(0).resolveBinding();
         IParameter a = (IParameter) collector.getName(1).resolveBinding();
@@ -628,7 +628,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IFunction f = (IFunction) collector.getName(0).resolveBinding();
         IFunction g = (IFunction) collector.getName(1).resolveBinding();
@@ -647,7 +647,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IVariable i = (IVariable) collector.getName(1).resolveBinding();
 
@@ -663,7 +663,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         ICPPClassType A = (ICPPClassType) collector.getName(0).resolveBinding();
         IField x = (IField) collector.getName(1).resolveBinding();
@@ -685,7 +685,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IEnumeration hue = (IEnumeration) collector.getName(0).resolveBinding();
         IEnumerator red = (IEnumerator) collector.getName(1).resolveBinding();
@@ -709,7 +709,7 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testPointerToFunction() throws Exception {
         IASTTranslationUnit tu = parse("int (*pfi)();", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
         IVariable pf = (IVariable) collector.getName(0).resolveBinding();
         IPointerType pt = (IPointerType) pf.getType();
         assertTrue(pt.getType() instanceof IFunctionType);
@@ -717,7 +717,7 @@ public class AST2CPPTests extends AST2BaseTest {
         tu = parse(
                 "struct A; int (*pfi)( int, struct A * );", ParserLanguage.CPP); //$NON-NLS-1$
         collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
         ICPPClassType A = (ICPPClassType) collector.getName(0).resolveBinding();
         pf = (IVariable) collector.getName(1).resolveBinding();
         pt = (IPointerType) pf.getType();
@@ -840,7 +840,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IFunction f = (IFunction) collector.getName(0).resolveBinding();
         ICPPNamespace A = (ICPPNamespace) collector.getName(1).resolveBinding();
@@ -866,7 +866,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IFunction f = (IFunction) collector.getName(1).resolveBinding();
         IFunction g = (IFunction) collector.getName(8).resolveBinding();
@@ -889,7 +889,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         IProblemBinding x = (IProblemBinding) collector.getName(12)
                 .resolveBinding();
@@ -909,7 +909,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         assertEquals(collector.size(), 15);
 
@@ -940,7 +940,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         assertEquals(collector.size(), 15);
 
@@ -974,7 +974,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( collector);
+        tu.accept( collector);
 
         assertEquals(collector.size(), 6);
 
@@ -1049,7 +1049,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 8);
         ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -1076,7 +1076,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 3);
         IVariable p = (IVariable) col.getName(1).resolveBinding();
@@ -1097,7 +1097,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 3);
 
@@ -1114,7 +1114,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 7);
 
@@ -1128,7 +1128,7 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testBug84266_2() throws Exception {
         IASTTranslationUnit tu = parse("struct s f(void);", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 3);
 
@@ -1137,7 +1137,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         tu = parse("struct s f(void){}", ParserLanguage.CPP); //$NON-NLS-1$
         col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 3);
 
@@ -1155,7 +1155,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 13);
 
@@ -1183,7 +1183,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 9);
 
@@ -1231,7 +1231,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         ICPPNamespace Y = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPNamespace A = (ICPPNamespace) col.getName(3).resolveBinding();
@@ -1262,7 +1262,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 9);
 
@@ -1283,7 +1283,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 11);
 
@@ -1309,7 +1309,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(col.size(), 17);
 
@@ -1368,7 +1368,7 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testBug84710() throws Exception {
         IASTTranslationUnit tu = parse("class T { T(); };", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         ICPPConstructor T = (ICPPConstructor) col.getName(1).resolveBinding();
         assertTrue(CharArrayUtils.equals(T.getNameCharArray(),
                 "T".toCharArray())); //$NON-NLS-1$
@@ -1388,7 +1388,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         ICPPNamespace NS = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPClassType T = (ICPPClassType) col.getName(1).resolveBinding();
@@ -1418,7 +1418,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         IFunction fref = (IFunction) col.getName(14).resolveBinding();
         IFunction f1 = (IFunction) col.getName(1).resolveBinding();
@@ -1449,7 +1449,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(17, col.size());
 
@@ -1478,7 +1478,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(8, col.size());
 
@@ -1500,7 +1500,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(9, col.size());
     }
@@ -1509,7 +1509,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse("struct S; int S::* pm;", //$NON-NLS-1$
                 ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         assertEquals(4, col.size());
 
@@ -1534,7 +1534,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         IBinding ref = col.getName(11).resolveBinding();
         IVariable pm = (IVariable) col.getName(5).resolveBinding();
@@ -1555,7 +1555,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
 
         ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
         IVariable pm = (IVariable) col.getName(8).resolveBinding();
@@ -1588,7 +1588,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
     }
 
     public void testFindTypeBinding_1() throws Exception {
@@ -1651,7 +1651,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f = (IFunction) col.getName(15).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1679,7 +1679,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f = (IFunction) col.getName(16).resolveBinding();
         ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -1707,7 +1707,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f = (IFunction) col.getName(27).resolveBinding();
         ICPPNamespace M = (ICPPNamespace) col.getName(0).resolveBinding();
@@ -1735,7 +1735,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
         IFunction set = (IFunction) col.getName(1).resolveBinding();
@@ -1757,7 +1757,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1779,7 +1779,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         ICPPClassType N = (ICPPClassType) col.getName(5).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
@@ -1802,7 +1802,7 @@ public class AST2CPPTests extends AST2BaseTest {
                 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction helper = (IFunction) col.getName(2).resolveBinding();
         assertSame( helper.getScope(), tu.getScope() );
@@ -1827,7 +1827,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f1 = (IFunction) col.getName(0).resolveBinding();
         IFunction f2 = (IFunction) col.getName(2).resolveBinding();
@@ -1851,7 +1851,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f1 = (IFunction) col.getName(0).resolveBinding();
         IFunction f2 = (IFunction) col.getName(2).resolveBinding();
@@ -1874,7 +1874,7 @@ public class AST2CPPTests extends AST2BaseTest {
     	
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f1 = (IFunction) col.getName(0).resolveBinding();
         IFunction f2 = (IFunction) col.getName(2).resolveBinding();
@@ -1894,7 +1894,7 @@ public class AST2CPPTests extends AST2BaseTest {
     	
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f1 = (IFunction) col.getName(0).resolveBinding();
         IFunction f2 = (IFunction) col.getName(2).resolveBinding();
@@ -1913,7 +1913,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IVariable g = (IVariable) col.getName(3).resolveBinding();
         assertInstances( col, g, 3 );
@@ -1936,7 +1936,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IASTName name = col.getName(11);
         IBinding [] bs = CPPSemantics.prefixLookup( name );
@@ -1950,7 +1950,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction f = (IFunction) col.getName(1).resolveBinding();
         assertTrue( f.isStatic() );
@@ -1988,7 +1988,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         ICPPClassType D1 = (ICPPClassType) col.getName(2).resolveBinding();
         ICPPClassType D2 = (ICPPClassType) col.getName(4).resolveBinding();
@@ -2020,7 +2020,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         ICPPClassType C = (ICPPClassType) col.getName(0).resolveBinding();
         ICPPMethod f = (ICPPMethod) col.getName(1).resolveBinding();
@@ -2049,7 +2049,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit( col);
+        tu.accept( col);
         
         IFunction r1 = (IFunction) col.getName(6).resolveBinding();
         IFunction r2 = (IFunction) col.getName(8).resolveBinding();
@@ -2070,7 +2070,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
         IFunction g = (IFunction) col.getName(3).resolveBinding();
@@ -2119,7 +2119,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6).resolveBinding();
         ICPPClassType T1 = (ICPPClassType) col.getName(0).resolveBinding();
@@ -2137,7 +2137,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
         
@@ -2164,7 +2164,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
     }
     
     public void testBug86319() throws Exception {
@@ -2179,7 +2179,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IVariable i1 = (IVariable) col.getName(1).resolveBinding();
         IVariable i2 = (IVariable) col.getName(3).resolveBinding();
@@ -2204,7 +2204,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPField i = (ICPPField) col.getName(1).resolveBinding();
         ICPPField j = (ICPPField) col.getName(2).resolveBinding();
@@ -2244,7 +2244,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IEnumerator enum_x = (IEnumerator) col.getName(3).resolveBinding();
         IBinding x_ref = col.getName(4).resolveBinding();
@@ -2275,7 +2275,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         assertEquals( col.size(), 10 );
         
         IVariable d1 = (IVariable) col.getName(6).resolveBinding();
@@ -2298,7 +2298,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction point = (IFunction) col.getName(0).resolveBinding();
         
@@ -2318,7 +2318,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IVariable i = (IVariable) col.getName(4).resolveBinding();
         IVariable i2 = (IVariable) col.getName(7).resolveBinding();
@@ -2340,7 +2340,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction f1 = (IFunction) col.getName(2).resolveBinding();
         IFunction f2 = (IFunction) col.getName(5).resolveBinding();
@@ -2366,7 +2366,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction f_ref = (IFunction) col.getName(12).resolveBinding(); 
         IFunction g_ref = (IFunction) col.getName(15).resolveBinding();
@@ -2390,7 +2390,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPNamespace ns = (ICPPNamespace) col.getName(0).resolveBinding();
         IASTName [] refs = tu.getReferences( ns );
@@ -2416,7 +2416,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IBinding b = col.getName(7).resolveBinding();
         IASTName [] decls = tu.getDeclarations( b );
@@ -2444,7 +2444,7 @@ public class AST2CPPTests extends AST2BaseTest {
                 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction f_decl = (IFunction) col.getName(10).resolveBinding();
         IFunction f_ref = (IFunction) col.getName(19).resolveBinding();
@@ -2466,7 +2466,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IBinding ref1 = col.getName(8).resolveBinding();
         IBinding ref2 = col.getName(9).resolveBinding();
@@ -2501,7 +2501,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IBinding ref1 = col.getName(11).resolveBinding();
         IBinding ref2 = col.getName(12).resolveBinding();
@@ -2527,7 +2527,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction f = (IFunction) col.getName(3).resolveBinding();
         
@@ -2548,7 +2548,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPClassType B = (ICPPClassType) col.getName(6).resolveBinding();
         ICPPField i = (ICPPField) col.getName(12).resolveBinding();
@@ -2570,7 +2570,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction printf = (IFunction) col.getName(6).resolveBinding();
         assertInstances( col, printf, 3 );
@@ -2585,7 +2585,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IVariable m = (IVariable) col.getName(11).resolveBinding();
         IParameter a = (IParameter) col.getName(1).resolveBinding();
@@ -2607,7 +2607,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IFunction g1 = (IFunction) col.getName(0).resolveBinding();
         ICPPMethod g2 = (ICPPMethod) col.getName(9).resolveBinding();
@@ -2637,7 +2637,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         ICPPField x = (ICPPField) col.getName(23).resolveBinding();
         ICPPMethod f = (ICPPMethod) col.getName(24).resolveBinding();
@@ -2661,7 +2661,7 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
+        tu.accept(col);
         
         IVariable c = (IVariable) col.getName(1).resolveBinding();
 

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 
@@ -49,4 +50,17 @@ public class CPPASTFunctionCallExpression extends CPPASTNode implements
         return parameter;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+      
+        if( functionName != null ) if( !functionName.accept( action ) ) return false;
+        if( parameter != null )  if( !parameter.accept( action ) ) return false;
+        return true;
+    }
 }

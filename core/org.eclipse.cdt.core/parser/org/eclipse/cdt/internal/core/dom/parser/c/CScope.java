@@ -23,13 +23,11 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -54,14 +52,14 @@ public class CScope implements ICScope {
         return CVisitor.getContainingScope( physicalNode );
     }
 
-    protected static class CollectNamesAction extends ICASTVisitor.CBaseVisitorAction {
+    protected static class CollectNamesAction extends CASTVisitor {
         private char [] name;
         private IASTName [] result = null;
         CollectNamesAction( char [] n ){
             name = n;
-            processNames = true;
+            shouldVisitNames = true;
         }
-        public int processName( IASTName n ){
+        public int visit( IASTName n ){
             ASTNodeProperty prop = n.getPropertyInParent();
             if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
                 prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
@@ -73,7 +71,7 @@ public class CScope implements ICScope {
             
             return PROCESS_CONTINUE; 
         }
-        public int processStatement( IASTStatement statement ){
+        public int visit( IASTStatement statement ){
             if( statement instanceof IASTDeclarationStatement )
                 return PROCESS_CONTINUE;
             return PROCESS_SKIP;
@@ -87,14 +85,8 @@ public class CScope implements ICScope {
      */
     public IBinding[] find( String name ) {
         IASTNode node = getPhysicalNode();
-        IASTTranslationUnit tu = node.getTranslationUnit();
-        IASTVisitor visitor = tu.getVisitor();
-        
         CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
-        if( node instanceof IASTTranslationUnit )
-            visitor.visitTranslationUnit( action );
-        else if( node instanceof IASTStatement )
-            visitor.visitStatement( (IASTStatement) node, action );
+        node.accept( action );
         
         IASTName [] names = action.getNames();
         IBinding [] result = null;

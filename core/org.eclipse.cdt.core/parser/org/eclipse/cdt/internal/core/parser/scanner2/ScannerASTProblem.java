@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -303,6 +304,13 @@ public class ScannerASTProblem extends ASTNode implements IASTProblem {
             node = node.getParent();
         }
         return (IASTTranslationUnit) node;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#accept(org.eclipse.cdt.core.dom.ast.IASTVisitor.BaseVisitorAction)
+     */
+    public boolean accept( ASTVisitor visitor ) {
+        return true;
     }
 
 }

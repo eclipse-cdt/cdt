@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 
@@ -35,4 +36,8 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
         return n;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( n != null ) if( !n.accept( action ) ) return false;
+        return true;
+    }
 }

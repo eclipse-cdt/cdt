@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 
@@ -35,4 +36,16 @@ public class CPPASTUsingDirective extends CPPASTNode implements
         this.name = qualifiedName;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( name != null ) if( !name.accept( action ) ) return false;
+        return true;
+    }
 }

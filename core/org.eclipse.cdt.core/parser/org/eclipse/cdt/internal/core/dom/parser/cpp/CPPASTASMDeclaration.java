@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 
 /**
@@ -31,6 +32,17 @@ public class CPPASTASMDeclaration extends CPPASTNode implements
      */
     public void setAssembly(String assembly) {
         this.assembly = assembly.toCharArray();
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        return true;
     }
 
 }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 
@@ -33,6 +34,18 @@ public class CPPASTConstructorInitializer extends CPPASTNode implements
      */
     public void setExpression(IASTExpression expression) {
         this.exp = expression;
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitInitializers ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( exp != null ) if( !exp.accept( action ) ) return false;
+        return true;
     }
 
 }

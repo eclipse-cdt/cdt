@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -142,4 +143,23 @@ public class CPPASTNewExpression extends CPPASTNode implements
     private IASTExpression [] arrayExpressions = null;
     private static final int DEFAULT_ARRAY_EXPRESSIONS_LIST_SIZE = 4;
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( placement != null ) if( !placement.accept( action ) ) return false;
+        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+
+        IASTExpression [] exps = getNewTypeIdArrayExpressions();
+        for( int i = 0; i < exps.length; i++ )
+            if( !exps[i].accept( action ) ) return false;
+            
+        if( initializer != null ) if( !initializer.accept( action ) ) return false;
+        return true;
+    }
 }

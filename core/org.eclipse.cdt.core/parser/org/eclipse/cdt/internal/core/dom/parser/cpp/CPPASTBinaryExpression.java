@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 
@@ -63,6 +64,20 @@ public class CPPASTBinaryExpression extends CPPASTNode implements
      */
     public void setOperand2(IASTExpression expression) {
         operand2 = expression;
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( operand1 != null ) if( !operand1.accept( action ) ) return false;
+        if( operand2 != null ) if( !operand2.accept( action ) ) return false;
+        return true;
     }
 
 }

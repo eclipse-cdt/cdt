@@ -17,16 +17,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IASTVisitor.BaseVisitorAction;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -59,18 +58,18 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
         return ( tu != null ) ? tu : (IASTNode) namespaceDefinitions[0];
     }
 
-	static private class NamespaceCollector extends CPPVisitor.CPPBaseVisitorAction {
+	static private class NamespaceCollector extends CPPASTVisitor {
 	    private char [] name;
 	    public List namespaces = Collections.EMPTY_LIST;
 	    public int processResult = PROCESS_SKIP;
 	    
 	    public NamespaceCollector( IASTName name  ){
-	        processNamespaces = true;
-	        processDeclarations = true;
+	        shouldVisitNamespaces = true;
+	        shouldVisitDeclarations = true;
 	        this.name = name.toCharArray();
 	    }
 
-	    public int processNamespace( ICPPASTNamespaceDefinition namespace) {
+	    public int visit( ICPPASTNamespaceDefinition namespace) {
 	        if( CharArrayUtils.equals( namespace.getName().toCharArray(), name ) ){
 	            if( namespaces == Collections.EMPTY_LIST )
 	                namespaces = new ArrayList();
@@ -84,7 +83,7 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	        return processResult; 
 	    }
 	    
-	    public int processDeclaration( IASTDeclaration declaration ){
+	    public int visit( IASTDeclaration declaration ){
 	        if( declaration instanceof ICPPASTLinkageSpecification )
 	            return PROCESS_CONTINUE;
 	        return PROCESS_SKIP;
@@ -96,15 +95,14 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	    ICPPASTNamespaceDefinition nsDef = (ICPPASTNamespaceDefinition) namespaceName.getParent();
 	    IASTNode node = nsDef.getParent();
 	    
-	    ICPPASTVisitor visitor = (ICPPASTVisitor) node.getTranslationUnit().getVisitor();
 	    while( node instanceof ICPPASTLinkageSpecification )
 	        node = node.getParent();
-	    if( node instanceof IASTTranslationUnit )
-	        visitor.visitTranslationUnit( collector );
-	    else if( node instanceof ICPPASTNamespaceDefinition ){
-	        collector.processResult = BaseVisitorAction.PROCESS_CONTINUE;
-	        visitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, collector );
+	  
+	    if( node instanceof ICPPASTNamespaceDefinition ){
+	        collector.processResult = ASTVisitor.PROCESS_CONTINUE;
 	    }
+	    
+	    node.accept( collector );
 	    
 	    int size = collector.namespaces.size();
 	    namespaceDefinitions = new IASTName [ size ];

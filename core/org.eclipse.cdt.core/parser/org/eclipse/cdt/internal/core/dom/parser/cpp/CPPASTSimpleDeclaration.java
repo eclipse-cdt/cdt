@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -79,6 +80,22 @@ public class CPPASTSimpleDeclaration extends CPPASTNode implements
      */
     public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         this.declSpecifier = declSpecifier;
+    }
+
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitDeclarations ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
+        IASTDeclarator [] dtors = getDeclarators();
+        for( int i = 0; i < dtors.length; i++ )
+            if( !dtors[i].accept( action ) ) return false;
+        return true;
     }
 
 }

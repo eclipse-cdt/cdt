@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 
@@ -34,4 +36,18 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements
         return typeId;
     }
 
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        
+        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+        IASTExpression op = getOperand();
+        if( op != null ) if( !op.accept( action ) ) return false;
+        return true;
+    }
 }

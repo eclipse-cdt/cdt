@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
@@ -48,6 +49,21 @@ public class CPPASTArraySubscriptExpression extends CPPASTNode implements
      */
     public void setSubscriptExpression(IASTExpression expression) {
         subscriptExp = expression;
+    }
+    
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitExpressions ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( arrayExpression != null ) 
+            if( !arrayExpression.accept( action ) ) return false;
+        if( subscriptExp != null )   
+            if( !subscriptExp.accept( action ) ) return false;
+        return true;
     }
 
 }

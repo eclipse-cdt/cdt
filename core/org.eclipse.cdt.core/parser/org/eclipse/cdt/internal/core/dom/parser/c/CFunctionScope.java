@@ -19,9 +19,9 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
-import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
@@ -86,7 +86,7 @@ public class CFunctionScope implements ICFunctionScope {
 	public ILabel[] getLabels(){
 	    FindLabelsAction action = new FindLabelsAction();
 	    
-        function.getTranslationUnit().getVisitor().visitDeclaration( function, action );
+        function.accept( action );
 	    
 	    ILabel [] result = null;
 	    if( action.labels != null ){
@@ -100,14 +100,14 @@ public class CFunctionScope implements ICFunctionScope {
 	    return (ILabel[]) ArrayUtil.trim( ILabel.class, result );
 	}
 	
-	static private class FindLabelsAction extends CBaseVisitorAction {
+	static private class FindLabelsAction extends CASTVisitor {
         public IASTLabelStatement [] labels = null;
         
         public FindLabelsAction(){
-            processStatements = true;
+            shouldVisitStatements = true;
         }
         
-        public int processStatement( IASTStatement statement ) {
+        public int visit( IASTStatement statement ) {
             if( statement instanceof IASTLabelStatement ){
                labels = (IASTLabelStatement[]) ArrayUtil.append( IASTLabelStatement.class, labels, statement );
             }

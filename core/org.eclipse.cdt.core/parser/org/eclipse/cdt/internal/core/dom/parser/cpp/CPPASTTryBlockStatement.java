@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
@@ -79,8 +80,21 @@ public class CPPASTTryBlockStatement extends CPPASTNode implements
         return tryBody;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement#addCatchHandler(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler)
-     */
+    public boolean accept( ASTVisitor action ){
+        if( action.shouldVisitStatements ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        if( tryBody != null ) if( !tryBody.accept( action ) ) return false;
+        
+        ICPPASTCatchHandler [] handlers = getCatchHandlers();
+        for ( int i = 0; i < handlers.length; i++ ) {
+            if( !handlers[i].accept( action ) ) return false;
+        }
+        return true;
+    }
 
 }

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -563,6 +564,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 node = node.getParent();
             }
             return (IASTTranslationUnit) node;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.dom.ast.IASTNode#accept(org.eclipse.cdt.core.dom.ast.IASTVisitor.BaseVisitorAction)
+         */
+        public boolean accept( ASTVisitor visitor ) {
+            return true;
         }
 
     }

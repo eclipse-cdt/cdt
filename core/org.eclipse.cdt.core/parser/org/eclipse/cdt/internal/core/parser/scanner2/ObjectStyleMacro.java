@@ -10,10 +10,12 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.parser.IMacro;
+
 /**
  * @author Doug Schaefer
  */
-public class ObjectStyleMacro {
+public class ObjectStyleMacro implements IMacro{
 
 	public char[] name;
 	public char[] expansion;
@@ -22,4 +24,11 @@ public class ObjectStyleMacro {
 		this.name = name;
 		this.expansion = expansion;
 	}
+    public char[] getSignature() {
+        return name;
+    }
+    
+    public char[] getName(){
+        return name;
+    }
 }

@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.core.parser.token;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
-import org.eclipse.cdt.internal.core.parser.scanner.ScannerContextMacro;
 
 /**
  * @author johnc
@@ -28,16 +26,19 @@ public class SimpleExpansionToken extends SimpleToken implements IToken {
 		super( tokenType, stack, f );
 	}
 	
+    public SimpleExpansionToken(int t, int macroOffset, int macroLength, char [] f, int l) {
+        super(t, macroOffset + macroLength, f, l);
+		setOffsetAndLength( macroOffset, macroLength );
+	}
 	protected int length;
 	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.token.SimpleToken#setOffsetAndLength(org.eclipse.cdt.internal.core.parser.scanner.IScannerContext)
 	 */
-	protected void setOffsetAndLength(IScannerContext context) {
-		ScannerContextMacro m = (ScannerContextMacro) context;
-		offset = m.getOffset();
-		length = m.getMacroLength();
+	protected void setOffsetAndLength(int macroOffset, int macroLength ) {
+		offset = macroOffset;
+		length = macroLength;
 	}
 	
 	

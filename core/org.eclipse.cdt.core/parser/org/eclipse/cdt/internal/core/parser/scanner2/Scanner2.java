@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionPars
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
@@ -78,6 +80,17 @@ public class Scanner2 implements IScanner, IScannerData {
 			this.reader = reader; 
 			this.inclusion = inclusion;
 		}
+	}
+	
+	private static class MacroData {
+	    public MacroData( int start, int end, IMacro macro ){
+	        this.startOffset = start;
+	        this.endOffset = end;
+	        this.macro = macro;
+	    }
+	    public final int startOffset;
+	    public final int endOffset;
+	    public final IMacro macro;
 	}
 	
 	private ISourceElementRequestor requestor;
@@ -833,21 +846,28 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @return
 	 */
 	private IToken newToken( int signal ) {
-		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
-	}
-
-	private IToken newToken( int signal, char [] buffer )
-	{
-		if( bufferData[bufferStackPos] instanceof ObjectStyleMacro || 
-			bufferData[bufferStackPos] instanceof FunctionStyleMacro )
+	    if( bufferData[bufferStackPos] instanceof MacroData )
 		{
 			int mostRelevant;
 			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
-			if( bufferData[bufferStackPos] instanceof ObjectStyleMacro )
-				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1) );
-			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+			MacroData data = (MacroData)bufferData[mostRelevant + 1];
+			return new SimpleExpansionToken( signal, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1)); 
+		}
+		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
+	}
+
+	private IToken newToken( int signal, char [] buffer )
+	{
+	    if( bufferData[bufferStackPos] instanceof MacroData )
+		{
+			int mostRelevant;
+			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
+				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
+					break;
+			MacroData data = (MacroData)bufferData[mostRelevant + 1];
+			return new ImagedExpansionToken( signal, buffer, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
 		}
 		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		if( buffer != null && buffer.length == 0 && signal != IToken.tSTRING  && signal != IToken.tLSTRING )
@@ -896,24 +916,14 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 		// but not if it has been expanded on the stack already
 		// i.e. recursion avoidance
-		if (expObject != null && !isLimitReached() )
-			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
-				if (bufferData[stackPos] != null
-						&& bufferData[stackPos] instanceof ObjectStyleMacro
-						&& CharArrayUtils.equals(buffer, start, len,
-								((ObjectStyleMacro)bufferData[stackPos]).name)) {
-					expObject = null;
-					break;
-				}
-		
-		if (expObject != null && !isLimitReached()) {
+		if (expObject != null && !isLimitReached() && shouldExpandMacro( (IMacro) expObject)) {
 			if (expObject instanceof FunctionStyleMacro) {
 				handleFunctionStyleMacro((FunctionStyleMacro)expObject, true);
 			} else if (expObject instanceof ObjectStyleMacro) {
 				ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;
 				char[] expText = expMacro.expansion;
 				if (expText.length > 0)
-					pushContext(expText, expMacro);
+					pushContext(expText, new MacroData( bufferPos[bufferStackPos] - expMacro.name.length + 1, bufferPos[bufferStackPos], expMacro ));
 			} else if (expObject instanceof char[]) {
 				char[] expText = (char[])expObject;
 				if (expText.length > 0)
@@ -933,6 +943,26 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken(tokenType);
 	}
 	
+	/**
+     * @param buffer
+     * @param start
+     * @param len
+     * @param expObject
+     * @return
+     */
+    private boolean shouldExpandMacro( IMacro macro ) {
+        // but not if it has been expanded on the stack already
+		// i.e. recursion avoidance
+		if( macro != null && !isLimitReached() )
+			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
+				if( bufferData[stackPos] != null && bufferData[stackPos] instanceof MacroData && 
+				    CharArrayUtils.equals(macro.getName(), ((MacroData)bufferData[stackPos]).macro.getName()) ) 
+				{
+					return false;
+				}
+        return true;
+    }
+    
 	/**
 	 * @return
 	 */
@@ -2122,54 +2152,54 @@ public class Scanner2 implements IScanner, IScannerData {
 		return true;
 	}
 
-	private void skipOverMacroArg() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		
-		while (++bufferPos[bufferStackPos] < limit) {
-			switch (buffer[bufferPos[bufferStackPos]]) {
-				case ' ':
-				case '\t':
-				case '\r':
-				case '\n':
-				case ',':
-				case ')':
-				case '(':
-				case '<':
-				case '>':
-					--bufferPos[bufferStackPos];
-					return;
-				case '\\':
-					int pos = bufferPos[bufferStackPos];
-					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
-						// \n is whitespace
-						--bufferPos[bufferStackPos];
-						return;
-					}
-					break;
-				case '"':
-					boolean escaped = false;
-					loop:
-					while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
-						switch (buffer[bufferPos[bufferStackPos]]) {
-							case '\\':
-								escaped = !escaped;
-								continue;
-							case '"':
-								if (escaped) {
-									escaped = false;
-									continue;
-								}
-								break loop;
-							default:
-								escaped = false;
-						}
-					}
-					break;
-			}
-		}
-		--bufferPos[bufferStackPos];
-	}
+   protected int skipOverMacroArg() {
+       char[] buffer = bufferStack[bufferStackPos];
+       int limit = bufferLimit[bufferStackPos];
+       int argEnd = bufferPos[bufferStackPos]--;
+       int nesting = 0;
+       while (++bufferPos[bufferStackPos] < limit) {
+          switch (buffer[bufferPos[bufferStackPos]]) {
+             case '(':
+                ++nesting;
+                break;
+             case ')':
+                if (nesting == 0) {
+                   --bufferPos[bufferStackPos];
+                   return argEnd;
+                }
+                --nesting;
+                break;
+             case ',':
+                if (nesting == 0) {
+                   --bufferPos[bufferStackPos];
+                   return argEnd;
+                }
+                break;
+             case '"':
+                boolean escaped = false;
+                loop: while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
+                   switch (buffer[bufferPos[bufferStackPos]]) {
+                      case '\\':
+                         escaped = !escaped;
+                         continue;
+                      case '"':
+                         if (escaped) {
+                            escaped = false;
+                            continue;
+                         }
+                         break loop;
+                      default:
+                         escaped = false;
+                   }
+                }
+                break;
+          }
+          argEnd = bufferPos[bufferStackPos];
+          skipOverWhiteSpace();
+       }
+       --bufferPos[bufferStackPos];
+       return argEnd;
+    }
 
 	private void skipOverIdentifier() {
 		char[] buffer = bufferStack[bufferStackPos];
@@ -2231,7 +2261,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private char[] handleFunctionStyleMacro(FunctionStyleMacro macro, boolean pushContext) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
-
+		int start = bufferPos[bufferStackPos] - macro.name.length + 1;
 		skipOverWhiteSpace();
 		while( 	bufferPos[bufferStackPos] < limit && 
 				buffer[bufferPos[bufferStackPos]] == '\\' && 
@@ -2259,8 +2289,6 @@ public class Scanner2 implements IScanner, IScannerData {
 				// end of macro
 				break;
 			} else if (c == ',') {
-				// empty arg
-				argmap.put(arglist[currarg], emptyCharArray);
 				continue;
 			}
 			
@@ -2270,54 +2298,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				break;
 			}
 
-			// peel off the arg
-			--bufferPos[bufferStackPos];
-			int argend = bufferPos[bufferStackPos];
-			int argstart = argend + 1;
-			
-			// Loop looking for end of argument
-			int argparens = 0;
-//			int startOffset = -1;
-			while (bufferPos[bufferStackPos] < limit) {
-//				if( bufferPos[bufferStackPos] == startOffset )
-//					++bufferPos[bufferStackPos];
-//				startOffset = bufferPos[bufferStackPos];
-				skipOverMacroArg();
-				argend = bufferPos[bufferStackPos];
-				skipOverWhiteSpace();
-				
-				if (++bufferPos[bufferStackPos] >= limit)
-					break;
-				c = buffer[bufferPos[bufferStackPos]];
-				if (c == '(' || c == '<')
-					++argparens;
-				else if (c == '>')
-					--argparens;
-				else if (c == ')') {
-					if (argparens == 0)
-						break;
-					--argparens;
-				} else if (c == ',') {
-					if (argparens == 0) {
-						break;
-					}
-				} else if (c == '\n') {
-					// eat it and continue
-					continue;
-				} else {
-					// start of next macro arg
-					--bufferPos[bufferStackPos];
-					continue;
-				}
-				
-				skipOverWhiteSpace();
-				while (++bufferPos[bufferStackPos] < limit) {
-					if (buffer[bufferPos[bufferStackPos]] != '\n')
-						break;
-					skipOverWhiteSpace();
-				}
-				--bufferPos[bufferStackPos];
-			}
+			int argstart = bufferPos[bufferStackPos];
+			int argend = skipOverMacroArg();
 			
 			char[] arg = emptyCharArray;
 			int arglen = argend - argstart + 1;
@@ -2350,7 +2332,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		char[] result = new char[size];
 		expandFunctionStyleMacro(macro.expansion, argmap, result);
 		if( pushContext )
-			pushContext(result, macro);
+			pushContext(result, new MacroData( start, bufferPos[bufferStackPos], macro ) );
 		return result;
 	}
 
@@ -2358,21 +2340,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		// Check for macro expansion
 		Object expObject = definitions.get(arg, 0, arg.length);
 		
-		// but not if it has been expanded on the stack already
-		// i.e. recursion avoidance
-		if (expObject != null){
-			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos){
-				if (bufferData[stackPos] != null
-						&& bufferData[stackPos] instanceof ObjectStyleMacro
-						&& CharArrayUtils.equals(arg, ((ObjectStyleMacro)bufferData[stackPos]).name)) 
-				{
-					expObject = null;
-					break;
-				}
-			}
-		}
-		
-		if( expObject == null )
+		if( expObject == null || !shouldExpandMacro( (IMacro) expObject ) )
 		    return arg;
 		
 		if (expObject instanceof ObjectStyleMacro) {

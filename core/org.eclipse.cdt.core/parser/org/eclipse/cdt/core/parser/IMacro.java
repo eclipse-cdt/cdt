@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 /*
- * Created on Sep 16, 2004
+ * Created on Jan 20, 2005
  */
 package org.eclipse.cdt.core.parser;
 

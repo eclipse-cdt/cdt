@@ -109,7 +109,7 @@ public class EditorUtility {
 		if (file != null) {
 			IWorkbenchPage p= CUIPlugin.getActivePage();
 			if (p != null) {
-				IEditorPart editorPart= p.openEditor(file, null, activate);
+				IEditorPart editorPart= p.openEditor(file, getEditorID(file.getName()), activate);
 				initializeHighlightRange(editorPart);
 				return editorPart;
 			}

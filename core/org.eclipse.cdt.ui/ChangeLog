@@ -1,3 +1,14 @@
+2004-02-18 Alain Magloire
+
+	Patch from Thomas Fletcher.
+	PR 52128: Where duplicate editors are opened for external include files
+	PR 46263: Where local headers residing in the current directory are not found.
+	PR 51355: Performance in searching a large project in the absence of
+		proper include information is poor.
+
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java
+	
 2004-02-13 Bogdan Gheorghe
 	Thomas' patch: Modified CCompletionProcessor to use FORCE_IMMEDIATE_SEARCH
 	when requesting a dependency query/search.

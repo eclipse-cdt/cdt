@@ -1,3 +1,7 @@
+2004-08-12 Mikhail Khodjaiants
+	Warning cleanup.
+	* CApplicationLaunchShortcut.java
+
 2004-08-16 Mikhail Khodjaiants
 	Contextual launch shortcuts cleanup.
 	* plugin.properties

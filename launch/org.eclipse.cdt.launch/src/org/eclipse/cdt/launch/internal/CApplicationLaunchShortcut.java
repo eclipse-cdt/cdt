@@ -234,8 +234,10 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	protected String getDebugConfigDialogMessageString(ICDebugConfiguration [] configList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseConfigToDebug");  //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseConfigToRun");  //$NON-NLS-1$
 		}
-		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseConfigToRun");  //$NON-NLS-1$
+		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Invalid_launch_mode_1"); //$NON-NLS-1$
 	}
 
 
@@ -266,8 +268,10 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	protected String getLaunchSelectionDialogMessageString(List binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLaunchConfigToDebug");  //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLaunchConfigToRun");  //$NON-NLS-1$
 		}
-		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLaunchConfigToRun");  //$NON-NLS-1$
+		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Invalid_launch_mode_2"); //$NON-NLS-1$
 	}
 
 	/**
@@ -323,8 +327,10 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	protected String getBinarySelectionDialogMessageString(List binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLocalAppToDebug");  //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLocalAppToRun");  //$NON-NLS-1$
 		}
-		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLocalAppToRun");  //$NON-NLS-1$
+		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Invalid_launch_mode_3"); //$NON-NLS-1$
 	}
 
 	/**

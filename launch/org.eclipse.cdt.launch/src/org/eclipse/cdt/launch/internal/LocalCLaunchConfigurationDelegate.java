@@ -76,41 +76,44 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 				if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
 					dsession = debugConfig.getDebugger().createLaunchSession(config, exe);
-				}
-				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+					ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
+					opt.setArguments(getProgramArgumentsArray(config));
+					File wd = getWorkingDir(config);
+					if (wd != null) {
+						opt.setWorkingDirectory(wd.toString());
+					}
+					opt.setEnvironment(getEnvironmentProperty(config));
+					ICDITarget dtarget = dsession.getTargets()[0];
+					Process process = dtarget.getProcess();
+					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
+					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+					CDebugModel.newDebugTarget(
+						launch,
+						dsession.getCurrentTarget(),
+						renderTargetLabel(debugConfig),
+						iprocess,
+						exe.getProject(),
+						true,
+						false,
+						stopInMain);
+
+				} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
-					if ( pid == -1 ) {
+					if (pid == -1) {
 						cancel("No Process ID selected", ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 					}
 					dsession = debugConfig.getDebugger().createAttachSession(config, exe, pid);
+					CDebugModel.newAttachDebugTarget(
+						launch,
+						dsession.getCurrentTarget(),
+						renderTargetLabel(debugConfig),
+						null,
+						exe.getProject());
 				}
+			} catch (CDIException e) {
+				abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
-			catch (CDIException e) {
-				abort( "Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-			}
-			ICDIRuntimeOptions opt = dsession.getRuntimeOptions();			
-			opt.setArguments(getProgramArgumentsArray(config));
-			File wd = getWorkingDir(config);
-			if (wd != null) {
-				opt.setWorkingDirectory(wd.toString());
-			}
-			opt.setEnvironment(getEnvironmentProperty(config));
-			ICDITarget dtarget = dsession.getTargets()[0];
-			Process process = dtarget.getProcess();
-			IProcess iprocess =
-				DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
-			boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-			CDebugModel.newDebugTarget(
-				launch,
-				dsession.getTargets()[0],
-				renderTargetLabel(debugConfig),
-				iprocess,
-				exe.getProject(),
-				true,
-				false,
-				stopInMain);
-		}
-		else {
+		} else {
 			Process process = exec(commandArray, getEnvironmentArray(config), getWorkingDir(config));
 			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray[0]));
 		}
@@ -119,36 +122,35 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 
 	private int getProcessID() throws CoreException {
 		final Shell shell = LaunchUIPlugin.getShell();
-		final int pid[] = {-1};
-		if ( shell == null ) {
-			abort( "No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		final int pid[] = { -1 };
+		if (shell == null) {
+			abort("No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				ElementListSelectionDialog dialog = new ElementListSelectionDialog( shell, new LabelProvider() {
+				ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider() {
 					public String getText(Object element) {
-						IProcessInfo info = (IProcessInfo)element;
+						IProcessInfo info = (IProcessInfo) element;
 						return info.getPid() + " " + info.getName();
 					}
-				} );
-				dialog.setTitle( "Select Process" );
+				});
+				dialog.setTitle("Select Process");
 				dialog.setMessage("Select a Process to attach debugger to:");
 				IProcessList plist = CCorePlugin.getDefault().getProcessList();
-				if ( plist == null ) {
+				if (plist == null) {
 					MessageDialog.openError(shell, "CDT Launch Error", "Current platform does not support listing processes");
 					return;
 				}
 				dialog.setElements(plist.getProcessList());
-				if ( dialog.open() == dialog.OK ) {
-					IProcessInfo info = (IProcessInfo)dialog.getFirstResult();
+				if (dialog.open() == dialog.OK) {
+					IProcessInfo info = (IProcessInfo) dialog.getFirstResult();
 					pid[0] = info.getPid();
 				}
 			}
 		});
 		return pid[0];
 	}
-
 
 	/**
 	 * Performs a runtime exec on the given command line in the context
@@ -169,18 +171,15 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		try {
 			if (workingDirectory == null) {
 				p = Runtime.getRuntime().exec(cmdLine, envp);
-			}
-			else {
+			} else {
 				p = Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			if (p != null) {
 				p.destroy();
 			}
 			abort("Error starting process", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-		}
-		catch (NoSuchMethodError e) {
+		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 
 			IStatus status =
@@ -201,7 +200,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		}
 		return p;
 	}
-	
+
 	protected String getPluginID() {
 		return LaunchUIPlugin.getUniqueIdentifier();
 	}

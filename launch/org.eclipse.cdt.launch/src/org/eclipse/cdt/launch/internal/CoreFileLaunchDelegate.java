@@ -32,10 +32,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 
+	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
-	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor)
-		throws CoreException {
-		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -52,39 +50,32 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		ICDISession dsession = null;
 
 		ICProject cproject = getCProject(config);
-	
-		IPath corefile = getCoreFilePath((IProject)cproject.getResource());
-		if ( corefile == null ) {
+
+		IPath corefile = getCoreFilePath((IProject) cproject.getResource());
+		if (corefile == null) {
 			cancel("No Corefile selected", ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 		}
 		try {
 			dsession = debugConfig.getDebugger().createCoreSession(config, exe, corefile);
-		}
-		catch (CDIException e) {
-			abort( "Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		} catch (CDIException e) {
+			abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 
 		ICDITarget dtarget = dsession.getTargets()[0];
-		Process process = dtarget.getProcess();
 
-		IProcess iprocess =
-			DebugPlugin.newProcess(launch, process, renderProcessLabel(projectPath.toOSString()));
-		CDebugModel.newDebugTarget(
+		CDebugModel.newCoreFileDebugTarget(
 			launch,
-			dsession.getTargets()[0],
+			dsession.getCurrentTarget(),
 			renderTargetLabel(debugConfig),
-			iprocess,
-			exe.getProject(),
-			false,
-			true,
-			false);
+			null,
+			exe.getProject());
 	}
 
-	private IPath getCoreFilePath(final IProject project) throws CoreException {
+	protected IPath getCoreFilePath(final IProject project) throws CoreException {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final String res[] = { null };
 		if (shell == null) {
-			abort( "No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort("No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
@@ -95,8 +86,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 				String initPath = null;
 				try {
 					initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath"));
-				}
-				catch (CoreException e) {
+				} catch (CoreException e) {
 				}
 				if (initPath == null || initPath.equals("")) {
 					initPath = project.getLocation().toString();

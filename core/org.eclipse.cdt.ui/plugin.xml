@@ -363,7 +363,7 @@
       <editor
             default="true"
             name="%CEditor.name"
-            extensions="c, cc, cpp, cxx, h, hh, hpp"
+            extensions="c,C,cc,cpp,cxx,h,hh,hpp"
             icon="icons/full/obj16/c_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
@@ -372,7 +372,7 @@
       </editor>
       <editor
             name="%AsmEditor.name"
-            extensions="s"
+            extensions="s,asm,S"
             icon="icons/full/obj16/s_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">

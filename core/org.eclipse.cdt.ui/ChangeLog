@@ -1,5 +1,13 @@
 2004-08-21 Alain Magloire
 
+	Hardcode The CEditor id and the ASM id for the
+	CView openEditor.
+
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	* plugin.xml
+
+2004-08-21 Alain Magloire
+
 	Fix for 69756
 	* plugin.xml
 

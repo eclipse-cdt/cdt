@@ -161,7 +161,7 @@ public class EditorUtility {
 	private static void closedProject(IProject project) {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
-		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description");
+		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
 		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()})); //$NON-NLS-1$
 		errorMsg.open();
 		
@@ -337,9 +337,13 @@ public class EditorUtility {
 		// Choose an a file base on the extension.
 		if (tunit != null) {
 			if (tunit.isCLanguage()) {
-				return getEditorID("No_ExIsTeNt_FiLe.c");//$NON-NLS-1$
+				return "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
+				//return getEditorID("No_ExIsTeNt_FiLe.c");//$NON-NLS-1$
 			} else if (tunit.isCXXLanguage()) {
-				return getEditorID("No_ExIsTeNt_FiLe.cpp");//$NON-NLS-1$
+				return "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
+				//return getEditorID("No_ExIsTeNt_FiLe.cpp");//$NON-NLS-1$
+			} else if (tunit.isASMLanguage()) {
+				return "org.eclipse.cdt.ui.editor.asm.AsmEditor"; //$NON-NLS-1$
 			}
 		}
 

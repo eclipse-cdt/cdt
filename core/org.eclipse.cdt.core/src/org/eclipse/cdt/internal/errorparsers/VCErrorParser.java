@@ -57,7 +57,7 @@ public class VCErrorParser implements IErrorParser {
 								desc = "*" + desc; //$NON-NLS-1$
 							}
 							int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
-							if (desc.startsWith("warning")) { //$NON-NLS-1$
+							if (desc.startsWith("warning") || desc.startsWith("remark")) { //$NON-NLS-1$ //$NON-NLS-2$
 								severity = IMarkerGenerator.SEVERITY_WARNING;
 							}
 							eoParser.generateMarker(file, num, desc, severity, null);

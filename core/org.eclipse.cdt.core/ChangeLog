@@ -1,4 +1,8 @@
 2004-11-11 Alain Magloire
+	PR 78573, patch from Brad Jarvinen
+	* src/org/eclipse/cdt/internal/errorparser/VCErroParser.java
+
+2004-11-11 Alain Magloire
 	PR 78570, patch from Brad Jarvinen
 	The default VC error parser understands (<line number>) but doesn't understand 
 	(<line number>, <column>), which is also a valid VC error output format.

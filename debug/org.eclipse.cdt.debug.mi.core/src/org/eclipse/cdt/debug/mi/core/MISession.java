@@ -67,6 +67,9 @@ public class MISession extends Observable {
 
 		parser = new MIParser();
 
+		// Do this first.
+		inferior = new MIInferior(this);
+
 		txQueue = new CommandQueue();
 		rxQueue = new CommandQueue();
 		eventQueue = new Queue();
@@ -79,10 +82,9 @@ public class MISession extends Observable {
 		rxThread.start();
 		eventThread.start();
 
-		inferior = new MIInferior(this);
+		// Disable a certain number of irritations from gdb.
+		// Like confirmation and screen size.
 		try {
-			// Disable a certain number of irritations from gdb.
-			// Like confirmation and screen size.
 			MIInfo info;
 
 			MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});

@@ -1,5 +1,17 @@
 2004-08-25 Chris Wiebe
 
+	better handling of enclosing type
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/AbstractMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/ConstructorMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/DestructorMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/IMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewClassCreationWizard.java
+
+2004-08-25 Chris Wiebe
+
 	support for matching enclosed type names
 	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeHierarchyAction.java
 	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java

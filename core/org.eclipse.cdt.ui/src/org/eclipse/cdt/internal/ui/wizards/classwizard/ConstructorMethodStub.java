@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 
@@ -25,10 +26,10 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         super(NAME, access, false, isInline);
     }
 
-    public String createMethodDeclaration(String className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
+    public String createMethodDeclaration(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
         //TODO should use code templates
         StringBuffer buf = new StringBuffer();
-        buf.append(className);
+        buf.append(className.toString());
         buf.append("()"); //$NON-NLS-1$
     	if (fIsInline) {
     	    buf.append(" {}"); //$NON-NLS-1$
@@ -38,15 +39,15 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         return buf.toString();
     }
 
-    public String createMethodImplementation(String className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
+    public String createMethodImplementation(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
         //TODO should use code templates
         if (fIsInline)
             return ""; //$NON-NLS-1$
         else {
             StringBuffer buf = new StringBuffer();
-            buf.append(className);
+            buf.append(className.toString());
             buf.append("::"); //$NON-NLS-1$
-            buf.append(className);
+            buf.append(className.toString());
             buf.append("()"); //$NON-NLS-1$
             buf.append(lineDelimiter);
             buf.append('{');

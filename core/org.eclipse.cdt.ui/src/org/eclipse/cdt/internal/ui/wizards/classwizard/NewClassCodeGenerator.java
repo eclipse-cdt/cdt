@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.CModelException;
@@ -43,8 +44,8 @@ public class NewClassCodeGenerator {
 
     private IPath fHeaderPath = null;
     private IPath fSourcePath = null;
-    private String fClassName = null;
-    private String fNamespace = null;
+    private IQualifiedTypeName fClassName = null;
+    private IQualifiedTypeName fNamespace = null;
     private String fLineDelimiter;
     private IBaseClassInfo[] fBaseClasses = null;
     private IMethodStub[] fMethodStubs = null;
@@ -62,7 +63,7 @@ public class NewClassCodeGenerator {
         }
 	}
 
-    public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, String className, String namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
+    public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, IQualifiedTypeName className, IQualifiedTypeName namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
         fHeaderPath = headerPath;
         fSourcePath = sourcePath;
         fClassName = className;
@@ -128,7 +129,7 @@ public class NewClassCodeGenerator {
 	            headerWorkingCopy.commit(true, monitor);
 	            monitor.worked(50);
 	
-	            createdClass = headerWorkingCopy.getElement(fClassName);
+	            createdClass = headerWorkingCopy.getElement(fClassName.toString());
 	            fCreatedClass = createdClass;
 	            fCreatedHeaderTU = headerTU;
             }
@@ -203,7 +204,7 @@ public class NewClassCodeGenerator {
             text.append(fLineDelimiter);
         }
         
-        if (fNamespace != null && fNamespace.length() > 0) {
+        if (fNamespace != null) {
             beginNamespace(text);
         }
         
@@ -230,7 +231,7 @@ public class NewClassCodeGenerator {
         text.append("};"); //$NON-NLS-1$
         text.append(fLineDelimiter);
 
-        if (fNamespace != null && fNamespace.length() > 0) {
+        if (fNamespace != null) {
             endNamespace(text);
         }
 
@@ -265,20 +266,25 @@ public class NewClassCodeGenerator {
         }
         return insertPos;
     }
-    
     private void beginNamespace(StringBuffer text) {
-        text.append("namespace "); //$NON-NLS-1$
-        text.append(fNamespace);
-        text.append(fLineDelimiter);
-        text.append('{');
-        text.append(fLineDelimiter);
-        text.append(fLineDelimiter);
+        String[] segments = fNamespace.segments();
+        for (int i = 0; i < segments.length; ++i) {
+	        text.append("namespace "); //$NON-NLS-1$
+	        text.append(segments[i]);
+	        text.append(fLineDelimiter);
+	        text.append('{');
+	        text.append(fLineDelimiter);
+	        text.append(fLineDelimiter);
+        }
     }
 
     private void endNamespace(StringBuffer text) {
-        text.append(fLineDelimiter);
-        text.append("};"); //$NON-NLS-1$
-        text.append(fLineDelimiter);
+        String[] segments = fNamespace.segments();
+        for (int i = 0; i < segments.length; ++i) {
+            text.append(fLineDelimiter);
+	        text.append("};"); //$NON-NLS-1$
+	        text.append(fLineDelimiter);
+        }
     }
 
     private void addMethodDeclarations(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text) {
@@ -573,13 +579,13 @@ public class NewClassCodeGenerator {
                 && privateMethods.isEmpty()) {
             // no methods
         } else {
-            if (fNamespace != null && fNamespace.length() > 0) {
+            if (fNamespace != null) {
                 beginNamespace(text);
             }
 
             addMethodBodies(publicMethods, protectedMethods, privateMethods, text, new SubProgressMonitor(monitor, 50));
 
-            if (fNamespace != null && fNamespace.length() > 0) {
+            if (fNamespace != null) {
                 endNamespace(text);
             }
         }

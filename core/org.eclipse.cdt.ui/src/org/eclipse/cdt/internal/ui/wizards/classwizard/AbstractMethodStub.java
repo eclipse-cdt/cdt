@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public abstract class AbstractMethodStub implements IMethodStub {
@@ -78,7 +79,7 @@ public abstract class AbstractMethodStub implements IMethodStub {
         return false;
     }
 	
-    public abstract String createMethodDeclaration(String className, IBaseClassInfo[] baseClasses, String lineDelimiter);
+    public abstract String createMethodDeclaration(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter);
     
-    public abstract String createMethodImplementation(String className, IBaseClassInfo[] baseClasses, String lineDelimiter);
+    public abstract String createMethodImplementation(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter);
 }

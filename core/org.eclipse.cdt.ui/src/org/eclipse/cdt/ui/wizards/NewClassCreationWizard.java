@@ -48,7 +48,7 @@ public class NewClassCreationWizard extends NewElementWizard {
      * @see org.eclipse.cdt.internal.ui.wizards.NewElementWizard#canRunForked()
      */
     protected boolean canRunForked() {
-        return !fPage.isEnclosingClassSelected();
+        return !fPage.isEnclosingTypeSelected();
     }
     
     /*

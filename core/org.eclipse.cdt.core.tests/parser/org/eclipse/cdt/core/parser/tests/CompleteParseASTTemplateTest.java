@@ -17,8 +17,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
-import junit.framework.AssertionFailedError;
-
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
@@ -1092,5 +1091,107 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTTemplateDeclaration td3 = (IASTTemplateDeclaration) i.next();
 		assertFalse(i.hasNext());
 		IASTMethod mdef = (IASTMethod) td3.getOwnedDeclaration();
+	}
+
+	public void testParametrizedTypeDefinition_bug69751() throws Exception {
+		// a typedef refers to an unknown type in a template parameter
+		Iterator i = parse("template <typename T> \n class A { \n typedef typename T::size_type size_type; \n void foo() { size_type i; } \n }; \n").getDeclarations();//$NON-NLS-1$
+		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+		assertFalse(i.hasNext());
+		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+		Iterator j = cs.getDeclarations();
+		IASTTypedefDeclaration tdd = (IASTTypedefDeclaration) j.next();
+		IASTMethod m = (IASTMethod) j.next();
+		assertFalse(j.hasNext());
+		Iterator k = m.getDeclarations();
+		IASTVariable v = (IASTVariable) k.next();
+		assertFalse(k.hasNext());
+	}
+	
+	public void testParametrizedTypeDefinition_bug69751_2() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("template <typename T> class A { \n");
+		writer.write("void foo(); };\n");
+		writer.write("template <typename T> \n");
+		writer.write("void A<T>::foo() { \n");
+		writer.write("typedef typename T::B<char*>::s_type l_type; \n");
+		writer.write("typedef typename T::B<T>::s2_type l2_type; \n");
+		writer.write("l_type i; \n");
+		writer.write("l2_type j; } \n");
+		Iterator i = parse(writer.toString()).getDeclarations();//$NON-NLS-1$
+		IASTTemplateDeclaration td1 = (IASTTemplateDeclaration)i.next();
+		IASTTemplateDeclaration td2 = (IASTTemplateDeclaration)i.next();
+		assertFalse(i.hasNext());
+		IASTClassSpecifier cs = (IASTClassSpecifier) td1.getOwnedDeclaration();
+		Iterator j = cs.getDeclarations();
+		IASTMethod mdecl = (IASTMethod) j.next();
+		assertFalse(j.hasNext());
+		IASTMethod mdef = (IASTMethod) td2.getOwnedDeclaration();
+		Iterator k = mdef.getDeclarations();
+		IASTTypedefDeclaration tdd1 = (IASTTypedefDeclaration) k.next();
+		IASTTypedefDeclaration tdd2 = (IASTTypedefDeclaration) k.next();
+		IASTVariable v1 = (IASTVariable) k.next();
+		IASTVariable v2 = (IASTVariable) k.next();
+		assertFalse(k.hasNext());
+	}
+	
+	public void testParametrizedTypeDefinition_bug69751_3() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("template <typename T, typename U> class A { \n");
+		// T::U is not the same as template parameter U
+		writer.write("typedef typename T::U::s_type l_type; \n");
+		writer.write("l_type m_l; \n");
+		writer.write("typename U::s_type m_s; } \n");
+		Iterator i = parse(writer.toString()).getDeclarations();//$NON-NLS-1$
+		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+		assertFalse(i.hasNext());
+		Iterator j = td.getTemplateParameters();
+		IASTTemplateParameter tpT = (IASTTemplateParameter) j.next();
+		IASTTemplateParameter tpU = (IASTTemplateParameter) j.next();
+		assertFalse(j.hasNext());
+		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+		Iterator k = cs.getDeclarations();
+		IASTTypedefDeclaration tdd = (IASTTypedefDeclaration) k.next();
+		IASTField f1 = (IASTField) k.next();
+		IASTField f2 = (IASTField) k.next();
+		assertFalse(k.hasNext());
+		assertAllReferences(3, createTaskList(new Task(tpT), new Task(tpU), new Task(tdd)));
+	}
+	
+	public void testParametrizedTypeDefinition_bug69751_4() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("class B { typedef char size_type; };");
+		writer.write("template <typename T> class A { \n");
+		writer.write("typedef typename T::size_type size_type; };\n");
+		writer.write("A<B>::size_type c; \n");
+		writer.write("void f(char) {} \n");
+		writer.write("void f(int) {} \n");
+		writer.write("void main() { f(c); } \n");
+		Iterator i = parse(writer.toString()).getDeclarations();
+		IASTAbstractTypeSpecifierDeclaration ad = (IASTAbstractTypeSpecifierDeclaration)i.next();
+		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+		IASTVariable v = (IASTVariable)i.next();
+		IASTFunction fc = (IASTFunction) i.next();
+		IASTFunction fi = (IASTFunction) i.next();
+		IASTFunction fm = (IASTFunction) i.next();
+		assertFalse(i.hasNext());
+		assertReferenceTask(new Task(fc, 1, true, false));
+	}
+	
+	public void testTemplateParametersInExpressions_bug72546() throws Exception {
+		Iterator i = parse("template <class T> \n int add(T * x, T * y) { \n  return x->value + y->value; }; \n").getDeclarations();//$NON-NLS-1$
+		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+		assertFalse(i.hasNext());
+		Iterator j = td.getTemplateParameters();
+		IASTTemplateParameter tp = (IASTTemplateParameter) j.next();
+		assertFalse(j.hasNext());
+		IASTFunction f = (IASTFunction) td.getOwnedDeclaration();
+		Iterator k = f.getParameters();
+		IASTParameterDeclaration x = (IASTParameterDeclaration) k.next();
+		IASTParameterDeclaration y = (IASTParameterDeclaration) k.next();
+		assertFalse(k.hasNext());
+		IASTAbstractDeclaration ad = f.getReturnType();
+		assertTrue(ad != null);
+		assertAllReferences(4, createTaskList(new Task(tp, 2), new Task(x), new Task(y)));
 	}
 }

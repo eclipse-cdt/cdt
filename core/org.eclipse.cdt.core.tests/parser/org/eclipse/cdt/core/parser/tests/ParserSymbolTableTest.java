@@ -844,20 +844,22 @@ public class ParserSymbolTableTest extends TestCase {
 		IParameterizedSymbol f = table.newParameterizedSymbol("f".toCharArray()); //$NON-NLS-1$
 		compUnit.addSymbol(f);
 		
-		IContainerSymbol lookA = f.lookupNestedNameSpecifier("A".toCharArray()); //$NON-NLS-1$
+		ISymbol lookA = f.lookupNestedNameSpecifier("A".toCharArray()); //$NON-NLS-1$
 		assertEquals( lookA, nsA );
+		assertTrue( lookA instanceof IContainerSymbol);
 		
-		ISymbol look = lookA.qualifiedLookup("a".toCharArray()); //$NON-NLS-1$
+		ISymbol look = ((IContainerSymbol) lookA).qualifiedLookup("a".toCharArray()); //$NON-NLS-1$
 		assertEquals( look, a );
 		
-		look = lookA.qualifiedLookup("b".toCharArray()); //$NON-NLS-1$
+		look = ((IContainerSymbol) lookA).qualifiedLookup("b".toCharArray()); //$NON-NLS-1$
 		assertEquals( look, b );
 		
-		IContainerSymbol lookB = f.lookupNestedNameSpecifier("B".toCharArray()); //$NON-NLS-1$
-		look = lookB.qualifiedLookup("a".toCharArray()); //$NON-NLS-1$
+		ISymbol lookB = f.lookupNestedNameSpecifier("B".toCharArray()); //$NON-NLS-1$
+		assertTrue( lookB instanceof IContainerSymbol);
+		look = ((IContainerSymbol) lookB).qualifiedLookup("a".toCharArray()); //$NON-NLS-1$
 		assertEquals( look, a );
 		
-		look = lookB.qualifiedLookup("b".toCharArray()); //$NON-NLS-1$
+		look = ((IContainerSymbol) lookB).qualifiedLookup("b".toCharArray()); //$NON-NLS-1$
 		assertEquals( look, b );
 		assertEquals( table.getTypeInfoProvider().numAllocated(), 0 );
 	}
@@ -1028,14 +1030,15 @@ public class ParserSymbolTableTest extends TestCase {
 	
 		nsA.addUsingDirective( nsB );
 	
-		IContainerSymbol lookA = compUnit.lookupNestedNameSpecifier( "A".toCharArray() ); //$NON-NLS-1$
+		ISymbol lookA = compUnit.lookupNestedNameSpecifier( "A".toCharArray() ); //$NON-NLS-1$
 		assertEquals( nsA, lookA );
+		assertTrue( lookA instanceof IContainerSymbol);
 	
-		ISymbol look = lookA.lookupMemberForDefinition( "f1".toCharArray() ); //$NON-NLS-1$
+		ISymbol look = ((IContainerSymbol) lookA).lookupMemberForDefinition( "f1".toCharArray() ); //$NON-NLS-1$
 		assertEquals( look, null );
 	
 		//but notice if you wanted to do A::f1 as a function call, it is ok
-		look = lookA.qualifiedLookup( "f1".toCharArray() ); //$NON-NLS-1$
+		look = ((IContainerSymbol) lookA).qualifiedLookup( "f1".toCharArray() ); //$NON-NLS-1$
 		assertEquals( look, f1 );
 		assertEquals( table.getTypeInfoProvider().numAllocated(), 0 );
 	}
@@ -1105,11 +1108,12 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		compUnit.addSymbol( D );
 		
-		IContainerSymbol lookB = D.lookupNestedNameSpecifier("B".toCharArray()); //$NON-NLS-1$
+		ISymbol lookB = D.lookupNestedNameSpecifier("B".toCharArray()); //$NON-NLS-1$
 		assertEquals( lookB, B );
+		assertTrue( lookB instanceof IContainerSymbol);
 
-		D.addUsingDeclaration( "f".toCharArray(), lookB ); //$NON-NLS-1$
-		D.addUsingDeclaration( "e".toCharArray(), lookB ); //$NON-NLS-1$
+		D.addUsingDeclaration( "f".toCharArray(), (IContainerSymbol)lookB ); //$NON-NLS-1$
+		D.addUsingDeclaration( "e".toCharArray(), (IContainerSymbol)lookB ); //$NON-NLS-1$
 		  
 		//TBD anonymous union
 		//D.addUsingDeclaration( "x".toCharArray(), lookB );

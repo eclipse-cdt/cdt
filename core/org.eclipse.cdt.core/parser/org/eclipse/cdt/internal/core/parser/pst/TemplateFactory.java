@@ -407,7 +407,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupNestedNameSpecifier(java.lang.String)
 	 */
-	public IContainerSymbol lookupNestedNameSpecifier(char[] name) throws ParserSymbolTableException {
+	public ISymbol lookupNestedNameSpecifier(char[] name) throws ParserSymbolTableException {
 		return getContainingSymbol().lookupNestedNameSpecifier( name );
 	}
 

@@ -10,10 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.failedTests;
 
-import java.io.StringWriter;
 import java.util.Iterator;
-
-import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -162,28 +159,6 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertFalse(j.hasNext());
 	}
 	
-	public void testParametrizedTypeDefinition_bug69751() throws Exception {
-		try {
-			// a typedef refers to an unknown type in a template parameter
-			parse("template <typename T> \n class A { \n typedef typename T::size_type size_type; \n void foo() { size_type i; } \n }; \n");//$NON-NLS-1$
-			fail();
-		} catch (ParserException e) {
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("template <typename T> \n class A { \n typedef typename T::size_type size_type; \n void foo() { size_type i; } \n }; \n").getDeclarations();//$NON-NLS-1$
-//		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
-//		assertFalse(i.hasNext());
-//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
-//		Iterator j = cs.getDeclarations();
-//		IASTTypedefDeclaration tdd = (IASTTypedefDeclaration) j.next();
-//		IASTMethod m = (IASTMethod) j.next();
-//		assertFalse(j.hasNext());
-//		Iterator k = m.getDeclarations();
-//		IASTVariable v = (IASTVariable) k.next();
-//		assertFalse(k.hasNext());
-	}
-	
-
 	
 	public void testGNUExternalTemplate_bug71603() throws Exception {
 		try {

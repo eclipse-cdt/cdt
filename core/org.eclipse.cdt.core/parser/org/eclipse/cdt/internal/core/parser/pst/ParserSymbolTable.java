@@ -102,6 +102,16 @@ public class ParserSymbolTable {
 		return new TemplateFactory( this );
 	}
 	
+	public ISymbol newUndefinedTemplateSymbol(char[] name) {
+		if( name == null ) name = EMPTY_NAME_ARRAY;
+		return new UndefinedTemplateSymbol( this, name );
+	}
+	
+	public ISymbol newUndefinedTemplateSymbol(char[] name, ITypeInfo.eType type ){
+	    if( name == null ) name = EMPTY_NAME_ARRAY;
+		return new UndefinedTemplateSymbol( this, name, type );
+	}
+
 	/**
 	 * Lookup the name from LookupData starting in the inDeclaration
 	 * @param data
@@ -2142,7 +2152,8 @@ public class ParserSymbolTable {
 				}
 			}
 			
-			if( info.isType( ITypeInfo.t_class, ITypeInfo.t_enumeration ) || info.isType( ITypeInfo.t_function ) ){
+			if( info.isType( ITypeInfo.t_class, ITypeInfo.t_enumeration ) || info.isType( ITypeInfo.t_function ) ||
+				( info.isType( ITypeInfo.t_undef ) && typeSymbol instanceof UndefinedTemplateSymbol ) ) {
 				returnInfo.setType( ITypeInfo.t_type );
 				returnInfo.setTypeSymbol( typeSymbol );
 			} else {

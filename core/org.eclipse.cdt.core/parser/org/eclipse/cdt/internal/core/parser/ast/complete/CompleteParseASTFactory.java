@@ -98,6 +98,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
+import org.eclipse.cdt.internal.core.parser.pst.UndefinedTemplateSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -388,8 +389,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					
 					try
 					{
-						if( result instanceof IDeferredTemplateInstance ){
-							result = ((IDeferredTemplateInstance)result).getTemplate().getTemplatedSymbol();
+						while ( ! ( result instanceof IContainerSymbol ) ) {
+							if ( result.getTypeInfo().checkBit( ITypeInfo.isTypedef )) {
+								result = result.getTypeSymbol();
+							}
+							else if( result instanceof IDeferredTemplateInstance ){
+								result = ((IDeferredTemplateInstance)result).getTemplate().getTemplatedSymbol();
+							}
+							else {
+								if (throwOnError)
+									handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, image, t.getOffset(), t.getEndOffset(), t.getLineNumber(), true );
+								else
+									return null;
+							}
 						}
 						args = ( templateArgLists != null ) ? getTemplateArgList( templateArgLists[ idx ] ) : null;
 						if( t == last ) 
@@ -894,7 +906,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         //Its possible that the parent is not an IContainerSymbol if its a template parameter or some kinds of template instances
 		ISymbol symbol = lookupQualifiedName( classSymbol, parentClassName, references, true );
 		
-		if( symbol instanceof ITemplateSymbol )
+		if( symbol instanceof ITemplateSymbol && 
+			! ( symbol instanceof UndefinedTemplateSymbol ) )
 			handleProblem( IProblem.SEMANTIC_INVALID_TEMPLATE_ARGUMENT, parentClassName.toCharArray(), parentClassName.getStartOffset(), parentClassName.getEndOffset(), parentClassName.getLineNumber(), true);
 			
 		List [] templateArgumentLists = parentClassName.getTemplateIdArgLists();
@@ -2007,6 +2020,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					idx++;
 					continue;
 				}
+				if( current.getType() == IToken.t_template ){
+					continue;
+				}
 
 				char[] image = current.getCharImage();
 				int offset = current.getOffset();
@@ -2016,8 +2032,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						current = TokenFactory.consumeTemplateIdArguments( current.getNext(), last );
 				}
 				
-				if( typeSymbol instanceof IDeferredTemplateInstance ){
-					typeSymbol = ((IDeferredTemplateInstance)typeSymbol).getTemplate().getTemplatedSymbol();
+				while ( ! ( typeSymbol instanceof IContainerSymbol ) ) {
+					if ( typeSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef )) {
+						typeSymbol = typeSymbol.getTypeSymbol();
+					}
+					else if( typeSymbol instanceof IDeferredTemplateInstance ){
+						typeSymbol = ((IDeferredTemplateInstance)typeSymbol).getTemplate().getTemplatedSymbol();
+					}
+					else {
+                    	handleProblem( IProblem.SEMANTIC_INVALID_TYPE, image, current.getOffset(), current.getEndOffset(), current.getLineNumber(), true );
+					}
 				}
 				try
                 {
@@ -2025,8 +2049,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						typeSymbol = ((IContainerSymbol)typeSymbol).lookupTemplateId( image, getTemplateArgList( argLists[idx] ) );
 					else if( current != last )
                 		typeSymbol = ((IContainerSymbol)typeSymbol).lookupNestedNameSpecifier( image );
-                    else
+                    else if ( typeName.getSegmentCount() == 1 )	// a single segment
                     	typeSymbol = ((IContainerSymbol)typeSymbol).lookup( image );
+                    else
+                    	typeSymbol = ((IContainerSymbol)typeSymbol).qualifiedLookup( image );
 					
 					if( typeSymbol != null )
 					{	
@@ -3059,7 +3085,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      	} else {
     		
     		if(  kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
-    			symbol = pst.newSymbol( identifier );
+    			// to allow for template parameter qualified typedefs
+    			// i.e. typedef typename T::some_type some_type;
+    			// symbol = pst.newSymbol( identifier );
+    			symbol = pst.newUndefinedTemplateSymbol( identifier );
     			provider.setType( ITypeInfo.t_templateParameter );
         		provider.setTemplateParameterType( ITypeInfo.t_typeName );
         		symbol.setTypeInfo( provider.completeConstruction() );
@@ -3638,8 +3667,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				}
 			}
 		}
-		if ( s == null ) return null;
-		return s.getASTExtension().getPrimaryDeclaration();
+		if ( s != null && s.getASTExtension() != null)
+			return s.getASTExtension().getPrimaryDeclaration();
+		return null;
 	}
 
 	public ISymbol lookupSymbolInNewExpression( IASTScope scope, ITokenDuple duple, ASTExpression expression ){

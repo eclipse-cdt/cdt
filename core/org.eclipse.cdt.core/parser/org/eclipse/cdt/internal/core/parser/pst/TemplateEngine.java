@@ -28,36 +28,46 @@ public final class TemplateEngine {
 	static protected ITypeInfo instantiateTypeInfo( ITypeInfo info, ITemplateSymbol template, ObjectMap  argMap ) throws ParserSymbolTableException{
 		if( argMap == null )
 			return info;
-
-		if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol() == null )
-			return info;
-		if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
-			IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
-			ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
-			//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
-			template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
-			newInfo.setTypeSymbol( deferred );
-			return newInfo;
-		} else if( info.isType( ITypeInfo.t_type ) && 
-				   info.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) &&
-				   argMap.containsKey( info.getTypeSymbol() ) )
-		{
-			ITypeInfo targetInfo = TypeInfoProvider.newTypeInfo( (ITypeInfo) argMap.get( info.getTypeSymbol() ) );
-			if( info.hasPtrOperators() ){
-				targetInfo.addPtrOperator( info.getPtrOperators() );
+		ISymbol typeSymbol = info.getTypeSymbol();
+		if( info.isType( ITypeInfo.t_type ) ) {
+			if ( info.getTypeSymbol() == null ) {
+				return info;
 			}
-			
-			if( info.checkBit( ITypeInfo.isConst ) )
-				targetInfo.setBit( true, ITypeInfo.isConst );
-			
-			if( info.checkBit( ITypeInfo.isVolatile ) )
-				targetInfo.setBit( true, ITypeInfo.isVolatile );
-			
-			return targetInfo;
-		} else if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol().isType( ITypeInfo.t_function ) ){
-			ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
-			newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
-			return newInfo;
+			if( typeSymbol instanceof IDeferredTemplateInstance ){
+				IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
+				ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
+				//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
+				template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
+				newInfo.setTypeSymbol( deferred );
+				return newInfo;
+			} else if ( typeSymbol instanceof UndefinedTemplateSymbol &&
+						( typeSymbol.isType( ITypeInfo.t_template ) ||
+						  typeSymbol.isType( ITypeInfo.t_undef ) ) ) {
+					ITemplateSymbol deferred = (ITemplateSymbol) info.getTypeSymbol();
+					ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
+					template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
+					newInfo.setTypeSymbol( deferred );
+					return newInfo;
+			} else if( typeSymbol.isType( ITypeInfo.t_templateParameter ) &&
+					   argMap.containsKey( info.getTypeSymbol() ) )
+			{
+				ITypeInfo targetInfo = TypeInfoProvider.newTypeInfo( (ITypeInfo) argMap.get( info.getTypeSymbol() ) );
+				if( info.hasPtrOperators() ){
+					targetInfo.addPtrOperator( info.getPtrOperators() );
+				}
+				
+				if( info.checkBit( ITypeInfo.isConst ) )
+					targetInfo.setBit( true, ITypeInfo.isConst );
+				
+				if( info.checkBit( ITypeInfo.isVolatile ) )
+					targetInfo.setBit( true, ITypeInfo.isVolatile );
+				
+				return targetInfo;
+			} else if( typeSymbol.isType( ITypeInfo.t_function ) ){
+				ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
+				newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
+				return newInfo;
+			}
 		}
 		return info;
 	
@@ -72,7 +82,7 @@ public final class TemplateEngine {
 	 * @param symbol
 	 * @param map
 	 */
-	public static void discardDeferredTypeInfo(ITypeInfo info, TemplateSymbol template, ObjectMap map) {
+	public static void discardDeferredTypeInfo(ITypeInfo info, ITemplateSymbol template, ObjectMap map) {
 		ISymbol instance = info.getTypeSymbol();
 		if( !(instance instanceof IDeferredTemplateInstance ) )
 			template.removeInstantiation( (IContainerSymbol) instance );
@@ -1104,7 +1114,7 @@ public final class TemplateEngine {
 	 */
 	static protected ISymbol instantiateWithinTemplateScope( IContainerSymbol container, ITemplateSymbol symbol ) throws ParserSymbolTableException
 	{
-		if( symbol.getTemplatedSymbol().isType( ITypeInfo.t_function ) ){
+		if( symbol.getTemplatedSymbol() == null || symbol.getTemplatedSymbol().isType( ITypeInfo.t_function ) ){
 			return symbol;
 		}
 		

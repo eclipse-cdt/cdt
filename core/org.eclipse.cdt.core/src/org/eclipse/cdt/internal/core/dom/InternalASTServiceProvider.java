@@ -17,11 +17,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -60,7 +60,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     private static final ISourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
     private static final IProblemRequestor PROBLEM_REQUESTOR = new IProblemRequestor() {
 
-        public boolean acceptProblem(IProblem problem) {
+        public boolean acceptProblem(IASTProblem problem) {
             return true;
         }
     };

@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -118,7 +119,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -127,8 +127,8 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
-import org.eclipse.cdt.internal.core.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
@@ -221,8 +221,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     } while (scopes.size() > 0
                             && (top == IToken.tGT || top == IToken.tLT));
                     if (top != IToken.tLBRACKET)
-                        throwBacktrack(startingOffset, last.getEndOffset(),
-                                last.getLineNumber(), last.getFilename());
+                        throwBacktrack(startingOffset, last.getEndOffset() - startingOffset );
 
                     break;
                 case IToken.tRPAREN:
@@ -231,8 +230,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     } while (scopes.size() > 0
                             && (top == IToken.tGT || top == IToken.tLT));
                     if (top != IToken.tLPAREN)
-                        throwBacktrack(startingOffset, last.getEndOffset(),
-                                last.getLineNumber(), last.getFilename());
+                        throwBacktrack(startingOffset, last.getEndOffset() - startingOffset );
 
                     break;
                 case IToken.tLT:
@@ -250,8 +248,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         IToken start = LA(1);
         int startingOffset = start.getOffset();
-        int startingLineNumber = start.getOffset();
-        char[] fn = start.getFilename();
+        int endOffset = 0;
         start = null;
         List list = new ArrayList();
 
@@ -289,6 +286,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
             } else if (LT(1) != IToken.tGT) {
                 failed = true;
+                endOffset = LA(1).getEndOffset();
                 break;
             }
         }
@@ -296,7 +294,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         templateIdScopes.pop();
 
         if (failed) 
-            throwBacktrack(startingOffset, 0, startingLineNumber, fn);
+            throwBacktrack(startingOffset, endOffset - startingOffset );
 
 
         return list;
@@ -344,8 +342,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             default:
                 IToken l = LA(1);
                 backup(mark);
-                throwBacktrack(first.getOffset(), l.getEndOffset(), first
-                        .getLineNumber(), l.getFilename());
+                throwBacktrack(first.getOffset(), l.getEndOffset() - first.getOffset() );
             }
 
             while (LT(1) == IToken.tCOLONCOLON) {
@@ -361,8 +358,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.t_operator:
                     IToken l = LA(1);
                     backup(mark);
-                    throwBacktrack(first.getOffset(), l.getEndOffset(), first
-                            .getLineNumber(), l.getFilename());
+                    throwBacktrack(first.getOffset(), l.getEndOffset() - first.getOffset() );
                 case IToken.tIDENTIFIER:
                     last = consume();
                     last = consumeTemplateArguments(last, argumentList);
@@ -409,45 +405,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return last;
     }
 
-    /**
-     * Parse a const-volatile qualifier.
-     * 
-     * cvQualifier : "const" | "volatile"
-     * 
-     * TODO: fix this
-     * 
-     * @param ptrOp
-     *            Pointer Operator that const-volatile applies to.
-     * @throws BacktrackException
-     */
-    protected void cvQualifier(List collection)
-            throws EndOfFileException, BacktrackException {
-        
-        int startingOffset = LA(1).getOffset();
-        switch (LT(1)) {
-        case IToken.t_const:
-            consume(IToken.t_const);
-            collection.add(null /*ASTPointerOperator.CONST_POINTER*/);
-            break;
-        case IToken.t_volatile:
-            consume(IToken.t_volatile);
-            collection.add(null/*ASTPointerOperator.VOLATILE_POINTER*/);
-            break;
-        case IToken.t_restrict:
-            if (allowCPPRestrict) {
-                consume(IToken.t_restrict);
-                collection
-                        .add(null/*ASTPointerOperator.RESTRICT_POINTER*/);
-                break;
-            }
-            IToken la = LA(1);
-            throwBacktrack(startingOffset, la.getEndOffset(), la
-                    .getLineNumber(), la.getFilename());
-
-        }
-        return;
-    }
-
     protected ITokenDuple operatorId(IToken originalToken, TemplateParameterManager templateArgs) throws BacktrackException,
             EndOfFileException {
         // we know this is an operator
@@ -472,9 +429,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 toSend = consume();
             else
                 throwBacktrack(operatorToken.getOffset(),
-                        toSend != null ? toSend.getEndOffset() : 0,
-                        operatorToken.getLineNumber(), operatorToken
-                                .getFilename());
+                        toSend != null ? toSend.getEndOffset() - operatorToken.getOffset(): 0 );
         } else {
             // must be a conversion function
             typeId(true);
@@ -563,8 +518,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             break;
                         }
                         IToken la = LA(1);
-                        throwBacktrack(startingOffset, la.getEndOffset(), la
-                                .getLineNumber(), la.getFilename());
+                        throwBacktrack(startingOffset, la.getEndOffset() - startingOffset );
                     
                     }
                     if( t == LA(1) )
@@ -913,8 +867,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
         int startingOffset = mark.getOffset();
-        char [] filename = mark.getFilename();
-        int lineNumber = mark.getLineNumber();
         IASTDeclSpecifier declSpecifier = null;
         IASTDeclarator declarator = null;
 
@@ -927,13 +879,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         {
             int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
             backup( mark );
-            throwBacktrack( startingOffset, endingOffset, lineNumber, filename );            
+            throwBacktrack( startingOffset, endingOffset - startingOffset );            
         }
         if( declarator == null || declarator.getName().toString() != null )   //$NON-NLS-1$
         {
             int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
             backup( mark );
-            throwBacktrack( startingOffset, endingOffset, lineNumber, filename );
+            throwBacktrack( startingOffset, endingOffset - startingOffset );
         }
         
         IASTTypeId result = createTypeId();
@@ -1051,7 +1003,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	                    templateIdScopes.pop();
 	                } //pop 1st Parent
 	                placementParseFailure = true;
-	                throwBacktrack( backtrackMarker.getOffset(), backtrackMarker.getEndOffset(), backtrackMarker.getLineNumber(), backtrackMarker.getFilename() );
+	                throwBacktrack( backtrackMarker.getOffset(), backtrackMarker.getLength() );
                 }
                 else
                     placementParseFailure = false;
@@ -1669,9 +1621,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         default:
             IToken la = LA(1);
             int startingOffset = la.getOffset();
-            int line = la.getLineNumber();
-            char[] fn = la.getFilename();
-            throwBacktrack(startingOffset, startingOffset, line, fn);
+            throwBacktrack(startingOffset, la.getLength());
             return null;
         }
 
@@ -1714,8 +1664,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     duple = operatorId(start, null);
                 else {
                     backup(mark);
-                    throwBacktrack(start.getOffset(), end.getEndOffset(), end
-                            .getLineNumber(), start.getFilename());
+                    throwBacktrack(start.getOffset(), end.getEndOffset() - start.getOffset() );
                 }
             } else if (LT(1) == IToken.t_operator)
                 duple = operatorId(null, null);
@@ -1810,8 +1759,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
                 name = createName( name() );
             else
-                throwBacktrack(firstToken.getOffset(), endOffset, firstToken
-                        .getLineNumber(), firstToken.getFilename());
+                throwBacktrack(firstToken.getOffset(), endOffset - firstToken.getOffset() );
             
             consume(IToken.tSEMI);
             ICPPASTUsingDirective astUD = createUsingDirective();
@@ -2237,8 +2185,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     protected IASTDeclaration simpleDeclarationStrategyUnion() throws EndOfFileException, BacktrackException {
         simpleDeclarationMark = mark();
-        IProblem firstFailure = null;
-        IProblem secondFailure = null;
+        IASTProblem firstFailure = null;
+        IASTProblem secondFailure = null;
         try {
             return simpleDeclaration(SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
                     false);
@@ -2345,8 +2293,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IToken assign = consume(IToken.tASSIGN);
 
             if (name.toString() == null) {
-                throwBacktrack(first.getOffset(), assign.getEndOffset(), first
-                        .getLineNumber(), first.getFilename());
+                throwBacktrack(first.getOffset(), assign.getEndOffset() - first.getOffset() );
                 return null;
             }
 
@@ -2365,8 +2312,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return alias;
         } else {
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            throwBacktrack(first.getOffset(), endOffset, first.getLineNumber(),
-                    first.getFilename());
+            throwBacktrack(first.getOffset(), endOffset - first.getOffset() );
             return null;
         }
     }
@@ -2486,11 +2432,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws BacktrackException, EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
-        int firstLine = firstToken.getLineNumber();
-        char[] fn = firstToken.getFilename();
         if (firstToken.getType() == IToken.tLBRACE)
-            throwBacktrack(firstOffset, firstToken.getEndOffset(),
-                    firstLine, fn);
+            throwBacktrack(firstOffset, firstToken.getLength() );
         firstToken = null; // necessary for scalability
 
         ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR);
@@ -2531,12 +2474,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             break;
         case IToken.tRPAREN:
             if (!fromCatchHandler)
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
             break;
         default:
-            throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                    .getLineNumber(), fn);
+            throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
         }
 
         if (!consumedSemi) {
@@ -2545,19 +2486,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             if (hasFunctionTryBlock && !hasFunctionBody)
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
         }
         
         if (hasFunctionBody) {
             if (declarators.size() != 1)
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
 
             IASTDeclarator declarator = (IASTDeclarator) declarators.get(0);
             if (!(declarator instanceof IASTFunctionDeclarator))
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
 
             if( ! constructorChain.isEmpty() && declarator instanceof ICPPASTFunctionDeclarator )
             {
@@ -2707,8 +2645,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         if (current == LA(1)) {
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            throwBacktrack(current.getOffset(), endOffset, current
-                    .getLineNumber(), current.getFilename());
+            throwBacktrack(current.getOffset(), endOffset - current.getOffset() );
         }
         ICPPASTParameterDeclaration parm = createParameterDeclaration();
         ((ASTNode)parm).setOffset( current.getOffset() );
@@ -2901,7 +2838,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if( !supportRestrict )
                 {
                     IToken la = LA(1);
-                    throwBacktrack( la.getOffset(), la.getEndOffset(), la.getLineNumber(), la.getFilename() );
+                    throwBacktrack( la.getOffset(), la.getEndOffset() - la.getOffset() );
                 }                
                 isRestrict = true;
             	consume();
@@ -2936,7 +2873,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if( ! supportComplex )
                 {
                     IToken la = LA(1);
-                    throwBacktrack( la.getOffset(), la.getEndOffset(), la.getLineNumber(), la.getFilename() );
+                    throwBacktrack( la.getOffset(), la.getEndOffset() - la.getOffset() );
                 }
                 consume(IToken.t__Complex);
                 simpleType = IGPPASTSimpleDeclSpecifier.t_Complex;
@@ -2945,7 +2882,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if( ! supportComplex )
                 {
                     IToken la = LA(1);
-                    throwBacktrack( la.getOffset(), la.getEndOffset(), la.getLineNumber(), la.getFilename() );
+                    throwBacktrack( la.getOffset(), la.getLength() );
                 }
                 consume(IToken.t__Imaginary);
                 simpleType = IGPPASTSimpleDeclSpecifier.t_Imaginary;
@@ -3188,8 +3125,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             break;
         default:
             backup(t);
-            throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(),
-                    t.getFilename());
+            throwBacktrack(t.getOffset(), t.getLength() );
         }
 
         IASTName name = createName( name() );
@@ -3363,8 +3299,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         
         IToken la = LA(1);
         int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         la = null;
         IASTDeclarator innerDecl = null;
         IASTName declaratorName = null;
@@ -3437,8 +3371,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                             : 0;
                                     logException(
                                             "declarator:queryIsTypeName", e); //$NON-NLS-1$
-                                    throwBacktrack(startingOffset, endOffset,
-                                            line, newMark.getFilename());
+                                    throwBacktrack(startingOffset, endOffset - startingOffset );
                                 }
                             } catch (BacktrackException b) {
                                 failed = true;
@@ -3472,8 +3405,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 int endOffset = (lastToken != null) ? lastToken
                                         .getEndOffset() : 0;
                                 if (seenParameter)
-                                    throwBacktrack(startingOffset, endOffset,
-                                            line, fn);
+                                    throwBacktrack(startingOffset, endOffset - startingOffset );
                                 IASTParameterDeclaration p = parameterDeclaration();
                                 if( parameters == Collections.EMPTY_LIST )
                                     parameters = new ArrayList( DEFAULT_PARM_LIST_SIZE );
@@ -3728,16 +3660,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     int endOffset = (lastToken != null) ? lastToken
                             .getEndOffset() : 0;
                     backup(mark);
-                    throwBacktrack(mark.getOffset(), endOffset, mark
-                            .getLineNumber(), mark.getFilename());
+                    throwBacktrack(mark.getOffset(), endOffset - mark.getOffset() );
                 }
                 return TokenFactory.createTokenDuple( start, end, argumentList.getTemplateArgumentsList() );
             }
             int endOffset = (lastToken != null) ? lastToken
                     .getEndOffset() : 0;
             backup(mark);
-            throwBacktrack(mark.getOffset(), endOffset, mark
-                    .getLineNumber(), mark.getFilename());
+            throwBacktrack(mark.getOffset(), endOffset - mark.getOffset() );
             
             return null;
         } finally {
@@ -3779,8 +3709,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             classKind = IASTCompositeTypeSpecifier.k_union;
             break;
         default:
-            throwBacktrack(mark.getOffset(), mark.getEndOffset(), mark
-                    .getLineNumber(), mark.getFilename());
+            throwBacktrack(mark.getOffset(), mark.getLength());
         }
 
         IASTName name = null;
@@ -3794,8 +3723,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
             backup(mark);
-            throwBacktrack(errorPoint.getOffset(), errorPoint.getEndOffset(),
-                    errorPoint.getLineNumber(), errorPoint.getFilename());
+            throwBacktrack(errorPoint.getOffset(), errorPoint.getLength() );
         }
         
         ICPPASTCompositeTypeSpecifier astClassSpecifier = createClassSpecifier();
@@ -3998,8 +3926,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         if (LT(1) != IToken.t_catch) {
             IToken la = LA(1);
-            throwBacktrack(la.getOffset(), la.getEndOffset(), la
-                    .getLineNumber(), la.getFilename()); // error, need at least one of these
+            throwBacktrack(la.getOffset(), la.getLength()); // error, need at least one of these
         }
         while (LT(1) == IToken.t_catch) {
             int startOffset = consume(IToken.t_catch).getOffset();

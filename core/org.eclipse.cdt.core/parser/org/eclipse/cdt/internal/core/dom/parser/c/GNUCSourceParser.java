@@ -89,8 +89,8 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
-import org.eclipse.cdt.internal.core.parser.BacktrackException;
 
 /**
  * @author jcamelon
@@ -143,8 +143,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         la = null;
         if (LT(1) == IToken.tLBRACE) {
             consume(IToken.tLBRACE);
@@ -195,8 +193,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
                 if (checkHashcode == LA(1).hashCode()) {
                     IToken l2 = LA(1);
-                    throwBacktrack(startingOffset, l2.getEndOffset(), l2
-                            .getLineNumber(), l2.getFilename());
+                    throwBacktrack(startingOffset, l2.getEndOffset() - startingOffset);
                     return null;
                 }
 
@@ -222,7 +219,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // do nothing
         }
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-        throwBacktrack(startingOffset, endOffset, line, fn);
+        throwBacktrack(startingOffset, endOffset - startingOffset);
         return null;
     }
 
@@ -399,10 +396,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
-        char[] fn = firstToken.getFilename();
         if (firstToken.getType() == IToken.tLBRACE)
-            throwBacktrack(firstToken.getOffset(), firstToken.getEndOffset(),
-                    firstToken.getLineNumber(), firstToken.getFilename());
+            throwBacktrack(firstToken.getOffset(), firstToken.getLength() );
 
         firstToken = null; // necessary for scalability
 
@@ -431,8 +426,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLBRACE:
             break;
         default:
-            throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                    .getLineNumber(), fn);
+            throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
         }
 
         if (!consumedSemi) {
@@ -441,19 +435,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             if (hasFunctionTryBlock && !hasFunctionBody)
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
         }
 
         if (hasFunctionBody) {
             if (declarators.size() != 1)
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset());
 
             IASTDeclarator declarator = (IASTDeclarator) declarators.get(0);
             if (!(declarator instanceof IASTFunctionDeclarator))
-                throwBacktrack(firstOffset, LA(1).getEndOffset(), LA(1)
-                        .getLineNumber(), fn);
+                throwBacktrack(firstOffset, LA(1).getEndOffset());
 
             IASTFunctionDefinition funcDefinition = createFunctionDefinition();
             ((ASTNode)funcDefinition).setOffset(firstOffset);
@@ -1018,7 +1009,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tIDENTIFIER:
 
             int startingOffset = LA(1).getOffset();
-            int line = LA(1).getLineNumber();
             IToken t1 = identifier();
             IASTIdExpression idExpression = createIdExpression();
             IASTName name = createName(t1);
@@ -1029,8 +1019,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         default:
             IToken la = LA(1);
             startingOffset = la.getOffset();
-            line = la.getLineNumber();
-            throwBacktrack( startingOffset, startingOffset, line, la.getFilename() );
+            throwBacktrack( startingOffset, la.getLength() );
             return null;
         }
 
@@ -1054,8 +1043,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
         int startingOffset = mark.getOffset();
-        char [] filename = mark.getFilename();
-        int lineNumber = mark.getLineNumber();
         IASTDeclSpecifier declSpecifier = null;
         IASTDeclarator declarator = null;
 
@@ -1068,13 +1055,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         {
             int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
             backup( mark );
-            throwBacktrack( startingOffset, endingOffset, lineNumber, filename );            
+            throwBacktrack( startingOffset, endingOffset - startingOffset );            
         }
         if( declarator == null || declarator.getName().toString() != null )   //$NON-NLS-1$
         {
             int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
             backup( mark );
-            throwBacktrack( startingOffset, endingOffset, lineNumber, filename );
+            throwBacktrack( startingOffset, endingOffset - startingOffset );
         }
         
         IASTTypeId result = createTypeId();
@@ -1458,8 +1445,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             classKind = IASTCompositeTypeSpecifier.k_union;
             break;
         default:
-            throwBacktrack(mark.getOffset(), mark.getEndOffset(), mark
-                    .getLineNumber(), mark.getFilename());
+            throwBacktrack(mark.getOffset(), mark.getLength() );
         }
 
         IToken nameToken = null;
@@ -1471,8 +1457,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
             backup(mark);
-            throwBacktrack(errorPoint.getOffset(), errorPoint.getEndOffset(),
-                    errorPoint.getLineNumber(), errorPoint.getFilename());
+            throwBacktrack(errorPoint.getOffset(), errorPoint.getLength());
         }
 
         consume(IToken.tLBRACE);
@@ -1553,8 +1538,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             break;
         default:
             backup(t);
-            throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(),
-                    t.getFilename());
+            throwBacktrack(t.getOffset(), t.getLength() );
         }
 
         IToken identifier = identifier();
@@ -1598,8 +1582,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTName declaratorName = null;
         IToken la = LA(1);
         int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         la = null;
         List pointerOps = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
         List parameters = Collections.EMPTY_LIST;
@@ -1648,8 +1630,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             int endOffset = (lastToken != null) ? lastToken
                                     .getEndOffset() : 0;
                             if (seenParameter)
-                                throwBacktrack(startingOffset, endOffset,
-                                        line, fn);
+                                throwBacktrack(startingOffset, endOffset - startingOffset);
                             IASTParameterDeclaration pd = parameterDeclaration();
                             if (parameters == Collections.EMPTY_LIST)
                                 parameters = new ArrayList(
@@ -1869,8 +1850,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (current == LA(1)) {
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            throwBacktrack(current.getOffset(), endOffset, current
-                    .getLineNumber(), current.getFilename());
+            throwBacktrack(current.getOffset(), endOffset - current.getOffset() );
         }
 
         IASTParameterDeclaration result = createParameterDeclaration();
@@ -2150,5 +2130,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     protected void nullifyTranslationUnit() {
         translationUnit = null;
     }
+
 
 }

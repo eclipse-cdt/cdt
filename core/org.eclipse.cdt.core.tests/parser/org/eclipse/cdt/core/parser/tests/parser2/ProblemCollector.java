@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.parser.tests.parser2;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
 
 
@@ -29,7 +29,7 @@ public class ProblemCollector implements IProblemRequestor {
      * 
      * @see org.eclipse.cdt.internal.core.parser2.IProblemRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
      */
-    public boolean acceptProblem(IProblem problem) {
+    public boolean acceptProblem(IASTProblem problem) {
         problems.add(problem);
         return true;
     }

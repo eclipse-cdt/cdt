@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -52,15 +53,11 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.BacktrackException;
-import org.eclipse.cdt.internal.core.parser.ParserProblemFactory;
-import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 
 /**
  * @author jcamelon
@@ -100,12 +97,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected int backtrackCount = 0;
 
-    protected final void throwBacktrack(int startingOffset, int endingOffset,
-            int lineNumber, char[] f) throws BacktrackException {
+    protected final void throwBacktrack(int offset, int length ) throws BacktrackException {
         ++backtrackCount;
-        backtrack.initialize(startingOffset,
-                (endingOffset == 0) ? startingOffset + 1 : endingOffset,
-                lineNumber, f);
+        backtrack.initialize(offset, ( length < 0 ) ? 0 : length );
         throw backtrack;
     }
 
@@ -185,8 +179,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (LT(1) == type)
             return consume();
         IToken la = LA(1);
-        throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber(),
-                la.getFilename());
+        throwBacktrack(la.getOffset(), la.getLength());
         return null;
     }
 
@@ -210,8 +203,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected boolean isCancelled = false;
 
     protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
-
-    protected IProblemFactory problemFactory = new ParserProblemFactory();
 
     protected static int parseCount = 0;
 
@@ -298,10 +289,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected void failParse(BacktrackException bt) {
         if (requestor != null) {
             if (bt.getProblem() == null) {
-                IProblem problem = problemFactory.createProblem(
-                        IProblem.SYNTAX_ERROR, bt.getStartingOffset(), bt
-                                .getEndOffset(), bt.getLineNumber(), bt
-                                .getFilename(), EMPTY_STRING, false, true);
+                IASTProblem problem = createProblem( IASTProblem.SYNTAX_ERROR, bt.getOffset(), bt.getLength() );
                 requestor.acceptProblem(problem);
             } else
                 requestor.acceptProblem(bt.getProblem());
@@ -309,13 +297,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         failParse();
     }
 
-    protected void failParse(IProblem problem) {
-        if (problem != null && requestor != null) {
-            requestor.acceptProblem(problem);
-        }
-        failParse();
+    /**
+     * @param syntax_error
+     * @param offset
+     * @param length
+     * @return
+     */
+    protected IASTProblem createProblem(int signal, int offset, int length)
+    {
+        IASTProblem result = new ASTProblem( signal, EMPTY_STRING, false, true );
+        ((ASTNode)result).setOffset( offset );
+        ((ASTNode)result).setLength( length );
+        return result;
     }
-
+    
     /**
      * @param string
      * @param e
@@ -360,7 +355,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    protected final void throwBacktrack(IProblem problem)
+    protected final void throwBacktrack(IASTProblem problem)
             throws BacktrackException {
         ++backtrackCount;
         backtrack.initialize(problem);
@@ -1087,8 +1082,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                     enumeratorName = createName( identifier() );
                 } else {
                     IToken la = LA(1);
-                    throwBacktrack(la.getOffset(), la.getEndOffset(), la
-                            .getLineNumber(), la.getFilename());
+                    throwBacktrack(la.getOffset(), la.getLength());
                 }
                 IASTExpression initialValue = null;
                 if (LT(1) == IToken.tASSIGN) {
@@ -1115,10 +1109,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                     break;
                 }
                 if (LT(1) != IToken.tCOMMA) {
-                    int endOffset = (lastToken != null) ? lastToken
-                            .getEndOffset() : 0;
-                    throwBacktrack(mark.getOffset(), endOffset, mark
-                            .getLineNumber(), mark.getFilename());
+                    throwBacktrack(mark.getOffset(), mark.getLength());
                 }
 
                 enumerator = createEnumerator();
@@ -1143,10 +1134,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             return result;
         }
         // enumSpecifierAbort
-        int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         backup(mark);
-        throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
-                mark.getFilename());
+        throwBacktrack(mark.getOffset(), mark.getLength());
         return null;
     }
 
@@ -1688,7 +1677,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if_loop: while( true ){
         	int so = consume(IToken.t_if).getOffset();
         	consume(IToken.tLPAREN);
-        	IToken start = LA(1);
         	boolean passedCondition = true;
         	IASTExpression condition = null;
         	try {
@@ -1696,14 +1684,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		consume(IToken.tRPAREN);
         	} catch (BacktrackException b) {
         	    //if the problem has no offset info, make a new one that does
-        	    if( b.getProblem() != null && b.getProblem().getSourceLineNumber() == -1 ){
-        	        IProblem p = b.getProblem();
-        	        IProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
-                            		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
-                                       start.getLineNumber(), p.getOriginatingFileName(),
-                                       p.getArguments() != null ? p.getArguments().toCharArray() : null,
-                                       p.isWarning(), p.isError() );
-        	        b.initialize( p2 );
+        	    if( b.getProblem() != null ){
+        	        IASTProblem p = b.getProblem();
+//        	        IASTProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
+//                            		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
+//                                       start.getLineNumber(), p.getOriginatingFileName(),
+//                                       p.getArguments() != null ? p.getArguments().toCharArray() : null,
+//                                       p.isWarning(), p.isError() );
+        	        b.initialize( p );
         	    }
         		failParse(b);
         		failParseWithErrorHandling();

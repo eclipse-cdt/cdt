@@ -13,7 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 
 /**
  * @author jcamelon
@@ -21,6 +21,6 @@ import org.eclipse.cdt.core.parser.IProblem;
  */
 public interface IProblemRequestor {
 
-	public boolean acceptProblem( IProblem problem );
+	public boolean acceptProblem( IASTProblem problem );
 
 }

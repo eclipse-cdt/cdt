@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     private List problems = Collections.EMPTY_LIST;
+    private static final IASTProblem[] EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getMacroDefinitions()
@@ -243,6 +244,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getScannerProblems()
      */
     public IASTProblem[] getScannerProblems() {
+        if( problems == Collections.EMPTY_LIST ) return EMPTY_PROBLEMS_ARRAY;
         return (IASTProblem[]) problems.toArray( new IASTProblem[ problems.size() ]);
     }
 

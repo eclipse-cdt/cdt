@@ -69,6 +69,10 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 public class Scanner implements IScanner {
 
+	private static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( __CPLUSPLUS, "199711L"); //$NON-NLS-1$
+	private static final ObjectMacroDescriptor STDC_VERSION_MACRO = new ObjectMacroDescriptor( __STDC_VERSION__, "199001L"); //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor STDC_HOSTED_MACRO = new ObjectMacroDescriptor( __STDC_HOSTED__, "0"); //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor STDC_MACRO = new ObjectMacroDescriptor( __STDC__,  "1"); //$NON-NLS-1$
 	private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 	private final static String SCRATCH = "<scratch>"; //$NON-NLS-1$
 	protected final IScannerData scannerData;
@@ -181,18 +185,18 @@ public class Scanner implements IScanner {
 		
 		scannerExtension.setupBuiltInMacros(scannerData);
 		if( getDefinition(__STDC__) == null )
-			addDefinition( __STDC__, new ObjectMacroDescriptor( __STDC__,  "1") ); //$NON-NLS-1$
+			addDefinition( __STDC__, STDC_MACRO ); 
 		
 		if( scannerData.getLanguage() == ParserLanguage.C )
 		{
 			if( getDefinition(__STDC_HOSTED__) == null )
-				addDefinition( __STDC_HOSTED__, new ObjectMacroDescriptor( __STDC_HOSTED__, "0")); //$NON-NLS-1$
+				addDefinition( __STDC_HOSTED__, STDC_HOSTED_MACRO); 
 			if( getDefinition( __STDC_VERSION__) == null )
-				addDefinition( __STDC_VERSION__, new ObjectMacroDescriptor( __STDC_VERSION__, "199001L")); //$NON-NLS-1$
+				addDefinition( __STDC_VERSION__, STDC_VERSION_MACRO); 
 		}
 		else
 			if( getDefinition( __CPLUSPLUS ) == null )
-					addDefinition( __CPLUSPLUS, new ObjectMacroDescriptor( __CPLUSPLUS, "199711L")); //$NON-NLS-1$
+					addDefinition( __CPLUSPLUS, CPLUSPLUS_MACRO); //$NON-NLS-1$
 		
 		if( getDefinition(__FILE__) == null )
 			addDefinition(  __FILE__, 

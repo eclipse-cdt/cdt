@@ -36,33 +36,11 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public class GCCScannerExtension implements IScannerExtension {
 	
-
-
-	protected static final String POUND_IDENT = "#ident"; //$NON-NLS-1$
-	protected static final String POUND_WARNING = "#warning"; //$NON-NLS-1$
-	protected static final String POUND_INCLUDE_NEXT = "#include_next"; //$NON-NLS-1$
-	
-	private static final String __CONST__ = "__const__"; //$NON-NLS-1$
-	private static final String __CONST = "__const"; //$NON-NLS-1$
-	private static final String __INLINE__ = "__inline__"; //$NON-NLS-1$
-	private static final String __VOLATILE__ = "__volatile__"; //$NON-NLS-1$
-	private static final String __SIGNED__ = "__signed__"; //$NON-NLS-1$
-	private static final String __RESTRICT = "__restrict"; //$NON-NLS-1$
-	private static final String __RESTRICT__ = "__restrict__"; //$NON-NLS-1$
-	private static final String __ASM__ = "__asm__"; //$NON-NLS-1$
-	private static final String __TYPEOF__ = "__typeof__"; //$NON-NLS-1$
-	
-	
-	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
-	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
-	private static final List EMPTY_LIST = new ArrayList();
-
+	protected static final ObjectMacroDescriptor STDC_VERSION_MACRO = new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L"); //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor STDC_HOSTED_MACRO = new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0"); //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1"); //$NON-NLS-1$
 	private static final List simpleIdentifiersDeclSpec;
 	private static final List simpleIdentifiersAttribute;
-	
-	private static final String __EXTENSION__ = "__extension__"; //$NON-NLS-1$
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
 	static
 	{
 		simpleIdentifiersDeclSpec = new ArrayList( 1 );
@@ -71,6 +49,41 @@ public class GCCScannerExtension implements IScannerExtension {
 		simpleIdentifiersAttribute = new ArrayList( 1 );
 		simpleIdentifiersAttribute.add( "xyz"); //$NON-NLS-1$
 	}
+
+
+	protected static final String POUND_IDENT = "#ident"; //$NON-NLS-1$
+	protected static final String POUND_WARNING = "#warning"; //$NON-NLS-1$
+	protected static final String POUND_INCLUDE_NEXT = "#include_next"; //$NON-NLS-1$
+	
+	private static final String __CONST__ = "__const__"; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor __CONST__MACRO = new ObjectMacroDescriptor( __CONST__, Keywords.CONST );
+	private static final String __CONST = "__const"; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor __CONST_MACRO = new ObjectMacroDescriptor( __CONST, Keywords.CONST );
+	private static final String __INLINE__ = "__inline__"; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor __INLINE__MACRO = new ObjectMacroDescriptor( __INLINE__, Keywords.INLINE );
+	private static final String __VOLATILE__ = "__volatile__"; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor __VOLATILE__MACRO = new ObjectMacroDescriptor( __VOLATILE__, Keywords.VOLATILE );
+	private static final String __SIGNED__ = "__signed__"; //$NON-NLS-1$
+	private static final ObjectMacroDescriptor __SIGNED__MACRO = new ObjectMacroDescriptor( __SIGNED__, Keywords.SIGNED );
+	private static final String __RESTRICT = "__restrict"; //$NON-NLS-1$
+	private static final String __RESTRICT__ = "__restrict__"; //$NON-NLS-1$
+	private static final ObjectMacroDescriptor __RESTRICT__MACRO = new ObjectMacroDescriptor( __RESTRICT__, Keywords.RESTRICT );
+	private static final String __ASM__ = "__asm__"; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor __ASM__MACRO = new ObjectMacroDescriptor( __ASM__, Keywords.ASM );
+	private static final String __TYPEOF__ = "__typeof__"; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor __TYPEOF__MACRO = new ObjectMacroDescriptor( __TYPEOF__, GCCKeywords.TYPEOF );
+	
+	
+	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
+	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
+	private static final List EMPTY_LIST = new ArrayList();
+	protected static final FunctionMacroDescriptor DECLSPEC_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" ); //$NON-NLS-1$
+	protected static final FunctionMacroDescriptor ATTRIBUTE_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersAttribute,  EMPTY_LIST, "" ); //$NON-NLS-1$
+	
+	private static final String __EXTENSION__ = "__extension__"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final ObjectMacroDescriptor EXTENSION_MACRO = new ObjectMacroDescriptor( __EXTENSION__, EMPTY_STRING );
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
 	 */
@@ -87,46 +100,44 @@ public class GCCScannerExtension implements IScannerExtension {
 				
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
 			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
-				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1")); //$NON-NLS-1$
+				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, CPLUSPLUS_MACRO); 
 		
 		if( scannerData.getScanner().getDefinition(IScanner.__STDC_HOSTED__) == null )
-			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0")); //$NON-NLS-1$
+			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, STDC_HOSTED_MACRO); 
 		if( scannerData.getScanner().getDefinition( IScanner.__STDC_VERSION__) == null )
-			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L")); //$NON-NLS-1$
+			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, STDC_VERSION_MACRO); 
 		
-		//TODO - these macros should not be visible as macros in the scanner's definition list
-		//need to make a public/private table i think
+		// add these to private table
 		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
-			scannerData.getPrivateDefinitions().put( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
+			scannerData.getPrivateDefinitions().put( __ATTRIBUTE__, ATTRIBUTE_MACRO); 
 		
 		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
-			scannerData.getPrivateDefinitions().put( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
+			scannerData.getPrivateDefinitions().put( __DECLSPEC, DECLSPEC_MACRO );
 
 		if( scannerData.getScanner().getDefinition( __EXTENSION__ ) == null )
-			scannerData.getPrivateDefinitions().put( __EXTENSION__, new ObjectMacroDescriptor( __EXTENSION__, EMPTY_STRING ));
+			scannerData.getPrivateDefinitions().put( __EXTENSION__, EXTENSION_MACRO);
 		
-		setupAlternativeKeyword(scannerData, __CONST__, Keywords.CONST);
-		setupAlternativeKeyword(scannerData, __CONST, Keywords.CONST);
-		setupAlternativeKeyword(scannerData, __INLINE__, Keywords.INLINE);
-		setupAlternativeKeyword(scannerData, __SIGNED__, Keywords.SIGNED);
-		setupAlternativeKeyword(scannerData, __VOLATILE__, Keywords.VOLATILE);
-		setupAlternativeKeyword( scannerData, __RESTRICT, Keywords.RESTRICT);
-		setupAlternativeKeyword( scannerData, __RESTRICT__, Keywords.RESTRICT);
-		setupAlternativeKeyword( scannerData, __TYPEOF__, GCCKeywords.TYPEOF );
+		if( scannerData.getScanner().getDefinition( __CONST__ ) == null )
+		scannerData.getPrivateDefinitions().put( __CONST__, __CONST__MACRO);
+		if( scannerData.getScanner().getDefinition( __CONST ) == null )
+		scannerData.getPrivateDefinitions().put( __CONST, __CONST_MACRO);
+		if( scannerData.getScanner().getDefinition( __INLINE__ ) == null )
+		scannerData.getPrivateDefinitions().put( __INLINE__, __INLINE__MACRO);
+		if( scannerData.getScanner().getDefinition( __SIGNED__ ) == null )
+		scannerData.getPrivateDefinitions().put( __SIGNED__, __SIGNED__MACRO);
+		if( scannerData.getScanner().getDefinition( __VOLATILE__ ) == null )
+		scannerData.getPrivateDefinitions().put( __VOLATILE__, __VOLATILE__MACRO);
+		ObjectMacroDescriptor __RESTRICT_MACRO = new ObjectMacroDescriptor( __RESTRICT, Keywords.RESTRICT );
+		if( scannerData.getScanner().getDefinition( __RESTRICT ) == null )
+		scannerData.getPrivateDefinitions().put( __RESTRICT, __RESTRICT_MACRO);
+		if( scannerData.getScanner().getDefinition( __RESTRICT__ ) == null )
+		scannerData.getPrivateDefinitions().put( __RESTRICT__, __RESTRICT__MACRO);
+		if( scannerData.getScanner().getDefinition( __TYPEOF__ ) == null )
+		scannerData.getPrivateDefinitions().put( __TYPEOF__, __TYPEOF__MACRO);
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
-			setupAlternativeKeyword( scannerData, __ASM__, Keywords.ASM );
+			if( scannerData.getScanner().getDefinition( __ASM__ ) == null )
+			scannerData.getPrivateDefinitions().put( __ASM__, __ASM__MACRO);
 		
-	}
-
-	/**
-	 * @param scannerData TODO
-	 * 
-	 */
-	protected void setupAlternativeKeyword(IScannerData scannerData, String keyword, String mapping) {
-		// alternate keyword forms
-		// TODO - make this more efficient - update TokenFactory to avoid a context push for these token to token cases
-		if( scannerData.getScanner().getDefinition( keyword ) == null )
-			scannerData.getPrivateDefinitions().put( keyword, new ObjectMacroDescriptor( __CONST__, mapping )); //$NON-NLS-1$
 	}
 
 	private static final Set directives;

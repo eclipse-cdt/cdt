@@ -1,3 +1,10 @@
+2002-12-16 Mikhail Khodjaiants
+	Added support of variable formatting.
+	* ICValue.java: new type - TYPE_UNKNOWN
+	* ICVariable: new interface for object contribution, set/get format and refresh methods
+	* CValue.java
+	* CVariable.java
+ 
 2002-12-13 Mikhail Khodjaiants
 	Display message when 'getStackDepth' is timed out.
 	* CThread.java

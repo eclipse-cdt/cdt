@@ -50,7 +50,7 @@ public class CValue extends CDebugElement implements ICValue
 	/**
 	 * Type (simple, array, structure or string) of this value.
 	 */
-	private int fType = TYPE_SIMPLE;
+	private int fType = TYPE_UNKNOWN;
 
 	/**
 	 * Constructor for CValue.
@@ -198,7 +198,7 @@ public class CValue extends CDebugElement implements ICValue
 	
 	protected void calculateType( String stringValue )
 	{
-		if ( stringValue != null )
+		if ( fType == TYPE_UNKNOWN && stringValue != null )
 		{
 			stringValue = stringValue.trim();
 			if ( stringValue.length() == 0 )
@@ -220,6 +220,10 @@ public class CValue extends CDebugElement implements ICValue
 			else if ( stringValue.startsWith( "0x" ) )
 			{
 				fType = TYPE_POINTER;
+			}
+			else
+			{
+				fType = TYPE_SIMPLE;
 			}
 		}
 	}

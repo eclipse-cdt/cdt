@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
@@ -13,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -26,7 +28,7 @@ import org.eclipse.debug.core.model.IVariable;
  * @since Aug 9, 2002
  */
 public abstract class CVariable extends CDebugElement 
-								implements IVariable,
+								implements ICVariable,
 										   ICDIEventListener
 {
 	/**
@@ -62,6 +64,11 @@ public abstract class CVariable extends CDebugElement
 	 * The type name of this variable.
 	 */
 	private String fTypeName = null;
+
+	/**
+	 * The current format of this variable.
+	 */
+	private int fFormat = ICDIFormat.NATURAL;
 
 	/**
 	 * Constructor for CVariable.
@@ -152,6 +159,8 @@ public abstract class CVariable extends CDebugElement
 	public Object getAdapter( Class adapter )
 	{
 		if ( adapter.equals( IVariable.class ) )
+			return this;
+		if ( adapter.equals( ICVariable.class ) )
 			return this;
 		return super.getAdapter( adapter );
 	}
@@ -348,5 +357,44 @@ public abstract class CVariable extends CDebugElement
 	{
 		parentValue.getParentVariable().setChanged( true );
 		parentValue.getParentVariable().fireChangeEvent( DebugEvent.STATE );
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getFormat()
+	 */
+	public int getFormat()
+	{
+		return fFormat;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#setFormat(int)
+	 */
+	public void setFormat( int format ) throws DebugException
+	{
+		try
+		{
+			getCDIVariable().setFormat( format );
+			fFormat = format;
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#refresh()
+	 */
+	public void refresh() throws DebugException
+	{
+		try
+		{
+			getCDIVariable().setValue( getCDIVariable().getValue().getValueString() );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 }

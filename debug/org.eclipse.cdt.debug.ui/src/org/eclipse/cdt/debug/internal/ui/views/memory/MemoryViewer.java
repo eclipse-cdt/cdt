@@ -98,10 +98,13 @@ public class MemoryViewer extends ContentViewer
 	 */
 	public void refresh()
 	{
-		CTabItem[] tabItems = fTabFolder.getItems();
-		for ( int i = 0; i < tabItems.length; ++i )
-			if ( tabItems[i].getControl() instanceof MemoryControlArea )
-				((MemoryControlArea)tabItems[i].getControl()).refresh();
+		if ( fTabFolder != null )
+		{
+			CTabItem[] tabItems = fTabFolder.getItems();
+			for ( int i = 0; i < tabItems.length; ++i )
+				if ( tabItems[i].getControl() instanceof MemoryControlArea )
+					((MemoryControlArea)tabItems[i].getControl()).refresh();
+		}
 	}
 
 	public void refresh( Object element )
@@ -125,10 +128,13 @@ public class MemoryViewer extends ContentViewer
 
 	public void propertyChange( PropertyChangeEvent event )
 	{
-		CTabItem[] tabItems = fTabFolder.getItems();
-		for ( int i = 0; i < tabItems.length; ++i )
-			if ( tabItems[i].getControl() instanceof MemoryControlArea )
-				((MemoryControlArea)tabItems[i].getControl()).propertyChange( event );
+		if ( fTabFolder != null )
+		{
+			CTabItem[] tabItems = fTabFolder.getItems();
+			for ( int i = 0; i < tabItems.length; ++i )
+				if ( tabItems[i].getControl() instanceof MemoryControlArea )
+					((MemoryControlArea)tabItems[i].getControl()).propertyChange( event );
+		}
 	}
 	
 	protected void inputChanged( Object input, Object oldInput )

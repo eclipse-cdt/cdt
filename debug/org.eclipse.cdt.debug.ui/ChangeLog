@@ -1,4 +1,8 @@
 2002-10-21 Mikhail Khodjaiants
+	Framework tries to refresh memory view before the view controls are created.
+	* MemoryViewer.java: Check if CTabFolder has already created when refreshing the view.
+ 
+2002-10-21 Mikhail Khodjaiants
 	Implementation of the "Clear" action for the memory view.
 	* ClearMemoryAction.java
 	* ICDebugHelpContextIds.java

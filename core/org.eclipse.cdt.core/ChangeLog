@@ -1,3 +1,9 @@
+2002-11-12 David Inglis
+
+	* model/.../internal/core/model/CModelManager.java,v
+		fixed model.create(IPath) method so it returns a element which 
+		actually exits
+
 2002-11-08 Judy N. Green
 	* src/org/eclipse/cdt/internal/core/COwner.java
 	fixed check in constructor to throw error when ownerID is invalid

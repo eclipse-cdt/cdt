@@ -108,8 +108,10 @@ public class CModelManager implements IResourceChangeListener {
 			if (path.equals(rootPath))
 				return getCRoot(root);
 			res = root.getContainerForLocation(path);
-			if (res == null)
+			if (res == null || !res.exists())
 				res = root.getFileForLocation(path);
+			if (res != null && !res.exists())
+				res = null;
 		}
 		return create (res);
 	}

@@ -7,6 +7,8 @@ package org.eclipse.cdt.debug.core.cdi;
 
 import java.io.File;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+
 /**
  * 
  * Maintains the list of directories to search for source files.
@@ -50,5 +52,27 @@ public interface ICDISourceManager extends ICDISessionObject
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	void reset() throws CDIException;
+	
+	/**
+	 *  @param startAdress is the begining address
+	 *  @param endAddress is the end address
+	 *  @throws CDIException on failure.
+	 */
+	ICDIInstruction[] getInstructions(String startAddress, String endAddress)  throws CDIException;
+
+	/**
+	 * @param filename is the name of the file to disassemble
+	 *  @param linenum is the line number to disassemble around
+	 *  @throws CDIException onf failure
+	 */
+	ICDIInstruction[] getInstructions(String filename,  int linenum)  throws CDIException;
+
+	/**
+	 * @param filename is the name of the file to disassemble
+	 *  @param linenum is the line number to disassemble around
+	 *  @param lines is the number of disassembly to produced
+	 *  @throws CDIException onf failure
+	 */
+	ICDIInstruction[] getInstructions(String filename,  int linenum, int lines) throws CDIException;
 
 }

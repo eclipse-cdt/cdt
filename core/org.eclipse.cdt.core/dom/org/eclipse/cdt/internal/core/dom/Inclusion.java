@@ -18,8 +18,18 @@ package org.eclipse.cdt.internal.core.dom;
  */
 public class Inclusion extends PreprocessorStatement {
 
-	public Inclusion( String name, int nameOffset, int startingOffset, int totalLength )
+	private final boolean local;
+
+	public Inclusion( String name, int nameOffset, int startingOffset, int totalLength, boolean local )
 	{
 		super( name, nameOffset, startingOffset, totalLength );
+		this.local = local;
 	}
+	/**
+	 * @return
+	 */
+	public boolean isLocal() {
+		return local;
+	}
+
 }

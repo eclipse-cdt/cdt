@@ -1664,7 +1664,7 @@ public class Scanner implements IScanner {
 			if( callback != null )
 			{
 				offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
-				callback.inclusionEnd(callback.inclusionBegin( f, offset, beginningOffset ));  
+				callback.inclusionEnd(callback.inclusionBegin( f, offset, beginningOffset, !useIncludePath ));  
 			}
 		}
 		else

@@ -18,7 +18,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#inclusionBegin(java.lang.String, int)
 	 */
-	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
+	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset, boolean local) {
 		return null; 
 	}
 

@@ -249,7 +249,7 @@ public class CModelBuilder {
 	}
 	protected Include createInclusion(Parent parent, Inclusion inclusion){
 		// create element
-		Include element = new Include((CElement)parent, inclusion.getName());
+		Include element = new Include((CElement)parent, inclusion.getName(), !inclusion.isLocal());
 		// add to parent
 		parent.addChild((CElement) element);
 		// set position

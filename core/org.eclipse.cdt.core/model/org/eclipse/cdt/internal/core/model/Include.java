@@ -10,8 +10,11 @@ import org.eclipse.cdt.core.model.IInclude;
 
 public class Include extends SourceManipulation implements IInclude {
 	
-	public Include(ICElement parent, String name) {
+	private final boolean standard; 
+	
+	public Include(ICElement parent, String name, boolean isStandard) {
 		super(parent, name, CElement.C_INCLUDE);
+		standard = isStandard;
 	}
 
 	public String getIncludeName() {
@@ -19,7 +22,7 @@ public class Include extends SourceManipulation implements IInclude {
 	}
 
 	public boolean isStandard() {
-		return true;
+		return standard;
 	}
 
 	protected CElementInfo createElementInfo () {

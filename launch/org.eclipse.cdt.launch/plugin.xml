@@ -126,7 +126,7 @@
       <propertyTester
       		namespace="org.eclipse.cdt.launch"
             properties="isExecutable"
-            type="org.eclipse.core.resources.IResource"
+            type="org.eclipse.core.runtime.IAdaptable"
             class="org.eclipse.cdt.launch.internal.CPropertyTester"
             id="org.eclipse.cdt.launch.CPropertyTester">
       </propertyTester>
@@ -146,4 +146,19 @@
             id="org.eclipse.cdt.launch.statusHandler.coreFilePrompter">
       </statusHandler>  
 	</extension>
+	
+	<!-- Adapters for contextual launch -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.cdt.core.model.IBinary">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.core.resources.IResource">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>         
+    </extension>
+	
 </plugin>

@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * A property tester that determines if a file is an executable.
@@ -36,10 +38,11 @@ public class CPropertyTester extends PropertyTester {
 	 * @return true if the target resource has a <code>main</code> method,
 	 * <code>false</code> otherwise.
 	 */
-	private boolean isExecutable(Object target) {
+	private boolean isExecutable(Object receiver) {
 		ICElement celement = null;
-		if (target instanceof IFile) {
-			celement = CoreModel.getDefault().create((IFile) target);
+		IFile file = (IFile) ((IAdaptable)receiver).getAdapter(IResource.class);
+		if (file != null) {
+			celement = CoreModel.getDefault().create(file);
 		}
 		return (celement != null && celement instanceof IBinary);
 	}

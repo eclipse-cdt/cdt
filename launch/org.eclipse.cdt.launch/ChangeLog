@@ -1,3 +1,8 @@
+2004-11-11 Alain Magloire
+	Fix for PR 78441
+	* src/org/eclipse/cdt/launch/internal/CPropertyTester.java
+	* plugin.xml
+
 2004-11-1  David Inglis
 	Use status handlers to prompt for launch input (process id and core file).
 

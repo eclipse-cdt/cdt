@@ -6,8 +6,6 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.internal.core.dom.ASMDefinition;
 import org.eclipse.cdt.internal.core.dom.AccessSpecifier;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
@@ -17,8 +15,6 @@ import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.ConstructorChain;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
-import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
@@ -42,31 +38,14 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameterList;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.UsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.UsingDirective;
-import org.eclipse.cdt.internal.core.parser.IParser;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
 
-public class DOMTests extends TestCase {
-
+public class DOMTests extends BaseDOMTest {
+	
 	public DOMTests( String arg )
 	{
 		super( arg );
-	}
-	
-	public TranslationUnit parse( String code ) throws Exception
-	{
-		return parse( code, false, true );
-	}
-	
-	public TranslationUnit parse(String code, boolean quickParse, boolean throwOnError ) throws Exception {
-		DOMBuilder domBuilder = DOMFactory.createDOMBuilder(false); 
-		IParser parser = new Parser(code, domBuilder, quickParse );
-		if( ! parser.parse() )
-			if( throwOnError ) throw new ParserException( "Parse failure" );
-			else domBuilder.getTranslationUnit().setParseSuccessful( false ); 
-		
-		return domBuilder.getTranslationUnit();
 	}
 	
 	public void testNamespaceDefinition() throws Exception
@@ -1635,8 +1614,18 @@ public class DOMTests extends TestCase {
 		Writer code = new StringWriter();
 		code.write("A ( * const fPtr) (void *); \n");
 		code.write("A (* const fPtr2) ( A * ); \n");
-		code.write("A (*const fPtr3) ( A * ) = function\n");
 		TranslationUnit tu = parse(code.toString());
+		assertEquals( tu.getDeclarations().size(), 2 );
+		SimpleDeclaration simple = (SimpleDeclaration)tu.getDeclarations().get(0); 
+		assertEquals( simple.getDeclarators().size(),  1) ;
+		Declarator top = (Declarator)simple.getDeclarators().get(0);
+		assertEquals( top.getPointerOperators().size(), 0 );
+		assertNotNull( top.getDeclarator() ); 
+		assertEquals( top.getDeclarator().getPointerOperators().size(), 1 );
+		PointerOperator po = (PointerOperator)top.getDeclarator().getPointerOperators().get(0);
+		assertTrue( po.isConst());
+		assertFalse( po.isVolatile());
+		assertEquals( po.getType(), PointerOperator.t_pointer);
 	}
 
 	public void testBug36794() throws Exception
@@ -1659,6 +1648,11 @@ public class DOMTests extends TestCase {
 			assertNotNull( i.next() );
 	}
 
+	public void testBug36799() throws Exception
+	{
+		TranslationUnit tu = parse( "static const int __WORD_BIT = int(CHAR_BIT*sizeof(unsigned int));");
+		assertEquals( tu.getDeclarations().size(), 1 );
+	}
 
 }
 

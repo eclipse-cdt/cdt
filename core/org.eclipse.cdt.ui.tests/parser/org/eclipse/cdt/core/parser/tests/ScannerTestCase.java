@@ -1,17 +1,11 @@
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.internal.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Token;
 
@@ -23,7 +17,7 @@ import org.eclipse.cdt.internal.core.parser.Token;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ScannerTestCase extends TestCase
+public class ScannerTestCase extends BaseScannerTest
 {
 	public class TableRow
 	{
@@ -152,52 +146,12 @@ public class ScannerTestCase extends TestCase
 
 	}
 
-	public final static String EXCEPTION_THROWN= "Exception thrown ";
-	public final static String EXPECTED_FAILURE=
-		"This statement should not be reached "
-			+ "as we sent in bad preprocessor input to the scanner";
-	public final static boolean verbose= false;
 	public final static boolean doIncludeStdio= false;
 	public final static boolean doIncludeWindowsH= false;
 	public final static boolean doIncludeWinUserH= false;
 	
 	public final static int SIZEOF_TRUTHTABLE = 10; 
 
-	public void initializeScanner(String input)
-	{
-		scanner= new Scanner(); 
-		scanner.initialize( new StringReader(input),"TEXT");
-	}
-
-	public static Test suite()
-	{
-		return new TestSuite(ScannerTestCase.class);
-	}
-
-	public int fullyTokenize() throws Exception
-	{
-		try
-		{
-			Token t= scanner.nextToken();
-			while (t != null)
-			{
-				if (verbose)
-					System.out.println("Token t = " + t);
-
-				if ((t.type < 1) || (t.type > Token.tLAST))
-					System.out.println("Unknown type for token " + t);
-				t= scanner.nextToken();
-			}
-		}
-		catch (Parser.EndOfFile e)
-		{
-		}
-		catch (ScannerException se)
-		{
-			throw se;
-		}
-		return scanner.getCount();
-	}
 
 	public void testWeirdStrings()
 	{
@@ -238,8 +192,6 @@ public class ScannerTestCase extends TestCase
 		
 	}
 	
-	
-	Scanner scanner;
 
 	/**
 	 * Constructor for ScannerTestCase.
@@ -1026,130 +978,6 @@ public class ScannerTestCase extends TestCase
 			}
 		}
 
-	}
-
-	public void validateIdentifier(String expectedImage) throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tIDENTIFIER);
-			assertTrue(t.image.equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}
-	}
-
-	public void validateInteger(String expectedImage) throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tINTEGER);
-			assertTrue(t.image.equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}
-	}
-	
-	public void validateFloatingPointLiteral(String expectedImage) throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tFLOATINGPT);
-			assertTrue(t.image.equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}
-	}
-	
-	public void validateChar( char expected )throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.getType() == Token.tCHAR );
-			Character c = new Character( expected ); 
-			assertEquals( t.getImage(), c.toString() ); 
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}		
-	}
-	public void validateChar( String expected ) throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.getType() == Token.tCHAR );
-			assertEquals( t.getImage(), expected ); 
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}		
-	}
-
-	public void validateString( String expectedImage ) throws ScannerException
-	{
-		validateString( expectedImage, false );
-	}
-
-	public void validateString(String expectedImage, boolean lString ) throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			if( lString )
-				assertTrue(t.getType() == Token.tLSTRING);
-			else
-				assertTrue(t.getType() == Token.tSTRING);
-			assertTrue(t.getImage().equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}
-	}
-
-	public void validateToken(int tokenType) throws ScannerException
-	{
-		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == tokenType);
-		} catch (Parser.EndOfFile e) {
-			assertTrue(false);
-		}
-	}
-
-	public void validateBalance(int expected)
-	{
-		assertTrue(scanner.getDepth() == expected);
-	}
-
-	public void validateBalance()
-	{
-		assertTrue(scanner.getDepth() == 0);
-	}
-
-	public void validateEOF() throws ScannerException
-	{
-		try {
-			assertNull(scanner.nextToken());
-		} catch (Parser.EndOfFile e) {
-		}
-	}
-
-	public void validateDefinition(String name, String value)
-	{
-		String definition= null;
-		definition= (String) scanner.getDefinition(name);
-		assertNotNull(definition);
-		assertTrue(definition.trim().equals(value));
-	}
-
-	public void validateDefinition(String name, int value)
-	{
-		String definition= null;
-		definition= (String) scanner.getDefinition(name);
-		assertNotNull(definition);
-		int intValue= (Integer.valueOf((String) definition)).intValue();
-		assertEquals(value, intValue);
-	}
-
-	public void validateAsUndefined(String name)
-	{
-		assertNull(scanner.getDefinition(name));
 	}
 
 	public void validateAllDefinitions(TableRow row)

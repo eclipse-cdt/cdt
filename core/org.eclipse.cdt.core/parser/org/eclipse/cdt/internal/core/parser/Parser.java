@@ -881,45 +881,59 @@ c, quick);
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:
-					try
+					if( !parm )
 					{
-						classSpecifier(decl);
-						return;
+						try
+						{
+							classSpecifier(decl);
+							return;
+						}
+						catch( Backtrack bt )
+						{
+							elaboratedTypeSpecifier(decl);
+							return;
+						}
 					}
-					catch( Backtrack bt )
+					else
 					{
-						// this is an elaborated class specifier
-						Object elab = null; 
-						try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() );} catch( Exception e ) {} 
-						name(); 
-						try{ 
-							callback.elaboratedTypeSpecifierName( elab ); 
-							callback.elaboratedTypeSpecifierEnd( elab );
-						} catch( Exception e ) {}
+						elaboratedTypeSpecifier(decl);
 						return;
 					}
 				case Token.t_enum:
-					try
+					if( !parm )
 					{
-						enumSpecifier(decl);
-						return;
+						try
+						{
+							enumSpecifier(decl);
+							return;
+						}
+						catch( Backtrack bt )
+						{
+							// this is an elaborated class specifier
+							elaboratedTypeSpecifier(decl);
+							return;
+						}
 					}
-					catch( Backtrack bt )
+					else
 					{
-						// this is an elaborated class specifier
-						Object elab = null; 
-						try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() ); } catch( Exception e ) {} 
-						name(); 
-						try{ 
-							callback.elaboratedTypeSpecifierName( elab );
-							callback.elaboratedTypeSpecifierEnd( elab );
-						} catch( Exception e ) {}
+						elaboratedTypeSpecifier(decl);
 						return;
 					}
 				default:
 					break declSpecifiers;
 			}
 		}
+	}
+
+	private void elaboratedTypeSpecifier(Object decl) throws Backtrack {
+		// this is an elaborated class specifier
+		Object elab = null; 
+		try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() );} catch( Exception e ) {} 
+		name(); 
+		try{ 
+			callback.elaboratedTypeSpecifierName( elab ); 
+			callback.elaboratedTypeSpecifierEnd( elab );
+		} catch( Exception e ) {}
 	}
 
 
@@ -2236,6 +2250,29 @@ c, quick);
 				consume();
 				// TO DO: this
 				break;
+			// simple-type-specifier ( assignment-expression , .. )
+			case Token.t_char:
+			case Token.t_wchar_t:
+			case Token.t_bool:
+			case Token.t_short:
+			case Token.t_int:
+			case Token.t_long:
+			case Token.t_signed:
+			case Token.t_unsigned:
+			case Token.t_float:
+			case Token.t_double:
+				consume(); 
+				consume( Token.tLPAREN );
+				while( true )
+				{
+					assignmentExpression( expression );
+					if( LT(1) == Token.tRPAREN ) break;
+					consume( Token.tCOMMA );
+				}
+				consume( Token.tRPAREN );
+				break;
+				
+			
 			case Token.t_dynamic_cast:
 			case Token.t_static_cast:
 			case Token.t_reinterpret_cast:

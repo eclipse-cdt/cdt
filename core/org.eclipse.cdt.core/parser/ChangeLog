@@ -1,4 +1,7 @@
 2003-04-24 John Camelon
+	Fixed Bug36799  STL Testing: Parser fails on Variable Definition 
+
+2003-04-24 John Camelon
 	Fixed bug36693 - Problem parsing Loki's Reference SmallObj.cpp Impl
 	Fixed bug36696 - Problem parsing Loki's Reference SmartPtr.h Impl
 	Improved our error handling robustness.

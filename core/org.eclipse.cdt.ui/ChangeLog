@@ -1,3 +1,23 @@
+2003-04-21 David Inglis
+
+	Update CEditor to be 2.0/2.1 compliant.
+	
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmTextEditor.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/text/CPairMatcher.java
+
+	* src/org/eclipse/cdt/internal/ui/editor/BracketPainter.java (removed)
+	* src/org/eclipse/cdt/internal/ui/editor/IPainter.java (removed)
+	* src/org/eclipse/cdt/internal/ui/editor/LinePainter.java (removed)
+	* src/org/eclipse/cdt/internal/ui/editor/OverviewRuler.java (removed)
+	* src/org/eclipse/cdt/internal/ui/editor/PaintManager.java (removed)
+	* src/org/eclipse/cdt/internal/ui/editor/PrintMarginPainter.java (removed)
+	* src/org/eclipse/cdt/internal/ui/editor/ProblemPainter.java (removed)
+	* src/org/eclipse/cdt/internal/ui/preferences/CLaunchingPropertyPage.java (removed)
+	* src/org/eclipse/cdt/internal/ui/util/CoreUtility.java (removed)
+	
 2003-04-17 Alain Magloire
 
 	Bug 36584

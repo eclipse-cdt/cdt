@@ -114,8 +114,8 @@ public class AsmTextEditor extends StatusTextEditor {
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
 			// Shared with C editor
-			String title= CEditorMessages.getString("CEditor.error.save.title"); //$NON-NLS-1$
-			String msg= MessageFormat.format(CEditorMessages.getString("CEditor.error.save.message"), new Object[] { x.getTargetException().getMessage() }); //$NON-NLS-1$
+			String title= CEditorMessages.getString("CEditor.error.saving.title"); //$NON-NLS-1$
+			String msg= MessageFormat.format(CEditorMessages.getString("CEditor.error.saving.message"), new Object[] { x.getTargetException().getMessage() }); //$NON-NLS-1$
 			MessageDialog.openError(shell, title, msg);
 		} finally {
 			getDocumentProvider().changed(newInput);

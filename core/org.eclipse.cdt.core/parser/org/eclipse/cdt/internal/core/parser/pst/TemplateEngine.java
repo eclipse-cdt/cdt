@@ -366,8 +366,11 @@ public final class TemplateEngine {
 			return deferred.getArguments();
 		} 
 		ISymbol instantiated = symbol.getInstantiatedSymbol();
-		ITemplateSymbol template = (ITemplateSymbol) instantiated.getContainingSymbol();
-		return template.findArgumentsFor( (IContainerSymbol) symbol );
+		if( instantiated != null ){
+			ITemplateSymbol template = (ITemplateSymbol) instantiated.getContainingSymbol();
+			return template.findArgumentsFor( (IContainerSymbol) symbol );
+		}
+		return null;
 	}
 	
 	/**

@@ -2056,7 +2056,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 		}
 	
-		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name.getFirstToken().getImage(), TypeInfo.t_function );
+		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name.extractNameFromTemplateId(), TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		
 		symbol.setHasVariableArgs( hasVariableArguments );

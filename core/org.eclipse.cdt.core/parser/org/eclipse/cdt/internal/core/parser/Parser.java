@@ -197,8 +197,8 @@ public abstract class Parser extends ExpressionParser implements IParser
     protected void errorHandling() throws EndOfFileException
     {
         failParse();
-        consume();
-        int depth = 0;
+        int depth = ( LT(1) == IToken.tLBRACE ) ? 1 : 0;
+        consume();    
         while (!((LT(1) == IToken.tSEMI && depth == 0)
             || (LT(1) == IToken.tRBRACE && depth == 1)))
         {

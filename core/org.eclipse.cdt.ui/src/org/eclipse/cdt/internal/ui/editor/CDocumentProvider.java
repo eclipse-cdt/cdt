@@ -194,7 +194,8 @@ public class CDocumentProvider extends FileDocumentProvider {
 				}
 				
 				IAnnotationModel m= createAnnotationModel(input);
-				IWorkingCopy c= (IWorkingCopy) original.getSharedWorkingCopy(getProgressMonitor(), fBufferFactory);
+				IBufferFactory factory = getBufferFactory();
+				IWorkingCopy c= (IWorkingCopy) original.getSharedWorkingCopy(getProgressMonitor(), factory);
 				
 				DocumentAdapter a= null;
 				try {
@@ -321,6 +322,7 @@ public class CDocumentProvider extends FileDocumentProvider {
 	public IBufferFactory getBufferFactory() {
 		return fBufferFactory;
 	}
+
 	/**
 	 * Returns the underlying resource for the given element.
 	 * 

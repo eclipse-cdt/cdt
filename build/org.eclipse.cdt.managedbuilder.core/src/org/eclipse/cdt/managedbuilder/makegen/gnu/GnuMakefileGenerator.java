@@ -186,29 +186,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	// String constants for makefile contents and messages
-	protected static final String AT = "@";	//$NON-NLS-1$
 	private static final String COMMENT = "MakefileGenerator.comment";	//$NON-NLS-1$
 	private static final String AUTO_DEP = COMMENT + ".autodeps";	//$NON-NLS-1$
 	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
 	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
-	protected static final String COLON = ":";	//$NON-NLS-1$
 	
-	private static final int COLS_PER_LINE = 80;
-	protected static final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
-	protected static final String DEP_EXT = "d";	//$NON-NLS-1$
 	private static final String DEP_INCL = COMMENT + ".module.dep.includes";	//$NON-NLS-1$
-	protected static final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
-	protected static final String DOT = ".";	//$NON-NLS-1$
-	protected static final String ECHO = "echo";	//$NON-NLS-1$
 	private static final String HEADER = COMMENT + ".header"; //$NON-NLS-1$
-	protected static final String IN_MACRO = "$<";	//$NON-NLS-1$
-	protected static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
-	protected static final String LINEBREAK = "\\" + NEWLINE;	//$NON-NLS-1$
-	protected static final String LOGICAL_AND = "&&";	//$NON-NLS-1$
-	protected static final String MAKEFILE_DEFS = "makefile.defs"; //$NON-NLS-1$
-	protected static final String MAKEFILE_INIT = "makefile.init"; //$NON-NLS-1$
-	protected static final String MAKEFILE_NAME = "makefile";	//$NON-NLS-1$
-	protected static final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$
 	
 	protected static final String MESSAGE_FINISH_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.build");	//$NON-NLS-1$
 	protected static final String MESSAGE_FINISH_FILE = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.file");	//$NON-NLS-1$
@@ -217,17 +201,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private static final String MOD_INCL = COMMENT + ".module.make.includes";	//$NON-NLS-1$	
 	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
 	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
-	protected static final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
-	protected static final String OBJECTS_MAKFILE = "objects.mk"; //$NON-NLS-1$
-	protected static final String OUT_MACRO = "$@";	//$NON-NLS-1$
-	protected static final String ROOT = "$(ROOT)";	//$NON-NLS-1$
-	protected static final String SEPARATOR = "/";	//$NON-NLS-1$
-	protected static final String SINGLE_QUOTE = "'";	//$NON-NLS-1$
 	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$	
-	protected static final String SRCSFILE_NAME = "sources.mk"; //$NON-NLS-1$	
-	protected static final String TAB = "\t";	//$NON-NLS-1$
-	protected static final String WHITESPACE = " ";	//$NON-NLS-1$
-	protected static final String WILDCARD = "%";	//$NON-NLS-1$
 	
 	// Local variables needed by generator
 	private String buildTargetName;
@@ -300,7 +274,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append("-include sources.mk" + NEWLINE); //$NON-NLS-1$
 		buffer.append("-include $(SUBDIRS:%=%/subdir.mk)" + NEWLINE); //$NON-NLS-1$
 		buffer.append("-include objects.mk" + NEWLINE); //$NON-NLS-1$
-		buffer.append("-include $(OBJS:%.o=%.d)" + NEWLINE); //$NON-NLS-1$
+		buffer.append("-include $(DEPS)" + NEWLINE); //$NON-NLS-1$
 		// Include makefile.defs supplemental makefile
 		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_DEFS + NEWLINE); //$NON-NLS-1$
 		
@@ -599,7 +573,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + "$(OBJS:%.o=%.d)" + WHITESPACE + outputPrefix + buildTargetName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + "$(DEPS)" + WHITESPACE + outputPrefix + buildTargetName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (extension.length() > 0) {
 			buffer.append(DOT + extension);
 		}
@@ -1264,7 +1238,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @throws CoreException
 	 */
 	protected void populateFragmentMakefile(IContainer module) throws CoreException {
-		// Calcualte the new directory relative to the build output
+		// Calculate the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		IPath buildRoot = getBuildWorkingDir();
 		if (buildRoot == null) {
@@ -1301,6 +1275,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		macroBuffer.append(addDefaultHeader()); 
 		StringBuffer objectsBuffer = new StringBuffer();
 		objectsBuffer.append("OBJS := " + LINEBREAK);	//$NON-NLS-1$
+		StringBuffer depFilesBuffer = new StringBuffer();
+		depFilesBuffer.append("DEPS := " + LINEBREAK);	//$NON-NLS-1$
 		
 		// Add the libraries this project depends on
 		macroBuffer.append("LIBS := "); //$NON-NLS-1$
@@ -1362,11 +1338,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  					objectsBuffer.append(WHITESPACE + "$(" + macroName + COLON + "$(ROOT)" + SEPARATOR + WILDCARD	//$NON-NLS-1$ //$NON-NLS-2$
  							+ DOT + extensionName + "=" + WILDCARD + DOT +	//$NON-NLS-1$
  							toolArray[k].getOutputExtension(extensionName) + ")" );	//$NON-NLS-1$
+ 					
+ 					// And another for the deps makefiles
+ 					// DEPS = $(macroName1: $(ROOT)/%.input1=%.DEP_EXT) ... $(macroNameN: $(ROOT)/%.inputN=%.DEP_EXT)
+ 					depFilesBuffer.append(WHITESPACE + "$(" + macroName + COLON + "$(ROOT)" + SEPARATOR + WILDCARD	//$NON-NLS-1$ //$NON-NLS-2$
+ 							+ DOT + extensionName + "=" + WILDCARD + DOT +	//$NON-NLS-1$
+ 							DEP_EXT + ")" );	//$NON-NLS-1$
+ 					
  				}
  			}
  		}		
  		
  		macroBuffer.append(NEWLINE + NEWLINE + objectsBuffer);
+ 		macroBuffer.append(NEWLINE + NEWLINE + depFilesBuffer);
  
  		// For now, just save the buffer that was populated when the rules were created
 		Util.save(macroBuffer, fileHandle);

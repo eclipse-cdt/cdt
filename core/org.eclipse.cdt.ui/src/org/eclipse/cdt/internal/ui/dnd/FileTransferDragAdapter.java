@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.drag;
+package org.eclipse.cdt.internal.ui.dnd;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -62,9 +62,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	}
 
 	public void dragSetData(DragSourceEvent event) {
-		String[] locations = getResourceLocations(getResources());
-
-		event.data = locations.length != 0 ? locations : null;
+		event.data = getResourceLocations(getResources());
 	}
 
 	public void dragFinished(DragSourceEvent event) {
@@ -132,10 +130,11 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 				Object object = iterator.next();
 				IResource resource = null;
 
-				if (object instanceof IResource)
+				if (object instanceof IResource) {
 					resource = (IResource) object;
-				else if (object instanceof IAdaptable)
+				} else if (object instanceof IAdaptable) {
 					resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
+				}
 
 				if (resource != null)
 					result.add(resource);
@@ -146,22 +145,26 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 	}
 
 	private static String[] getResourceLocations(List resources) {
-		final int count = resources.size();
-		final List locations = new ArrayList(count);
-
-		for (Iterator iterator = resources.iterator(); iterator.hasNext();) {
-			IResource resource = (IResource) iterator.next();
-			IPath location = resource.getLocation();
-
-			if (location != null)
-				locations.add(location.toOSString());
+		if (!resources.isEmpty()) {
+			int count = resources.size();
+			List locations = new ArrayList(count);
+			
+			for (Iterator iterator = resources.iterator(); iterator.hasNext();) {
+				IResource resource = (IResource) iterator.next();
+				IPath location = resource.getLocation();
+				
+				if (location != null) {
+					locations.add(location.toOSString());
+				}
+			}
+			
+			String[] result = new String[locations.size()];
+			
+			locations.toArray(result);
+			
+			return result;
 		}
-
-		String[] result = new String[locations.size()];
-
-		locations.toArray(result);
-
-		return result;
+		return null;
 	}
 
 	private static void runOperation(

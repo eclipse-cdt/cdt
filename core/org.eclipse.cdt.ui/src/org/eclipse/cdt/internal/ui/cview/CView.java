@@ -26,11 +26,14 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
-import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.drag.ResourceTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.drag.TransferDragSourceListener;
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.FileTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.FileTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
@@ -40,7 +43,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CElementSorter;
-import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
@@ -99,7 +101,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
-import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
@@ -371,20 +372,9 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * Adds drag and drop support to the navigator.
 	 */
 	void initDragAndDrop() {
-		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		initDrag();
+		initDrop();
 
-		Transfer[] dragTransfers = new Transfer[] { ResourceTransfer.getInstance(), FileTransfer.getInstance(),
-				CLocalSelectionTransfer.getInstance(), PluginTransfer.getInstance()};
-
-		TransferDragSourceListener[] dragListeners = new TransferDragSourceListener[] { new ResourceTransferDragAdapter(viewer),
-				new LocalSelectionTransferDragAdapter(viewer), new FileTransferDragAdapter(viewer)};
-
-		viewer.addDragSupport(ops, dragTransfers, new DelegatingDragAdapter(viewer, dragListeners));
-
-		Transfer[] dropTransfers = new Transfer[] { ResourceTransfer.getInstance(), FileTransfer.getInstance(),
-				LocalSelectionTransfer.getInstance(), PluginTransfer.getInstance()};
-
-		viewer.addDropSupport(ops, dropTransfers, new CViewDropAdapter(viewer));
 		dragDetectListener = new Listener() {
 
 			public void handleEvent(Event event) {
@@ -393,6 +383,35 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		};
 		viewer.getControl().addListener(SWT.DragDetect, dragDetectListener);
 
+	}
+
+	private void initDrag() {
+		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
+		Transfer[] transfers= new Transfer[] {
+				LocalSelectionTransfer.getInstance(),
+				ResourceTransfer.getInstance(),
+				FileTransfer.getInstance()
+		};
+		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
+				new SelectionTransferDragAdapter(viewer),
+				new ResourceTransferDragAdapter(viewer),
+				new FileTransferDragAdapter(viewer)
+		};
+		viewer.addDragSupport(ops, transfers, new CDTViewerDragAdapter(viewer, dragListeners));
+	}
+
+	private void initDrop() {
+		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK | DND.DROP_DEFAULT;
+		Transfer[] transfers= new Transfer[] {
+			LocalSelectionTransfer.getInstance(),
+			ResourceTransfer.getInstance(),
+			FileTransfer.getInstance()};
+		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
+			new SelectionTransferDropAdapter(viewer),
+			new ResourceTransferDropAdapter(viewer),
+			new FileTransferDropAdapter(viewer)
+		};
+		viewer.addDropSupport(ops, transfers, new DelegatingDropAdapter(dropListeners));
 	}
 
 	/**

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.drag;
+package org.eclipse.cdt.internal.ui.dnd;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,31 +57,7 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 	}
 
 	public void dragStart(DragSourceEvent event) {
-		event.doit = false;
-
-		ISelection selection = provider.getSelection();
-
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
-
-			for (Iterator iterator = structured.iterator(); iterator.hasNext();) {
-				Object element = iterator.next();
-
-				if (element instanceof IAdaptable) {
-					IAdaptable adaptable = (IAdaptable) element;
-					IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-
-					if (resource == null) {
-						event.doit = false;
-						break;
-					}
-
-					// this will stick unless a later part of the
-					// selection isn't adaptable into a resource
-					event.doit = true;
-				}
-			}
-		}
+		event.doit = getSelectedResources().length > 0;
 	}
 
 	public void dragSetData(DragSourceEvent event) {
@@ -127,13 +103,15 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 
 			for (Iterator iterator = structured.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
-
-				if (element instanceof IAdaptable) {
+				IResource resource = null;
+				if (element instanceof IResource) {
+					resource = (IResource)element;
+				} else if (element instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) element;
-					IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-
-					if (resource != null)
-						resources.add(resource);
+					resource = (IResource) adaptable.getAdapter(IResource.class);
+				}
+				if (resource != null) {
+					resources.add(resource);
 				}
 			}
 		}

@@ -1,3 +1,10 @@
+2005-01-26 Alain Magloire
+	Part of implementing PR 83112
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/SelectionTransferDragAdapter.java
+	* src/org/eclipse/cdt/internal/ui/cview/SelectionTransferDropAdapter.java
+	* src/org/eclipse/cdt/internal/ui/dnd/*.java
+
 2005-01-24 Vladimir Hirsl
 	SCD work for CDT 3.0
 	Better displaying of error messages in TabFolderOptionBlock.

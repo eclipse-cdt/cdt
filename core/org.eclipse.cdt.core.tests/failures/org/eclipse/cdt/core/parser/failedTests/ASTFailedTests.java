@@ -116,13 +116,7 @@ public class ASTFailedTests extends BaseASTTest
         }
         assertCodeFailsParse(code.toString());
     }
-    public void testBug39694() throws Exception
-    {
-        IASTVariable variable = (IASTVariable)parse("int ab$cd = 1;").getDeclarations().next();
-        assertFalse(
-            "The expected error did not occur.",
-            variable.equals("ab$cd"));
-    }
+
     public void testBug39695() throws Exception
     {
         assertCodeFailsParse("int a = __alignof__ (int);");
@@ -225,10 +219,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("__declspec(dllexport) int func1 (int a) {}");
     }
-    public void testBug39705() throws Exception
-    {
-        assertCodeFailsParse("#ident \"@(#)filename.c   1.3 90/02/12\"");
-    }
+
 
     
 	public void testBug40422() throws Exception {

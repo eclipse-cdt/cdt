@@ -1,3 +1,11 @@
+2004-04-02 John Camelon
+	Updated SelectionSearch to work for functions, variables with initializers, etc.
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39705
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=44336  
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=36770  
+	Partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=51428  
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39694  
+
 2004-03-30 John Camelon
 	Partial fix for Bug 56614 - Content Assist] Global variables do not appear in a global completion list
 

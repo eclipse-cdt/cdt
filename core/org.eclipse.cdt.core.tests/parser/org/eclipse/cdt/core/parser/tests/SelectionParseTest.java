@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 
 /**
@@ -55,7 +56,7 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 	
 	public void testBaseCase_VariableReference() throws Exception
 	{
-		String code = "int x; x=3;";
+		String code = "void f() { int x; x=3; }";
 		int offset1 = code.indexOf( "x=" );
 		int offset2 = code.indexOf( '=');
 		IASTNode node = parse( code, offset1, offset2 );
@@ -81,25 +82,47 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertNull( parse( code, offset1, offset2 ));
 	}
 	
-//	public void testBaseCase_FunctionDeclaration() throws Exception
-//	{
-//		String code = "int x(); x( );";
-//		int offset1 = code.indexOf( "x()" );
-//		int offset2 = code.indexOf( "()");
-//		IASTNode node = parse( code, offset1, offset2 );
-//		assertTrue( node instanceof IASTFunction );
-//		assertEquals( ((IASTFunction)node).getName(), "x" );
-//	}
-//	
-//	public void testBaseCase_VariableDeclaration() throws Exception
-//	{
-//		String code = "int x = 3;";
-//		int offset1 = code.indexOf( "x" );
-//		int offset2 = code.indexOf( " =");
-//		IASTNode node = parse( code, offset1, offset2 );
-//		assertTrue( node instanceof IASTVariable );
-//		assertEquals( ((IASTVariable)node).getName(), "x" );
-//	}
+	public void testBaseCase_FunctionDeclaration() throws Exception
+	{
+		String code = "int x(); x( );";
+		int offset1 = code.indexOf( "x()" );
+		int offset2 = code.indexOf( "()");
+		IASTNode node = parse( code, offset1, offset2 );
+		assertTrue( node instanceof IASTFunction );
+		assertEquals( ((IASTFunction)node).getName(), "x" );
+	}
+	
+	public void testBaseCase_FunctionDeclaration2() throws Exception
+	{
+		String code = "int printf( const char *, ... ); ";
+		int offset1 = code.indexOf( "printf" );
+		int offset2 = code.indexOf( "( const");
+		IASTNode node = parse( code, offset1, offset2 );
+		assertTrue( node instanceof IASTFunction );
+		assertEquals( ((IASTFunction)node).getName(), "printf" );		
+	}
+
+	public void testBaseCase_VariableDeclaration() throws Exception
+	{
+		String code = "int x = 3;";
+		int offset1 = code.indexOf( "x" );
+		int offset2 = code.indexOf( " =");
+		IASTNode node = parse( code, offset1, offset2 );
+		assertNotNull( node );
+		assertTrue( node instanceof IASTVariable );
+		assertEquals( ((IASTVariable)node).getName(), "x" );
+	}
+	
+	public void testBaseCase_Parameter() throws Exception
+	{
+		String code = "int main( int argc ) { int x = argc; }";
+		int offset1 = code.indexOf( "argc;" );
+		int offset2 = code.indexOf( ";" );
+		IASTNode node = parse( code, offset1, offset2 );
+		assertNotNull( node );
+		assertTrue( node instanceof IASTParameterDeclaration );
+		assertEquals( ((IASTParameterDeclaration)node).getName(), "argc" );		
+	}
 	
 	
 }

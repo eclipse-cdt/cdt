@@ -52,4 +52,8 @@ public interface ITokenDuple {
 	public int getStartOffset();
 	public int getEndOffset();
 	public int getLineNumber();
+	/**
+	 * @return
+	 */
+	public abstract boolean syntaxOfName();
 }

@@ -2115,4 +2115,25 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		assertFalse( i.hasNext() );
 	}
+	
+	public void testBug44336() throws Exception
+	{
+		Iterator i = parse( "class A {};  typedef typename A foo;" ).getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertEquals( classA.getClassKind(), ASTClassKind.CLASS );
+		assertEquals( classA.getName(), "A");
+		IASTTypedefDeclaration typedefDeclaration = (IASTTypedefDeclaration) i.next();
+		assertFalse( i.hasNext() );
+	}
+	
+    public void testBug39705() throws Exception
+    {
+        parse("#ident \"@(#)filename.c   1.3 90/02/12\"");
+    }
+    
+    public void testBug39694() throws Exception
+    {
+        IASTVariable variable = (IASTVariable)parse("int ab$cd = 1;").getDeclarations().next();
+        assertEquals( variable.getName(), "ab$cd");
+    }
 }

@@ -1588,12 +1588,21 @@ public class ScannerTestCase extends BaseScannerTest
     	writer.write( "#endif\n");
     	initializeScanner( writer.toString() );
     	validateEOF();
-//    	validateToken( IToken.t_char);
-//    	validateToken( IToken.tSTAR);
-//    	validateIdentifier( "x");
-//    	validateToken( IToken.tASSIGN );
-//    	validateString( "#boo");
-//    	validateToken(IToken.tSEMI);
-//    	validateEOF();
+	}
+    
+    public void testBug36770B() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define A 0\n" );
+    	writer.write( "#if ( A == 1 )\n" );
+    	writer.write( "#  define foo\n" );
+    	writer.write( "#else\n" );
+    	writer.write( "#   define bar\n" );
+    	writer.write( "#endif\n" );
+    	initializeScanner( writer.toString(), ParserMode.QUICK_PARSE );
+    	validateEOF();
+    	validateDefinition( "A", 0 );
+    	validateDefinition( "bar", "" );
+
 	}
 }

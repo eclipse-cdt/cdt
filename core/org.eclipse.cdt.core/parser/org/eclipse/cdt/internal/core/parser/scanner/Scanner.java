@@ -1437,12 +1437,9 @@ public class Scanner implements IScanner {
 		c = getChar();				
 		
 		// do the least expensive tests first!
-		while (
-			((c >= 'a') && (c <= 'z'))
-			|| ((c >= 'A') && (c <= 'Z'))
-			|| ((c >= '0') && (c <= '9'))
-			|| (c == '_') || Character.isUnicodeIdentifierPart( (char)c)
-			) {
+		while (	( scannerExtension.offersDifferentIdentifierCharacters() && 
+				  scannerExtension.isValidIdentifierCharacter(c) ) || 
+				  isValidIdentifierCharacter(c) ) {
 			buff.append((char) c);
 			c = getChar();
 			if (c == '\\') {
@@ -1491,6 +1488,17 @@ public class Scanner implements IScanner {
 			return newToken(IToken.tIDENTIFIER, ident, scannerData.getContextStack().getCurrentContext());
 	}
 	
+	/**
+	 * @param c
+	 * @return
+	 */
+	protected boolean isValidIdentifierCharacter(int c) {
+		return ((c >= 'a') && (c <= 'z'))
+		|| ((c >= 'A') && (c <= 'Z'))
+		|| ((c >= '0') && (c <= '9'))
+		|| (c == '_') || Character.isUnicodeIdentifierPart( (char)c);
+	}
+
 	public IToken nextToken( boolean pasting ) throws ScannerException, EndOfFileException 
 	{
 		if( ! initialContextInitialized )
@@ -1573,11 +1581,6 @@ public class Scanner implements IScanner {
 									continue;
 								}
 								return token;
-
-//							case '/':
-//								expandDefinition("??/", "\\", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
-//								c = getChar(insideString);
-//								break;
 							default:
 								// Not a trigraph
 								ungetChar(c);
@@ -1850,12 +1853,9 @@ public class Scanner implements IScanner {
 					return token;
 						
 				default:
-					if (
-							// JOHNC - Accept non-ASCII Input
-//						((c >= 'a') && (c <= 'z'))
-//							|| ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
-							Character.isLetter((char)c) || ( c == '_') 
-					) 
+					if ( 	( scannerExtension.offersDifferentIdentifierCharacters() && 
+							  scannerExtension.isValidIdentifierStartCharacter(c) ) || 
+							 isValidIdentifierStartCharacter(c)  ) 
 					{
 						token = processKeywordOrLiteral(c, pasting);
 						if (token == null) 
@@ -1885,6 +1885,14 @@ public class Scanner implements IScanner {
 
 
     /**
+	 * @param c
+	 * @return
+	 */
+	protected boolean isValidIdentifierStartCharacter(int c) {
+		return Character.isLetter((char)c) || ( c == '_');
+	}
+
+	/**
 	 * @param definition
 	 */
 	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
@@ -2292,47 +2300,43 @@ public class Scanner implements IScanner {
 	protected boolean evaluateExpression(String expression, int beginningOffset )
 		throws ScannerException {
 			
-		if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
-		{
-			if( expression.trim().equals( "0" ) ) //$NON-NLS-1$
-				return false; 
-			
-			return true; 
-		}
-		else
-		{	
-			IExpressionParser parser = null;
-			StringBuffer expressionBuffer = new StringBuffer( expression );
-			expressionBuffer.append( ';');
+		IExpressionParser parser = null;
+		StringBuffer expressionBuffer = new StringBuffer( expression );
+		expressionBuffer.append( ';');
 		   
-			IScanner trial = new Scanner( 
-					new StringReader(expressionBuffer.toString()), 
-					EXPRESSION, 
-					scannerData.getDefinitions(), 
-					scannerData.getIncludePathNames(),					
-					NULL_REQUESTOR,
-					ParserMode.QUICK_PARSE, 
-					scannerData.getLanguage(),  
-					NULL_LOG_SERVICE,
-					scannerExtension );
-			
-	        parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), NULL_LOG_SERVICE);
-			try {
-				IASTExpression exp = parser.expression(null);
-				if( exp.evaluateExpression() == 0 )
-					return false;
-				return true;
-			} catch( BacktrackException backtrack  )
-			{
-				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
-			}
-			catch (ASTExpressionEvaluationException e) {
-				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
-			} catch (EndOfFileException e) {
-				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
-			}
-			return true; 
+		IScanner trial = new Scanner( 
+				new StringReader(expressionBuffer.toString()), 
+				EXPRESSION, 
+				scannerData.getDefinitions(), 
+				scannerData.getIncludePathNames(),					
+				NULL_REQUESTOR,
+				ParserMode.QUICK_PARSE, 
+				scannerData.getLanguage(),  
+				NULL_LOG_SERVICE,
+				scannerExtension );
+		
+        parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), NULL_LOG_SERVICE);
+		try {
+			IASTExpression exp = parser.expression(null);
+			if( exp.evaluateExpression() == 0 )
+				return false;
+			return true;
+		} catch( BacktrackException backtrack  )
+		{
+			if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+				return false;
+			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
 		}
+		catch (ASTExpressionEvaluationException e) {
+			if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+				return false;			
+			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
+		} catch (EndOfFileException e) {
+			if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+				return false;
+			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
+		}
+		return true; 
 	}
 
 	

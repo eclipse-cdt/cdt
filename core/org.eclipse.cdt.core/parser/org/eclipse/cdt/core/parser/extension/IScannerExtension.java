@@ -24,4 +24,16 @@ public interface IScannerExtension extends Cloneable {
 
 	public boolean canHandlePreprocessorDirective( String directive );
 	public void handlePreprocessorDirective( String directive, String restOfLine );
+
+	/**
+	 * @return
+	 */
+	public boolean offersDifferentIdentifierCharacters();
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	public boolean isValidIdentifierStartCharacter(int c);
+	public boolean isValidIdentifierCharacter( int c );
 }

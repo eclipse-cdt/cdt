@@ -402,4 +402,28 @@ public class TokenDuple implements ITokenDuple {
 	public List[] getTemplateIdArgLists() {
 		return argLists;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#syntaxOfName()
+	 */
+	public boolean syntaxOfName() {
+		Iterator iter = iterator();
+		if( ! iter.hasNext() ) return false; // empty is not good
+		while( iter.hasNext() )
+		{
+			IToken token = (IToken) iter.next();
+			if( token.isOperator() ) continue;
+			switch( token.getType() )
+			{
+				case IToken.tCOMPL:
+				case IToken.tIDENTIFIER:
+				case IToken.tCOLONCOLON:
+				case IToken.t_operator:
+					continue;
+				default:
+					return false;
+			}
+		}
+		return true;
+	}
 }

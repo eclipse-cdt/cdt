@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 
@@ -30,6 +31,9 @@ public class SelectionParser extends ContextualParser {
 
 	private OffsetDuple offsetRange;
 	private IToken firstTokenOfDuple = null, lastTokenOfDuple = null;
+	private IASTScope ourScope = null;
+	private IASTCompletionNode.CompletionKind ourKind = null;
+	private IASTNode ourContext = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
@@ -47,6 +51,16 @@ public class SelectionParser extends ContextualParser {
 			{
 				log.traceLog( "Offset Ceiling Hit w/token \"" + value.getImage() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				lastTokenOfDuple = value;
+			}
+			if( scanner.isOnTopContext() && lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )
+			{
+				if ( ourScope == null )
+					ourScope = getCompletionScope();
+				if( ourContext == null )
+					ourContext = getCompletionContext();
+				if( ourKind == null )
+					ourKind = getCompletionKind();
+				
 			}
 		}
 	}
@@ -67,7 +81,6 @@ public class SelectionParser extends ContextualParser {
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
 	public IASTNode parse(int startingOffset, int endingOffset) {
-//		scanner.setOffsetBoundary(endingOffset);
 		offsetRange = new OffsetDuple( startingOffset, endingOffset );
 		translationUnit();
 		return reconcileTokenDuple();
@@ -84,7 +97,11 @@ public class SelectionParser extends ContextualParser {
 			throw new ParseError( ParseError.ParseErrorKind.OFFSETDUPLE_UNREACHABLE );
 		
 		ITokenDuple duple = new TokenDuple( firstTokenOfDuple, lastTokenOfDuple );
-		return duple.lookup( astFactory, getCompletionScope() );
+		
+		if( ! duple.syntaxOfName() )
+			throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
+		
+		return duple.lookup( astFactory, ourScope );
 	}
 
 	/* (non-Javadoc)
@@ -99,8 +116,6 @@ public class SelectionParser extends ContextualParser {
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#checkEndOfFile()
 	 */
 	protected void checkEndOfFile() throws EndOfFileException {
-		if( scanner.isOnTopContext() && lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )
-			throw new EndOfFileException();
 	}
 
 }

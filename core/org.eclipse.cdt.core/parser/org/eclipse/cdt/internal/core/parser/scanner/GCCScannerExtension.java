@@ -11,11 +11,15 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
 
 /**
  * @author jcamelon
@@ -65,6 +69,7 @@ public class GCCScannerExtension implements IScannerExtension {
 		directives = new HashSet();
 		directives.add( "#include_next" ); //$NON-NLS-1$
 		directives.add( "#warning"); //$NON-NLS-1$
+		directives.add( "#ident"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -82,17 +87,78 @@ public class GCCScannerExtension implements IScannerExtension {
 		{
 			scannerData.getLogService().traceLog( "GCCScannerExtension handling #include_next directive" ); //$NON-NLS-1$
 			// figure out the name of the current file and its path
-//			IScannerContext context = scannerData.getContextStack().getCurrentContext();
-//			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
-//			{
-//				//handle appropriate error
-//			}
-//			String fullInclusionPath = context.getFilename();
-//			IASTInclusion inclusion = context.getExtension();
+			IScannerContext context = scannerData.getContextStack().getCurrentContext();
+			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
+				return;
 			
+			String fullInclusionPath = context.getFilename();
+			IASTInclusion inclusion = context.getExtension();
 			
-			// search through include paths 
+			Iterator iter = scannerData.getIncludePathNames().iterator();
+			
+			while (iter.hasNext()) {
+				String path = (String)iter.next();
+				String completePath = ScannerUtility.createReconciledPath(path, inclusion.getName() );
+				if( completePath.equals( fullInclusionPath ) )
+					break;
+			}
+			
+			ScannerUtility.InclusionDirective parsedDirective = null;
+			try {
+				parsedDirective = ScannerUtility.parseInclusionDirective( scannerData, this, restOfLine, scannerData.getContextStack().getCurrentContext().getOffset() );
+			} catch (InclusionParseException e) {
+				return;
+			}
+			CodeReader duple = null;
+			// search through include paths
+			while (iter.hasNext()) {	
+				String path = (String)iter.next();
+				duple = ScannerUtility.createReaderDuple( path, parsedDirective.getFilename(), scannerData.getClientRequestor() );
+				if( duple != null )
+					break;
+			}
+
+			if( duple != null )
+			{
+				try			
+				{
+					scannerData.getContextStack().updateContext(duple.getUnderlyingReader(), duple.getFilename(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
+					scannerData.getLogService().traceLog( "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
+				}
+				catch (ContextException e1)
+				{
+					return;
+				}
+			}
+			
 		}
+		else if( directive.equals( "#warning") || directive.equals("#ident"))
+			return; // good enough -- the rest of the line has been consumed
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#offersDifferentIdentifierCharacters()
+	 */
+	public boolean offersDifferentIdentifierCharacters() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isValidIdentifierStartCharacter(int)
+	 */
+	public boolean isValidIdentifierStartCharacter(int c) {
+		return Character.isLetter((char)c) || ( c == '_') || ( c == '$' );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isValidIdentifierCharacter(int)
+	 */
+	public boolean isValidIdentifierCharacter(int c) {
+		return ((c >= 'a') && (c <= 'z'))
+		|| ((c >= 'A') && (c <= 'Z'))
+		|| ((c >= '0') && (c <= '9'))
+		|| (c == '_') || ( c== '$' ) || 
+		Character.isUnicodeIdentifierPart( (char)c);
 	}
 
 }

@@ -1,3 +1,13 @@
+2004-04-02 John Camelon
+	Added SelectionParseTest::testBaseCase_FunctionDeclaration().  
+	Added SelectionParseTest::testBaseCase_FunctionDeclaration2().  
+	Added SelectionParseTest::testBaseCase_VariableDeclaration().  
+	Added SelectionParseTest::testBaseCase_Parameter().  
+	Added QuickParseASTTests::testBug44336().  
+	Added ScannerTestCase::testBug36770B(). 
+	Moved testBug39705() from ASTFailedTests to QuickParseASTTests.  
+	Moved testBug39694() from ASTFailedTests to QuickParseASTTests.
+
 2004-03-29 John Camelon
 	Added ScannerTestCase::testBug56517().  
 

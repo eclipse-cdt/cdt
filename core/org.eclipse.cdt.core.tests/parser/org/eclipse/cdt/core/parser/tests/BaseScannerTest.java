@@ -184,6 +184,8 @@ public class BaseScannerTest extends TestCase {
 		} 
 	}
 
+
+	
 	public void validateDefinition(String name, String value)
 	{
 		String definition= null;

@@ -749,7 +749,6 @@ public abstract class Parser extends ExpressionParser implements IParser
                 simpleDeclarationStrategyUnion(scope, ownerTemplate, overideKind );
         }
     	setCompletionValues(scope, kind, Key.DECLARATION );
-    	checkEndOfFile();
     }
     
     /**
@@ -1066,10 +1065,9 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             try
             {
-                astFactory
-                    .createTypeSpecDeclaration(
-                        sdw.getScope(),
-                        sdw.getTypeSpecifier(),
+           		astFactory.createTypeSpecDeclaration(
+                   sdw.getScope(),
+                      sdw.getTypeSpecifier(),
                         ownerTemplate,
                         sdw.getStartingOffset(),
                         sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber())
@@ -1551,9 +1549,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         consume(IToken.t_template);
                         last = templateId(sdw.getScope(), CompletionKind.SINGLE_NAME_REFERENCE );
                     }
+                    if( sdw.getName() != null )
+                    	first = sdw.getName().getFirstToken();
                     ITokenDuple duple = new TokenDuple(first, last);
                     sdw.setTypeName(duple);
-      
+					flags.setEncounteredTypename(true);
                     break;
                 case IToken.tCOLONCOLON :
                     consume(IToken.tCOLONCOLON);

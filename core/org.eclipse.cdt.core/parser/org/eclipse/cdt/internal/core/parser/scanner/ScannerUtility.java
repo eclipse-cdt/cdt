@@ -62,22 +62,30 @@ public class ScannerUtility {
 		return buffer.toString();
 	}
 
+	
 	static CodeReader createReaderDuple( String path, String fileName, ISourceElementRequestor requestor )
 	{
-		File pathFile = new File(path);
-		//TODO assert pathFile.isDirectory();	
-		StringBuffer newPathBuffer = new StringBuffer( pathFile.getPath() );
-		newPathBuffer.append( File.separatorChar );
-		newPathBuffer.append( fileName );
-		//remove ".." and "." segments
-		String finalPath = reconcilePath( newPathBuffer.toString() );
+		String finalPath = createReconciledPath(path, fileName);
 		Reader r = requestor.createReader( finalPath );
 		if( r != null )
 			return new CodeReader( finalPath, r );
 		return null;		
-	
 	}
 	
+	/**
+	 * @param path
+	 * @param fileName
+	 * @return
+	 */
+	static String createReconciledPath(String path, String fileName) {
+		//TODO assert pathFile.isDirectory();	
+		StringBuffer newPathBuffer = new StringBuffer( new File(path).getPath() );
+		newPathBuffer.append( File.separatorChar );
+		newPathBuffer.append( fileName );
+		//remove ".." and "." segments
+		return reconcilePath( newPathBuffer.toString() );
+	}
+
 	static class InclusionDirective
 	{
 		public InclusionDirective( String fileName, boolean useIncludePaths, int startOffset, int endOffset )

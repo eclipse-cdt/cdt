@@ -24,7 +24,7 @@ public class CPPFilt {
 	private Process cppfilt;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
-	private boolean isDisposed = false;
+	//private boolean isDisposed = false;
 
 	public CPPFilt(String command, String[] params) throws IOException {
 		init(command, params);
@@ -71,6 +71,6 @@ public class CPPFilt {
 		catch (IOException e) {
 		}
 		cppfilt.destroy();
-		isDisposed = true;
+		//isDisposed = true;
 	}
 }

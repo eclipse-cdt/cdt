@@ -114,9 +114,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 					if (offset < endPos && offset >= startPos) {
 						if (child instanceof Parent) {
 							return ((Parent)child).getSourceElementAtOffset(offset);
-						} else {
-							return (ICElement)child;
 						}
+						return (ICElement)child;
 					}
 				}
 			}
@@ -157,9 +156,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			children = new ICElement[list.size()];
 			list.toArray(children);
 			return children;
-		} else {
-			// should not happen
-			//Assert.isTrue(false);
 		}
 		return new ICElement[]{this};
 	}

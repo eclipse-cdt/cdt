@@ -24,7 +24,7 @@ public class Addr2line {
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 	private String lastaddr, lastsymbol, lastline;
-	private boolean isDisposed = false;
+	//private boolean isDisposed = false;
 
 	public Addr2line(String command, String[] params, String file) throws IOException {
 		init(command, params, file);
@@ -129,7 +129,7 @@ public class Addr2line {
 		} catch (IOException e) {
 		}
 		addr2line.destroy();
-		isDisposed = true;
+		//isDisposed = true;
 	}
 }
 

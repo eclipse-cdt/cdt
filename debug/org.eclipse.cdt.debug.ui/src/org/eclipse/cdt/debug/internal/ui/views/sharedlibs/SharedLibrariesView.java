@@ -86,7 +86,7 @@ public class SharedLibrariesView extends AbstractDebugView
 	 */
 	protected Viewer createViewer( Composite parent )
 	{
-		TableViewer viewer = new TableViewer( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+		TableViewer viewer = new TableViewer( parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL );
 		viewer.setContentProvider( new SharedLibrariesViewContentProvider() );
 		viewer.setLabelProvider( getModelPresentation() );
 

@@ -1,3 +1,14 @@
+2004-02-24 Sean Evoy
+	Changed the makefile generator to escape any whitespace it finds in a dependency
+	path. Now it is possible to build a project in a location with spaces but 
+	you still cannot have internal folders with spaces in the name. 
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+	
+	Tweaked the builder to put only the make command in invocation if there were 
+	no arguments spec'd. It seemed to be causing a fake error message 
+	to be reported on Linux even though make was successfully building the project.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	
 2004-02-23 Sean Evoy
 	Fix for bug 52647.
 	In 1.2, the target stored the raw, overridden build command the user 

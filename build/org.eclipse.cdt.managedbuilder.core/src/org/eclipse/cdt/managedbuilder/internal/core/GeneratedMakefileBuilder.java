@@ -336,9 +336,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// Get the arguments to be passed to make from build model
 				ArrayList makeArgs = new ArrayList();
 				String arg = info.getMakeArguments();
-				String[] args = arg.split("\\s");
-				for (int i = 0; i < args.length; ++i) {
-					makeArgs.add(args[i]);
+				if (arg.length() > 0) {
+					String[] args = arg.split("\\s");
+					for (int i = 0; i < args.length; ++i) {
+						makeArgs.add(args[i]);
+					}
 				}
 				makeArgs.addAll(Arrays.asList(getMakeTargets(fullBuild)));
 				String[] makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);

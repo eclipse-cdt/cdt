@@ -339,7 +339,7 @@ public class MakefileGenerator {
 					if (outputExt != null) {
 						fileName += DOT + outputExt;
 					}
-					// ASk the dep generator to find all the deps for this resource
+					// Ask the dep generator to find all the deps for this resource
 					ArrayList dependencies = new ArrayList();
 					try {
 						indexManager.performConcurrentJob(new DependencyQueryJob(project, (IFile)resource, indexManager, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null, null);
@@ -351,14 +351,41 @@ public class MakefileGenerator {
 					Iterator iter = dependencies.listIterator();
 					while (iter.hasNext()) {
 						buffer.append(LINEBREAK + NEWLINE);
-						String path = (String)iter.next();
-						buffer.append(path + WHITESPACE);
+						String rawPath = (String)iter.next();
+						// TODO Convert to relative if possible
+						String path = escapeWhitespaces(rawPath);
+						buffer.append(path);
+						if (iter.hasNext()) {
+							buffer.append(WHITESPACE);
+						}
 					}
 					buffer.append(NEWLINE);
 				}
 			}
 		}		
 		return buffer;
+	}
+
+	/* (non-Javadoc)
+	 * Answers the argument with all whitespaces replaced with an escape sequence.
+	 * 
+	 * @param path
+	 */
+	private String escapeWhitespaces(String path) {
+		// Escape the spaces in the path/filename if it has any
+		String[] segments = path.split("\\s");
+		if (segments.length > 1) {
+			StringBuffer escapedPath = new StringBuffer();
+			for (int index = 0; index < segments.length; ++index) {
+				escapedPath.append(segments[index]);
+				if (index + 1 < segments.length) {
+					escapedPath.append("\\ ");
+				}
+			}
+			return escapedPath.toString().trim();
+		} else {
+			return path;
+		}
 	}
 
 	/* (non-javadoc)

@@ -15,12 +15,14 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibUnloadedEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIShared;
 
@@ -39,7 +41,22 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	}
 
 	public void loadSymbols(ICDISharedLibrary slib) throws CDIException {
-		throw new CDIException("not implemented");
+		// FIXME: use the command factory for this so we can overload.
+		if (slib.areSymbolsLoaded()) {
+			return;
+		}
+		CSession s = getCSession();
+		CLICommand cmd = new CLICommand("shared " + slib.getFileName());
+		try {
+			s.getMISession().postCommand(cmd);
+			MIInfo info = cmd.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		update();
 	}
 
 	public void update() throws CDIException {

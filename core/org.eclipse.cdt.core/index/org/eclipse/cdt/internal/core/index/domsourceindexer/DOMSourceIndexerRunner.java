@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -41,15 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
- * A DOMSourceIndexerRunner indexes source files using the DOMAST. The following items are indexed:
- * Declarations:
- * - Classes
- * - Structs
- * - Unions
- * References:
- * - Classes
- * - Structs
- * - Unions
+ * A DOMSourceIndexerRunner indexes source files using the DOM AST.
  * 
  * @author vhirsl
  */
@@ -221,6 +214,11 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 IProblemBinding problemBinding = (IProblemBinding) name.resolveBinding(); 
                 errorMessage = problemBinding.getMessage();
                 location = name.getNodeLocations()[0];
+                IASTNode node = problemBinding.getASTNode();
+//                if (node != null && !name.equals(node)) {
+//                    // TODO may require further processing - looking at the IProblemBinding id
+//                    location = node.getNodeLocations()[0];
+//                }
             }
         }
         if (location != null) {

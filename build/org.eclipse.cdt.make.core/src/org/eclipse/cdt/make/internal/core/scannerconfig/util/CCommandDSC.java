@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -106,9 +108,10 @@ public class CCommandDSC {
                 commandAsString += optionPair.getValue() + SINGLE_SPACE;
             }
             else {
-//    			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString()) ||
-//    					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()))
-//    				continue;
+                // skip -include and -imacros options
+    			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString()) ||
+    					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()))
+    				continue;
     			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
                                    optionPair.getValue() + SINGLE_SPACE;
             }
@@ -116,26 +119,26 @@ public class CCommandDSC {
 		return commandAsString.trim();
 	}
 	
-	public String[] getImacrosFile() {
+	public IPath[] getImacrosFile() {
 		List imacrosFiles = new ArrayList();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = (KVStringPair)i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())) {
-				imacrosFiles.add(optionPair.getValue());
+				imacrosFiles.add(new Path(optionPair.getValue()));
 			}
 		}
-		return (String[]) imacrosFiles.toArray(new String[imacrosFiles.size()]);
+		return (IPath[]) imacrosFiles.toArray(new IPath[imacrosFiles.size()]);
 	}
 	
-	public String[] getIncludeFile() {
+	public IPath[] getIncludeFile() {
 		List includeFiles = new ArrayList();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = (KVStringPair)i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString())) {
-				includeFiles.add(optionPair.getValue());
+				includeFiles.add(new Path(optionPair.getValue()));
 			}
 		}
-		return (String[]) includeFiles.toArray(new String[includeFiles.size()]);
+		return (IPath[]) includeFiles.toArray(new IPath[includeFiles.size()]);
 	}
 	
 //	public List getFilesList() {

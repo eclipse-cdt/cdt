@@ -147,7 +147,7 @@ public class MakeScannerProvider extends ScannerProvider {
 			}
 		}
 		for (int i = 0; i < includes.length; i++) {
-			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null, new Path(includes[i]));
+			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null, new Path(includes[i]), true);
 			if (!cPaths.contains(include)) {
 				cPaths.add(include);
 			}

@@ -98,11 +98,11 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 			}
 			String[] localIncludes = new String[localCount];
 			String[] systemIncludes = new String[systemCount]; 
-			for (int i = 0; i < includeEntries.length; ++i) {
+			for (int i = 0, j = 0, k = 0; i < includeEntries.length; ++i) {
 				if (includeEntries[i].isSystemInclude()) {
-					systemIncludes[i] = includeEntries[i].getFullIncludePath().toOSString();					
+					systemIncludes[j++] = includeEntries[i].getFullIncludePath().toOSString();					
 				} else {
-					localIncludes[i] = includeEntries[i].getFullIncludePath().toOSString();
+					localIncludes[k++] = includeEntries[i].getFullIncludePath().toOSString();
 				}
 			}
 

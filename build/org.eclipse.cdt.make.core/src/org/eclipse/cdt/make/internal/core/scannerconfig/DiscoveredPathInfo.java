@@ -219,6 +219,20 @@ public class DiscoveredPathInfo implements IDiscoveredPathInfo, IDiscoveredScann
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeFiles(org.eclipse.core.runtime.IPath)
+     */
+    public IPath[] getIncludeFiles(IPath path) {
+        return new IPath[0];
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
+     */
+    public IPath[] getMacroFiles(IPath path) {
+        return new IPath[0];
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
      */
     public IDiscoveredScannerInfoSerializable getSerializable() {
@@ -231,5 +245,5 @@ public class DiscoveredPathInfo implements IDiscoveredPathInfo, IDiscoveredScann
     public ScannerConfigScope getScope() {
         return ScannerConfigScope.PROJECT_SCOPE;
     }
-	
+
 }

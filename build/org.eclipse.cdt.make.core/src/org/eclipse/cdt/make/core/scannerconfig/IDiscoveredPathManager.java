@@ -25,25 +25,30 @@ public interface IDiscoveredPathManager {
 
         /**
          * Get include paths for the whole project 
-         * @return
          */
         IPath[] getIncludePaths();
         /**
          * Get defined symbols for the whole project 
-         * @return
          */
 		Map 	getSymbols();
 		
         /**
          * Get include paths for the specific path (file) 
-         * @return
          */
         IPath[] getIncludePaths(IPath path);
         /**
          * Get defined symbols for the specific path (file) 
-         * @return
          */
         Map     getSymbols(IPath path);
+        
+        /**
+         * Get include files (gcc option -include) for the specific path (file)
+         */
+        IPath[] getIncludeFiles(IPath path);
+        /**
+         * Get macro files (gcc option -imacros) for the specific path (file)
+         */
+        IPath[] getMacroFiles(IPath path);
         
         IDiscoveredScannerInfoSerializable getSerializable();
         ScannerConfigScope getScope();

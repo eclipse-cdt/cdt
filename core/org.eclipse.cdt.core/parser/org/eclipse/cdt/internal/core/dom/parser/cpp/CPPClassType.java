@@ -582,7 +582,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 			        }
 			    }
 			} else if( members[i] instanceof IASTFunctionDefinition ){
-			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
+			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)members[i]).getDeclSpecifier();
 			    if( declSpec.isFriend() ){
 			        IASTDeclarator dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
 			        resultSet.put( dtor.getName().resolveBinding() );

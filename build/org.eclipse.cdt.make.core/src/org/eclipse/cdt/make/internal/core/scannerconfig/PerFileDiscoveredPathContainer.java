@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IIncludeEntry;
-import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -71,40 +69,38 @@ public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContai
     public IPathEntry[] getPathEntries(IPath path, int mask) {
         IDiscoveredPathInfo info;
 		ArrayList entries = new ArrayList();
-		if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
-			// TODO: not implemented
-		}
-		if ((mask & IPathEntry.CDT_INCLUDE) != 0) {
-			// TODO: Vlad how do we differentiate local includes from system includes
-			try {
-				info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+        try {
+            info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+    		if ((mask & IPathEntry.CDT_INCLUDE) != 0) {
+    			// TODO: Vlad how do we differentiate local includes from system includes
 				IPath[] includes = info.getIncludePaths(path);
 				for (int i = 0; i < includes.length; i++) {
 					entries.add(CoreModel.newIncludeEntry(path, Path.EMPTY, includes[i], true));
 				}
-				return (IIncludeEntry[])entries.toArray(new IIncludeEntry[entries.size()]);
-			}
-			catch (CoreException e) {
-				// 
-			}
-		}
-		if ((mask & IPathEntry.CDT_MACRO_FILE) != 0) {
-			// TODO: not implemented
-		}
-		if ((mask & IPathEntry.CDT_MACRO) != 0) {
-			try {
-				info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+    		}
+    		if ((mask & IPathEntry.CDT_MACRO) != 0) {
 				Map syms = info.getSymbols(path);
 				for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
 					Entry entry = (Entry)iter.next();
 					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
 				}
-				return (IMacroEntry[])entries.toArray(new IMacroEntry[entries.size()]);
-			}
-			catch (CoreException e) {
-				//
-			}
-		}
+    		}
+            if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
+                IPath[] includeFiles = info.getIncludeFiles(path);
+                for (int i = 0; i < includeFiles.length; i++) {
+                    entries.add(CoreModel.newIncludeFileEntry(path, includeFiles[i]));
+                }
+            }
+            if ((mask & IPathEntry.CDT_MACRO_FILE) != 0) {
+                IPath[] imacrosFiles = info.getMacroFiles(path);
+                for (int i = 0; i < imacrosFiles.length; i++) {
+                    entries.add(CoreModel.newMacroFileEntry(path, imacrosFiles[i]));
+                }
+            }
+        }
+        catch (CoreException e) {
+            // 
+        }
 		return (IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]);
     }
 

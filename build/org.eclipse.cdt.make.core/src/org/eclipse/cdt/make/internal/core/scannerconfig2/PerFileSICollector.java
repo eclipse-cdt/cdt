@@ -549,21 +549,15 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
          */
         public IPath[] getIncludePaths(IPath path) {
-            IFile file = project.getWorkspace().getRoot().getFile(path);
-            if (file != null) {
-                Integer cmdId = (Integer) sid.fileToCommandIdMap.get(file);
-                if (cmdId != null) {
-                    // get the command
-                    CCommandDSC cmd = (CCommandDSC) sid.commandIdCommandMap.get(cmdId);
-                    if (cmd != null && cmd.isDiscovered()) {
-                        List includes = cmd.getIncludes();
-                        List includePaths = new ArrayList(includes.size());
-                        for (Iterator i = includes.iterator(); i.hasNext(); ) {
-                            includePaths.add(new Path((String) i.next()));
-                        }
-                        return (IPath[])includePaths.toArray(new IPath[includePaths.size()]);
-                    }
+            // get the command
+            CCommandDSC cmd = getCommand(path);
+            if (cmd != null && cmd.isDiscovered()) {
+                List includes = cmd.getIncludes();
+                List includePaths = new ArrayList(includes.size());
+                for (Iterator i = includes.iterator(); i.hasNext(); ) {
+                    includePaths.add(new Path((String) i.next()));
                 }
+                return (IPath[])includePaths.toArray(new IPath[includePaths.size()]);
             }
             return new IPath[0];
         }
@@ -572,26 +566,44 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols(org.eclipse.core.runtime.IPath)
          */
         public Map getSymbols(IPath path) {
-            IFile file = project.getFile(path);
-            if (file != null) {
-                Integer cmdId = (Integer) sid.fileToCommandIdMap.get(file);
-                if (cmdId != null) {
-                    // get the command
-                    CCommandDSC cmd = (CCommandDSC) sid.commandIdCommandMap.get(cmdId);
-                    if (cmd != null && cmd.isDiscovered()) {
-                        List symbols = cmd.getSymbols();
-                        Map definedSymbols = new HashMap(symbols.size());
-                        for (Iterator i = symbols.iterator(); i.hasNext(); ) {
-                            String symbol = (String) i.next();
-                            String key = ScannerConfigUtil.getSymbolKey(symbol);
-                            String value = ScannerConfigUtil.getSymbolValue(symbol);
-                            definedSymbols.put(key, value);
-                        }
-                        return definedSymbols;
-                    }
+            // get the command
+            CCommandDSC cmd = getCommand(path);
+            if (cmd != null && cmd.isDiscovered()) {
+                List symbols = cmd.getSymbols();
+                Map definedSymbols = new HashMap(symbols.size());
+                for (Iterator i = symbols.iterator(); i.hasNext(); ) {
+                    String symbol = (String) i.next();
+                    String key = ScannerConfigUtil.getSymbolKey(symbol);
+                    String value = ScannerConfigUtil.getSymbolValue(symbol);
+                    definedSymbols.put(key, value);
                 }
+                return definedSymbols;
             }
             return new HashMap(0);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeFiles(org.eclipse.core.runtime.IPath)
+         */
+        public IPath[] getIncludeFiles(IPath path) {
+            // get the command
+            CCommandDSC cmd = getCommand(path);
+            if (cmd != null) {
+                return cmd.getIncludeFile();
+            }
+            return new IPath[0];
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
+         */
+        public IPath[] getMacroFiles(IPath path) {
+            // get the command
+            CCommandDSC cmd = getCommand(path);
+            if (cmd != null) {
+                return cmd.getImacrosFile();
+            }
+            return new IPath[0];
         }
 
         /* (non-Javadoc)
@@ -606,6 +618,23 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
          */
         public ScannerConfigScope getScope() {
             return ScannerConfigScope.FILE_SCOPE;
+        }
+
+        /**
+         * @param path
+         * @return
+         */
+        private CCommandDSC getCommand(IPath path) {
+            CCommandDSC cmd = null;
+            IFile file = project.getWorkspace().getRoot().getFile(path);
+            if (file != null) {
+                Integer cmdId = (Integer) sid.fileToCommandIdMap.get(file);
+                if (cmdId != null) {
+                    // get the command
+                    cmd = (CCommandDSC) sid.commandIdCommandMap.get(cmdId);
+                }
+            }
+            return cmd;
         }
 
     }

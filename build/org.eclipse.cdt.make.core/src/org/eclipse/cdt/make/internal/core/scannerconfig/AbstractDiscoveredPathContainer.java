@@ -72,7 +72,7 @@ public abstract class AbstractDiscoveredPathContainer implements IPathEntryConta
         Map syms = info.getSymbols();
         List entries = new ArrayList(includes.length + syms.size());
         for (int i = 0; i < includes.length; i++) {
-            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, includes[i])); //$NON-NLS-1$ //$NON-NLS-2$
+            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, includes[i], true)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         Iterator iter = syms.entrySet().iterator();
         while (iter.hasNext()) {

@@ -1,3 +1,8 @@
+2004-08-26 Alain Magloire
+
+	Do not call computeSources() multiple times.
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+
 2004-08-20 Alain Magloire
 
 	Fix for Bug 69071

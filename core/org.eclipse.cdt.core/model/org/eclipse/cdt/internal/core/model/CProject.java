@@ -461,10 +461,12 @@ public class CProject extends Openable implements ICProject {
 			if (pinfo.sourceRoots != null) {
 				roots = pinfo.sourceRoots;
 			} else {
-				roots = pinfo.sourceRoots = (ISourceRoot[])computeSourceRoots().toArray(new ISourceRoot[computeSourceRoots().size()]);				
+				List list = computeSourceRoots();
+				roots = pinfo.sourceRoots = (ISourceRoot[])list.toArray(new ISourceRoot[list.size()]);				
 			}
 		} else {
-			roots = (ISourceRoot[])computeSourceRoots().toArray(new ISourceRoot[computeSourceRoots().size()]);
+			List list= computeSourceRoots();
+			roots = (ISourceRoot[])list.toArray(new ISourceRoot[list.size()]);
 		}
 		return roots;
 	}

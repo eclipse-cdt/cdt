@@ -17,13 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 /**
  * @author jcamelon
  */
-public interface ICPPASTNamespaceAlias extends IASTDeclaration {
+public interface ICPPASTUsingDirective extends IASTDeclaration {
 
-    public static final ASTNodeProperty ALIAS_NAME = new ASTNodeProperty( "Alias name"); //$NON-NLS-1$
-    public static final ASTNodeProperty MAPPING_NAME = new ASTNodeProperty( "Mapping name"); //$NON-NLS-1$
-    
-    public IASTName getAlias();
-    public void setAlias( IASTName name );
+    public static final ASTNodeProperty QUALIFIED_NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
     
     public IASTName getQualifiedName();
     public void setQualifiedName( IASTName qualifiedName );

@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.parser2.c.CASTNode;
 
 /**
@@ -22,7 +21,7 @@ public class CPPASTNamespaceAlias extends CASTNode implements
         ICPPASTNamespaceAlias {
 
     private IASTName alias;
-    private ICPPASTQualifiedName qualifiedName;
+    private IASTName qualifiedName;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#getAlias()
@@ -41,14 +40,14 @@ public class CPPASTNamespaceAlias extends CASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#getQualifiedName()
      */
-    public ICPPASTQualifiedName getQualifiedName() {
+    public IASTName getQualifiedName() {
         return qualifiedName;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#setQualifiedName(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName)
      */
-    public void setQualifiedName(ICPPASTQualifiedName qualifiedName) {
+    public void setQualifiedName(IASTName qualifiedName) {
         this.qualifiedName = qualifiedName;
     }
 

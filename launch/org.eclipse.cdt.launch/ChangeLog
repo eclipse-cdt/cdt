@@ -1,3 +1,8 @@
+2002-11-23 Alain Magloire
+
+	* src/.../internal/ui/CApplicationLaunchShortcut.java (searchAndLaunch):
+	Bail out with a message if no binaries.
+
 2002-11-22 Alain Magloire
 
 	* src/.../AbstractCLaunchDelegate.java (getProgranName): Now static.

@@ -306,7 +306,7 @@ public class CModelManager implements IResourceChangeListener {
 				container.removeChild(cfile);
 			} else if (cfile.isBinary()) {
 				if (! ((IBinary)celement).isObject()) {
-System.out.println("RELEASE Binary " + cfile.getElementName());
+//System.out.println("RELEASE Binary " + cfile.getElementName());
 					CProject cproj = (CProject)cfile.getCProject();
 					BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
 					container.removeChild(cfile);
@@ -490,7 +490,6 @@ System.out.println("RELEASE Binary " + cfile.getElementName());
 	public void resourceChanged(IResourceChangeEvent event) {
 
 		if (event.getSource() instanceof IWorkspace) {
-			//IResource resource = event.getResource();
 			IResourceDelta delta = event.getDelta();
 			switch(event.getType()){
 				case IResourceChangeEvent.PRE_DELETE :

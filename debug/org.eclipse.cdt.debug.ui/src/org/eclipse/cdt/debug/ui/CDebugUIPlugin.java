@@ -22,8 +22,6 @@ import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
-import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
-import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -41,7 +39,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -168,15 +165,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 				PreferenceConverter.getColor( getDefault().getPreferenceStore(), type ) );
 	}
 
-	/**
-	 * @see AbstractUIPlugin#initializeDefaultPreferences
-	 */
-	protected void initializeDefaultPreferences( IPreferenceStore pstore ) 
-	{
-		MemoryViewPreferencePage.initDefaults( pstore );
-		CDebugPreferencePage.initDefaults( pstore );
-	}
-	
 	public static CDTDebugModelPresentation getDebugModelPresentation()
 	{
 		return CDTDebugModelPresentation.getDefault();

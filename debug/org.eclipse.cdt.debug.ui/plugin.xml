@@ -1269,5 +1269,9 @@
             debugModel="org.eclipse.cdt.debug.core"
             delegateClass="org.eclipse.cdt.debug.internal.ui.CWatchExpressionDelegate"/>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.debug.internal.ui.CDebugUIPreferenceInitializer"/>
+   </extension>
 
 </plugin>

@@ -139,6 +139,13 @@ public class MakeScannerProvider extends ScannerProvider {
 		IPathEntry[] entries = cProject.getRawPathEntries();
 		List cPaths = new ArrayList(Arrays.asList(entries));
 
+		Iterator cpIter = cPaths.iterator();
+		while(cpIter.hasNext()) {
+			int kind = ((IPathEntry)cpIter.next()).getEntryKind();
+			if(kind == IPathEntry.CDT_INCLUDE || kind == IPathEntry.CDT_MACRO) {
+				cpIter.remove();
+			}
+		}
 		for (int i = 0; i < includes.length; i++) {
 			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null, new Path(includes[i]));
 			if (!cPaths.contains(include)) {

@@ -11,6 +11,8 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
@@ -95,5 +97,12 @@ public class ASTUsingDeclaration
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#getUsingType()
+     */
+    public IASTDeclaration getUsingType() throws ASTNotImplementedException
+    {
+    	throw new ASTNotImplementedException();
     }
 }

@@ -153,6 +153,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     public void addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset, IASTExpression initialValue)
     {
      	IASTEnumerator enumerator = new ASTEnumerator( enumeration, string, startingOffset, endingOffset, initialValue );
+     	((ASTEnumerationSpecifier)enumeration).addEnumerator( enumerator );
     }
 
 	/* (non-Javadoc)

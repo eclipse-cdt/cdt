@@ -18,5 +18,6 @@ public interface IASTUsingDeclaration extends IASTDeclaration, IASTOffsetableEle
 
 	public boolean isTypename(); 
 	public String  usingTypeName(); 
+	public IASTDeclaration getUsingType() throws ASTNotImplementedException; 
 			 
 }

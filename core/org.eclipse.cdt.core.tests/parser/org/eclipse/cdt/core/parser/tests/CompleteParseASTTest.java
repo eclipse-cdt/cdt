@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -661,4 +662,57 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( f.getName(), "x" );
 		assertEquals( ((IASTSimpleTypeSpecifier)f.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.DOUBLE ); 
 	}
+	
+	public void testUsingClauses() throws Exception
+	{
+		Iterator declarations = parse( "namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n using namespace A::B;\n using A::B::x;using A::B::C;using A::B::C::y;").getDeclarations();
+		IASTNamespaceDefinition namespaceA = (IASTNamespaceDefinition)declarations.next();
+		IASTNamespaceDefinition  namespaceB = (IASTNamespaceDefinition)getDeclarations( namespaceA ).next();
+		Iterator i = getDeclarations( namespaceB );
+		IASTVariable variableX = (IASTVariable)i.next();
+		IASTClassSpecifier classC = ((IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier());
+		IASTField fieldY = (IASTField)getDeclarations( classC ).next(); 
+		assertQualifiedName( fieldY.getFullyQualifiedName(), new String [] { "A", "B", "C", "y" } );		
+		IASTUsingDirective directive = (IASTUsingDirective)declarations.next();
+		assertEquals( directive.getNamespaceDefinition(), namespaceB );
+		IASTUsingDeclaration declaration = (IASTUsingDeclaration)declarations.next();
+		assertEquals( declaration.getUsingType(), variableX );
+		declaration = (IASTUsingDeclaration)declarations.next();
+		assertEquals( declaration.getUsingType(), classC );
+		declaration = (IASTUsingDeclaration)declarations.next();
+		assertEquals( declaration.getUsingType(), fieldY );
+		assertEquals( callback.getReferences().size(), 12 );
+		
+	}
+	
+	public void testEnumerations() throws Exception
+	{
+		Iterator declarations = parse( "namespace A { enum E { e1, e2, e3 }; E varE;}").getDeclarations();
+		IASTNamespaceDefinition namespaceA = (IASTNamespaceDefinition)declarations.next(); 
+		Iterator namespaceMembers = getDeclarations( namespaceA ); 
+		IASTEnumerationSpecifier enumE = (IASTEnumerationSpecifier)((IASTAbstractTypeSpecifierDeclaration)namespaceMembers.next()).getTypeSpecifier();
+		assertEquals( enumE.getName(), "E");
+		assertQualifiedName( enumE.getFullyQualifiedName(), new String [] { "A", "E" } );		
+		Iterator enumerators = enumE.getEnumerators();
+		IASTEnumerator enumerator_e1 = (IASTEnumerator)enumerators.next();
+		IASTEnumerator enumerator_e2 = (IASTEnumerator)enumerators.next();
+		IASTEnumerator enumerator_e3 = (IASTEnumerator)enumerators.next();
+		assertFalse( enumerators.hasNext() );
+		assertEquals( enumerator_e1.getName(), "e1");
+		assertEquals( enumerator_e2.getName(), "e2");
+		assertEquals( enumerator_e3.getName(), "e3");
+		IASTVariable varE = (IASTVariable)namespaceMembers.next();
+		assertEquals( ((IASTSimpleTypeSpecifier)varE.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), enumE );
+	}
+	
+	protected void assertQualifiedName(String [] fromAST, String [] theTruth)
+	 {
+		 assertNotNull( fromAST );
+		 assertNotNull( theTruth );
+		 assertEquals( fromAST.length, theTruth.length );
+		 for( int i = 0; i < fromAST.length; ++i )
+		 {
+			 assertEquals( fromAST[i], theTruth[i]);
+		 }
+	 }
 }

@@ -40,7 +40,7 @@ public interface IASTFactory
     public IASTUsingDeclaration createUsingDeclaration(
         IASTScope scope,
         boolean isTypeName,
-        ITokenDuple name, int startingOffset, int endingOffset);
+        ITokenDuple name, int startingOffset, int endingOffset) throws ASTSemanticException;
     public IASTASMDefinition createASMDefinition(
         IASTScope scope,
         String assembly,
@@ -82,12 +82,12 @@ public interface IASTFactory
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,
         String name,
-        int startingOffset, int nameOffset);
+        int startingOffset, int nameOffset) throws ASTSemanticException;
     public void addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String string,
         int startingOffset,
-        int endingOffset, IASTExpression initialValue);
+        int endingOffset, IASTExpression initialValue)throws ASTSemanticException;
     public IASTExpression createExpression(
         IASTExpression.Kind kind,
         IASTExpression lhs,
@@ -162,9 +162,9 @@ public interface IASTFactory
         ASTAccessVisibility visibility);
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset );
+		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset ) throws ASTSemanticException;
 		   
-	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility);
+	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility) throws ASTSemanticException;
 	
 	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, String parameterName, IASTInitializerClause initializerClause );
 	

@@ -8,62 +8,55 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.quick;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
+
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTEnumerator
-    implements IASTEnumerator, IASTOffsetableNamedElement
+public class ASTUsingDeclaration implements IASTUsingDeclaration
 {
-	private final IASTExpression initialValue;
-    private final String name; 
-	private final IASTEnumerationSpecifier enumeration;
-	private final NamedOffsets offsets = new NamedOffsets();
+	private final IASTScope ownerScope;
+    private final boolean isTypeName;
+	private final IASTDeclaration declaration; 
+	private Offsets offsets = new Offsets();
+	private final ASTReferenceStore delegate; 
 	
     /**
-     * @param enumeration
-     * @param string
-     * @param startingOffset
-     * @param endingOffset
+     * 
      */
-    public ASTEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset, IASTExpression initialValue)
+    public ASTUsingDeclaration( IASTScope ownerScope, IASTDeclaration declaration, boolean isTypeName, int startingOffset, int endingOffset, List references )
     {
-    	this.enumeration = enumeration; 
-        name = string;
-        offsets.setStartingOffset( startingOffset );
-		offsets.setNameOffset( startingOffset );
-		offsets.setEndingOffset( endingOffset );
-		this.initialValue = initialValue;
+    	this.ownerScope = ownerScope;
+    	this.isTypeName = isTypeName;
+    	this.declaration = declaration;
+    	setStartingOffset(startingOffset);
+    	setEndingOffset(endingOffset);
+    	delegate = new ASTReferenceStore( references );
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
+     * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#isTypename()
      */
-    public String getName()
+    public boolean isTypename()
     {
-        return name;
+        return isTypeName;
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
+     * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#usingTypeName()
      */
-    public int getNameOffset()
+    public String usingTypeName()
     {
-        return offsets.getNameOffset();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
-     */
-    public void setNameOffset(int o)
-    {
-        offsets.setNameOffset(o);
+        return ((IASTOffsetableNamedElement)declaration).getName();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
@@ -80,38 +73,33 @@ public class ASTEnumerator
         offsets.setEndingOffset(o);
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
     public int getStartingOffset()
     {
         return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
     {
         return offsets.getEndingOffset();
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getOwnerEnumerationSpecifier()
+     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
      */
-    public IASTEnumerationSpecifier getOwnerEnumerationSpecifier()
+    public IASTScope getOwnerScope()
     {
-        return enumeration;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getInitialValue()
-     */
-    public IASTExpression getInitialValue()
-    {
-        return initialValue;
+        return ownerScope;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
+        requestor.acceptUsingDeclaration( this );
+        delegate.processReferences(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -124,5 +112,12 @@ public class ASTEnumerator
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#getUsingType()
+     */
+    public IASTDeclaration getUsingType() throws ASTNotImplementedException
+    {
+        return declaration;
     }
 }

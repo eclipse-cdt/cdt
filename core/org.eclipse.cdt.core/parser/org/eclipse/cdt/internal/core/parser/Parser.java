@@ -294,8 +294,21 @@ public class Parser implements IParser
             if (LT(1) == IToken.tSEMI)
             {
                 IToken last = consume(IToken.tSEMI);
-                IASTUsingDeclaration declaration =
-                    astFactory.createUsingDeclaration(scope, typeName, name, firstToken.getOffset(), last.getEndOffset());
+                IASTUsingDeclaration declaration = null;
+                try
+                {
+                    declaration =
+                        astFactory.createUsingDeclaration(
+                            scope,
+                            typeName,
+                            name,
+                            firstToken.getOffset(),
+                            last.getEndOffset());
+                }
+                catch (ASTSemanticException e)
+                {
+                 
+                }
                 declaration.acceptElement( requestor );
             }
             else
@@ -768,7 +781,7 @@ public class Parser implements IParser
         declSpecifierSeq(false, tryConstructor, sdw);
         try
         {       
-	        if (sdw.getTypeSpecifier() == null )
+	        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
 	            sdw.setTypeSpecifier(
 	                astFactory.createSimpleTypeSpecifier(
 	                    scope,
@@ -830,7 +843,15 @@ public class Parser implements IParser
         
         if( forKR ) return;
         
-        List l = sdw.createASTNodes(astFactory);
+        List l = null; 
+        try
+        {
+            l = sdw.createASTNodes(astFactory);
+        }
+        catch (ASTSemanticException e)
+        {
+        	throw backtrack;
+        }
         Iterator i = l.iterator();
         if (hasFunctionBody && l.size() != 1)
         {
@@ -2128,14 +2149,21 @@ public class Parser implements IParser
         }
         if (LT(1) == IToken.tLBRACE)
         {
-            IASTEnumerationSpecifier enumeration =
-                astFactory.createEnumerationSpecifier(
-                    sdw.getScope(),
-                    ((identifier == null) ? "" : identifier.getImage()),
-                    mark.getOffset(), 
-                    ((identifier == null)
-                        ? mark.getOffset()
-                        : identifier.getOffset()));
+            IASTEnumerationSpecifier enumeration = null;
+            try
+            {
+                enumeration = astFactory.createEnumerationSpecifier(
+                        sdw.getScope(),
+                        ((identifier == null) ? "" : identifier.getImage()),
+                        mark.getOffset(), 
+                        ((identifier == null)
+                            ? mark.getOffset()
+                            : identifier.getOffset()));
+            }
+            catch (ASTSemanticException e)
+            {
+                
+            }
             consume(IToken.tLBRACE);
             while (LT(1) != IToken.tRBRACE)
             {
@@ -2157,24 +2185,38 @@ public class Parser implements IParser
   
                 if (LT(1) == IToken.tRBRACE)
                 {
-                    astFactory.addEnumerator(
-                        enumeration,
-                        enumeratorIdentifier.getImage(),
-                        enumeratorIdentifier.getOffset(),
-                        enumeratorIdentifier.getEndOffset(),
-                        initialValue);
+                    try
+                    {
+                        astFactory.addEnumerator(
+                            enumeration,
+                            enumeratorIdentifier.getImage(),
+                            enumeratorIdentifier.getOffset(),
+                            enumeratorIdentifier.getEndOffset(),
+                            initialValue);
+                    }
+                    catch (ASTSemanticException e1)
+                    {
+                    
+                    }
                     break;
                 }
                 if (LT(1) != IToken.tCOMMA)
                 {
                     throw backtrack;
                 }
-                astFactory.addEnumerator(
-                    enumeration,
-                    enumeratorIdentifier.getImage(),
-                    enumeratorIdentifier.getOffset(),
-                    enumeratorIdentifier.getEndOffset(),
-                    initialValue);
+                try
+                {
+                    astFactory.addEnumerator(
+                        enumeration,
+                        enumeratorIdentifier.getImage(),
+                        enumeratorIdentifier.getOffset(),
+                        enumeratorIdentifier.getEndOffset(),
+                        initialValue);
+                }
+                catch (ASTSemanticException e1)
+                {
+                
+                }
                 consume(IToken.tCOMMA);
             }
             IToken t = consume(IToken.tRBRACE);

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
@@ -298,7 +299,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @param requestor
      */
-    public List createASTNodes(IASTFactory astFactory)
+    public List createASTNodes(IASTFactory astFactory) throws ASTSemanticException
     {
         this.astFactory = astFactory;
         Iterator i = declarators.iterator();
@@ -310,7 +311,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @param declarator
      */
-    private IASTDeclaration createASTNode(Declarator declarator)
+    private IASTDeclaration createASTNode(Declarator declarator) throws ASTSemanticException
     {
         boolean isWithinClass = (getScope() instanceof IASTClassSpecifier); //TODO fix this for COMPLETE_PARSE
         boolean isFunction = declarator.isFunction();
@@ -418,7 +419,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      * @param declarator
      * @return
      */
-    private IASTField createFieldASTNode(Declarator declarator)
+    private IASTField createFieldASTNode(Declarator declarator) throws ASTSemanticException
     {
         return astFactory.createField(
             scope,
@@ -468,7 +469,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      * @param declarator
      * @return
      */
-    private IASTVariable createVariableASTNode(Declarator declarator)
+    private IASTVariable createVariableASTNode(Declarator declarator) throws ASTSemanticException
     {
         return astFactory.createVariable(
             scope,

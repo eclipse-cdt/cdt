@@ -101,9 +101,7 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     {
         return Collections.unmodifiableList( enumerators ).iterator();
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier#addEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerator)
-     */
+
     public void addEnumerator(IASTEnumerator enumerator)
     {
 		enumerators.add(enumerator);        

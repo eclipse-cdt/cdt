@@ -397,4 +397,17 @@ public class CCorePlugin extends Plugin {
 		}
 		return null;
 	}
+	
+	// Preference to turn on/off the new parser
+	
+	private boolean useNewParser = false;
+	
+	public void setUseNewParser(boolean useNewParser) {
+		this.useNewParser = useNewParser;
+	}
+	
+	public boolean useNewParser() {
+		return useNewParser;
+	}
+	
 }

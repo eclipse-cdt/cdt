@@ -34,10 +34,6 @@ public class CFunction implements IFunction {
 		this.declarator = declarator;
 		this.functionScope = new CFunctionScope( this );
 	}
-//	public CStructure( IASTDeclSpecifier declSpec ){
-//		declSpec = checkForDefinition( declSpec );
-//		this.declSpec = declSpec;
-//	}
 	
 	private IASTFunctionDeclarator checkForDefinition( IASTFunctionDeclarator declarator ){
 		if( declarator.getParent() instanceof IASTFunctionDefinition )

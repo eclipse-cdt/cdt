@@ -13,23 +13,41 @@ package org.eclipse.cdt.internal.core.parser2.c;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -38,7 +56,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
@@ -151,8 +171,10 @@ public class CVisitor {
 	}
 
 	private static IBinding createBinding( IASTParameterDeclaration parameterDeclaration ){
-		CParameter parameter = new CParameter( parameterDeclaration );
-		return parameter;
+		IBinding binding = resolveBinding( parameterDeclaration, CURRENT_SCOPE );
+		if( binding == null )
+			binding = new CParameter( parameterDeclaration );
+		return binding;
 	}
 	
 	protected static IBinding resolveBinding( IASTNode node ){
@@ -164,7 +186,6 @@ public class CVisitor {
 			IASTFunctionDeclarator functionDeclartor = functionDef.getDeclarator();
 			IASTName name = functionDeclartor.getName();
 			IASTNode blockItem = getContainingBlockItem( node );
-			//return name.resolveBinding();
 			return findBinding( blockItem, (CASTName) name, scopeDepth );
 		} else if( node instanceof IASTIdExpression ){
 			IASTNode blockItem = getContainingBlockItem( node );
@@ -178,10 +199,24 @@ public class CVisitor {
 		} else if( node instanceof ICASTCompositeTypeSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			return findBinding( blockItem, (CASTName) ((ICASTCompositeTypeSpecifier)node).getName(), scopeDepth );
+		} else if( node instanceof IASTParameterDeclaration ){
+			IASTParameterDeclaration param = (IASTParameterDeclaration) node;
+			IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
+			if( fDtor.getParent() instanceof IASTFunctionDefinition ){
+				return null;
+			}
+			IASTFunctionDeclarator fdef = findDefinition( fDtor );
+			if( fdef != null ){
+				int index = fDtor.getParameters().indexOf( param );
+				if( index >= 0 && index < fdef.getParameters().size() ){
+					IASTParameterDeclaration pdef = (IASTParameterDeclaration) fdef.getParameters().get( index );
+					return pdef.getDeclarator().getName().resolveBinding();
+				}
+			}
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @param declaration
 	 * @return
@@ -402,4 +437,128 @@ public class CVisitor {
 		}
 		return null;
 	}
+	
+	public static void clearBindings( IASTTranslationUnit tu ){
+		List decls = tu.getDeclarations();
+		for( int i = 0; i < decls.size(); i++ ){
+			clearBindings( (IASTDeclaration) decls.get(i) );
+		}
+	}
+	private static void clearBindings( IASTDeclaration declaration ){
+		if( declaration instanceof IASTSimpleDeclaration ){
+			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declaration;
+			clearBindings( simpleDecl.getDeclSpecifier() );
+			List list = simpleDecl.getDeclarators();
+			for( int i = 0; i < list.size(); i++ ){
+				clearBindings( (IASTDeclarator) list.get(i) );
+			}
+		} else if( declaration instanceof IASTFunctionDefinition ){
+			IASTFunctionDefinition fnDef = (IASTFunctionDefinition) declaration;
+			clearBindings( fnDef.getDeclSpecifier() );
+			clearBindings( fnDef.getDeclarator() );
+			clearBindings( fnDef.getBody() );
+		}
+	}
+	private static void clearBindings( IASTDeclarator declarator ){
+		((CASTName)declarator.getName()).setBinding( null );
+		
+		if( declarator.getNestedDeclarator() != null )
+			clearBindings( declarator.getNestedDeclarator() );
+		
+		//TODO: if( declarator.getInitializer() != null )
+		
+		if( declarator instanceof IASTFunctionDeclarator ){
+			List list = ((IASTFunctionDeclarator)declarator).getParameters();
+			for( int i = 0; i < list.size(); i++ ){
+				IASTParameterDeclaration param = (IASTParameterDeclaration) list.get(i);
+				clearBindings( param.getDeclarator() );
+			}
+		}
+	}
+	private static void clearBindings( IASTDeclSpecifier declSpec ){
+		if( declSpec instanceof ICASTCompositeTypeSpecifier ){
+			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
+			((CASTName) compTypeSpec.getName()).setBinding( null );
+			
+			List list = compTypeSpec.getMembers();
+			for( int i = 0; i < list.size(); i++ ){
+				clearBindings( (IASTDeclaration) list.get(i) );
+			}
+		}
+	}
+	private static void clearBindings( IASTStatement statement ){
+		if( statement instanceof IASTCompoundStatement ){
+			List list = ((IASTCompoundStatement) statement).getStatements();
+			for( int i = 0; i < list.size(); i++ ){
+				clearBindings( (IASTStatement) list.get(i) );
+			}
+		} else if( statement instanceof IASTDeclarationStatement ){
+			clearBindings( ((IASTDeclarationStatement)statement).getDeclaration() );
+		} else if( statement instanceof IASTExpressionStatement ){
+			clearBindings( ((IASTExpressionStatement)statement).getExpression() );
+		} else if( statement instanceof IASTCaseStatement ){
+			clearBindings( ((IASTCaseStatement)statement).getExpression() );
+		} else if( statement instanceof IASTDoStatement ){
+			clearBindings( ((IASTDoStatement)statement).getBody() );
+		} else if( statement instanceof IASTGotoStatement ){
+			((CASTName) ((IASTGotoStatement)statement).getName()).setBinding( null );
+		} else if( statement instanceof IASTIfStatement ){
+			clearBindings( ((IASTIfStatement) statement ).getCondition() );
+			clearBindings( ((IASTIfStatement) statement ).getThenClause() );
+			clearBindings( ((IASTIfStatement) statement ).getElseClause() );
+		} else if( statement instanceof IASTLabelStatement ){
+			((CASTName) ((IASTLabelStatement)statement).getName()).setBinding( null );
+		} else if( statement instanceof IASTReturnStatement ){
+			clearBindings( ((IASTReturnStatement) statement ).getReturnValue() );
+		} else if( statement instanceof IASTSwitchStatement ){
+			clearBindings( ((IASTSwitchStatement) statement ).getController() );
+			clearBindings( ((IASTSwitchStatement) statement ).getBody() );
+		} else if( statement instanceof IASTWhileStatement ){
+			clearBindings( ((IASTWhileStatement) statement ).getCondition() );
+			clearBindings( ((IASTWhileStatement) statement ).getBody() );
+		}
+	}
+	private static void clearBindings( IASTTypeId typeId ){
+		clearBindings( typeId.getAbstractDeclarator() );
+		clearBindings( typeId.getDeclSpecifier() );		
+	}
+	private static void clearBindings( IASTExpression expression ){
+		if( expression instanceof IASTArraySubscriptExpression ){
+			clearBindings( ((IASTArraySubscriptExpression)expression).getArrayExpression() );
+			clearBindings( ((IASTArraySubscriptExpression)expression).getSubscriptExpression() );
+		} else if( expression instanceof IASTBinaryExpression ){
+			clearBindings( ((IASTBinaryExpression)expression).getOperand1() );
+			clearBindings( ((IASTBinaryExpression)expression).getOperand2() );
+		} else if( expression instanceof IASTConditionalExpression){
+			clearBindings( ((IASTConditionalExpression)expression).getLogicalConditionExpression() );
+			clearBindings( ((IASTConditionalExpression)expression).getNegativeResultExpression() );
+			clearBindings( ((IASTConditionalExpression)expression).getPositiveResultExpression() );
+		} else if( expression instanceof IASTExpressionList ){
+			List list = ((IASTExpressionList)expression).getExpressions();
+			for( int i = 0; i < list.size(); i++){
+				clearBindings( (IASTExpression) list.get(i) );
+			}
+		} else if( expression instanceof IASTFieldReference ){
+			clearBindings( ((IASTFieldReference)expression).getFieldOwner() );
+			((CASTName) ((IASTFieldReference)expression).getFieldName()).setBinding( null );
+		} else if( expression instanceof IASTFunctionCallExpression ){
+			clearBindings( ((IASTFunctionCallExpression)expression).getFunctionNameExpression() );
+			clearBindings( ((IASTFunctionCallExpression)expression).getParameterExpression() );
+		} else if( expression instanceof IASTIdExpression ){
+			((CASTName) ((IASTIdExpression)expression).getName()).setBinding( null );
+		} else if( expression instanceof IASTTypeIdExpression ){
+			clearBindings( ((IASTTypeIdExpression)expression).getTypeId() );
+		} else if( expression instanceof IASTUnaryExpression ){
+			clearBindings( ((IASTUnaryExpression)expression).getOperand() );
+		} else if( expression instanceof IASTUnaryTypeIdExpression ){
+			clearBindings( ((IASTUnaryTypeIdExpression)expression).getOperand() );
+			clearBindings( ((IASTUnaryTypeIdExpression)expression).getTypeId() );
+		} else if( expression instanceof ICASTTypeIdInitializerExpression ){
+			clearBindings( ((ICASTTypeIdInitializerExpression)expression).getTypeId() );
+			//TODO: ((ICASTTypeIdInitializerExpression)expression).getInitializer();
+		} else if( expression instanceof IGNUASTCompoundStatementExpression ){
+			clearBindings( ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement() );
+		}
+	}
+	
 }

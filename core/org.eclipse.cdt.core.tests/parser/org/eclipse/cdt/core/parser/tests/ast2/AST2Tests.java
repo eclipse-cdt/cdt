@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.parser.tests.parser2.QuickParser2Tests.ProblemCollec
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
@@ -609,6 +610,65 @@ public class AST2Tests extends TestCase {
 		assertSame( structA_1, structA_2 );
 		assertSame( structA_2, structA_3 );
 		assertSame( structA_3, structA_4 );
+    }
+    
+    public void testFunctionParameters() throws Exception {
+    	StringBuffer buffer  = new StringBuffer();
+    	buffer.append( "void f( int a );        \n"); //$NON-NLS-1$
+    	buffer.append( "void f( int b ){        \n"); //$NON-NLS-1$
+    	buffer.append( "   b;                   \n"); //$NON-NLS-1$
+    	buffer.append( "}                       \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	//void f(
+    	IASTSimpleDeclaration f_decl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) f_decl.getDeclarators().get(0);
+    	IASTName f_name1 = dtor.getName();
+    	//        int a );
+    	IASTParameterDeclaration param = (IASTParameterDeclaration) dtor.getParameters().get(0);
+    	IASTDeclarator paramDtor = param.getDeclarator();
+    	IASTName name_param1 = paramDtor.getName();
+    	
+    	//void f( 
+    	IASTFunctionDefinition f_defn = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	dtor = f_defn.getDeclarator();
+    	IASTName f_name2 = dtor.getName();
+    	//        int b );
+    	param = (IASTParameterDeclaration) dtor.getParameters().get(0);
+    	paramDtor = param.getDeclarator();
+    	IASTName name_param2 = paramDtor.getName();
+    	
+    	//   b;
+    	IASTCompoundStatement compound = (IASTCompoundStatement) f_defn.getBody();
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements().get(0);
+    	IASTIdExpression idexp = (IASTIdExpression) expStatement.getExpression();
+    	IASTName name_param3 = idexp.getName();
+    	
+    	//bindings
+    	IParameter param_1 = (IParameter) name_param3.resolveBinding();
+    	IParameter param_2 = (IParameter) name_param2.resolveBinding();
+    	IParameter param_3 = (IParameter) name_param1.resolveBinding();
+    	IFunction  f_1 = (IFunction) f_name1.resolveBinding();
+    	IFunction  f_2 = (IFunction) f_name2.resolveBinding();
+    	
+    	assertNotNull( param_1 );
+    	assertNotNull( f_1 );
+    	assertSame( param_1, param_2 );
+    	assertSame( param_2, param_3 );
+    	assertSame( f_1, f_2 );
+    	
+    	CVisitor.clearBindings( tu );
+    	param_1 = (IParameter) name_param1.resolveBinding();
+    	param_2 = (IParameter) name_param3.resolveBinding();
+    	param_3 = (IParameter) name_param2.resolveBinding();
+    	f_1 = (IFunction) f_name2.resolveBinding();
+    	f_2 = (IFunction) f_name1.resolveBinding();
+    	assertNotNull( param_1 );
+    	assertNotNull( f_1 );
+    	assertSame( param_1, param_2 );
+    	assertSame( param_2, param_3 );
+    	assertSame( f_1, f_2 );
     }
     
     public void testSimpleFunction() throws Exception {

@@ -11,6 +11,8 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -24,8 +26,27 @@ public class CParameter implements IParameter {
 	final private IASTParameterDeclaration parameterDeclaration;
 	
 	public CParameter( IASTParameterDeclaration parameterDeclaration ){
+		parameterDeclaration = checkForDefinition( parameterDeclaration );
 		this.parameterDeclaration = parameterDeclaration;
 	}
+
+	private IASTParameterDeclaration checkForDefinition( IASTParameterDeclaration paramDecl ){
+		IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) paramDecl.getParent();
+		if( fnDtor.getParent() instanceof IASTFunctionDefinition  )
+			return paramDecl;
+		
+		IASTFunctionDeclarator fDef = CVisitor.findDefinition( fnDtor );
+		if( fDef != null && fDef instanceof IASTFunctionDefinition ){
+			int index = fnDtor.getParameters().indexOf( paramDecl );
+			if( index >= 0 && index < fDef.getParameters().size() ) {
+				IASTParameterDeclaration pDef = (IASTParameterDeclaration) fDef.getParameters().get( index );
+				((CASTName)pDef.getDeclarator().getName()).setBinding( this );
+				paramDecl = pDef;
+			}
+		}
+		return paramDecl;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()

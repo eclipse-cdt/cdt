@@ -245,7 +245,9 @@ public class Session implements ICDISession, ICDISessionObject {
 		ProcessManager pMgr = getProcessManager();
 		Target[] targets = pMgr.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
-			targets[i].terminate();
+			if (!targets[i].isTerminated()) {
+				targets[i].terminate();
+			}
 		}
 		//TODO: the ExitEvent is sent by MISession.terminate()
 		// We nee move it here.

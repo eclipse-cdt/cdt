@@ -103,6 +103,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private String initialBuilderParserId = null;
 	private Map providerParsers = new HashMap();
 	private String initialProviderParserId = null;
+	private boolean fCreatePathContainer = false;
 
 	public DiscoveryOptionsBlock() {
 		super(MakeUIPlugin.getResourceString(DIALOG_TITLE));
@@ -129,6 +130,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 			}
 		} else {
+			fCreatePathContainer = true;
 			fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
 		}
 		retrieveSIConsoleParsers();
@@ -159,13 +161,11 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 						needsSCNature = false;
 					}
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
-					if (isScannerConfigDiscoveryEnabled()) {
+					if (fCreatePathContainer) {
 						createDiscoveredPathContainer(project, monitor);
-					} else {
-						removeDiscoveredPathContainer(project, monitor);
+						// create a new discovered scanner config store
+						MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
 					}
-					// create a new discovered scanner config store
-					MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
 				} else {
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
 				}
@@ -206,19 +206,6 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			List newEntries = new ArrayList(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
-				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
-			}
-		}
-	}
-
-	private void removeDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {
-		IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
-		ICProject cProject = CoreModel.getDefault().create(project);
-		if (cProject != null) {
-			IPathEntry[] entries = cProject.getRawPathEntries();
-			List newEntries = new ArrayList(Arrays.asList(entries));
-			if (newEntries.contains(container)) {
-				newEntries.remove(container);
 				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
 			}
 		}

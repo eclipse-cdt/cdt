@@ -92,15 +92,17 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 		boolean removed = (delta.getKind() == ICElementDelta.REMOVED);
 		boolean contentChanged = ((delta.getFlags() & ICElementDelta.F_CONTENT) != 0);
 		boolean pathEntryChanged = ((delta.getFlags() & PATH_ENTRY_FLAGS) != 0);
+		boolean openedOrClosed = (((delta.getFlags() & ICElementDelta.F_CLOSED) != 0) || ((delta.getFlags() & ICElementDelta.F_OPENED) != 0));
 		boolean hasChildren = ((delta.getFlags() & ICElementDelta.F_CHILDREN) != 0);
 		int deltaCount = 0;
+		
 
 		switch (elem.getElementType()) {
 			case ICElement.C_PROJECT:
 			case ICElement.C_CCONTAINER: {
 				ICProject cProject = elem.getCProject();
 				IProject project = cProject.getProject();
-				if (added || removed || pathEntryChanged) {
+				if (added || removed || pathEntryChanged || openedOrClosed) {
 					addCacheDelta(project, delta);
 					++deltaCount;
 				}

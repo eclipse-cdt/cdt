@@ -264,7 +264,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 **/
 
 	protected ICProject[] getCProjects() {
-		ICProject cproject[] = CoreModel.getDefault().getCRoot().getCProjects();
+		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
 		boolean isNative = filterPlatform.equals(BootLoader.getOS());
 
@@ -293,7 +293,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (projectName.length() < 1) {
 			return null;
 		}
-		return CoreModel.getDefault().getCRoot().getCProject(projectName);
+		return CoreModel.getDefault().getCModel().getCProject(projectName);
 	}
 
 	/**

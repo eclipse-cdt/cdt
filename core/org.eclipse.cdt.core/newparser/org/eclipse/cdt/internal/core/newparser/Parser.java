@@ -17,7 +17,7 @@ public class Parser {
 	private boolean parsePassed = true;
 	private DeclarativeRegion currRegion = new DeclarativeRegion();
 	
-	public Parser(Scanner s, IParserCallback c, boolean quick) throws Exception {
+	public Parser(IScanner s, IParserCallback c, boolean quick) throws Exception {
 		callback = c;
 		scanner = s;
 		quickParse = quick;
@@ -26,24 +26,27 @@ public class Parser {
 		//fetchToken();
 	}
 
-	public Parser(Scanner s, IParserCallback c) throws Exception {
+	public Parser(IScanner s, IParserCallback c) throws Exception {
 		this(s, c, false);
 	}
 	
-	public Parser(Scanner s) throws Exception {
+	public Parser( IScanner s) throws Exception {
 		this(s, new NullParserCallback(), false);
 	}
 	
 	public Parser(String code) throws Exception {
-		this(new Scanner(new StringReader(code)));
+		this(new Scanner().initializeScanner( new StringReader( code ), null 
+));
 	}
 
 	public Parser(String code, IParserCallback c) throws Exception {
-		this(new Scanner(new StringReader(code)), c, false);
+		this(new Scanner().initializeScanner( new StringReader( code ), null 
+), c, false);
 	}
 
 	public Parser(InputStream stream, IParserCallback c, boolean quick) throws Exception {
-		this(new Scanner(new InputStreamReader(stream)), c, quick);
+		this(new Scanner().initializeScanner( new InputStreamReader(stream), 
+null ), c, quick);
 	}
 	
 	private static int parseCount = 0;
@@ -1237,7 +1240,7 @@ public class Parser {
 	private static Backtrack backtrack = new Backtrack();
 	
 	// Token management
-	private Scanner scanner;
+	private IScanner scanner;
 	private Token currToken;
 	
 	private Token fetchToken() {

@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.newparser;
 
 public class Token {
 
-	public Token(int t, String i, ScannerContext context ) {
+	public Token(int t, String i, IScannerContext context ) {
 		type = t;
 		image = i;
 		filename = context.getFilename();

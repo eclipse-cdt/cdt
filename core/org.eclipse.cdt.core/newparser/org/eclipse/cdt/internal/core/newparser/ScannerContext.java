@@ -13,19 +13,21 @@ package org.eclipse.cdt.internal.core.newparser;
 import java.io.IOException;
 import java.io.Reader;
 
-public class ScannerContext
+public class ScannerContext implements IScannerContext
 {
 	private Reader reader;
 	private String filename;
 	private int offset;
 	private int undo; 
 		
-	public ScannerContext(Reader r, String f, int u ) 
+	public ScannerContext(){}
+	public IScannerContext initialize(Reader r, String f, int u )
 	{
 		reader = r;
 		filename = f;
 		offset = 0;
 		undo = u;
+		return this;
 	}
 		
 	public int read() throws IOException {

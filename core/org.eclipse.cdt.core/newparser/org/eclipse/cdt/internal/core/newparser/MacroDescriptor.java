@@ -13,14 +13,27 @@ package org.eclipse.cdt.internal.core.newparser;
 import java.util.Iterator;
 import java.util.List;
 
-public class MacroDescriptor {
+public class MacroDescriptor implements IMacroDescriptor {
 
-	public MacroDescriptor( String n, List i, List t, String s )
+	public MacroDescriptor()
 	{
-		name = n; 
-		identifierParameters = i; 
-		tokenizedExpansion = t;
-		signature = s; 
+	}
+	
+	/**
+	 * Method initialize.
+	 * @param name 		The name or label that the Macro can be identified by.
+	 * @param identifiers	An ordered list of parameters in the macro
+	 * definition.
+	 * @param tokens		An ordered list of tokens that describe the
+	 * RHS expansion in the macro definition.
+	 * @param sig			The complete signature of the macro, as a string.  
+	 */
+	public void initialize( String name, List identifiers, List tokens, String sig )
+	{
+		this.name = name; 
+		identifierParameters = identifiers; 
+		tokenizedExpansion = tokens;
+		signature = sig;
 	}
 
 	private String name; 
@@ -52,6 +65,9 @@ public class MacroDescriptor {
 		return name;
 	}
 	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString()
 	{
 		StringBuffer buffer = new StringBuffer( 128 ); 

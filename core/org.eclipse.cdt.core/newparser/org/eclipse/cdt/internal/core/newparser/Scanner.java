@@ -33,34 +33,45 @@ import java.util.Vector;
  * Window>Preferences>Java>Code Generation.
  */
 
-public class Scanner {
+public class Scanner implements IScanner {
 	
-	public Scanner( Reader reader, String filename )
+	public IScanner initializeScanner( Reader reader, String filename )
 	{
+		Scanner scn = new Scanner(); 
+		scn.initialize( reader, filename );
+		return scn;
+	}
+	
+	protected void initialize( Reader reader, String filename )
+	{ 	
 		// this is a hack to get around a sudden EOF experience
 		contextStack.push(
-			new ScannerContext(new StringReader("\n"), START, NOCHAR));
-		currentContext= new ScannerContext(reader, filename, NOCHAR);
+			new ScannerContext().initialize( new StringReader("\n"), START, NOCHAR));
+		if( filename == null )
+			currentContext = new ScannerContext().initialize( reader, TEXT, NOCHAR );
+		else
+			currentContext= new ScannerContext().initialize( reader, filename, 
+NOCHAR);
 	}
-
-	public Scanner(Reader reader)
+	
+	public Scanner()
 	{
-		this(reader, TEXT);
 	}
-
-	public Scanner(Reader reader, String filename, Hashtable defns)
+	
+	protected Scanner(Reader reader, String filename, Hashtable defns)
 	{
-		this(reader, filename);
+		initializeScanner(reader, filename);
 		definitions= defns;
 	}
 
 	protected void updateContext(Reader reader, String filename)
 	{
 		if (callback != null)
-			callback.inclusionBegin(filename);
+			callback.inclusionBegin(filename);		// not quite right ... fix me!!!
 			
 		contextStack.push(currentContext);
-		currentContext= new ScannerContext(reader, filename, NOCHAR);
+		currentContext= new ScannerContext().initialize( reader, filename, 
+NOCHAR);
 	}
 
 	protected boolean rollbackContext()
@@ -92,7 +103,7 @@ public class Scanner {
 		includePaths.add(includePath);
 	}
 
-	public void addDefinition(String key, MacroDescriptor macro)
+	public void addDefinition(String key, IMacroDescriptor macro)
 	{
 		definitions.put(key, macro);
 	}
@@ -205,7 +216,7 @@ public class Scanner {
 		currentToken = t;
 	}
 
-	protected Token newToken(int t, String i, ScannerContext c) {
+	protected Token newToken(int t, String i, IScannerContext c) {
 		setCurrentToken(new Token(t, i, c));
 		return currentToken;
 	}
@@ -266,7 +277,7 @@ public class Scanner {
 					try
 					{
 						FileReader inclusionReader= new FileReader(includeFile);
-						System.out.println( "Parsing inclusion file " + newPath ); 
+						//System.out.println( "Parsing inclusion file " + newPath );
 						updateContext(inclusionReader, newPath);
 						return;
 					}
@@ -292,8 +303,7 @@ public class Scanner {
 	private static final String DEFINED= "defined";
 	private static final String POUND_DEFINE= "#define ";
 
-
-	private ScannerContext currentContext;
+	private IScannerContext currentContext;
 	private Stack contextStack= new Stack();
 
 	private List includePaths= new ArrayList();
@@ -306,7 +316,8 @@ public class Scanner {
 
 	private int ignore= IGNORE_SENTINEL;
 	private int depth= 0;
-
+	private BranchTracker branches = new BranchTracker();
+	
 	// these are scanner configuration aspects that we perhaps want to tweak
 	// eventually, these should be configurable by the client, but for now
 	// we can just leave it internal
@@ -1340,8 +1351,8 @@ public class Scanner {
 
 			ArrayList macroReplacementTokens= new ArrayList();
 			String replacementString= getRestOfPreprocessorLine();
-			Scanner helperScanner=
-				new Scanner(new StringReader(replacementString));
+			Scanner helperScanner= new Scanner(); 
+			helperScanner.initializeScanner( new StringReader(replacementString), null);
 			Token t= helperScanner.nextToken();
 
 			while (t.type != Token.tEOF)
@@ -1350,12 +1361,8 @@ public class Scanner {
 				t= helperScanner.nextToken();
 			}
 
-			MacroDescriptor descriptor=
-				new MacroDescriptor(
-					key,
-					parameterIdentifiers,
-					macroReplacementTokens,
-					key + "(" + parameters + ")");
+			IMacroDescriptor descriptor=	new MacroDescriptor(); 
+			descriptor.initialize( key,	parameterIdentifiers,macroReplacementTokens, key + "(" + parameters + ")");
 			addDefinition(key, descriptor);
 
 		}
@@ -1419,7 +1426,7 @@ public class Scanner {
 		}
 		else if (expansion.getClass() == MacroDescriptor.class)
 		{
-			MacroDescriptor macro= (MacroDescriptor) expansion;
+			IMacroDescriptor macro= (IMacroDescriptor) expansion;
 			skipOverWhitespace();
 			int c= getChar();
 

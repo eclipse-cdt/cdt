@@ -10,8 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
@@ -30,6 +35,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -152,13 +158,60 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		// TODO Auto-generated method stub
+		if ( selection instanceof IStructuredSelection ) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if ( ss.size() == 1 && ss.getFirstElement() instanceof IFunction ) {
+				IFunction function = (IFunction)ss.getFirstElement();
+				String sourceHandle = getSourceHandle( function );
+				IResource resource = getFunctionResource( function );
+				String functionName = getFunctionName( function );
+				ICFunctionBreakpoint breakpoint = CDIDebugModel.functionBreakpointExists( sourceHandle, resource, functionName );
+				if ( breakpoint != null ) {
+					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+				}
+				else {
+					int lineNumber = -1;
+					int charStart = -1;
+					int charEnd = -1;
+					try {
+						ISourceRange sourceRange = function.getSourceRange();
+						if ( sourceRange != null ) {
+							charStart = sourceRange.getStartPos();
+							charEnd = charStart + sourceRange.getLength();
+							// for now
+							if ( charEnd == 0 )
+								lineNumber = sourceRange.getStartLine();
+						}
+					}
+					catch( CModelException e ) {
+						DebugPlugin.log( e );
+					}
+					CDIDebugModel.createFunctionBreakpoint( sourceHandle, 
+															resource, 
+															functionName,
+															charStart,
+															charEnd,
+															lineNumber,
+															true, 
+															0, 
+															"", //$NON-NLS-1$
+															true );
+				}
+			}
+		}
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) {
+		if ( selection instanceof IStructuredSelection ) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if ( ss.size() == 1 ) {
+				return ( ss.getFirstElement() instanceof IFunction );
+			}
+		}
 		return false;
 	}
 
@@ -254,7 +307,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 
 	private String getSourceHandle( IEditorInput input ) throws CoreException {
 		if ( input instanceof IFileEditorInput ) {
-			return ((IFileEditorInput)input).getFile().getFullPath().toOSString();
+			return ((IFileEditorInput)input).getFile().getLocation().toOSString();
 		}
 		if ( input instanceof IStorageEditorInput ) {
 			return ((IStorageEditorInput)input).getStorage().getName();
@@ -263,5 +316,44 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			return ((DisassemblyEditorInput)input).getModuleFile();
 		}
 		return ""; //$NON-NLS-1$
+	}
+
+	private String getSourceHandle( IFunction function ) {
+		ITranslationUnit tu = function.getTranslationUnit();
+		if ( tu != null ) {
+			IResource resource = tu.getResource();
+			if ( resource != null ) {
+				return resource.getLocation().toOSString();
+			}
+			return tu.getPath().toOSString();
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	private IResource getFunctionResource( IFunction function ) {
+		ITranslationUnit tu = function.getTranslationUnit();
+		return (tu != null) ? tu.getResource() : function.getCProject().getProject();
+	}
+
+	private String getFunctionName( IFunction function ) {
+		String functionName = function.getElementName();
+		StringBuffer name = new StringBuffer( functionName );
+		if ( functionName.indexOf( "::" ) != -1 ) //$NON-NLS-1$
+		{
+			String[] params = function.getParameterTypes();
+			name.append( '(' );
+			if ( params.length == 0 ) {
+				name.append( "void" ); //$NON-NLS-1$
+			}
+			else {
+				for( int i = 0; i < params.length; ++i ) {
+					name.append( params[i] );
+					if ( i != params.length - 1 )
+						name.append( ',' );
+				}
+			}
+			name.append( ')' );
+		}
+		return name.toString();
 	}
 }

@@ -1,143 +1,81 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IFunction;
-import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * Enter type comment.
- * 
- * @since Apr 2, 2003
+ * The delegate of the "Toggle Function Breakpoint" action.
  */
-public class ManageFunctionBreakpointActionDelegate extends ActionDelegate
-													implements IObjectActionDelegate
-{
-//	private IFunction fFunction = null;
-	private ICElement fElement = null;
+public class ManageFunctionBreakpointActionDelegate extends ActionDelegate implements IObjectActionDelegate {
 
-	/**
-	 * 
-	 */
-	public ManageFunctionBreakpointActionDelegate()
-	{
+	private ToggleBreakpointAdapter fBreakpointAdapter;
+
+	private IWorkbenchPart fTargetPart;
+
+	private ISelection fSelection;
+
+	public ManageFunctionBreakpointActionDelegate() {
+		fBreakpointAdapter = new ToggleBreakpointAdapter();
 	}
 
-	/* (non-Javadoc)
+	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void setActivePart( IAction action, IWorkbenchPart targetPart )
-	{
+	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+		fTargetPart = targetPart;
 	}
 
-	/* (non-Javadoc)
+	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void run( IAction action )
-	{
-		if ( getMethod() != null )
-			manageBreakpoint( getMethod() );
-		else if ( getFunction() != null )
-			manageBreakpoint( getFunction() );
+	public void run( IAction action ) {
+		try {
+			getBreakpointAdapter().toggleMethodBreakpoints( getTargetPart(), getSelection() );
+		}
+		catch( CoreException e ) {
+			DebugUIPlugin.errorDialog( getTargetPart().getSite().getShell(), 
+					   				   ActionMessages.getString( "ManageFunctionBreakpointActionDelegate.Error_1" ), //$NON-NLS-1$
+									   ActionMessages.getString( "ManageFunctionBreakpointActionDelegate.Operation_failed_1" ), //$NON-NLS-1$
+									   e.getStatus() );
+		}
 	}
 
-	/* (non-Javadoc)
+	/*(non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		if ( selection instanceof IStructuredSelection )
-		{
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICElement )
-			{
-				boolean enabled = enablesFor( (ICElement)element );
-				action.setEnabled( enabled );
-				if ( enabled )
-				{
-					setElement( (ICElement)element );
-					return;
-				}
-			}
-		}
-		action.setEnabled( false );
-		setElement( null );
+	public void selectionChanged( IAction action, ISelection selection ) {
+		setSelection( selection );
+		action.setEnabled( getBreakpointAdapter().canToggleMethodBreakpoints( getTargetPart(), getSelection() ) );
 	}
 
-	public ICElement getElement()
-	{
-		return fElement;
+	private IWorkbenchPart getTargetPart() {
+		return fTargetPart;
 	}
 
-	public void setElement( ICElement element )
-	{
-		fElement = element;
+	private ISelection getSelection() {
+		return fSelection;
 	}
 
-	private boolean enablesFor( ICElement element )
-	{
-		// for now
-		return true;
-	}
-	
-	private void manageBreakpoint( IFunction function )
-	{
-//		try
-//		{
-//			ICFunctionBreakpoint breakpoint = CDebugModel.functionBreakpointExists( function );
-//			if ( breakpoint != null )
-//			{
-//				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
-//			}
-//			else
-//			{
-//				CDebugModel.createFunctionBreakpoint( function, true, 0, "", true ); //$NON-NLS-1$
-//			}
-//		}
-//		catch( CoreException e )
-//		{
-//			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
-//		}
-	}
-	
-	private IFunction getFunction()
-	{
-		return ( getElement() != null ) ? (IFunction)getElement().getAdapter( IFunction.class ) : null;
+	private ToggleBreakpointAdapter getBreakpointAdapter() {
+		return fBreakpointAdapter;
 	}
 
-	private void manageBreakpoint( IMethod method )
-	{
-//		try
-//		{
-//			ICFunctionBreakpoint breakpoint = CDebugModel.methodBreakpointExists( method );
-//			if ( breakpoint != null )
-//			{
-//				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
-//			}
-//			else
-//			{
-//				CDebugModel.createMethodBreakpoint( method, true, 0, "", true ); //$NON-NLS-1$
-//			}
-//		}
-//		catch( CoreException e )
-//		{
-//			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
-//		}
-	}
-	
-	private IMethod getMethod()
-	{
-		return ( getElement() != null ) ? (IMethod)getElement().getAdapter( IMethod.class ) : null;
+	private void setSelection( ISelection selection ) {
+		fSelection = selection;
 	}
 }

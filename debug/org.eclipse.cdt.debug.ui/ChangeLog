@@ -1,4 +1,12 @@
 2004-06-14 Mikhail Khodjaiants
+	Implementation of the "Toggle Method Breakpoint" retargettable action.
+	* plugin.properties
+	* plugin.xml	
+	* ActionMessages.properties
+	* ManageFunctionBreakpointActionDelegate.java
+	* ToggleBreakpointAdapter.java
+
+2004-06-14 Mikhail Khodjaiants
 	Added transparency to the icons.
 	* icons/full/cview16/sharedlibraries_view.gif
 	* icons/full/eview16/sharedlibraries_view.gif

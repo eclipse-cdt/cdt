@@ -1349,6 +1349,16 @@
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
       </factory>
+      <factory
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.ui.views.contentoutline.ContentOutline">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.themes">

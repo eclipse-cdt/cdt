@@ -24,14 +24,14 @@ import java.util.StringTokenizer;
  */
 public class MIInfoSignalsInfo extends MIInfo {
 
-	MISignal[] signals;
+	MISigHandle[] signals;
 
 	public MIInfoSignalsInfo(MIOutput out) {
 		super(out);
 		parse();
 	}
 
-	public MISignal[] getMISignals() {
+	public MISigHandle[] getMISignals() {
 		return signals;
 	}
 
@@ -49,9 +49,9 @@ public class MIInfoSignalsInfo extends MIInfo {
 				}
 			}
 		}
-		signals = new MISignal[aList.size()];
+		signals = new MISigHandle[aList.size()];
 		for (int i = 0; i < aList.size(); i++) {
-			signals[i] = (MISignal)aList.get(i);
+			signals[i] = (MISigHandle)aList.get(i);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class MIInfoSignalsInfo extends MIInfo {
 						break;
 					}
 				}
-				MISignal s = new MISignal(signal, stop, print, pass, desc.trim());
+				MISigHandle s = new MISigHandle(signal, stop, print, pass, desc.trim());
 				aList.add(s);
 			}
 		}

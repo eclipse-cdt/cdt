@@ -8,7 +8,7 @@ package org.eclipse.cdt.debug.mi.core.output;
 /**
  * GDB/MI shared information
  */
-public class MISignal {
+public class MISigHandle {
 
 	String signal = "";
 	boolean stop;
@@ -16,7 +16,7 @@ public class MISignal {
 	boolean pass;
 	String description = "";
 
-	public MISignal (String name, boolean stp, boolean prnt, boolean ps, String desc) {
+	public MISigHandle (String name, boolean stp, boolean prnt, boolean ps, String desc) {
 		signal = name;
 		stop = stp;
 		print = prnt;
@@ -38,6 +38,11 @@ public class MISignal {
 
 	public boolean isPass() {
 		return pass;
+	}
+
+	public void handle(boolean isIgnore, boolean isStop) {
+		pass = !isIgnore;
+		stop = isStop;
 	}
 
 	public String getDescription() {

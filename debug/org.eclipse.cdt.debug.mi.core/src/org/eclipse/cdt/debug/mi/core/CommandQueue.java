@@ -49,8 +49,8 @@ public class CommandQueue extends Queue {
 		return cmds;
 	}
 
-	private static void print(String msg) {
-		String name = Thread.currentThread().getName();
-		System.out.println(name + ": " + msg);
-	}
+//	private static void print(String msg) {
+//		String name = Thread.currentThread().getName();
+//		System.out.println(name + ": " + msg);
+//	}
 }

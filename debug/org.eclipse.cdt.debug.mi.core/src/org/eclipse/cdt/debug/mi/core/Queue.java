@@ -61,8 +61,8 @@ public class Queue {
 		return array;
 	}
 
-	private static void print(String msg) {
-		String name = Thread.currentThread().getName();
-		System.out.println(name + ": " + msg);
-	}
+//	private static void print(String msg) {
+//		String name = Thread.currentThread().getName();
+//		System.out.println(name + ": " + msg);
+//	}
 }

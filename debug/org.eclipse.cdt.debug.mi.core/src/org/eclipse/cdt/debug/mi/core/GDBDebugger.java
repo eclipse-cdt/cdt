@@ -25,8 +25,7 @@ public class GDBDebugger implements ICDebugger {
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		try {
 			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
-			if ( mgr instanceof SharedLibraryManager )
-			{
+			if (mgr instanceof SharedLibraryManager) {
 				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
 				((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
 			}

@@ -402,10 +402,11 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			// There is a selected tool defined
 			primary = selectedTool;
 		} else if (selectedCategory != null) {
-//		if (selectedCategory != null) {
 			// There is a selected option or category
 			primary = selectedCategory;
-		} else {
+		} 
+		
+		if (primary == null) {
 			// Select the first tool in the list
 			Object[] elements = null;
 			if( element instanceof IProject){

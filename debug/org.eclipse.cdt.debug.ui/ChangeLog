@@ -1,5 +1,13 @@
 2005-02-14 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
+	Added the "Load Symbols" action.
+	* LoadModuleSymbolsActionDelegate.java: new
+	* ActionMessages.properties
+	* plugin.xml
+	* plugin.properties
+
+2005-02-14 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
 	Implementing module's properties.
 	* PropertyPageMessages.properties
 	* ModuleProperties.java (former ModuleProperties.java)

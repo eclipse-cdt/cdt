@@ -733,6 +733,15 @@
             objectClass="org.eclipse.cdt.debug.core.model.ICModule"
             id="org.eclipse.cdt.debug.ui.ModuleActions">
          <action
+               helpContextId="load_symbols_action_context"
+               enablesFor="1"
+               label="%LoadSymbolsAction.label"
+               tooltip="%LoadSymbolsAction.tooltip"
+               icon="icons/full/clcl16/load_symbols_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.LoadModuleSymbolsActionDelegate"
+               menubarPath="modulesGroup"
+               id="org.eclipse.cdt.debug.ui.LoadSymbolsAction"/>
+         <action
                helpContextId="module_properties_action_context"
                enablesFor="1"
                label="%ModulePropertiesAction.label"
@@ -740,11 +749,6 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ModulesPropertiesActionDelegate"
                style="pulldown"
                id="org.eclipse.cdt.debug.ui.ModulePropertiesAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui.pluginState1"/>
-            </enablement>
          </action>
       </objectContribution>
    </extension>

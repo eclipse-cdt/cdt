@@ -17,12 +17,16 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.MISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibUnloadedEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIShared;
@@ -152,6 +156,55 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
+	 */
+	public void setAutoLoadSymbols(boolean set) throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib(set);
+		try {
+			mi.postCommand(solib);
+			solib.getMIInfo();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
+	 */
+	public void setSharedLibraryPaths(String[] libPaths) throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBSetSolibSearchPath solib = factory.createMIGDBSetSolibSearchPath(libPaths);
+		try {
+			mi.postCommand(solib);
+			solib.getMIInfo();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#getSharedLibraryPaths()
+	 */
+	public String[] getSharedLibraryPaths() throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBShowSolibSearchPath dir = factory.createMIGDBShowSolibSearchPath();
+		try {
+			mi.postCommand(dir);
+			MIGDBShowSolibSearchPathInfo info = dir.getMIGDBShowSolibSearchPathInfo();
+			return info.getDirectories();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 	/**

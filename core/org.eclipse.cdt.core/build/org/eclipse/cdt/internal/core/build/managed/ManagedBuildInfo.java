@@ -229,6 +229,40 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getLibsForTarget(java.lang.String)
+	 */
+	public String[] getLibsForTarget(String extension) {
+		ArrayList libs = new ArrayList();
+		// Get all the tools for the current config
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.producesFileType(extension)) {
+				IOption[] opts = tool.getOptions();
+				// Look for the lib option type
+				for (int i = 0; i < opts.length; i++) {
+					IOption option = opts[i];
+					if (option.getValueType() == IOption.LIBRARIES) {
+						try {
+							String command = option.getCommand();
+							String[] allLibs = option.getLibraries();
+							for (int j = 0; j < allLibs.length; j++) {
+								String string = allLibs[j];
+								libs.add(command + string);
+							}
+						} catch (BuildException e) {
+							continue;
+						}
+					}
+				}
+			}
+		}
+		libs.trimToSize();
+		return (String[])libs.toArray(new String[libs.size()]);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeArguments()
 	 */
 	public String[] getMakeArguments() {
@@ -266,10 +300,35 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
 	 */
-	public String getOutputFlag() {
-		// TODO Stop hard-coding this
-		String flag = new String("-o");
-		return flag;
+	public String getOutputFlag(String outputExt) {
+		// Get all the tools for the current config
+		String flags = new String();
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.producesFileType(outputExt)) {
+				flags = tool.getOutputFlag();
+			}
+		}
+		return flags;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputPrefix(java.lang.String)
+	 */
+	public String getOutputPrefix(String outputExtension) {
+		// Get all the tools for the current config
+		String flags = new String();
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.producesFileType(outputExtension)) {
+				flags = tool.getOutputPrefix();
+			}
+		}
+		return flags;
 	}
 
 	public IResource getOwner() {
@@ -405,6 +464,5 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return symbols; 
 	}
-
 
 }

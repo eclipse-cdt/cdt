@@ -19,6 +19,7 @@ import java.util.ListIterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
+import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
@@ -197,10 +198,6 @@ public class MakefileGenerator {
 		buffer.append("RM := ");
 		buffer.append(info.getCleanCommand() + NEWLINE);
 		
-		// Add the macro for the output flag
-		buffer.append("OUTPUT_FLAG := ");
-		buffer.append(info.getOutputFlag() + NEWLINE);
-
 		buffer.append(CCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
 		buffer.append("C_SRCS := " + NEWLINE);
 		buffer.append("CC_SRCS := " + NEWLINE);
@@ -296,24 +293,53 @@ public class MakefileGenerator {
 		String extension = temp.getFileExtension();
 		
 		/*
-		 * Write out the taqrget rule as:
-		 * <target>.<extension>: $(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)
-		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $^ $(LIB_DEPS)
+		 * Write out the target rule as:
+		 * <prefix><target>.<extension>: $(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)
+		 * 		<cd <Proj_Dep_1/build_dir>; make all> 
+		 * 		<cd <Proj_Dep_.../build_dir>; make all> 
+		 * 		<cd <Proj_Dep_n/build_dir>; make all> 
+		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $(OUTPUT_PREFIX)$@ $^ $(LIB_DEPS)
 		 */
 		String cmd = info.getToolForTarget(extension);
 		String flags = info.getFlagsForTarget(extension);
-		buffer.append(target + COLON + WHITESPACE + "$(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)" + NEWLINE);
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + "$(OUTPUT_FLAG) $@" + WHITESPACE + "$^" + WHITESPACE + NEWLINE);
+		String outflag = info.getOutputFlag(extension);
+		String outputPrefix = info.getOutputPrefix(extension);
+
+		buffer.append(outputPrefix + target + COLON + WHITESPACE + "$(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)" + NEWLINE);
+		IProject[] deps;
+		try {
+			deps = project.getReferencedProjects();
+			for (int i = 0; i < deps.length; i++) {
+				IProject dep = deps[i];
+				String buildDir = dep.getLocation().toString();
+				if (ManagedBuildManager.manages(dep)) {
+					IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
+					buildDir += SEPARATOR + depInfo.getConfigurationName();
+				}
+				buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "make all" + NEWLINE);
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + outputPrefix + "$@" + WHITESPACE + "$^");
+		String[] libraries = info.getLibsForTarget(extension);
+		for (int i = 0; i < libraries.length; i++) {
+			String lib = libraries[i];
+			buffer.append(WHITESPACE + lib);
+		}
+		buffer.append(NEWLINE);
 		buffer.append(NEWLINE);
 
 		// TODO Generate 'all' for now but determine the real rules from UI
-		buffer.append("all: " + target + NEWLINE);
+		buffer.append("all: " + outputPrefix + target + NEWLINE);
 		buffer.append(NEWLINE);
 		
 		// Always add a clean target
 		buffer.append(".PHONY: clean" + NEWLINE);
 		buffer.append("clean:" + NEWLINE);
-		buffer.append(TAB + "$(RM)" + WHITESPACE + "${addprefix ., $(CC_SRCS:$(ROOT)%.cpp=%.o)} ${addprefix ., $(C_SRCS:$(ROOT)%.c=%.o)}" + WHITESPACE + target + NEWLINE);
+		buffer.append(TAB + "$(RM)" + WHITESPACE + "${addprefix ., $(CC_SRCS:$(ROOT)%.cpp=%.o)} ${addprefix ., $(C_SRCS:$(ROOT)%.c=%.o)}" + WHITESPACE + outputPrefix + target + NEWLINE);
 		buffer.append(NEWLINE);
 		
 		buffer.append(NEWLINE + CCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
@@ -329,7 +355,9 @@ public class MakefileGenerator {
 		String buildFlags = null;
 		String inputExtension = null;
 		String outputExtension = null;
-
+		String outflag = null;
+		String outputPrefix = null;
+		
 		// Is there a special rule for this file
 		if (false) {
 		} 
@@ -361,8 +389,9 @@ public class MakefileGenerator {
 			buffer.append(rule + NEWLINE);
 			cmd = info.getToolForSource(inputExtension);
 			buildFlags = info.getFlagsForSource(inputExtension);
-			
-			buffer.append(TAB + cmd + WHITESPACE + buildFlags + WHITESPACE + "$(OUTPUT_FLAG) $@" + WHITESPACE + "$<" + NEWLINE + NEWLINE);
+			outflag = info.getOutputFlag(outputExtension);
+			outputPrefix = info.getOutputPrefix(outputExtension);
+			buffer.append(TAB + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + "$@" + WHITESPACE + "$<" + NEWLINE + NEWLINE);
 		}
 	}
 	

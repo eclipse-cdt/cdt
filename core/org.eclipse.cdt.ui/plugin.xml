@@ -628,6 +628,7 @@
          <tool
                sources="c,cc,cpp,cxx,C"
                name="%ToolName.compiler"
+               outputFlag="-o"
                outputs="o"
                command="g++"
                id="org.eclipse.cdt.build.tool.cygwin.compiler">
@@ -761,6 +762,7 @@
          </configuration>
          <tool
                name="%ToolName.linker"
+               outputFlag="-o"
                outputs="exe"
                command="g++"
                id="org.eclipse.cdt.build.tool.cygwin.link">
@@ -787,7 +789,7 @@
                   name="Libraries"
                   category="cygwin.linker.category.general"
                   command="-l"
-                  valueType="stringList"
+                  valueType="libs"
                   id="cygwin.link.libs">
             </option>
             <optionCategory
@@ -819,6 +821,7 @@
          </configuration>
          <tool
                name="%ToolName.linker"
+               outputFlag="-o"
                outputs="dll.a"
                id="org.eclipse.cdt.build.tool.cygwin.solink">
             <optionCategory
@@ -844,7 +847,7 @@
                   name="Libraries"
                   category="cygwin.solink.category.general"
                   command="-l"
-                  valueType="stringList"
+                  valueType="libs"
                   id="cygwin.solink.libs">
             </option>
          </tool>
@@ -867,8 +870,21 @@
          <tool
                name="%ToolName.archiver"
                outputs="a"
+               outputPrefix="lib"
                command="ar"
                id="org.eclipse.cdt.build.tool.cygwin.ar">
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.ar"
+                  name="General"
+                  id="cygwin.ar.category.general">
+            </optionCategory>
+            <option
+                  defaultValue="-r"
+                  name="Archiver Flags"
+                  category="cygwin.ar.category.general"
+                  valueType="string"
+                  id="cygwin.ar.flags">
+            </option>
          </tool>
       </target>
       <target
@@ -878,6 +894,7 @@
             id="linux">
          <tool
                name="Compiler"
+               outputFlag="-o"
                id="linux.compiler">
             <optionCategory
                   owner="linux.compiler"
@@ -906,6 +923,7 @@
             id="linux.exec">
          <tool
                name="Linker"
+               outputFlag="-o"
                id="org.eclipse.cdt.ui.tests.tool.linux.link">
          </tool>
          <configuration
@@ -926,6 +944,7 @@
             id="linux.so">
          <tool
                name="Linker"
+               outputFlag="-o"
                id="org.eclipse.cdt.ui.tests.tool.linux.solink">
          </tool>
       </target>
@@ -973,7 +992,7 @@
             class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
             id="org.eclipse.search.internal.ui.ParentNameSorter">
       </sorter>
-	<sorter
+      <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%PathNameSorter.label"
             icon="icons/full/clcl16/search_sortmatch.gif"

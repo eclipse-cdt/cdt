@@ -42,6 +42,11 @@
    </element>
 
    <element name="tool">
+      <annotation>
+         <documentation>
+            Defines a tool used in the build process.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="option"/>
@@ -92,6 +97,20 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="outputFlag" type="string">
+            <annotation>
+               <documentation>
+                  An optional flag for tools that allow users to specify a name for the artifact of the tool. For example, the GCC compiler and linker tools typically allow the user to specify the name of the output with the &apos;-o&apos; flag, whereas the archiver that creates libraries does not.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputPrefix" type="string">
+            <annotation>
+               <documentation>
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be lib&lt;target&gt;.a so &apos;lib&apos; would be the prefix.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -136,6 +155,8 @@ Two additional types exist to flag options of special relevance to the build mod
                   <enumeration value="includePath">
                   </enumeration>
                   <enumeration value="definedSymbols">
+                  </enumeration>
+                  <enumeration value="libs">
                   </enumeration>
                </restriction>
             </simpleType>

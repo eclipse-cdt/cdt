@@ -220,6 +220,20 @@ public class ToolReference implements ITool {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputFlag()
+	 */
+	public String getOutputFlag() {
+		return parent.getOutputFlag();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputPrefix()
+	 */
+	public String getOutputPrefix() {
+		return parent.getOutputPrefix();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getTarget()
 	 */
 	public ITarget getTarget() {
@@ -321,6 +335,5 @@ public class ToolReference implements ITool {
 	public String getOutputExtension(String inputExtension) {
 		return parent.getOutputExtension(inputExtension);
 	}
-
 
 }

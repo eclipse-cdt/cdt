@@ -80,6 +80,7 @@ public class BuildToolSettingsPage extends FieldEditorPreferencePage {
 				case IOption.STRING_LIST :
 				case IOption.INCLUDE_PATH :
 				case IOption.PREPROCESSOR_SYMBOLS :
+				case IOption.LIBRARIES :
 					BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
 					addField(listField); 
 					break;
@@ -129,6 +130,7 @@ public class BuildToolSettingsPage extends FieldEditorPreferencePage {
 				case IOption.STRING_LIST :
 				case IOption.INCLUDE_PATH :
 				case IOption.PREPROCESSOR_SYMBOLS :
+				case IOption.LIBRARIES :
 					String listStr = getPreferenceStore().getString(option.getId());
 					String[] listVal = BuildToolsSettingsStore.parseString(listStr);
 					ManagedBuildManager.setOption(configuration, option, listVal);

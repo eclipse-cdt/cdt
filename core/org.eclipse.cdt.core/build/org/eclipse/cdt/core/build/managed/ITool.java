@@ -48,6 +48,22 @@ public interface ITool extends IBuildObject {
 	public String getOutputExtension(String inputExtension);
 	
 	/**
+	 * Answers the argument that must be passed to a specific tool in order to 
+	 * control the name of the output artifact. For example, the GCC compile and 
+	 * linker use '-o', while the archiver does not. 
+	 * 
+	 * @return
+	 */
+	public String getOutputFlag();
+
+	/**
+	 * Answers the prefix that the tool should prepend to the name of the build artifact.
+	 * For example, a librarian usually prepends 'lib' to the target.a
+	 * @return
+	 */
+	public String getOutputPrefix();
+
+	/**
 	 * Return the target that defines this tool, if applicable
 	 * @return
 	 */
@@ -85,5 +101,6 @@ public interface ITool extends IBuildObject {
 	 * @return
 	 */
 	public boolean producesFileType(String outputExtension);
+
 	
 }

@@ -82,6 +82,7 @@ public class OptionReference implements IOption {
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:
 			case IOption.PREPROCESSOR_SYMBOLS:
+			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
 				IConfigurationElement[] valueElements = element.getChildren("optionValue");
 				for (int i = 0; i < valueElements.length; ++i) {
@@ -116,6 +117,7 @@ public class OptionReference implements IOption {
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:
 			case IOption.PREPROCESSOR_SYMBOLS:
+			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
 				NodeList nodes = element.getElementsByTagName("optionValue");
 				for (int i = 0; i < nodes.getLength(); ++i) {
@@ -151,6 +153,7 @@ public class OptionReference implements IOption {
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:
 			case IOption.PREPROCESSOR_SYMBOLS:
+			case IOption.LIBRARIES:
 				ArrayList stringList = (ArrayList)value;
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
@@ -219,6 +222,20 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getIncludePaths();
 		else if (getValueType() == IOption.INCLUDE_PATH) {
+			ArrayList list = (ArrayList)value;
+			return (String[]) list.toArray(new String[list.size()]);
+		}
+		else
+			throw new BuildException("bad value type");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getLibraries()
+	 */
+	public String[] getLibraries() throws BuildException {
+		if (value == null)
+			return option.getLibraries();
+		else if (getValueType() == IOption.LIBRARIES) {
 			ArrayList list = (ArrayList)value;
 			return (String[]) list.toArray(new String[list.size()]);
 		}
@@ -346,7 +363,8 @@ public class OptionReference implements IOption {
 	public void setValue(String [] value) throws BuildException {
 		if (getValueType() == IOption.STRING_LIST
 			|| getValueType() == IOption.INCLUDE_PATH
-			|| getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+			|| getValueType() == IOption.PREPROCESSOR_SYMBOLS
+			|| getValueType() == IOption.LIBRARIES) {
 			// Just replace what the option reference is holding onto 
 			this.value = new ArrayList(Arrays.asList(value));
 		}

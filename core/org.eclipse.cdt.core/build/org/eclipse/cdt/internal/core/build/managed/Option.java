@@ -77,6 +77,8 @@ public class Option extends BuildObject implements IOption {
 			valueType = IOption.ENUMERATED;
 		else if (valueTypeStr.equals("includePath"))
 			valueType = IOption.INCLUDE_PATH;
+		else if (valueTypeStr.equals("libs"))
+			valueType = IOption.LIBRARIES;
 		else
 			valueType = IOption.PREPROCESSOR_SYMBOLS;
 		
@@ -109,6 +111,7 @@ public class Option extends BuildObject implements IOption {
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:
 			case IOption.PREPROCESSOR_SYMBOLS:
+			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
 				IConfigurationElement[] valueElements = element.getChildren("optionValue");
 				for (int i = 0; i < valueElements.length; ++i) {
@@ -176,6 +179,19 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String[] getIncludePaths() throws BuildException {
 		if (valueType != IOption.INCLUDE_PATH) {
+			throw new BuildException("bad value type");
+		}
+		List v = (List)value;
+		return v != null
+			? (String[])v.toArray(new String[v.size()])
+			: EMPTY_STRING_ARRAY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getLibraries()
+	 */
+	public String[] getLibraries() throws BuildException {
+		if (valueType != IOption.LIBRARIES) {
 			throw new BuildException("bad value type");
 		}
 		List v = (List)value;
@@ -265,7 +281,8 @@ public class Option extends BuildObject implements IOption {
 	{
 		if (valueType != IOption.STRING_LIST 
 			|| valueType != IOption.INCLUDE_PATH
-			|| valueType != IOption.PREPROCESSOR_SYMBOLS)
+			|| valueType != IOption.PREPROCESSOR_SYMBOLS
+			|| valueType != IOption.LIBRARIES)
 			throw new BuildException("Bad value for type");
 		
 		if (config == null) {

@@ -35,6 +35,7 @@
          <tool
                sources="foo,bar"
                name="Root Tool"
+               outputFlag="-r"
                outputs="toor"
                command="doIt"
                id="root.tool">
@@ -119,7 +120,10 @@
                id="sub.config">
          </configuration>
          <tool
+               sources="yarf"
                name="Sub Tool"
+               outputPrefix="lib"
+               outputs="bus"
                id="tool.sub">
             <option
                   name="Include Paths"

@@ -44,6 +44,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String command;
 	private List inputExtensions;
 	private String outputExtension;
+	private String outputFlag;
+	private String outputPrefix;
 	
 	public Tool(Target target) {
 		this.target = target;
@@ -86,6 +88,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		command = element.getAttribute("command") == null ? 
 			new String() : 
 			element.getAttribute("command");
+			
+		// Get the flag to control output
+		outputFlag = element.getAttribute("outputFlag") == null ?
+			new String() :
+			element.getAttribute("outputFlag");
+			
+		// Get the output prefix
+		outputPrefix = element.getAttribute("outputPrefix") == null ?
+			new String() :
+			element.getAttribute("outputPrefix");
 
 		// set up the category map
 		categoryMap = new HashMap();
@@ -175,6 +187,20 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		childOptionCategories.add(category);
 		
 		return category;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputFlag()
+	 */
+	public String getOutputFlag() {
+		return outputFlag == null ? new String() : outputFlag;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputPrefix()
+	 */
+	public String getOutputPrefix() {
+		return outputPrefix == null ? new String() : outputPrefix;
 	}
 
 	/* (non-Javadoc)

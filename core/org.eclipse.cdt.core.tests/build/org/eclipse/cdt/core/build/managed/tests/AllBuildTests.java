@@ -528,20 +528,12 @@ public class AllBuildTests extends TestCase {
 		tools = rootConfig.getTools();
 		assertEquals(1, tools.length);
 		assertEquals("Root Tool", tools[0].getName());
-		topCategory = tools[0].getTopOptionCategory();
-		options = topCategory.getOptions(configs[0]);
-		assertEquals(2, options.length);
-		assertEquals("List Option in Top", options[0].getName());
-		valueList = options[0].getStringListValue();
-		assertEquals("a", valueList[0]);
-		assertEquals("b", valueList[1]);
-		assertEquals("Boolean Option in Top", options[1].getName());
-		categories = topCategory.getChildCategories();
-		options = categories[0].getOptions(configs[0]);
-		assertEquals(2, options.length);
-		assertEquals("String Option in Category", options[0].getName());
-		assertEquals(oicValue, options[0].getStringValue());
-		assertEquals("Enumerated Option in Category", options[1].getName());
+		assertEquals("-r", tools[0].getOutputFlag());
+		assertTrue(tools[0].buildsFileType("foo"));
+		assertTrue(tools[0].buildsFileType("bar"));
+		assertTrue(tools[0].producesFileType("toor"));
+		assertEquals("doIt", tools[0].getToolCommand());
+		assertEquals("", tools[0].getOutputPrefix());
 
 		// Root Override Config
 		assertEquals("Root Override Config", configs[1].getName());
@@ -569,6 +561,13 @@ public class AllBuildTests extends TestCase {
 		assertEquals("Another Enum", valueList[1]);
 		assertEquals("-e1", options[1].getEnumCommand(valueList[0]));
 		assertEquals("-e2", options[1].getEnumCommand(valueList[1]));
+		assertEquals(1, tools.length);
+		assertEquals("Root Tool", tools[0].getName());
+		assertEquals("-r", tools[0].getOutputFlag());
+		assertTrue(tools[0].buildsFileType("foo"));
+		assertTrue(tools[0].buildsFileType("bar"));
+		assertTrue(tools[0].producesFileType("toor"));
+		assertEquals("doIt", tools[0].getToolCommand());
 	}
 
 	/*
@@ -595,6 +594,11 @@ public class AllBuildTests extends TestCase {
 		// Confirm that it has three options
 		IOption[] subOpts = subTool.getOptions();
 		assertEquals(3, subOpts.length);
+		assertEquals("", subTool.getOutputFlag());
+		assertTrue(subTool.buildsFileType("yarf"));
+		assertTrue(subTool.producesFileType("bus"));
+		assertEquals("", subTool.getToolCommand());
+		assertEquals("lib", subTool.getOutputPrefix());
 
 		// Do a sanity check on the options 
 		assertEquals("Include Paths", subOpts[0].getName());

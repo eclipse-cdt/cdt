@@ -1,3 +1,57 @@
+2003-07-24 Sean Evoy
+	*src/org/eclipse/cdt/internal/core/MakefileGenerator.java:
+	Added code to place interproject dependencies in target build rule, 
+	added code to properly put output prefixes on library names, and 
+	added code to put library link arguments at the end of the depednency list
+
+	* build/org/eclipse/cdt/core/build/managed/IManagedBuildInfo.java
+	* build/org/eclipse/cdt/core/build/managed/IOption.java
+	* build/org/eclipse/cdt/core/build/managed/ITool.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Option.java
+	* build/org/eclipse/cdt/internal/core/build/managed/OptionReference.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Tool.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ToolReference.java:
+	Added code to managed output prefixes for tools like the librarian. Added code
+	to manage the library options differently. Removed some hard-coding of tool 
+	information, such as the output flag.
+	
+	*schema/ManagedBuildTools.exsd:
+	New attributes on tool for output flag and prefix. New value type enum for option
+	to handle libs differently.
+	
+2003-07-24 Sean Evoy
+	Changes introduced to make the managed build system work with
+	multi-folder project.
+	
+	* src/org/eclipse/cdt/core/ManagedCProjectNature.java:
+	now removes the cbuilder from a project before it adds its 
+	own builder. This is a temporary fix to stop the managed build 
+	system from building a project twice. When the new StandardBuildNature 
+	is introduced, this code will be removed.
+
+	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties:
+	New builder messages added.
+	
+	* src/org/eclipse/cdt/internal/core/GeneratedMakefileBuilder.java:
+	Moved the actual directory and file creation to a delegate class.
+	
+	* src/org/eclipse/cdt/internal/core/MakefileGenerator.java:
+	New class that does the grunt work of creating build output directories 
+	and makefiles.
+	
+	* build/org/eclipse/cdt/core/build/managed/ManagedBuildManager.java:
+	Short-term changes to make it possible for build info clients to get the
+	path and symbol information. When a permanent mechanism is implemented
+	for clients to discover this information, these methods (IScannerInfoxxx) 
+	will be removed.
+	
+	* build/org/eclipse/cdt/core/build/managed/IManagedBuildInfo.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java:
+	Some minor changes have been made to extract more information from the 
+	build model. Currently, the values are hard-coded to simplify some integration
+	testing. This will be addressed in the next patch.
+	
 2003-07-24 Alain Magloire
 
 	* utils/org/eclipse/cdt/utils/Elf.java:

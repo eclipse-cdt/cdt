@@ -21,6 +21,7 @@ public interface IOption extends IBuildObject {
 	public static final int STRING_LIST = 3;
 	public static final int INCLUDE_PATH = 4;
 	public static final int PREPROCESSOR_SYMBOLS = 5;
+	public static final int LIBRARIES = 6;
 	
 	/**
 	 * If this option is defined as an enumeration, this function returns
@@ -81,6 +82,13 @@ public interface IOption extends IBuildObject {
 		
 
 	/**
+	 * Answers an array or <code>String</code>s containing the libraries
+	 * that must be linked into the project.
+	 * @return
+	 */
+	public String[] getLibraries() throws BuildException ;
+
+	/**
 	 * Answers a <code>String</code> containing the selected enumeration in an
 	 * enumerated option. For an option that has not been changed by the user, 
 	 * the receiver will answer with the default defined in the plugin manifest.
@@ -121,4 +129,5 @@ public interface IOption extends IBuildObject {
 	 * @return
 	 */
 	public int getValueType();
+
 }

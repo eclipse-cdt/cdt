@@ -177,9 +177,10 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			Iterator iter= ((IStructuredSelection)sel).iterator();
 			for (;iter.hasNext();) {
 				//ICElement elem= fInput.findEqualMember((ICElement)iter.next());
-				ICElement elem = (ICElement)iter.next();
-				if (elem != null) {
-					newSelection.add(elem);
+				Object o = iter.next();
+				if (o instanceof ICElement) {
+					//ICElement elem = (ICElement)iter.next();
+					newSelection.add(o);
 				}
 			}
 		}

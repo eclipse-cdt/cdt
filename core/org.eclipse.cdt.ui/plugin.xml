@@ -236,7 +236,7 @@
       <editor
             name="%CEditor.name"
             icon="icons/full/obj16/c_file_obj.gif"
-            extensions="c, h, cc, hh, cpp, cxx"
+            extensions="c, h, cc, hh, cpp, cxx, hpp"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
             id="org.eclipse.cdt.ui.editor.CEditor">
@@ -373,14 +373,14 @@
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
-            extensions="c,cc,cpp,cxx,h"
+            extensions="c,cc,cpp,cxx,h,hpp"
             class="org.eclipse.cdt.internal.ui.compare.CStructureCreator">
       </structureCreator>
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
-            extensions="c,cc,cpp,cxx,h,c2"
+            extensions="c,cc,cpp,cxx,h,c2,hpp"
             class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator">
       </viewer>
    </extension>

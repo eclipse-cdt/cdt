@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -544,7 +545,10 @@ public class DOMAST extends ViewPart {
          } else if (node instanceof IASTEnumerator) {
             imageKey = DOMASTPluginImages.IMG_IASTEnumerator;
          } else if (node instanceof IASTExpression) {
-            imageKey = DOMASTPluginImages.IMG_IASTExpression;
+         	if (node instanceof IASTProblemExpression)
+         		imageKey = DOMASTPluginImages.IMG_IASTProblem;
+         	else
+         		imageKey = DOMASTPluginImages.IMG_IASTExpression;
          } else if (node instanceof IASTInitializer) {
             imageKey = DOMASTPluginImages.IMG_IASTInitializer;
          } else if (node instanceof IASTName) {

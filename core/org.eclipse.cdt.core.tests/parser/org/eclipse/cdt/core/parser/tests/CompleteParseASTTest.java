@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.ui.views.tasklist.TaskList;
 
 
 /**
@@ -1761,6 +1762,28 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertReferenceTask( new Task( constructor1, 1, false, false ) );
     	assertReferenceTask( new Task( constructor2, 1, false, false ) );
     	assertReferenceTask( new Task( A, 2, false, false ) );
+	}
+    
+    public void test575513_qualified() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "namespace Foo{                     " );
+    	writer.write( "   class Bar{ public : Bar(); };   " );
+    	writer.write( "}                                  " );
+    	writer.write( "void main(){                       " );
+    	writer.write( "  Foo::Bar * bar = new Foo::Bar(); " );
+    	writer.write( "}                                  " );
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	
+    	IASTNamespaceDefinition namespace = (IASTNamespaceDefinition) i.next();
+    	IASTFunction main = (IASTFunction) i.next();
+    	i = getDeclarations( namespace );
+    	IASTClassSpecifier Bar = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next() ).getTypeSpecifier();
+    	i = getDeclarations( Bar );
+    	IASTMethod constructor = (IASTMethod) i.next();
+    	
+    	assertAllReferences( 4, createTaskList( new Task(namespace, 2 ), new Task( Bar, 1 ), new Task( constructor, 1 ) ) );
 	}
     
     public void testBug60944() throws Exception

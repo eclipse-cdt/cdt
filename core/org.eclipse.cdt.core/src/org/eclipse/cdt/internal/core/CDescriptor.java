@@ -1,7 +1,13 @@
-/*
- * (c) Copyright QNX Software System Ltd. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.io.ByteArrayInputStream;
@@ -10,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -27,6 +34,7 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
+import org.eclipse.cdt.core.ICPathEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -37,6 +45,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
@@ -46,15 +55,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CDescriptor implements ICDescriptor {
+	private ICPathEntry[] fPathEntries = new ICPathEntry[0];
 	private COwner fOwner;
 	private IProject fProject;
 	private HashMap extMap = new HashMap(4);
 	private HashMap extInfoMap = new HashMap(4);
 
-	final static String DESCRIPTION_FILE_NAME = ".cdtproject";
-	private final static String PROJECT_DESCRIPTION = "cdtproject";
-	private final static String PROJECT_EXTENSION = "extension";
-	private final static String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
+	static final String DESCRIPTION_FILE_NAME = ".cdtproject";
+	private static final char[][] NO_CHAR_CHAR = new char[0][];
+	private static final String PROJECT_DESCRIPTION = "cdtproject";
+	private static final String PROJECT_EXTENSION = "extension";
+	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
+	private static final String PATH_ENTRY = "cpathentry";
 
 	private boolean fDirty;
 	private boolean autoSave;
@@ -71,8 +83,9 @@ public class CDescriptor implements ICDescriptor {
 
 		if (descriptionPath.toFile().exists()) {
 			IStatus status;
-			readCDTProject(descriptionPath);
-			if (fOwner.getID().equals(id)) {
+			String ownerID = readCDTProject(descriptionPath);
+			if (ownerID.equals(id)) {
+				fOwner = new COwner(ownerID);
 				status =
 					new Status(
 						IStatus.WARNING,
@@ -108,7 +121,7 @@ public class CDescriptor implements ICDescriptor {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "CDTProject file not found", (Throwable) null);
 			throw new CoreException(status);
 		}
-		readCDTProject(descriptionPath);
+		fOwner = new COwner(readCDTProject(descriptionPath));
 	}
 
 	protected CDescriptor(IProject project, COwner owner) throws CoreException {
@@ -125,19 +138,25 @@ public class CDescriptor implements ICDescriptor {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "CDTProject file not found", (Throwable) null);
 			throw new CoreException(status);
 		}
+		readCDTProject(descriptionPath);
 		fOwner = owner;
-		readProjectExtensions(getCDTProjectNode(descriptionPath));
+		setDirty();
 	}
 
-	protected Node getCDTProjectNode(IPath descriptionPath) throws CoreException {
+	protected COwner getOwner() {
+		return fOwner;
+	}
+
+	private String readCDTProject(IPath descriptionPath) throws CoreException {
 		FileInputStream file = null;
 		try {
 			file = new FileInputStream(descriptionPath.toFile());
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(file);
 			Node node = document.getFirstChild();
-			if (node.getNodeName().equals(PROJECT_DESCRIPTION))
-				return node;
+			if (node.getNodeName().equals(PROJECT_DESCRIPTION)) {
+				return readProjectDescription(node);
+			}
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Missing cdtproject element", null);
 			throw new CoreException(status);
 		} catch (Exception e) {
@@ -153,12 +172,7 @@ public class CDescriptor implements ICDescriptor {
 		}
 	}
 
-	protected void readCDTProject(IPath projectLocation) throws CoreException {
-		Node node = getCDTProjectNode(projectLocation);
-		fOwner = readProjectDescription(node);
-	}
-
-	protected IPath getProjectDefaultLocation(IProject project) {
+	private IPath getProjectDefaultLocation(IProject project) {
 		return Platform.getLocation().append(project.getFullPath());
 	}
 
@@ -245,48 +259,6 @@ public class CDescriptor implements ICDescriptor {
 		return info;
 	}
 
-	protected Node searchNode(Node target, String tagName) {
-		NodeList list = target.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			if (list.item(i).getNodeName().equals(tagName))
-				return list.item(i);
-		}
-		return null;
-	}
-
-	protected String getString(Node target, String tagName) {
-		Node node = searchNode(target, tagName);
-		return node != null ? (node.getFirstChild() == null ? null : node.getFirstChild().getNodeValue()) : null;
-	}
-
-	private COwner readProjectDescription(Node node) throws CoreException {
-		COwner owner = null;
-		NamedNodeMap attrib = node.getAttributes();
-		owner = new COwner(attrib.getNamedItem("id").getNodeValue());
-		readProjectExtensions(node);
-		return owner;
-	}
-
-	private void readProjectExtensions(Node node) throws CoreException {
-		NodeList list = node.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			if (list.item(i).getNodeName().equals(PROJECT_EXTENSION)) {
-				NamedNodeMap attrib = list.item(i).getAttributes();
-				ICExtensionReference ext =
-					create(attrib.getNamedItem("point").getNodeValue(), attrib.getNamedItem("id").getNodeValue());
-				NodeList extAttrib = list.item(i).getChildNodes();
-				for (int j = 0; j < extAttrib.getLength(); j++) {
-					if (extAttrib.item(j).getNodeName().equals(PROJECT_EXTENSION_ATTRIBUTE)) {
-						attrib = extAttrib.item(j).getAttributes();
-						ext.setExtensionData(
-							attrib.getNamedItem("key").getNodeValue(),
-							attrib.getNamedItem("value").getNodeValue());
-					}
-				}
-			}
-		}
-	}
-
 	protected void saveInfo() throws CoreException {
 		String xml;
 		if (!isDirty()) {
@@ -310,6 +282,14 @@ public class CDescriptor implements ICDescriptor {
 		fDirty = false;
 	}
 
+	public boolean isAutoSave() {
+		return autoSave;
+	}
+
+	public void setAutoSave(boolean autoSave) {
+		this.autoSave = autoSave;
+	}
+
 	protected void setDirty() throws CoreException {
 		fDirty = true;
 		if (isAutoSave())
@@ -325,19 +305,153 @@ public class CDescriptor implements ICDescriptor {
 		OutputFormat format = new OutputFormat();
 		format.setIndenting(true);
 		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-
-			Serializer serializer = SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
-	format);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
 		serializer.asDOMSerializer().serialize(doc);
 		return s.toString("UTF8"); //$NON-NLS-1$		
 	}
 
+	private String readProjectDescription(Node node) throws CoreException {
+		Node childNode;
+		ArrayList pathEntries = new ArrayList();
+		String ownerID = node.getAttributes().getNamedItem("id").getNodeValue();
+		NodeList list = node.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			childNode = list.item(i);
+			if ( childNode.getNodeType() == Node.ELEMENT_NODE ) {
+				if (childNode.getNodeName().equals(PROJECT_EXTENSION)) {
+					decodeProjectExtension((Element)node);
+				} else if (childNode.getNodeName().equals(PATH_ENTRY)) {
+					ICPathEntry entry = decodePathEntry((Element)node);
+					if (entry != null) {
+						pathEntries.add(entry);
+					}
+				}
+			}
+		}
+		return ownerID;
+	}
+
+	private void decodeProjectExtension(Element element) throws CoreException {
+		ICExtensionReference ext = create(element.getAttribute("point"), element.getAttribute("id"));
+		NodeList extAttrib = element.getChildNodes();
+		for (int j = 0; j < extAttrib.getLength(); j++) {
+			if (extAttrib.item(j).getNodeName().equals(PROJECT_EXTENSION_ATTRIBUTE)) {
+				NamedNodeMap attrib = extAttrib.item(j).getAttributes();
+				ext.setExtensionData(attrib.getNamedItem("key").getNodeValue(), attrib.getNamedItem("value").getNodeValue());
+			}
+		}
+	}
+
+	private ICPathEntry decodePathEntry(Element element) throws CoreException {
+		IPath projectPath = fProject.getProject().getFullPath();
+		String kindAttr = element.getAttribute("kind"); //$NON-NLS-1$
+		String pathAttr = element.getAttribute("path"); //$NON-NLS-1$
+
+		// ensure path is absolute
+		IPath path = new Path(pathAttr);
+		int kind = CPathEntry.kindFromString(kindAttr);
+		if (kind != ICPathEntry.CDT_VARIABLE && !path.isAbsolute()) {
+			path = projectPath.append(path);
+		}
+		// source attachment info (optional)
+		IPath sourceAttachmentPath = element.hasAttribute("sourcepath") ? new Path(element.getAttribute("sourcepath")) : null;
+		IPath sourceAttachmentRootPath = element.hasAttribute("rootpath") ? new Path(element.getAttribute("rootpath")) : null;
+		IPath sourceAttachmentPrefixMapping =
+			element.hasAttribute("prefixmapping") ? new Path(element.getAttribute("prefixmapping")) : null;
+
+		// exclusion patterns (optional)
+		String exclusion = element.getAttribute("excluding"); //$NON-NLS-1$ 
+		IPath[] exclusionPatterns = CPathEntry.NO_EXCLUSION_PATTERNS;
+		if (!exclusion.equals("")) { //$NON-NLS-1$ 
+			char[][] patterns = splitOn('|', exclusion.toCharArray());
+			int patternCount;
+			if ((patternCount = patterns.length) > 0) {
+				exclusionPatterns = new IPath[patternCount];
+				for (int j = 0; j < patterns.length; j++) {
+					exclusionPatterns[j] = new Path(new String(patterns[j]));
+				}
+			}
+		}
+
+		// recreate the CP entry
+		switch (kind) {
+
+			case ICPathEntry.CDT_PROJECT :
+				return CCorePlugin.newProjectEntry(path);
+
+			case ICPathEntry.CDT_LIBRARY :
+				return CCorePlugin.newLibraryEntry(
+					path,
+					sourceAttachmentPath,
+					sourceAttachmentRootPath,
+					sourceAttachmentPrefixMapping);
+
+			case ICPathEntry.CDT_SOURCE :
+				// must be an entry in this project or specify another project
+				String projSegment = path.segment(0);
+				if (projSegment != null && projSegment.equals(fProject.getName())) { // this project
+					return CCorePlugin.newSourceEntry(path, exclusionPatterns);
+				} else { // another project
+					return CCorePlugin.newProjectEntry(path);
+				}
+
+			case ICPathEntry.CDT_VARIABLE :
+				return CCorePlugin.newVariableEntry(path, sourceAttachmentPath, sourceAttachmentRootPath);
+
+			case ICPathEntry.CDT_INCLUDE :
+				return CCorePlugin.newIncludeEntry(path, exclusionPatterns);
+
+			default :
+				{
+					IStatus status =
+						new Status(
+							IStatus.ERROR,
+							CCorePlugin.PLUGIN_ID,
+							-1,
+							"CPathEntry: unknown kind (" + kindAttr + ")",
+							(Throwable) null);
+					throw new CoreException(status);
+				}
+		}
+	}
+
+	private char[][] splitOn(char divider, char[] array) {
+		int length = array == null ? 0 : array.length;
+
+		if (length == 0)
+			return NO_CHAR_CHAR;
+
+		int wordCount = 1;
+		for (int i = 0; i < length; i++)
+			if (array[i] == divider)
+				wordCount++;
+		char[][] split = new char[wordCount][];
+		int last = 0, currentWord = 0;
+		for (int i = 0; i < length; i++) {
+			if (array[i] == divider) {
+				split[currentWord] = new char[i - last];
+				System.arraycopy(array, last, split[currentWord++], 0, i - last);
+				last = i + 1;
+			}
+		}
+		split[currentWord] = new char[length - last];
+		System.arraycopy(array, last, split[currentWord], 0, length - last);
+		return split;
+	}
+
 	protected String getAsXML() throws IOException {
-		Element element;
 		Document doc = new DocumentImpl();
 		Element configRootElement = doc.createElement(PROJECT_DESCRIPTION);
 		doc.appendChild(configRootElement);
 		configRootElement.setAttribute("id", fOwner.getID()); //$NON-NLS-1$
+		encodeProjectExtensions(doc, configRootElement);
+		encodePathEntries(doc, configRootElement);
+		return serializeDocument(doc);
+	}
+
+	private void encodeProjectExtensions(Document doc, Element configRootElement) {
+		Element element;
 		Iterator extIterator = extMap.values().iterator();
 		while (extIterator.hasNext()) {
 			CExtensionReference extension[] = (CExtensionReference[]) extIterator.next();
@@ -358,15 +472,58 @@ public class CDescriptor implements ICDescriptor {
 				}
 			}
 		}
-		return serializeDocument(doc);
 	}
 
-	public boolean isAutoSave() {
-		return autoSave;
+	private void encodePathEntries(Document doc, Element configRootElement) {
+		Element element;
+		IPath projectPath = fProject.getProject().getFullPath();
+		for (int i = 0; i < fPathEntries.length; i++) {
+			configRootElement.appendChild(element = doc.createElement(PATH_ENTRY));
+			element.setAttribute("kind", CPathEntry.kindToString(fPathEntries[i].getEntryKind())); //$NON-NLS-1$
+			IPath xmlPath = fPathEntries[i].getPath();
+			if (fPathEntries[i].getEntryKind() != ICPathEntry.CDT_VARIABLE) {
+				// translate to project relative from absolute (unless a device path)
+				if (xmlPath.isAbsolute()) {
+					if (projectPath != null && projectPath.isPrefixOf(xmlPath)) {
+						if (xmlPath.segment(0).equals(projectPath.segment(0))) {
+							xmlPath = xmlPath.removeFirstSegments(1);
+							xmlPath = xmlPath.makeRelative();
+						} else {
+							xmlPath = xmlPath.makeAbsolute();
+						}
+					}
+				}
+			}
+			element.setAttribute("path", xmlPath.toString()); //$NON-NLS-1$
+			if (fPathEntries[i].getSourceAttachmentPath() != null) {
+				element.setAttribute("sourcepath", fPathEntries[i].getSourceAttachmentPath().toString()); //$NON-NLS-1$
+			}
+			if (fPathEntries[i].getSourceAttachmentRootPath() != null) {
+				element.setAttribute("rootpath", fPathEntries[i].getSourceAttachmentRootPath().toString()); //$NON-NLS-1$
+			}
+			if (fPathEntries[i].getSourceAttachmentPrefixMapping() != null) {
+				element.setAttribute("prefixmapping", fPathEntries[i].getSourceAttachmentPrefixMapping().toString()); //$NON-NLS-1$
+			}
+			IPath[] exclusionPatterns = fPathEntries[i].getExclusionPatterns();
+			if (exclusionPatterns.length > 0) {
+				StringBuffer excludeRule = new StringBuffer(10);
+				for (int j = 0, max = exclusionPatterns.length; j < max; j++) {
+					if (j > 0)
+						excludeRule.append('|');
+					excludeRule.append(exclusionPatterns[j]);
+				}
+				element.setAttribute("excluding", excludeRule.toString()); //$NON-NLS-1$
+			}
+		}
 	}
 
-	public void setAutoSave(boolean autoSave) {
-		this.autoSave = autoSave;
+	public void setPathEntries(ICPathEntry[] entries) throws CoreException {
+		fPathEntries = entries;
+		setDirty();
+	}
+
+	public ICPathEntry[] getPathEntries() {
+		return fPathEntries;
 	}
 
 	protected ICExtension createExtensions(ICExtensionReference ext) throws CoreException {

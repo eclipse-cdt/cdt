@@ -1,7 +1,13 @@
-/*
- * (c) Copyright QNX Software System Ltd. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.util.HashMap;
@@ -116,8 +122,7 @@ public class CDescriptorManager implements IResourceChangeListener {
 			else
 				throw e;
 		}
-		COwner cowner = new COwner(id);
-		cowner.configure(project, cproject);
+		cproject.getOwner().configure(project, cproject);
 		cproject.saveInfo();
 		cproject.setAutoSave(true);
 		fDescriptorMap.put(project, cproject);
@@ -128,34 +133,10 @@ public class CDescriptorManager implements IResourceChangeListener {
 		if ( fDescriptorMap == null ) {
 			fDescriptorMap = new HashMap();
 		}
-		COwner cowner = new COwner(id);
-		cproject = new CDescriptor(project, cowner);
-		cowner.configure(project, cproject);
+		cproject = new CDescriptor(project, new COwner(id));
+		cproject.getOwner().configure(project, cproject);
 		cproject.saveInfo();
 		cproject.setAutoSave(true);
 		fDescriptorMap.put(project, cproject);
 	}
-	
-	/**
-     * Must remove an existing .cdtproject file before we generate a new one when converting
-     */
-//    public static void removeExistingCdtProjectFile(IProject project){
-//    	IFile file = project.getFile(CDescriptor.DESCRIPTION_FILE_NAME);
-//    	IProgressMonitor monitor = new  NullProgressMonitor();
-//    		
-//		// update the resource content
-//		if ((file != null) && file.exists()) {
-//			try{
-//				file.delete(true, monitor);
-//				// remove reference from the fDescriptorMap
-//				if (fDescriptorMap != null){
-//					fDescriptorMap.remove(project);
-//				}	
-//
-//				project.refreshLocal(1, monitor);		
-//			}catch(CoreException ce){
-//				CCorePlugin.log(ce);
-//			}
-//		}    	
-//    }
 }

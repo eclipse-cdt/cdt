@@ -1,3 +1,28 @@
+2003-03-28 David Inglis
+
+	* src/org/eclipse/cdt/core/AbstractCExtension.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ICDescriptor.java
+	* src/org/eclipse/cdt/core/ICExtension.java
+	* src/org/eclipse/cdt/core/ICExtensionReference.java
+	* src/org/eclipse/cdt/core/ICOwner.java
+	* src/org/eclipse/cdt/core/ICOwnerInfo.java
+	* src/org/eclipse/cdt/core/ICPathEntry.java
+	* src/org/eclipse/cdt/internal/CCorePluginResources.properties
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/CExtensionInfo.java
+	* src/org/eclipse/cdt/internal/core/CExtensionReference.java
+	* src/org/eclipse/cdt/internal/core/COwner.java
+	* src/org/eclipse/cdt/internal/core/CPathEntry.java
+	* src/org/eclipse/cdt/internal/core/InternalCExtension.java
+
+	Add new ICPathEntry interface with peristancy, access is via the ICDecriptor
+	which uses the .cdtproject file for the store. creation is through CCorePlugin.
+
+	- included is some copyright header changes and the move of the properties file
+	  to 'internal'	
+
 2003-03-27 Alain Magloire
 	* model/org/eclipse/cdt/internal/core/model/BinaryContainer.java:
 	* model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java:

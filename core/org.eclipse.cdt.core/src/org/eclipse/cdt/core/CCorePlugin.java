@@ -13,6 +13,7 @@ import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
+import org.eclipse.cdt.internal.core.CPathEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -54,9 +56,7 @@ public class CCorePlugin extends Plugin {
 
 	static {
 		try {
-			fgResourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.cdt.internal.CCorePluginResources");
+			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.internal.core.CCorePluginResources");
 		} catch (MissingResourceException x) {
 			fgResourceBundle = null;
 		}
@@ -77,9 +77,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(
-			getResourceString(key),
-			new String[] { arg });
+		return MessageFormat.format(getResourceString(key), new String[] { arg });
 	}
 
 	public static String getFormattedString(String key, String[] args) {
@@ -133,22 +131,15 @@ public class CCorePlugin extends Plugin {
 
 	public IConsole getConsole(String id) {
 		try {
-			IExtensionPoint extension =
-				getDescriptor().getExtensionPoint("CBuildConsole");
+			IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole");
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] configElements =
-						extensions[i].getConfigurationElements();
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
-						String builderID =
-							configElements[j].getAttribute("builderID");
-						if ((id == null && builderID == null)
-							|| (id != null && builderID.equals(id))) {
-							return (
-								IConsole) configElements[j]
-									.createExecutableExtension(
-								"class");
+						String builderID = configElements[j].getAttribute("builderID");
+						if ((id == null && builderID == null) || (id != null && builderID.equals(id))) {
+							return (IConsole) configElements[j].createExecutableExtension("class");
 						}
 					}
 				}
@@ -210,13 +201,11 @@ public class CCorePlugin extends Plugin {
 		return IndexModel.getDefault();
 	}
 
-	public ICDescriptor getCProjectDescription(IProject project)
-		throws CoreException {
+	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {
 		return fDescriptorManager.getDescriptor(project);
 	}
 
-	public void mapCProjectOwner(IProject project, String id, boolean override)
-		throws CoreException {
+	public void mapCProjectOwner(IProject project, String id, boolean override) throws CoreException {
 		if (!override) {
 			fDescriptorManager.configure(project, id);
 		} else {
@@ -258,9 +247,7 @@ public class CCorePlugin extends Plugin {
 			projectHandle.open(monitor);
 
 			// Add C Nature ... does not add duplicates
-			CProjectNature.addCNature(
-				projectHandle,
-				new SubProgressMonitor(monitor, 1));
+			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
 			mapCProjectOwner(projectHandle, projectID, false);
 		} finally {
 			//monitor.done();
@@ -279,10 +266,7 @@ public class CCorePlugin extends Plugin {
 	 * @throws CoreException
 	 */
 
-	public void convertProjectFromCtoCC(
-		IProject projectHandle,
-		IProgressMonitor monitor)
-		throws CoreException {
+	public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		if ((projectHandle != null)
 			&& projectHandle.hasNature(CCProjectNature.C_NATURE_ID)
 			&& !projectHandle.hasNature(CCProjectNature.CC_NATURE_ID)) {
@@ -297,10 +281,7 @@ public class CCorePlugin extends Plugin {
 	 * @param monitor
 	 * @exception CoreException
 	 */
-	public void addDefaultCBuilder(
-		IProject projectHandle,
-		IProgressMonitor monitor)
-		throws CoreException {
+	public void addDefaultCBuilder(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		// Set the Default C Builder.
 		CProjectNature.addCBuildSpec(projectHandle, monitor);
 	}
@@ -319,11 +300,7 @@ public class CCorePlugin extends Plugin {
 	 * @exception CoreException
 	 */
 
-	public void convertProjectToC(
-		IProject projectHandle,
-		IProgressMonitor monitor,
-		String projectID)
-		throws CoreException {
+	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID) throws CoreException {
 		this.convertProjectToC(projectHandle, monitor, projectID, true);
 
 	}
@@ -342,20 +319,13 @@ public class CCorePlugin extends Plugin {
 	 * @exception CoreException
 	 */
 
-	public void convertProjectToC(
-		IProject projectHandle,
-		IProgressMonitor monitor,
-		String projectID,
-		boolean addMakeBuilder)
+	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID, boolean addMakeBuilder)
 		throws CoreException {
-		if ((projectHandle == null)
-			|| (monitor == null)
-			|| (projectID == null)) {
+		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
 			return;
 		}
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProjectDescription description =
-			workspace.newProjectDescription(projectHandle.getName());
+		IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
 		description.setLocation(projectHandle.getFullPath());
 		createCProject(description, projectHandle, monitor, projectID);
 		if (addMakeBuilder) {
@@ -374,22 +344,12 @@ public class CCorePlugin extends Plugin {
 	 * @exception CoreException
 	 */
 
-	public void convertProjectToCC(
-		IProject projectHandle,
-		IProgressMonitor monitor,
-		String projectID,
-		boolean addMakeBuilder)
+	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID, boolean addMakeBuilder)
 		throws CoreException {
-		if ((projectHandle == null)
-			|| (monitor == null)
-			|| (projectID == null)) {
+		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
 			return;
 		}
-		createCProject(
-			projectHandle.getDescription(),
-			projectHandle,
-			monitor,
-			projectID);
+		createCProject(projectHandle.getDescription(), projectHandle, monitor, projectID);
 		// now add C++ nature
 		convertProjectFromCtoCC(projectHandle, monitor);
 		if (addMakeBuilder) {
@@ -408,11 +368,7 @@ public class CCorePlugin extends Plugin {
 	* @exception CoreException
 	*/
 
-	public void convertProjectToCC(
-		IProject projectHandle,
-		IProgressMonitor monitor,
-		String projectID)
-		throws CoreException {
+	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID) throws CoreException {
 		this.convertProjectToCC(projectHandle, monitor, projectID, true);
 	}
 
@@ -425,35 +381,82 @@ public class CCorePlugin extends Plugin {
 	//	}
 
 	public IProcessList getProcessList() {
-		IExtensionPoint extension =
-			getDescriptor().getExtensionPoint("ProcessList");
+		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			IConfigurationElement[] configElements =
-				extensions[0].getConfigurationElements();
+			IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
 			if (configElements.length != 0) {
 				try {
-					return (
-						IProcessList) configElements[0]
-							.createExecutableExtension(
-						"class");
+					return (IProcessList) configElements[0].createExecutableExtension("class");
 				} catch (CoreException e) {
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	// Preference to turn on/off the new parser
-	
+
 	private boolean useNewParser = false;
-	
+
 	public void setUseNewParser(boolean useNewParser) {
 		this.useNewParser = useNewParser;
 	}
-		
+
 	public boolean useNewParser() {
 		return useNewParser;
 	}
 
+	/**
+	 * @param path
+	 * @return
+	 */
+	public static ICPathEntry newProjectEntry(IPath path) {
+		return new CPathEntry(ICPathEntry.CDT_PROJECT, path, CPathEntry.NO_EXCLUSION_PATTERNS, null, null, null);
+	}
+
+	/**
+	 * @param path
+	 * @param sourceAttachmentPath
+	 * @param sourceAttachmentRootPath
+	 * @return
+	 */
+	public static ICPathEntry newLibraryEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentRootPrefixMapping) {
+		return new CPathEntry(
+			ICPathEntry.CDT_LIBRARY,
+			path,
+			CPathEntry.NO_EXCLUSION_PATTERNS,
+			sourceAttachmentPath,
+			sourceAttachmentRootPath, 
+			sourceAttachmentRootPrefixMapping);
+	}
+
+	/**
+	 * @param path
+	 * @param exclusionPatterns
+	 * @param outputLocation
+	 * @return
+	 */
+	public static ICPathEntry newSourceEntry(IPath path, IPath[] exclusionPatterns) {
+		return new CPathEntry(ICPathEntry.CDT_SOURCE, path, exclusionPatterns, null, null, null);  
+	}
+
+	/**
+	 * @param path
+	 * @param sourceAttachmentPath
+	 * @param sourceAttachmentRootPath
+	 * @return
+	 */
+	public static ICPathEntry newVariableEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath) {
+		return new CPathEntry(ICPathEntry.CDT_VARIABLE, path, null, sourceAttachmentPath, sourceAttachmentRootPath, null);
+	}
+
+	/**
+	 * @param path
+	 * @param exclusionPatterns
+	 * @return
+	 */
+	public static ICPathEntry newIncludeEntry(IPath path, IPath[] exclusionPatterns) {
+		return new CPathEntry(ICPathEntry.CDT_INCLUDE, path, exclusionPatterns, null, null, null);  
+	}
 }

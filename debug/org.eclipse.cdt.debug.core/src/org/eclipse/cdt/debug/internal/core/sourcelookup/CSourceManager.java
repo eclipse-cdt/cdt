@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.internal.sourcelookup;
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
@@ -32,8 +32,8 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	 */
 	public CSourceManager( ISourceLocator sourceLocator, DisassemblyManager disassemblyManager )
 	{
-		fSourceLocator = sourceLocator;
-		fDisassemblyManager = disassemblyManager;
+		setSourceLocator( sourceLocator );
+		setDisassemblyManager( disassemblyManager );
 	}
 
 	/* (non-Javadoc)
@@ -58,11 +58,12 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceElement(String)
 	 */
+/*
 	public Object getSourceElement( String fileName )
 	{
 		return ( getCSourceLocator() != null ) ? getCSourceLocator().getSourceElement( fileName ) : null;
 	}
-
+*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
 	 */
@@ -106,7 +107,7 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 		fMode = mode;
 	}
 
-	protected int getRealMode()
+	public int getRealMode()
 	{
 		return fRealMode;
 	}
@@ -129,7 +130,21 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	 */
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
-		return ( getSourceLocator() != null ) ? getSourceLocator().getSourceElement( stackFrame ) : null;
+		Object result = null;
+		if ( getMode() == ISourceMode.MODE_SOURCE && getSourceLocator() != null )
+		{
+			result = getSourceLocator().getSourceElement( stackFrame );
+		}
+		if ( result == null && getDisassemblyManager() != null )
+		{
+			setRealMode( ISourceMode.MODE_DISASSEMBLY );
+			result = getDisassemblyManager().getSourceElement( stackFrame );
+		}
+		else
+		{
+			setRealMode( ISourceMode.MODE_SOURCE );
+		}
+		return result;
 	}
 	
 	protected ICSourceLocator getCSourceLocator()
@@ -142,5 +157,20 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	protected ISourceLocator getSourceLocator()
 	{
 		return fSourceLocator;
+	}
+
+	protected void setSourceLocator( ISourceLocator sl )
+	{
+		fSourceLocator = sl;
+	}
+	
+	protected void setDisassemblyManager( DisassemblyManager dm )
+	{
+		fDisassemblyManager = dm;
+	}
+
+	protected DisassemblyManager getDisassemblyManager()
+	{
+		return fDisassemblyManager;
 	}
 }

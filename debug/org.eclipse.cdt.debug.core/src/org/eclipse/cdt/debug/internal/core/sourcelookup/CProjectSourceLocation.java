@@ -3,7 +3,7 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.core.internal.sourcelookup;
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 

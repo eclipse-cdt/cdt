@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.internal.sourcelookup;
+package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
 
@@ -106,6 +106,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElement(String)
 	 */
+/*
 	public Object getSourceElement( String fileName )
 	{
 		Object result = null;
@@ -128,7 +129,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		}
 		return result;
 	}
-
+*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#contains(IResource)
 	 */

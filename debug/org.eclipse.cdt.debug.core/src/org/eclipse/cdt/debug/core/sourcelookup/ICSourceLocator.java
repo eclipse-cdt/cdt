@@ -36,7 +36,7 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @param fileName the file name for which to locate source
 	 * @return an object representing a source element. 
 	 */
-	Object getSourceElement( String fileName );
+//	Object getSourceElement( String fileName );
 	
 	/**
 	 * Returns the source locations of this locator.

@@ -1,3 +1,7 @@
+2004-11-10 Mikhail Khodjaiants
+	Fix for bug 77437: Disassembly blocks with no associated source code has PC pointer on wrong line.
+	* DisassemblyEditorInput.java
+
 2004-11-09 Mikhail Khodjaiants
 	Partial fix for bug 41725: I can't set a breakpoint in a function where I used attach source.
 	* CDTDebugModelPresentation.java

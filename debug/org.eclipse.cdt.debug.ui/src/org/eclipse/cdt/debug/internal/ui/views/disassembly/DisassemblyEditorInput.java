@@ -132,7 +132,8 @@ public class DisassemblyEditorInput implements IEditorInput {
 			int result = 0;
 			for ( int i = 0; i < lines.length; ++i ) {
 				IAsmInstruction[] instructions = lines[i].getInstructions();
-				++result;
+				if ( fBlock.isMixedMode() )
+					++result;
 				for ( int j = 0; j < instructions.length; ++j ) {
 					++result;
 					if ( address.equals( instructions[j].getAdress() ) ) {

@@ -87,8 +87,8 @@
                     <topic label="Setting reminders" href="cdt_t_setreminder.htm"/>
                </topic>
           </topic>
-          <topic label="Running" href="">
-               <topic label="Creating or editing a run configuration" href="cdt_o_run.htm">
+          <topic label="Running" href="cdt_o_run.htm">
+               <topic label="Creating or editing a run configuration" href="cdt_o_run_config.htm">
                     <topic label="Creating a run configuration" href="cdt_t_new_run_config.htm"/>
                     <topic label="Selecting an application to run" href="cdt_t_run_main.htm"/>
                     <topic label="Specifying execution arguments" href="cdt_t_run_arg.htm"/>
@@ -99,7 +99,7 @@
                </topic>
           </topic>
           <topic label="Selecting a run configuration" href="cdt_t_run_config.htm"/>
-          <topic label="Debugging" href="cdt_o_runanddebug.htm">
+          <topic label="Debugging" href="cdt_o_debug.htm">
                <topic label="Debugging a program" href="cdt_t_debug_prog.htm"/>
                <topic label="Working with breakpoints and watchpoints" href="cdt_o_brkpnts_watch.htm">
                     <topic label="Adding breakpoints" href="cdt_t_add_brkpnts.htm"/>
@@ -109,7 +109,7 @@
                     <topic label="Setting conditions" href="cdt_t_cond_watch_brkpnts.htm"/>
                </topic>
                <topic label="Controlling your debug execution" href="cdt_t_controldebug.htm"/>
-               <topic label="Disassembly mode" href="cdt_t_disassemblymode.htm"/>
+               <topic label="Stepping into assembler functions" href="cdt_t_disassembly.htm"/>
                <topic label="Working with variables" href="cdt_t_variables.htm"/>
                <topic label="Working with expressions" href="cdt_t_expressions.htm"/>
                <topic label="Working with registers" href="cdt_t_registers.htm"/>

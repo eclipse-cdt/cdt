@@ -1,4 +1,8 @@
 2003-11-05 Mikhail Khodjaiants
+	'getCDIBreakpointFile' returns wrong file for address breakpoints.
+	* CBreakpointManager.java
+
+2003-11-05 Mikhail Khodjaiants
 	Changed the handling of the breakpoint created event to reflect the CDI changes for deferred 
 	breakpoints support.
 	* CBreakpointManager.java

@@ -216,6 +216,8 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 	public boolean isTargetBreakpoint( ICBreakpoint breakpoint )
 	{
 		IResource resource = breakpoint.getMarker().getResource();
+		if ( breakpoint instanceof ICAddressBreakpoint )
+			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
 		if ( breakpoint instanceof ICLineBreakpoint )
 		{ 
 			ICSourceLocator sl = getSourceLocator();
@@ -255,7 +257,7 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 	public IFile getCDIBreakpointFile( ICDIBreakpoint cdiBreakpoint )
 	{
 		IBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
-		if ( breakpoint instanceof ICLineBreakpoint )
+		if ( breakpoint instanceof ICLineBreakpoint && !(breakpoint instanceof ICAddressBreakpoint) )
 		{
 			IResource resource = ((ICLineBreakpoint)breakpoint).getMarker().getResource();
 			if ( resource instanceof IFile )

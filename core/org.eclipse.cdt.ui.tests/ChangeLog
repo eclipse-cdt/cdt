@@ -1,3 +1,8 @@
+2003-03-31 Andrew Niefer
+	In ParserSymbolTableTest, renamed testFunctionResolution_2() to testFunctionResolution_PointersAndBaseClasses(),
+	and modified to reflect changes in function resolution.  
+	Added testFunctionResolution_TypedefsAndPointers().
+	
 2003-03-31 John Camelon
 	Added testWeirdStrings() and testNumerics() to ScannerTestCase. 
 	Added testTemplateSpecialization(), testTemplateDeclaration(), testBug26467(), 

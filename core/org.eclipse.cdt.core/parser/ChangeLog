@@ -1,3 +1,7 @@
+2003-03-31 Andrew Niefer
+	Parser Symbol Table, better support for function resolution with pointers and 
+	references as parameters.  Also support for typedefs as function parameters
+		
 2003-03-31 John Camelon
 	Updated Scanner to work for Strings literals like L"this string"
 	Updated Scanner to work for floating points literals.

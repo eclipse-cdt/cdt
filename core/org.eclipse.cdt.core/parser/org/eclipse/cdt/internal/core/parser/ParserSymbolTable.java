@@ -760,19 +760,15 @@ public class ParserSymbolTable {
 					data.visited.add( wrapper.parent );
 				}
 				
-				//HashSet.add returns false if wrapper.parent is already in the set
-				//this means we have circular inheritance
+				//if the inheritanceChain already contains the parent, then that 
+				//is circular inheritance
 				if( ! data.inheritanceChain.contains( wrapper.parent ) ){
-				
 					//is this name define in this scope?
 					temp =  LookupInContained( data, wrapper.parent );
 					
 					if( temp == null ){
 						temp = LookupInParents( data, wrapper.parent );
 					}
-					
-					//data.inheritanceChain.remove( wrapper.parent );
-					
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
 				}
@@ -799,7 +795,9 @@ public class ParserSymbolTable {
 				temp = null;	//reset temp for next iteration
 			}
 		}
-		data.inheritanceChain.remove( lookIn);
+	
+		data.inheritanceChain.remove( lookIn );
+
 		return decl;	
 	}
 	
@@ -1270,7 +1268,7 @@ public class ParserSymbolTable {
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param source
@@ -1290,7 +1288,7 @@ public class ParserSymbolTable {
 		//if they are the same, no promotion is necessary
 		if( ( source.isType( TypeInfo.t_bool, TypeInfo.t_double ) || 
 		      source.isType( TypeInfo.t_enumeration ) ) 		   && 
-			source.getType() == target.getType() )
+			  source.getType() == target.getType() )
 		{
 			return 0;
 		}
@@ -1315,23 +1313,39 @@ public class ParserSymbolTable {
 	 * @return int
 	 * 
 	 */
-	static private int canConvert(TypeInfo source, TypeInfo target ){
+	static private int canConvert(TypeInfo source, TypeInfo target ) throws ParserSymbolTableException{
 		int temp = 0;
 		
+		source = getFlatTypeInfo( source );
+		
+		String sourcePtr = source.getPtrOperator();
+		String targetPtr = target.getPtrOperator();
+		
+		if( sourcePtr != null && sourcePtr.equals("") ){
+			sourcePtr = null;
+		}
+		if( targetPtr != null && targetPtr.equals("") ){
+			targetPtr = null;
+		}
+		
+		boolean samePtrOp = ( ( sourcePtr == targetPtr ) ||
+							  ( sourcePtr != null && targetPtr != null && sourcePtr.equals( targetPtr ) ) );
 		//are they the same?
 		if( source.getType() == target.getType() &&
-			source.getTypeDeclaration() == target.getTypeDeclaration() )
+			source.getTypeDeclaration() == target.getTypeDeclaration() &&
+			samePtrOp  )
 		{
 			return 0;
 		}
 		
 		//no go if they have different pointer qualification
-		if( ! source.getPtrOperator().equals( target.getPtrOperator() ) ){
+		if( !samePtrOp )
+		{					
 			return -1;
 		}
 		
 		//TBD, do a better check on the kind of ptrOperator
-		if( !source.getPtrOperator().equals("*") ){
+		if( sourcePtr == null || !sourcePtr.equals("*") ){
 			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			if( source.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
@@ -1380,6 +1394,48 @@ public class ParserSymbolTable {
 	static private boolean canDoQualificationConversion( TypeInfo source, TypeInfo target ){
 		return (  source.getCVQualifier() == source.getCVQualifier() ||
 		 		  (source.getCVQualifier() - source.getCVQualifier()) > 1 );	
+	}
+	
+	/**
+	 * 
+	 * @param decl
+	 * @return TypeInfo
+	 * @throws ParserSymbolTableException
+	 * The top level TypeInfo represents modifications to the object and the
+	 * remaining TypeInfo's represent the object.
+	 */
+	static private TypeInfo getFlatTypeInfo( TypeInfo topInfo ) throws ParserSymbolTableException {
+		TypeInfo returnInfo = topInfo;
+		TypeInfo info = null;
+		
+		if( topInfo.getType() == TypeInfo.t_type ){
+			returnInfo = new TypeInfo();
+			
+			Declaration typeDecl = null;
+			
+			info = topInfo.getTypeDeclaration().getTypeInfo();
+			
+			while( info.getType() == TypeInfo.t_type ){
+				typeDecl = info.getTypeDeclaration();
+				
+				returnInfo.addCVQualifier( info.getCVQualifier() );
+				returnInfo.addPtrOperator( info.getPtrOperator() );	
+				
+				info = info.getTypeDeclaration().getTypeInfo();
+			}
+			
+			returnInfo.setType( TypeInfo.t_type );
+			returnInfo.setTypeDeclaration( typeDecl );
+			
+			String ptrOp = returnInfo.getPtrOperator();
+			returnInfo.setPtrOperator( topInfo.getInvertedPtrOperator() );
+			
+			if( ptrOp != null ){
+				returnInfo.addPtrOperator( ptrOp );
+			}
+		}
+		
+		return returnInfo;	
 	}
 	
 	private Stack _contextStack = new Stack();

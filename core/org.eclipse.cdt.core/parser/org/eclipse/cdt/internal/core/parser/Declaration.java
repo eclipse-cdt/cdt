@@ -166,10 +166,10 @@ public class Declaration implements Cloneable {
 	}
 	
 	public String getPtrOperator(){
-		return _ptrOperator;
+		return _typeInfo.getPtrOperator();
 	}
 	public void setPtrOperator( String ptrOp ){
-		_ptrOperator = ptrOp;
+		_typeInfo.setPtrOperator( ptrOp );
 	}
 	
 	public int getReturnType(){
@@ -233,7 +233,7 @@ public class Declaration implements Cloneable {
 	private	Object 		_object;				//the object associated with us
 	private	boolean	_needsDefinition;		//this name still needs to be defined
 	private	int		_cvQualifier;
-	private	String		_ptrOperator;
+	//private	String		_ptrOperator;
 	protected	TypeInfo	_typeInfo;				//our type info
 	protected	Declaration	_containingScope;		//the scope that contains us
 	protected	LinkedList 	_parentScopes;			//inherited scopes (is base classes)

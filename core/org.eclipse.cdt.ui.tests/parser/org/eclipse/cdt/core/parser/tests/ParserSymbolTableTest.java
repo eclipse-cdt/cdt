@@ -1508,7 +1508,7 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration C = new Declaration( "C" );
-		
+		C.setType( TypeInfo.t_class );
 		table.addDeclaration(C);
 		table.push(C);
 				
@@ -1538,8 +1538,9 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, C );
 		
 		Declaration c = new Declaration("c");
-		c.setType( TypeInfo.t_class );
+		c.setType( TypeInfo.t_type );
 		c.setTypeDeclaration( look );
+		c.setPtrOperator( "*" );
 		table.addDeclaration( c );
 		
 		look = table.Lookup( "c" );
@@ -1550,7 +1551,7 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList paramList = new LinkedList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, null, 0, "", false);
 		TypeInfo p2 = new TypeInfo( TypeInfo.t_char, null, 0, "", false);
-		TypeInfo p3 = new TypeInfo( TypeInfo.t_type, C, 0, "*", false);
+		TypeInfo p3 = new TypeInfo( TypeInfo.t_type, c, 0, "", false);
 		
 		paramList.add( p1 );
 		look = table.MemberFunctionLookup( "foo", paramList );
@@ -1577,7 +1578,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * f( 'b' ); 	//calls f( char );
 	 * f(); 		//calls f( char );
 	 */
-	public void testFunctionResolution_1() throws Exception{
+	public void testFunctionResolution() throws Exception{
 		newTable();
 		
 		Declaration f1 = new Declaration("f");
@@ -1613,7 +1614,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, f2 );
 	}
 	
-	/**
+	/** 
 	 * 
 	 * @throws Exception
 	 *
@@ -1630,7 +1631,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * f( a );		//calls f( A * );
 	 * f( c );		//calls f( B * );   	      
 	 */
-	public void testFunctionResolution_2() throws Exception{
+	public void testFunctionResolution_PointersAndBaseClasses() throws Exception{
 		newTable();
 		
 		Declaration A = new Declaration( "A" );
@@ -1657,16 +1658,112 @@ public class ParserSymbolTableTest extends TestCase {
 		f2.addParameter( B, 0, "*", false );
 		table.addDeclaration( f2 );
 		
+		Declaration a = new Declaration( "a" );
+		a.setType( TypeInfo.t_type );
+		a.setTypeDeclaration( A );
+		a.setPtrOperator( "*" );
+		
+		Declaration c = new Declaration( "c" );
+		c.setType( TypeInfo.t_type );
+		c.setTypeDeclaration( C );
+		c.setPtrOperator( "*" );
+		
 		LinkedList paramList = new LinkedList();
-		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, A, 0, "*", false );
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, a, 0, null, false );
 		paramList.add( p1 );
 		Declaration look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 		paramList.clear();
-		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, C, 0, "*", false );
+		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, c, 0, "", false );
 		paramList.add( p2 );
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 *
+	 * class A {};
+	 * typedef A * B;
+	 * 
+	 * void f( A * );
+	 * void f( A );
+	 * 
+	 * A a;
+	 * B b;
+	 * A [] array;
+	 *
+	 * f( a ); 		//calls f( A );
+	 * f( &a );		//calls f( A * );
+	 * f( b );		//calls f( A * );
+	 * f( *b );		//calls f( A );
+	 * f( array );  //calls f( A * );
+	 */
+	public void testFunctionResolution_TypedefsAndPointers() throws Exception{
+		newTable();
+		
+		Declaration A = new Declaration( "A" );
+		A.setType( TypeInfo.t_class );
+		table.addDeclaration( A );
+		
+		Declaration B = new Declaration( "B" );
+		B.setType( TypeInfo.t_type );
+		B.setTypeDeclaration( A );
+		B.setPtrOperator( "*" );
+		table.addDeclaration( B );
+		
+		Declaration f1 = new Declaration( "f" );
+		f1.setType( TypeInfo.t_function );
+		f1.addParameter( A, 0, "*", false );
+		table.addDeclaration( f1 );
+		
+		Declaration f2 = new Declaration( "f" );
+		f2.setType( TypeInfo.t_function );
+		f2.addParameter( A, 0, null, false );
+		table.addDeclaration( f2 );
+
+		Declaration a = new Declaration( "a" );
+		a.setType( TypeInfo.t_type );
+		a.setTypeDeclaration( A );
+		table.addDeclaration( a );
+				
+		Declaration b = new Declaration( "b" );
+		b.setType( TypeInfo.t_type );
+		b.setTypeDeclaration( B );
+		table.addDeclaration( b );
+		
+		Declaration array = new Declaration( "array" );
+		array.setType( TypeInfo.t_type );
+		array.setTypeDeclaration( A );
+		array.setPtrOperator( "[]" );
+				
+		LinkedList paramList = new LinkedList();
+		TypeInfo p = new TypeInfo( TypeInfo.t_type, a, 0, null, false );
+		paramList.add( p );
+		
+		Declaration look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f2 );
+		
+		p.setPtrOperator( "&" );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f1 );
+		
+		p.setTypeDeclaration( b );
+		p.setPtrOperator( null );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f1 );
+		
+		p.setPtrOperator( "*" );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f2 );
+		
+		p.setTypeDeclaration( array );
+		p.setPtrOperator( null );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f1 );
+		
+	}
 }
+

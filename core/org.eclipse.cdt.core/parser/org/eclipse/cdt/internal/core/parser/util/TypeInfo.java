@@ -39,10 +39,20 @@ public class TypeInfo{
 		_typeInfo = type;
 		_typeDeclaration = decl;
 		_cvQualifier = cvQualifier;
-		_ptrOperator = ptrOp;
+		_ptrOperator = ( ptrOp != null ) ? new String( ptrOp ) : null;
 		_hasDefaultValue = hasDefault;
 	}
+	
+	public TypeInfo( TypeInfo info ){
+		super();
 		
+		_typeInfo = info._typeInfo;
+		_typeDeclaration = info._typeDeclaration;
+		_cvQualifier = info._cvQualifier;
+		_ptrOperator = ( info._ptrOperator == null ) ? null : new String( info._ptrOperator );
+		_hasDefaultValue = info._hasDefaultValue;
+	}
+	
 	public static final int typeMask   = 0x001f;
 	public static final int isAuto     = 0x0020;
 	public static final int isRegister = 0x0040;
@@ -63,21 +73,22 @@ public class TypeInfo{
 	// Types (maximum type is typeMask
 	// Note that these should be considered ordered and if you change
 	// the order, you should consider the ParserSymbolTable uses
-	public static final int t_type        =  0; // Type Specifier
-	public static final int t_namespace   =  1;
-	public static final int t_class       =  2;
-	public static final int t_struct      =  3;
-	public static final int t_union       =  4;
-	public static final int t_enumeration =  5;
-	public static final int t_function    =  6;
-	public static final int t_bool        =  7;
-	public static final int t_char        =  8;
-	public static final int t_wchar_t     =  9;
-	public static final int t_int         = 10;
-	public static final int t_float       = 11;
-	public static final int t_double      = 12;
-	public static final int t_void        = 13;
-	public static final int t_enumerator  = 14;
+	public static final int t_undef       =  0; //not specified
+	public static final int t_type        =  1; // Type Specifier
+	public static final int t_namespace   =  2;
+	public static final int t_class       =  3;
+	public static final int t_struct      =  4;
+	public static final int t_union       =  5;
+	public static final int t_enumeration =  6;
+	public static final int t_function    =  7;
+	public static final int t_bool        =  8;
+	public static final int t_char        =  9;
+	public static final int t_wchar_t     = 10;
+	public static final int t_int         = 11;
+	public static final int t_float       = 12;
+	public static final int t_double      = 13;
+	public static final int t_void        = 14;
+	public static final int t_enumerator  = 15;
 		
 	//Partial ordering :
 	// none		< const
@@ -157,6 +168,29 @@ public class TypeInfo{
 	public void setCVQualifier( int cv ){
 		_cvQualifier = cv;
 	}
+
+	public void addCVQualifier( int cv ){
+		switch( _cvQualifier ){
+			case 0:
+				_cvQualifier = cv;
+				break;
+				
+			case cvConst:
+				if( cv != cvConst ){
+					_cvQualifier = cvConstVolatile;
+				}
+				break;
+			
+			case cvVolatile:
+				if( cv != cvVolatile ){
+					_cvQualifier = cvConstVolatile;
+				}
+				break;
+			
+			case cvConstVolatile:
+				break;	//nothing to do
+		}
+	}
 	
 	public String getPtrOperator(){
 		return _ptrOperator;
@@ -164,6 +198,93 @@ public class TypeInfo{
 	
 	public void setPtrOperator( String ptr ){
 		_ptrOperator = ptr;
+	}
+	
+	public void addPtrOperator( String ptr ){
+		if( ptr == null ){
+			return;
+		}
+		
+		char chars[] = ( _ptrOperator == null ) ? ptr.toCharArray() : ( ptr + _ptrOperator ).toCharArray();
+		
+		int nChars = ( _ptrOperator == null ) ? ptr.length() : ptr.length() + _ptrOperator.length();
+		
+		char dest[] = new char [ nChars ];
+		int j = 0;
+		
+		char currChar, nextChar, tempChar;
+		
+		for( int i = 0; i < nChars; i++ ){
+			currChar = chars[ i ];
+			nextChar = ( i + 1 < nChars ) ? chars[ i + 1 ] : 0;
+			
+			switch( currChar ){
+				case '&':{
+					switch( nextChar ){
+						case '[':
+							tempChar = ( i + 2 < nChars ) ? chars[ i + 2 ] : 0;
+							if( tempChar == ']' ){
+								i++;
+								nextChar = '*'; 
+							}
+							//fall through to '*'
+						case '*':
+							i++;
+							break;
+						case '&':
+						default:
+							dest[ j++ ] = currChar;
+							break;
+					}
+					break;
+				}
+				case '[':{
+					if( nextChar == ']' ){
+						i++;
+						currChar = '*';
+						nextChar = ( i + 2 < nChars ) ? chars[ i + 2 ] : 0;
+					}
+					//fall through to '*'
+				}
+				case '*':{
+					
+					if( nextChar == '&' ){
+						i++;
+					} else {
+						dest[ j++ ] = currChar;
+					}
+					break;
+				}
+				default:
+					break;
+
+			}
+		}
+		
+		_ptrOperator = new String( dest, 0, j );
+	}
+	
+	public String getInvertedPtrOperator(){
+		if( _ptrOperator == null ){
+			return null;
+		}
+		
+		char chars[] = _ptrOperator.toCharArray();
+		int nChars = _ptrOperator.length();
+		
+		char dest[] = new char [ nChars ];
+		char currChar;
+		
+		for( int i = 0; i < nChars; i++ ){
+			currChar = chars[ i ];
+			switch( currChar ){
+				case '*' :	dest[ i ] = '&'; 		break;
+				case '&' :	dest[ i ] = '*'; 		break;
+				default: 	dest[ i ] = currChar;	break;
+			}
+		}
+		
+		return new String( dest );
 	}
 	
 	public boolean getHasDefault(){

@@ -6,15 +6,20 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+
+
 /**
  * 
- *    sharedlibrary regex
+ *    sharedlibrary filename
  *
  */
-public class MISharedLibrary extends CLICommand
-{
-	public MISharedLibrary(String lib) {
-		super("sharedlibrary " + lib);
+public class MISharedLibrary extends CLICommand {
+
+	public MISharedLibrary() {
+		super("sharedlibrary");
 	}
 
+	public MISharedLibrary(String name) {
+		super("sharedlibrary " + name);
+	}
 }

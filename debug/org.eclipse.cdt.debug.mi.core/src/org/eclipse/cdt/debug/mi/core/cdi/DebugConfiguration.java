@@ -16,7 +16,7 @@ public class DebugConfiguration implements ICDIDebugConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsBreakpoints()
 	 */
 	public boolean supportsBreakpoints() {
-		return false;
+		return true;
 	}
 
 	/**
@@ -30,70 +30,69 @@ public class DebugConfiguration implements ICDIDebugConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsExpressionEvaluation()
 	 */
 	public boolean supportsExpressionEvaluation() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsInstructionStepping()
 	 */
 	public boolean supportsInstructionStepping() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsMemoryModification()
 	 */
 	public boolean supportsMemoryModification() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsMemoryRetrieval()
 	 */
 	public boolean supportsMemoryRetrieval() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsRegisterModification()
 	 */
 	public boolean supportsRegisterModification() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsRegisters()
 	 */
 	public boolean supportsRegisters() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsRestart()
 	 */
 	public boolean supportsRestart() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsStepping()
 	 */
 	public boolean supportsStepping() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsSuspendResume()
 	 */
 	public boolean supportsSuspendResume() {
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsTerminate()
 	 */
 	public boolean supportsTerminate() {
-		return false;
+		return true;
 	}
-
 }

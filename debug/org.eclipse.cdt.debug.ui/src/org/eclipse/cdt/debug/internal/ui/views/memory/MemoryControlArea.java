@@ -331,4 +331,10 @@ public class MemoryControlArea extends Composite
 	{
 		return fMemoryText;
 	}
+	
+	protected void clear()
+	{
+		fAddressText.setText( "" );
+		handleAddressEnter();
+	}
 }

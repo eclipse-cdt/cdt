@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshMemoryAction;
+import org.eclipse.cdt.debug.internal.ui.actions.ClearMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -80,6 +81,11 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		setAction( "AutoRefreshMemory", action ); //$NON-NLS-1$
 		add( (AutoRefreshMemoryAction)action );
 
+		action = new ClearMemoryAction( (MemoryViewer)getViewer() );
+		action.setEnabled( false );
+		setAction( "ClearMemory", action ); //$NON-NLS-1$
+		add( (ClearMemoryAction)action );
+
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	}
@@ -101,6 +107,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		menu.add( new Separator( ICDebugUIConstants.MEMORY_GROUP ) );
 		menu.add( getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 		menu.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
+		menu.add( getAction( "ClearMemory" ) ); //$NON-NLS-1$
 
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 	}
@@ -114,6 +121,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		tbm.add( new Separator( ICDebugUIConstants.MEMORY_GROUP ) );
 		tbm.add( getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 		tbm.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
+		tbm.add( getAction( "ClearMemory" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -150,6 +158,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	public void dispose()
 	{
+		remove( (ClearMemoryAction)getAction( "ClearMemory" ) );
 		remove( (RefreshMemoryAction)getAction( "RefreshMemory" ) );
 		remove( (AutoRefreshMemoryAction)getAction( "AutoRefreshMemory" ) );
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );

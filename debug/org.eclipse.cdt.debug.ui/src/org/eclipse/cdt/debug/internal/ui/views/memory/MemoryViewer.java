@@ -182,4 +182,9 @@ public class MemoryViewer extends ContentViewer
 			block.setFrozen( frozen );
 		}
 	}
+	
+	public void clear()
+	{
+		((MemoryControlArea)fTabFolder.getSelection().getControl()).clear();
+	}
 }

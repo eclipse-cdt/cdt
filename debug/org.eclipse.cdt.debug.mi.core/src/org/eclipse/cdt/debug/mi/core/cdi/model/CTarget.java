@@ -486,9 +486,9 @@ public class CTarget  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String loc = "";
-		if (location.getFile() != null) {
+		if (location.getFile() != null && location.getFile().length() > 0) {
 			loc = location.getFile() + ":" + location.getLineNumber();
-		} else if (location.getFunction() != null) {
+		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
 			loc = location.getFunction();
 		} else if (location.getAddress() != 0) {
 			loc = "*" + location.getAddress();

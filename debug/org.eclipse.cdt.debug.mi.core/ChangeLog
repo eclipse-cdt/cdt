@@ -1,3 +1,6 @@
+2003-01-13 Mikhail Khodjaiants
+	* CTarget.java: in the 'runUntil' method check if file name or function name length > 0, otherwise use address.
+
 2003-01-10 Alain Magloire
 
 	* src/.../mi/core/cdi/BreakpointManager.java (update): fix subscript

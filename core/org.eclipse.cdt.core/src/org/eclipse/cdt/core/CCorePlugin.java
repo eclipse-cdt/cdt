@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -71,7 +70,6 @@ public class CCorePlugin extends Plugin {
 	public final static String PREF_USE_NEW_PARSER = "useNewParser";
 
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
-	public final static String PREF_ERROR_PARSER = "errorOutputParser"; // $NON-NLS-1$
 	
 	// Build Model Interface Discovery
 	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider";
@@ -757,36 +755,6 @@ public class CCorePlugin extends Plugin {
 		} catch (CoreException e) {
 		}
 		return empty;
-	}
-
-	public String[] getPreferenceErrorParserIDs() {
-		return getPreferenceErrorParserIDs(CCorePlugin.getDefault().getPluginPreferences());
-	}
-
-	public String[] getPreferenceErrorParserIDs(Preferences prefs) {
-		String parserIDs = prefs.getString(PREF_ERROR_PARSER);
-		String[] empty = new String[0];
-		if (parserIDs != null && parserIDs.length() > 0) {
-			StringTokenizer tok = new StringTokenizer(parserIDs, ";");
-			List list = new ArrayList(tok.countTokens());
-			while (tok.hasMoreElements()) {
-				list.add(tok.nextToken());
-			}
-			return (String[]) list.toArray(empty);
-		}
-		return empty;
-	}
-
-	public void setPreferenceErrorParser(String[] parsersIDs) {
-		setPreferenceErrorParser(CCorePlugin.getDefault().getPluginPreferences(), parsersIDs);
-	}
-
-	public void setPreferenceErrorParser(Preferences prefs, String[] parserIDs) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < parserIDs.length; i++) {
-			buf.append(parserIDs[i]).append(';');
-		}
-		prefs.setValue(PREF_ERROR_PARSER, buf.toString());
 	}
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {

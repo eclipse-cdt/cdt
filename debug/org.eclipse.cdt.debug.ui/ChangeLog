@@ -1,3 +1,7 @@
+2003-05-12 Mikhail Khodjaiants
+	Moved the generation of expressions for global variables to the mi plugin.
+	* AddGlobalsActionDelegate.java
+
 2003-05-07 Mikhail Khodjaiants
 	Display the error message and error image in the debug target's label 
 	if the error status is set.

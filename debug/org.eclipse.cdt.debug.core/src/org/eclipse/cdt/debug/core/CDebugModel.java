@@ -22,6 +22,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
@@ -44,6 +46,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -547,6 +550,28 @@ public class CDebugModel
 			{
 				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( text );
 				return new CExpression( (CDebugTarget)target, cdiExpression );
+			}
+			catch( CDIException e )
+			{
+				throw new DebugException( new Status( IStatus.ERROR, 
+													  getPluginIdentifier(),
+													  DebugException.TARGET_REQUEST_FAILED, 
+													  e.getMessage(), 
+													  null ) );
+			}
+		}
+		return null;
+	}
+
+	public static IExpression createExpressionForGlobalVariable( IDebugTarget target, IPath fileName, String name ) throws DebugException
+	{
+		if ( target != null && target instanceof CDebugTarget )
+		{
+			try
+			{
+				ICDIVariableObject vo = ((CDebugTarget)target).getCDISession().getVariableManager().getVariableObject( fileName.lastSegment(), null, name );
+				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable( vo );
+				return new CExpression( (CDebugTarget)target, cdiVariable );
 			}
 			catch( CDIException e )
 			{

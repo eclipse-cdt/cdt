@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -87,7 +87,6 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -2341,18 +2340,12 @@ public class CDebugTarget extends CDebugElement
 				  	  
 				  	  public IPath getPath()
 				  	  {
-							IPath path = new Path("");
-							try
-							{
-								IResource res = var.getUnderlyingResource();
-								if ( res != null )
-								{
-									path = res.getLocation();
-								}
-							}
-							catch (CModelException e)
-							{
-							}
+						  IPath path = new Path("");
+						  ICElement parent = var.getParent();
+						  if ( parent instanceof IBinaryModule )
+						  {
+							  path = ((IBinaryModule)parent).getPath();
+						  }
 						  return path;
 				  	  }
 				  };

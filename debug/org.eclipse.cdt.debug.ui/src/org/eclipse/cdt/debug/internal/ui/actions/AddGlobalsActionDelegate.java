@@ -68,19 +68,6 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 		{
 			return fPath;
 		}
-		
-		public String toString()
-		{
-			String path = "";
-			if ( getPath() != null )
-			{
-				path = getPath().toString();
-				int index = path.lastIndexOf( '/' );
-			 	if ( index != -1 )
-			 		path = path.substring( index + 1 );
-			}
-			return ( path.length() > 0 ? ( '\'' + path + "\'::" ) : "" ) + getName();
-		}
 	}
 
 	private Global[] fGlobals;
@@ -341,7 +328,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 					Object[] selections = dlg.getResult();
 					for ( int i = 0; i < selections.length; ++i )
 					{
-						createExpression( ((IDebugElement)element).getDebugTarget(), ((Global)selections[i]).toString() );
+						createExpression( ((IDebugElement)element).getDebugTarget(), (Global)selections[i]  );
 					}
 				}
 			}
@@ -371,9 +358,9 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 		return fStatus;
 	}
 
-	private void createExpression( IDebugTarget target, String text ) throws DebugException
+	private void createExpression( IDebugTarget target, Global global ) throws DebugException
 	{
-		IExpression expression = CDebugModel.createExpression( target, text );
+		IExpression expression = CDebugModel.createExpressionForGlobalVariable( target, global.getPath(), global.getName() );
 		DebugPlugin.getDefault().getExpressionManager().addExpression( expression );
 	}
 }

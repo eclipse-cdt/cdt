@@ -10,6 +10,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -26,10 +27,21 @@ public class CExpression extends CModificationVariable
 	/**
 	 * Constructor for CExpression.
 	 * @param target
+	 * @param cdiExpression
 	 */
 	public CExpression( CDebugTarget target, ICDIExpression cdiExpression )
 	{
 		super( target, cdiExpression );
+	}
+
+	/**
+	 * Constructor for CExpression.
+	 * @param target
+	 * @param cdiExpression
+	 */
+	public CExpression( CDebugTarget target, ICDIVariable cdiVariable )
+	{
+		super( target, cdiVariable );
 	}
 
 	/* (non-Javadoc)

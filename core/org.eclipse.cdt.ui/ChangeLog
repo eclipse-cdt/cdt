@@ -1,3 +1,14 @@
+2004-11-05 Alain Magloire
+	Framework for code formatter.
+	* src/org/eclipse/cdt/internal/coreext/CodeFormatterUtil.java
+	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CodeFormatterPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	* src/org/eclipse/cdt/internal/ui/text/CFormattingStrategy.java
+	* src/org/eclipse/cdt/ui/dialogs/CodeFormatterBlock.java
+	* plugin.xml
+	* plugin.properties
+
 2004-11-05 Chris Wiebe
 
 	Fix for 56204 - empty source files are no longer created

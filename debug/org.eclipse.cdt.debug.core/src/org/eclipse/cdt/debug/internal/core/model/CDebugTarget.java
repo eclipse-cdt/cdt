@@ -591,7 +591,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			currentCDIThread = getCDITarget().getCurrentThread();
 		}
 		catch( CDIException e ) {
-			CDebugCorePlugin.log( e );
 		}
 		for( int i = 0; i < cdiThreads.length; ++i ) {
 			CThread thread = findThread( oldList, cdiThreads[i] );

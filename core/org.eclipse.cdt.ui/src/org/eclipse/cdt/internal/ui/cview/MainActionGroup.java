@@ -69,10 +69,6 @@ public class MainActionGroup extends CViewActionGroup {
 	CollapseAllAction collapseAllAction;
 	ToggleLinkingAction toggleLinkingAction;
 
-	//Search
-	FileSearchAction fFileSearchAction;
-	FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
-	SearchDialogAction fSearchDialogAction;
 
 	BuildGroup buildGroup;
 	OpenFileGroup openFileGroup;
@@ -160,10 +156,6 @@ public class MainActionGroup extends CViewActionGroup {
 		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
 		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
-		fFileSearchAction = new FileSearchAction(viewer);
-		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(viewer);
-		fSearchDialogAction = new SearchDialogAction(viewer, getCView().getViewSite().getWorkbenchWindow());
-		
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
 		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite(), null);	
 		
@@ -186,10 +178,11 @@ public class MainActionGroup extends CViewActionGroup {
 			menu.add(importAction);
 			exportAction.selectionChanged(resources);
 			menu.add(exportAction);
+			menu.add(new Separator());
+			addSearchMenu(menu, celements);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 			menu.add(new Separator());
-			addSelectionSearchMenu(menu, resources);
 			return;
 		}
 
@@ -210,8 +203,6 @@ public class MainActionGroup extends CViewActionGroup {
 		menu.add(new Separator());
 		openProjectGroup.fillContextMenu(menu);
 		addBookMarkMenu(menu, resources);
-		menu.add(new Separator());
-		addSearchMenu(menu, resources);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 		addPropertyMenu(menu, resources);
@@ -266,28 +257,14 @@ public class MainActionGroup extends CViewActionGroup {
 
 		MenuManager search = new MenuManager(CViewMessages.getString("SearchAction.label"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
 
-		if (SearchDialogAction.canActionBeAdded(selection)) {
-			search.add(fSearchDialogAction);
+		
+		if (SelectionSearchGroup.canActionBeAdded(selection)){
+		selectionSearchGroup.fillContextMenu(search);
 		}
-
-		if (FileSearchAction.canActionBeAdded(selection)) {
-			MenuManager fileSearch = new MenuManager(CViewMessages.getString("FileSearchAction.label"));//$NON-NLS-1$
-			fileSearch.add(fFileSearchAction);
-			fileSearch.add(fFileSearchActionInWorkingSet);
-			search.add(fileSearch);
-		}
-
+		
 		menu.add(search);
 	}
 	
-	/**
-	 * @param menu
-	 */
-	void addSelectionSearchMenu(IMenuManager menu, IStructuredSelection selection) {
-		selectionSearchGroup.fillContextMenu(menu);
-	}
-
-
 	public void runDefaultAction(IStructuredSelection selection) {
 		openFileGroup.runDefaultAction(selection);
 		openProjectGroup.runDefaultAction(selection);

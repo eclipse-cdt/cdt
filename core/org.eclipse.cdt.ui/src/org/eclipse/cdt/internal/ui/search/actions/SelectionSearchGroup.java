@@ -10,10 +10,15 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import java.util.List;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
@@ -64,4 +69,25 @@ public class SelectionSearchGroup extends ActionGroup {
 		fDeclarationsSearchGroup.fillContextMenu(incomingMenu);
 		fRefSearchGroup.fillContextMenu(incomingMenu);
 	}	
+	
+	public static boolean canActionBeAdded(ISelection selection) {
+		if(selection instanceof ITextSelection) {
+			return (((ITextSelection)selection).getLength() > 0);
+		} else {
+			return getElement(selection) != null;
+		}
+	}
+	
+	private static ICElement getElement(ISelection sel) {
+		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
+			List list= ((IStructuredSelection)sel).toList();
+			if (list.size() == 1) {
+				Object element= list.get(0);
+				if (element instanceof ICElement) {
+					return (ICElement)element;
+				}
+			}
+		}
+		return null;
+	}
 }

@@ -102,12 +102,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	protected CContentOutlinePage fOutlinePage;
 	
 	/** Search actions **/
-
-	private FileSearchAction fFileSearchAction;
-
-	private FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
-	
-	private SearchDialogAction fSearchDialogAction;
 	
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
@@ -519,13 +513,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
-		//Search items
-		fFileSearchAction = new FileSearchAction(getSelectionProvider());
-		
-		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(getSelectionProvider());
-		
-		fSearchDialogAction = new SearchDialogAction(getSelectionProvider(), this);
-
 		if (hyperLinkEnabled()){
 			enableBrowserLikeLinks();
 		}
@@ -545,23 +532,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		// @@@ disabled for now until we get it to do something...
 		//addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Format"); //$NON-NLS-1$
 
-		MenuManager search = new MenuManager(CEditorMessages.getString("CEditor.menu.search"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, search);
-		
-		if (SearchDialogAction.canActionBeAdded(getSelectionProvider().getSelection())){
-			search.add(fSearchDialogAction);
-		}
-		
-		if (FileSearchAction.canActionBeAdded(getSelectionProvider().getSelection())) {
-			MenuManager fileSearch = new MenuManager(CEditorMessages.getString("CEditor.menu.fileSearch")); //$NON-NLS-1$
-			fileSearch.add(fFileSearchAction);
-			fileSearch.add(fFileSearchActionInWorkingSet);
-			search.add(fileSearch);
-		}
+		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDeclarations"); //$NON-NLS-1$
 
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenDeclarations"); //$NON-NLS-1$
+		
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
 		
 		fRefactoringActionGroup.fillContextMenu(menu);

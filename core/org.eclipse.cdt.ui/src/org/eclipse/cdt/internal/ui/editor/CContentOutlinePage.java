@@ -7,10 +7,11 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
@@ -37,8 +38,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
@@ -50,9 +53,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private String fContextMenuId;
 	
 	private OpenIncludeAction fOpenIncludeAction;
-	private FileSearchAction fFileSearchAction;
-	private FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
-	private SearchDialogAction fSearchDialogAction;
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
@@ -73,9 +73,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fTogglePresentation.setEditor(editor);
 		
 		fOpenIncludeAction= new OpenIncludeAction(this);
-		fFileSearchAction= new FileSearchAction(this);
-		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(this);
-		fSearchDialogAction = new SearchDialogAction(this, editor);
 	}
 	
 	public ICElement getRoot() {
@@ -129,21 +126,20 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			menu.add(fOpenIncludeAction);
 		}
 		
-		if (SearchDialogAction.canActionBeAdded(getSelection())) {
-			menu.add(fSearchDialogAction);
-		}
-		
-		if (FileSearchAction.canActionBeAdded(getSelection())) {
-			MenuManager fileSearch = new MenuManager(CEditorMessages.getString("CContentOutlinePage.menu.fileSearch")); //$NON-NLS-1$
-			fileSearch.add(fFileSearchAction);
-			fileSearch.add(fFileSearchActionInWorkingSet);
-			menu.add(fileSearch);
-		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 		
-		fSelectionSearchGroup.fillContextMenu(menu);
+		if (SelectionSearchGroup.canActionBeAdded(getSelection())){
+			MenuManager search = new MenuManager(CViewMessages.getString("SearchAction.label"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$	
+			fSelectionSearchGroup.fillContextMenu(search);
+			menu.add(search);
+			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		}
+		
 		fRefactoringActionGroup.fillContextMenu(menu);
+		
+		
+		
 	}
 	
 	/**

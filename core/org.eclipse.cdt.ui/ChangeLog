@@ -1,3 +1,14 @@
+2004-05-05 Bogdan Gheorghe
+	Got rid of the old search context menus in CEditor, COutlineView, CView.
+	
+	
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
+	* src/org/eclipse/cdt/internal/ui/search/actions/SelectionSearchGroup.java
+	
 2004-05-05 Andrew Niefer
 	externalize "Libraries" string in LibraryRefContainer
 

@@ -2653,7 +2653,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false,
             strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR);
       List declarators = Collections.EMPTY_LIST;
-      if (LT(1) != IToken.tSEMI) {
+      if (LT(1) != IToken.tSEMI && LT(1) != IToken.tEOC) {
          declarators = new ArrayList(DEFAULT_DECLARATOR_LIST_SIZE);
          declarators.add(initDeclarator(strategy));
          while (LT(1) == IToken.tCOMMA) {

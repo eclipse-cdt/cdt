@@ -1,5 +1,27 @@
 2003-08-06 Alain Magloire
 
+	Dealing with casting: Casting a field of a structure did not
+	work properly for example:
+		struct foo { int bar; } foobar;
+	To cast the field bar, we need to construct the full qualified
+	name "foobar.bar".
+	Unfortunately for C++ things are hectic in the GDB/MI world
+	the childre of structure are not the fields.  So we try to
+	deal with it too.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java:
+	New constructor, new method getLanguage() to deal with
+	different type of languages ex: C vs C++.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java:
+	Clean up and added a bunch of set/getXXX() methods instead of
+	accessing directly the fields.
+	* src/og/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	Clean the methods use for casting and format the indentation.
+	* src/org/eclipse/cdt/debug/mi/core/command/MIVarInfoExpression.java:
+	Added parsing method.
+
+2003-08-06 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java:
 	Implement isEditable method.
 

@@ -71,6 +71,20 @@ public interface IMakefile extends IParent {
 	IMacroDefinition[] getBuiltinMacroDefinitions();
 
 	/**
+	 * Returning after expanding any macros.
+	 * @return String - expanded line
+	 */
+	String expandString(String line);
+
+	/**
+	 * Returning after expanding any macros.
+	 * @param String - line to expand
+	 * @param boolean -  if true recursively expand.
+	 * @return String - expanded line
+	 */
+	String expandString(String line, boolean recursive);
+
+	/**
 	 * Clear the all statements and (re)parse the Makefile
 	 * @param makefile
 	 * @throws IOException

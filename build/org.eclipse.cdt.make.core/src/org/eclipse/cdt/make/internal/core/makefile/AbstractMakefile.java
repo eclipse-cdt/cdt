@@ -176,4 +176,84 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
 	}
 
+	public String expandString(String line) {
+		return expandString(line, false);
+	}
+
+	public String expandString(String line, boolean recursive) {
+		int len = line.length();
+		boolean foundDollar = false;
+		boolean inMacro = false;
+		StringBuffer buffer = new StringBuffer();
+		StringBuffer macroName = new StringBuffer();
+		for (int i = 0; i < len; i++) {
+			char c = line.charAt(i);
+			switch(c) {
+				case '$':
+					// '$$' --> '$'
+					if (foundDollar) {
+						buffer.append(c);
+						foundDollar = false;
+					} else {
+						foundDollar = true;
+					}
+					break;
+				case '(':
+				case '{':
+					if (foundDollar) {
+						inMacro = true;
+					} else {
+						buffer.append(c);
+					}
+					break;
+				case ')':
+				case '}':
+					if (inMacro) {
+						String name = macroName.toString();
+						if (name.length() > 0) {
+							IMacroDefinition[] defs = getMacroDefinition(name);
+							if (defs.length == 0) {
+								defs = getBuiltinMacroDefinition(name);
+							}
+							if (defs.length > 0) {
+								String result = defs[0].getValue().toString();
+								if (result.indexOf('$') != -1 && recursive) {
+									result = expandString(result, recursive);
+								}
+								buffer.append(result);
+							}
+						}
+						macroName.setLength(0);
+						inMacro = false;
+					} else {
+						buffer.append(c);
+					}
+					break;
+				default:
+					if (inMacro) {
+						macroName.append(c);
+					} else if (foundDollar) {
+						String name = String.valueOf(c);
+						IMacroDefinition[] defs = getMacroDefinition(name);
+						if (defs.length == 0) {
+							defs = getBuiltinMacroDefinition(name);
+						}
+						if (defs.length > 0) {
+							String result = defs[0].getValue().toString();
+							if (result.indexOf('$') != -1 && recursive) {
+								result = expandString(result, recursive);
+							}
+							buffer.append(result);
+						}
+						inMacro = false;
+					} else {
+						buffer.append(c);
+					}
+					foundDollar = false;
+					break;
+			}
+		}
+		return buffer.toString();
+	}
+
 }

@@ -154,7 +154,7 @@
    <extension
          point="org.eclipse.cdt.core.PathEntryContainerInitializer">
       <pathEntryContainerInitializer
-            class="org.eclipse.cdt.make.internal.core.scannerconfig.DiscoverdPathInitializer"
+            class="org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInitializer"
             id="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO">
       </pathEntryContainerInitializer>
    </extension>

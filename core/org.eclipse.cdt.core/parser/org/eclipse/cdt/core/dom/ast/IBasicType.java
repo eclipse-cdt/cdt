@@ -19,4 +19,24 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IBasicType extends IType {
 
+	/**
+	 * This returns the built-in type for the declaration. The type is
+	 * then refined by qualifiers for signed/unsigned and short/long.
+	 * The type could also be unspecified which usually means int.
+	 * 
+	 * @return
+	 */
+	public int getType();
+	
+	public static final int t_unspecified = IASTSimpleDeclSpecifier.t_unspecified;
+	public static final int t_void = IASTSimpleDeclSpecifier.t_void;
+	public static final int t_char = IASTSimpleDeclSpecifier.t_char;
+	public static final int t_int = IASTSimpleDeclSpecifier.t_int;
+	public static final int t_float = IASTSimpleDeclSpecifier.t_float;
+	public static final int t_double = IASTSimpleDeclSpecifier.t_double;
+	
+	public boolean isSigned();
+	public boolean isUnsigned();
+	public boolean isShort();
+	public boolean isLong();
 }

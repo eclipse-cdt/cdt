@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.ICModelStatusConstants;
 
 public class CProject extends CResource implements ICProject {
 
-	boolean elfDone = false;
+	boolean runner = false;
 
 	public CProject (ICElement parent, IProject project) {
 		super (parent, project, CElement.C_PROJECT);
@@ -62,12 +62,12 @@ public class CProject extends CResource implements ICProject {
 		return celem;
 	}
 
-	synchronized protected boolean hasRunElf() {
-		return elfDone;
+	synchronized protected boolean hasStartBinaryRunner() {
+		return runner;
 	}
 
-	synchronized protected void setRunElf(boolean done) {
-		elfDone = done;
+	synchronized protected void setStartBinaryRunner(boolean done) {
+		runner = done;
 	}
 
 	protected CProjectInfo getCProjectInfo() {

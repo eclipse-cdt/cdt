@@ -161,8 +161,11 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	public ICDIType getType() throws CDIException {
 		if (type == null) {
 			Target target = (Target)getTarget();
-			ICDIStackFrame frame = getStackFrame();
 			Session session = (Session) (target.getSession());
+			ICDIStackFrame frame = getStackFrame();
+			if (frame == null) {
+				frame = target.getCurrentThread().getCurrentStackFrame();
+			}
 			SourceManager sourceMgr = (SourceManager) session.getSourceManager();
 			String nametype = sourceMgr.getTypeName(this, getQualifiedName());
 			try {

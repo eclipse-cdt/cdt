@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -363,9 +364,11 @@ public class CValue extends AbstractCValue {
 
   	private String getPointerValueString( ICDIPointerValue value ) throws CDIException
   	{
- 		//IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
- 		IAddress address = value.pointerValue();
- 		if(address == null) return "";
+ 		//TODO:IPF_TODO Workaround to solve incorrect handling of structures referenced by pointers or references
+		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
+ 		IAddress address = factory.createAddress(value.pointerValue().toString());
+ 		if ( address == null ) 
+ 			return ""; //$NON-NLS-1$
 		CVariableFormat format = getParentVariable().getFormat(); 
         if( CVariableFormat.NATURAL.equals( format ) ||
             CVariableFormat.HEXADECIMAL.equals( format ) )
@@ -378,9 +381,11 @@ public class CValue extends AbstractCValue {
   	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException
   	{
   		//NOTE: Reference should be displayed identically to address
- 		//IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
- 		IAddress address = value.referenceValue();
- 		if(address == null) return "";
+ 		//TODO:IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
+		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
+ 		IAddress address = factory.createAddress( value.referenceValue().toString() );
+ 		if (address == null)
+ 			return ""; //$NON-NLS-1$
 		CVariableFormat format = getParentVariable().getFormat(); 
         if( CVariableFormat.NATURAL.equals( format ) ||
             CVariableFormat.HEXADECIMAL.equals( format ) )

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.cdi;
 
-import org.eclipse.cdt.core.IAddress;
-
+import java.math.BigInteger;
 
 /**
  * 
@@ -26,7 +25,7 @@ public interface ICDILocation {
 	 * 
 	 * @return the address of this location
 	 */
-	IAddress getAddress();
+	BigInteger getAddress();
 	
 	/**
 	 * Returns the source file of this location or <code>null</code>

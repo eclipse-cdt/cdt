@@ -11,7 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.model.ICDITracepoint;
 
 /**
@@ -156,5 +157,5 @@ public interface ICDITraceManager extends ICDISessionObject {
 	 * @param address - an address
 	 * @return an ICDILocation object 
 	 */
-	ICDILocation createLocation( IAddress address );
+	ICDILocation createLocation( BigInteger address );
 }

@@ -11,7 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -183,6 +184,6 @@ public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 	/**
 	 * Returns a ICDILocation
 	 */
-	ICDILocation createLocation(IAddress address);
+	ICDILocation createLocation(BigInteger address);
 
 }

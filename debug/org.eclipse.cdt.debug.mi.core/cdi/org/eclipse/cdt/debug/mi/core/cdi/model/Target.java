@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.IAddress;
-import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -65,13 +64,11 @@ public class Target  implements ICDITarget {
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
-	IAddressFactory addressFactory;
 	
-	public Target(Session s, MISession mi, IAddressFactory addrFactory) {
+	public Target(Session s, MISession mi) {
 		session = s;
 		miSession = mi;
 		currentThreads = noThreads;
-		addressFactory = addrFactory;
 	}
 
 	public MISession getMISession() {
@@ -468,7 +465,7 @@ public class Target  implements ICDITarget {
 			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
 		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
 			loc = location.getFunction();
-		} else if ( ! location.getAddress().isZero() ) {
+		} else if ( ! location.getAddress().equals(BigInteger.ZERO) ) {
 			loc = "*" + location.getAddress().toString(); //$NON-NLS-1$
 		}
 		MIExecUntil until = factory.createMIExecUntil(loc);
@@ -579,7 +576,7 @@ public class Target  implements ICDITarget {
 			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
 		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
 			loc = location.getFunction();
-		} else if (! location.getAddress().isZero()) {
+		} else if (! location.getAddress().equals(BigInteger.ZERO)) {
 			loc = "*" + location.getAddress().toString(); //$NON-NLS-1$
 		}
 		MIJump jump = factory.createMIJump(loc);
@@ -746,44 +743,8 @@ public class Target  implements ICDITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(long)
 	 */
-	public ICDILocation createLocation(IAddress address) {
+	public ICDILocation createLocation(BigInteger address) {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.createLocation(address);
 	}
-/*	
-	private IAddressFactory createAddressFactory() throws CDIException 
-	{
-		MISession mi = ((Session)getSession()).getMISession();
-		CommandFactory cf = mi.getCommandFactory();
-		MIGDBShowAddressSize as = cf.createMIGDBShowAddressSize();
-		try 
-		{
-			mi.postCommand(as );
-			MIGDBShowAddressSizeInfo info = (MIGDBShowAddressSizeInfo)as.getMIInfo();
-			if (info == null)
-			{
-				throw new CDIException("Target is not responding");
-			}
-			switch ( info.getAddressSize() )
-			{
-				case 32:
-					return new Addr32Factory();
-				case 64:
-					return new Addr64Factory();
-				default:
-				    throw new CDIException("Undefined address size");
-			}
-		}
-		catch (MIException e) 
-		{
-			throw new MI2CDIException(e);
-		}
-	}
-*/
-	public IAddressFactory getAddressFactory()
-	{
-		return addressFactory;
-	}
-
-	
 }

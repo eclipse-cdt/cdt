@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmSourceLine;
@@ -26,11 +27,11 @@ public class AsmSourceLine implements IAsmSourceLine {
 	/**
 	 * Constructor for AsmSourceLine.
 	 */
-	public AsmSourceLine( String text, ICDIInstruction[] cdiInstructions ) {
+	public AsmSourceLine( IAddressFactory factory, String text, ICDIInstruction[] cdiInstructions ) {
 		fText = text;
 		fInstructions = new IAsmInstruction[cdiInstructions.length];
 		for ( int i = 0; i < fInstructions.length; ++i ) {
-			fInstructions[i] = new AsmInstruction( cdiInstructions[i] );
+			fInstructions[i] = new AsmInstruction( factory, cdiInstructions[i] );
 		}
 	}
 

@@ -21,10 +21,6 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IAddressFactory;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
@@ -34,8 +30,6 @@ import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.osgi.framework.BundleContext;
@@ -119,7 +113,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws MIException
 	 */
-	public ICDISession createCSession(String gdb, IFile program, File cwd, String gdbinit) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit) throws IOException, MIException {
 		PTY pty = null;
 		boolean failed = false;
 
@@ -162,7 +156,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, IFile program, File cwd, String gdbinit, PTY pty) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, PTY pty) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -176,13 +170,13 @@ public class MIPlugin extends Plugin {
 			if (program == null) {
 				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program.getLocation().toFile().getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			}
 		} else {
 			if (program == null) {
 				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1", program.getLocation().toFile().getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			}
 		}
 
@@ -212,7 +206,7 @@ public class MIPlugin extends Plugin {
 			// If an exception is thrown that means ok
 			// we did not attach to any target.
 		}
-		return new Session(session, getAddressFactory(program), false);
+		return new Session(session, false);
 	}
 
 	/**
@@ -222,7 +216,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, IFile program, File core, File cwd, String gdbinit) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File core, File cwd, String gdbinit) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -235,7 +229,7 @@ public class MIPlugin extends Plugin {
 		if (program == null) {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getLocation().toFile().getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		}
 		Process pgdb = getGDBProcess(args);
 		MISession session;
@@ -245,7 +239,7 @@ public class MIPlugin extends Plugin {
 			pgdb.destroy();
 			throw e;
 		}
-		return new Session(session, getAddressFactory(program));
+		return new Session(session);
 	}
 
 	/**
@@ -255,7 +249,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, IFile program, int pid, String[] targetParams, File cwd, String gdbinit) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -268,7 +262,7 @@ public class MIPlugin extends Plugin {
 		if (program == null) {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getLocation().toFile().getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
 		Process pgdb = getGDBProcess(args);
 		MISession session;
@@ -304,7 +298,7 @@ public class MIPlugin extends Plugin {
 		//@@@ We have to manually set the suspended state when we attach
 		session.getMIInferior().setSuspended();
 		session.getMIInferior().update();
-		return new Session(session, getAddressFactory(program), true);
+		return new Session(session, true);
 	}
 
 	/**
@@ -429,16 +423,6 @@ public class MIPlugin extends Plugin {
 		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, IMIConstants.DEF_REQUEST_LAUNCH_TIMEOUT);
 	}
 
-	protected IAddressFactory getAddressFactory(IFile exe)
-	{
-		ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( exe );
-		if ( cFile instanceof IBinary )
-		{
-			return ((IBinary)cFile).getAddressFactory();
-		}
-		return null;		 
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */

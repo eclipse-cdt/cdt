@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 
@@ -20,19 +21,25 @@ import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 public class AsmInstruction implements IAsmInstruction {
 
 	private ICDIInstruction fCDIInstruction;
-
+	private IAddressFactory fAddressFactory;
 	/**
 	 * Constructor for AsmInstruction.
 	 */
-	public AsmInstruction( ICDIInstruction cdiInstruction ) {
+	public AsmInstruction( IAddressFactory factory, ICDIInstruction cdiInstruction ) {
 		fCDIInstruction = cdiInstruction;
+		fAddressFactory = factory;
+	}
+
+	public IAddressFactory getAddressFactory() {
+		return fAddressFactory;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getAdress()
 	 */
 	public IAddress getAdress() {
-		return fCDIInstruction.getAdress();
+		IAddressFactory factory = getAddressFactory();
+		return factory.createAddress( fCDIInstruction.getAdress().toString() );
 	}
 
 	/* (non-Javadoc)

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.mi.core.MISession;
 
 
@@ -21,20 +22,20 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  */
 public class MIMemoryCreatedEvent extends MICreatedEvent {
 
-	IAddress address;
+	BigInteger address;
 	long totalBytes;
 
-	public MIMemoryCreatedEvent(MISession source, IAddress addr, long total) {
+	public MIMemoryCreatedEvent(MISession source, BigInteger addr, long total) {
 		this(source, 0, addr, total);
 	}
 
-	public MIMemoryCreatedEvent(MISession source, int token, IAddress addr, long total) {
+	public MIMemoryCreatedEvent(MISession source, int token, BigInteger addr, long total) {
 		super(source, token);
 		address = addr;
 		totalBytes = total;
 	}
 
-	public IAddress getAddress() {
+	public BigInteger getAddress() {
 		return address;
 	}
 

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.event;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -37,16 +37,16 @@ public class MemoryChangedEvent implements ICDIMemoryChangedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getAddresses()
 	 */
-	public IAddress[] getAddresses() {
+	public BigInteger[] getAddresses() {
 	 	/* But only returns the address that are in the block.  */
-		IAddress[] mi_addresses = miMem.getAddresses();
+		BigInteger[] mi_addresses = miMem.getAddresses();
 		List aList = new ArrayList(mi_addresses.length);
 		for (int i = 0; i < mi_addresses.length; i++) {
 			if (source.contains(mi_addresses[i])) {
 				aList.add(mi_addresses[i]);
 			}
 		}
-		return (IAddress[])aList.toArray(new IAddress[0]);
+		return (BigInteger[]) aList.toArray(new BigInteger[aList.size()]);
 	}
 
 	/**

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
@@ -55,9 +56,10 @@ public class CSharedLibrary extends CDebugElement
 	 */
 	public IAddress getStartAddress()
 	{
+		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
 		if ( getCDISharedLibrary() != null )
-			return getCDISharedLibrary().getStartAddress();
-		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
+			return factory.createAddress(getCDISharedLibrary().getStartAddress().toString());
+		return factory.getZero();
 	}
 
 	/* (non-Javadoc)
@@ -65,9 +67,10 @@ public class CSharedLibrary extends CDebugElement
 	 */
 	public IAddress getEndAddress()
 	{
+		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
 		if ( getCDISharedLibrary() != null )
-			return getCDISharedLibrary().getEndAddress();
-		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
+			return factory.createAddress(getCDISharedLibrary().getEndAddress().toString());
+		return factory.getZero();
 	}
 
 	/* (non-Javadoc)

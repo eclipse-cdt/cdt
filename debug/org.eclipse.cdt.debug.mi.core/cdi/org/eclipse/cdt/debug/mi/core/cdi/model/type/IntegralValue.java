@@ -11,8 +11,11 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntegralValue;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Value;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
@@ -27,6 +30,24 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 		super(v);
 	}
 
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#biIntegerValue()
+	 */
+	public BigInteger bigIntegerValue() throws CDIException {
+		String valueString = getValueString();
+		int space = valueString.indexOf(' ');
+		if (space != -1) {
+			valueString = valueString.substring(0, space).trim();
+		}
+		try {
+			return MIFormat.getBigInteger(valueString);
+		} catch (NumberFormatException e) {
+		}
+		return BigInteger.ZERO;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#longValue()
 	 */
@@ -38,7 +59,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 			valueString = valueString.substring(0, space).trim();
 		}
 		try {
-			value = Long.decode(valueString).longValue();
+			value = MIFormat.getBigInteger(valueString).longValue();
 		} catch (NumberFormatException e) {
 		}
 		return value;
@@ -55,7 +76,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 			valueString = valueString.substring(0, space).trim();
 		}
 		try {
-			value = Integer.decode(valueString).intValue();
+			value = MIFormat.getBigInteger(valueString).intValue();
 		} catch (NumberFormatException e) {
 		}
 		return value;
@@ -72,7 +93,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 			valueString = valueString.substring(0, space).trim();
 		}
 		try {
-			value = Short.decode(valueString).shortValue();
+			value = MIFormat.getBigInteger(valueString).shortValue();
 		} catch (NumberFormatException e) {
 		}
 		return value;
@@ -89,7 +110,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 			valueString = valueString.substring(0, space).trim();
 		}
 		try {
-			value = Byte.decode(valueString).byteValue();
+			value = MIFormat.getBigInteger(valueString).byteValue();
 		} catch (NumberFormatException e) {
 		}
 		return value;

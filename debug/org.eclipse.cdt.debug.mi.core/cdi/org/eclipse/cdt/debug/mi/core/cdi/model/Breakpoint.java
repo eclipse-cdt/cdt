@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Condition;
 import org.eclipse.cdt.debug.mi.core.cdi.Location;
@@ -153,7 +156,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 				fLocation = new Location (miBreakpoint.getFile(),
 					miBreakpoint.getFunction(),
 					miBreakpoint.getLine(),
-					((Target)getTarget()).getAddressFactory().createAddress(miBreakpoint.getAddress()));
+					MIFormat.getBigInteger(miBreakpoint.getAddress()));
 			}
 		}
 		return fLocation;

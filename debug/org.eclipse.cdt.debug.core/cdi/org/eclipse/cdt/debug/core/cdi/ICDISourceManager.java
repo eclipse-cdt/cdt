@@ -11,7 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 
@@ -41,7 +42,7 @@ public interface ICDISourceManager extends ICDIManager {
 	 *  @param endAddress is the end address
 	 *  @throws CDIException on failure.
 	 */
-	ICDIInstruction[] getInstructions(IAddress startAddress, IAddress endAddress)
+	ICDIInstruction[] getInstructions(BigInteger startAddress, BigInteger endAddress)
 		throws CDIException;
 
 	/**
@@ -67,8 +68,8 @@ public interface ICDISourceManager extends ICDIManager {
 	 *  @throws CDIException on failure.
 	 */
 	ICDIMixedInstruction[] getMixedInstructions(
-		IAddress startAddress,
-	    IAddress endAddress)
+		BigInteger startAddress,
+	    BigInteger endAddress)
 		throws CDIException;
 
 	/**

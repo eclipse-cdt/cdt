@@ -14,12 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GDB/MI thread list parsing.
-&"info shared\n"
-~"From        To          Syms Read   Shared Object Library\n"
-~"0x40042fa0  0x4013ba9b  Yes         /lib/i686/libc.so.6\n"
-~"0x40001db0  0x4001321c  Yes         /lib/ld-linux.so.2\n"
-
+ * 
  */
 public class MIInfoSharedLibraryInfo extends MIInfo {
 
@@ -80,8 +75,8 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 		if (str.length() > 0) {
 			// Pass the header
 			int index = -1;
-			String from = "";
-			String to = "";
+			String from = ""; //$NON-NLS-1$
+			String to = ""; //$NON-NLS-1$
 			boolean syms = false;
 			String name = ""; //$NON-NLS-1$
 
@@ -117,8 +112,8 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	}
 
 	void parseWinShared(String str, List aList) {
-		String from = "";
-		String to = "";
+		String from = ""; //$NON-NLS-1$
+		String to = ""; //$NON-NLS-1$
 		boolean syms = true;
 
 		int index = str.lastIndexOf(' ');

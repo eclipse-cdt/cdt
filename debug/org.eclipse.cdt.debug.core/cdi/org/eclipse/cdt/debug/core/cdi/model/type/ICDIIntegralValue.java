@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 
@@ -22,6 +24,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
  * @since April 15, 2003
  */
 public interface ICDIIntegralValue extends ICDIValue {
+
+	public BigInteger bigIntegerValue() throws CDIException;
 
 	public long longValue() throws CDIException;
 

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
-import org.eclipse.cdt.debug.mi.core.MISession;
+import java.math.BigInteger;
 
-import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * This can not be detected yet by gdb/mi.
@@ -20,18 +20,18 @@ import org.eclipse.cdt.core.IAddress;
  */
 public class MIMemoryChangedEvent extends MIChangedEvent {
 
-	IAddress[] addresses;
+	BigInteger[] addresses;
 
-	public MIMemoryChangedEvent(MISession source, IAddress[] addrs) {
+	public MIMemoryChangedEvent(MISession source, BigInteger[] addrs) {
 		this(source, 0, addrs);
 	}
 
-	public MIMemoryChangedEvent(MISession source, int token, IAddress[] addrs) {
+	public MIMemoryChangedEvent(MISession source, int token, BigInteger[] addrs) {
 		super(source, token);
 		addresses = addrs;
 	}
 
-	public IAddress[] getAddresses() {
+	public BigInteger[] getAddresses() {
 		return addresses;
 	}
 }

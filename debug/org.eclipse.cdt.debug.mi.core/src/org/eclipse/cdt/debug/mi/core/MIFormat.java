@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
+import java.math.BigInteger;
+
 /**
  * Help class to specify formats.
  */
@@ -30,5 +32,41 @@ public final class MIFormat {
 
 	// no instanciation.
 	private MIFormat() {
+	}
+
+	public static BigInteger getBigInteger(String address) {
+		int index = 0;
+		int radix = 10;
+		boolean negative = false;
+
+		// Handle zero length
+		address = address.trim();
+		if (address.length() == 0) {
+			return BigInteger.ZERO;
+		}
+
+		// Handle minus sign, if present
+		if (address.startsWith("-")) { //$NON-NLS-1$
+			negative = true;
+			index++;
+		}
+		if (address.startsWith("0x", index) || address.startsWith("0X", index)) { //$NON-NLS-1$ //$NON-NLS-2$
+			index += 2;
+			radix = 16;
+		} else if (address.startsWith("#", index)) { //$NON-NLS-1$
+			index ++;
+			radix = 16;
+		} else if (address.startsWith("0", index) && address.length() > 1 + index) { //$NON-NLS-1$
+			index ++;
+			radix = 8;
+		}
+
+		if (index > 0) {
+			address = address.substring(index);
+		}
+		if (negative) {
+			address = "-" + address; //$NON-NLS-1$
+		}
+		return new BigInteger(address, radix);
 	}
 }

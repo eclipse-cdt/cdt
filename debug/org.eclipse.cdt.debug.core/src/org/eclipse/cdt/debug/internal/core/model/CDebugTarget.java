@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -1518,7 +1519,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( skipBreakpoints ) {
 			getBreakpointManager().skipBreakpoints( true );
 		}
-		ICDILocation location = getCDITarget().createLocation( address );
+		ICDILocation location = getCDITarget().createLocation( new BigInteger( address.toString() ) );
 		try {
 			getCDITarget().stepUntil( location );
 		}
@@ -1619,7 +1620,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void jumpToAddress( IAddress address ) throws DebugException {
 		if ( !canJumpToAddress( address ) )
 			return;
-		ICDILocation location = getCDITarget().createLocation( address );
+		ICDILocation location = getCDITarget().createLocation( new BigInteger( address.toString() ) );
 		try {
 			getCDITarget().resume( location );
 		}

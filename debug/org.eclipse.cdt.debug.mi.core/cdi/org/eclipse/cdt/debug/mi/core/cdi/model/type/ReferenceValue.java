@@ -11,10 +11,11 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -34,20 +35,19 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue#referenceValue()
 	 */
-	public IAddress referenceValue() throws CDIException {
+	public BigInteger referenceValue() throws CDIException {
 		String valueString = getValueString().trim();
-		if ( valueString.startsWith("@") ) //$NON-NLS-1$
-			valueString = valueString.substring( 1 );
+		if (valueString.startsWith("@")) { //$NON-NLS-1$
+			valueString = valueString.substring(1);
+		}
 		int space = valueString.indexOf(":"); //$NON-NLS-1$
 		if (space != -1) {
 			valueString = valueString.substring(0, space).trim();
 		}
-		try{
+		try {
 			
-			return ((Target)getTarget()).getAddressFactory().createAddress(valueString);
-		}
-		catch(Exception e)
-		{
+			return MIFormat.getBigInteger(valueString);
+		} catch(Exception e){
 			return null;
 		}
 		

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.cdi.event;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
 
 /**
  * 
@@ -21,5 +21,5 @@ public interface ICDIMemoryChangedEvent extends ICDIChangedEvent {
 	/**
 	 * @return the modified addresses.
 	 */
-	IAddress[] getAddresses();
+	BigInteger[] getAddresses();
 }

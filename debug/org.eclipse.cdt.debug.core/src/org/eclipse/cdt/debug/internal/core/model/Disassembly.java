@@ -79,7 +79,8 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 				if ( mixedInstrs.length == 0 ||
 						!containsAddress( mixedInstrs, address ) ) {
 						try {
-							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( address, address.add(BigInteger.valueOf(DISASSEMBLY_BLOCK_SIZE)) ) );
+							BigInteger addr = new BigInteger( address.toString() );
+							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( addr, addr.add(BigInteger.valueOf(DISASSEMBLY_BLOCK_SIZE)) ) );
 							return DisassemblyBlock.create( this, instructions );
 						}
 						catch( CDIException e ) {

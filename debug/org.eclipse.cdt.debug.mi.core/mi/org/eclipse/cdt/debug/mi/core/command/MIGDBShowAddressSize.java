@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIGDBShowAddressSize extends MIGDBShow {
 	
 	public MIGDBShowAddressSize () {
-		super(new String[] { "remoteaddresssize" });
+		super(new String[] { "remoteaddresssize" }); //$NON-NLS-1$
 	}
 	
 	public MIInfo getMIInfo() throws MIException {

@@ -11,7 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 
 /**
  * 
@@ -24,7 +25,7 @@ public interface ICDIInstruction extends ICDIObject {
 	 * Returns the Address.
 	 * @return the address.
 	 */
-	IAddress getAdress();
+	BigInteger getAdress();
 	
 	/**
 	 * @return the function name.

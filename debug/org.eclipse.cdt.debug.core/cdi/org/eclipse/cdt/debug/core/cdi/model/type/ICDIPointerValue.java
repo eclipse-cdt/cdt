@@ -11,7 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 
@@ -23,5 +24,5 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  */
 public interface ICDIPointerValue extends ICDIDerivedValue {
 	
-	IAddress pointerValue() throws CDIException;
+	BigInteger pointerValue() throws CDIException;
 }

@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;
 
 /**
@@ -27,8 +29,8 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getAdress()
 	 */
-	public IAddress getAdress() {
-		return ((Target)getTarget()).getAddressFactory().createAddress(asm.getAddress());
+	public BigInteger getAdress() {
+		return MIFormat.getBigInteger(asm.getAddress());
 	}
 
 	/**

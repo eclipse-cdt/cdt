@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.math.BigInteger;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
@@ -146,16 +146,16 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(long, long)
 	 */
-	public ICDIInstruction[] getInstructions(IAddress start, IAddress end) throws CDIException {
+	public ICDIInstruction[] getInstructions(BigInteger start, BigInteger end) throws CDIException {
 		Target target = (Target)getSession().getCurrentTarget();
 		return getInstructions(target, start, end);
 	}
-	public ICDIInstruction[] getInstructions(Target target, IAddress start, IAddress end) throws CDIException {
+	public ICDIInstruction[] getInstructions(Target target, BigInteger start, BigInteger end) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String hex = "0x"; //$NON-NLS-1$
-		String sa = start.toHexAddressString();
-		String ea = end.toHexAddressString();
+		String sa = hex + start.toString(16);
+		String ea = hex + end.toString(16);
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, false);
 		try {
 			mi.postCommand(dis);
@@ -206,15 +206,16 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(long, long)
 	 */
-	public ICDIMixedInstruction[] getMixedInstructions(IAddress start, IAddress end) throws CDIException {	
+	public ICDIMixedInstruction[] getMixedInstructions(BigInteger start, BigInteger end) throws CDIException {	
 		Target target = (Target)getSession().getCurrentTarget();
 		return getMixedInstructions(target, start, end);
 	}
-	public ICDIMixedInstruction[] getMixedInstructions(Target target, IAddress start, IAddress end) throws CDIException {
+	public ICDIMixedInstruction[] getMixedInstructions(Target target, BigInteger start, BigInteger end) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String sa = start.toHexAddressString();
-		String ea = end.toHexAddressString();
+		String hex = "0x"; //$NON-NLS-1$
+		String sa = hex + start.toString(16);
+		String ea = hex + end.toString(16);
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, true);
 		try {
 			mi.postCommand(dis);
@@ -340,7 +341,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		} else if (typename.equals("int32_t")) { //$NON-NLS-1$
 			return new LongType(vo, typename);
 		} else if (typename.equals("int64_t")) { //$NON-NLS-1$
-			return new IntType(vo, typename);
+			return new LongLongType(vo, typename);
 		} else if (typename.equals("int128_t")) { //$NON-NLS-1$
 			return new IntType(vo, typename);
 		}
@@ -480,12 +481,16 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	}
 
 	public String getTypeName(VariableObject vo, String variable) throws CDIException {
+		Target target = (Target)vo.getTarget();
 		ICDIStackFrame frame = vo.getStackFrame();
-		Target target = (Target)frame.getTarget();
-		ICDIThread currentThread = target.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(frame.getThread(), false);
-		frame.getThread().setCurrentStackFrame(frame, false);
+		ICDIThread currentThread = null;
+		ICDIStackFrame currentFrame = null;
+		if (frame != null) {
+			currentThread = target.getCurrentThread();
+			currentFrame = currentThread.getCurrentStackFrame();
+			target.setCurrentThread(frame.getThread(), false);
+			frame.getThread().setCurrentStackFrame(frame, false);
+		}
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -499,8 +504,12 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			target.setCurrentThread(currentThread, false);
-			currentThread.setCurrentStackFrame(currentFrame, false);
+			if (currentThread != null) {
+				target.setCurrentThread(currentThread, false);
+			}
+			if (currentFrame != null) {
+				currentThread.setCurrentStackFrame(currentFrame, false);
+			}
 		}
 	}
 

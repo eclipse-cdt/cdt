@@ -18,7 +18,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
@@ -102,12 +101,12 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	/**
 	 * update one Block.
 	 */
-	public IAddress[] update(MemoryBlock block, List aList) throws CDIException {
+	public BigInteger[] update(MemoryBlock block, List aList) throws CDIException {
 		Target target = (Target)block.getTarget();
 		MISession miSession = target.getMISession();
 		MemoryBlock newBlock = cloneBlock(block);
 		boolean newAddress = ! newBlock.getStartAddress().equals(block.getStartAddress());
-		IAddress[] array = compareBlocks(block, newBlock);
+		BigInteger[] array = compareBlocks(block, newBlock);
 		// Update the block MIDataReadMemoryInfo.
 		block.setMIDataReadMemoryInfo(newBlock.getMIDataReadMemoryInfo());
 		if (array.length > 0 || newAddress) {
@@ -128,11 +127,11 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 * oldBlock.getLength() == newBlock.getLength();
 	 * @return Long[] array of modified addresses.
 	 */
-	IAddress[] compareBlocks (MemoryBlock oldBlock, MemoryBlock newBlock) throws CDIException {
+	BigInteger[] compareBlocks (MemoryBlock oldBlock, MemoryBlock newBlock) throws CDIException {
 		byte[] oldBytes = oldBlock.getBytes();
 		byte[] newBytes = newBlock.getBytes();
 		List aList = new ArrayList(newBytes.length);
-		BigInteger distance = newBlock.getStartAddress().distance(oldBlock.getStartAddress());
+		BigInteger distance = newBlock.getStartAddress().subtract(oldBlock.getStartAddress());
 		//IPF_TODO enshure it is OK here
 		int diff = distance.intValue();
 		if ( Math.abs(diff) <  newBytes.length) {
@@ -144,7 +143,7 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 				}
 			}
 		}
-		return (IAddress[])aList.toArray(new IAddress[0]);
+		return (BigInteger[]) aList.toArray(new BigInteger[aList.size()]);
 	}
 
 	/**
@@ -180,9 +179,9 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
 	 */
-	public ICDIMemoryBlock createMemoryBlock(IAddress address, int length)
+	public ICDIMemoryBlock createMemoryBlock(BigInteger address, int length)
 		throws CDIException {
-		return createMemoryBlock(address.toHexAddressString(), length);
+		return createMemoryBlock(address.toString(16), length);
 	}
 		
 	/**

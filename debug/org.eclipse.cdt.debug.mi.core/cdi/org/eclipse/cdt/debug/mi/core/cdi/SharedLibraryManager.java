@@ -11,18 +11,19 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -146,10 +147,9 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	public boolean hasSharedLibChanged(ICDISharedLibrary lib, MIShared miLib) {
-		IAddressFactory af = ((Target)getSession().getCurrentTarget()).getAddressFactory();
 		return !miLib.getName().equals(lib.getFileName()) ||
-			!af.createAddress(miLib.getFrom()).equals(lib.getStartAddress())   ||
-		    !af.createAddress(miLib.getTo()).equals(lib.getEndAddress()) ||
+			!MIFormat.getBigInteger(miLib.getFrom()).equals(lib.getStartAddress())   ||
+		    !MIFormat.getBigInteger(miLib.getTo()).equals(lib.getEndAddress()) ||
 			miLib.isRead() != lib.areSymbolsLoaded();
 	}
 

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
@@ -61,15 +62,17 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 		if ( adapter instanceof IAdaptable ) {
 			locator = (ICSourceLocator)((IAdaptable)adapter).getAdapter( ICSourceLocator.class );
 		}
-		block.setSourceLines( createSourceLines( locator, instructions ) );
+		IAddressFactory factory = ((CDebugTarget)disassembly.getDebugTarget()).getAddressFactory();
+		block.setSourceLines( createSourceLines( factory, locator, instructions ) );
 		block.initializeAddresses();
 		return block;
 	}
 
 	public static DisassemblyBlock create( IDisassembly disassembly, ICDIInstruction[] instructions ) {
 		DisassemblyBlock block = new DisassemblyBlock( disassembly );
+		IAddressFactory factory = ((CDebugTarget)disassembly.getDebugTarget()).getAddressFactory();
 		block.setMixedMode( false );
-		block.setSourceLines( createSourceLines( instructions ) );
+		block.setSourceLines( createSourceLines( factory, instructions ) );
 		block.initializeAddresses();
 		return block;
 	}
@@ -130,7 +133,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	public void dispose() {
 	}
 
-	private static IAsmSourceLine[] createSourceLines( ICSourceLocator locator, ICDIMixedInstruction[] mi ) {
+	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ICSourceLocator locator, ICDIMixedInstruction[] mi ) {
 		IAsmSourceLine[] result = new IAsmSourceLine[mi.length];
 		LineNumberReader reader = null;
 		if ( result.length > 0 && locator != null ) {
@@ -170,13 +173,14 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 					}
 				}
 			}
-			result[i] = new AsmSourceLine( text, mi[i].getInstructions() );
+			result[i] = new AsmSourceLine( factory, text, mi[i].getInstructions() );
 		}
 		return result;
 	}
 
-	private static IAsmSourceLine[] createSourceLines( ICDIInstruction[] instructions ) {
-		return new IAsmSourceLine[] { new AsmSourceLine( "", instructions ) }; //$NON-NLS-1$
+	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ICDIInstruction[] instructions ) {
+		
+		return new IAsmSourceLine[] { new AsmSourceLine( factory, "", instructions ) }; //$NON-NLS-1$
 	}
 
 	private void initializeAddresses() {

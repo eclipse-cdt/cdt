@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -293,11 +294,12 @@ public class CFormattedMemoryBlock extends CDebugElement
 
 	public IAddress getRealStartAddress()
 	{
+		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
 		if ( fCDIMemoryBlock != null )
 		{
-			return fCDIMemoryBlock.getStartAddress();
+			return factory.createAddress( fCDIMemoryBlock.getStartAddress().toString() );
 		}
-		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
+		return factory.getZero();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
@@ -500,7 +502,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 	{
 		resetBytes();
 		resetRows();
-		setChangedAddresses( event.getAddresses() );
+		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
+		BigInteger[] bigs = event.getAddresses();
+		IAddress[] addresses = new IAddress[bigs.length];
+		for (int i = 0; i < addresses.length; ++i) {
+			addresses[i] = factory.createAddress( bigs[i].toString() );
+		}
+		setChangedAddresses( addresses );
 		fireChangeEvent( DebugEvent.CONTENT );
 	}
 	

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
@@ -41,6 +44,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	int level;
 	ICDIArgument[] args;
 	ICDIVariable[] locals;
+	Location fLocation;
 
 	/*
  	 * 
@@ -130,12 +134,15 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 */
 	public ICDILocation getLocation() {
 		if (frame != null) {
-			return new Location(frame.getFile(), 
+			if (fLocation == null) {
+				fLocation = new Location(frame.getFile(), 
 					            frame.getFunction(),
 					            frame.getLine(),  
-								((Target)getTarget()).getAddressFactory().createAddress(frame.getAddress()));
+								MIFormat.getBigInteger(frame.getAddress()));
+			}
+			return fLocation;
 		}
-		return new Location("", "", 0, ((Target)getTarget()).getAddressFactory().getZero()); //$NON-NLS-1$ //$NON-NLS-2$
+		return new Location("", "", 0, BigInteger.ZERO); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

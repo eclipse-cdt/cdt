@@ -104,7 +104,7 @@ public class ParserUtil
 			path = path.removeFirstSegments(root.getLocation().segmentCount() );
 
 		IResource resultingResource = root.getFile(path);
-		if( resultingResource.exists() ) 
+		if( resultingResource != null && resultingResource.exists() ) 
 		    return resultingResource;
 		return null;
 	}

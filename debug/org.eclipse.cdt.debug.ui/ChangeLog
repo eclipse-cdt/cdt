@@ -1,3 +1,9 @@
+2004-02-20 Alain Magloire
+	Partial Fix for #52155, we simply catch the exception.
+	We do not worry about it too much since this code will
+	be rewritten part of catching up with Eclipse 3.0
+	* CDebugUIPlugin.java: shutdown()
+
 2004-02-16 Mikhail Khodjaiants
 	Fix for bug 52135: Debugger should indicate which thread triggered breakpoint.
 	* CDTDebugModelPresentation.java

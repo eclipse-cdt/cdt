@@ -324,14 +324,22 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	public void shutdown() throws CoreException
 	{
 		DebugPlugin.getDefault().removeDebugEventListener( this );
-		IWorkbenchWindow ww = getActiveWorkbenchWindow();
-		if ( ww != null )
+		// TODO: PR 52155, this is big hammer approach, but it is ok for
+		// Since the code will be remove when we align ourselves
+		// with Eclipse-3.0
+		try 
 		{
-			ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+			IWorkbenchWindow ww = getActiveWorkbenchWindow();
+			if ( ww != null )
+			{
+				ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+			}
+		} catch (Exception e) {
+			// Big hammer.
 		}
 		if ( fImageDescriptorRegistry != null )
 		{
-			fImageDescriptorRegistry.dispose();
+				fImageDescriptorRegistry.dispose();
 		}
 		CDebugCorePlugin.getDefault().setAsyncExecutor( null );
 		super.shutdown();

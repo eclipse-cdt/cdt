@@ -79,6 +79,17 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fWorkingDirLabel.setLayoutData(gd);
+
+		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
+		fUseDefaultWorkingDirButton.setText("Use de&fault working directory");
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		fUseDefaultWorkingDirButton.setLayoutData(gd);
+		fUseDefaultWorkingDirButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleUseDefaultWorkingDirButtonSelected();
+			}
+		});
 		
 		fLocalDirButton = createRadioButton(workingDirComp, "&Local directory");
 		fLocalDirButton.addSelectionListener(new SelectionAdapter() {
@@ -125,18 +136,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 				handleWorkspaceDirBrowseButtonSelected();
 			}
 		});		
-				
-		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText("Use de&fault working directory");
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		fUseDefaultWorkingDirButton.setLayoutData(gd);
-		fUseDefaultWorkingDirButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleUseDefaultWorkingDirButtonSelected();
-			}
-		});
-				
+								
 	}
 					
 	/**

@@ -245,7 +245,7 @@ public class SourceLookupBlock
 								if ( association.isValidPath( (String)value ) )
 								{
 									((CDirectorySourceLocation)entry).setAssociation( association );
-									fSourceListField.refresh();
+									getSourceListField().refresh();
 									updateLaunchConfigurationDialog();
 								}
 							}
@@ -317,7 +317,7 @@ public class SourceLookupBlock
 		return false;
 	}
 
-	private void updateLaunchConfigurationDialog()
+	protected void updateLaunchConfigurationDialog()
 	{
 		if ( getLaunchConfigurationDialog() != null )
 		{
@@ -364,5 +364,10 @@ public class SourceLookupBlock
 	public void setProject( IProject project )
 	{
 		fProject = project;
+	}
+
+	public SourceListDialogField getSourceListField()
+	{
+		return fSourceListField;
 	}
 }

@@ -1,3 +1,7 @@
+2003-01-07 Mikhail Khodjaiants
+	Fix for bug 29095: The current instruction is incorrect in the disassembly mode.
+	* CStackFrame.java
+
 2003-01-03 Mikhail Khodjaiants
 	Fix in the 'findFileByRelativePath' method of 'CDirectorySourceLocation'.
 	Check if file exists in the local file system than try to map it to the Eclipse workspace.

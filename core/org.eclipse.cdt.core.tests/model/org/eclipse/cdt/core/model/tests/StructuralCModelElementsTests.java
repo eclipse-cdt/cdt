@@ -125,7 +125,7 @@ public class StructuralCModelElementsTests extends TestCase {
 		
 		checkStructs(namespace);
 		
-//		checkTemplates(namespace);
+		checkTemplates(namespace);
 		
 		checkArrays(tu);
 

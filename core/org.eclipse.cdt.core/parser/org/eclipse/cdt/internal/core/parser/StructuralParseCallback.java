@@ -92,7 +92,10 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionDeclaration(org.eclipse.cdt.core.parser.ast.IASTFunction)
 	 */
 	public void acceptFunctionDeclaration(IASTFunction function) {
-		addElement(function);
+		if(function.getOwnerTemplateDeclaration() == null)
+			addElement(function);
+		else if(function.getOwnerTemplateDeclaration() instanceof IASTTemplateDeclaration)
+			addElement((IASTTemplateDeclaration)function.getOwnerTemplateDeclaration());
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +123,10 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptAbstractTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration)
 	 */
 	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {
-		addElement(abstractDeclaration);
+		if(abstractDeclaration.getOwnerTemplateDeclaration() == null)
+			addElement(abstractDeclaration);
+		else if(abstractDeclaration.getOwnerTemplateDeclaration() instanceof IASTTemplateDeclaration)
+			addElement((IASTTemplateDeclaration)abstractDeclaration.getOwnerTemplateDeclaration());
 	}
 
 	/* (non-Javadoc)
@@ -159,16 +165,18 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
 	 */
 	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {
-		enterScope(compilationUnit);
+	enterScope(compilationUnit);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodDeclaration(org.eclipse.cdt.core.parser.ast.IASTMethod)
 	 */
 	public void acceptMethodDeclaration(IASTMethod method) {
-		addElement(method);
-	}
-	/* (non-Javadoc)
+		if(method.getOwnerTemplateDeclaration() == null)
+			addElement(method);
+		else if(method.getOwnerTemplateDeclaration() instanceof IASTTemplateDeclaration)
+			addElement((IASTTemplateDeclaration)method.getOwnerTemplateDeclaration());
+	}	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptField(org.eclipse.cdt.core.parser.ast.IASTField)
 	 */
 	public void acceptField(IASTField field) {
@@ -224,21 +232,20 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterFunctionBody(org.eclipse.cdt.core.parser.ast.IASTFunction)
 	 */
 	public void enterFunctionBody(IASTFunction function) {
-		addElement(function);
+		if(function.getOwnerTemplateDeclaration() == null)
+			addElement(function);
+		else if(function.getOwnerTemplateDeclaration() instanceof IASTTemplateDeclaration)
+			addElement((IASTTemplateDeclaration)function.getOwnerTemplateDeclaration());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterMethodBody(org.eclipse.cdt.core.parser.ast.IASTMethod)
 	 */
 	public void enterMethodBody(IASTMethod method) {
-		addElement(method);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
-	 */
-	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {
-		addElement(declaration);
+		if(method.getOwnerTemplateDeclaration() == null)
+			addElement(method);
+		else if(method.getOwnerTemplateDeclaration() instanceof IASTTemplateDeclaration)
+			addElement((IASTTemplateDeclaration)method.getOwnerTemplateDeclaration());
 	}
 
 }

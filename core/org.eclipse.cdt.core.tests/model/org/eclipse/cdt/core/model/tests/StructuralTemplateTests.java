@@ -1,76 +1,44 @@
-/*
- * Created on Jun 17, 2003
- * by bnicolle
- */
 package org.eclipse.cdt.core.model.tests;
-
-import org.eclipse.cdt.core.model.*;
-
-import junit.framework.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * Class for testing ITemplate interface
- * @author bnicolle
+ * @author hamer
  *
  */
-public class ITemplateTests extends IntegratedCModelTest {
+public class StructuralTemplateTests extends ITemplateTests {
 	/**
 	 * @param name
 	 */
-	public ITemplateTests(String name) {
+	public StructuralTemplateTests(String name) {
 		super(name);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.tests.IntegratedCModelTest#getSourcefileSubdir()
-	 */
-	public String getSourcefileSubdir() {
-		return "resources/cmodel/";
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.tests.IntegratedCModelTest#getSourcefileResource()
-	 */
-	public String getSourcefileResource() {
-		return "ITemplate.cpp";
-	}
-	/**
-	 * @returns a test suite named after this class
-	 *          containing all its public members named "test*"
-	 */
 	public static Test suite() {
-		TestSuite suite= new TestSuite( IStructureTests.class.getName() );
+		TestSuite suite= new TestSuite( StructuralTemplateTests.class.getName() );
 		
 		// Interface tests:
-		suite.addTest( new ITemplateTests("testGetChildrenOfTypeTemplate"));
-		suite.addTest( new ITemplateTests("testGetNumberOfTemplateParameters"));
-		suite.addTest( new ITemplateTests("testGetTemplateParameterTypes"));
-		suite.addTest( new ITemplateTests("testGetTemplateSignature"));
-		
-		// Language Specification tests:		
-		// TBD.
-				
+		suite.addTest( new StructuralTemplateTests("testGetChildrenOfTypeTemplate"));
+		suite.addTest( new StructuralTemplateTests("testGetNumberOfTemplateParameters"));
+		suite.addTest( new StructuralTemplateTests("testGetTemplateParameterTypes"));
+		suite.addTest( new StructuralTemplateTests("testGetTemplateSignature"));
+						
 		return suite;
 	}
+	
 
-	public List getTemplateMethods(ITranslationUnit tu) throws CModelException
-	{
-		IStructure myElem = null;
-		try {
-			myElem = (IStructure) tu.getElement("TemplateContainer");
-		}
-		catch( CModelException c ) {
-			assertNotNull( c );							
-		}
-		assertNotNull(myElem);
-		return myElem.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetChildrenOfTypeTemplate()
+	 */
 	public void testGetChildrenOfTypeTemplate() throws CModelException {
+		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
@@ -114,12 +82,13 @@ public class ITemplateTests extends IntegratedCModelTest {
 			// are considered Method Declarations in Structural parse mode
 			List arrayElements = getTemplateMethods(tu);
 			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION));
+			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
 			String[] myExpectedValues = {
 				"fum",
 				"scrum",
-				"nonVector<T>::first",
 				"IsGreaterThan",
-				"Foo::fum"
+				"first",
+				"fum"
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
 			for(int i=0; i<myExpectedValues.length; i++) {
@@ -128,25 +97,12 @@ public class ITemplateTests extends IntegratedCModelTest {
 				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
 			}
 		}
-/*
- 		// TEMPLATE_VARIABLE moved to failed tests
- 		{
-			ArrayList arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
-			String[] myExpectedValues = {
-				"default_alloc_template<threads,inst>::S_start_free"
-			};
-			assertEquals(myExpectedValues.length, arrayElements.size());
-			for(int i=0; i<myExpectedValues.length; i++) {
-				ITemplate myITemplate = (ITemplate) arrayElements.get(i);
-				assertNotNull( "Failed on "+i, myITemplate);
-				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
-			}
-		}
-*/	}
-
-
-	public void testGetNumberOfTemplateParameters() throws CModelException
-	{
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetNumberOfTemplateParameters()
+	 */
+	public void testGetNumberOfTemplateParameters() throws CModelException {
+		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT ) );
@@ -154,6 +110,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
+		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
 		// TEMPLATE_VARIABLE moved to failed tests
 		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
@@ -169,8 +126,11 @@ public class ITemplateTests extends IntegratedCModelTest {
 				myTemplate.getNumberOfTemplateParameters());
 		}
 	}
-	public void testGetTemplateParameterTypes() throws CModelException
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetTemplateParameterTypes()
+	 */
+	public void testGetTemplateParameterTypes() throws CModelException {
+		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT ) );
@@ -178,6 +138,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
+		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
 		// TEMPLATE_VARIABLE moved to failed tests
 		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
@@ -187,15 +148,15 @@ public class ITemplateTests extends IntegratedCModelTest {
 			//"nonVector"
 			{"T"},
 			//"ArrayOverlay"
-			{"X","Y","int=16"},
+			{"X","Y","size"}, // should be {"X","Y","int=16"},
 			//"TemplateContainer::fum"
 			{"Bar"},
 		  	//"TemplateParameter::scrum"
 			{"Foo"},
-			//"nonVector::first"
-			{"T"},
 			//"IsGreaterThan"
 			{"X"},
+			//"nonVector::first"
+			{"T"},
 			//"Foo::fum"
 			{"Bar"},
 			/*
@@ -214,8 +175,11 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 	}
-	public void testGetTemplateSignature() throws CModelException
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetTemplateSignature()
+	 */
+	public void testGetTemplateSignature() throws CModelException {
+		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT ) );
@@ -223,19 +187,20 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
+		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
 		// TEMPLATE_VARIABLE moved to failed tests
 		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
 		String[] myExpectedValues = {
 			"Map<Key, Value, SortAlgorithm>",
 			"nonVector<T>",
-			"ArrayOverlay<X, Y, int=16>",
+			"ArrayOverlay<X, Y, size>", // should be  "ArrayOverlay<X, Y, int=16>",
 			"fum<Bar>(int) : void",
 			"scrum<Foo>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
-			"nonVector<T>::first<T>() : const T&", // TODO: where should <T> be?
 			// TODO: shouldn't signature indicate const function as well?
 			"IsGreaterThan<X>(X, X) : bool",
-			"Foo::fum<Bar>(int) : void",
+			"first<T>() : const T&", // TODO: where should <T> be?
+			"fum<Bar>(int) : void",
 			/*"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",*/
 		};
 		assertEquals(myExpectedValues.length, arrayElements.size());

@@ -1,4 +1,10 @@
 #define size_t int
-class B {
-int b;
-};
+class A;
+
+class B;
+
+class C;
+
+class T;
+
+class junk;

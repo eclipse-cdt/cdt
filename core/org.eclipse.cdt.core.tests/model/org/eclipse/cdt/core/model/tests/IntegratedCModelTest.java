@@ -10,6 +10,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -29,6 +30,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 	private ICProject fCProject;
 	private IFile sourceFile;
 	private NullProgressMonitor monitor;
+	private boolean structuralParse = false;
 
 	/**
 	 * 
@@ -78,8 +80,24 @@ public abstract class IntegratedCModelTest extends TestCase {
 
 	protected ITranslationUnit getTU() {
 		TranslationUnit tu = new TranslationUnit(fCProject, sourceFile);
+		if(isStructuralParse()) {
+			CCorePlugin.getDefault().setStructuralParseMode(true);
+		}
 		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse(); 
+		Map newElement = tu.parse();
+		CCorePlugin.getDefault().setStructuralParseMode(false);
 		return tu;
+	}
+	/**
+	 * @return Returns the structuralParse.
+	 */
+	public boolean isStructuralParse() {
+		return structuralParse;
+	}
+	/**
+	 * @param structuralParse The structuralParse to set.
+	 */
+	public void setStructuralParse(boolean structuralParse) {
+		this.structuralParse = structuralParse;
 	}
 }

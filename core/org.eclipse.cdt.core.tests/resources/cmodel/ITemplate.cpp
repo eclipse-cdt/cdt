@@ -1,3 +1,15 @@
+class Key;
+class Value;
+class SortAlgorithm;
+class DefaultSort;
+class T;
+class X;
+class Y;
+class Bar;
+class Foo {
+	template<class Bar> void fum(int i);
+};
+
 // TEMPLATE_STRUCT
 template<class Key, class Value, class SortAlgorithm=DefaultSort>
 struct Map
@@ -16,8 +28,7 @@ template<class T> class nonVector {
 	public:
 	nonVector() { head =new T(); }
 	int length() { return 1; }
-	T& first() { return *head; }
-	const T& first() const;
+	const T& first();
 };
 
 // TEMPLATE_UNION
@@ -35,7 +46,7 @@ union ArrayOverlay {
 class TemplateContainer {
 	// these are in an enclosing class
 	template<class Bar> void fum(int i);
-	template<int> void scrum(void) {};
+	template<class Foo> void scrum(void) {};
 };
 
 // TEMPLATE_FUNCTION

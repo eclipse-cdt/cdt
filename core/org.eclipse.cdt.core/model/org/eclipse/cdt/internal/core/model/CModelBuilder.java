@@ -267,6 +267,19 @@ public class CModelBuilder {
 				ITemplate classTemplate = (ITemplate) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
 			}
+		} else if (declaration instanceof IASTClassSpecifier){
+			// special case for Structural parse
+			IASTClassSpecifier classSpecifier = (IASTClassSpecifier)declaration ;
+			CElement element = createClassSpecifierElement(parent, classSpecifier , true);
+			if(element != null){			
+				// set the element position		
+				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
+				element.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
+				// set the template parameters				
+				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
+				ITemplate classTemplate = (ITemplate) element;
+				classTemplate.setTemplateParameterTypes(parameterTypes);				
+			}
 		}
 		ITemplate template = null;
 		template = (ITemplate) createSimpleElement(parent, declaration, true);
@@ -289,6 +302,20 @@ public class CModelBuilder {
 		CElement element = createAbstractElement(parent, abstractDeclaration, false);
 	}
 		
+	private CElement createClassSpecifierElement(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate)throws ASTNotImplementedException, CModelException{
+		CElement element = null;
+		IParent classElement = createClass(parent, classSpecifier, isTemplate);
+		element = (CElement) classElement;
+				
+		// create the sub declarations 
+		Iterator j  = classSpecifier.getDeclarations();
+		while (j.hasNext()){
+			IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
+			generateModelElements((Parent)classElement, subDeclaration);					
+		} // end while j	
+		return element;
+	}
+	
 	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate)throws ASTNotImplementedException, CModelException{
 		CElement element = null;
 		if(abstractDeclaration != null){
@@ -302,15 +329,7 @@ public class CModelBuilder {
 			// IASTClassSpecifier
 			else if (typeSpec instanceof IASTClassSpecifier){
 				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
-				IParent classElement = createClass(parent, classSpecifier, isTemplate);
-				element = (CElement) classElement;
-						
-				// create the sub declarations 
-				Iterator j  = classSpecifier.getDeclarations();
-				while (j.hasNext()){
-					IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
-					generateModelElements((Parent)classElement, subDeclaration);					
-				} // end while j
+				element = createClassSpecifierElement (parent, classSpecifier, isTemplate);
 			} else if (typeSpec instanceof IASTElaboratedTypeSpecifier){
 				// This is not a model element, so we don't create anything here.
 				// However, do we need to do anything else?

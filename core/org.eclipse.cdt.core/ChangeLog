@@ -1,3 +1,12 @@
+2004-05-19 Alain Magloire
+	Patch contributed by James Langley.
+	Let Elf.java recognize Altera?s Nios and Nios II magic numbers.
+	The number for Nios II is an official number assigned by SCO,
+	the one for Nios was randomly chosen, but doesn't conflict with
+	any of the ones already in Elf.java. 
+	
+	* Elf.java
+
 2004-05-18 Alain Magloire
 
 	Remove warnings and compatibility plugin

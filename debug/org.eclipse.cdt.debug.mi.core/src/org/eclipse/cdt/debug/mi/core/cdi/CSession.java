@@ -204,7 +204,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 			session.postCommand(dir);
 		 	dir.getMIInfo();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

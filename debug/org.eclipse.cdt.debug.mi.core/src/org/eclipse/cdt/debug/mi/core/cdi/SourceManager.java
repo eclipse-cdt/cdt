@@ -44,7 +44,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			mi.postCommand(dir);
 			dir.getMIInfo();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			MIGDBShowDirectoriesInfo info = dir.getMIGDBShowDirectoriesInfo();
 			return info.getDirectories();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -72,7 +72,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			mi.postCommand(solib);
 			solib.getMIInfo();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			MIGDBShowSolibSearchPathInfo info = dir.getMIGDBShowSolibSearchPathInfo();
 			return info.getDirectories();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			mi.postCommand(solib);
 			solib.getMIInfo();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -118,7 +118,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			}
 			return instructions;
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			}
 			return instructions;
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -170,7 +170,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			}
 			return mixed;
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -201,7 +201,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			}
 			return mixed;
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

@@ -9,24 +9,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
-import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSharedLibrary;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * Enter type comment.
  * 
  * @since: Jan 16, 2003
  */
-public class CSharedLibraryManager implements ICSharedLibraryManager
+public class CSharedLibraryManager extends CUpdateManager implements ICSharedLibraryManager
 {
 	private CDebugTarget fDebugTarget = null;
 	private ArrayList fSharedLibraries;
@@ -36,7 +34,7 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 	 */
 	public CSharedLibraryManager( CDebugTarget target )
 	{
-		setDebugTarget( target );
+		super( target );
 		fSharedLibraries = new ArrayList( 5 );
 	}
 
@@ -103,10 +101,6 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 	 */
 	public Object getAdapter( Class adapter )
 	{
-		if ( adapter.equals( ICUpdateManager.class ) )
-		{
-			return this;
-		}
 		if ( adapter.equals( ICSharedLibraryManager.class ) )
 		{
 			return this;
@@ -115,25 +109,7 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 		{
 			return this;
 		}
-		if ( adapter.equals( IDebugTarget.class ) )
-		{
-			return fDebugTarget;
-		}
-		if ( adapter.equals( ICDebugTarget.class ) )
-		{
-			return fDebugTarget;
-		}
-		return null;
-	}
-
-	public IDebugTarget getDebugTarget()
-	{
-		return fDebugTarget;
-	}
-	
-	protected void setDebugTarget( CDebugTarget target )
-	{
-		fDebugTarget = target;
+		return super.getAdapter( adapter );
 	}
 	
 	protected CSharedLibrary find( ICDISharedLibrary cdiLibrary )
@@ -147,49 +123,8 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 		}
 		return null;
 	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#getAutoModeEnabled()
-	 */
-	public boolean getAutoModeEnabled()
-	{
-		if ( getCDIManager() != null )
-		{
-			return getCDIManager().isAutoUpdate();
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#setAutoModeEnabled(boolean)
-	 */
-	public void setAutoModeEnabled( boolean enable )
-	{
-		if ( getCDIManager() != null )
-		{
-			getCDIManager().setAutoUpdate( enable );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#update()
-	 */
-	public void update() throws DebugException
-	{
-		if ( getCDIManager() != null )
-		{
-			try
-			{
-				getCDIManager().update();
-			}
-			catch( CDIException e )
-			{
-				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
-			}
-		}
-	}
 	
-	private ICDISharedLibraryManager getCDIManager()
+	protected ICDIManager getCDIManager()
 	{
 		if ( getDebugTarget() != null )
 		{
@@ -199,23 +134,11 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#canUpdate()
-	 */
-	public boolean canUpdate()
-	{
-		if ( getDebugTarget() != null )
-		{
-			return getDebugTarget().isSuspended();
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#loadSymbols(org.eclipse.cdt.debug.core.model.ICSharedLibrary)
 	 */
 	public void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException
 	{
-		ICDISharedLibraryManager slm = getCDIManager();
+		ICDISharedLibraryManager slm = (ICDISharedLibraryManager)getCDIManager();
 		if ( slm != null )
 		{
 			ArrayList cdiLibs = new ArrayList( libraries.length );
@@ -239,7 +162,7 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 	 */
 	public void loadSymbolsForAll() throws DebugException
 	{
-		ICDISharedLibraryManager slm = getCDIManager();
+		ICDISharedLibraryManager slm = (ICDISharedLibraryManager)getCDIManager();
 		if ( slm != null )
 		{
 			try

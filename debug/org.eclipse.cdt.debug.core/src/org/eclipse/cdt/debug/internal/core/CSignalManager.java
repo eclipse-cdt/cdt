@@ -9,22 +9,21 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSignal;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * Enter type comment.
  * 
  * @since: Jan 31, 2003
  */
-public class CSignalManager implements ICSignalManager
+public class CSignalManager extends CUpdateManager implements ICSignalManager
 {
-	private CDebugTarget fDebugTarget = null;
 	private ICSignal[] fSignals = null;
 	private boolean fIsDisposed = false;
 
@@ -33,7 +32,7 @@ public class CSignalManager implements ICSignalManager
 	 */
 	public CSignalManager( CDebugTarget target )
 	{
-		setDebugTarget( target );
+		super( target );
 	}
 
 	/* (non-Javadoc)
@@ -87,21 +86,7 @@ public class CSignalManager implements ICSignalManager
 		{
 			return this;
 		}
-		if ( adapter.equals( IDebugTarget.class ) )
-		{
-			return fDebugTarget;
-		}
-		return null;
-	}
-
-	public IDebugTarget getDebugTarget()
-	{
-		return fDebugTarget;
-	}
-	
-	protected void setDebugTarget( CDebugTarget target )
-	{
-		fDebugTarget = target;
+		return super.getAdapter( adapter );
 	}
 	
 	public void signalChanged( ICDISignal cdiSignal )
@@ -131,5 +116,14 @@ public class CSignalManager implements ICSignalManager
 	protected boolean isDisposed()
 	{
 		return fIsDisposed;
+	}
+
+	protected ICDIManager getCDIManager()
+	{
+		if ( getDebugTarget() != null )
+		{
+			return ((CDebugTarget)getDebugTarget()).getCDISession().getSignalManager();
+		}
+		return null;
 	}
 }

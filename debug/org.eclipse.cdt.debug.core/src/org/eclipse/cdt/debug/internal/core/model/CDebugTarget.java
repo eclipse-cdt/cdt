@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
+import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -50,7 +51,6 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -75,6 +75,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
+import org.eclipse.cdt.debug.internal.core.CRegisterManager;
 import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
 import org.eclipse.cdt.debug.internal.core.CSignalManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -214,11 +215,6 @@ public class CDebugTarget extends CDebugElement
 	private HashMap fBreakpoints;
 
 	/**
-	 * Collection of register groups added to this target. Values are of type <code>CRegisterGroup</code>.
-	 */
-	private List fRegisterGroups;
-
-	/**
 	 * A memory manager for this target.
 	 */
 	private CMemoryManager fMemoryManager;
@@ -237,6 +233,11 @@ public class CDebugTarget extends CDebugElement
 	 * A signal manager for this target.
 	 */
 	private CSignalManager fSignalManager;
+
+	/**
+	 * A register manager for this target.
+	 */
+	private CRegisterManager fRegisterManager;
 
 	/**
 	 * Whether the debugger process is default.
@@ -284,6 +285,7 @@ public class CDebugTarget extends CDebugElement
 		setDisassemblyManager( new DisassemblyManager( this ) );
 		setSharedLibraryManager( new CSharedLibraryManager( this ) );
 		setSignalManager( new CSignalManager( this ) );
+		setRegisterManager( new CRegisterManager( this ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
@@ -387,8 +389,7 @@ public class CDebugTarget extends CDebugElement
 
 	protected void initializeRegisters()
 	{
-		fRegisterGroups = new ArrayList( 20 );
-		createMainRegisterGroup();
+		getRegisterManager().initialize();
 	}
 
 	protected void initializeMemoryManager()
@@ -931,6 +932,8 @@ public class CDebugTarget extends CDebugElement
 			return getSharedLibraryManager();
 		if ( adapter.equals( ICSignalManager.class ) )
 			return getSignalManager();
+		if ( adapter.equals( ICRegisterManager.class ) )
+			return getRegisterManager();
 		return super.getAdapter( adapter );
 	}
 	
@@ -1175,7 +1178,6 @@ public class CDebugTarget extends CDebugElement
 	protected void cleanup()
 	{
 		removeAllThreads();
-		removeAllRegisterGroups();
 		getCDISession().getEventManager().removeEventListener( this );
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
@@ -1183,6 +1185,7 @@ public class CDebugTarget extends CDebugElement
 		disposeMemoryManager();
 		disposeSharedLibraryManager();
 		disposeSignalManager();
+		disposeRegisterManager();
 		removeAllExpressions();
 		try
 		{
@@ -2017,42 +2020,6 @@ public class CDebugTarget extends CDebugElement
 		return isAvailable() && isSuspended();
 	}
 
-	protected IRegisterGroup[] getRegisterGroups() throws DebugException
-	{
-		return (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
-	}
-
-	protected IRegisterGroup[] getRegisterGroups( CStackFrame stackFrame ) throws DebugException
-	{
-		return (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
-	}
-	
-	protected void createMainRegisterGroup()
-	{
-		ICDIRegisterObject[] regObjects = null;
-		try
-		{
-			regObjects = getCDISession().getRegisterManager().getRegisterObjects();
-		}
-		catch( CDIException e )
-		{
-			CDebugCorePlugin.log( e );
-		}
-		if ( regObjects != null )
-		{
-			fRegisterGroups.add( new CRegisterGroup( this, "Main", regObjects ) );
-		}
-	}
-
-	protected void removeAllRegisterGroups()
-	{
-		Iterator it = fRegisterGroups.iterator();
-		while( it.hasNext() )
-		{
-			((CRegisterGroup)it.next()).dispose();
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionListener#expressionAdded(IExpression)
 	 */
@@ -2194,11 +2161,7 @@ public class CDebugTarget extends CDebugElement
 	
 	protected void resetRegisters()
 	{
-		Iterator it = fRegisterGroups.iterator();
-		while( it.hasNext() )
-		{
-			((CRegisterGroup)it.next()).resetChangeFlags();
-		}
+		getRegisterManager().reset();
 	}
 
 	/**
@@ -2395,6 +2358,11 @@ public class CDebugTarget extends CDebugElement
 		fSignalManager.dispose();
 	}
 
+	protected void disposeRegisterManager()
+	{
+		fRegisterManager.dispose();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointManager#getBreakpointAddress(IBreakpoint)
 	 */
@@ -2553,5 +2521,20 @@ public class CDebugTarget extends CDebugElement
 		{
 			targetRequestFailed( e.toString(), e );
 		}
+	}
+
+	public CRegisterManager getRegisterManager()
+	{
+		return fRegisterManager;
+	}
+
+	protected void setRegisterManager( CRegisterManager registerManager )
+	{
+		fRegisterManager = registerManager;
+	}
+
+	public IRegisterGroup[] getRegisterGroups() throws DebugException
+	{
+		return getRegisterManager().getRegisterGroups();
 	}
 }

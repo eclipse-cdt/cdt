@@ -1,3 +1,14 @@
+2003-03-31 Mikhail Khodjaiants
+	The new abstract class ('CUpdateManager') is added to provide a basic implementation of ICUpdateManager.
+	CSignalManager, CSharedLibraryManager and CRegisterManager extend this class.
+	* ICRegisterManager.java: new
+	* CRegisterManager.java: new
+	* CSharedLibraryManager.java
+	* CSignalManager.java
+	* CUpdateManager.java: new
+	* CDebugTarget.java
+	* CRegisterGroup.java
+
 2003-03-28 Mikhail Khodjaiants
 	Use the 'exists' method of the 'IFile' interface instead of using 'toFile().exists()' for 'IPath'.
 	* CDirectorySourceLocation.java

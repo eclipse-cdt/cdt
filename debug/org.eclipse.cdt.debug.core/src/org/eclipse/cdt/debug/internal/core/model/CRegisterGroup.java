@@ -80,7 +80,7 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 		return fRegisters;
 	}
 	
-	protected void dispose()
+	public void dispose()
 	{
 		Iterator it = fRegisters.iterator();
 		while( it.hasNext() )
@@ -107,7 +107,7 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 		return results;
 	}
 	
-	protected void resetChangeFlags()
+	public void resetChangeFlags()
 	{
 		if ( fRegisters == null )
 			return;

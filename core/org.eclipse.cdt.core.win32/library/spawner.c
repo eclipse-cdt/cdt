@@ -1,22 +1,26 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * Copyright (c) 2002-2004 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
+ *
+ *  spawner.c
+ *
+ *  This is a part of JNI implementation of spawner 
 ***********************************************************************/
-// spawner.cpp : Defines the entry point for the DLL application.
-//
 
 #include "stdafx.h"
+#include "spawner.h"
 
 
 CRITICAL_SECTION cs;
 
-TCHAR path[MAX_PATH + 1] = {_T('\0') };
+
+TCHAR path[MAX_PATH + 1] = {_T('\0') };  // Directory where spawner.dll is located
 
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
@@ -47,5 +51,4 @@ BOOL APIENTRY DllMain( HANDLE hModule,
     }
     return TRUE;
 }
-
 

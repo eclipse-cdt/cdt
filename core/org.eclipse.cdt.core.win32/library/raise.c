@@ -1,16 +1,17 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * Copyright (c) 2002-2004 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
+ *
+ *  raise.c
+ *
+ *  This is a part of JNI implementation of spawner 
 ***********************************************************************/
-/*  
- *  This is a JNI implementation of spawner 
- */
 #include "stdafx.h"
 #include "Spawner.h"
 
@@ -19,10 +20,17 @@
 
 extern void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
-// #define DEBUG_MONITOR
 
 static HWND consoleHWND;
 
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Check if window is a console of process with pid
+// Arguments:  
+//			hwnd - window handler
+//			arg  - process PID
+// Return : TRUE if yes
+/////////////////////////////////////////////////////////////////////////////////////
 static BOOL CALLBACK
 find_child_console (HWND hwnd, LPARAM arg)
 {
@@ -46,35 +54,13 @@ find_child_console (HWND hwnd, LPARAM arg)
   return TRUE;
 }
 
-/*
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise__Ljava_lang_Object_2
-  (JNIEnv * env, jobject process, jobject jpid)
-{
-	jint pid;
-	jclass integerClass = (*env) -> FindClass(env, "java/lang/Integer");
-	jmethodID intValue;
-	if(NULL == integerClass) {
-		ThrowByName(env, "java/lang/IOException", "Cannot find Integer class");
-		return -1;
-	}
-	if(!((*env) -> IsInstanceOf(env, jpid, integerClass))) {
-		ThrowByName(env, "java/lang/IOException", "Wrong argument");
-		return -1;
-	}
 
-	intValue = (*env) -> GetMethodID(env, integerClass, "intValue", "()I");
-	if(NULL == intValue) {
-		ThrowByName(env, "java/lang/IOException", "Cannot find intValue method in Integer class");
-		return -1;
-	}
-
-	pid = (*env) -> CallIntMethod(env, jpid, intValue);
-
-	return interruptProcess(pid);
-
-}
-*/
-
+/////////////////////////////////////////////////////////////////////////////////////
+// Function implements interrupt process (Ctrl-C emulation)
+// Arguments:  
+//			pid - process' pid
+// Return : 0 if OK or error code
+/////////////////////////////////////////////////////////////////////////////////////
 int interruptProcess(int pid) 
 {
 #ifdef DEBUG_MONITOR
@@ -89,10 +75,13 @@ int interruptProcess(int pid)
 		sprintf(buffer, "Try to interrupt process %i\n", pid);
 		OutputDebugString(buffer);
 #endif
+	// Find console
 	EnumWindows (find_child_console, (LPARAM) pid);
 
-	if(NULL != consoleHWND)
+	if(NULL != consoleHWND) // Yes, we found out it
 	{
+	  // We are going to switch focus to console, 
+	  // send Ctrl-C and then restore focus
 	  BYTE control_scan_code = (BYTE) MapVirtualKey (VK_CONTROL, 0);
 	  /* Fake Ctrl-C for SIGINT, and Ctrl-Break for SIGQUIT.  */
 	  BYTE vk_c_code = 'C';
@@ -100,7 +89,7 @@ int interruptProcess(int pid)
 	  BYTE c_scan_code = (BYTE) MapVirtualKey (vk_c_code, 0);
 	  BYTE break_scan_code = (BYTE) MapVirtualKey (vk_break_code, 0);
 	  HWND foreground_window;
-
+		
 
 	  foreground_window = GetForegroundWindow ();
 	  if (foreground_window)
@@ -128,17 +117,6 @@ int interruptProcess(int pid)
         /* Set the foreground window to the child.  */
         if (SetForegroundWindow (consoleHWND))
            {
-			/*
-			if(0 != c_scan_code) {
-			   // Generate keystrokes as if user had typed Ctrl-C.  
-			   keybd_event (VK_CONTROL, control_scan_code, 0, 0);
-			   keybd_event (vk_c_code, c_scan_code,	0, 0);
-			   keybd_event (vk_c_code, c_scan_code, KEYEVENTF_KEYUP, 0);
-			   keybd_event (VK_CONTROL, control_scan_code,  KEYEVENTF_KEYUP, 0);
-			}
-			*/
-          /* Sleep for a bit to give time for respond */
-           Sleep (100);
 		   if(0 != break_scan_code) {
 			   /* Generate keystrokes as if user had typed Ctrl-Break */
 			   keybd_event (VK_CONTROL, control_scan_code, 0, 0);

@@ -1,22 +1,19 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * Copyright (c) 2002-2004 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
-/*
- *  starter.c
+ *
+ *  starter.cpp
  *
  *  This is a small utility for windows spawner
- */
+***********************************************************************/
 
 
-//#define UNICODE
-//#define _UNICODE
 
 #define STRICT
 #include <Windows.h>
@@ -24,8 +21,9 @@
 #include <tchar.h>
 #include <stdio.h>
 
-// #define DEBUG_MONITOR
+//#define DEBUG_MONITOR 
 #define MAX_CMD_LINE_LENGTH (2049)
+#define PIPE_NAME_LENGTH 100
 
 int copyTo(char * target, const char * source, int cpyLength, int availSpace);
 
@@ -58,8 +56,8 @@ BOOL WINAPI HandlerRoutine(  DWORD dwCtrlType)   //  control signal type
 
 extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 
-   // Make sure that we've been passed the right number of arguments
-   if (argc < 5) {
+	// Make sure that we've been passed the right number of arguments
+   if (argc < 7) {
       _tprintf(__TEXT("Usage: %s (Three InheritableEventHandles) (CommandLineToSpawn)\n"), 
          argv[0]);
       return(0);
@@ -69,7 +67,7 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
    TCHAR szCmdLine[MAX_CMD_LINE_LENGTH] = { 0 };
    int nPos = 0;
 
-   for(int i = 4; i < argc; ++i) 
+   for(int i = 6; i < argc; ++i) 
 		{
 		int nCpyLen;
 		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], _tcslen(argv[i]), MAX_CMD_LINE_LENGTH - nPos)))
@@ -94,28 +92,81 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 #endif
    
    BOOL exitProc = FALSE;
-   HANDLE waitEvent = OpenEvent(EVENT_ALL_ACCESS, TRUE, argv[2]);
+   HANDLE waitEvent = OpenEvent(EVENT_ALL_ACCESS, TRUE, argv[4]);
    HANDLE h[3];
-   h[0] = OpenEvent(EVENT_ALL_ACCESS, TRUE, argv[1]);
-   h[2] = OpenEvent(EVENT_ALL_ACCESS, TRUE, argv[3]); // This is a terminate event
+   h[0] = OpenEvent(EVENT_ALL_ACCESS, TRUE, argv[3]);
+   h[2] = OpenEvent(EVENT_ALL_ACCESS, TRUE, argv[5]); // This is a terminate event
    SetConsoleCtrlHandler(HandlerRoutine, TRUE);
 
+
+   int parentPid = strtol(argv[1], NULL, 10);
+   int nCounter = strtol(argv[2], NULL, 10);
+   char inPipeName[PIPE_NAME_LENGTH];
+   char outPipeName[PIPE_NAME_LENGTH];
+   char errPipeName[PIPE_NAME_LENGTH];
+ 
+   sprintf(inPipeName,  "\\\\.\\pipe\\stdin%08i%010i",  parentPid, nCounter); 
+   sprintf(outPipeName, "\\\\.\\pipe\\stdout%08i%010i", parentPid, nCounter); 
+   sprintf(errPipeName, "\\\\.\\pipe\\stderr%08i%010i", parentPid, nCounter);
 #ifdef DEBUG_MONITOR
-	sprintf(buffer, "starter start command: %s\n", szCmdLine);
+	sprintf(buffer, "Pipes: %s, %s, %s\n", inPipeName, outPipeName, errPipeName);
 	OutputDebugString(buffer);
 #endif
+   
+   HANDLE stdHandles[3];
 
-//   OutputDebugString(szCmdLine);
+   SECURITY_ATTRIBUTES sa;
+   sa.nLength = sizeof(SECURITY_ATTRIBUTES); 
+   sa.bInheritHandle = TRUE; 
+   sa.lpSecurityDescriptor = NULL; 
+
+   if((INVALID_HANDLE_VALUE  == (stdHandles[0] = CreateFile(inPipeName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, &sa))) ||
+	  (INVALID_HANDLE_VALUE  == (stdHandles[1] = CreateFile(outPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa))) ||
+	  (INVALID_HANDLE_VALUE  == (stdHandles[2] = CreateFile(errPipeName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, &sa)))) 
+		{ 
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "Failed to open pipe %i, %i, %i: %i\n", stdHandles[0], stdHandles[1], stdHandles[2], GetLastError());
+	OutputDebugString(buffer);
+#endif
+		CloseHandle(stdHandles[0]);
+		CloseHandle(stdHandles[1]);
+		CloseHandle(stdHandles[2]);
+		return -1;;
+		}
+   SetHandleInformation(stdHandles[0], HANDLE_FLAG_INHERIT, TRUE);
+   SetHandleInformation(stdHandles[1], HANDLE_FLAG_INHERIT, TRUE);
+   SetHandleInformation(stdHandles[2], HANDLE_FLAG_INHERIT, TRUE);
+
+   if(!SetStdHandle(STD_INPUT_HANDLE, stdHandles[0])  ||
+	  !SetStdHandle(STD_OUTPUT_HANDLE, stdHandles[1]) ||
+	  !SetStdHandle(STD_ERROR_HANDLE, stdHandles[2])) {
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "Failed to reassign standard streams: %i\n", GetLastError());
+	OutputDebugString(buffer);
+#endif
+		CloseHandle(stdHandles[0]);
+		CloseHandle(stdHandles[1]);
+		CloseHandle(stdHandles[2]);
+		return -1;;
+   }
+
+
    // Spawn the other processes as part of this Process Group
    BOOL f = CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 
       0, NULL, NULL, &si, &pi);
-
+   // We don't need them any more
+   CloseHandle(stdHandles[0]);
+   CloseHandle(stdHandles[1]);
+   CloseHandle(stdHandles[2]);
    if (f) 
    {
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "Process %i started\n", pi.dwProcessId);
+	OutputDebugString(buffer);
+#endif
    	  SetEvent(waitEvent); // Means thar process has been spawned
       CloseHandle(pi.hThread);
       h[1] = pi.hProcess;
-
 	  while(!exitProc)
 		  {
 		  // Wait for the spawned-process to die or for the event
@@ -151,6 +202,7 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 				break;
 			 default:
 			 // Unexpected code
+#ifdef DEBUG_MONITOR
 				LPTSTR lpMsgBuf;
 
 				FormatMessage( 
@@ -167,6 +219,7 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 				OutputDebugString(lpMsgBuf);
 				// Free the buffer.
 				LocalFree( lpMsgBuf );
+#endif
 				exitProc = TRUE;
 				break;
 			 }
@@ -177,12 +230,21 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 
    CloseHandle(waitEvent);
    CloseHandle(h[0]);
+   CloseHandle(h[1]);
    CloseHandle(h[2]);
  
    return(dwExitCode);
 }
 
-// Return number of bytes in target or -1 in case of error
+/////////////////////////////////////////////////////////////////////////////////////
+// Use this utility program to process correctly quotation marks in the command line
+// Arguments:  
+//			target - string to copy to
+//			source - string to copy from
+//			cpyLength - copy length
+//			availSpace - size of the target buffer
+// Return :number of bytes used in target, or -1 in case of error
+/////////////////////////////////////////////////////////////////////////////////////
 int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 {
 	BOOL bSlash = FALSE;

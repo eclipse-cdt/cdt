@@ -1,3 +1,8 @@
+2004-02-12 Alex Chapiro
+
+	Update starter and spawner to use named pipes.
+	Update the binaries.
+
 2003-08-29 Alex Chapiro
 
 	This patch just increase command line buffer up to OS limit (2K). It also

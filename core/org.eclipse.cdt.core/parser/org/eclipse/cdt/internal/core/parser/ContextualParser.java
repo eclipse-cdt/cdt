@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -211,5 +212,21 @@ public class ContextualParser extends CompleteParser {
 	 */
 	protected void setCurrentFunctionName(String functionName) {
 		currentFunctionName = functionName;
+	}
+	
+	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
+	{
+		if( scanner.isOnTopContext() )
+			functionBody(scope);
+		else
+			skipOverCompoundStatement();
+	}
+	
+	protected void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException 
+	{
+		if( scanner.isOnTopContext() )
+			compoundStatement(scope, true);
+		else
+			skipOverCompoundStatement();
 	}
 }

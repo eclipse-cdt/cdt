@@ -158,10 +158,6 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 
 	}
-
-	public final static boolean doIncludeStdio= false;
-	public final static boolean doIncludeWindowsH= false;
-	public final static boolean doIncludeWinUserH= false;
 	
 	public final static int SIZEOF_TRUTHTABLE = 10; 
 
@@ -356,41 +352,6 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 	}
 
-	public void prepareForWindowsRH()
-	{
-		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
-		scanner.addDefinition("_WIN32_WINNT", "0x0300");
-		scanner.addDefinition("WINVER", "0x0400");
-		scanner.addDefinition("_WIN32_WINDOWS", "0x0300");
-		scanner.addDefinition("_MSC_VER", "1200");
-	}
-
-	public void prepareForWindowsH()
-	{
-		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
-		scanner.addDefinition("_MSC_VER", "1200");
-		scanner.addDefinition("__cplusplus", "1");
-		scanner.addDefinition("__STDC__", "1");
-		scanner.addDefinition("_WIN32", "");		
-		scanner.addDefinition( "__midl", "1000" );
-		scanner.addDefinition("_WIN32_WINNT", "0x0300");
-		scanner.addDefinition("WINVER", "0x0400");
-		scanner.addDefinition( "_M_IX86", "300");
-		scanner.addDefinition( "_INTEGRAL_MAX_BITS", "64");
-	}
-
-	public void prepareForStdio()
-	{
-		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
-		scanner.addDefinition("_MSC_VER", "1100");
-		scanner.addDefinition("__STDC__", "1");
-		scanner.addDefinition("_INTEGRAL_MAX_BITS", "64");
-		scanner.addDefinition("_WIN32", "");
-		scanner.addDefinition( "_M_IX86", "300");
-	}
 
 	public void testConcatenation()
 	{
@@ -888,51 +849,6 @@ public class ScannerTestCase extends BaseScannerTest
 		
 	}
 
-	public void testInclusions()
-	{
-		try
-		{
-			if (doIncludeStdio)
-			{
-				initializeScanner("#include <stdio.h>");
-				prepareForStdio();
-				int count= fullyTokenize();
-				if (verbose)
-					System.out.println(
-						"For stdio.h, Scanner produced " + count + " tokens");
-				validateBalance();
-
-				initializeScanner("#include \\\n<\\\nstdio.h   \\\n>");
-				prepareForStdio();
-				count= fullyTokenize();
-				if (verbose)
-					System.out.println(
-						"For stdio.h, Scanner produced " + count + " tokens");
-			}
-
-			if (doIncludeWindowsH)
-			{
-				initializeScanner("#include <Windows.h>");
-				prepareForWindowsH();
-				int count= fullyTokenize();
-
-				validateBalance();
-			}
-
-			if (doIncludeWinUserH)
-			{
-				initializeScanner("#include <WinUser.rh>");
-				prepareForWindowsRH();
-				validateEOF();
-				validateBalance();
-			}
-		}
-		catch (Exception e)
-		{
-			fail(EXCEPTION_THROWN + e.toString());
-		}
-
-	}
 
 	public void testOtherPreprocessorCommands() throws ParserFactoryError
 	{

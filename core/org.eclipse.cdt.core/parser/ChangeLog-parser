@@ -1,3 +1,6 @@
+2004-04-21 John Camelon
+	Partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=59468
+
 2004-04-20 Andrew Niefer
 	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=59302 - Nested friend mishandled
 

@@ -1,4 +1,12 @@
 2003-07-28 Mikhail Khodjaiants
+	Refactoring: moved the 'CDebugUtils' class to the 'org.eclipse.cdt.debug.core' package - 
+	the methods of this class are mostly used in UI plugins.
+	* CDTDebugModelPresentation.java
+	* CBreakpointPreferencePage.java
+	* MemoryPresentation.java
+	* SharedLibrariesView.java
+
+2003-07-28 Mikhail Khodjaiants
 	Cleanup. Removed the 'reset' method from the 'ICVaraible' interface.
 	* VariableFormatActionDelegate.java
 

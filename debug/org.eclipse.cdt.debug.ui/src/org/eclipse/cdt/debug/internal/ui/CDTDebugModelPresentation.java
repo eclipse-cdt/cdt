@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -34,7 +35,6 @@ import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;

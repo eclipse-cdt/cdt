@@ -1,4 +1,18 @@
 2003-07-28 Mikhail Khodjaiants
+	Refactoring: moved the 'CDebugUtils' class to the 'org.eclipse.cdt.debug.core' package - 
+	the methods of this class are mostly used in UI plugins.
+	* CDebugUtils.java
+	* CDebugModel.java
+	* DisassemblyStorage.java
+	* CAddressBreakpoint.java
+	* CDebugTarget.java
+	* CFormattedMemoryBlock.java
+	* CDebugElement.java
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+
+2003-07-28 Mikhail Khodjaiants
 	Cleanup. Removed the unused 'getNumberOfChildren' method from the 'CValue' class.
 	* CValue.java
 

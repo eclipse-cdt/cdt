@@ -3,7 +3,7 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.internal.core;
+package org.eclipse.cdt.debug.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -4,6 +4,12 @@
 	Added beginning of IScannerExtension and GCCScannerExtension support for gcc specific aspects.
 	Added separate Scanner log category for tracing and updated clients to use it.  
 
+2004-01-26 Andrew Niefer
+	Handle the C types _Complex, _Imaginary, _Bool, & long long int:
+	modified ParserSymbolTable.promotion() & conversion()
+	added TypeInfo.isLongLong
+	modified TypeInfo.canHold()
+
 2004-01-23 John Camelon
 	Added support for content assist in the scanner..
 

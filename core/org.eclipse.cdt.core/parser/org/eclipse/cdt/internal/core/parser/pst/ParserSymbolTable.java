@@ -1495,9 +1495,9 @@ public class ParserSymbolTable {
 		TypeInfo src = cost.source;
 		TypeInfo trg = cost.target;
 		 
-		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned;
+		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned | TypeInfo.isLongLong;
 		
-		if( (src.isType( TypeInfo.t_bool, TypeInfo.t_float ) || src.isType( TypeInfo.t_enumeration )) &&
+		if( (src.isType( TypeInfo.t__Bool, TypeInfo.t_float ) || src.isType( TypeInfo.t_enumeration )) &&
 			(trg.isType( TypeInfo.t_int ) || trg.isType( TypeInfo.t_double )) )
 		{
 			if( src.getType() == trg.getType() && (( src.getTypeInfo() & mask) == (trg.getTypeInfo() & mask)) ){
@@ -1594,11 +1594,11 @@ public class ParserSymbolTable {
 		} else if( !src.hasPtrOperators() ) {
 			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
-			if( src.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
+			if( src.isType( TypeInfo.t__Bool, TypeInfo.t_int ) ||
 				src.isType( TypeInfo.t_float, TypeInfo.t_double ) ||
 				src.isType( TypeInfo.t_enumeration ) )
 			{
-				if( trg.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
+				if( trg.isType( TypeInfo.t__Bool, TypeInfo.t_int ) ||
 					trg.isType( TypeInfo.t_float, TypeInfo.t_double ) )
 				{
 					cost.rank = Cost.CONVERSION_RANK;

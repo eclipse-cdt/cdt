@@ -3555,5 +3555,117 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertFalse( iter.hasNext() );
 	}
+	
+	/**
+	 * void f( long long int ){}   //#1
+	 * void f( long int ) {}       //#2
+	 *  
+	 * f( 1L );    //#2   
+	 * f( 1LL );   //#1
+	 * 
+	 * @throws Exception
+	 */
+	public void testLongLong() throws Exception{
+		newTable();
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( TypeInfo.t_int, TypeInfo.isLongLong, null, false );
+		table.getCompilationUnit().addSymbol( f1 );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_int, TypeInfo.isLong, null, false );
+		table.getCompilationUnit().addSymbol( f2 );
+		
+		List params = new LinkedList();
+		params.add( new TypeInfo( TypeInfo.t_int, TypeInfo.isLong, null ) );
+		
+		IParameterizedSymbol lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		assertEquals( lookup, f2 );
+		
+		params.clear();
+		params.add( new TypeInfo( TypeInfo.t_int, TypeInfo.isLongLong, null ) );
+		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		assertEquals( lookup, f1 );
+	}
+	
+	/**
+	 * void f( float _Complex ){}
+	 * void g( float ) {}
+	 * 
+	 * float _Complex c;
+	 * float fl;
+	 * float _Imaginary i;
+	 * 
+	 * f( c );
+	 * f( fl );
+	 * g( c );
+	 * g( i );
+	 * @throws Exception
+	 */
+	public void testComplex() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f.addParameter( TypeInfo.t_float, TypeInfo.isComplex, null, false );
+		
+		table.getCompilationUnit().addSymbol( f );
+		
+		IParameterizedSymbol g = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		g.addParameter( TypeInfo.t_float, 0, null, false );
+		table.getCompilationUnit().addSymbol( g );
+		
+		List params = new LinkedList();
+		params.add( new TypeInfo( TypeInfo.t_float, TypeInfo.isComplex, null ) );
+		
+		IParameterizedSymbol lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		
+		assertEquals( lookup, f );
+		
+		params.clear();
+		params.add( new TypeInfo( TypeInfo.t_float, 0, null ) );
+		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		assertEquals( lookup, f );
+		
+		params.clear();
+		params.add( new TypeInfo( TypeInfo.t_float, TypeInfo.isComplex, null ) );
+		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "g", params );
+		assertEquals( lookup, g );
+
+		params.clear();
+		params.add( new TypeInfo( TypeInfo.t_float, TypeInfo.isImaginary, null ) );
+		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "g", params );
+		assertEquals( lookup, g );		
+		
+		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		assertEquals( lookup, f );
+	}
+	
+	public void test_Bool() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f.addParameter( TypeInfo.t__Bool, 0, null, false );
+		
+		table.getCompilationUnit().addSymbol( f );
+		
+		IParameterizedSymbol g = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		g.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		table.getCompilationUnit().addSymbol( g );
+		
+		List params = new LinkedList();
+		params.add( new TypeInfo( TypeInfo.t__Bool, 0, null ) );
+		
+		IParameterizedSymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		assertEquals( look, f );
+		
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "g", params );
+		assertEquals( look, g );
+		
+		params.clear();
+		params.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		assertEquals( look, f );
+		
+	}
 }
 

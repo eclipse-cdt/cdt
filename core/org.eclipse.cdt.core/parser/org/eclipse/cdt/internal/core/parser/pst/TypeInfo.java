@@ -88,6 +88,7 @@ public class TypeInfo {
 	public static final int isForward  = 0x100000;
 	public static final int isComplex  = 0x200000;
 	public static final int isImaginary= 0x400000;
+	public static final int isLongLong = 0x800000;
 	
 	// Types (maximum type is typeMask
 	// Note that these should be considered ordered and if you change
@@ -450,13 +451,18 @@ public class TypeInfo {
 	 * canHold
 	 * @param type
 	 * @return boolean
-	 * return true is the our type can hold all the values of the passed in
+	 * return true if our type can hold all the values of the passed in
 	 * type.
 	 * TODO, for now return true if our type is "larger" (based on ordering of
 	 * the type values)
 	 */
 	public boolean canHold( TypeInfo type ){
-		return getType().compareTo( type.getType() ) >= 0;	
+		if( getType().compareTo( type.getType()) > 0 ){
+			return true;
+		} else {
+			int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isLongLong;
+			return ( getTypeInfo() & mask ) >= ( type.getTypeInfo() & mask );
+		}	
 	}
 
 	public boolean equals( Object t ){

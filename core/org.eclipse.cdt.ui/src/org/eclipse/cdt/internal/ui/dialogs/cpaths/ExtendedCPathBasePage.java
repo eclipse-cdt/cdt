@@ -53,7 +53,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	private ListDialogField fPathList;
 	private TreeListDialogField fSrcList;
 
-	private class IncludeListAdapter implements IListAdapter, IDialogFieldListener {
+	private class ListAdapter implements IListAdapter, IDialogFieldListener {
 
 		public void dialogFieldChanged(DialogField field) {
 		}
@@ -166,7 +166,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 	public ExtendedCPathBasePage(ITreeListAdapter adapter, String title, String pathTitle, String[] buttons) {
 		super(title);
-		IncludeListAdapter includeListAdaper = new IncludeListAdapter();
+		ListAdapter includeListAdaper = new ListAdapter();
 
 		fPathList = new ListDialogField(includeListAdaper, buttons, new ModifiedCPListLabelProvider()) {
 

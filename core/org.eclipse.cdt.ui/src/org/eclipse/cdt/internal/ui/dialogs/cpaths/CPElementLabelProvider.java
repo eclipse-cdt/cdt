@@ -34,8 +34,8 @@ class CPElementLabelProvider extends LabelProvider {
 	private ImageDescriptorRegistry fRegistry;
 
 	public CPElementLabelProvider() {
-		fNewLabel = CPathEntryMessages.getString("CPListLabelProvider.new"); //$NON-NLS-1$
-		fCreateLabel = CPathEntryMessages.getString("CPListLabelProvider.willbecreated"); //$NON-NLS-1$
+		fNewLabel = CPathEntryMessages.getString("CPElementLabelProvider.new"); //$NON-NLS-1$
+		fCreateLabel = CPathEntryMessages.getString("CPElementLabelProvider.willbecreated"); //$NON-NLS-1$
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 
 		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
@@ -58,16 +58,30 @@ class CPElementLabelProvider extends LabelProvider {
 			return getCPElementAttributeText((CPElementAttribute)element);
 		} else if (element instanceof IPathEntry) {
 			return getCPElementText(CPElement.createFromExisting((IPathEntry)element, null));
+		} else if (element instanceof CPElementGroup) {
+			return (getCPContainerGroupText((CPElementGroup)element));
 		}
 		return super.getText(element);
 	}
 
+	private String getCPContainerGroupText(CPElementGroup group) {
+		switch (group.getEntryType()) {
+			case IPathEntry.CDT_INCLUDE :
+				return CPathEntryMessages.getString("CPElementLabelProvider.Includes"); //$NON-NLS-1$
+			case IPathEntry.CDT_MACRO :
+				return CPathEntryMessages.getString("CPElementLabelProvider.PreprocessorSymbols"); //$NON-NLS-1$
+			case IPathEntry.CDT_LIBRARY :
+				return CPathEntryMessages.getString("CPElementLabelProvider.Libraries"); //$NON-NLS-1$
+		}
+		return ""; //$NON-NLS-1$
+	}
+
 	public String getCPElementAttributeText(CPElementAttribute attrib) {
-		String notAvailable = CPathEntryMessages.getString("CPListLabelProvider.none"); //$NON-NLS-1$
+		String notAvailable = CPathEntryMessages.getString("CPElementLabelProvider.none"); //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		String key = attrib.getKey();
 		if (key.equals(CPElement.SOURCEATTACHMENT)) {
-			buf.append(CPathEntryMessages.getString("CPListLabelProvider.source_attachment.label")); //$NON-NLS-1$
+			buf.append(CPathEntryMessages.getString("CPElementLabelProvider.source_attachment.label")); //$NON-NLS-1$
 			IPath path = (IPath)attrib.getValue();
 			if (path != null && !path.isEmpty()) {
 				buf.append(getPathString(path, path.getDevice() != null));
@@ -75,7 +89,7 @@ class CPElementLabelProvider extends LabelProvider {
 				buf.append(notAvailable);
 			}
 		} else if (key.equals(CPElement.SOURCEATTACHMENTROOT)) {
-			buf.append(CPathEntryMessages.getString("CPListLabelProvider.source_attachment_root.label")); //$NON-NLS-1$
+			buf.append(CPathEntryMessages.getString("CPElementLabelProvider.source_attachment_root.label")); //$NON-NLS-1$
 			IPath path = (IPath)attrib.getValue();
 			if (path != null && !path.isEmpty()) {
 				buf.append(path.toString());
@@ -84,12 +98,12 @@ class CPElementLabelProvider extends LabelProvider {
 			}
 		}
 		if (key.equals(CPElement.EXCLUSION)) {
-			buf.append(CPathEntryMessages.getString("CPListLabelProvider.exclusion_filter.label")); //$NON-NLS-1$
+			buf.append(CPathEntryMessages.getString("CPElementLabelProvider.exclusion_filter.label")); //$NON-NLS-1$
 			IPath[] patterns = (IPath[])attrib.getValue();
 			if (patterns != null && patterns.length > 0) {
 				for (int i = 0; i < patterns.length; i++) {
 					if (i > 0) {
-						buf.append(CPathEntryMessages.getString("CPListLabelProvider.exclusion_filter_separator")); //$NON-NLS-1$
+						buf.append(CPathEntryMessages.getString("CPElementLabelProvider.exclusion_filter_separator")); //$NON-NLS-1$
 					}
 					buf.append(patterns[i].toString());
 				}
@@ -103,45 +117,26 @@ class CPElementLabelProvider extends LabelProvider {
 	public String getCPElementText(CPElement cpentry) {
 		IPath path = cpentry.getPath();
 		switch (cpentry.getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY : {
-				StringBuffer str = new StringBuffer( ((IPath)cpentry.getAttribute(CPElement.LIBRARY)).toOSString());
-				IPath base = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
-				if (!base.isEmpty()) {
-					str.append(" - ("); //$NON-NLS-1$
-					str.append(base);
-					str.append(')');
-				} else {
-					path = ((IPath)cpentry.getAttribute(CPElement.BASE)).addTrailingSeparator();
-					str.insert(0, path.toOSString());
+			case IPathEntry.CDT_LIBRARY :
+				{
+					StringBuffer str = new StringBuffer( ((IPath)cpentry.getAttribute(CPElement.LIBRARY)).toOSString());
+					addBaseString(cpentry, str);
+					return str.toString();
 				}
-				return str.toString();				
-			}
 			case IPathEntry.CDT_PROJECT :
 				return path.lastSegment();
 			case IPathEntry.CDT_INCLUDE :
 				{
-					StringBuffer str = new StringBuffer( ((IPath)cpentry.getAttribute(CPElement.INCLUDE)).toOSString());
-					IPath base = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
-					if (!base.isEmpty()) {
-						str.append(" - ("); //$NON-NLS-1$
-						str.append(base);
-						str.append(')');
-					} else {
-						path = ((IPath)cpentry.getAttribute(CPElement.BASE)).addTrailingSeparator();
-						str.insert(0, path.toOSString());
-					}
+					IPath incPath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE));
+					StringBuffer str = new StringBuffer(incPath.toOSString());
+					addBaseString(cpentry, str);
 					return str.toString();
 				}
 			case IPathEntry.CDT_MACRO :
 				{
 					StringBuffer str = new StringBuffer((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
 							+ (String)cpentry.getAttribute(CPElement.MACRO_VALUE));
-					IPath base = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
-					if (!base.isEmpty()) {
-						str.append('(');
-						str.append(base);
-						str.append(')');
-					}
+					addBaseString(cpentry, str);
 					return str.toString();
 				}
 			case IPathEntry.CDT_CONTAINER :
@@ -171,7 +166,38 @@ class CPElementLabelProvider extends LabelProvider {
 			default :
 		// pass
 		}
-		return CPathEntryMessages.getString("CPListLabelProvider.unknown_element.label"); //$NON-NLS-1$
+		return CPathEntryMessages.getString("CPElementLabelProvider.unknown_element.label"); //$NON-NLS-1$
+	}
+
+	private void addBaseString(CPElement cpentry, StringBuffer str) {
+		IPath baseRef = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
+		if (!baseRef.isEmpty()) {
+			str.append(" - ("); //$NON-NLS-1$
+			if (baseRef.isAbsolute()) {
+//				str.append("From project ");
+				str.append(baseRef);
+			} else {
+//				str.append("From contribution ");
+				IPathEntryContainer container;
+				try {
+					container = CoreModel.getPathEntryContainer(baseRef, cpentry.getCProject());
+					if (container != null) {
+						str.append(container.getDescription());
+					}
+				} catch (CModelException e1) {
+				}
+			}
+			str.append(')');
+		} else {
+			IPath path = (IPath)cpentry.getAttribute(CPElement.BASE);
+			if (!path.isEmpty()) {
+				if (!path.hasTrailingSeparator()) {
+					path = path.addTrailingSeparator();
+				}
+				str.insert(0, path.toOSString());
+			}
+		}
+
 	}
 
 	private String getPathString(IPath path, boolean isExternal) {
@@ -242,6 +268,15 @@ class CPElementLabelProvider extends LabelProvider {
 			}
 		} else if (element instanceof IPathEntry) {
 			return getImage(CPElement.createFromExisting((IPathEntry)element, null));
+		} else if (element instanceof CPElementGroup) {
+			switch ( ((CPElementGroup)element).getEntryType()) {
+				case IPathEntry.CDT_INCLUDE :
+					return fRegistry.get(fIncludeIcon);
+				case IPathEntry.CDT_MACRO :
+					return fRegistry.get(fMacroIcon);
+				case IPathEntry.CDT_LIBRARY :
+					return fRegistry.get(fLibIcon);
+			}
 		}
 		return null;
 	}

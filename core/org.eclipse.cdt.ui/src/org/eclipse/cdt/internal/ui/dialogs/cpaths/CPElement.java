@@ -481,7 +481,7 @@ public class CPElement {
 						res = root.getFolder(path);
 					}
 				}
-				if (res.getType() != IResource.PROJECT && project != null) {
+				if (res.getType() != IResource.ROOT && project != null) {
 					isMissing = !project.isOnSourceRoot(res);
 				}
 				exclusion = ((IIncludeEntry) curr).getExclusionPatterns();
@@ -498,7 +498,7 @@ public class CPElement {
 						res = root.getFolder(path);
 					}
 				}
-				if (res.getType() != IResource.PROJECT && project != null) {
+				if (res.getType() != IResource.ROOT && project != null) {
 					isMissing = !project.isOnSourceRoot(res);
 				}
 				exclusion = ((IMacroEntry) curr).getExclusionPatterns();

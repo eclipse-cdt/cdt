@@ -130,9 +130,9 @@
                id="org.eclipse.ui.run">
          </menu>
          <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               id="org.eclipse.cdt.debug.ui.actions.ResumeAtLine"
                hoverIcon="icons/full/clcl16/jump_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RetargetResumeAtLineAction"
                disabledIcon="icons/full/dlcl16/jump_co.gif"
                enablesFor="1"
                icon="icons/full/elcl16/jump_co.gif"
@@ -256,6 +256,14 @@
       <viewerContribution
             targetID="#CEditorContext"
             id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     value="true"
+                     name="org.eclipse.cdt.debug.ui.debuggerActive"/>
+               <objectClass name="org.eclipse.jface.text.ITextSelection"/>
+            </and>
+         </visibility>
          <action
                label="%AddExpressionAction.label"
                icon="icons/full/etool16/watch_exp.gif"
@@ -268,31 +276,18 @@
                label="%JumpToLineAction.label"
                icon="icons/full/clcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
          </action>
          <action
-               label="%RunToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               label="%RunToLineAction.label"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
+               id="org.eclipse.cdt.debug.ui.actions.popup.RunToLine">
          </action>
       </viewerContribution>
       <objectContribution
@@ -349,6 +344,14 @@
       <viewerContribution
             targetID="#ASMEditorContext"
             id="org.eclipse.cdt.debug.ui.AsmEditorPopupActions">
+         <visibility>
+            <and>
+               <objectClass name="org.eclipse.jface.text.ITextSelection"/>
+               <systemProperty
+                     value="true"
+                     name="org.eclipse.cdt.debug.ui.debuggerActive"/>
+            </and>
+         </visibility>
          <action
                label="%AddExpressionAction.label"
                icon="icons/full/etool16/watch_exp.gif"
@@ -361,31 +364,18 @@
                label="%JumpToLineAction.label"
                icon="icons/full/clcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
          </action>
          <action
-               label="%RunToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               label="%RunToLineAction.label"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
+               id="org.eclipse.cdt.debug.ui.actions.popup.RunToLine">
          </action>
       </viewerContribution>
       <objectContribution
@@ -1093,6 +1083,7 @@
          <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
       </factory>
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
@@ -1103,6 +1094,7 @@
          <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
       </factory>
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
@@ -1113,6 +1105,7 @@
          <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
       </factory>
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"

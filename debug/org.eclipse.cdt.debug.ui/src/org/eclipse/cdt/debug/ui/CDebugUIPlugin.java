@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
+import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -245,6 +246,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public void start( BundleContext context ) throws Exception {
 		super.start( context );
+		EvaluationContextManager.startup();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 	}
 

@@ -111,6 +111,7 @@ public class CDebugImages
 	public static final String IMG_LCL_LOAD_ALL_SYMBOLS = NAME_PREFIX + "load_all_symbols_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CAST_TO_TYPE = NAME_PREFIX + "casttotype_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DISPLAY_AS_ARRAY = NAME_PREFIX + "showasarray_co.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_RESUME_AT_LINE = NAME_PREFIX + "jump_co.gif";	//$NON-NLS-1$
 
 	public static final String IMG_TOOLS_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "adddirsource_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "addprjsource_wiz.gif";	//$NON-NLS-1$
@@ -127,6 +128,7 @@ public class CDebugImages
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	private static final String T_LCL = "lcl16"; //$NON-NLS-1$
 	private static final String T_CLCL = "clcl16"; //$NON-NLS-1$
+	private static final String T_DLCL = "dlcl16"; //$NON-NLS-1$
 	private static final String T_CTOOL = "ctool16"; //$NON-NLS-1$
 //	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
 //	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
@@ -174,13 +176,15 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_SIGNAL = createManaged( T_OBJ, IMG_OBJS_SIGNAL );
 	public static final ImageDescriptor DESC_OBJS_WORKSPACE_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_WORKSPACE_SOURCE_FILE );
 	public static final ImageDescriptor DESC_OBJS_EXTERNAL_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_EXTERNAL_SOURCE_FILE );
-	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE_LOCATION ); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION ); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOLS_ADD_PRJ_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION ); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOLS_ADD_DIR_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_CLCL, IMG_LCL_CAST_TO_TYPE ); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_CLCL, IMG_LCL_DISPLAY_AS_ARRAY ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE_LOCATION );
+	public static final ImageDescriptor DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION );
+	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION );
+	public static final ImageDescriptor DESC_TOOLS_ADD_PRJ_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION );
+	public static final ImageDescriptor DESC_TOOLS_ADD_DIR_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_DIR_SOURCE_LOCATION );
+	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_CLCL, IMG_LCL_CAST_TO_TYPE );
+	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_CLCL, IMG_LCL_DISPLAY_AS_ARRAY );
+	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_CLCL, IMG_LCL_RESUME_AT_LINE );
+	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE_DISABLED = createManaged( T_DLCL, IMG_LCL_RESUME_AT_LINE );
 
 	/**
 	 * Returns the image managed under the given key in this registry.

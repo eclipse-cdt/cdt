@@ -31,6 +31,9 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 		if ( adapterType == IRunToLineTarget.class ) {
 			return new RunToLineAdapter();
 		} 
+		if ( adapterType == IResumeAtLineTarget.class ) {
+			return new ResumeAtLineAdapter();
+		} 
 		return null;
 	}
 
@@ -38,6 +41,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{ IRunToLineTarget.class, IToggleBreakpointsTarget.class };
+		return new Class[]{ IRunToLineTarget.class, IToggleBreakpointsTarget.class, IResumeAtLineTarget.class };
 	}
 }

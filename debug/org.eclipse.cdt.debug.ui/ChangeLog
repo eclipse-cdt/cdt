@@ -1,3 +1,19 @@
+2005-01-18 Mikhail Khodjaiants
+	Fix for bug 82800: Make "Resume At Line" action retargettable.
+	* plugin.xml
+	* CDebugImages.java
+	* EvaluationContextManager.java: new
+	* ActionMessages.properties
+	* IResumeAtLineTarget.java: new
+	* ResumeAtLineActionDelegate.java
+	* ResumeAtLineAdapter.java: new
+	* RetargetAction.java: new
+	* RetargetResumeAtLineAction.java: new
+	* RetargettableActionAdapterFactory.java
+	* CDebugUIPlugin.java
+	* JumpToLineActionDelegate.java: removed
+	* RunToLineActionDelegate.java: removed
+
 2005-01-12 Mikhail Khodjaiants
 	Bug 73168: Use memory view provided by Eclipse platform in CDT. 
 	Removed the old memory view.

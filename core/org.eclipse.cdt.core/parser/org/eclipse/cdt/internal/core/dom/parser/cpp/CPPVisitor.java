@@ -226,7 +226,7 @@ public class CPPVisitor implements ICPPASTVisitor {
         try {
             enumtor = scope.getBinding( enumerator.getName() );
             if( enumtor == null ){
-                enumtor = new CPPEnumerator( enumerator );
+                enumtor = new CPPEnumerator( enumerator.getName() );
                 scope.addBinding( enumtor );
             }
         } catch ( DOMException e ) {
@@ -647,6 +647,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 				return parent;
 			} else if( parent instanceof IASTFunctionDeclarator ){
 			    return node;
+			} else if( parent instanceof IASTEnumerationSpecifier.IASTEnumerator ){
+			    return parent;
 			}
 			node = parent;
 			parent = node.getParent();
@@ -838,7 +840,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 				
 					return PROCESS_CONTINUE;
 				case KIND_OBJ_FN:
-					if( prop == IASTDeclarator.DECLARATOR_NAME )
+					if( prop == IASTDeclarator.DECLARATOR_NAME ||
+					    prop == IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME )
 					{
 						break;
 					}

@@ -2199,7 +2199,6 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, j, 3 );
         assertInstances( col, x, 5 );
     }
-    
     public void testBug84478() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append( "void foo() {\n" ); //$NON-NLS-1$
@@ -2219,5 +2218,34 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNull( whileStatement.getCondition() );
 		assertNotNull( whileStatement.getConditionDeclaration() );
 	}
+	    
+    public void testBug86353() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void foo() {                      \n"); //$NON-NLS-1$
+        buffer.append("   const int x = 12;              \n"); //$NON-NLS-1$
+        buffer.append("   {   enum { x = x };  }         \n"); //$NON-NLS-1$
+        buffer.append("}                                 \n"); //$NON-NLS-1$
+        buffer.append("enum { RED };                     \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IEnumerator enum_x = (IEnumerator) col.getName(3).resolveBinding();
+        IBinding x_ref = col.getName(4).resolveBinding();
+        IEnumerator RED = (IEnumerator) col.getName(6).resolveBinding();
+        
+        IASTName [] decls = tu.getDeclarations( enum_x );
+        assertEquals( decls.length, 1 );
+        assertSame( decls[0], col.getName(3) );
+        
+        decls = tu.getDeclarations( x_ref );
+        assertEquals( decls.length, 1 );
+        assertSame( decls[0], col.getName(1) );
+        
+        decls = tu.getDeclarations( RED );
+        assertEquals( decls.length, 1 );
+        assertSame( decls[0], col.getName(6) );
+    }
 }
 

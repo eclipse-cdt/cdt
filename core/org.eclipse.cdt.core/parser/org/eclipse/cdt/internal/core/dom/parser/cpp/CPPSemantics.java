@@ -623,7 +623,9 @@ public class CPPSemantics {
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
 				IBinding binding = data.prefixLookup ? null : scope.getBinding( data.astName );
-				if( binding == null ){
+				if( binding == null || !( CPPSemantics.declaredBefore( binding, data.astName ) || 
+				                          (scope instanceof ICPPClassScope && data.checkWholeClassScope())) )
+				{
 				    directives = new ArrayWrapper();
 				    mergeResults( data, lookupInScope( data, scope, blockItem, directives ), true );
 				} else {
@@ -893,7 +895,7 @@ public class CPPSemantics {
 						usingDirectives.array = ArrayUtil.append( usingDirectives.array, item );
 				} else {
 					possible = collectResult( data, scope, item, (item == parent)  );
-					if( possible != null ){
+					if( possible != null && (checkWholeClassScope || declaredBefore( possible, data.astName )) ){
 					    found = (IASTName[]) ArrayUtil.append( IASTName.class, found, possible );
 					}
 				}
@@ -1118,16 +1120,39 @@ public class CPPSemantics {
         }
 	}
 	
-	static private boolean declaredBefore( IBinding binding, IASTNode node ){
-	    if( binding instanceof ICPPBinding ){
-	        ICPPBinding cpp = (ICPPBinding) binding;
+	static public boolean declaredBefore( Object obj, IASTNode node ){
+	    ASTNode nd = null;
+	    if( obj instanceof ICPPBinding ){
+	        ICPPBinding cpp = (ICPPBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
+	        
 	        if( n != null && n.length > 0 )
-	            return (((ASTNode) n[0]).getOffset() <= ((ASTNode)node).getOffset() );
+	            nd = (ASTNode) n[0];
 	        else if( cpp.getDefinition() != null )
-	            return (((ASTNode) cpp.getDefinition()).getOffset() <= ((ASTNode)node).getOffset() );
+	            nd = (ASTNode) cpp.getDefinition();
 	        else 
 	            return true;
+	    } else if( obj instanceof IASTName ) {
+	        nd = (ASTNode) obj;
+	    }
+	    if( nd != null ){
+	        int pointOfDecl = 0;
+            ASTNodeProperty prop = nd.getPropertyInParent();
+            if( prop == IASTDeclarator.DECLARATOR_NAME ){
+                pointOfDecl = nd.getOffset() + nd.getLength(); 
+            } else if( prop == IASTEnumerator.ENUMERATOR_NAME) {
+                IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
+                if( enumtor.getValue() != null ){
+                    ASTNode exp = (ASTNode) enumtor.getValue();
+                    pointOfDecl = exp.getOffset() + exp.getLength();
+                } else {
+                    pointOfDecl = nd.getOffset() + nd.getLength();
+                }
+            } else 
+                pointOfDecl = nd.getOffset();
+            
+            return ( pointOfDecl <= ((ASTNode)node).getOffset() );
+	        
 	    }
 	    return false;
 	}

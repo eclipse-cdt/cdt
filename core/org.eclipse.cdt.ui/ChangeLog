@@ -1,3 +1,14 @@
+2003-09-11 Andrew Niefer
+	- bug42837 - fixed populating search dialog on function declarations
+		- modified determineInitValuesFrom in CSearchPage
+	- bug42829 - prepopulated search dialog to any element declarations
+		- modified trySimpleTextSelection in CSearchPage
+	- bug42815 - group together search results with same label
+		- modified GroupByKeyComputer to use Name, ParentName & Path in the group key
+		- modified CSearchResultCollector to properly use the GroupByKeyComputer	
+	- modified CSearchResultLabelProvider to not display the "-" in the search label
+	  while sorting by name if there is no parent.
+
 2003-09-11 David Inglis
 	Deprecated
 	

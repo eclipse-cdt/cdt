@@ -102,16 +102,24 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				CSearchUtil.updateLRUWorkingSets(getContainer().getSelectedWorkingSets());
 		}
 		
+		data.cElement= null;
+		
 		CSearchResultCollector collector= new CSearchResultCollector();
-		CSearchOperation op = null;
-//		if (data.cElement != null && getPattern().equals(fInitialData.pattern)) {
-//			op = new CSearchOperation(workspace, data.cElement, data.limitTo, scope, scopeDescription, collector);
-//			if (data.limitTo == ICSearchConstants.REFERENCES)
-//				CSearchUtil.warnIfBinaryConstant(data.cElement, getShell());
-//		} else {
-			data.cElement= null;
-			op = new CSearchOperation(workspace, data.pattern, data.isCaseSensitive, data.searchFor, data.limitTo, scope, scopeDescription, collector);
-	//}
+		
+		List searching = null;
+		
+		if( data.searchFor.contains( UNKNOWN_SEARCH_FOR ) ){
+			//UNKNOWN_SEARCH_FOR means search for anything, make a list with everything
+			searching = new LinkedList();
+			for( int i = 0; i < fSearchFor.length - 1; i++ ){
+				searching.add( fSearchForValues[ i ] );		
+			}
+		} else {
+			searching = data.searchFor;
+		}
+		
+		CSearchOperation op = new CSearchOperation(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
+
 		
 		try {
 			getContainer().getRunnableContext().run(true, true, op);
@@ -320,10 +328,10 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private List getSearchFor() {
 		List search = new LinkedList( );
 		
-		boolean all = fSearchFor[ fSearchFor.length - 1 ].getSelection();
+//		boolean all = fSearchFor[ fSearchFor.length - 1 ].getSelection();
 		
-		for (int i= 0; i < fSearchFor.length - 1; i++) {
-			if( fSearchFor[i].getSelection() || all )
+		for (int i= 0; i < fSearchFor.length; i++) {
+			if( fSearchFor[i].getSelection() /*|| all */)
 				search.add( fSearchForValues[i] );
 		}
 		
@@ -409,6 +417,9 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			fSearchFor[i].setEnabled( enabled );			
 		}
 		
+		if( !enabled )
+			fSearchFor[ fSearchFor.length - 1 ].setEnabled( true );
+			
 		setLimitTo( fInitialData.searchFor );
 			
 		for (int i = 0; i < fLimitTo.length; i++)
@@ -438,8 +449,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				IWorkbenchAdapter adapter= (IWorkbenchAdapter)((IAdaptable)o).getAdapter( IWorkbenchAdapter.class );
 				if( adapter != null ){
 					List searchFor = new LinkedList();
-					searchFor.add( CLASS_STRUCT );
-					return new SearchPatternData( searchFor, REFERENCES, fIsCaseSensitive, adapter.getLabel(o), null );
+					searchFor.add( UNKNOWN_SEARCH_FOR );
+					return new SearchPatternData( searchFor, DECLARATIONS, fIsCaseSensitive, adapter.getLabel(o), null );
 				}
 			}
 		}
@@ -465,8 +476,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			}
 			
 			List searchFor = new LinkedList();
-			searchFor.add( CLASS_STRUCT );
-			result= new SearchPatternData( searchFor, REFERENCES, fIsCaseSensitive, text, null);
+			searchFor.add( UNKNOWN_SEARCH_FOR );
+			result= new SearchPatternData( searchFor, DECLARATIONS, fIsCaseSensitive, text, null);
 		}
 		return result;
 	}
@@ -474,7 +485,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private SearchPatternData getDefaultInitValues() {
 		List searchFor = new LinkedList();
 		searchFor.add( CLASS_STRUCT );
-		return new SearchPatternData( searchFor, REFERENCES, fIsCaseSensitive, "", null); //$NON-NLS-1$
+		return new SearchPatternData( searchFor, DECLARATIONS, fIsCaseSensitive, "", null); //$NON-NLS-1$
 	}
 		
 	private String[] getPreviousSearchPatterns() {
@@ -518,6 +529,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		boolean forceMethod = ( pattern.indexOf("::") != -1 );
 		
 		switch ( element.getElementType() ){
+			case ICElement.C_FUNCTION_DECLARATION: /*fall through to function */
 			case ICElement.C_FUNCTION:	if( forceMethod ) searchFor.add( METHOD ); 
 										else 			  searchFor.add( FUNCTION );		
 										break;
@@ -527,6 +539,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			case ICElement.C_UNION:		searchFor.add( UNION );			break;
 			case ICElement.C_ENUMERATOR: /* fall through to FIELD    */
 			case ICElement.C_FIELD:		searchFor.add( FIELD );			break;
+			case ICElement.C_METHOD_DECLARATION : /*fall through to METHOD */
 			case ICElement.C_METHOD:	searchFor.add( METHOD );		break;
 			case ICElement.C_NAMESPACE: searchFor.add( NAMESPACE );		break;
 		}
@@ -600,7 +613,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;
-	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, NAMESPACE, null };
+	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, NAMESPACE, UNKNOWN_SEARCH_FOR };
 	
 	private String[] fSearchForText= {
 		CSearchMessages.getString("CSearchPage.searchFor.classStruct"), //$NON-NLS-1$

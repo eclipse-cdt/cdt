@@ -23,6 +23,7 @@ import org.eclipse.cdt.ui.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
 
@@ -57,6 +58,8 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		CSearchResultLabelProvider labelProvider = new CSearchResultLabelProvider();
 		labelProvider.setOrder( CSearchResultLabelProvider.SHOW_PATH );
 		
+		_computer = new GroupByKeyComputer();
+		
 		if( _view != null ){
 			_view.searchStarted(
 				null,//new ActionGroupFactory(),
@@ -66,7 +69,7 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 				CSearchPage.EXTENSION_POINT_ID,
 				labelProvider,
 				new GotoMarkerAction(),
-				new GroupByKeyComputer(),
+				_computer,
 				_operation
 			);
 		}
@@ -86,9 +89,7 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 			return false;
 		 
 		IMarker marker =  searchMatch.resource.createMarker( SearchUI.SEARCH_MARKER );
-		
-		Object groupKey = match;
-		
+	
 		HashMap markerAttributes = new HashMap( 2 );
 		
 		//we can hang any other info we want off the marker
@@ -98,9 +99,10 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		
 		marker.setAttributes( markerAttributes );
 		
-		if( _view != null )
-			_view.addMatch( searchMatch.name, groupKey, searchMatch.resource, marker );
-		
+		if( _view != null ){
+			_view.addMatch( searchMatch.name, _computer.computeGroupByKey( marker ), searchMatch.resource, marker );		
+		}
+
 		_matchCount++;
 		
 		return true;
@@ -152,5 +154,6 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 	private IProgressMonitor 	_monitor;
 	private CSearchOperation 	_operation;
 	private ISearchResultView 	_view;
+	private IGroupByKeyComputer _computer;
 	private int					_matchCount;
 }

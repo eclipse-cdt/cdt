@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
@@ -120,6 +121,21 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
+		
+		Iterator iter = matches.iterator();
+		IMatch match = (IMatch) iter.next();
+		if( match.getName().equals("b2") ){
+			assertTrue( match.getParentName().equals("") );
+			match = (IMatch) iter.next();
+			assertTrue( match.getName().equals( "C" ) );
+			assertTrue( match.getParentName().equals( "NS3" ));
+		} else {
+			assertTrue( match.getName().equals( "C" ) );
+			assertTrue( match.getParentName().equals( "NS3" ));
+			match = (IMatch) iter.next();
+			assertTrue( match.getName().equals( "b2" ) );
+			assertTrue( match.getParentName().equals( "" ));
+		}
 	}
 	
 	public void testFieldDeclaration(){
@@ -175,6 +191,10 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
+		
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getName().equals( "FOO" ) );
+		assertTrue( match.getParentName().equals( "" ));
 	}
 	
 	public void testEnumerators(){
@@ -184,6 +204,9 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getName().equals( "One" ) );
+		assertTrue( match.getParentName().equals( "NS::B" ));
 		
 		pattern = SearchEngine.createSearchPattern( "NS::B::Two", FIELD, DECLARATIONS, true );
 		
@@ -191,6 +214,9 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
+		match = (IMatch) matches.iterator().next();
+		assertTrue( match.getName().equals( "Two" ) );
+		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testEnumeratorReferences(){
@@ -200,6 +226,9 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
+		
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getName().equals( "eE" ) );
+		assertTrue( match.getParentName().equals( "NS3::C" ));
 	}
-	
 }

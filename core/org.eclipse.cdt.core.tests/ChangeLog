@@ -1,3 +1,11 @@
+2003-09-11 Andrew Niefer
+	Created search/SearchTestSuite
+	Added SearchTestSuite to AutomatedIntegrationSuite and removed the individual search tests
+	Added testReferencesInFunction to ClassDeclarationPatternTests
+	Modified resources/search/classDecl.cpp
+	Modified testNamespaceReferenceInClassBaseClause, testMacroPattern, testEnumerators, 
+	testEnumeratorReferences in OtherPatternTests to test the Match result strings
+
 2003-09-11 John Camelon
 	Added CompleteParseASTTest::testBug42840() & testBug42872().
 	Moved testBug39504B(), testBug39505A() & testBug39505B() from failed to QuickParse tests.

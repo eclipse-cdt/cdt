@@ -1,3 +1,9 @@
+2003-09-11 Andrew Niefer
+	- Modified ICSearchResultCollector.createMatch to not take a parent parameter
+	- modified BasicSearchResultCollector to create the parent string from the fully qualified name of the node
+	- modified MatchLocator to keep track of most recent declaration for reporting purposes
+	- modified MatchLocator.report to use the most recent declaration
+
 2003-09-09 Andrew Niefer
 	pattern matching on function parameters:
 	 - modified scanForParameters in CSearchPattern

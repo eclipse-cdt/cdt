@@ -257,4 +257,22 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		assertEquals( matches.size(), 7 );
 	}
+	
+	public void testReferencesInFunction(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "AClassForFoo", CLASS, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 3 );
+		
+		Iterator iter = matches.iterator();
+		
+		while( iter.hasNext() ){
+			IMatch match = (IMatch) iter.next();
+
+			assertTrue( match.getName().equals("foo(AClassForFoo)") );
+			assertTrue( match.getParentName().equals("") );
+		}
+	}
 }
+

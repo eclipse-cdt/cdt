@@ -30,10 +30,7 @@ import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.LokiFailures;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.core.search.tests.ClassDeclarationPatternTests;
-import org.eclipse.cdt.core.search.tests.FunctionMethodPatternTests;
-import org.eclipse.cdt.core.search.tests.OtherPatternTests;
-import org.eclipse.cdt.core.search.tests.ParseTestOnSearchFiles;
+import org.eclipse.cdt.core.search.tests.SearchTestSuite;
 import org.eclipse.core.boot.IPlatformRunnable;
 
 /**
@@ -86,10 +83,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTest(BinaryTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
-		suite.addTestSuite(ClassDeclarationPatternTests.class );
-		suite.addTestSuite(FunctionMethodPatternTests.class );
-		suite.addTestSuite(OtherPatternTests.class );		
-		suite.addTestSuite( ParseTestOnSearchFiles.class);
+		suite.addTest(SearchTestSuite.suite());
 		suite.addTestSuite( CompletionProposalsTest.class);
 		//Indexer Tests need to be run after any indexer client tests
 		//as the last test shuts down the indexing thread

@@ -137,7 +137,11 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			case SHOW_NAME_ONLY:
 				result = match.getName();
 			case SHOW_ELEMENT_CONTAINER:
-				result = match.getName() + " - " + match.getParentName() + " ( " + path + " )";
+				if( !match.getParentName().equals("") )
+					result = match.getName() + " - " + match.getParentName() + " ( " + path + " )";
+				else
+					result = match.getName() + " ( " + path + " )";
+						
 				break;
 			case SHOW_PATH:
 				result = path + " - " + match.getParentName()+ "::" + match.getName();

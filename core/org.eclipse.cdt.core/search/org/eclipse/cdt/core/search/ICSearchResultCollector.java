@@ -14,7 +14,6 @@
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -46,24 +45,9 @@ public interface ICSearchResultCollector {
 	 * Called when the search has ended.
 	 */
 	public void done();
-	
-	/**
-	 * Accepts the given search result.
-	 *
-	 * @param resource the resource in which the match has been found
-	 * @param start the start position of the match, -1 if it is unknown
-	 * @param end the end position of the match, -1 if it is unknown;
-	 *  the ending offset is exclusive, meaning that the actual range of characters 
-	 *  covered is <code>[start, end]</code>
-	 * @param enclosingObject an object that contains the character range
-	 *	<code>[start, end]</code>; the value can be <code>null</code> indicating that
-	 *	no enclosing object has been found
-	 * @param accuracy the level of accuracy the search result has; either
-	 *  <code>EXACT_MATCH</code> or <code>POTENTIAL_MATCH</code>
-	 * @exception CoreException if this collector had a problem accepting the search result
-	 */
+
 	public IMatch createMatch( Object fileResource, int start, int end, 
-						ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException;
+						ISourceElementCallbackDelegate node ) throws CoreException;
 	
 	//return whether or not the match was accepted
 	public boolean acceptMatch( IMatch match ) throws CoreException;

@@ -45,3 +45,10 @@ NS::B b2;
 
 union u{
 };
+
+class AClassForFoo {};
+
+AClassForFoo foo( AClassForFoo ){
+	AClassForFoo b;
+	return b;
+}

@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -64,13 +63,13 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		return null;
 	}
 
-	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException 
+	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException 
 	{
 		BasicSearchMatch result = new BasicSearchMatch();
-		return createMatch( result, fileResource, start, end, node, parent );
+		return createMatch( result, fileResource, start, end, node );
 	}
 	
-	public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException {
+	public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException {
 		if( fileResource instanceof IResource )
 			result.resource = (IResource) fileResource;
 		else if( fileResource instanceof IPath )
@@ -78,26 +77,34 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			
 		result.startOffset = start;
 		result.endOffset = end;
-		
 		result.parentName = "";
-		if( parent instanceof IASTQualifiedNameElement ){
-			String [] names = ((IASTQualifiedNameElement)parent).getFullyQualifiedName();
-			for( int i = 0; i < names.length; i++ ){
-				if( i > 0 )
-					result.parentName += "::";
-					
-				result.parentName += names[ i ];
-			}
-		}
 		
 		IASTOffsetableNamedElement offsetable = null;
-		
+
 		if( node instanceof IASTReference ){
 			offsetable = (IASTOffsetableNamedElement) ((IASTReference)node).getReferencedElement();
 			result.name = ((IASTReference)node).getName();
 		} else if( node instanceof IASTOffsetableNamedElement ){
 			offsetable = (IASTOffsetableNamedElement)node;
 			result.name = offsetable.getName();
+		}
+		
+		result.parentName = "";
+		String [] names = null;
+		if( offsetable instanceof IASTEnumerator ){
+			IASTEnumerator enumerator = (IASTEnumerator) offsetable;
+			names = enumerator.getOwnerEnumerationSpecifier().getFullyQualifiedName();
+		} else if( offsetable instanceof IASTQualifiedNameElement ) {
+			names = ((IASTQualifiedNameElement) offsetable).getFullyQualifiedName();
+		}
+
+		if( names != null ){
+			for( int i = 0; i < names.length - 1; i++ ){
+				if( i > 0 )
+					result.parentName += "::";
+			
+				result.parentName += names[ i ];
+			}
 		}
 		
 		if( offsetable instanceof IASTFunction ){

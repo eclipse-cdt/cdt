@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTEnumeratorReference;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
@@ -141,26 +142,33 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 	
 	public void acceptVariable(IASTVariable variable){
+		lastDeclaration = variable;
 		check( DECLARATIONS, variable );   
 	}
 	
-	public void acceptField(IASTField field){ 
+	public void acceptField(IASTField field){
+		lastDeclaration = field; 
 		check( DECLARATIONS, field ); 	   
 	}
 	
-	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){ 
+	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){
+		lastDeclaration = enumeration; 
 		check( DECLARATIONS, enumeration );
 		Iterator iter = enumeration.getEnumerators();
 		while( iter.hasNext() ){
-			check ( DECLARATIONS, (ISourceElementCallbackDelegate) iter.next() );
+			IASTEnumerator enumerator = (IASTEnumerator) iter.next();
+			lastDeclaration = enumerator;
+			check ( DECLARATIONS, enumerator );
 		}  
 	}
 		
 	public void acceptFunctionDeclaration(IASTFunction function){
+		lastDeclaration = function;
 		check( DECLARATIONS, function );
 	}
 	
 	public void acceptMethodDeclaration(IASTMethod method){
+		lastDeclaration = method;
 		check( DECLARATIONS, method );
 	}
 		
@@ -193,11 +201,14 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 	
 	public void enterFunctionBody(IASTFunction function){
+		lastDeclaration = function;
+		check( DECLARATIONS, function );
 		check( DEFINITIONS, function );
 		pushScope( function );
 	}
 	
 	public void enterMethodBody(IASTMethod method) {
+		lastDeclaration = method;
 		check( DEFINITIONS, method );
 		pushScope( method );
 	}
@@ -207,13 +218,15 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 	
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
-		check( DECLARATIONS, namespaceDefinition );			
-		pushScope( namespaceDefinition );
+		lastDeclaration = namespaceDefinition;
+		check( DECLARATIONS, namespaceDefinition );
+		pushScope( namespaceDefinition );			
 	}
 
 	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
-		check( DECLARATIONS, classSpecification );		
-		pushScope( classSpecification );
+		lastDeclaration = classSpecification;
+		check( DECLARATIONS, classSpecification );
+		pushScope( classSpecification );		
 	}
 	
 	public void exitFunctionBody(IASTFunction function) {
@@ -407,12 +420,27 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 					MatchLocator.verbose("Report Match: " + offsetableElement.getName());
 			}
 		
-				
-			IMatch match = null;		
+			IMatch match = null;
+			ISourceElementCallbackDelegate object = null;
+			
+			if( node instanceof IASTReference ){
+				if( currentScope instanceof IASTFunction || currentScope instanceof IASTMethod ){
+					object = (ISourceElementCallbackDelegate) currentScope;
+				} else {
+					object = lastDeclaration;
+				}
+			} else {
+				if( currentScope instanceof IASTFunction || currentScope instanceof IASTMethod ){
+					object = (ISourceElementCallbackDelegate) currentScope;
+				} else {
+					object = node;
+				}
+			}
+		
 			if( currentResource != null ){
-				match = resultCollector.createMatch( currentResource, offset, offset + length, node, currentScope );
+				match = resultCollector.createMatch( currentResource, offset, offset + length, object );
 			} else if( currentPath != null ){
-				match = resultCollector.createMatch( currentPath, offset, offset + length, node, currentScope );
+				match = resultCollector.createMatch( currentPath, offset, offset + length, object );
 			}
 			if( match != null ){
 				resultCollector.acceptMatch( match );
@@ -450,6 +478,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		currentScope = (scopeStack.size() > 0 ) ? (IASTScope) scopeStack.removeFirst() : null;
 		return oldScope;
 	}
+	
+	private ISourceElementCallbackDelegate lastDeclaration;
 	
 	private ICSearchPattern 		searchPattern;
 	private ICSearchResultCollector resultCollector;

@@ -77,9 +77,9 @@ $(LINK_TARGET) : $(OBJS)
 # It says how to create a file with a .o suffix, given a file with a .cpp suffix.
 # The rule's command uses some built-in Make Macros:
 # $@ for the pattern-matched target
-# $< for the pattern-matched dependency
+# $lt; for the pattern-matched dependency
 %.o : %.cpp
- g++ -g -o $@ -c $<
+ g++ -g -o $@ -c $&lt;
 
 # These are Dependency Rules, which are rules without any command.
 # Dependency Rules indicate that if any file to the right of the colon changes,
@@ -94,7 +94,7 @@ Test2.o : Test2.h
 # Alternatively to manually capturing dependencies, several automated
 # dependency generators exist.  Here is one possibility (commented out)...
 # %.dep : %.cpp
-#        g++ -M $(FLAGS) $< > $@
+#        g++ -M $(FLAGS) $&lt; &gt; $@
 # include $(OBJS:.o=.dep)
 </pre>
 
@@ -153,7 +153,7 @@ Messages from the standard error stream (the lines saying Error 255) and standar
 This is helpful for build large projects.</p>
 <p>You can remove the -k flag by turning on Project Properties > C/C++ Make Project > Make Builder > Stop on first build error</p>
 
-<p><font size="+1"><b>Q6</b>. My Console view looks like:</b></font>
+<p><font size="+1"><b>Q6</b>. My Console view looks like:</p></font>
 <pre>
 mingw32-make clean all 
 process_begin: CreateProcess((null), rm -f Test1.o Test2.o Main.o test_me.exe, ...) failed.
@@ -168,7 +168,7 @@ rm -f Test1.o Test2.o Main.o test_me.exe
 clean : 
 	-del $(REBUILDABLES)
 	echo Clean done
-<pre></p>
+</pre></p>
 <p>The leading minus sign tells make to consider the clean rule to be successful even if the del command returns failure.  This may be acceptable since the del command will fail if the specified files to be deleted do not exist yet (or anymore).</p>
 
 

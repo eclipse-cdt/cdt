@@ -132,7 +132,7 @@ public class ErrorParserManager extends OutputStream {
 			while (tok.hasMoreElements()) {
 				String clName = tok.nextToken();
 				try {
-					IErrorParser parser = (IErrorParser) getClass().forName(clName).newInstance();
+					IErrorParser parser = (IErrorParser) Class.forName(clName).newInstance();
 					fErrorParsers.add(parser);
 				}
 				catch (ClassNotFoundException e) {

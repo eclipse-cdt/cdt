@@ -1882,7 +1882,8 @@ public class Parser {
 	}
 
 	protected Token LA(int i) throws Exception {
-		for (int la = currToken; i > 1; --i) {
+		int j = i;
+		for (int la = currToken; j > 1; --j) {
 			if (++la > maxToken)
 				la = 0;
 			if (la > lastToken)

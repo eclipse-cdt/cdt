@@ -1064,8 +1064,9 @@ public class Parser2 {
 			case Token.tCOMPL:
 			case Token.tINCR:
 			case Token.tDECR:
-				consume();
+				Token t = consume();
 				castExpression();
+				callback.expressionOperator(t);
 				return;
 			case Token.t_sizeof:
 				if (LT(1) == Token.tLPAREN) {

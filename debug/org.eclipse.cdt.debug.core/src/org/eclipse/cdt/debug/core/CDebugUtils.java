@@ -16,23 +16,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
 import org.eclipse.cdt.debug.core.model.ICValue;
-import org.eclipse.cdt.debug.internal.core.model.CValue;
+import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -354,19 +349,11 @@ public class CDebugUtils
 
 	public static Number getFloatingPointValue( ICValue value )
 	{
-		if ( value instanceof CValue )
+		if ( value instanceof CFloatingPointValue )
 		{
 			try 
 			{
-				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
-				if ( cdiValue instanceof ICDIDoubleValue )
-				{
-					return new Double( ((ICDIDoubleValue)cdiValue).doubleValue() );
-				}
-				if ( cdiValue instanceof ICDIFloatValue )
-				{
-					return new Float( ((ICDIFloatValue)cdiValue).floatValue() );
-				}
+				return ((CFloatingPointValue)value).getFloatingPointValue();
 			}
 			catch( CDIException e ) 
 			{

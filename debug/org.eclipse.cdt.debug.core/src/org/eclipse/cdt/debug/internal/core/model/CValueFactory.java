@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -25,6 +26,9 @@ public class CValueFactory
 {
 	static public CValue createValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
 	{
+		if ( cdiValue instanceof ICDIFloatingPointValue ) {
+			return new CFloatingPointValue( parent, cdiValue );
+		}
 		return new CValue( parent, cdiValue );
 	}
 

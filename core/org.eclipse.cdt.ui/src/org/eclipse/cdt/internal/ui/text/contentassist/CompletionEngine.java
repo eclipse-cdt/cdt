@@ -459,9 +459,10 @@ public class CompletionEngine implements RelevanceConstants {
 		
 		ILookupResult result = null;
 		// lookup fields and methods with the right visibility
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[2];
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[3];
 		kinds[0] = IASTNode.LookupKind.FIELDS; 
 		kinds[1] = IASTNode.LookupKind.METHODS; 
+		kinds[2] = IASTNode.LookupKind.ENUMERATORS;
 		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions (result);
 	}	

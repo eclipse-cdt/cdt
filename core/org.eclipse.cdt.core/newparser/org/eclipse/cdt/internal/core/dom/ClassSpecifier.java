@@ -8,6 +8,6 @@ package org.eclipse.cdt.internal.core.dom;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ClassSpecifier extends DeclSpecifier {
+public class ClassSpecifier extends DeclSpecifierSeq {
 
 }

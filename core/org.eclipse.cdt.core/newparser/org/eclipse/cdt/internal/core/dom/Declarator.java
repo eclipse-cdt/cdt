@@ -1,7 +1,8 @@
 package org.eclipse.cdt.internal.core.dom;
 
 /**
+ * @author dschaefe
  */
-public class DeclSpecifier {
+public class Declarator {
 
 }

@@ -145,13 +145,7 @@ public class Parser2 {
 	public SimpleDeclaration simpleDeclaration() throws Backtrack {
 		SimpleDeclaration simpleDeclaration = new SimpleDeclaration();
 		
-		for (;;) {
-			try {
-				declSpecifier();
-			} catch (Backtrack b) {
-				break;
-			}
-		}
+		DeclSpecifierSeq declSpecifierSeq = declSpecifierSeq();
 
 		try {
 			initDeclarator();
@@ -200,103 +194,132 @@ public class Parser2 {
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public DeclSpecifier declSpecifier() throws Backtrack {
-		switch (LT(1)) {
-			case Token.t_auto:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_auto);
-			case Token.t_register:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_register);
-			case Token.t_static:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_static);
-			case Token.t_extern:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_extern);
-			case Token.t_mutable:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_mutable);
-			case Token.t_inline:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_inline);
-			case Token.t_virtual:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_virtual);
-			case Token.t_explicit:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_explicit);
-			case Token.t_char:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_char);
-			case Token.t_wchar_t:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_wchar_t);
-			case Token.t_bool:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_bool);
-			case Token.t_short:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_short);
-			case Token.t_int:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_int);
-			case Token.t_long:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_long);
-			case Token.t_signed:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_signed);
-			case Token.t_unsigned:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_unsigned);
-			case Token.t_float:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_float);
-			case Token.t_double:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_double);
-			case Token.t_void:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_void);
-			case Token.t_const:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_const);
-			case Token.t_volatile:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_volatile);
-			case Token.t_friend:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_friend);
-			case Token.t_typedef:
-				consume();
-				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_typedef);
-			case Token.t_typename:
-				consume();
-				name();
-				return new DeclSpecifier();
-			case Token.tCOLONCOLON:
-				consume();
-				// handle nested later:
-			case Token.tIDENTIFIER:
-				// handle nested later:
-				if (currRegion.getDeclaration(LA(1).getImage()) != null) {
+	public DeclSpecifierSeq declSpecifierSeq() throws Backtrack {
+		DeclSpecifierSeq declSpecifierSeq = new DeclSpecifierSeq();
+		
+		boolean done = false;
+		while (!done) {
+			switch (LT(1)) {
+				case Token.t_auto:
 					consume();
-					return new DeclSpecifier();
-				}
-				else
-					throw backtrack;
-			case Token.t_class:
-			case Token.t_struct:
-			case Token.t_union:
-				classSpecifier();
-				return null;
-			case Token.t_enum:
-				// enumSpecifier();
-				return null;
-			default:
-				throw backtrack;
+					declSpecifierSeq.setAuto(true);
+					break;
+				case Token.t_register:
+					consume();
+					declSpecifierSeq.setRegister(true);
+					break;
+				case Token.t_static:
+					consume();
+					declSpecifierSeq.setStatic(true);
+					break;
+				case Token.t_extern:
+					consume();
+					declSpecifierSeq.setExtern(true);
+					break;
+				case Token.t_mutable:
+					consume();
+					declSpecifierSeq.setMutable(true);
+					break;
+				case Token.t_inline:
+					consume();
+					declSpecifierSeq.setInline(true);
+					break;
+				case Token.t_virtual:
+					consume();
+					declSpecifierSeq.setVirtual(true);
+					break;
+				case Token.t_explicit:
+					consume();
+					declSpecifierSeq.setExplicit(true);
+					break;
+				case Token.t_typedef:
+					consume();
+					declSpecifierSeq.setTypedef(true);
+					break;
+				case Token.t_friend:
+					consume();
+					declSpecifierSeq.setFriend(true);
+					break;
+				case Token.t_const:
+					consume();
+					declSpecifierSeq.setConst(true);
+					break;
+				case Token.t_volatile:
+					consume();
+					declSpecifierSeq.setVolatile(true);
+					break;
+				case Token.t_char:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_char);
+					break;
+				case Token.t_wchar_t:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_wchar_t);
+					break;
+				case Token.t_bool:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_bool);
+					break;
+				case Token.t_short:
+					consume();
+					declSpecifierSeq.setShort(true);
+					break;
+				case Token.t_int:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_int);
+					break;
+				case Token.t_long:
+					consume();
+					declSpecifierSeq.setLong(true);
+					break;
+				case Token.t_signed:
+					consume();
+					declSpecifierSeq.setUnsigned(false);
+					break;
+				case Token.t_unsigned:
+					consume();
+					declSpecifierSeq.setUnsigned(true);
+					break;
+				case Token.t_float:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_float);
+					break;
+				case Token.t_double:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_double);
+					break;
+				case Token.t_void:
+					consume();
+					declSpecifierSeq.setType(DeclSpecifierSeq.t_void);
+					break;
+				case Token.t_typename:
+					consume();
+					name();
+					break;
+				case Token.tCOLONCOLON:
+					consume();
+					// handle nested later:
+				case Token.tIDENTIFIER:
+					// handle nested later:
+					if (currRegion.getDeclaration(LA(1).getImage()) != null) {
+						consume();
+						break;
+					}
+					else
+						done = true;
+				case Token.t_class:
+				case Token.t_struct:
+				case Token.t_union:
+					classSpecifier();
+					break;
+				case Token.t_enum:
+					// enumSpecifier();
+					break;
+				default:
+					done = true;
+			}
 		}
+		return declSpecifierSeq;
 	}
 	
 	/**
@@ -367,7 +390,8 @@ public class Parser2 {
 	 * declaratorId
 	 * : name
 	 */
-	public Object declarator() throws Backtrack {
+	public Declarator declarator() throws Backtrack {
+		
 		for (;;) {
 			try {
 				ptrOperator();

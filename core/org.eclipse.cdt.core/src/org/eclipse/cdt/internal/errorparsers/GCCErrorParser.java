@@ -13,7 +13,27 @@ import org.eclipse.core.resources.IFile;
 public class GCCErrorParser implements IErrorParser {
 
 	public boolean processLine(String line, ErrorParserManager eoParser) {
-		// gcc: "filename:linenumber:column: error_desc"
+		// Known patterns.
+		// (a)
+		// filename:lineno: description
+		//
+		// (b)
+		// filename:lineno:column: description
+		//
+		// (b)
+		// In file included from b.h:2,
+		//				 from a.h:3,
+		//				 from hello.c:3:
+		// c.h:2:15: missing ')' in macro parameter list
+		//
+		// (c)
+		// h.c: In function `main':
+		// h.c:41: `foo' undeclared (first use in this function)
+		// h.c:41: (Each undeclared identifier is reported only once
+		// h.c:41: for each function it appears in.)
+		// h.c:41: parse error before `char'
+		// h.c:75: `p' undeclared (first use in this function)
+
 		int firstColon = line.indexOf(':');
 
 		/* Guard against drive in Windows platform.  */
@@ -113,7 +133,37 @@ public class GCCErrorParser implements IErrorParser {
 					 		varName = desc.substring(desc.indexOf("`") + 1, p);
 					 		//System.out.println("prev varName "+ varName);
 					 	}
+					 } else if ((s = desc.indexOf("parse error before ")) != -1) {
+						int p = desc.indexOf("\'", s);
+						if (p != -1) {
+							varName = desc.substring(desc.indexOf("`") + 1, p);
+							//System.out.println("prev varName "+ varName);
+						}
 					 }
+
+					if (eoParser.getScratchBuffer().startsWith("In file included from ")) {
+						if (line.startsWith("from ")) {
+							eoParser.appendToScratchBuffer(line);
+							return false;
+						}
+						String buffer = eoParser.getScratchBuffer();
+						eoParser.clearScratchBuffer();
+						int from = -1;
+						while ((from = buffer.lastIndexOf("from ")) != -1) {
+							String buf = buffer.substring(from + 5);
+							buffer = buffer.substring(0, from);
+							if (buf.endsWith(",")) {
+								int coma = buf.lastIndexOf(',');
+								StringBuffer b = new StringBuffer(buf);
+								b.setCharAt(coma, ':');
+								b.append(' ').append(buffer).append(" from ").append(line);
+								buf = b.toString();
+							} else {
+								buf = buf + ' ' + buffer + " from " + line;
+							}
+							processLine(buf, eoParser);
+						}
+					}
 
 					IFile file = eoParser.findFilePath(fileName);
 
@@ -147,6 +197,12 @@ public class GCCErrorParser implements IErrorParser {
 						desc = desc +"[" + fileName + "]";
 					}
 					eoParser.generateMarker(file, num, desc, severity, varName);
+				} else {
+					if (line.startsWith("In file included from ")) {
+						eoParser.appendToScratchBuffer(line);
+					} else if (line.startsWith("from ")) {
+						eoParser.appendToScratchBuffer(line);
+					}
 				}
 			} catch (StringIndexOutOfBoundsException e) {
 			} catch (NumberFormatException e) {

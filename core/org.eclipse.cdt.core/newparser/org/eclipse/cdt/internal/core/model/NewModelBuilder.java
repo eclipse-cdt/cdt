@@ -114,9 +114,13 @@ public class NewModelBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#macro(String)
 	 */
-	public void macro(String macroName) {
+	public void macro(String macroName, int offset) {
 		Macro elem = new Macro((TranslationUnit)translationUnit.getElement(), macroName);
+		elem.setIdPos(offset, macroName.length());
+		elem.setPos(offset, macroName.length());
+
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
+		
 	}
 
 	private int startPos;
@@ -141,9 +145,12 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginInclusion(String)
 	 */
-	public void inclusionBegin(String includeFile) {
+	public void inclusionBegin(String includeFile, int offset) {
 		Include elem = new Include(((TranslationUnit)translationUnit.getElement()), includeFile);
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
+		elem.setIdPos(offset, includeFile.length());
+		elem.setPos(offset, includeFile.length());
+
 	}
 
 	/**
@@ -283,6 +290,17 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsEnd()
 	 */
 	public void argumentsEnd(Object parameterDeclarationClause) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
+	 */
+	public void declaratorAbort(Object container, Object declarator) {
+		DeclarationSpecifier.Container declSpec = (DeclarationSpecifier.Container)container;
+		Declarator toBeRemoved =(Declarator)declarator; 
+		declSpec.removeDeclarator( toBeRemoved ); 
+		toBeRemoved = null; 
+		currName = null;   		
 	}
 
 }

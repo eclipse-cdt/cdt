@@ -248,6 +248,8 @@ c, quick);
 	 * - find template names in name
 	 */
 	public void declSpecifierSeq( Object decl ) throws Exception {
+		boolean encounteredTypename = false;
+		boolean encounteredRawType = false;
 		declSpecifiers:		
 		for (;;) {
 			switch (LT(1)) {
@@ -274,6 +276,7 @@ c, quick);
 				case Token.t_float:
 				case Token.t_double:
 				case Token.t_void:
+					encounteredRawType = true;
 					callback.simpleDeclSpecifier(decl, consume());
 					break;
 				case Token.t_typename:
@@ -284,18 +287,26 @@ c, quick);
 					consume();
 					// handle nested later:
 				case Token.tIDENTIFIER:
-					// handle nested later:
-					if (currRegion.get(LA(1).getImage()) != null) {
-						consume();
-						break;
+					if( ! encounteredRawType )
+					{
+						// handle nested later:
+						if( ! encounteredTypename )
+						{
+							callback.simpleDeclSpecifier(decl,consume());
+							encounteredTypename = true; 
+							break;
+						}
+						else
+							return;
 					}
 					else
-						break declSpecifiers;
+						return;
+					
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:
 					classSpecifier(decl);
-					break;
+					return;
 				case Token.t_enum:
 					// enumSpecifier();
 					break;
@@ -379,60 +390,72 @@ c, quick);
 	 */
 	public void declarator( Object container ) throws Exception {
 		
-		Object declarator = callback.declaratorBegin( container );
-		
-		for (;;) {
-			try {
-				ptrOperator();
-			} catch (Backtrack b) {
+		boolean aborted; 
+		do
+		{
+			aborted = false;
+			Object declarator = callback.declaratorBegin( container );
+			
+			for (;;) {
+				try {
+					ptrOperator();
+				} catch (Backtrack b) {
+					break;
+				}
+			}
+			
+			if (LT(1) == Token.tLPAREN) {
+				consume();
+				declarator(declarator);
+				consume(Token.tRPAREN);
+				return;
+			}
+			
+			name();
+			callback.declaratorId(declarator);
+			
+			for (;;) {
+				switch (LT(1)) {
+					case Token.tLPAREN:
+						// parameterDeclarationClause
+						Object clause = callback.argumentsBegin(declarator);
+						consume();
+						parameterDeclarationLoop:
+						for (;;) {
+							switch (LT(1)) {
+								case Token.tRPAREN:
+									consume();
+									break parameterDeclarationLoop;
+								case Token.tELIPSE:
+									consume();
+									break;
+								case Token.tCOMMA:
+									consume();
+									break;
+								default:
+									parameterDeclaration( clause );  
+							}
+						}
+						callback.argumentsEnd(clause);
+						break;
+					case Token.tLBRACKET:
+						consume();
+						// constantExpression();
+						consume(Token.tRBRACKET);
+						continue;
+				}
 				break;
 			}
-		}
-		
-		if (LT(1) == Token.tLPAREN) {
-			consume();
-			declarator(declarator);
-			consume(Token.tRPAREN);
-			return;
-		}
-		
-		name();
-		callback.declaratorId(declarator);
-		
-		for (;;) {
-			switch (LT(1)) {
-				case Token.tLPAREN:
-					// parameterDeclarationClause
-					Object clause = callback.argumentsBegin(declarator);
-					consume();
-					parameterDeclarationLoop:
-					for (;;) {
-						switch (LT(1)) {
-							case Token.tRPAREN:
-								consume();
-								break parameterDeclarationLoop;
-							case Token.tELIPSE:
-								consume();
-								break;
-							case Token.tCOMMA:
-								consume();
-								break;
-							default:
-								parameterDeclaration( clause );  
-						}
-					}
-					callback.argumentsEnd(clause);
-					break;
-				case Token.tLBRACKET:
-					consume();
-					// constantExpression();
-					consume(Token.tRBRACKET);
-					continue;
+			
+			if( LA(1).getType() == Token.tIDENTIFIER )
+			{
+				callback.declaratorAbort( container, declarator );
+				declarator = null;
+				aborted = true; 
 			}
-			break;
-		}
-		
-		callback.declaratorEnd(declarator);
+			else
+				callback.declaratorEnd(declarator);
+		} while( aborted );
 	}
 	
 	/**

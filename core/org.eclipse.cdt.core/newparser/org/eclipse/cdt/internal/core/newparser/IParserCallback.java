@@ -15,9 +15,9 @@ public interface IParserCallback {
 	public Object translationUnitBegin();
 	public void translationUnitEnd(Object unit);
 	
-	public void inclusionBegin(String includeFile);
+	public void inclusionBegin(String includeFile, int offset);
 	public void inclusionEnd();
-	public void macro(String macroName);
+	public void macro(String macroName, int offset);
 	
 	public Object simpleDeclarationBegin(Object Container);
 	public void simpleDeclarationEnd(Object declaration);
@@ -32,9 +32,12 @@ public interface IParserCallback {
 	
 	public Object declaratorBegin(Object container);
 	public void declaratorId(Object declarator);
+	public void declaratorAbort( Object container, Object declarator ); 
+	public void declaratorEnd(Object declarator);
+		
 	public Object argumentsBegin( Object declarator );
 	public void argumentsEnd(Object parameterDeclarationClause);
-	public void declaratorEnd(Object declarator);
+
 	
 	public void functionBodyBegin();
 	public void functionBodyEnd();

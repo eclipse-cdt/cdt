@@ -19,6 +19,7 @@ public class DeclarationSpecifier extends DeclSpecifier {
 		public void setDeclSpecifier( DeclarationSpecifier in );
 	
 		public void addDeclarator(Object declarator);
+		public void removeDeclarator( Object declarator );
 		public List getDeclarators();
 
 	};

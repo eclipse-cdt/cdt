@@ -31,7 +31,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginInclusion(String)
 	 */
-	public void inclusionBegin(String includeFile) {
+	public void inclusionBegin(String includeFile, int offset) {
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#macro(String)
 	 */
-	public void macro(String macroName) {
+	public void macro(String macroName, int offset) {
 	}
 
 	/**
@@ -165,6 +165,11 @@ public class NullParserCallback implements IParserCallback {
 	}
 	
 	public void  parameterDeclarationEnd( Object declaration ){
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
+	 */
+	public void declaratorAbort(Object container, Object declarator) {
 	}
 
 }

@@ -173,6 +173,9 @@ public class DeclSpecifier {
 			case Token.t_void:
 				setType(DeclarationSpecifier.t_void);
 				break;
+			case Token.tIDENTIFIER:
+				setType(DeclarationSpecifier.t_type);
+				break;
 		}
 
 	}

@@ -137,7 +137,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionBegin(java.lang.String)
 	 */
-	public void inclusionBegin(String includeFile) {
+	public void inclusionBegin(String includeFile, int offset) {
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#macro(java.lang.String)
 	 */
-	public void macro(String macroName) {
+	public void macro(String macroName, int offset) {
 	}
 
 	/**
@@ -252,4 +252,15 @@ public class DOMBuilder implements IParserCallback
 	
 	public void  parameterDeclarationEnd( Object declaration ){
 	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
+	 */
+	public void declaratorAbort(Object container, Object declarator) {
+		DeclarationSpecifier.Container decl = (DeclarationSpecifier.Container )container;
+		Declarator toBeRemoved = (Declarator)declarator;
+		decl.removeDeclarator( toBeRemoved ); 
+		currName = null;
+		toBeRemoved = null; 
+	}
+
 }

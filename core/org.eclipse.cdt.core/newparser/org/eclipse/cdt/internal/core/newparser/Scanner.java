@@ -1169,6 +1169,7 @@ public class Scanner implements IScanner {
 	protected void poundInclude() throws ScannerException {
 		skipOverWhitespace();
 		int c = getChar();
+		int offset;
 
 		StringBuffer fileName = new StringBuffer();
 		if (c == '<') {
@@ -1177,9 +1178,8 @@ public class Scanner implements IScanner {
 				fileName.append((char) c);
 				c = getChar();
 			}
-
-			handleInclusion(fileName.toString().trim());
-		} else if (c == '"') {
+		}
+		else if (c == '"') {
 			c = getChar();
 			while ((c != '"')) {
 				fileName.append((char) c);
@@ -1188,14 +1188,31 @@ public class Scanner implements IScanner {
 
 			// TO DO: Make sure the directory of the current file is in the
 			// inclusion paths.
-			handleInclusion(fileName.toString().trim());
 		}
+		
+		String f = fileName.toString();
+		
+		if( quickScan )
+		{ 
+			if( callback != null )
+			{
+				offset = currentContext.getOffset() - f.length() - 1; // -1 for the end quote
+				
+				callback.inclusionBegin( f, offset );
+				callback.inclusionEnd();  
+			}
+		}
+		else
+			handleInclusion(f.trim());
 	}
 
 	protected void poundDefine() throws ScannerException {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
+		int offset = currentContext.getOffset() - key.length();
+		if( currentContext.getUndo() != Scanner.NOCHAR )
+			offset -= 1;
 
 		if (throwExceptionOnRedefinition) {
 			String checkForRedefinition = (String) definitions.get(key);
@@ -1291,6 +1308,10 @@ public class Scanner implements IScanner {
 			if (throwExceptionOnBadPPDirective)
 				throw new ScannerException(BAD_PP + currentContext.getOffset());
 		}
+
+		// call the callback accordingly
+		if( callback != null )
+			callback.macro( key, offset );
 	}
 
 	protected void expandDefinition(String symbol, Object expansion)

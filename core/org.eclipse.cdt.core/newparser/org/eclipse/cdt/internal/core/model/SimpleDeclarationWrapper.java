@@ -153,4 +153,11 @@ currentDeclarator.getName().getEndOffset(),currentDeclarator.getName().toString(
 		declSpec = in; 
 	}
 	
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.util.DeclarationSpecifier.Container#removeDeclarator(java.lang.Object)
+	 */
+	public void removeDeclarator(Object declarator) {
+		declarators.remove( declarator );
+	}
+
 }

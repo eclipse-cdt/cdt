@@ -1,5 +1,28 @@
 2004-04-06 Alain Magloire
 
+	Patch from Sam Robb covering part of PR #52864
+	This is the first effort in making a difference
+	between header and source files.
+
+	* template/cpp_headers
+	* src/org/eclipse/cdt/core/internal/filetype/CFileType.java
+	* src/org/eclipse/cdt/core/internal/filetype/CFileTypeAssociation.java
+	* src/org/eclipse/cdt/core/internal/filetype/CFileTypeResolver.java
+
+	* src/org/eclipse/cdt/core/filetype/ICFileType.java
+	* src/org/eclipse/cdt/core/filetype/ICFileTypeAssociation.java
+	* src/org/eclipse/cdt/core/filetype/ICFileTypeResolver.java
+	* src/org/eclipse/cdt/core/filetype/ICFileTypeConstants.java
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
+	* schema/CFileTyp.exsd
+	* schema/CFileTypeAssociation.exsd
+
+	* plugin.xml
+
+2004-04-06 Alain Magloire
+
 	Fix possible NPE.
 
 	* model/org/eclipse/cdt/internal/core/model/IncludeRefence.java

@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
+import org.eclipse.cdt.core.internal.filetype.CFileTypeResolver;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -124,6 +127,8 @@ public class CCorePlugin extends Plugin {
 	private CDescriptorManager fDescriptorManager = new CDescriptorManager();
 
 	private CoreModel fCoreModel;
+	
+	private ICFileTypeResolver fFileTypeResolver;
 
 	// -------- static methods --------
 
@@ -243,7 +248,9 @@ public class CCorePlugin extends Plugin {
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
-		
+
+		// Start file type manager
+		fFileTypeResolver = CFileTypeResolver.getDefault();
 	}
     
     
@@ -608,6 +615,30 @@ public class CCorePlugin extends Plugin {
 		return parser;
 	}
 
+	/**
+	 * Returns the file type object corresponding to the provided
+	 * file name.
+	 * 
+	 * If no file type object exists, a default file type object is
+	 * returned.
+	 * 
+	 * The implementation checks for a match for the provided file name
+     *   - By looking for an exact filename match ("iostream" == "iostream")
+     *   - By looking for an extension match ("foo.c" == "*.c")
+     *   - By looking for a pattern match ("libfoo.so.1.0" == "*.so*")
+	 * 
+	 * @param fileName Name of the file to resolve type infor for.
+	 * 
+	 * @return File type object for the provided file name.
+	 */
+	public ICFileType getFileType(IProject project, String fileName) {	
+		return fFileTypeResolver.getFileType(fileName);
+	}
+
+	public ICFileTypeResolver getFileTypeResolver() {	
+		return fFileTypeResolver;
+	}
+	
 	public CoreModel getCoreModel() {
 		return fCoreModel;
 	}

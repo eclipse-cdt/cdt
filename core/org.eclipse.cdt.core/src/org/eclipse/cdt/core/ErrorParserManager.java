@@ -272,7 +272,8 @@ public class ErrorParserManager extends OutputStream {
 		else {
 			path = (IPath) getWorkingDirectory().append(filePath);
 		}
-		return (IFile) fProject.getFile(path);
+		IFile file = fProject.getFile(path);
+		return (file.exists()) ? file : null;
 	}
 
 	protected class Problem {

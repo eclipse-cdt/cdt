@@ -11,9 +11,11 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -24,16 +26,15 @@ import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -163,7 +164,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			if ( ss.size() == 1 && ss.getFirstElement() instanceof IFunction ) {
 				IFunction function = (IFunction)ss.getFirstElement();
 				String sourceHandle = getSourceHandle( function );
-				IResource resource = getFunctionResource( function );
+				IResource resource = getElementResource( function );
 				String functionName = getFunctionName( function );
 				ICFunctionBreakpoint breakpoint = CDIDebugModel.functionBreakpointExists( sourceHandle, resource, functionName );
 				if ( breakpoint != null ) {
@@ -219,64 +220,81 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleWatchpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		IEditorPart editorPart = (IEditorPart)part;
-		IEditorInput input = editorPart.getEditorInput();
-		String errorMessage = null;
-		if ( input == null ) {
-			errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_2" ); //$NON-NLS-1$
-		}
-		else {
-			ITextEditor textEditor = (ITextEditor)editorPart;
-			IDocument document = textEditor.getDocumentProvider().getDocument( input );
-			if ( document == null ) {
-				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_2" ); //$NON-NLS-1$
-			}
-			else {
-				IResource resource = getResource( textEditor );
-				if ( resource == null ) {
-					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_2" ); //$NON-NLS-1$
-				}
-				else {
-					if ( !(resource instanceof IWorkspaceRoot) )
-						resource = resource.getProject();
-					String expression = ( selection instanceof TextSelection ) ? ((TextSelection)selection).getText().trim() : ""; //$NON-NLS-1$
-					AddWatchpointDialog dlg = new AddWatchpointDialog( textEditor.getSite().getShell(), true, false, expression );
-					if ( dlg.open() != Window.OK )
-						return;
-					expression = dlg.getExpression();
-					WatchpointExpressionVerifier wev = new WatchpointExpressionVerifier();
-					if ( !wev.isValidExpression( document, expression ) ) {
-						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_expression_1" ) + expression; //$NON-NLS-1$
-					}
-					else {
-						String sourceHandle = getSourceHandle( input );
-						ICWatchpoint watchpoint = CDIDebugModel.watchpointExists( sourceHandle, resource, expression );
-						if ( watchpoint != null ) {
-							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( watchpoint, true );
-						}
-						else {
-							CDIDebugModel.createWatchpoint( sourceHandle, 
-															resource,
-															dlg.getWriteAccess(), 
-															dlg.getReadAccess(),
-															expression, 
-															true, 
-															0, 
-															"", //$NON-NLS-1$
-															true );
-						}
-						return;
-					}
-				}
+		if ( selection instanceof IStructuredSelection ) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if ( ss.size() == 1 && ss.getFirstElement() instanceof IVariable ) {
+				toggleVariableWatchpoint( part, (IVariable)ss.getFirstElement() );
 			}
 		}
-		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
+//		String errorMessage = null;
+//		if ( part instanceof IEditorPart ) {
+//			IEditorPart editorPart = (IEditorPart)part;
+//			IEditorInput input = editorPart.getEditorInput();
+//			if ( input == null ) {
+//				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_2" ); //$NON-NLS-1$
+//			}
+//			else {
+//				ITextEditor textEditor = (ITextEditor)editorPart;
+//				IDocument document = textEditor.getDocumentProvider().getDocument( input );
+//				if ( document == null ) {
+//					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_2" ); //$NON-NLS-1$
+//				}
+//				else {
+//					IResource resource = getResource( textEditor );
+//					if ( resource == null ) {
+//						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_2" ); //$NON-NLS-1$
+//					}
+//					else {
+//						if ( !(resource instanceof IWorkspaceRoot) )
+//							resource = resource.getProject();
+//						String expression = ( selection instanceof TextSelection ) ? ((TextSelection)selection).getText().trim() : ""; //$NON-NLS-1$
+//						String sourceHandle = getSourceHandle( input );
+//						ICWatchpoint watchpoint = CDIDebugModel.watchpointExists( sourceHandle, resource, expression );
+//						if ( watchpoint != null ) {
+//							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( watchpoint, true );
+//						}
+//						else {
+//							AddWatchpointDialog dlg = new AddWatchpointDialog( textEditor.getSite().getShell(), true, false, expression );
+//							if ( dlg.open() != Window.OK )
+//								return;
+//							expression = dlg.getExpression();
+//							WatchpointExpressionVerifier wev = new WatchpointExpressionVerifier();
+//							if ( !wev.isValidExpression( document, expression ) ) {
+//								errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_expression_1" ) + expression; //$NON-NLS-1$
+//							}
+//							else {
+//								CDIDebugModel.createWatchpoint( sourceHandle, 
+//																resource,
+//																dlg.getWriteAccess(), 
+//																dlg.getReadAccess(),
+//																expression, 
+//																true, 
+//																0, 
+//																"", //$NON-NLS-1$
+//																true );
+//							}
+//						}
+//						return;
+//					}
+//				}
+//			}
+//		}
+//		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
+		if ( selection instanceof IStructuredSelection ) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if ( ss.size() == 1 ) {
+				return ( ss.getFirstElement() instanceof IVariable );
+			}
+		}
+//		if ( selection instanceof ITextSelection ) {
+//			return true;
+//		}
 		return false;
 	}
 
@@ -318,28 +336,51 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		return ""; //$NON-NLS-1$
 	}
 
-	private String getSourceHandle( IFunction function ) {
-		ITranslationUnit tu = function.getTranslationUnit();
+	private void toggleVariableWatchpoint( IWorkbenchPart part, IVariable variable ) throws CoreException {
+		String sourceHandle = getSourceHandle( variable );
+		IResource resource = getElementResource( variable );
+		String expression = getVariableName( variable );
+		ICWatchpoint watchpoint = CDIDebugModel.watchpointExists( sourceHandle, resource, expression );
+		if ( watchpoint != null ) {
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( watchpoint, true );
+		}
+		else {
+			AddWatchpointDialog dlg = new AddWatchpointDialog( part.getSite().getShell(), true, false, expression );
+			if ( dlg.open() != Window.OK )
+				return;
+			expression = dlg.getExpression();
+			CDIDebugModel.createWatchpoint( sourceHandle, 
+											resource,
+											dlg.getWriteAccess(), 
+											dlg.getReadAccess(),
+											expression, 
+											true, 
+											0, 
+											"", //$NON-NLS-1$
+											true );
+		}
+	}
+
+	private String getSourceHandle( IDeclaration declaration ) {
+		ITranslationUnit tu = declaration.getTranslationUnit();
 		if ( tu != null ) {
-			IResource resource = tu.getResource();
-			if ( resource != null ) {
-				return resource.getLocation().toOSString();
+			IPath path = tu.getPath();
+			if ( path != null ) {
+				return path.toOSString();
 			}
-			return tu.getPath().toOSString();
 		}
 		return ""; //$NON-NLS-1$
 	}
 
-	private IResource getFunctionResource( IFunction function ) {
-		ITranslationUnit tu = function.getTranslationUnit();
-		return (tu != null) ? tu.getResource() : function.getCProject().getProject();
+	private IResource getElementResource( IDeclaration declaration ) {
+		return declaration.getUnderlyingResource();
 	}
 
 	private String getFunctionName( IFunction function ) {
 		String functionName = function.getElementName();
 		StringBuffer name = new StringBuffer( functionName );
-		if ( functionName.indexOf( "::" ) != -1 ) //$NON-NLS-1$
-		{
+		//??????
+		if ( functionName.indexOf( "::" ) != -1 && functionName.indexOf( '(' ) == -1 ) { //$NON-NLS-1$
 			String[] params = function.getParameterTypes();
 			name.append( '(' );
 			if ( params.length == 0 ) {
@@ -355,5 +396,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			name.append( ')' );
 		}
 		return name.toString();
+	}
+
+	private String getVariableName( IVariable variable ) {
+		return variable.getElementName();
 	}
 }

@@ -1,5 +1,15 @@
 2004-06-15 Mikhail Khodjaiants
-	Breakpoint and expression related actions enablemnt should not depend 
+	Added the "Toggle Watchpoint" object contribution action.
+	* plugin.properties
+	* plugin.xml	
+	* ActionMessages.properties
+	* ToggleWatchpointActionDelegate.java: new
+	* ToggleBreakpointAdapter.java
+	* icons/full/elcl16/function_brkpt_co.gif: new
+	* icons/full/elcl16/watchpoint_co.gif: new
+
+2004-06-15 Mikhail Khodjaiants
+	Breakpoint and expression related actions enablement should not depend 
 	on the activation of the debuggger plugin.
 	* plugin.xml	
 

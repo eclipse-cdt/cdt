@@ -657,7 +657,7 @@
             id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
          <action
                label="%ManageFunctionBreakpointAction.label"
-               icon="icons/full/obj16/funbrkp_obj.gif"
+               icon="icons/full/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
@@ -665,6 +665,19 @@
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate">
          </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.core.model.IVariable"
+            id="org.eclipse.cdt.debug.ui.WatchpointActions">
+         <action
+               helpContextId="toggle_watchpoint_action_context"
+               enablesFor="1"
+               label="%ToggleWatchpointAction.label"
+               icon="icons/full/elcl16/watchpoint_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleWatchpointActionDelegate"
+               tooltip="%ToggleWatchpointAction.tooltip"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ToggleWatchpointActionDelegate"/>
       </objectContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView"

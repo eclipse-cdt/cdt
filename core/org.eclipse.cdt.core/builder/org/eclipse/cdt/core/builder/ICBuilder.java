@@ -57,15 +57,15 @@ public interface ICBuilder {
 
 	/**
 	 * Get the Optimization level.
-	 * @params String[]
+	 * @return IOptimization
 	 */
 	IOptimization getOptimization();
 
 	/**
 	 * Change the Optimization level.
-	 * @params String[]
+	 * @params IOptimization
 	 */
-	void setOptimization();
+	void setOptimization(IOptimization o);
 
 	/**
 	 * Build the project.

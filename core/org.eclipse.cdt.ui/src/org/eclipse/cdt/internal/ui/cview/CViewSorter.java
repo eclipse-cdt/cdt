@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
@@ -109,19 +110,21 @@ public class CViewSorter extends ViewerSorter {
 				return 134;
 			}
 			return 140;
+		} else if (element instanceof IArchive) {
+			return 150;
+		} else if (element instanceof IBinary) {
+			return 160;
+		} else if (element instanceof ILibraryReference) {
+			return 170;
 		} else if (element instanceof ICElement) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) {
-				return 142;
+				return 172;
 			}
 			if (name.charAt(0) == '_') {
-				return 144;
+				return 174;
 			}
-			return 150;
-		} else if (element instanceof IArchive) {
-			return 160;
-		} else if (element instanceof IBinary) {
-			return 170;
+			return 180;
 		}
 		return 200;
 	}

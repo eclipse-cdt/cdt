@@ -68,6 +68,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_CEXEC_DEBUG= NAME_PREFIX + "exec_dbg_obj.gif";
 	public static final String IMG_OBJS_CORE= NAME_PREFIX + "core_obj.gif";
 	public static final String IMG_OBJS_CONTAINER= NAME_PREFIX + "container_obj.gif";
+	public static final String IMG_OBJS_LIBRARY= NAME_PREFIX + "lib_obj.gif";
 
 	// Breakpoint images
 	public static final String IMG_OBJS_BREAKPOINT = NAME_PREFIX + "breakpoint.gif";
@@ -99,6 +100,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_CEXEC_DEBUG= createManaged(T_OBJ, IMG_OBJS_CEXEC_DEBUG);
 	public static final ImageDescriptor DESC_OBJS_CORE= createManaged(T_OBJ, IMG_OBJS_CORE);
 	public static final ImageDescriptor DESC_OBJS_CONTAINER= createManaged(T_OBJ, IMG_OBJS_CONTAINER);
+	public static final ImageDescriptor DESC_OBJS_LIBRARY= createManaged(T_OBJ, IMG_OBJS_LIBRARY);
 	
 	// Breakpoint image descriptors
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT );

@@ -10,6 +10,7 @@ import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IDeclaration;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IField;
@@ -162,6 +163,8 @@ public class CElementImageProvider {
 			case ICElement.C_VCONTAINER:
 				if (celement instanceof IBinaryModule) {
 					return CPluginImages.DESC_OBJS_BINARY;
+				} else if (celement instanceof ILibraryReference) {
+					return CPluginImages.DESC_OBJS_LIBRARY;
 				}
 				return CPluginImages.DESC_OBJS_CONTAINER;
 

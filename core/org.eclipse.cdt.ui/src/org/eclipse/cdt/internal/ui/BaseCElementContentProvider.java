@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
@@ -210,6 +211,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		IBinaryContainer bins = cproject.getBinaryContainer(); 
 		if (bins.hasChildren()) {
 			objects = concatenate(objects, new Object[] {bins});
+		}
+		try {
+			ILibraryReference[] refs = cproject.getLibraryReferences();
+			objects = concatenate(objects, refs);
+		} catch (CModelException e) {
 		}
 		return objects;
 	}

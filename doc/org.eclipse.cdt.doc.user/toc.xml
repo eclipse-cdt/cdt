@@ -68,7 +68,7 @@
                <topic label="Setting a build order" href="cdt_t_setbuildorder.htm"/>
                <topic label="Manually building" href="cdt_t_manualbuild.htm"/>
                <topic label="Autosaving on a manual build" href="cdt_t_autosave.htm"/>
-               <topic label="Adding a make target" href="cdt_t_addmaketarget.htm"/>
+               <topic label="Creating a make target" href="cdt_t_addmaketarget.htm"/>
                <topic label="Customizing the C-Build view" href="cdt_t_cbuild_pref.htm"/>
                <topic label="Viewing and managing compile errors" href="cdt_o_tasksview.htm">
                     <topic label="Jumping to errors" href="cdt_t_jumperror.htm"/>
@@ -103,49 +103,42 @@
                <topic label="Working with memory" href="cdt_t_memory.htm"/>
           </topic>
      </topic>
-     <topic label="Reference" href="topic_under_dev.htm">
-          <topic label="User Interface Reference" href="topic_under_dev.htm">
-               <topic label="New Project wizard" href="topic_under_dev.htm">
-                    <topic label="Make Builder page, C/C++ New Project wizard" href="topic_under_dev.htm"/>
-                    <topic label="Error Parsers, C/C++ New Project wizard" href="topic_under_dev.htm"/>
-                    <topic label="Paths and Symbols page, C/C++ New Project wizard" href="topic_under_dev.htm"/>
-                    <topic label="Target platform, C/C++ New Project wizard" href="topic_under_dev.htm"/>
-               </topic>
-               <topic label="Views" href="topic_under_dev.htm">
-                    <topic label="Outline view" href="topic_under_dev.htm"/>
-                    <topic label="C/C++ Projects view" href="topic_under_dev.htm"/>
-                    <topic label="C-Build view" href="topic_under_dev.htm"/>
-                    <topic label="Make Targets view" href="topic_under_dev.htm"/>
-                    <topic label="Debug views" href="topic_under_dev.htm">
-                         <topic label="Registers view" href="topic_under_dev.htm"/>
-                         <topic label="Registers view preferences" href="topic_under_dev.htm"/>
-                         <topic label="Memory view" href="topic_under_dev.htm"/>
-                         <topic label="Memory view preferences" href="topic_under_dev.htm"/>
-                         <topic label="Shared Libraries view" href="topic_under_dev.htm"/>
-                         <topic label="Shared Libraries view preferences" href="topic_under_dev.htm"/>
-                         <topic label="Signals view" href="topic_under_dev.htm"/>
-                         <topic label="Variables view" href="topic_under_dev.htm"/>
-                         <topic label="Debug view" href="topic_under_dev.htm"/>
-                         <topic label="Debug preferences" href="topic_under_dev.htm"/>
-                         <topic label="GDB MI preference page" href="topic_under_dev.htm"/>
-                    </topic>
-               </topic>
-               <topic label="Run and Debug" href="topic_under_dev.htm">
-                    <topic label="Main page, Run/Debug dialog box" href="topic_under_dev.htm"/>
-                    <topic label="Arguments page, Run/Debug dialog box" href="topic_under_dev.htm"/>
-                    <topic label="Environment page, Run/Debug dialog box" href="topic_under_dev.htm"/>
-                    <topic label="Debugger page, Run/Debug dialog box" href="topic_under_dev.htm"/>
-                    <topic label="Source page, Run/Debug dialog box" href="topic_under_dev.htm"/>
-                    <topic label="Common page, Run/Debug dialog box" href="topic_under_dev.htm"/>
-               </topic>
-               <topic label="C/C++ editor" href="topic_under_dev.htm">
-                    <topic label="General page, Preferences window" href="topic_under_dev.htm"/>
-                    <topic label="Annotations page, Preferences window" href="topic_under_dev.htm"/>
-                    <topic label="Colors page, Preferences window" href="topic_under_dev.htm"/>
-                    <topic label="Code Assist page, Preferences window" href="topic_under_dev.htm"/>
-               </topic>
-               <topic label="Code Templates page, Preferences window" href="topic_under_dev.htm"/>
-               <topic label="C/C++ Search page, Search dialog box" href="topic_under_dev.htm"/>
+     <topic label="Reference" href="cdt_o_ref.htm">
+          <topic label="Project properties" href="cdt_o_proj_prop_pages.htm">
+               <topic label="Make Builder page, C/C++ Properties window" href="cdt_u_newproj_buildset.htm"/>
+               <topic label="Error Parsers, C/C++ Properties window" href="cdt_u_newproj_parser_error.htm"/>
+               <topic label="Binary Parser page, C/C++ Properties window" href="cdt_u_newproj_parser_binary.htm"/>
+               <topic label="Paths and Symbols page, C/C++ Properties window" href="cdt_u_newproj_pathsymb.htm"/>
+               <topic label="Target platform, C/C++ Properties window" href="cdt_u_newproj_platf.htm"/>
           </topic>
+          <topic label="Views" href="cdt_o_views.htm">
+               <topic label="Outline view" href="cdt_u_outlineview.htm"/>
+               <topic label="C/C++ Projects view" href="cdt_u_cproj_view.htm"/>
+               <topic label="Debug views" href="cdt_o_dbg_view.htm">
+                    <topic label="Registers view" href="cdt_u_registersview.htm"/>
+                    <topic label="Memory view" href="cdt_u_memoryview.htm"/>
+                    <topic label="Memory view preferences" href="cdt_u_mem_view_pref.htm"/>
+                    <topic label="Shared Libraries view" href="cdt_u_shared_lib_view.htm"/>
+                    <topic label="Signals view" href="cdt_u_signals_view.htm"/>
+                    <topic label="Debug view" href="cdt_u_dbg_view.htm"/>
+                    <topic label="Debug preferences" href="cdt_u_dbg_pref.htm"/>
+               </topic>
+          </topic>
+          <topic label="Run and Debug" href="cdt_o_run_dbg_pages.htm">
+               <topic label="Main page, Run/Debug dialog box" href="cdt_u_run_dbg_main.htm"/>
+               <topic label="Arguments page, Run/Debug dialog box" href="cdt_u_run_dbg_arg.htm"/>
+               <topic label="Environment page, Run/Debug dialog box" href="cdt_u_run_dbg_env.htm"/>
+               <topic label="Debugger page, Run/Debug dialog box" href="cdt_u_run_dbg_dbg.htm"/>
+               <topic label="Source page, Run/Debug dialog box" href="cdt_u_run_dbg_srce.htm"/>
+               <topic label="Common page, Run/Debug dialog box" href="cdt_u_run_dbg_comm.htm"/>
+          </topic>
+          <topic label="C/C++ editor, code templates and search preferences preferences" href="cdt_o_ceditor_pref.htm">
+               <topic label="General page, Preferences window" href="cdt_u_c_editor_gen.htm"/>
+               <topic label="Annotations page, Preferences window" href="cdt_u_c_editor_anno.htm"/>
+               <topic label="Colors page, Preferences window" href="cdt_u_c_editor_color.htm"/>
+               <topic label="Content Assist page, Preferences window" href="cdt_u_c_editor_con_assist.htm"/>
+          </topic>
+          <topic label="Code Templates page, Preferences window" href="cdt_u_code_temp.htm"/>
+          <topic label="C/C++ Search page, Search dialog box" href="cdt_u_search.htm"/>
      </topic>
 </toc>

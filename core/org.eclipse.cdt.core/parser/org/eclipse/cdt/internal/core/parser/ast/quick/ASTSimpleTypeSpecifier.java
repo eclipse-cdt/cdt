@@ -117,6 +117,8 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 			if (isSigned())
 				type.append("signed "); //$NON-NLS-1$
 		}
+		else
+			type.append( typeName.toString() );
 		this.typeName = type.toString();
     }
 

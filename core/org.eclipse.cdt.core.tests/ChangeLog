@@ -1,4 +1,7 @@
 2003-10-01 Andrew Niefer
+	added testBug43951 to CompleteParseASTTest
+
+2003-10-01 Andrew Niefer
 	modified OtherPatternTests.testBug42911() and renamed it testBug42911_43988
 
 2003-10-01 Andrew Niefer

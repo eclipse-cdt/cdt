@@ -3,6 +3,13 @@
 	Fixed Bug 43997 : Search results: selection includes preceding whitespace 
 	Fixed Bug 44034 : Scanner failure on #undef 
 
+2003-10-01 Andrew Niefer
+	bug43951 - search on ctor declarations returns definition too.
+	PST changes:
+	- modify lookupConstructor to copy the constructor list before resolving on it
+	- modify checkUserDefinedConversionSequence the same way
+	- modify isValidFunctionOverload to check for forward declarations
+
 2003-10-01 Bogdan Gheorghe
 	Modified CDT log dump in Parser.fetchToken to include error message
 

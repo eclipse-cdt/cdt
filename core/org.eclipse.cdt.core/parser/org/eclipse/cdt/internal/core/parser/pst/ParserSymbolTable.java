@@ -512,6 +512,12 @@ public class ParserSymbolTable {
 			return false;
 		}
 		
+		//handle forward decls
+		if( origSymbol.getTypeInfo().isForwardDeclaration() &&
+			origSymbol.getTypeSymbol() == newSymbol )
+		{
+			return true;
+		}
 		if( origSymbol.hasSameParameters( newSymbol ) ){
 			//functions with the same name and same parameter types cannot be overloaded if any of them
 			//is static
@@ -1473,7 +1479,8 @@ public class ParserSymbolTable {
 				}
 				
 				if( container.getConstructors() != null ){
-					constructor = resolveFunction( data, container.getConstructors() );
+					LinkedList constructors = new LinkedList( container.getConstructors() );
+					constructor = resolveFunction( data, constructors );
 				}
 				if( constructor != null && constructor.getTypeInfo().checkBit( TypeInfo.isExplicit ) ){
 					constructor = null;
@@ -3294,7 +3301,11 @@ public class ParserSymbolTable {
 			LookupData data = new LookupData( EMPTY_NAME, TypeInfo.t_constructor, null );
 			data.parameters = parameters;
 			
-			return ParserSymbolTable.resolveFunction( data, getConstructors() );
+			List constructors = new LinkedList();
+			if( getConstructors() != null )
+				constructors.addAll( getConstructors() );
+				
+			return ParserSymbolTable.resolveFunction( data, constructors );
 		}
 		
 		/**

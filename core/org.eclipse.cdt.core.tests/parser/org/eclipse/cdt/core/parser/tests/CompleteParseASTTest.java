@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -906,4 +905,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 			fail();
 		}
 	}
+	
+	public void testBug43951() throws Exception
+	{
+		Iterator i = parse( "class B{ B(); ~B(); }; B::B(){} B::~B(){}", false ).getDeclarations();
+	
+		IASTClassSpecifier b = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertEquals( b.getName(), "B");
+		IASTMethod constructor = (IASTMethod) i.next();
+		assertEquals( constructor.getName(), "B" );
+		assertTrue( constructor.previouslyDeclared() );
+	}	
 }

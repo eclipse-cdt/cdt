@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1107,7 +1108,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 		boolean refreshViewer= false;
 
-		if (event.getProperty() == CPluginPreferencePage.PREF_SHOW_CU_CHILDREN) {
+		if (event.getProperty() == PreferenceConstants.PREF_SHOW_CU_CHILDREN) {
 			boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
 			((CElementContentProvider)viewer.getContentProvider()).setProvideMembers(showCUChildren);
 			refreshViewer= true;

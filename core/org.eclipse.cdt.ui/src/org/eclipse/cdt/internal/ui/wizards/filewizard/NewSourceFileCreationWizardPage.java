@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
-import java.io.File;
-
 import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -22,6 +19,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,7 +34,7 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 	private StringDialogField fNewFileDialogField;
 	
 	public NewSourceFileCreationWizardPage() {
-		super(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.title"));
+		super(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.title")); //$NON-NLS-1$
 		setDescription(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.description")); //$NON-NLS-1$
 
 		fNewFileDialogField = new StringDialogField();
@@ -82,7 +80,7 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 	    }
 	    return path;
 	}
-
+	
 	protected IStatus fileNameChanged() {
 		StatusInfo status = new StatusInfo();
 		
@@ -91,40 +89,31 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 			status.setError(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.error.EnterFileName")); //$NON-NLS-1$
 			return status;
 		}
+
+		IPath sourceFolderPath = getSourceFolderFullPath();
+		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(filePath)) {
+			status.setError(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.error.FileNotInSourceFolder")); //$NON-NLS-1$
+			return status;
+		}
 		
 		// check if file already exists
-		IPath workspacePath = getWorkspaceRoot().getLocation();
-	    File file = workspacePath.append(filePath).toFile();
-//	    if (file == null || !file.exists()) {
-//			IResource res = fWorkspaceRoot.findMember(path);
-//			if (res != null && res.exists()) {
-//				file = res.getLocation().toFile();
-//			}
-//		}
-	    if (file != null && file.exists()) {
-	    	if (file.isFile()) {
+		IResource file = getWorkspaceRoot().findMember(filePath);
+		if (file != null && file.exists()) {
+	    	if (file.getType() == IResource.FILE) {
 	    		status.setError(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.error.FileExists")); //$NON-NLS-1$
-	    	} else if (file.isDirectory()) {
+	    	} else if (file.getType() == IResource.FOLDER) {
 	    		status.setError(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.error.MatchingFolderExists")); //$NON-NLS-1$
 	    	} else {
 	    		status.setError(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.error.MatchingResourceExists")); //$NON-NLS-1$
 	    	}
 			return status;
-		} else if (filePath.segmentCount() > 1) {
-			IPath parentFolderPath = workspacePath.append(filePath).removeLastSegments(1);
-			File folder = parentFolderPath.toFile();
-			if (folder != null && folder.exists() && folder.isDirectory()) {
-			    // folder exists
-			} else {
-				status.setError(NewFileWizardMessages.getFormattedString("NewSourceFileCreationWizardPage.error.FolderDoesNotExist", PathUtil.getWorkspaceRelativePath(parentFolderPath))); //$NON-NLS-1$
-				return status;
-			}
 		}
-
-		// make sure file is inside source folder
-		IPath folderPath = getSourceFolderFullPath();
-		if (folderPath != null && !folderPath.isPrefixOf(filePath)) {
-			status.setError(NewFileWizardMessages.getString("NewSourceFileCreationWizardPage.error.FileNotInSourceFolder")); //$NON-NLS-1$
+		
+		// check if folder exists
+		IPath folderPath = filePath.removeLastSegments(1).makeRelative();
+		IResource folder = getWorkspaceRoot().findMember(folderPath);
+		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
+		    status.setError(NewFileWizardMessages.getFormattedString("NewSourceFileCreationWizardPage.error.FolderDoesNotExist", folderPath)); //$NON-NLS-1$
 			return status;
 		}
 

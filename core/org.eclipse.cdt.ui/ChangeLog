@@ -1,3 +1,10 @@
+2004-11-10 Chris Wiebe
+
+	Fix for 78200
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewFileWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewHeaderFileCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewSourceFileCreationWizardPage.java
+
 2004-11-05 Alain Magloire
 	Framework for code formatter.
 	* src/org/eclipse/cdt/internal/coreext/CodeFormatterUtil.java

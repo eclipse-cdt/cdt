@@ -65,7 +65,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(1);
 			IPath exePath = verifyProgramPath(config);
 			ICProject project = verifyCProject(config);
-			IBinaryExecutable exeFile = createBinary(project, exePath);
+			IBinaryExecutable exeFile = verifyBinary(project, exePath);
 
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				ICDebugConfiguration debugConfig = getDebugConfig(config);

@@ -55,7 +55,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(1);
 			IPath exePath = verifyProgramPath(config);
 			ICProject project = verifyCProject(config);
-			IBinaryExecutable exeFile = createBinary(project, exePath);
+			IBinaryExecutable exeFile = verifyBinary(project, exePath);
 			String arguments[] = getProgramArgumentsArray(config);
 
 			// set the default source locator if required

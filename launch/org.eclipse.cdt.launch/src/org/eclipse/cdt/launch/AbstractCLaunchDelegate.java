@@ -407,7 +407,6 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 							LaunchMessages.getFormattedString(
 																"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
-
 		}
 		return programPath;
 	}
@@ -750,7 +749,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return
 	 * @throws CoreException
 	 */
-	protected IBinaryExecutable createBinary(ICProject project, IPath exePath) throws CoreException {
+	protected IBinaryExecutable verifyBinary(ICProject project, IPath exePath) throws CoreException {
 		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project.getProject());
 		for (int i = 0; i < parserRef.length; i++) {
 			try {
@@ -766,9 +765,17 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
 		try {
 			return (IBinaryExecutable)parser.getBinary(exePath);
+		} catch (ClassCastException e) {
 		} catch (IOException e) {
 		}
-		return null;
+		Throwable exception = new FileNotFoundException(LaunchMessages.getFormattedString(
+				"AbstractCLaunchDelegate.PROGRAM_PATH_not_binary", exePath.toOSString()));
+		int code = ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY;
+		MultiStatus status = new MultiStatus(getPluginID(), code, LaunchMessages
+				.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable"), exception);
+		status.add(new Status(IStatus.ERROR, getPluginID(), code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+				exception));
+		throw new CoreException(status);
 	}
 
 	/**

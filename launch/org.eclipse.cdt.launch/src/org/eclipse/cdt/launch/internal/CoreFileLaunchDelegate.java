@@ -52,7 +52,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(1);
 			IPath exePath = verifyProgramPath(config);
 			ICProject project = verifyCProject(config);
-			IBinaryExecutable exeFile = createBinary(project, exePath);
+			IBinaryExecutable exeFile = verifyBinary(project, exePath);
 
 			ICDebugConfiguration debugConfig = getDebugConfig(config);
 			ICDISession dsession = null;

@@ -1,3 +1,8 @@
+2004-0608 Alain Magloire
+
+	Quick workaround for PR 57287.
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+
 2004-06-08 Alain Magloire
 
 	Patch from Dirk Dörr.

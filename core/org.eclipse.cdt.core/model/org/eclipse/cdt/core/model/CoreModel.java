@@ -158,8 +158,11 @@ public class CoreModel {
 	 */
 	public static boolean isTranslationUnit(IFile file) {
 		if (file != null) {
-			ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-			return type.isTranslationUnit();
+			IProject p = file.getProject();
+			if (hasCNature(p) || hasCCNature(p)) {
+				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
+				return type.isTranslationUnit();
+			}
 		}
 		return false;
 	}

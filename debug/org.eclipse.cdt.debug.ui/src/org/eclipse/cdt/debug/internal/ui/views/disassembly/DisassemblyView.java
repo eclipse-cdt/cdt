@@ -46,12 +46,14 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -557,5 +559,24 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		removeCurrentInstructionPointer();
 
 		updateObjects();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
+	 */
+	protected void becomesHidden() {
+		selectionChanged( null, new StructuredSelection() );
+		super.becomesHidden();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
+	 */
+	protected void becomesVisible() {
+		super.becomesVisible();
+		IViewPart part = getSite().getPage().findView( IDebugUIConstants.ID_DEBUG_VIEW );
+		if ( part != null ) {
+			ISelection selection = getSite().getPage().getSelection( IDebugUIConstants.ID_DEBUG_VIEW );
+			selectionChanged( part, selection );
+		}
 	}
 }

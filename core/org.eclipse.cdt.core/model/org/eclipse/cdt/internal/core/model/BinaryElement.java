@@ -113,6 +113,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 					}
 				}
 			} else {
+				// TODO-model: handle non-absolute paths when finding source files
 				// ??? assert()
 				path = new Path("");
 			}
@@ -121,7 +122,10 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 				ICProject cproject = getCProject();
 				SourceMapper mapper = mgr.getSourceMapper(cproject);
 				if (mapper != null) {
-					tu = mapper.findTranslationUnit(path.lastSegment());
+					String lastSegment = path.lastSegment();
+					if (lastSegment != null) {
+						tu = mapper.findTranslationUnit(lastSegment);
+					}
 				}
 			}
 		}

@@ -336,14 +336,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 		return fState;
 	}
 
-	protected boolean isValidState( CDebugElementState state ) {
-		return true;
-	}
-
 	protected void setState( CDebugElementState state ) throws IllegalArgumentException {
-		if ( !isValidState( state ) ) {
-			throw new IllegalArgumentException( state.toString() );
-		}
 		fState = state;
 	}
 

@@ -413,7 +413,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		
 		IASTCompletionNode.CompletionKind kind = completionNode.getCompletionKind();
 		
-		if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
+		if( (kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE) ||
+				(kind == IASTCompletionNode.CompletionKind.CLASS_REFERENCE) )
 			addProposalsFromTemplateEngine(viewer, fGlobalContextTemplateEngine, completions);
 		if( (kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
 			|| (kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE) )

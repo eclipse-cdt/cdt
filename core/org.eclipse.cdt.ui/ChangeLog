@@ -1,3 +1,6 @@
+2004-06-21 Hoda Amer
+	Fix for PR 63439 : [Content Assist] When prefix is a C/C++ keyword, Content Assist does not complete templates
+	
 2004-0618 Alain Magloire
 	Patch from Chris W. to fix PR 6606
 

@@ -45,11 +45,6 @@ public class TxThread extends Thread {
 				if (cmd != null) {
 					// Give the command a token and increment. 
 					cmd.setToken(token++);
-					// shove in the pipe
-					String str = cmd.toString();
-					OutputStream out = session.getChannelOutputStream();
-					out.write(str.getBytes());
-					out.flush();
 					// Move to the RxQueue only if we have
 					// a valid token, this is to permit input(HACK!)
 					// or commands that do not want to wait for responses.
@@ -57,6 +52,11 @@ public class TxThread extends Thread {
 						CommandQueue rxQueue = session.getRxQueue();
 						rxQueue.addCommand(cmd);
 					}
+					// shove in the pipe
+					String str = cmd.toString();
+					OutputStream out = session.getChannelOutputStream();
+					out.write(str.getBytes());
+					out.flush();
 				}
 			}
 		} catch (IOException e) {

@@ -369,7 +369,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buildRule = relativePath + WILDCARD + OptDotExt + COLON + WHITESPACE + ROOT + SEPARATOR + resourcePath + WILDCARD + DOT + inputExtension;
 		} // end fix for PR 70491
 
-		IConfiguration config = info.getSelectedConfiguration();
+		IConfiguration config = info.getDefaultConfiguration();
 		
 		// For testing only
 /*		if( config.getResourceConfigurations().length > 0) {
@@ -517,10 +517,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Visit the resources in this folder
 		IResource[] resources = module.members();
-		IConfiguration config = info.getSelectedConfiguration();
-		if (config == null) {
-		    config = info.getDefaultConfiguration();
-		}
+		IConfiguration config = info.getDefaultConfiguration();
+
 		IResourceConfiguration resConfig; 
 		
 		for (int i = 0; i < resources.length; i++) {

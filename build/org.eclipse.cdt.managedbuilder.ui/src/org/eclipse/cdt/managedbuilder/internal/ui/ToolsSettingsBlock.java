@@ -189,8 +189,8 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	}
 
 	/* (non-Javadoc)
-	 * Method displayOptionsForTool.
-	 * @param toolReference
+	 * Method displayOptionsForCategory
+	 * @param category
 	 */
 	private void displayOptionsForCategory(IOptionCategory category) {
 		// Do nothing if the selected category is is unchanged
@@ -264,6 +264,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	}
 
 	/* (non-Javadoc)
+	 * Method displayOptionsForTool
 	 * @param tool
 	 */
 	private void displayOptionsForTool(ITool tool) {
@@ -315,9 +316,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		// Make the current page visible
 		currentSettingsPage.setVisible(true);
 
-		// save the last page build options.
-		// If the last page is tool page then parse all the options
-		// and put it in the appropriate preference store.
+		// Save the last page build options.
 		if (oldPage != null){
 			if(oldPage instanceof BuildOptionSettingsPage) {
 				((BuildOptionSettingsPage)oldPage).storeSettings();
@@ -327,7 +326,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 				//((BuildToolSettingsPage)oldPage).parseAllOptions();
 			}
 		}
-		//update the field editor that displays all the build options
+		// Update the field editor that displays all the build options
 		if(currentSettingsPage instanceof BuildToolSettingsPage)
 			((BuildToolSettingsPage)currentSettingsPage).updateAllOptionField();
 

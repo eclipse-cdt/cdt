@@ -409,6 +409,9 @@
                <documentation>
                   Specifies the name of the class that implements IManagedCommandLineGenerator (TBS).
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="dependencyCalculator" type="string">

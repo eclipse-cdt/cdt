@@ -30,11 +30,8 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -46,9 +43,6 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -56,7 +50,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -394,44 +387,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		// Say bye bye
 		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-	}
-
-	/**
-	 * @param toolId
-	 * @return
-	 */
-	public IManagedDependencyGenerator getDependencyCalculator(String toolId) {
-		try {
-			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedBuilderCorePlugin.DEP_CALC_ID);
-			if (extension != null) {
-				// There could be many of these
-				IExtension[] extensions = extension.getExtensions();
-				// Get the "configuraton elements" defined in the plugin.xml file.
-				// Note that these "configuration elements" are not related to the
-				// managed build system "configurations".  
-				// From the PDE Guide:
-				//  A configuration element, with its attributes and children, directly 
-				//  reflects the content and structure of the extension section within the 
-				//  declaring plug-in's manifest (plugin.xml) file. 
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
-						IConfigurationElement element = configElements[j];
-						if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) { 
-							if (element.getAttribute(ITool.ID).equals(toolId)) {
-								if (element.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
-									return (IManagedDependencyGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
-								}
-							}
-						}
-					}
-				}
-			}
-		} 
-		catch (CoreException e) {
-			// Probably not defined
-		}
-		return null;
 	}
 	
 	/* (non-Javadoc)

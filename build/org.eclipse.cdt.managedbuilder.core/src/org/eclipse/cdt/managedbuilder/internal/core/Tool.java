@@ -31,6 +31,9 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -72,11 +75,14 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String outputPrefix;
 	private String errorParserIds;
 	private String commandLinePattern;
+	private IConfigurationElement commandLineGeneratorElement = null;
+	private IManagedCommandLineGenerator commandLineGenerator = null;
+	private IConfigurationElement dependencyGeneratorElement = null;
+	private IManagedDependencyGenerator dependencyGenerator = null;
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
-	private IManagedCommandLineGenerator commandLineGenerator = null;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -267,6 +273,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			outputPrefix = new String(tool.outputPrefix);
 		}
 
+		commandLineGeneratorElement = tool.commandLineGeneratorElement; 
+		commandLineGenerator = tool.commandLineGenerator; 
+		dependencyGeneratorElement = tool.dependencyGeneratorElement; 
+		dependencyGenerator = tool.dependencyGenerator; 
+
 		//  Clone the children
 		//  Note: This constructor ignores OptionCategories since they should not be
 		//        found on an non-extension tool
@@ -372,6 +383,18 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		
 		// Get command line pattern
 		commandLinePattern = element.getAttribute( ITool.COMMAND_LINE_PATTERN );
+		
+		// Store the configuration element IFF there is a command line generator defined 
+		String commandLineGenerator = element.getAttribute(COMMAND_LINE_GENERATOR); 
+		if (commandLineGenerator != null && element instanceof DefaultManagedConfigElement) {
+			commandLineGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
+		
+		// Store the configuration element IFF there is a dependency generator defined 
+		String depGenerator = element.getAttribute(DEP_CALC_ID); 
+		if (depGenerator != null && element instanceof DefaultManagedConfigElement) {
+			dependencyGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -601,6 +624,18 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				Element optionElement = doc.createElement(OPTION);
 				element.appendChild(optionElement);
 				option.serialize(doc, optionElement);
+			}
+
+			// Note: command line generator cannot be specified in a project file because
+			//       an IConfigurationElement is needed to load it!
+			if (commandLineGeneratorElement != null) {
+				//  TODO:  issue warning?
+			}
+
+			// Note: dependency generator cannot be specified in a project file because
+			//       an IConfigurationElement is needed to load it!
+			if (dependencyGeneratorElement != null) {
+				//  TODO:  issue warning?
 			}
 			
 			// I am clean now
@@ -1075,6 +1110,84 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			return new String(DEFAULT_PATTERN);  // Default pattern
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandLineGeneratorElement()
+	 */
+	public IConfigurationElement getCommandLineGeneratorElement() {
+		if (commandLineGeneratorElement == null) {
+			if (superClass != null) {
+				return superClass.getCommandLineGeneratorElement();
+			}
+		}
+		return commandLineGeneratorElement;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setCommandLineGeneratorElement(String)
+	 */
+	public void setCommandLineGeneratorElement(IConfigurationElement element) {
+		commandLineGeneratorElement = element;
+		setDirty(true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandLineGenerator()
+	 */
+	public IManagedCommandLineGenerator getCommandLineGenerator() {
+		if (commandLineGenerator != null) {
+			return commandLineGenerator;
+		}
+		IConfigurationElement element = getCommandLineGeneratorElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(COMMAND_LINE_GENERATOR) != null) {
+					commandLineGenerator = (IManagedCommandLineGenerator) element.createExecutableExtension(COMMAND_LINE_GENERATOR);
+					return commandLineGenerator;
+				}
+			} catch (CoreException e) {}
+		}
+		return ManagedCommandLineGenerator.getCommandLineGenerator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGeneratorElement()
+	 */
+	public IConfigurationElement getDependencyGeneratorElement() {
+		if (dependencyGeneratorElement == null) {
+			if (superClass != null) {
+				return superClass.getDependencyGeneratorElement();
+			}
+		}
+		return dependencyGeneratorElement;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setDependencyGeneratorElement(String)
+	 */
+	public void setDependencyGeneratorElement(IConfigurationElement element) {
+		dependencyGeneratorElement = element;
+		setDirty(true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGenerator()
+	 */
+	public IManagedDependencyGenerator getDependencyGenerator() {
+		if (dependencyGenerator != null) {
+			return dependencyGenerator;
+		}
+		IConfigurationElement element = getDependencyGeneratorElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(DEP_CALC_ID) != null) {
+					dependencyGenerator = (IManagedDependencyGenerator) element.createExecutableExtension(DEP_CALC_ID);
+					return dependencyGenerator;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
@@ -1164,14 +1277,6 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			commandLinePattern = pattern;
 			isDirty = true;
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandLineGenerator()
-	 */
-	public IManagedCommandLineGenerator getCommandLineGenerator() {
-	    if( commandLineGenerator == null ) commandLineGenerator = ManagedBuildManager.getCommandLineGenerator( this.getId() );
-	    return commandLineGenerator;
 	}
 	
 	/* (non-Javadoc)

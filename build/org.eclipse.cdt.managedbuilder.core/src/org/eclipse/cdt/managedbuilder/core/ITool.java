@@ -12,6 +12,10 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+
 /**
  * This class represents a utility of some sort that is used in the build process.
  * A tool will generally process one or more resources to produce output resources.
@@ -22,6 +26,7 @@ public interface ITool extends IBuildObject {
 	public static final String COMMAND = "command";	//$NON-NLS-1$
 	public static final String COMMAND_LINE_PATTERN = "commandLinePattern"; //$NON-NLS-1$
 	public static final String COMMAND_LINE_GENERATOR = "commandLineGenerator"; //$NON-NLS-1$
+	public static final String DEP_CALC_ID ="dependencyCalculator"; //$NON-NLS-1$
 	public static final String INTERFACE_EXTS = "headerExtensions";	//$NON-NLS-1$
 	public static final String NATURE =	"natureFilter";	//$NON-NLS-1$
 	public static final String OPTION = "option";	//$NON-NLS-1$
@@ -268,10 +273,49 @@ public interface ITool extends IBuildObject {
 	public void setCommandLinePattern(String pattern);
 	
 	/**
-	 * Returns command line generator specified for this tool
+	 * Returns the plugin.xml element of the commandLineGenerator extension or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getCommandLineGeneratorElement();
+	
+	/**
+	 * Sets the CommandLineGenerator plugin.xml element
+	 * 
+	 * @param element
+	 */
+	public void setCommandLineGeneratorElement(IConfigurationElement element);
+	
+	/**
+	 * Returns the command line generator specified for this tool
 	 * @return IManagedCommandLineGenerator
 	 */
 	public IManagedCommandLineGenerator getCommandLineGenerator();
+	
+	/**
+	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getDependencyGeneratorElement();
+	
+	/**
+	 * Sets the DependencyGenerator plugin.xml element
+	 * 
+	 * @param element
+	 */
+	public void setDependencyGeneratorElement(IConfigurationElement element);
+	
+	/**
+	 * Returns a class instance that implements an interface to generate 
+	 * source-level dependencies for the tool specified in the argument. 
+	 * This method may return <code>null</code> in which case, the receiver 
+	 * should assume that the tool does not require dependency information 
+	 * when the project is built.
+	 *
+	 * @return IManagedDependencyGenerator
+	 */
+	public IManagedDependencyGenerator getDependencyGenerator();
 	
 	/**
 	 * Returns an array of command line arguments that have been specified for

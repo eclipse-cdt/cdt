@@ -15,6 +15,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -66,6 +68,7 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	private static final String RESOURCE_SETTINGS_LABEL = LABEL	+ ".ResourceSettings"; //$NON-NLS-1$
 	private static final String TREE_LABEL = LABEL + ".ToolTree"; //$NON-NLS-1$
 	private static final String OPTIONS_LABEL = LABEL + ".ToolOptions"; //$NON-NLS-1$
+	private static final String NOTMBSFILE_LABEL = LABEL + ".NotMBSFile"; //$NON-NLS-1$
 	private static final String EXCLUDE_CHECKBOX = LABEL + ".ExcludeCheckBox"; //$NON-NLS-1$
 	private static final String TIP = PREFIX + ".tip"; //$NON-NLS-1$
 	private static final String RESOURCE_PLAT_TIP = TIP + ".ResourcePlatform"; //$NON-NLS-1$
@@ -83,11 +86,12 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 
 //	private Point lastShellSize;
 	private Button excludedCheckBox;
-	private boolean isExcluded = false;
 
 	/*
 	 * Bookeeping variables
 	 */
+	private boolean isExcluded = false;
+	private boolean noContentOnPage = false;
 
 	
 	private IConfiguration[] configurations;
@@ -111,9 +115,7 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	}	
 	
 	protected Control createContents(Composite parent) {
-		GridData gd;
-		
-//		 Create the container we return to the property page editor
+		//	Create the container we return to the property page editor
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
 		GridLayout compositeLayout = new GridLayout();
@@ -121,8 +123,28 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		compositeLayout.marginHeight = 0;
 		compositeLayout.marginWidth = 0;
 		composite.setLayout( compositeLayout );
+
+		//  Check to see if we are dealing with a managed build project
+		boolean openMBSProject;
+		try {
+		    openMBSProject = (getProject().hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+		} catch (CoreException e) {
+		    openMBSProject = false;
+		}
 		
-//		 Initialize the key data
+		if (openMBSProject) {
+		    contentForMBSFile(composite);
+		} else {
+		    noContent(composite);
+		}
+		
+		return composite;
+	}
+		
+	protected void contentForMBSFile(Composite composite) {
+		GridData gd;
+		
+		//	Initialize the key data
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info.getVersion() == null) {
 			// Display a message page instead of the properties control
@@ -130,7 +152,6 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 			invalidInfo.setFont(composite.getFont());
 			invalidInfo.setText(ManagedBuilderUIMessages.getResourceString("ResourceBuildPropertyPage.error.version_low")); //$NON-NLS-1$
 			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING,GridData.VERTICAL_ALIGN_CENTER, true, true));
-			return composite;
 		}
 		
 		// Add a config selection area
@@ -179,16 +200,24 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		fd.right = new FormAttachment(80, -20);
 		configSelector.setLayoutData(fd);
 
-//		 Create the Tools Settings, Build Settings, ... Tabbed pane
+		//	Create the Tools Settings, Build Settings, ... Tabbed pane
 		Group tabGroup = ControlFactory.createGroup(composite, ManagedBuilderUIMessages.getResourceString(RESOURCE_SETTINGS_LABEL), 1);
 		gd = new GridData(GridData.FILL_BOTH);
 		tabGroup.setLayoutData(gd);
 		fOptionBlock.createContents(tabGroup, getElement());
 		
-//		 Update the contents of the configuration widget
+		//	Update the contents of the configuration widget
 		populateConfigurations();
 		WorkbenchHelp.setHelp(composite,ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
-		return composite;
+	}
+	
+	protected void noContent(Composite composite) {
+		Label label = new Label(composite, SWT.LEFT);
+		label.setText(ManagedBuilderUIMessages.getResourceString(NOTMBSFILE_LABEL));
+		label.setFont(composite.getFont());
+
+		noContentOnPage = true;
+		noDefaultAndApplyButton();
 	}
 
 	private void handleIsExcluded() {
@@ -310,8 +339,12 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	 */
 	public boolean performOk() {
 		
+		//	If there is no content on the page, then there is nothing to do
+		if (noContentOnPage) return true;
+
 		//	If the user did not visit this page, then there is nothing to do.
 		if (!displayedConfig) return true;
+
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				fOptionBlock.performApply(monitor);

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public interface IBuilder extends IBuildObject {
 	public static final String ARGUMENTS = "arguments";	//$NON-NLS-1$
 	public static final String BUILDER_ELEMENT_NAME = "builder"; 	//$NON-NLS-1$
+	public static final String BUILDFILEGEN_ID ="buildfileGenerator"; //$NON-NLS-1$
 	public static final String COMMAND = "command";	//$NON-NLS-1$
 	
 	/**

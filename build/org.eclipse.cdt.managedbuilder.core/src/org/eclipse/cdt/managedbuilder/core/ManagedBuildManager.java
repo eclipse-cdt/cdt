@@ -58,7 +58,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
@@ -72,7 +71,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -209,68 +207,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static IProjectType getProjectType(String id) {
 		return (IProjectType)getExtensionProjectTypeMap().get(id);
-	}
-	
-	/**
-	 * Answers an instance of a class that implements the 
-	 * <code>IManagedDependencyGenerator</code> interface to generate 
-	 * the source-level dependencies that make utilities rely on to 
-	 * properly rebuild projects  
-	 *  
-	 * @param toolId the unique <code>ID</code> of the tool to look for
-	 * @return the dependency generator for the tool specified in the argument or <code>null</code>
-	 */
-	public static IManagedDependencyGenerator getDependencyGenerator(String toolId) {
-		return (IManagedDependencyGenerator) getExtensionDepCalcMap().get(toolId);
-	}
-	
-	/**
-	 * @param toolId
-	 * @return
-	 */
-	public static IManagedDependencyGenerator createDependencyGenerator(String toolId) {
-		try {
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extension = registry.getExtensionPoint(EXTENSION_POINT_ID);
-			if (extension != null) {
-				// There could be many of these
-				IExtension[] extensions = extension.getExtensions();
-				// Get the "configuraton elements" defined in the plugin.xml file.
-				// Note that these "configuration elements" are not related to the
-				// managed build system "configurations".  
-				// From the PDE Guide:
-				//  A configuration element, with its attributes and children, directly 
-				//  reflects the content and structure of the extension section within the 
-				//  declaring plug-in's manifest (plugin.xml) file. 
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
-						IConfigurationElement element = configElements[j];
-						if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) { 
-							if (element.getAttribute(ITool.ID).equals(toolId)) {
-								if (element.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
-									return (IManagedDependencyGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
-								}
-							}
-						} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
-							IConfigurationElement[] children = element.getChildren(ITool.TOOL_ELEMENT_NAME);
-							for (int k = 0; k < children.length; ++k) {
-								IConfigurationElement child = children[k];
-								if (child.getAttribute(ITool.ID).equals(toolId)) {
-									if (child.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
-										return (IManagedDependencyGenerator) child.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		} 
-		catch (CoreException e) {
-			// Probably not defined
-		}
-		return null;
 	}
 	
 	protected static Map getExtensionDepCalcMap() {
@@ -591,8 +527,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.MAKEGEN_ID);
 					}
 				} else {
-					if (element.getAttribute(ManagedBuilderCorePlugin.BUILDFILEGEN_ID) != null) {
-						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.BUILDFILEGEN_ID);
+					if (element.getAttribute(IBuilder.BUILDFILEGEN_ID) != null) {
+						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(IBuilder.BUILDFILEGEN_ID);
 					}
 				}
 			}
@@ -609,29 +545,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param toolId - id selected id
 	 * @return IManagedCommandLineGenerator
 	 */
-	public static IManagedCommandLineGenerator getCommandLineGenerator( String toolId ) {
-		try {
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extension = registry.getExtensionPoint(EXTENSION_POINT_ID);
-			if (extension != null) {
-				// There could be many of these
-				IExtension[] extensions = extension.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
-						IConfigurationElement element = configElements[j];
-						if (element.getName().equals(ITool.COMMAND_LINE_GENERATOR)) { 
-							if (element.getAttribute(ITool.ID).equals(toolId)) {
-								if (element.getAttribute(ManagedBuilderCorePlugin.COMMANDLINEGEN_ID) != null) {
-									return (IManagedCommandLineGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.COMMANDLINEGEN_ID);
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch( CoreException ex ) {
-			
+	public static IManagedCommandLineGenerator getCommandLineGenerator(IConfiguration config, String toolId) {
+		ITool tool = config.getTool(toolId);
+		if (tool != null) {
+			return tool.getCommandLineGenerator();
 		}
 		return ManagedCommandLineGenerator.getCommandLineGenerator();
 	}
@@ -913,12 +830,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				
 				// Save the document
 				IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
-				String utfString = stream.toString("UTF8");	//$NON-NLS-1$
+				String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
 
 				if (projectFile.exists()) {
-					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
 				} else {
-					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
 				}
 
 				// Close the streams
@@ -1034,7 +951,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void addExtensionTool(Tool tool) {
 		getExtensionToolMap().put(tool.getId(), tool);
-		getExtensionDepCalcMap().put(tool.getId(), createDependencyGenerator(tool.getId()));
 	}
 	
 	/**

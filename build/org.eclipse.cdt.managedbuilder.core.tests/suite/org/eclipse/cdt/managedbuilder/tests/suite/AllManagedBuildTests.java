@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.tests.suite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuild.core.tests.ManagedBuildCoreTests;
+import org.eclipse.cdt.managedbuild.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuild.core.tests.ManagedCommandLineGeneratorTest;
 import org.eclipse.cdt.managedbuild.core.tests.ManagedProjectUpdateTests;
 
@@ -31,6 +32,7 @@ public class AllManagedBuildTests {
 				"Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$
 // TODO uncoment this		
+		suite.addTest(ManagedBuildCoreTests20.suite());
 		suite.addTest(ManagedBuildCoreTests.suite());
 		suite.addTest(ManagedProjectUpdateTests.suite());
 		suite.addTest( ManagedCommandLineGeneratorTest.suite() );

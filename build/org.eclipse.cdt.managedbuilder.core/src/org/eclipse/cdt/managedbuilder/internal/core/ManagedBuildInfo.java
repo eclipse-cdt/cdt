@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
@@ -290,7 +289,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				ITool[] tools = getDefaultConfiguration().getFilteredTools();
 				for (int index = 0; index < tools.length; ++index) {
 					if(tools[index].buildsFileType(sourceExtension)) {
-						return ManagedBuildManager.getDependencyGenerator(tools[index].getId());
+						return tools[index].getDependencyGenerator();
 					}
 				}
 			}

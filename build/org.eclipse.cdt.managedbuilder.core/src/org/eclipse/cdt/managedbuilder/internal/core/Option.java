@@ -1275,7 +1275,7 @@ public class Option extends BuildObject implements IOption {
 		if (superClass != null &&
 			unusedChildren == null &&
 		    browseType == null &&
-		    builtIns == null &&
+		    (builtIns == null || builtIns.size() == 0) &&
 		    category == null &&
 			categoryId == null &&
 			command == null &&

@@ -25,6 +25,8 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -922,6 +924,40 @@ public class ToolReference implements IToolReference {
 	public IManagedCommandLineGenerator getCommandLineGenerator() {
 		if( parent == null ) return null;
 		return parent.getCommandLineGenerator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
+	 */
+	public IConfigurationElement getCommandLineGeneratorElement() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
+	 */
+	public void setCommandLineGeneratorElement(IConfigurationElement element) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getDependencyGenerator()
+	 */
+	public IManagedDependencyGenerator getDependencyGenerator() {
+		if( parent == null ) return null;
+		return parent.getDependencyGenerator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
+	 */
+	public IConfigurationElement getDependencyGeneratorElement() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
+	 */
+	public void setDependencyGeneratorElement(IConfigurationElement element) {
 	}
 	
 	/* (non-Javadoc)

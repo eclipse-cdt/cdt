@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -193,9 +192,11 @@ public class Builder extends BuildObject implements IBuilder {
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
 		
-		// build file generator
-		if (element instanceof DefaultManagedConfigElement)
-			buildFileGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		// Store the configuration element IFF there is a build file generator defined 
+		String buildfileGenerator = element.getAttribute(BUILDFILEGEN_ID); 
+		if (buildfileGenerator != null && element instanceof DefaultManagedConfigElement) {
+			buildFileGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -253,7 +254,7 @@ public class Builder extends BuildObject implements IBuilder {
 		
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
-		if (element.hasAttribute(ManagedBuilderCorePlugin.BUILDFILEGEN_ID)) {
+		if (element.hasAttribute(IBuilder.BUILDFILEGEN_ID)) {
 			// TODO:  Issue warning?
 		}
 	}
@@ -466,18 +467,23 @@ public class Builder extends BuildObject implements IBuilder {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuildFileGeneratorElement()
+	 */
+	public IConfigurationElement getBuildFileGeneratorElement() {
+		if (buildFileGeneratorElement == null) {
+			if (superClass != null) {
+				return superClass.getBuildFileGeneratorElement();
+			}
+		}
+		return buildFileGeneratorElement;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setBuildFileGeneratorElement(String)
 	 */
 	public void setBuildFileGeneratorElement(IConfigurationElement element) {
 		buildFileGeneratorElement = element;
 		setDirty(true);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuildFileGeneratorElement()
-	 */
-	public IConfigurationElement getBuildFileGeneratorElement() {
-		return buildFileGeneratorElement;
 	}
 
 	/*

@@ -31,7 +31,6 @@ import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
@@ -272,7 +271,6 @@ public class Target extends BuildObject implements ITarget {
 	public void addTool(ITool tool) {
 		getToolList().add(tool);
 		getToolMap().put(tool.getId(), tool);
-		getDepCalcMap().put(tool.getId(), ManagedBuildManager.createDependencyGenerator(tool.getId()));
 	}
 
 	/**
@@ -444,26 +442,6 @@ public class Target extends BuildObject implements ITarget {
 			depCalculatorsMap = new HashMap();
 		}
 		return depCalculatorsMap;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getDependencyCalculator(java.lang.String)
-	 */
-	public IManagedDependencyGenerator getDependencyGenerator(String toolId) {
-		// If I have this tool defined locally, answer its dependency calculator
-		IManagedDependencyGenerator answer = (IManagedDependencyGenerator) getDepCalcMap().get(toolId);
-		
-		// I do not have a local tool definition
-		if (answer == null && parent != null) {
-			answer = parent.getDependencyGenerator(toolId);
-		}
-		
-		// Perhaps this is a reference, in which case the build manager is cacheing its generator
-		if (answer == null && parent == null) {
-			answer = ManagedBuildManager.getDependencyGenerator(toolId);
-		}
-		
-		return answer;
 	}
 
 	/* (non-Javadoc)

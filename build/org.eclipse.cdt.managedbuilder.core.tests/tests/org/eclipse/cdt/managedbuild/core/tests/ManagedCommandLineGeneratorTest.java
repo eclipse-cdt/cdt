@@ -10,13 +10,21 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuild.core.tests;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 
 public class ManagedCommandLineGeneratorTest extends TestCase {
 
@@ -58,6 +66,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
         suite.addTest( new ManagedCommandLineGeneratorTest( "testGenerateCommandLineInfoPatterns" ) );
         //  TODO:  The parameters set to NULL in these tests are not currently allowed to be null
         //suite.addTest( new ManagedCommandLineGeneratorTest( "testGenerateCommandLineInfoParameters" ) );
+        suite.addTest( new ManagedCommandLineGeneratorTest( "testCustomGenerator" ) );
         return suite;
     }
     
@@ -99,6 +108,49 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
         info = gen.generateCommandLineInfo( null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, OUTPUT_VAL, null, null );
         assertNotNull( info );
         assertEquals( info.getCommandLine().trim(), commandLineEtalonesForParameters[5].trim() );
+    }
+
+    public final void testCustomGenerator() {
+    	
+    	//  First, verify the elements in the project type
+    	IProjectType proj = ManagedBuildManager.getProjectType("cdt.managedbuild.test.java.attrs");
+    	assertNotNull(proj);
+    	IConfiguration[] configs = proj.getConfigurations();
+    	assertEquals(1, configs.length);
+    	IConfiguration config = proj.getConfiguration("cdt.managedbuild.test.java.attrs.config");
+    	assertNotNull(config);
+    	ITool[] tools = config.getTools();
+    	assertEquals(1, tools.length);
+    	ITool tool = config.getTool("cdt.managedbuild.test.java.attrs.tool");
+    	assertNotNull(tool);
+    	IOption[] options = tool.getOptions();
+    	assertEquals(20, options.length);
+    	IOption option = tool.getOption("testgnu.c.compiler.option.preprocessor.def.symbols.test");
+    	assertNotNull(option);
+    	Object val = option.getValue();
+    	assertTrue(val instanceof ArrayList);
+    	ArrayList list = (ArrayList)val;
+    	assertEquals("foo", list.get(0));
+    	assertEquals("bar", list.get(1));
+    	
+    	//  Next, invoke the commandLineGenerator for this tool
+    	IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
+    	String[] flags = {"-a", "-b", "-c"};
+    	String[] inputs = {"xy.cpp", "ab.cpp", "lt.cpp", "c.cpp"};
+    	IManagedCommandLineInfo info = gen.generateCommandLineInfo(tool, "MyName", flags, "-of", "opre", "TheOutput.exe", inputs, "[COMMAND] [FLAGS]");
+    	assertEquals("compiler.gnu.cMyName", info.getCommandName());
+    	assertEquals("-c -b -a", info.getFlags());
+    	assertEquals("ab.cpp c.cpp foo.cpp lt.cpp xy.cpp", info.getInputs());
+    	assertEquals("-0h", info.getOutputFlag());
+    	assertEquals("", info.getOutputPrefix());
+    	assertEquals("Testme", info.getOutput());
+    	assertEquals("[COMMAND] [FLAGS]", info.getCommandLinePattern());
+    	assertEquals("This is a test command line", info.getCommandLine());
+    	
+    	//  Next, invoke the build file generator for the tool chain
+    	IManagedBuilderMakefileGenerator makeGen = ManagedBuildManager.getBuildfileGenerator(config);
+    	String name = makeGen.getMakefileName();
+    	assertEquals("TestBuildFile.mak", name);
     }
 
 }

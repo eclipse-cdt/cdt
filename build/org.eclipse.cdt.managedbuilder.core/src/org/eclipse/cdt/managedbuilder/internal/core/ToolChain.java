@@ -106,7 +106,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int n = 0; n < tools.length; ++n) {
 			Tool toolChild = new Tool(this, tools[n]);
-			getToolList().add(toolChild);
+			addTool(toolChild);
 		}
 	}
 

@@ -82,6 +82,16 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         id="Cygwin_PE"
+         name="Cygwin PE Parser"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.CygwinPEParser">
+         </run>
+      </cextension>
+   </extension>
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->

@@ -21,7 +21,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
-import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
@@ -172,10 +171,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		return memoryManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSignalManager()
-	 */
-	public ICDISignalManager getSignalManager() {
+	public SignalManager getSignalManager() {
 		return signalManager;
 	}
 

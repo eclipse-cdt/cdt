@@ -36,6 +36,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
@@ -801,4 +802,16 @@ public class Target  implements ICDITarget {
 		ExpressionManager expMgr = ((Session)getSession()).getExpressionManager();
 		expMgr.destroyAllExpressions(this);
 	}
+
+	/**
+	 * Returns the array of signals defined for this target.
+	 * 
+	 * @return the array of signals
+	 * @throws CDIException on failure. Reasons include:
+	 */
+	public ICDISignal[] getSignals() throws CDIException {
+		SignalManager sigMgr = ((Session)getSession()).getSignalManager();
+		return sigMgr.getSignals(this);
+	}
+
 }

@@ -1,3 +1,10 @@
+2004-10-26 Alain Magloire
+	Remove of ICDISignalManager in CDI
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Signal.java
+
 2004-10-25 Alain Magloire
 	Remove of ICDExpressionManager in CDI
 	ICDIExpression changes in the interface.

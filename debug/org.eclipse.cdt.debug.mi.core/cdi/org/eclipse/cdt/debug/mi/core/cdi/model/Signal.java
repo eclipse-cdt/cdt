@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.output.MISigHandle;
 
@@ -52,7 +53,7 @@ public class Signal extends CObject implements ICDISignal {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignal#handle()
 	 */
 	public void handle(boolean ignore, boolean stop) throws CDIException {
-		SignalManager mgr = (SignalManager)getTarget().getSession().getSignalManager();
+		SignalManager mgr = ((Session)getTarget().getSession()).getSignalManager();
 		mgr.handle(this, ignore, stop);
 	}
 

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -33,7 +32,7 @@ import org.eclipse.cdt.debug.mi.core.output.MISigHandle;
 
 /**
  */
-public class SignalManager extends Manager implements ICDISignalManager {
+public class SignalManager extends Manager  {
 
 	ICDISignal[] EMPTY_SIGNALS = {};
 	MISigHandle[] noSigs =  new MISigHandle[0];
@@ -166,15 +165,6 @@ public class SignalManager extends Manager implements ICDISignalManager {
 		}
 		sig.getMISignal().handle(isIgnore, isStop);
 		miSession.fireEvent(new MISignalChangedEvent(miSession, sig.getName()));
-	}
-
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#getSignals()
-	 */
-	public ICDISignal[] getSignals() throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getSignals(target);
 	}
 
 	public ICDISignal[] getSignals(Target target) throws CDIException {

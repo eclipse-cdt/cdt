@@ -7,9 +7,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -31,32 +37,33 @@ public class XMLDumper {
 	
 	public static void main(String [] args) {
 		Test test = new Test();
-		XMLDumper dumper = new XMLDumper(test);
-		Document document = dumper.getDocument();
-		
-		OutputFormat    format  = new OutputFormat( document );   //Serialize DOM
-		StringWriter  stringOut = new StringWriter();        //Writer will be a String
-		XMLSerializer    serial = new XMLSerializer( stringOut, format );
-		
 		try {
-			serial.asDOMSerializer();                            // As a DOM Serializer
-			serial.serialize( document.getDocumentElement() );
-			System.out.println( "STRXML = " + stringOut.toString() ); //Spit out DOM as a String
-		} catch (IOException e) {
-			System.out.println(e);
+			XMLDumper dumper = new XMLDumper(test);
+			Document document = dumper.getDocument();
+			StringWriter writer = new StringWriter();
+		
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.transform(new DOMSource(document), new StreamResult(writer));
+
+			System.out.println( "STRXML = " + writer.toString() ); //Spit out DOM as a String
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
 		}
 
 	}
 	
 	private int id = 0;
 	private HashMap map = new HashMap();
-	private Document document = new DocumentImpl();
+	private Document document;
 	
 	public Document getDocument() {
 		return document;
 	}
 	
-	public XMLDumper(Object obj) {
+	public XMLDumper(Object obj) throws ParserConfigurationException {
+		document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		document.appendChild(createObject(obj));
 	}
 	

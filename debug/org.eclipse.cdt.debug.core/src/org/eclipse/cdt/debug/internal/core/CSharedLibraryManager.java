@@ -8,6 +8,8 @@ package org.eclipse.cdt.debug.internal.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
@@ -35,6 +37,9 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	{
 		super( target );
 		fSharedLibraries = new ArrayList( 5 );
+		boolean autoRefresh = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH );
+		if ( getCDIManager() != null )
+			getCDIManager().setAutoUpdate( autoRefresh );
 	}
 
 	/* (non-Javadoc)

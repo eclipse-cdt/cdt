@@ -40,4 +40,16 @@ public interface ICDebugConstants
 	 * The identifier of the default expression format to use in the expressions views
 	 */
 	public static final String PREF_DEFAULT_EXPRESSION_FORMAT = PLUGIN_ID + "cDebug.default_expression_format"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether the shared library manager will be
+	 * refreshed every time when the execution of program stops.
+	 */
+	public static final String PREF_SHARED_LIBRARIES_AUTO_REFRESH = PLUGIN_ID + "SharedLibraries.auto_refresh"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether the register manager will be
+	 * refreshed every time when the execution of program stops.
+	 */
+	public static final String PREF_REGISTERS_AUTO_REFRESH = PLUGIN_ID + "Registers.auto_refresh"; //$NON-NLS-1$
 }

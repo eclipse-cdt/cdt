@@ -1,4 +1,10 @@
 2003-04-01 Mikhail Khodjaiants
+	Moved the 'Auto-Refresh' preferences from CDebugUIPlugin to use it for initialization of update managers.
+	* ICDebugConstants.java
+	* CRegisterManager.java
+	* CSharedLibraryManager.java
+
+2003-04-01 Mikhail Khodjaiants
 	Removed the 'fDebugTarget' field from CSharedLibraryManager.
 	* CSharedLibraryManager.java
  

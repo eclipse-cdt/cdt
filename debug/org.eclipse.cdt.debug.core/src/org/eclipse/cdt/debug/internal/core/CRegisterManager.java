@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
@@ -83,6 +84,9 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 	public void initialize()
 	{
 		fRegisterGroups = new ArrayList( 20 );
+		boolean autoRefresh = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH );
+		if ( getCDIManager() != null )
+			getCDIManager().setAutoUpdate( autoRefresh );
 		createMainRegisterGroup();
 	}
 

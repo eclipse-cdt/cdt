@@ -16,8 +16,18 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTMacroExpansion {
 
 	/**
-	 * The definition 
+	 * The macro definition used for the expansion
+	 * 
 	 * @return
 	 */
 	public IASTMacroDefinition getMacroDefinition();
+
+	/**
+	 * The source location for for the macro expansion. This is the location
+	 * in the original source that expansion occured and was replaced.
+	 * 
+	 * @return
+	 */
+	public IASTNodeLocation getExpansionLocation();
+	
 }

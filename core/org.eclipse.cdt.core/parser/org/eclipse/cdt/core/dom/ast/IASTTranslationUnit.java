@@ -37,4 +37,23 @@ public interface IASTTranslationUnit extends IASTNode {
 	 */
 	public IScope getScope();
 	
+	/**
+	 * Returns the list of declarations in this translation unit for the given
+	 * binding. The list contains the IASTName nodes that declare the binding.
+	 * 
+	 * @param binding 
+	 * @return List of IASTName nodes for the binding's declaration
+	 */
+	public List getDeclarations(IBinding binding);
+
+	/**
+	 * Returns the list of references in this translation unit to the given
+	 * binding. This list contains the IASTName nodes that represent a use of
+	 * the binding.
+	 * 
+	 * @param binding
+	 * @return List of IASTName nodes representing uses of the binding
+	 */
+	public List getReferences(IBinding binding);
+	
 }

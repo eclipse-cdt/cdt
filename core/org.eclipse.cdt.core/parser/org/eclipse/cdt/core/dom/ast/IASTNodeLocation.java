@@ -11,12 +11,27 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * A NodeLocation represents some location that contains code. Most
+ * A NodeLocation represents the source location of a given node. Most
  * often this is a file it may be other fancy things like macro
  * expansions.
  * 
  * @author Doug Schaefer
  */
 public interface IASTNodeLocation {
+
+	/**
+	 * This is the offset into the actual source location that this node
+	 * starts at.
+	 * 
+	 * @return
+	 */
+	public int getNodeOffset();
+	
+	/**
+	 * This is the length of the node contained in this location.
+	 * 
+	 * @return
+	 */
+	public int getNodeLength();
 
 }

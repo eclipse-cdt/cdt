@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.parser2.CompilationUnit;
 
@@ -83,4 +84,20 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     		compilationUnit = new CompilationUnit();
         return compilationUnit;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
+	 */
+	public List getDeclarations(IBinding binding) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
+	 */
+	public List getReferences(IBinding binding) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

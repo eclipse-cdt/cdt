@@ -16,6 +16,8 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -23,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 
 /**
  * Created on Nov 5, 2004
@@ -45,7 +48,7 @@ public class CFunction implements IFunction {
         return ( definition != null ) ? definition : declarators[0];
     }
     public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
-        if( fnDeclarator instanceof IASTFunctionDefinition )
+        if( fnDeclarator instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) 
             definition = fnDeclarator;
         else {
             if( declarators == null ){
@@ -80,17 +83,37 @@ public class CFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
 	public List getParameters() {
+		List result = null;
+		
 	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-		IASTParameterDeclaration[] params = dtor.getParameters();
-		int size = params.length;
-		List result = new ArrayList( size );
-		if( size > 0 ){
-			for( int i = 0; i < size; i++ ){
-				IASTParameterDeclaration p = params[i];
-				result.add( p.getDeclarator().getName().resolveBinding() );
+		if (dtor instanceof IASTStandardFunctionDeclarator) {
+			IASTParameterDeclaration[] params = ((IASTStandardFunctionDeclarator)dtor).getParameters();
+			int size = params.length;
+			result = new ArrayList( size );
+			if( size > 0 ){
+				for( int i = 0; i < size; i++ ){
+					IASTParameterDeclaration p = params[i];
+					result.add( p.getDeclarator().getName().resolveBinding() );
+				}
+			}
+		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
+			IASTDeclaration[] params = ((ICASTKnRFunctionDeclarator)dtor).getParameterDeclarations();
+			int size = params.length;
+			result = new ArrayList( size );
+			if( size > 0 ){
+				for( int i = 0; i < size; i++ ){
+					IASTDeclaration p = params[i];
+					if ( p instanceof IASTSimpleDeclaration ) {
+						IASTDeclarator[] decltors = ((IASTSimpleDeclaration)p).getDeclarators();
+						for( int j=0; j<decltors.length; j++ ){
+							result.add( decltors[j].getName().resolveBinding() );				
+						}
+					}
+				}
 			}
 		}
-		return result;
+		
+		return result;	    
 	}
 
 	/* (non-Javadoc)

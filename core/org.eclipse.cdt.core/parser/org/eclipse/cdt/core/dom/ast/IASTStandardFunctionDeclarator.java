@@ -12,10 +12,23 @@ package org.eclipse.cdt.core.dom.ast;
 
 
 /**
- * This is a declarator for a function.
+ * This is a declarator for a non K&R C function.
  * 
  * @author Doug Schaefer
  */
-public interface IASTFunctionDeclarator extends IASTDeclarator {
+public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 
+    public final static ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty( "Parameter"); //$NON-NLS-1$
+	/**
+	 * Gets the parameter declarations for the function
+	 * 
+	 * @return List of IASTParameterDeclaration
+	 */
+	public IASTParameterDeclaration[] getParameters();
+	
+	public void addParameterDeclaration( IASTParameterDeclaration parameter );
+	
+	public boolean takesVarArgs();
+	
+	public void setVarArgs( boolean value );
 }

@@ -11,7 +11,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  *  
  * @author Doug Schaefer
  */
-public interface ICPPASTFunctionDeclarator extends IASTFunctionDeclarator {
+public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator {
 
 	
     public boolean isConst();

@@ -45,11 +45,13 @@ import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
@@ -64,13 +66,17 @@ public class AST2BaseTest extends TestCase {
 
     private static final IParserLogService NULL_LOG = new NullLogService();
 
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
+    	return parse(code, lang, false);
+    }
+    
     /**
      * @param string
      * @param c
      * @return
      * @throws ParserException
      */
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
         CodeReader codeReader = new CodeReader(code
                 .toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
@@ -85,7 +91,10 @@ public class AST2BaseTest extends TestCase {
         if( lang == ParserLanguage.CPP )
         {
             ICPPParserExtensionConfiguration config = null;
-            config = new ANSICPPParserExtensionConfiguration();
+            if (useGNUExtensions)
+            	config = new GPPParserExtensionConfiguration();
+            else
+            	config = new ANSICPPParserExtensionConfiguration();
             parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
                 NULL_LOG,
                 config );
@@ -93,7 +102,11 @@ public class AST2BaseTest extends TestCase {
         else
         {
             ICParserExtensionConfiguration config = null;
-             config = new ANSICParserExtensionConfiguration();
+
+            if (useGNUExtensions)
+            	config = new GCCParserExtensionConfiguration();
+            else
+            	config = new ANSICParserExtensionConfiguration();
             
             parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, 
                 NULL_LOG, config );

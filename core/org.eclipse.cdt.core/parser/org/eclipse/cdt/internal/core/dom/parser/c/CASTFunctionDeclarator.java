@@ -9,14 +9,14 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 
 /**
  * @author jcamelon
  */
 public class CASTFunctionDeclarator extends CASTDeclarator implements
-        IASTFunctionDeclarator {
+        IASTStandardFunctionDeclarator {
 
     private IASTParameterDeclaration [] parameters = null;
     private static final int DEFAULT_PARAMETERS_LIST_SIZE = 2;

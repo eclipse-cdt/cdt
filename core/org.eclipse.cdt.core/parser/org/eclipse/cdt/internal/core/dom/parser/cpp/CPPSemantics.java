@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -742,13 +743,15 @@ public class CPPSemantics {
 			}
 			if( checkAux ) {
 				//check the parameters
-				IASTParameterDeclaration []  parameters = declarator.getParameters();
-				for( int i = 0; i < parameters.length; i++ ){
-					IASTParameterDeclaration parameterDeclaration = parameters[i];
-					if( parameterDeclaration == null ) break;
-					declName = parameterDeclaration.getDeclarator().getName();
-					if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
-						return declName;
+				if ( declarator instanceof IASTStandardFunctionDeclarator ) {
+					IASTParameterDeclaration []  parameters = ((IASTStandardFunctionDeclarator)declarator).getParameters();
+					for( int i = 0; i < parameters.length; i++ ){
+						IASTParameterDeclaration parameterDeclaration = parameters[i];
+						if( parameterDeclaration == null ) break;
+						declName = parameterDeclaration.getDeclarator().getName();
+						if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
+							return declName;
+						}
 					}
 				}
 			}

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -115,7 +116,8 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals("f", name_f.toString()); //$NON-NLS-1$
 
 		// parameter - int y
-		IASTParameterDeclaration decl_y = declor_f.getParameters()[0];
+		assertTrue(declor_f instanceof IASTStandardFunctionDeclarator);
+		IASTParameterDeclaration decl_y = ((IASTStandardFunctionDeclarator)declor_f).getParameters()[0];
 		IASTSimpleDeclSpecifier declspec_y = (IASTSimpleDeclSpecifier) decl_y
 				.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_y.getType());
@@ -629,7 +631,8 @@ public class AST2Tests extends AST2BaseTest {
         IASTName x_1 = typeSpec.getName();
         
         IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[1];
-        IASTParameterDeclaration param = fdef.getDeclarator().getParameters()[0];
+        assertTrue(fdef.getDeclarator() instanceof IASTStandardFunctionDeclarator);
+        IASTParameterDeclaration param = ((IASTStandardFunctionDeclarator)fdef.getDeclarator()).getParameters()[0];
         IASTName x_2 = param.getDeclarator().getName();
         
         IASTCompoundStatement compound = (IASTCompoundStatement) fdef.getBody();
@@ -692,7 +695,7 @@ public class AST2Tests extends AST2BaseTest {
     	
     	//void f(
     	IASTSimpleDeclaration f_decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) f_decl.getDeclarators()[0];
+    	IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) f_decl.getDeclarators()[0];
     	IASTName f_name1 = dtor.getName();
     	//        int a );
     	IASTParameterDeclaration param1 = dtor.getParameters()[0];
@@ -701,7 +704,8 @@ public class AST2Tests extends AST2BaseTest {
     	
     	//void f( 
     	IASTFunctionDefinition f_defn = (IASTFunctionDefinition) tu.getDeclarations()[1];
-    	dtor = f_defn.getDeclarator();
+    	assertTrue(f_defn.getDeclarator() instanceof IASTStandardFunctionDeclarator);
+    	dtor = (IASTStandardFunctionDeclarator)f_defn.getDeclarator();
     	IASTName f_name2 = dtor.getName();
     	//        int b );
     	IASTParameterDeclaration param2 = dtor.getParameters()[0];
@@ -764,7 +768,8 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	IASTFunctionDefinition fDef = (IASTFunctionDefinition) tu.getDeclarations()[0];
-    	IASTFunctionDeclarator fDtor = fDef.getDeclarator();
+    	assertTrue(fDef.getDeclarator() instanceof IASTStandardFunctionDeclarator);
+    	IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator)fDef.getDeclarator();
     	IASTName fName = fDtor.getName();
     	
     	IASTParameterDeclaration a = fDtor.getParameters()[0];
@@ -812,7 +817,7 @@ public class AST2Tests extends AST2BaseTest {
     	
     	//void f();
     	IASTSimpleDeclaration fdecl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-    	IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) fdecl.getDeclarators()[0];
+    	IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) fdecl.getDeclarators()[0];
     	IASTName name_f = fdtor.getName();
     	
     	//void g() {
@@ -828,7 +833,8 @@ public class AST2Tests extends AST2BaseTest {
     	
     	//void f() {}
     	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations()[2];
-    	fdtor = fdef.getDeclarator();
+    	assertTrue(fdef.getDeclarator() instanceof IASTStandardFunctionDeclarator);
+    	fdtor = (IASTStandardFunctionDeclarator)fdef.getDeclarator();
     	IASTName name_fdef = fdtor.getName();
     	
     	//bindings
@@ -1024,8 +1030,8 @@ public class AST2Tests extends AST2BaseTest {
         IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration)tu.getDeclarations()[1];
         IASTName name_X1 = decl1.getDeclarators()[0].getName();
         IASTName name_f = decl2.getDeclarators()[0].getName();
-        IASTName name_X2 = ((IASTNamedTypeSpecifier)((IASTFunctionDeclarator)decl2.getDeclarators()[0]).getParameters()[0].getDeclSpecifier()).getName();
-        IASTName name_x = ((IASTFunctionDeclarator)decl2.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
+        IASTName name_X2 = ((IASTNamedTypeSpecifier)((IASTStandardFunctionDeclarator)decl2.getDeclarators()[0]).getParameters()[0].getDeclSpecifier()).getName();
+        IASTName name_x = ((IASTStandardFunctionDeclarator)decl2.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
         
         IASTName[] decls = tu.getDeclarations(name_X1.resolveBinding()); 
 		assertEquals( decls.length, 1 );
@@ -1207,7 +1213,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( tu.getDeclarations().length, 1 );
         IASTSimpleDeclaration d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
         assertEquals( d.getDeclarators().length, 1 );
-        IASTFunctionDeclarator f = (IASTFunctionDeclarator) d.getDeclarators()[0];
+        IASTStandardFunctionDeclarator f = (IASTStandardFunctionDeclarator) d.getDeclarators()[0];
         assertNull( f.getName().toString() );
         assertNotNull( f.getNestedDeclarator() );
         assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
@@ -1223,7 +1229,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( tu.getDeclarations().length, 1 );
         d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
         assertEquals( d.getDeclarators().length, 1 );
-        f = (IASTFunctionDeclarator) d.getDeclarators()[0];
+        f = (IASTStandardFunctionDeclarator) d.getDeclarators()[0];
         assertNull( f.getName().toString() );
         assertNotNull( f.getNestedDeclarator() );
         assertEquals( f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
@@ -1521,19 +1527,19 @@ public class AST2Tests extends AST2BaseTest {
         decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
         IFunction f = (IFunction) decl.getDeclarators()[0].getName().resolveBinding();
         IASTName name_f = decl.getDeclarators()[0].getName();
-        IASTName name_i = ((IASTFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
-        IASTName name_c = ((IASTFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[1].getDeclarator().getName(); 
+        IASTName name_i = ((IASTStandardFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
+        IASTName name_c = ((IASTStandardFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[1].getDeclarator().getName(); 
         
         decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
         IVariable g = (IVariable) decl.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
         IASTName name_g = decl.getDeclarators()[0].getNestedDeclarator().getName();
-        IASTName name_A2 = ((IASTElaboratedTypeSpecifier)((IASTFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[0].getDeclSpecifier()).getName();
+        IASTName name_A2 = ((IASTElaboratedTypeSpecifier)((IASTStandardFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[0].getDeclSpecifier()).getName();
         
         decl = (IASTSimpleDeclaration) tu.getDeclarations()[3];
         IVariable h = (IVariable) decl.getDeclarators()[0].getNestedDeclarator().getNestedDeclarator().getName().resolveBinding();
         IASTName name_h = decl.getDeclarators()[0].getNestedDeclarator().getNestedDeclarator().getName();
-        IASTName name_A3 = ((IASTElaboratedTypeSpecifier)((IASTFunctionDeclarator)decl.getDeclarators()[0].getNestedDeclarator()).getParameters()[0].getDeclSpecifier()).getName();
-        IASTName name_d = ((IASTFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[0].getDeclarator().getName(); 
+        IASTName name_A3 = ((IASTElaboratedTypeSpecifier)((IASTStandardFunctionDeclarator)decl.getDeclarators()[0].getNestedDeclarator()).getParameters()[0].getDeclSpecifier()).getName();
+        IASTName name_d = ((IASTStandardFunctionDeclarator)decl.getDeclarators()[0]).getParameters()[0].getDeclarator().getName(); 
         
         IFunctionType t_f = f.getType();
         IType t_f_return = t_f.getReturnType();
@@ -1774,7 +1780,7 @@ public class AST2Tests extends AST2BaseTest {
    		buffer.append( "typedef s t;\n" ); //$NON-NLS-1$
    		buffer.append( "typedef t y;\n" ); //$NON-NLS-1$
    		buffer.append( "y x = {.a=1,.b=2};\n" ); //$NON-NLS-1$
-   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); // TODO Devin make sure that loop I put in works properly for types
+   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
    		IASTSimpleDeclaration S_decl = (IASTSimpleDeclaration)tu.getDeclarations()[0];
    		IASTSimpleDeclaration x_decl = (IASTSimpleDeclaration)tu.getDeclarations()[3]; 
@@ -1827,7 +1833,7 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue( ((IPointerType)ft.getParameterTypes()[0]).isConst() );
         
         // test tu.getDeclarations(IBinding)
-        IASTName name_parm = ((IASTFunctionDeclarator)def.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
+        IASTName name_parm = ((IASTStandardFunctionDeclarator)def.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
         IASTName[] decls = tu.getDeclarations(name_parm.resolveBinding()); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], name_parm );
@@ -1892,7 +1898,8 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( ((IBasicType)gt_parm).getType(), IBasicType.t_void );
         
         // test tu.getDeclarations(IBinding)
-        IASTName name_g = def.getDeclarator().getParameters()[0].getDeclarator().getName();
+        assertTrue(def.getDeclarator() instanceof IASTStandardFunctionDeclarator);
+        IASTName name_g = ((IASTStandardFunctionDeclarator)def.getDeclarator()).getParameters()[0].getDeclarator().getName();
         IASTName name_g_call = ((IASTIdExpression)((IASTFunctionCallExpression)((IASTReturnStatement)((IASTCompoundStatement)def.getBody()).getStatements()[0]).getReturnValue()).getFunctionNameExpression()).getName();
         IASTName[] decls = tu.getDeclarations(name_g_call.resolveBinding());
 		assertEquals( decls.length, 1 );
@@ -1903,7 +1910,7 @@ public class AST2Tests extends AST2BaseTest {
     	IASTTranslationUnit tu = parse( "int (*v[])(int *x, int *y);", ParserLanguage.C ); //$NON-NLS-1$
     	
         IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-        IVariable v = (IVariable)((IASTFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName().resolveBinding();
+        IVariable v = (IVariable)((IASTStandardFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName().resolveBinding();
         
         IType vt_1 = v.getType();
         assertTrue( vt_1 instanceof IArrayType );
@@ -1927,9 +1934,9 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( ((IBasicType)vpt_2_2).getType(), IBasicType.t_int );
         
         // test tu.getDeclarations(IBinding)
-        IASTName[] decls = tu.getDeclarations(((IASTFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName().resolveBinding());
+        IASTName[] decls = tu.getDeclarations(((IASTStandardFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName().resolveBinding());
 		assertEquals( decls.length, 1 );
-		assertEquals( decls[0], ((IASTFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName() );
+		assertEquals( decls[0], ((IASTStandardFunctionDeclarator) decl.getDeclarators()[0]).getNestedDeclarator().getName() );
     }
     
     public void testTypedefExample4a() throws Exception {
@@ -2043,7 +2050,7 @@ public class AST2Tests extends AST2BaseTest {
         // test tu.getDeclarations(IBinding)
         IASTName name_pfv = decl2.getDeclarators()[0].getNestedDeclarator().getName();
         IASTName name_pfv1 = ((IASTNamedTypeSpecifier)decl3.getDeclSpecifier()).getName();
-        IASTName name_pfv2 = ((IASTNamedTypeSpecifier)((IASTFunctionDeclarator)decl3.getDeclarators()[0]).getParameters()[1].getDeclSpecifier()).getName();
+        IASTName name_pfv2 = ((IASTNamedTypeSpecifier)((IASTStandardFunctionDeclarator)decl3.getDeclarators()[0]).getParameters()[1].getDeclSpecifier()).getName();
         		
     	IASTName[] decls = tu.getDeclarations(name_pfv1.resolveBinding()); 
 		assertEquals( decls.length, 1 );
@@ -2118,7 +2125,7 @@ public class AST2Tests extends AST2BaseTest {
     {
         StringBuffer buffer =new StringBuffer(); //$NON-NLS-1$
         buffer.append( "int y ( int [ const *] );"); //$NON-NLS-1$
-        ICASTArrayModifier mod = (ICASTArrayModifier)((IASTArrayDeclarator)((IASTFunctionDeclarator) ((IASTSimpleDeclaration) parse( buffer.toString(), ParserLanguage.C ).getDeclarations()[0]).getDeclarators()[0]).getParameters()[0].getDeclarator() ).getArrayModifiers()[0];
+        ICASTArrayModifier mod = (ICASTArrayModifier)((IASTArrayDeclarator)((IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) parse( buffer.toString(), ParserLanguage.C ).getDeclarations()[0]).getDeclarators()[0]).getParameters()[0].getDeclarator() ).getArrayModifiers()[0];
         assertTrue( mod.isConst() );
         assertTrue( mod.isVariableSized() );
         assertFalse( mod.isStatic() );

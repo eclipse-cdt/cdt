@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -310,7 +311,7 @@ public class CPPVisitor {
 			}
 		} else if( parent instanceof IASTParameterDeclaration ){
 			IASTParameterDeclaration param = (IASTParameterDeclaration) parent;
-			IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
+			IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
 			IFunction function = (IFunction) fDtor.getName().resolveBinding();
 			binding = ((CPPFunction) function).resolveParameter( param );
 		} else if( parent instanceof IASTSimpleDeclaration ){
@@ -460,8 +461,8 @@ public class CPPVisitor {
 	 */
 	public static IScope getContainingScope(IASTParameterDeclaration parameterDeclaration) {
 		IASTNode parent = parameterDeclaration.getParent();
-		if( parent instanceof IASTFunctionDeclarator ){
-			IASTFunctionDeclarator functionDeclarator = (IASTFunctionDeclarator) parent;
+		if( parent instanceof IASTStandardFunctionDeclarator ){
+			IASTStandardFunctionDeclarator functionDeclarator = (IASTStandardFunctionDeclarator) parent;
 			if( functionDeclarator.getNestedDeclarator() != null ){
 				return getContainingScope( functionDeclarator );
 			}

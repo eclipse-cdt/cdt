@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTests;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2KnRTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2Tests;
 import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationTests;
@@ -63,6 +64,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( QuickParser2Tests.class );
 		suite.addTestSuite( CompleteParser2Tests.class );
 		suite.addTestSuite( DOMLocationTests.class );
+		suite.addTestSuite( AST2KnRTests.class );
 		return suite;
 	}	
 }

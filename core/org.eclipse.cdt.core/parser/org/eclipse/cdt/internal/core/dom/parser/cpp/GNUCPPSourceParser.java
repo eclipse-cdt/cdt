@@ -41,7 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -2613,7 +2613,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
          IASTDeclarator declarator = (IASTDeclarator) declarators.get(0);
-         if (!(declarator instanceof IASTFunctionDeclarator))
+         if (!(declarator instanceof IASTStandardFunctionDeclarator))
             throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
          if (!constructorChain.isEmpty()
@@ -2635,7 +2635,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          declSpec.setParent(funcDefinition);
          declSpec.setPropertyInParent(IASTFunctionDefinition.DECL_SPECIFIER);
 
-         funcDefinition.setDeclarator((IASTFunctionDeclarator) declarator);
+         funcDefinition.setDeclarator((IASTStandardFunctionDeclarator) declarator);
          declarator.setParent(funcDefinition);
          declarator.setPropertyInParent(IASTFunctionDefinition.DECLARATOR);
 
@@ -3670,7 +3670,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IASTParameterDeclaration p = (IASTParameterDeclaration) parameters
                   .get(i);
             p.setParent(fc);
-            p.setPropertyInParent(IASTFunctionDeclarator.FUNCTION_PARAMETER);
+            p.setPropertyInParent(IASTStandardFunctionDeclarator.FUNCTION_PARAMETER);
             fc.addParameterDeclaration(p);
          }
          fc.setConst(isConst);

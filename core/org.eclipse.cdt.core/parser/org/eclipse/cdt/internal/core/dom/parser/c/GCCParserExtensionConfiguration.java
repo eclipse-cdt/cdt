@@ -42,5 +42,12 @@ public class GCCParserExtensionConfiguration implements
     public boolean supportAlignOfUnaryExpression() {
         return true;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration#supportKRCSyntax()
+	 */
+	public boolean supportKnRC() {
+		return true;
+	}
 
 }

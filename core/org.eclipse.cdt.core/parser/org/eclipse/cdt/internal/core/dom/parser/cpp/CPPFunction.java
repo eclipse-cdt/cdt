@@ -16,7 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -69,7 +69,7 @@ public class CPPFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
 	public List getParameters() {
-	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarations[0];
+	    IASTStandardFunctionDeclarator dtor = ( definition != null ) ? definition : declarations[0];
 		IASTParameterDeclaration[] params = dtor.getParameters();
 		int size = params.length;
 		List result = new ArrayList( size );
@@ -136,7 +136,7 @@ public class CPPFunction implements IFunction {
     	if( binding != null )
     		return binding;
 		
-    	IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) param.getParent();
+    	IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
     	IASTParameterDeclaration [] ps = fdtor.getParameters();
     	int i = 0;
     	for( ; i < ps.length; i++ ){

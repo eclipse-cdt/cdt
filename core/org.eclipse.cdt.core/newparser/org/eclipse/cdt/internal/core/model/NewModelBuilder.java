@@ -10,25 +10,23 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.newparser.NullParserCallback;
-import org.eclipse.cdt.internal.core.newparser.Parser;
+import org.eclipse.cdt.internal.core.newparser.IParserCallback;
 import org.eclipse.cdt.internal.core.newparser.Token;
+import org.eclipse.cdt.internal.core.newparser.util.DeclSpecifier;
+import org.eclipse.cdt.internal.core.newparser.util.DeclarationSpecifier;
+import org.eclipse.cdt.internal.core.newparser.util.Name;
 
-public class NewModelBuilder extends NullParserCallback {
+public class NewModelBuilder implements IParserCallback {
 
-	private TranslationUnit translationUnit;
-	private CElement currentElement;
-	private CElement underConstruction;
-	private String declSpecifier;
-	private String declaratorId;
-	private boolean isFunction;
-	private int inclusionDepth = 0;
-	private boolean inArguments = false;
+	private TranslationUnitWrapper translationUnit = new TranslationUnitWrapper();
+	
 	
 	public NewModelBuilder(TranslationUnit tu) {
-		translationUnit = tu;
-		currentElement = tu;
+		translationUnit.setElement( tu );
 	}
 	
 	/**
@@ -37,7 +35,6 @@ public class NewModelBuilder extends NullParserCallback {
 	public Object translationUnitBegin() {
 		return translationUnit;
 	}
-
 	
 	
 	private Token classKey;
@@ -45,6 +42,8 @@ public class NewModelBuilder extends NullParserCallback {
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, String)
 	 */
 	public Object classSpecifierBegin(Object container, Token classKey) {
+		
+		SimpleDeclarationWrapper c = (SimpleDeclarationWrapper)container; 
 		
 		int kind;
 		switch (classKey.getType()) {
@@ -59,9 +58,9 @@ public class NewModelBuilder extends NullParserCallback {
 		}
 		this.classKey = classKey;
 		
-		Structure elem = new Structure( translationUnit, kind, null );  
-		currentElement.addChild(elem);
-		return elem; 
+		Structure elem = new Structure( c.getParent(), kind, null );
+		c.getParent().addChild(elem); 
+		return new SimpleDeclarationWrapper( elem ); 
 	}
 
 	/**
@@ -69,79 +68,34 @@ public class NewModelBuilder extends NullParserCallback {
 	 */
 	public void classSpecifierName(Object classSpecifier) {
 
-		String name = nameEndToken.getImage();
-		Structure elem = ((Structure)classSpecifier);
+		SimpleDeclarationWrapper container = (SimpleDeclarationWrapper)classSpecifier; 
+		String name = currName.toString(); 
+		Structure elem = ((Structure)container.getElement());
 		elem.setElementName( name );
-		elem.setIdPos(nameEndToken.getOffset() - 2, nameEndToken.getImage().length());
-		elem.setPos(nameEndToken.getOffset(), nameEndToken.getImage().length());
-		currentElement = elem;
-
+		elem.setIdPos(currName.getEndOffset() - 2, name.length());
+		elem.setPos(currName.getEndOffset(), name.length());
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endClass()
 	 */
 	public void classSpecifierEnd(Object classSpecifier) {
-		currentElement = (CElement)currentElement.getParent();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginDeclarator()
 	 */
 	public Object declaratorBegin(Object container) {
-		if (!inArguments) {
-			declaratorId = null;
-			isFunction = false;
-		}
-		return null; 
+		DeclarationSpecifier.Container declSpec = (DeclarationSpecifier.Container)container;
+		List declarators = declSpec.getDeclarators();
+		Declarator declarator =new Declarator();
+		declarators.add( declarator );  
+		return declarator; 
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.newparser.IParserCallback#declSpecifier(String)
-	 */
-	public void declSpecifier(Token specifier) {
-		declSpecifier = "";
-		if (specifier != null) {
-			try {
-				declSpecifier = Parser.generateName(specifier);
-			} catch (Exception e) {
-			}
-		}
-	}
 
 	private int startIdPos;
 	private int idLength;
-
-	/**
-	 * @see org.eclipse.cdt.core.newparser.IParserCallback#declaratorId(List)
-	 */
-	public void declaratorId(Token id) {
-		if (!inArguments)
-			try {
-				declaratorId = Parser.generateName(id);
-				startIdPos = id.getOffset() - 2;
-				idLength = declaratorId.length();
-			} catch (Exception e) {
-				// Hard to see why we would get here
-				declaratorId = "";
-			}
-	}
-
-	/**
-	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginArguments()
-	 */
-	public Object argumentsBegin() {
-		isFunction = true;
-		inArguments = true;
-		return null; 
-	}
-
-	/**
-	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endArguments()
-	 */
-	public void argumentsEnd() {
-		inArguments = false;
-	}
 
 	private CElement elem;
 		
@@ -149,42 +103,20 @@ public class NewModelBuilder extends NullParserCallback {
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endDeclarator()
 	 */
 	public void declaratorEnd( Object declarator) {
-		elem = null;
-		
-		if (isFunction) {
-			elem = new FunctionDeclaration(currentElement, declaratorId);
-		} else {
-			if (currentElement instanceof TranslationUnit) {
-				elem = new Variable(currentElement, declaratorId);
-
-			} else if (currentElement instanceof Structure) {
-				elem = new Field(currentElement, declaratorId);
-			}
-		}
-		
-		if (elem != null) {
-			elem.setIdPos(startIdPos, idLength);
-			elem.setPos(startPos, idLength);
-			currentElement.addChild(elem);
-		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginFunctionBody()
 	 */
 	public void functionBodyBegin() {
-		// Oops, the last function declaration was really supposed to be
-		// a function definition.
-		//((CElement)elem.getParent()).add
-		elem = new Function(currentElement, declaratorId);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#macro(String)
 	 */
 	public void macro(String macroName) {
-		Macro elem = new Macro(translationUnit, macroName);
-		translationUnit.addChild(elem);
+		Macro elem = new Macro((TranslationUnit)translationUnit.getElement(), macroName);
+		((TranslationUnit)translationUnit.getElement()).addChild(elem);
 	}
 
 	private int startPos;
@@ -193,43 +125,164 @@ public class NewModelBuilder extends NullParserCallback {
 	 * @see 
 org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
-		if (inclusionDepth == 0)
-			startPos = firstToken.getOffset();
-		return null; 
+	public Object simpleDeclarationBegin(Object container) {
+		ICElementWrapper wrapper = (ICElementWrapper)container; 
+		Object parent = wrapper.getElement();
+		SimpleDeclarationWrapper result = new SimpleDeclarationWrapper();
+		if( wrapper instanceof SimpleDeclarationWrapper )
+			result.setParent( (CElement)wrapper.getElement() );
+		else if ( wrapper instanceof TranslationUnitWrapper )
+			result.setParent( (TranslationUnit)wrapper.getElement());
+		return result;  	
 	}
+	
+	
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginInclusion(String)
 	 */
 	public void inclusionBegin(String includeFile) {
-		++inclusionDepth;
-		Include elem = new Include(translationUnit, includeFile);
-		translationUnit.addChild(elem);
+		Include elem = new Include(((TranslationUnit)translationUnit.getElement()), includeFile);
+		((TranslationUnit)translationUnit.getElement()).addChild(elem);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endInclusion()
 	 */
 	public void inclusionEnd() {
-		--inclusionDepth;
 	}
-
-	private Token nameBeginToken;
-	private Token nameEndToken;
+	
+	private Name currName;
 	
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void nameBegin(Token firstToken) {
-		nameBeginToken = firstToken;
+		currName = new Name(firstToken);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void nameEnd(Token lastToken) {
-		nameEndToken = lastToken;
+		currName.setEnd(lastToken);
+	}
+
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(java.lang.Object)
+	 */
+	public void simpleDeclarationEnd(Object declaration) {
+		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)declaration; 
+		wrapper.createElements();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void simpleDeclSpecifier(Object declSpec, Token specifier) { 
+		DeclSpecifier declSpecifier = (DeclSpecifier)declSpec;  
+		declSpecifier.setType( specifier ); 				
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(java.lang.Object)
+	 */
+	public void declaratorId(Object declarator) {
+		Declarator decl = (Declarator)declarator; 
+		decl.setName( currName ); 
+	}
+
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsBegin(java.lang.Object)
+	 */
+	public Object argumentsBegin(Object declarator) {
+		Declarator decl = (Declarator)declarator;
+		List parameterDeclarationClause = new LinkedList();
+		decl.setParameterDeclarationClause( parameterDeclarationClause );
+		return parameterDeclarationClause;  
+		
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierBegin(java.lang.Object)
+	 */
+	public Object baseSpecifierBegin(Object containingClassSpec) {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierEnd(java.lang.Object)
+	 */
+	public void baseSpecifierEnd(Object baseSpecifier) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierName(java.lang.Object)
+	 */
+	public void baseSpecifierName(Object baseSpecifier) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierVirtual(java.lang.Object, boolean)
+	 */
+	public void baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierVisibility(java.lang.Object, org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void baseSpecifierVisibility(
+		Object baseSpecifier,
+		Token visibility) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionOperator(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void expressionOperator(Token operator) throws Exception {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionTerminal(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void expressionTerminal(Token terminal) throws Exception {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#functionBodyEnd()
+	 */
+	public void functionBodyEnd() {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#parameterDeclarationBegin(java.lang.Object, org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public Object parameterDeclarationBegin(
+		Object container ) {
+		List parameterDeclarationClause = (List)container; 
+		Parameter p = new Parameter();
+		parameterDeclarationClause.add( p );
+		return p; 
+		
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#parameterDeclarationEnd(java.lang.Object)
+	 */
+	public void parameterDeclarationEnd(Object declaration) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#translationUnitEnd(java.lang.Object)
+	 */
+	public void translationUnitEnd(Object unit) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsEnd()
+	 */
+	public void argumentsEnd(Object parameterDeclarationClause) {
 	}
 
 }

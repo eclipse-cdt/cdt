@@ -37,7 +37,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
+	public Object simpleDeclarationBegin(Object Container) {
 		return null; 
 	}
 
@@ -63,7 +63,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endArguments()
 	 */
-	public void argumentsEnd() {
+	public void argumentsEnd(Object parameterDeclarationClause) {
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class NullParserCallback implements IParserCallback {
 	{
 	}
 
-	public Object parameterDeclarationBegin( Object container, Token firstToken )
+	public Object parameterDeclarationBegin( Object container )
 	{
 		return null; 
 	}

@@ -19,10 +19,10 @@ public interface IParserCallback {
 	public void inclusionEnd();
 	public void macro(String macroName);
 	
-	public Object simpleDeclarationBegin(Object Container, Token firstToken);
+	public Object simpleDeclarationBegin(Object Container);
 	public void simpleDeclarationEnd(Object declaration);
 	
-	public Object parameterDeclarationBegin( Object Container, Token firstToken ); 
+	public Object parameterDeclarationBegin( Object Container ); 
 	public void  parameterDeclarationEnd( Object declaration ); 
 	
 	public void simpleDeclSpecifier(Object Container, Token specifier);
@@ -33,7 +33,7 @@ public interface IParserCallback {
 	public Object declaratorBegin(Object container);
 	public void declaratorId(Object declarator);
 	public Object argumentsBegin( Object declarator );
-	public void argumentsEnd();
+	public void argumentsEnd(Object parameterDeclarationClause);
 	public void declaratorEnd(Object declarator);
 	
 	public void functionBodyBegin();

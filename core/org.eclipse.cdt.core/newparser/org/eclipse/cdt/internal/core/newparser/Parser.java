@@ -156,7 +156,7 @@ c, quick);
 	 * - work in ctorInitializer and functionTryBlock
 	 */
 	public void simpleDeclaration( Object container ) throws Exception {
-		Object simpleDecl = callback.simpleDeclarationBegin( container, LA(1));
+		Object simpleDecl = callback.simpleDeclarationBegin( container);
 		declSpecifierSeq(simpleDecl);
 
 		if (LT(1) != Token.tSEMI)
@@ -215,7 +215,7 @@ c, quick);
 	
 	public void parameterDeclaration( Object containerObject ) throws Exception
 	{
-		Object parameterDecl = callback.parameterDeclarationBegin( containerObject, LA(1) );
+		Object parameterDecl = callback.parameterDeclarationBegin( containerObject );
 		declSpecifierSeq( parameterDecl );
 		
 		if (LT(1) != Token.tSEMI)
@@ -421,7 +421,7 @@ c, quick);
 								parameterDeclaration( clause );  
 						}
 					}
-					callback.argumentsEnd();
+					callback.argumentsEnd(clause);
 					break;
 				case Token.tLBRACKET:
 					consume();

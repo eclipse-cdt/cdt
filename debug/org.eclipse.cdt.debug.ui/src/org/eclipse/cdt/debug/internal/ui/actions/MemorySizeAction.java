@@ -45,12 +45,6 @@ public class MemorySizeAction extends Action implements IUpdate
 	{
 		setEnabled( fMemoryViewer.canUpdate() );
 		setChecked( fMemoryViewer.getCurrentWordSize() == fId );
-/*
-		if ( isChecked() )
-		{
-			fGroup.setCurrentSelection( this );
-		}
-*/
 	}
 	
 	private static String getLabel( int id )

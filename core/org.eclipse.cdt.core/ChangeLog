@@ -1,3 +1,21 @@
+2003-10-23 Alain Magloire
+
+	Remove the old Implementation of ICPathEntry and use the new one.
+
+	* src/org/eclipse/cdt/core/ICPathEntry.java: Removed.
+	* src/org/eclipse/cdt/internal/core/CPathEntry.java: Removed.
+	* src/org/eclipse/cdt/internal/core/CDescription.java: Removed.
+	* src/org/eclipse/cdt/core/CCorePlugin.java: Removed.
+	* model/org/eclipse/cdt/core/model/ICProject.java
+	* model/org/eclipse/cdt/internal/core/model/core/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/core/SetCPathEntriesOperation.java
+	* model/org/eclipse/cdt/internal/core/model/core/LibraryReferenceArchive.java
+	* model/org/eclipse/cdt/internal/core/model/core/LibraryReferenceShared.java
+	* model/org/eclipse/cdt/internal/core/model/core/LibraryReference.java
+	* model/org/eclipse/cdt/internal/core/model/core/Archive.java
+	* model/org/eclipse/cdt/internal/core/model/core/Binary.java
+	* model/org/eclipse/cdt/internal/core/model/core/CPathEntry.java
+
 2003-10-22 Hoda Amer
 	Fix for bug#40759: Offsets of macroexpansions are not correct 
 	Fix for bug#44633: Outline View : CModelBuilder quits on templated friends 

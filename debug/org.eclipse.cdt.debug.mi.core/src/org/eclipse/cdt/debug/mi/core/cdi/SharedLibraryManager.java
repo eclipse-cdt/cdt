@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -41,8 +42,13 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	}
 
 	public void update() throws CDIException {
-		MIShared[] miLibs = new MIShared[0];
 		CSession s = getCSession();
+		ICDIConfiguration conf = s.getConfiguration();
+		if (!conf.supportsSharedLibrary()) {
+			return; // Bail out early;
+		}
+
+		MIShared[] miLibs = new MIShared[0];
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIInfoSharedLibrary infoShared = factory.createMIInfoSharedLibrary();
 		try {

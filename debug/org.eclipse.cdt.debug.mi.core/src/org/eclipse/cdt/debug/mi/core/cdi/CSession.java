@@ -185,10 +185,14 @@ public class CSession implements ICDISession, ICDISessionObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSuration()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getConfiguration()
 	 */
 	public ICDIConfiguration getConfiguration() {
 		return configuration;
+	}
+
+	public void setConfiguration(ICDIConfiguration conf) {
+		configuration = conf;
 	}
 
 	/**

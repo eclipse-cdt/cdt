@@ -77,6 +77,13 @@ public class Configuration implements ICDIConfiguration {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSharedLibrary()
+	 */
+	public boolean supportsSharedLibrary() {
+		return true;
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsRestart()
 	 */
 	public boolean supportsRestart() {

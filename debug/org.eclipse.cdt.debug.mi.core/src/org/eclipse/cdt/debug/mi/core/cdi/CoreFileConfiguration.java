@@ -65,4 +65,11 @@ public class CoreFileConfiguration implements ICDIConfiguration {
 		return false;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSharedLibrary()
+	 */
+	public boolean supportsSharedLibrary() {
+		return false;
+	}
+
 }

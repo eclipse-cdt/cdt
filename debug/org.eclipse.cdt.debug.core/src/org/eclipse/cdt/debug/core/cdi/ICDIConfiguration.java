@@ -84,6 +84,13 @@ public interface ICDIConfiguration
 	boolean supportsRegisterModification();
 
 	/**
+	 * Returns whether this session supports shared library.
+	 * 
+	 * @return whether this session supports registers modification
+	 */
+	boolean supportsSharedLibrary();
+
+	/**
 	 * Returns whether this session supports memory retrieval.
 	 * 
 	 * @return whether this session supports memory retrieval

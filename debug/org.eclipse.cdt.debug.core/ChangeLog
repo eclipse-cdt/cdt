@@ -1,3 +1,10 @@
+2004-09-01 Mikhail Khodjaiants
+	Breakpoint filtering by targets (core).
+	* ICBreakpoint.java
+	* CBreakpointManager.java
+	* CBreakpoint.java
+	* CDebugTarget.java
+
 2004-08-18 Mikhail Khodjaiants
 	New constant - the default value for the "stop at main" property.
 	* ICDTLaunchConfigurationConstants.java

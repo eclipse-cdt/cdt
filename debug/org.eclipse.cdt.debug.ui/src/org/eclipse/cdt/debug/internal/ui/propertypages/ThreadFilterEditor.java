@@ -12,7 +12,10 @@ package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -279,20 +282,58 @@ public class ThreadFilterEditor {
 	 * checked.
 	 */
 	protected void setInitialCheckedState() {
-//		try {
-//			IDebugTarget[] targets = getDebugTargets();
-//			for( int i = 0, numTargets = targets.length; i < numTargets; i++ ) {
-//				ICDebugTarget target = (ICDebugTarget)targets[i].getAdapter( ICDebugTarget.class );
-//				if ( target != null ) {
-//					ICThread filteredThread = fPage.getBreakpoint().getThreadFilter( target );
-//					if ( filteredThread != null ) {
-//						fCheckHandler.checkThread( filteredThread, true );
-//					}
-//				}
-//			}
-//		}
-//		catch( CoreException e ) {
-//			DebugUIPlugin.log( e );
-//		}
+		ICBreakpoint breakpoint = fPage.getBreakpoint(); 
+		try {
+			ICDebugTarget[] targets = breakpoint.getTargetFilters();
+			for( int i = 0; i < targets.length; i++ ) {
+				ICThread[] filteredThreads = breakpoint.getThreadFilters( targets[i] );
+				if ( filteredThreads != null ) {
+					for ( int j = 0; j < filteredThreads.length; ++j )
+						fCheckHandler.checkThread( filteredThreads[j], true );
+				}
+				else {
+					fCheckHandler.checkTarget( targets[i], true );
+				}
+			}
+		}
+		catch( CoreException e ) {
+			DebugUIPlugin.log( e );
+		}
+	}
+
+	protected void doStore() {
+		ICBreakpoint breakpoint = fPage.getBreakpoint();
+		IDebugTarget[] targets = getDebugTargets();
+		for ( int i = 0; i < targets.length; ++i ) {
+			if ( !(targets[i] instanceof ICDebugTarget) )
+				continue;
+			try {
+				if ( getThreadViewer().getChecked( targets[i] ) ) {
+					if ( getThreadViewer().getGrayed( targets[i] ) ) {
+						ICThread[] threads = getTargetThreadFilters( (ICDebugTarget)targets[i] );
+						breakpoint.setThreadFilters( threads );
+					}
+					else {
+						breakpoint.setTargetFilter( (ICDebugTarget)targets[i] );
+					}
+				}
+				else {
+					breakpoint.removeTargetFilter( (ICDebugTarget)targets[i] );
+				}
+			}
+			catch( CoreException e ) {
+				DebugUIPlugin.log( e );
+			}
+		}
+	}
+
+	private ICThread[] getTargetThreadFilters( ICDebugTarget target ) {
+		Object[] threads = ((ITreeContentProvider)getThreadViewer().getContentProvider()).getChildren( target );
+		ArrayList list = new ArrayList( threads.length );
+		for ( int i = 0; i < threads.length; ++i ) {
+			if ( getThreadViewer().getChecked( threads[i] ) )
+				list.add( threads[i] );
+		}
+		return (ICThread[])list.toArray( new ICThread[list.size()] );
 	}
 }

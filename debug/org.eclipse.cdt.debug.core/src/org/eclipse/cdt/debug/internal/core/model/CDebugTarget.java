@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -612,7 +613,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	public void breakpointAdded( IBreakpoint breakpoint ) {
-		if ( !(breakpoint instanceof ICBreakpoint) || !getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)breakpoint ) || !isAvailable() )
+		if ( !(breakpoint instanceof ICBreakpoint) || !isAvailable() || !getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)breakpoint ) )
 			return;
 		breakpointAdded0( breakpoint );
 	}
@@ -635,7 +636,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointRemoved( IBreakpoint breakpoint, IMarkerDelta delta ) {
-		if ( !(breakpoint instanceof ICBreakpoint) || !getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)breakpoint ) || !isAvailable() )
+		if ( !(breakpoint instanceof ICBreakpoint) || !isAvailable() || !getBreakpointManager().isCDIRegistered( (ICBreakpoint)breakpoint ) )
 			return;
 		try {
 			getBreakpointManager().removeBreakpoint( (ICBreakpoint)breakpoint );
@@ -648,12 +649,37 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointChanged( IBreakpoint breakpoint, IMarkerDelta delta ) {
-		if ( !(breakpoint instanceof ICBreakpoint) || !getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)breakpoint ) || !isAvailable() || delta == null )
+		if ( !(breakpoint instanceof ICBreakpoint) || !isAvailable() )
 			return;
+		ICBreakpoint b = (ICBreakpoint)breakpoint;
+		boolean install = false;
 		try {
-			getBreakpointManager().changeBreakpointProperties( (ICBreakpoint)breakpoint, delta );
+			ICDebugTarget[] tfs = b.getTargetFilters();
+			install = Arrays.asList( tfs ).contains( this );
 		}
-		catch( DebugException e ) {
+		catch( CoreException e1 ) {
+		}
+		boolean registered = getBreakpointManager().isCDIRegistered( b );
+		if ( registered && !install ) {
+			try {
+				getBreakpointManager().removeBreakpoint( b );
+			}
+			catch( DebugException e ) {
+			}
+		}
+		if ( !registered && install ) {
+			try {
+				getBreakpointManager().setBreakpoint( b );
+			}
+			catch( DebugException e ) {
+			}
+		}
+		if ( delta != null ) {
+			try {
+				getBreakpointManager().changeBreakpointProperties( b, delta );
+			}
+			catch( DebugException e ) {
+			}
 		}
 	}
 

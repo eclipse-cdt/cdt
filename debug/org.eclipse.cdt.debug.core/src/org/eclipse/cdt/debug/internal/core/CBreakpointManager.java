@@ -11,10 +11,10 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -203,6 +203,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	public boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
+		// Problem: gdb doesn't accept breakpoint if the file is specified by full path (depends on the current directory).
+		// This prevents us from using gdb as a breakpoint filter. The case when two unrelated projects contain files 
+		// with the same name will cause problems.
+		// Current solution: the source locator is used as a breakpoint filter.
 		IResource resource = breakpoint.getMarker().getResource();
 		if ( breakpoint instanceof ICAddressBreakpoint )
 			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
@@ -287,6 +291,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			}
 			if ( cdiBreakpoint == null )
 				return;
+			breakpoint.setTargetFilter( getDebugTarget() );
 			if ( !breakpoint.isEnabled() )
 				cdiBreakpoint.setEnabled( false );
 			setBreakpointCondition( breakpoint );
@@ -312,9 +317,13 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			ICDIBreakpointManager bm = getCDIBreakpointManager();
 			try {
 				bm.deleteBreakpoints( new ICDIBreakpoint[]{ cdiBreakpoint } );
+				breakpoint.removeTargetFilter( getDebugTarget() );
 			}
 			catch( CDIException e ) {
 				targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.3" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
+			}
+			catch( CoreException e ) {
+				DebugPlugin.log( e );
 			}
 		}
 	}
@@ -398,7 +407,16 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 		getBreakpointMap().removeCDIBreakpoint( cdiBreakpoint );
 		if ( breakpoint != null ) {
-			getBreakpointNotifier().breakpointRemoved( getDebugTarget(), breakpoint );
+			if ( isFilteredByTarget( breakpoint, getDebugTarget() ) ) {
+				getBreakpointNotifier().breakpointRemoved( getDebugTarget(), breakpoint );
+			}
+			else {
+				try {
+					breakpoint.decrementInstallCount();
+				}
+				catch( CoreException e ) {
+				}
+			}
 		}
 	}
 
@@ -670,5 +688,16 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				DebugPlugin.log( e );
 			}
 		}
+	}
+
+	private boolean isFilteredByTarget( ICBreakpoint breakpoint, ICDebugTarget target ) {
+		boolean result = false;
+		try {
+			ICDebugTarget[] tfs = breakpoint.getTargetFilters();
+			result = Arrays.asList( tfs ).contains( this );
+		}
+		catch( CoreException e1 ) {
+		}
+		return result;
 	}
 }

@@ -47,4 +47,19 @@ public class CBreakpointFilteringPage extends PropertyPage {
 	protected ThreadFilterEditor getThreadFilterEditor() {
 		return fThreadFilterEditor;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		doStore();
+		return super.performOk();
+	}
+
+	/**
+	 * Stores the values configured in this page.
+	 */
+	protected void doStore() {
+		fThreadFilterEditor.doStore();
+	}
 }

@@ -7,10 +7,10 @@
 
 <plugin 
 
-   name = "C/C++ Development User Guide"
+   name = "%pluginName"
    id = "org.eclipse.cdt.doc.user"
-   version = "1.0"
-  provider-name = "Rational Software: IBM Software Group">
+   version = "1.1.0"
+  provider-name = "%providerName">
    <!-- Configure the help contribution for this plugin --> 
    <!-- This part should be in a documentation plugin -->
    <extension point="org.eclipse.help.toc">

@@ -217,6 +217,10 @@ public abstract class Parser extends ExpressionParser implements IParser
                     break;
                 }
             }
+            catch( OutOfMemoryError oome )
+			{
+            	logThrowable( "translationUnit", oome ); //$NON-NLS-1$
+			}
             catch( Exception e )
 			{
             	logException( "translationUnit", e ); //$NON-NLS-1$

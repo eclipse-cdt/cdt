@@ -120,14 +120,6 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.ui.projectNatureImages">
-      <image
-            icon="icons/full/ovr16/c_ovr.gif"
-            natureId="org.eclipse.cdt.cnature"
-            id="org.eclipse.cdt.cProjectNatureImage">
-      </image>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <category
             name="%viewsCategory.name"

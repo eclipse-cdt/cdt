@@ -88,7 +88,9 @@ public class ErrorParserManager extends OutputStream {
 		if (fDirectoryStack.size() != 0) {
 			return (IPath) fDirectoryStack.lastElement();
 		}
-		return new Path("");
+		// Fallback to the Project Location
+		// FIXME: if the build did not start in the Project ?
+		return fProject.getLocation();
 	}
 
 	public void pushDirectory(IPath dir) {
@@ -244,7 +246,14 @@ public class ErrorParserManager extends OutputStream {
 		} else {
 			path = (IPath) getWorkingDirectory().append(filePath);
 		}
-		IFile file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+
+		IFile file = null;
+		// The workspace may throw an IllegalArgumentException
+		// Catch it and the parser will fallback to scan the entire project.
+		try {
+			file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+		} catch (Exception e) {
+		}
 		return (file != null && file.exists()) ? file : null;
 	}
 

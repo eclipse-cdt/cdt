@@ -1676,4 +1676,10 @@ public class Scanner2Test extends BaseScanner2Test
     	validateIdentifier("__n");
     	validateEOF();
     }
+    
+    public void testStringify() throws Exception {
+    	initializeScanner("#define xS(s) #s\n#define S(s) xS(s)#define X hi\nS(X)");
+    	validateString("hi");
+    	validateEOF();
+    }
 }

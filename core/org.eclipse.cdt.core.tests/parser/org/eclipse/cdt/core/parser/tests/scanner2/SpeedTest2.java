@@ -54,7 +54,7 @@ public class SpeedTest2 extends TestCase {
 				totalTime += time;
 		}
 		
-		if (n > 0) {
+		if (n > 1) {
 			System.out.println("Average Time: " + (totalTime / (n - 1)) + " millisecs");
 		}
 	}

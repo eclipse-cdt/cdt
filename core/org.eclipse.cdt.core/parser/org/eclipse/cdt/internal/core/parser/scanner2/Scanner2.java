@@ -240,8 +240,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		
 		IToken token = nextToken;
-		
 		nextToken = fetchToken();
+		token.setNext(nextToken);
+		
 		if (nextToken == null)
 			finished = true;
 		else if (nextToken.getType() == IToken.tPOUNDPOUND) {
@@ -277,7 +278,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	// Return null to signify end of file
 	private IToken fetchToken() throws ScannerException {
-		
+		++count;
 		contextLoop:
 		while (bufferStackPos >= 0) {
 			
@@ -841,6 +842,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						continue;
 					
 					// must be float suffix
+					++bufferPos[bufferStackPos];
 					break;
 
 				case 'p':
@@ -886,12 +888,26 @@ public class Scanner2 implements IScanner, IScannerData {
 				case 'u':
 				case 'U':
 					// unsigned suffix
+					if (++bufferPos[bufferStackPos] < limit) {
+						switch (buffer[bufferPos[bufferStackPos]]) {
+						case 'l':
+						case 'L':
+							if (++bufferPos[bufferStackPos]  < limit) {
+								switch (buffer[bufferPos[bufferStackPos]]) {
+									case 'l':
+									case 'L':
+										// long long
+										++bufferPos[bufferStackPos];
+								}
+							}
+						}
+					}
 					break;
 				
 				case 'l':
 				case 'L':
-					if (pos + 1 < limit) {
-						switch (buffer[pos + 1]) {
+					if (++bufferPos[bufferStackPos]  < limit) {
+						switch (buffer[bufferPos[bufferStackPos]]) {
 							case 'l':
 							case 'L':
 								// long long
@@ -912,7 +928,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		
 		return new ImagedToken(isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER,
-				new String(buffer, start, bufferPos[bufferStackPos] - start + 1));
+				new String(buffer, start,
+						bufferPos[bufferStackPos] - start + 1));
 	}
 	
 	private void handlePPDirective() throws ScannerException {
@@ -1754,8 +1771,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				
 			} else if (c == '#') {
 				
-				c = expansion[++pos];
-				if (c == '#') {
+				if (pos + 1 < limit && expansion[pos + 1] == '#') {
+					++pos;
 					// skip whitespace
 					if (wsstart < 0)
 						wsstart = pos - 1;
@@ -1800,6 +1817,51 @@ public class Scanner2 implements IScanner, IScannerData {
 
 				} else {
 					// stringify
+					
+					// copy what we haven't so far
+					if (++lastcopy < pos) {
+						int n = pos - lastcopy;
+						if (result != null)
+							System.arraycopy(expansion, lastcopy, result, outpos, n);
+						outpos += n;
+					}
+
+					++pos;
+					
+					// skip whitespace
+					while (++pos < limit) {
+						switch (expansion[pos]) {
+							case ' ':
+							case '\t':
+								continue;
+							//TODO handle comments
+						}
+						break;
+					}
+					--pos;
+					
+					// grab the identifier
+					c = expansion[pos];
+					int idstart = pos;
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X') || c == '_') {
+						while (++pos < limit) {
+							if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X')
+									|| (c >= '0' && c <= '9') || c == '_')
+								break;
+						}
+					} // else TODO something
+					--pos;
+					int idlen = pos - idstart + 1;
+					char[] argvalue = (char[])argmap.get(expansion, idstart, idlen);
+					if (argvalue != null) {
+						if (result != null) {
+							result[outpos] = '"';
+							System.arraycopy(argvalue, 0, result, outpos + 1, argvalue.length);
+							result[outpos + argvalue.length + 1] = '"';
+						}
+						outpos += argvalue.length + 2;
+					}
+					lastcopy = pos;
 				}
 			} else {
 				
@@ -1836,6 +1898,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		= new ObjectStyleMacro("__restrict__".toCharArray(), "restrict".toCharArray());
 	private static final ObjectStyleMacro __restrict
 		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray());
+	private static final ObjectStyleMacro __volatile__
+		= new ObjectStyleMacro("__volatile__".toCharArray(), "volatile".toCharArray());
 	private static final FunctionStyleMacro __attribute__
 		= new FunctionStyleMacro(
 				"__attribute__".toCharArray(),
@@ -1854,6 +1918,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		definitions.put(__attribute__.name, __attribute__);
 		definitions.put(__restrict__.name, __restrict__);
 		definitions.put(__restrict.name, __restrict);
+		definitions.put(__volatile__.name, __volatile__);
 		if( language == ParserLanguage.CPP )
 			definitions.put(__asm__.name, __asm__);
 		

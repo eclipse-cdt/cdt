@@ -36,9 +36,11 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.jface.util.Assert;
@@ -94,6 +96,11 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * The vertical ruler.
 	 */
 	private IVerticalRuler fVerticalRuler;
+	
+	/**
+	 * The overview ruler.
+	 */
+	private IOverviewRuler fOverviewRuler;
 
 	/**
 	 * The last stack frame for which the disassembly storage has 
@@ -139,8 +146,9 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	protected Viewer createViewer( Composite parent ) {
 		fVerticalRuler = createVerticalRuler();
+		fOverviewRuler = createOverviewRuler( getSharedColors() );
 		
-		SourceViewer viewer = createSourceViewer( parent, fVerticalRuler );
+		SourceViewer viewer = createSourceViewer( parent, fVerticalRuler, getOverviewRuler() );
 		viewer.configure( new DisassemblyViewerConfiguration() );
 		getSourceViewerDecorationSupport( viewer );
 		
@@ -223,6 +231,17 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		return ruler;
 	}
 
+	private IOverviewRuler createOverviewRuler( ISharedTextColors sharedColors ) {
+		IOverviewRuler ruler = new OverviewRuler( getAnnotationAccess(), VERTICAL_RULER_WIDTH, sharedColors );
+		Iterator e = fAnnotationPreferences.getAnnotationPreferences().iterator();
+		while( e.hasNext() ) {
+			AnnotationPreference preference = (AnnotationPreference)e.next();
+			if ( preference.contributesToHeader() )
+				ruler.addHeaderAnnotationType( preference.getAnnotationType() );
+		}
+		return ruler;
+	}
+
 	/**
 	 * Creates the source viewer to be used by this view.
 	 *
@@ -231,8 +250,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * @param styles style bits
 	 * @return the source viewer
 	 */
-	private SourceViewer createSourceViewer( Composite parent, IVerticalRuler ruler ) {
-		DisassemblyViewer viewer = new DisassemblyViewer( parent, ruler );
+	private SourceViewer createSourceViewer( Composite parent, IVerticalRuler vertRuler, IOverviewRuler ovRuler ) {
+		DisassemblyViewer viewer = new DisassemblyViewer( parent, vertRuler, ovRuler );
 		viewer.setRangeIndicator( new DefaultRangeIndicator() );
 		return viewer;
 	}
@@ -445,7 +464,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport( ISourceViewer viewer ) {
 		if ( fSourceViewerDecorationSupport == null ) {
-			fSourceViewerDecorationSupport = new SourceViewerDecorationSupport( viewer, null, getAnnotationAccess(), getSharedColors() );
+			fSourceViewerDecorationSupport = new SourceViewerDecorationSupport( viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors() );
 			configureSourceViewerDecorationSupport( fSourceViewerDecorationSupport );
 		}
 		return fSourceViewerDecorationSupport;
@@ -569,5 +588,16 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 			ISelection selection = getSite().getPage().getSelection( IDebugUIConstants.ID_DEBUG_VIEW );
 			selectionChanged( part, selection );
 		}
+	}
+
+	/**
+	 * Returns the overview ruler.
+	 * 
+	 * @return the overview ruler
+	 */
+	private IOverviewRuler getOverviewRuler() {
+		if ( fOverviewRuler == null )
+			fOverviewRuler = createOverviewRuler( getSharedColors() );
+		return fOverviewRuler;
 	}
 }

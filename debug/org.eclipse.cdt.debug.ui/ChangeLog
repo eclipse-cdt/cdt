@@ -1,3 +1,8 @@
+2004-04-28 Mikhail Khodjaiants
+	Added the overview ruler to the Disassembly view.
+	* DisassemblyView.java
+	* DisassemblyViewer.java
+
 2004-04-27 Mikhail Khodjaiants
 	Breakpoints presentation in the Disassembly view.
 	* HTML2TextReader.java: new

@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
@@ -35,8 +36,8 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @param ruler
 	 * @param styles
 	 */
-	public DisassemblyViewer( Composite parent, IVerticalRuler ruler ) {
-		super( parent, ruler, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION );
+	public DisassemblyViewer( Composite parent, IVerticalRuler vertRuler, IOverviewRuler ovRuler ) {
+		super( parent, vertRuler, ovRuler, true, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION );
 		getTextWidget().setFont( JFaceResources.getFont( IInternalCDebugUIConstants.DISASSEMBLY_FONT ) );
 		setEditable( false );
 		GridData gd = new GridData( GridData.FILL_BOTH );

@@ -128,14 +128,14 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariables()
 	 */
 	public ICDIGlobalVariable[] getGlobalVariables() throws CDIException {
-		return null;
+		return new ICDIGlobalVariable[0];
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterGroups()
 	 */
 	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
-		return null;
+		return new ICDIRegisterGroup[0];
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThread(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCurrentThread()
 	 */
 	public ICDIThread getCurrentThread() throws CDIException {
 		return null;
@@ -189,13 +189,6 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isStepping()
-	 */
-	public boolean isStepping() {
-		return session.getMISession().getMIInferior().isRunning();
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isSuspended()
 	 */
 	public boolean isSuspended() {
@@ -232,7 +225,7 @@ public class CTarget  implements ICDITarget {
 	 */
 	public void resume() throws CDIException {
 		MISession mi = session.getMISession();
-		if (mi.getMIInferior().isRunning() || mi.getMIInferior().isStepping()) {
+		if (mi.getMIInferior().isRunning()) {
 			throw new CDIException("Inferior already running");
 		} else if (mi.getMIInferior().isSuspended()) {
 			CommandFactory factory = mi.getCommandFactory();

@@ -3,25 +3,19 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class StackFrame extends CObject implements ICDIStackFrame {
 
@@ -36,15 +30,34 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
 	public ICDIArgument[] getArguments() throws CDIException {
+		MIArg[] args = null;
+		ICDIArgument[] cdiArgs = null;
 		if (frame != null) {
-			MIArg[] args = frame.getArgs();
-			ICDIArgument[] cargs = new ICDIArgument[args.length];
-			for (int i = 0; i < cargs.length; i++) {
-				cargs[i] = new Argument(getCTarget(), args[i]);
+			MISession mi = getCTarget().getCSession().getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			int level = frame.getLevel();
+			MIStackListArguments listArgs =
+				factory.createMIStackListArguments(true, level, level);
+			try {
+				mi.postCommand(listArgs);
+				MIStackListArgumentsInfo info = listArgs.getMIStackListArgumentsInfo();
+				MIFrame[] miFrames = info.getMIFrames();
+				if (miFrames != null && miFrames.length == 1) {
+					args = miFrames[0].getArgs();
+				}
+			} catch (MIException e) {
+				//throw new CDIException(e);
 			}
-			return cargs;
 		}
-		return new ICDIArgument[0];
+		if (args != null) {
+			cdiArgs = new ICDIArgument[args.length];
+			for (int i = 0; i < cdiArgs.length; i++) {
+				cdiArgs[i] = new Argument(getCTarget(), args[i]);
+			}
+		} else {
+			cdiArgs = new ICDIArgument[0];
+		}
+		return cdiArgs;
 	}
 
 	/**
@@ -89,4 +102,13 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		return new Location("", "", 0, 0);
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLevel()
+	 */
+	public int getLevel() {
+		if (frame != null) {
+			return frame.getLevel();
+		}
+		return 0;
+	}
 }

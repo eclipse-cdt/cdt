@@ -6,9 +6,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
+import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
-import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
 
 /**
  * @author alain
@@ -48,12 +48,10 @@ public class CThread extends CObject implements ICDIThread {
 	public ICDIStackFrame[] getStackFrames() throws CDIException {
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		//MIStackListFrames frames = factory.createMIStackListFrames();
-		MIStackListArguments frames = factory.createMIStackListArguments(true);
+		MIStackListFrames frames = factory.createMIStackListFrames();
 		try {
 			mi.postCommand(frames);
-			//MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
-			MIStackListArgumentsInfo info = frames.getMIStackListArgumentsInfo();
+			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 			if (info == null) {
 				throw new CDIException("Timedout");
 			}
@@ -68,14 +66,6 @@ public class CThread extends CObject implements ICDIThread {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#isStepping()
-	 *
-	public boolean isStepping() {
-		return getTarget().isStepping();
-	}
- 	*/
- 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#isSuspended()
 	 */

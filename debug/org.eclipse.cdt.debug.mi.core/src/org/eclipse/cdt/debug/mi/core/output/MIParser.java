@@ -203,6 +203,9 @@ public class MIParser {
 				async.setAsyncClass(asyncClass);
 				// Consume the async-class and the comma
 				buffer.delete(0, i + 1);
+			} else {
+				async.setAsyncClass(buffer.toString().trim());
+				buffer.setLength(0);
 			}
 			MIResult[] res = processMIResults(buffer);
 			async.setMIResults(res);

@@ -14,8 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIRegisterGroup extends ICDIObject
-{
+public interface ICDIRegisterGroup extends ICDIObject {
 	/**
 	 * Returns the registers in this register group.
 	 * 

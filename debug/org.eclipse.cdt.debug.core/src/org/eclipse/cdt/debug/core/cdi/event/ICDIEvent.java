@@ -14,8 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
  * 
  * @since Jul 18, 2002
  */
-public interface ICDIEvent
-{
+public interface ICDIEvent {
 	/**
 	 * The CDI object on which the event initially occurred.
 	 * 

@@ -17,8 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIExitedEvent extends ICDIEvent
-{
+public interface ICDIExitedEvent extends ICDIEvent {
 	/**
 	 * Returns the information provided by the session when program 
 	 * is exited.

@@ -15,8 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 18, 2002
  */
-public interface ICDIMemoryBlock extends ICDIObject
-{
+public interface ICDIMemoryBlock extends ICDIObject {
 	/**
 	 * Returns the start address of this memory block.
 	 * 

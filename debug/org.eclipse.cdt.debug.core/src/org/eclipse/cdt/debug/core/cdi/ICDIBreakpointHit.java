@@ -15,8 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
  * 
  * @since Aug 27, 2002
  */
-public interface ICDIBreakpointHit extends ICDISessionObject
-{
+public interface ICDIBreakpointHit extends ICDISessionObject {
 	/**
 	 * Returns the breakpoint that stopped the program.
 	 * 

@@ -13,12 +13,13 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIExitInfo extends ICDISessionObject
-{
+public interface ICDIExitInfo extends ICDISessionObject {
+
 	/**
 	 * Returns an exit code.
 	 * 
 	 * @return an exit code
 	 */
 	int getCode();
+
 }

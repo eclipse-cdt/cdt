@@ -16,6 +16,5 @@ package org.eclipse.cdt.debug.core.cdi.event;
  * 
  * @since Jul 11, 2002
  */
-public interface ICDIRestartedEvent extends ICDIEvent
-{
+public interface ICDIRestartedEvent extends ICDIEvent {
 }

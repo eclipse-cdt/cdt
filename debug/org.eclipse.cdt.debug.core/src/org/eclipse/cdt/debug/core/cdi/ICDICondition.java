@@ -12,8 +12,7 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDICondition
-{
+public interface ICDICondition {
 	/**
 	 * Returns the condition expression.
 	 * 

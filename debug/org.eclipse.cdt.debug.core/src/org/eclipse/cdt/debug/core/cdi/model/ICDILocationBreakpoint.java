@@ -15,8 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDILocationBreakpoint extends ICDIBreakpoint
-{
+public interface ICDILocationBreakpoint extends ICDIBreakpoint {
 	/**
 	 * Returns the location of this breakpoint.
 	 * 

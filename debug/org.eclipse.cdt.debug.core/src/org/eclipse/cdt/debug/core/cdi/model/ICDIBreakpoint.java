@@ -22,8 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIBreakpoint extends ICDIObject
-{
+public interface ICDIBreakpoint extends ICDIObject {
 	final static public int REGULAR = 0x0;
 	final static public int TEMPORARY = 0x1;
 	final static public int HARDWARE = 0x2;

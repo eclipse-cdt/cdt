@@ -16,6 +16,5 @@ package org.eclipse.cdt.debug.core.cdi.event;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIDisconnectedEvent extends ICDIEvent
-{
+public interface ICDIDisconnectedEvent extends ICDIEvent {
 }

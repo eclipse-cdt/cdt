@@ -11,7 +11,5 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * 
  * @since Aug 9, 2002
  */
-public interface ICDIPointerValue extends ICDIValue
-{
-
+public interface ICDIPointerValue extends ICDIValue {
 }

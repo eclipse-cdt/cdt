@@ -26,8 +26,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDISuspendedEvent extends ICDIEvent
-{
+public interface ICDISuspendedEvent extends ICDIEvent {
+
 	/**
 	 * Returns the session object that caused the suspension.
 	 * 

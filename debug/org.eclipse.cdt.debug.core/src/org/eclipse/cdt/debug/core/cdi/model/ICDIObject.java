@@ -11,8 +11,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDIObject
-{
+public interface ICDIObject {
 	/**
 	 * Returns the target this object is contained in.
 	 * 

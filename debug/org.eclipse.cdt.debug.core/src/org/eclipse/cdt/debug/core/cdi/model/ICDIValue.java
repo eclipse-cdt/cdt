@@ -15,8 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIValue extends ICDIObject
-{
+public interface ICDIValue extends ICDIObject {
 	/**
 	 * Returns a description of the type of data this value contains.
 	 * 

@@ -12,6 +12,5 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIEndSteppingRange extends ICDISessionObject
-{
+public interface ICDIEndSteppingRange extends ICDISessionObject {
 }

@@ -12,8 +12,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIInstruction extends ICDIObject
-{
+public interface ICDIInstruction extends ICDIObject {
 	/**
 	 *  Returns the Address.
 	 * @return the address.

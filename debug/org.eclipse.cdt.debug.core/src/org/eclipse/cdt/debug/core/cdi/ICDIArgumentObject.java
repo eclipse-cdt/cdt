@@ -8,5 +8,4 @@ package org.eclipse.cdt.debug.core.cdi;
 /**
  */
 public interface ICDIArgumentObject extends ICDIVariableObject {
-
 }

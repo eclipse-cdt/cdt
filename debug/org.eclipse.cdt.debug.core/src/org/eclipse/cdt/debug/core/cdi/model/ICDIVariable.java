@@ -16,6 +16,16 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * @since Jul 9, 2002
  */
 public interface ICDIVariable extends ICDIObject {
+
+	/**
+	 * Returns the stackframe where the variable was found
+	 * may return null.
+	 * 
+	 * @return the stackframe
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIStackFrame getStackFrame() throws CDIException;
+
 	/**
 	 * Returns the name of this variable.
 	 * 

@@ -13,8 +13,7 @@ package org.eclipse.cdt.debug.core.cdi.event;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIEventListener
-{
+public interface ICDIEventListener {
 	/**
 	 * Notifies this listener of the given event.
 	 * 

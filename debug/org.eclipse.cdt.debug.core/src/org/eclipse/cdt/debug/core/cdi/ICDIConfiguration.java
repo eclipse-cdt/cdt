@@ -11,8 +11,7 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Aug 6, 2002
  */
-public interface ICDIConfiguration
-{
+public interface ICDIConfiguration {
 	/**
 	 * Returns whether this session supports termination.
 	 * 

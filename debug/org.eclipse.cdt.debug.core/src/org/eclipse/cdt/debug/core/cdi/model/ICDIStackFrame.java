@@ -17,8 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDIStackFrame extends ICDIObject
-{
+public interface ICDIStackFrame extends ICDIObject {
 	/**
 	 * Returns the location of the instruction pointer in this 
 	 * stack frame.
@@ -44,6 +43,13 @@ public interface ICDIStackFrame extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIArgument[] getArguments() throws CDIException;
+
+	/**
+	 * Returns the thread this stackframe is contained in.
+	 *  
+	 * @return the thread
+	 */
+	ICDIThread getThread();
 
 	/**
 	 * Returns the level of the stack frame.

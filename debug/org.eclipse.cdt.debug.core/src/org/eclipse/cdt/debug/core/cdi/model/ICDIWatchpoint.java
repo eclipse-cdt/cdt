@@ -14,8 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIWatchpoint extends ICDIBreakpoint
-{
+public interface ICDIWatchpoint extends ICDIBreakpoint {
 	final static public int WRITE = 0x1;
 	final static public int READ = 0x2;
 

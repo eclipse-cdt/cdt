@@ -12,6 +12,5 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIStaticVariable extends ICDIVariable
-{
+public interface ICDIStaticVariable extends ICDIVariable {
 }

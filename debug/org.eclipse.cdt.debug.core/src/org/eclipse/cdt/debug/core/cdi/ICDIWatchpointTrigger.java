@@ -14,8 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
  * 
  * @since Aug 27, 2002
  */
-public interface ICDIWatchpointTrigger extends ICDISessionObject
-{
+public interface ICDIWatchpointTrigger extends ICDISessionObject {
 	/**
 	 * Returns the triggered watchpoint.
 	 * 

@@ -14,8 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
  * 
  * @since Aug 27, 2002
  */
-public interface ICDIWatchpointScope extends ICDISessionObject
-{
+public interface ICDIWatchpointScope extends ICDISessionObject {
 	/**
 	 * Returns the out of scope watchpoint.
 	 * 

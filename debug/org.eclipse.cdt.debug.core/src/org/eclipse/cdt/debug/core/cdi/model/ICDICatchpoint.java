@@ -15,8 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDICatchpoint extends ICDIBreakpoint
-{
+public interface ICDICatchpoint extends ICDIBreakpoint {
 	/**
 	 * Returns the catch event for this catchpoint.
 	 * 

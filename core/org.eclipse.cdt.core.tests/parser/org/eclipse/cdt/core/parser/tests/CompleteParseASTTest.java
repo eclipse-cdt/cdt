@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -855,5 +856,41 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable b = (IASTVariable)i.next();
 		assertEquals( b.getName(), "b");
 		assertFalse(i.hasNext());
+	}
+	
+	public void testBug43679_A () throws Exception
+	{
+		try{ // this used to throw a null pointer exception 
+			Iterator i = parse( "struct Sample { int size() const; }; extern const Sample * getSample(); int trouble() {  return getSample()->size(); } ", false ).getDeclarations();
+			IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+			Iterator j = getDeclarations(A);
+			IASTMethod s = (IASTMethod) j.next();
+			assertFalse (j.hasNext());
+			IASTFunction g = (IASTFunction) i.next();
+			IASTFunction t = (IASTFunction) i.next();
+			assertFalse (i.hasNext());
+			Iterator ref = callback.getReferences().iterator();
+			assertAllReferences( 3, createTaskList( new Task(A) , new Task( s ) , new Task (g) ));
+	
+		} catch(Exception e){
+			fail();
+		}
+	}
+	public void testBug43679_B () throws Exception
+	{
+		try{ // this used to throw a class cast exception 
+		Iterator i = parse( "struct Sample{int size() const; }; struct Sample; ", false ).getDeclarations();
+		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator j = getDeclarations(A);
+		IASTMethod s = (IASTMethod) j.next();
+		assertFalse (j.hasNext());
+		IASTAbstractTypeSpecifierDeclaration forwardDecl = (IASTAbstractTypeSpecifierDeclaration)i.next();
+		assertFalse (i.hasNext());
+		Iterator ref = callback.getReferences().iterator();
+		assertFalse (ref.hasNext());
+				
+		} catch(Exception e){
+			fail();
+		}
 	}
 }

@@ -763,58 +763,66 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTTypeId typeId,
         ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
     {
-    	List references = new ArrayList(); 
-    	    	
-        //look up id & add to references
-        IContainerSymbol startingScope = scopeToSymbol( scope );
-                
-        //look up typeId & add to references
-		ISymbol symbol = null;
-
-        if( idExpression != null )
-        	symbol = lookupQualifiedName( startingScope, idExpression, references, false );
-        
-		// "a.m" or "a->m : lookup m in the scope of the declaration of a        
-		if((kind == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION) 
-		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
-		|| (kind == IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS)
-		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)		
-		|| (kind == IASTExpression.Kind.PM_DOTSTAR)
-		|| (kind == IASTExpression.Kind.PM_ARROWSTAR)
-		){
-			TypeInfo lhsInfo = (TypeInfo) ((ASTExpression)lhs).getResultType().iterator().next();
-			ISymbol containingScope = (ISymbol) lhsInfo.getTypeSymbol().getTypeSymbol();
-			if(containingScope != null){
-				symbol = lookupQualifiedName((IContainerSymbol)containingScope, ((ASTExpression)rhs).getIdExpressionTokenDuple(), references, false);
+    	try{
+	    	List references = new ArrayList(); 
+	    	    	
+	        //look up id & add to references
+	        IContainerSymbol startingScope = scopeToSymbol( scope );
+	                
+	        //look up typeId & add to references
+			ISymbol symbol = null;
+	
+	        if( idExpression != null )
+	        	symbol = lookupQualifiedName( startingScope, idExpression, references, false );
+	        
+			// "a.m" or "a->m : lookup m in the scope of the declaration of a        
+			if((kind == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION) 
+			|| (kind == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
+			|| (kind == IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS)
+			|| (kind == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)		
+			|| (kind == IASTExpression.Kind.PM_DOTSTAR)
+			|| (kind == IASTExpression.Kind.PM_ARROWSTAR)
+			){
+				TypeInfo lhsInfo = (TypeInfo) ((ASTExpression)lhs).getResultType().iterator().next();
+				if(lhsInfo != null){
+					ISymbol firstContainingScope = (ISymbol) lhsInfo.getTypeSymbol();
+					if(firstContainingScope != null){
+						ISymbol containingScope = firstContainingScope.getTypeSymbol();
+						if(containingScope != null){
+							symbol = lookupQualifiedName((IContainerSymbol)containingScope, ((ASTExpression)rhs).getIdExpressionTokenDuple(), references, false);
+						}
+					}
+				}
 			}
-		}
-		
-		// go up the scope until you hit a class
-		if (kind == IASTExpression.Kind.PRIMARY_THIS){
-			ASTScope parentScope = (ASTScope)scope;
-			while (!(parentScope instanceof IASTClassSpecifier) )
-			{
-				parentScope = (ASTScope)((ASTScope)parentScope).getOwnerScope();
+			
+			// go up the scope until you hit a class
+			if (kind == IASTExpression.Kind.PRIMARY_THIS){
+				ASTScope parentScope = (ASTScope)scope;
+				while (!(parentScope instanceof IASTClassSpecifier) )
+				{
+					parentScope = (ASTScope)((ASTScope)parentScope).getOwnerScope();
+				}
+				if(parentScope instanceof IASTClassSpecifier)
+					symbol = parentScope.getSymbol();
 			}
-			if(parentScope instanceof IASTClassSpecifier)
-				symbol = parentScope.getSymbol();
-		}
-		
-		if (kind == IASTExpression.Kind.POSTFIX_FUNCTIONCALL){        							
-			ITokenDuple functionId = ((ASTExpression)lhs).getIdExpressionTokenDuple();
-			List parameters = ((ASTExpression)rhs).getResultType();
-			symbol = lookupQualifiedName(startingScope, functionId, TypeInfo.t_function, parameters, references, false);	        	
-		}
-        
-        ASTExpression expression =  new ASTExpression( kind, lhs, rhs, thirdExpression, 
-        							typeId,	idExpression, literal, newDescriptor, references);
-		try{       							
+			
+			if (kind == IASTExpression.Kind.POSTFIX_FUNCTIONCALL){        							
+				ITokenDuple functionId = ((ASTExpression)lhs).getIdExpressionTokenDuple();
+				List parameters = ((ASTExpression)rhs).getResultType();
+				symbol = lookupQualifiedName(startingScope, functionId, TypeInfo.t_function, parameters, references, false);	        	
+			}
+	        
+	        ASTExpression expression =  new ASTExpression( kind, lhs, rhs, thirdExpression, 
+	        							typeId,	idExpression, literal, newDescriptor, references);
+	
 			expression.setResultType (getExpressionResultType(expression, symbol));
+
+			return expression;
+			
 		}catch (ASTSemanticException e){
 			throw e;
 		}
         							
-        return expression;
     }
     /*
      * Conditional Expression conversion
@@ -1228,6 +1236,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					IParameterizedSymbol psymbol = (IParameterizedSymbol) symbol;
 					ISymbol returnTypeSymbol = psymbol.getReturnType();
 					info.setType(returnTypeSymbol.getType());  
+					info.setTypeSymbol(returnTypeSymbol);
 				}
 				result.add(info);
 				return result;
@@ -2272,29 +2281,27 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 	throw new ASTSemanticException();
                 }
 			}
-			return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
  		}
-		else
-		{	
-			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier ||
-			    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
-			)
+ 		
+		if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier ||
+		    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
+		)
+		{
+			ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), endOffset, references, isForewardDecl );
+			try
 			{
-				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), endOffset, references, isForewardDecl );
-				try
-				{
-					attachSymbolExtension( checkSymbol, elab );
-				}
-				catch (ExtensionException e2)
-				{
-					throw new ASTSemanticException();
-				}
-				return elab;
+				attachSymbolExtension( checkSymbol, elab );
 			}
-			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier )
-				return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
-	
+			catch (ExtensionException e2)
+			{
+				throw new ASTSemanticException();
+			}
+			return elab;
 		}
+		
+		if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier )
+			return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
+	
 		
 		throw new ASTSemanticException();
     }

@@ -3,6 +3,11 @@
 	modified resources/search/classDecl.cpp & include.h to include more operators and a constructor
 	& destructor
 
+2003-09-29 Hoda Amer
+	-Added testBug43679_A() & testBug43679_B() to CompleteParseASTTest
+	-Renamed FailedCompleteParseASTExpressionTest to FailedCompleteParseASTTest
+	-Added FailedCompleteParseASTTest::testBug43503()
+
 2003-09-29 Andrew Niefer
 	added testbug43834() to ParserSymbolTableTest
 

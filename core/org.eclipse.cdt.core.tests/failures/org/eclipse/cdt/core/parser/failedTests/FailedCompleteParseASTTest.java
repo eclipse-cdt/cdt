@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
-import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest;
 
@@ -24,19 +23,19 @@ import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest;
  * @author jcamelon
  *
  */
-public class FailedCompleteParseASTExpressionTest extends CompleteParseBaseTest
+public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 {
     /**
      * 
      */
-    public FailedCompleteParseASTExpressionTest()
+    public FailedCompleteParseASTTest()
     {
         super();
     }
     /**
      * @param name
      */
-    public FailedCompleteParseASTExpressionTest(String name)
+    public FailedCompleteParseASTTest(String name)
     {
         super(name);
     }
@@ -115,4 +114,20 @@ public class FailedCompleteParseASTExpressionTest extends CompleteParseBaseTest
 		assertFalse( i.hasNext() );
 		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
 	}
+	
+	public void testBug43503 () throws Exception {
+		Iterator i = parse("class SD_01 { f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} ").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator j = getDeclarations(classA);
+		IASTMethod f = (IASTMethod)j.next();
+		assertFalse(j.hasNext());
+		IASTFunction main = (IASTFunction) i.next();
+		assertFalse(i.hasNext());
+		Iterator k = getDeclarations(main);
+		
+		assertFalse(k.hasNext()); // this should be true, there is one declaration of "a"
+		// "a" is found to be in a multiplication expression, not a declaration
+		// not knowing "a" causes us to not find the reference to "f"
+		
+	}	
 }

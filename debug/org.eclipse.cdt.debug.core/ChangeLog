@@ -1,3 +1,8 @@
+2003-10-28 Mikhail Khodjaiants
+	Search only in the parent folders if the given file path is absolute.
+	Return a list only if the number of resulting files is > 1.
+	* CDirectorySourceLocation.java
+
 2003-10-27 Mikhail Khodjaiants
 	Renamed 'SourceLocationFactory' to 'SourceLookupFactory'.
 	Added the 'createSourceLocator' method to 'SourceLookupFactory'.

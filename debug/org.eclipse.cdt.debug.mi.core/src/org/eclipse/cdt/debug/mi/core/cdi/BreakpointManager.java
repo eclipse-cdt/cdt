@@ -72,6 +72,29 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			new Breakpoint[breakList.size()]);
 	}
 
+	boolean suspendInferior() throws CDIException {
+		boolean shouldRestart = false;
+		CSession s = getCSession();
+		CTarget target = s.getCTarget();
+		// Stop the program and disable events.
+		if (target.isRunning()) {
+			shouldRestart = true;
+			((EventManager)s.getEventManager()).disableEvents();
+			target.suspend();
+		}
+		return shouldRestart;
+	}
+
+	void resumeInferior(boolean shouldRestart) throws CDIException {
+		if (shouldRestart) {
+			CSession s = getCSession();
+			CTarget target = s.getCTarget();
+			target.resume();
+			((EventManager)s.getEventManager()).enableEvents();
+		}
+	}
+
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteAllBreakpoints()
 	 */
@@ -101,6 +124,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("Not a CDT breakpoint");
 			}
 		}
+		boolean state = suspendInferior();
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIBreakDelete breakDelete = factory.createMIBreakDelete(numbers);
@@ -112,6 +136,8 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
+		} finally {
+			resumeInferior(state);
 		}
 		for (int i = 0; i < breakpoints.length; i++) {
 			breakList.remove(breakpoints[i]);
@@ -126,6 +152,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		} else {
 			throw new CDIException("Not a CDT breakpoint");
 		}
+		boolean state = suspendInferior();
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIBreakEnable breakEnable =
@@ -138,6 +165,9 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
+		} finally {
+			// Resume the program and enable events.
+			resumeInferior(state);
 		}
 		((Breakpoint) breakpoint).getMIBreakPoint().setEnabled(true);
 	}
@@ -150,6 +180,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		} else {
 			throw new CDIException("Not a CDT breakpoint");
 		}
+		boolean state = suspendInferior();
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIBreakDisable breakDisable =
@@ -162,6 +193,8 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
+		} finally {
+			resumeInferior(state);
 		}
 		((Breakpoint) breakpoint).getMIBreakPoint().setEnabled(false);
 	}
@@ -178,6 +211,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		// We only suppor expression not ignore count reset.
 		String exprCond = condition.getExpression();
 		if (exprCond != null) {
+			boolean state = suspendInferior();
 			CSession s = getCSession();
 			CommandFactory factory = s.getMISession().getCommandFactory();
 			MIBreakCondition breakCondition =
@@ -190,9 +224,12 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				}
 			} catch (MIException e) {
 				throw new CDIException(e.getMessage());
+			} finally {
+				resumeInferior(state);
 			}
 		} else {
 			int ignoreCount = condition.getIgnoreCount();
+			boolean state = suspendInferior();
 			CSession s = getCSession();
 			CommandFactory factory = s.getMISession().getCommandFactory();
 			MIBreakAfter breakAfter =
@@ -205,6 +242,8 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				}
 			} catch (MIException e) {
 				throw new CDIException(e.getMessage());
+			} finally {
+				resumeInferior(state);
 			}
 		}
 	}
@@ -277,6 +316,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 		}
 
+		boolean state = suspendInferior();
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIBreakInsert breakInsert =
@@ -295,8 +335,9 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
+		} finally {
+			resumeInferior(state);
 		}
-
 		Breakpoint bkpt = new Breakpoint(this, points[0]);
 		breakList.add(bkpt);
 		return bkpt;
@@ -309,6 +350,8 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		ICDICondition condition) throws CDIException {
 		boolean access = (type == ICDIWatchpoint.WRITE);
 		boolean read = (type == ICDIWatchpoint.READ);
+
+		boolean state = suspendInferior();
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIBreakWatch breakWatch =
@@ -326,8 +369,9 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
+		} finally {
+			resumeInferior(state);
 		}
-
 		Watchpoint bkpt = new Watchpoint(this, points[0]);
 		breakList.add(bkpt);
 		return bkpt;

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
@@ -637,6 +638,28 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		assertEquals( c.getName(), "c" );
 		assertEquals( d.getName(), "d" );
 		
+	}
+	
+	public void testBug52948() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "typedef int Int; ");
+		writer.write( "InSP" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "SP" );
+		
+		IASTCompletionNode node = parse( code, index );
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.TYPEDEFS },
+				                                                 node.getCompletionContext() );
+		
+		assertEquals( result.getResultsSize(), 1 );
+		
+		Iterator iter = result.getNodes();
+		IASTTypedefDeclaration typeDef = (IASTTypedefDeclaration) iter.next();
+		
+		assertEquals( typeDef.getName(), "Int" );
+		assertFalse( iter.hasNext() );
 	}
 	
 }

@@ -1,3 +1,6 @@
+2004-03-09 Andrew Niefer
+	Added CompletionParseTest.testBug52948
+
 2004-03-09 Bogdan Gheorghe
 	Workaround to get DependencyTests working on integration builds. 
 	

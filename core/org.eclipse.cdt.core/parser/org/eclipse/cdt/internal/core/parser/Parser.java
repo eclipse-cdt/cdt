@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ITranslationResult;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
@@ -1545,7 +1546,7 @@ public class Parser implements IParser
         }
  
         ITokenDuple d = name();
-        IASTElaboratedTypeSpecifier elaboratedTypeSpec = null;
+		IASTTypeSpecifier elaboratedTypeSpec = null;
 		final boolean isForewardDecl = ( LT(1) == IToken.tSEMI );
 		
         try
@@ -1567,7 +1568,7 @@ public class Parser implements IParser
         sdw.setTypeSpecifier(elaboratedTypeSpec);
         
         if( isForewardDecl )
-        	elaboratedTypeSpec.acceptElement( requestor );
+        	((IASTElaboratedTypeSpecifier)elaboratedTypeSpec).acceptElement( requestor );
     }
     /**
      * Consumes template parameters.  

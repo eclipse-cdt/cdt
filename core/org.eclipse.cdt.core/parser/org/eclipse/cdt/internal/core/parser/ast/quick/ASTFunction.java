@@ -218,4 +218,12 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
     	return null;
     }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#previouslyDeclared()
+     */
+    public boolean previouslyDeclared()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

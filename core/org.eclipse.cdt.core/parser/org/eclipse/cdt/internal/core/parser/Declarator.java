@@ -326,7 +326,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
      */
     public void hasFunctionBody(boolean b)
     {
-    	hasFunctionBody = true;
+    	hasFunctionBody = b;
     }
 
     /**

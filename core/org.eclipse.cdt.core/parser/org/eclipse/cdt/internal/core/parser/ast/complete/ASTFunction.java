@@ -32,7 +32,8 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
  */
 public class ASTFunction extends ASTScope implements IASTFunction
 {
-	private boolean hasFunctionBody = false;
+	private final boolean previouslyDeclared;
+    private boolean hasFunctionBody = false;
     private final IASTTemplate ownerTemplate;
     private final IASTAbstractDeclaration returnType;
     private final IASTExceptionSpecification exception;
@@ -51,7 +52,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      * @param ownerTemplate
      * @param references
      */
-    public ASTFunction(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references)
+    public ASTFunction(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared )
     {
     	super( symbol );
     	this.parameters = parameters;
@@ -63,6 +64,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	this.ownerTemplate = ownerTemplate;
     	this.references = new ASTReferenceStore( references );
     	qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
+    	this.previouslyDeclared =previouslyDeclared;
     }
 
 
@@ -249,5 +251,14 @@ public class ASTFunction extends ASTScope implements IASTFunction
     {
         return ( getSymbol().getContainingSymbol().getASTExtension().getPrimaryDeclaration() ) instanceof IASTCodeScope ? 
 			(IASTCodeScope) getSymbol().getContainingSymbol().getASTExtension().getPrimaryDeclaration()  : null;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#previouslyDeclared()
+     */
+    public boolean previouslyDeclared()
+    {
+        return previouslyDeclared;
     }
 }

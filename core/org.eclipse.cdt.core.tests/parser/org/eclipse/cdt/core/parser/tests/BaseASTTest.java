@@ -92,7 +92,7 @@ public class BaseASTTest extends TestCase
 	public void assertCodeFailsParse(String code) {
 		boolean testPassed = false;
 		try {
-			IASTCompilationUnit tu = parse(code);
+			parse(code);
 			testPassed = true;
 			fail( "We should not reach this point");
 		} catch (Throwable e) {
@@ -106,7 +106,7 @@ public class BaseASTTest extends TestCase
 	public void assertCodeFailsFullParse(String code) {
 		boolean testPassed = false;
 		try {
-			IASTCompilationUnit tu = fullParse(code);
+			fullParse(code);
 			testPassed = true;
 			fail( "We should not reach this point");
 		} catch (Throwable e) {

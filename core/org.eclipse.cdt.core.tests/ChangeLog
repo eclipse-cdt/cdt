@@ -1,3 +1,7 @@
+2003-09-15 John Camelon
+	Added CompleteParseASTTest::testBug42979().
+	Updated CompleteParseASTTest::testAndrewsExample(). 
+
 2003-09-13 Andrew Niefer
 	- added testBadParameterInfo to ParserSymbolTableTest
 

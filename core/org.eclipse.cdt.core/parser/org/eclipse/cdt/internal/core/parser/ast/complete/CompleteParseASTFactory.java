@@ -425,9 +425,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbolASTExtension extension = symbol.getASTExtension();
 		if( extension == null )
 		{
-			if( astSymbol instanceof IASTNamespaceDefinition )
+			if( astSymbol instanceof IASTNamespaceDefinition || 
+				astSymbol instanceof IASTEnumerationSpecifier || 
+				astSymbol instanceof IASTClassSpecifier || 
+				astSymbol instanceof IASTElaboratedTypeSpecifier )
+
 				extension = new NamespaceSymbolExtension( symbol, astSymbol );
-			else if( astSymbol instanceof IASTFunction ) // TODO : other foreward declare cases
+			else if( astSymbol instanceof IASTFunction || astSymbol instanceof IASTMethod )
 			{
 				extension = new ForewardDeclaredSymbolExtension( symbol, astSymbol );
 			}
@@ -1351,7 +1355,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		setParameters( symbol, references, parameters.iterator() );
 		 
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
-		
+		boolean previouslyDeclared = false;
 		if( isFunctionDefinition )
 		{
 			List functionParameters = new LinkedList();
@@ -1371,6 +1375,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( functionDeclaration != null )
 			{
 				functionDeclaration.setTypeSymbol( symbol );
+				previouslyDeclared = true;
 			}
 		}
 		
@@ -1382,7 +1387,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			throw new ASTSemanticException();   
 		}
-		ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references );        
+		ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared );        
 	    try
 	    {
 	        attachSymbolExtension(symbol, function);
@@ -1491,12 +1496,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		List newReferences = null; 
 	    if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
 	    {
-	    	IASTSimpleTypeSpecifier.Type kind = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType();
-	   		if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
+	   		if( ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType() == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
 	    	{
 	    		xrefSymbol = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol(); 
 	    		newReferences = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getReferences();
 	    	}
+	    }
+	    else if( absDecl.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier )
+	    {
+	    	ASTElaboratedTypeSpecifier elab = (ASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier();
+	    	xrefSymbol = elab.getSymbol();
+	    	newReferences = new ArrayList(); 
+	    	newReferences.addAll( elab.getReferences() );
+	    	newReferences.add( createReference( xrefSymbol, elab.getName(), elab.getNameOffset()) );  
 	    }
 	    
 	    String paramName = "";
@@ -1654,8 +1666,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			throw new ASTSemanticException();   
 		}
 
+		boolean previouslyDeclared = false; 
+		//TODO : Hoda - if symbol was previously declared in PST, then set this to true
   
-        ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
+        ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
         try
         {
             attachSymbolExtension( symbol, method );
@@ -1984,10 +1998,31 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 	throw new ASTSemanticException();
                 }
 			}
+			return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
  		}
-
-
-		return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
+		else
+		{	
+			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier ||
+			    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
+			)
+			{
+				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), endOffset, references, isForewardDecl );
+				try
+				{
+					attachSymbolExtension( checkSymbol, elab );
+				}
+				catch (ExtensionException e2)
+				{
+					throw new ASTSemanticException();
+				}
+				return elab;
+			}
+			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier )
+				return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
+	
+		}
+		
+		throw new ASTSemanticException();
     }
 
     protected ParserSymbolTable pst;

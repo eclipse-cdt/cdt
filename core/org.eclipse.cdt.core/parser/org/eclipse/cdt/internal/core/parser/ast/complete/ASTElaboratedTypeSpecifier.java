@@ -26,7 +26,8 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElaboratedTypeSpecifier
 {
-	private final boolean isForwardDeclaration;
+	private List references;
+    private final boolean isForwardDeclaration;
     private final ASTClassKind kind;
 	private final ASTQualifiedNamedElement qualifiedName;
     private NamedOffsets offsets = new NamedOffsets();
@@ -48,7 +49,7 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), checkSymbol.getName() );
         store = new ASTReferenceStore( references );
         isForwardDeclaration = isDecl;
-        
+        this.references = references;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getName()
@@ -138,5 +139,10 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
 	 */
 	public void setNameOffset(int o) {
 		offsets.setNameOffset(o);
+	}
+	
+	public List getReferences() 
+	{
+		return references;
 	}
 }

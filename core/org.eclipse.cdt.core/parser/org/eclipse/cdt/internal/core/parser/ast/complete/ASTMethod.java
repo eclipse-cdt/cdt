@@ -45,7 +45,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      * @param ownerTemplate
      * @param references
      */
-    public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, 
+    public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, 
 	boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain )
     {
         super(
@@ -56,7 +56,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
             startOffset,
             nameOffset,
             ownerTemplate,
-            references);
+            references, previouslyDeclared );
         this.visibility = visibility; 
         this.isConstructor = isConstructor;
         this.isDestructor = isDestructor;

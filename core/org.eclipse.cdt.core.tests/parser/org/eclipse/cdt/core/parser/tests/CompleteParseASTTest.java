@@ -345,6 +345,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator i = parse(code.toString()).getDeclarations();
 		IASTVariable instanceA = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 0 );
 	}
 	
 	public void testNestedClassname() throws Exception
@@ -744,4 +745,32 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTFunction foo = (IASTFunction)i.next(); 
 		assertFalse( i.hasNext() );
 	}
+	
+	
+	public void testBug42979() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "class OperatorOverload{\n" );
+		code.write( "public:\n" );
+		code.write( "  bool operator==( const class OperatorOverload& that )\n" );
+		code.write( "  { return true; }\n" );
+		code.write( "  bool operator!=( const class OperatorOverload& that );\n" );
+		code.write( "}; \n" );
+  
+		code.write( "bool OperatorOverload::operator!=( const class OperatorOverload& that )\n" );
+		code.write( "{ return false; }\n" );
+
+		Iterator i = parse( code.toString() ).getDeclarations();
+		IASTClassSpecifier classOp = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator subDeclarations = getDeclarations(classOp);
+		IASTMethod operatorEqualsDeclaration = (IASTMethod)subDeclarations.next();
+		IASTMethod operatorNotEqualsDeclaration = (IASTMethod)subDeclarations.next();
+		IASTMethod operatorNotEqualDefinition = (IASTMethod)i.next();
+		assertEquals( operatorNotEqualDefinition.getName(), operatorNotEqualsDeclaration.getName() );
+		assertFalse( i.hasNext());
+		assertEquals( callback.getReferences().size(), 4 );
+		for( int j =0; j < 4; ++j )
+			assertFalse( classOp.getNameOffset() == ((IASTReference)callback.getReferences().get(j)).getOffset() ); 
+	}
+	
 }

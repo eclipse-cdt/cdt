@@ -1,3 +1,8 @@
+2002-12-06 Alain Magloire
+
+	* indexer/.../internal/core/index/CTagsentry.java (parse): Remove
+	The parsing was wrong for Exuberant Ctags.
+
 2002-11-27 Alain Magloire
 
 	* utils/.../utils/coff/PE.java (getAttribute):

@@ -1,3 +1,15 @@
+2002-12-06 Alain Magloire
+
+	The hovering uses to the indexer to gather some information, but
+	it is sometime wrong since the information should be base on the context
+	say:
+	  structure->printf
+	Obviously you do not want to know about libc printf() stdio call.
+	This will take sometime to fix.
+
+	* src/org/eclipse/cdt/internal/ui/editor/DefaultCEditortextHover.java (getHoverInfo):
+	Beautify the print.
+
 2002-12-06 David Inglis
 
 	* src/org/eclipse/cdt/internal/ui/editor/DefaultCEditorTextHover.java:

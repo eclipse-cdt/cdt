@@ -28,8 +28,7 @@
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
 	</target>
 
-	<target name="zips" depends="init">
-		<unzip src="${eclipseZip}" dest="${buildDirectory}"/>
+	<target name="zips" depends="init,unzip">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
 		</ant>
@@ -45,6 +44,10 @@
 		</condition>
 	</target>
 
+	<target name="unzip" depends="init" unless="dontUnzip">
+		<unzip src="${eclipseZip}" dest="${buildDirectory}"/>
+	</target>
+	
 	<target name="test" depends="init" unless="hasErrors">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />

@@ -1,4 +1,9 @@
 2003-10-27 Mikhail Khodjaiants
+	Added support of the old launch configurations.
+	* plugin.xml
+	* plugin.properties
+	
+2003-10-27 Mikhail Khodjaiants
 	Changed the initialization of 'SourceLookupBlock'.
 	* SourceLookupBlock.java
 	* SourcePropertyPage.java

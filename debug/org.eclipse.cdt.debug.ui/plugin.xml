@@ -1247,9 +1247,14 @@
    <extension
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
-            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
             name="%DefaultSourceLocator.name"
+            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
             id="org.eclipse.cdt.debug.ui.DefaultSourceLocator">
+      </sourceLocator>
+      <sourceLocator
+            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
+            name="%OldDefaultSourceLocator.name"
+            id="org.eclipse.cdt.launch.DefaultSourceLocator">
       </sourceLocator>
    </extension>
 

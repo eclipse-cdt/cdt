@@ -291,13 +291,15 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#reconcile(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void reconcile(boolean forceProblemDetection, IProgressMonitor monitor)
+	public boolean reconcile(boolean forceProblemDetection, IProgressMonitor monitor)
 		throws CModelException {
 			
+		boolean somethingChanged = false;
+		
 		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
 
 		if (monitor != null){
-			if (monitor.isCanceled()) return;
+			if (monitor.isCanceled()) return somethingChanged;
 			monitor.beginTask("element.reconciling", 10); //$NON-NLS-1$
 		}
 
@@ -312,14 +314,14 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 				// update the element infos with the content of the working copy
 				this.makeConsistent(monitor);
 				deltaBuilder.buildDeltas();
-
+				somethingChanged = true;
 			}
 
 			if (monitor != null) monitor.worked(2);
 	
 			// force problem detection? - if structure was consistent
 			if (forceProblemDetection && wasConsistent){
-				if (monitor != null && monitor.isCanceled()) return;
+				if (monitor != null && monitor.isCanceled()) return somethingChanged;
 
 				//IProblemRequestor problemRequestor = this.getProblemRequestor();
 				//if (problemRequestor != null && problemRequestor.isActive()){
@@ -338,7 +340,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		} finally {
 			if (monitor != null) monitor.done();
 		}
-			
+		return somethingChanged;	
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#restore()

@@ -1,3 +1,9 @@
+2003-10-27 Hoda Amer
+
+	Fixed bug#44507 outline flickers with CDT1.2 RC0
+	Returned a boolean from IWorkingCopy.reconcile() indicating
+	if there was a real change.
+
 2003-10-01 Bogdan Gheorghe
 	
 	Changed DeltaProcessor.updateDependencies to use the CModelManager

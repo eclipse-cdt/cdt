@@ -64,22 +64,23 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	 * @see IReconcilingStrategy#reconcile(dirtyRegion, region)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
-		// FIXME: This seems to generate to much flashing in
-		// the contentouline viewer.
-		//reconcile();
+		reconcile();
 	}
 	
 	private void reconcile() {
+		boolean doUpdate = false;
 		try {
 			ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
 			if (tu != null && tu.isWorkingCopy()) {
 				IWorkingCopy workingCopy = (IWorkingCopy)tu;
 				// reconcile
 				synchronized (workingCopy) {
-					workingCopy.reconcile(true, fProgressMonitor);
+					doUpdate = workingCopy.reconcile(true, fProgressMonitor);
 				}
 			}
-			fOutliner.contentUpdated();
+			if(doUpdate){				
+				fOutliner.contentUpdated();
+			}
 		} catch(CModelException e) {
 				
 		}

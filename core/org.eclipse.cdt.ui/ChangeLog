@@ -1,3 +1,9 @@
+2003-10-27 Hoda Amer
+
+	Fixed bug#44507 outline flickers with CDT1.2 RC0
+	In CReconcilingStrategy, the outliner is asked to redraw only 
+	if there was a real change.
+
 2003-10-08 Bogdan Gheorghe
 
 	- Modified CCompletionProcessor.java to create a file scope

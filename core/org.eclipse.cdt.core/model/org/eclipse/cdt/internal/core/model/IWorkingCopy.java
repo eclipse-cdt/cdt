@@ -118,7 +118,7 @@ public interface IWorkingCopy extends ITranslationUnit{
 	 * The boolean argument allows to force problem detection even if the
 	 * working copy is already consistent.
 	 */
-	void reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
+	boolean reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException;
 	/**
 	 * Restores the contents of this working copy to the current contents of
 	 * this working copy's original element. Has no effect if this element

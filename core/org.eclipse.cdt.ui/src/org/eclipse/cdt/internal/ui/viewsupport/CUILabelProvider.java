@@ -12,22 +12,16 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.internal.ui.browser.cbrowsing.StorageLabelProvider;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.resources.IStorage;
-
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 
 public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	
-	protected static final TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);
 	protected CElementImageProvider fImageLabelProvider;
 	protected StorageLabelProvider fStorageLabelProvider;
 	
@@ -130,9 +124,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * @see ILabelProvider#getImage
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof ITypeInfo)
-			return fTypeInfoLabelProvider.getImage(element);
-
 		Image result= fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
 		if (result == null && (element instanceof IStorage)) {
 			result= fStorageLabelProvider.getImage(element);
@@ -156,9 +147,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	 * @see ILabelProvider#getText
 	 */
 	public String getText(Object element) {
-		if (element instanceof ITypeInfo)
-			return fTypeInfoLabelProvider.getText(element);
-		
 		String result= CElementLabels.getTextLabel(element, evaluateTextFlags(element));
 		if (result.length() == 0 && (element instanceof IStorage)) {
 			result= fStorageLabelProvider.getText(element);

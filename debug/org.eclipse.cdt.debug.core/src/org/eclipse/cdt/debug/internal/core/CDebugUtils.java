@@ -84,6 +84,17 @@ public class CDebugUtils
 						   charFromByte( (byte)(b & 0x0f) ) };
 	}
 
+	public static byte textToByte( char[] text )
+	{
+		byte result = 0;
+		if ( text.length == 2 )
+		{
+			byte[] bytes = { charToByte( text[0] ), charToByte( text[1] ) };
+			result = (byte)((bytes[0] << 4) + bytes[1]);
+		}
+		return result;
+	}
+
 	public static char charFromByte( byte value )
 	{
 		if ( value >= 0x0 && value <= 0x9 )
@@ -93,6 +104,23 @@ public class CDebugUtils
 		return '0';
 	}
 	
+	public static byte charToByte( char ch )
+	{
+		if ( Character.isDigit( ch ) )
+		{
+			return (byte)(ch - '0');
+		}
+		if ( ch >= 'a' && ch <= 'f' )
+		{
+			return (byte)(0xa + ch - 'a');
+		}
+		if ( ch >= 'A' && ch <= 'F' )
+		{
+			return (byte)(0xa + ch - 'A');
+		}
+		return 0;
+	}
+
 	public static char bytesToChar( byte[] bytes )
 	{
 		try

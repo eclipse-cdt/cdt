@@ -1,4 +1,7 @@
 2002-10-25 Mikhail Khodjaiants
+	* CDebugUtils.java: Added utilities to convert textual presentation of memory to bytes.
+
+2002-10-25 Mikhail Khodjaiants
 	* IFormattedMemoryBlock.java: Replaced 'MEMORY_BYTES_PER_ROW_...' constants by 'MEMORY_NUMBER_OF_COLUMNS_...'.
 
 2002-10-25 Mikhail Khodjaiants

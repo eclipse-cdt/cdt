@@ -252,6 +252,10 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 				if (addr2line != null) {
 					try {
 						String filename =  addr2line.getFileName(sym.addr);
+						// Addr2line returns the funny "??" when it can not find the file.
+						if (filename != null && filename.equals("??")) {
+							filename = null;
+						}
 						if (filename != null) {
 							if (cygpath != null) {
 								sym.filename =  new Path(cygpath.getFileName(filename));

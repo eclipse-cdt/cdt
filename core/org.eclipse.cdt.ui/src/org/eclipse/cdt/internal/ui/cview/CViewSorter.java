@@ -27,7 +27,13 @@ import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  *	A sorter to sort the file and the folders in the C viewer in the following order:
@@ -39,12 +45,16 @@ import org.eclipse.jface.viewers.ViewerSorter;
  *  6 the reset
  */
 public class CViewSorter extends ViewerSorter { 
-	
+
+	private static final int CMODEL = 0;
+	private static final int PROJECT = 10;
+	private static final int RESOURCE = 200;
+
 	public int category (Object element) {
 		if (element instanceof ICModel) {
-			return 0;
+			return CMODEL;
 		} else if (element instanceof ICProject) {
-			return 10;
+			return PROJECT;
 		} else if (element instanceof IBinaryContainer) {
 			return 20;
 		} else if (element instanceof IArchiveContainer) {
@@ -122,6 +132,60 @@ public class CViewSorter extends ViewerSorter {
 			}
 			return 180;
 		}
-		return 200;
+		return RESOURCE;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	public int compare(Viewer viewer, Object e1, Object e2) {
+		int cat1 = category(e1);
+		int cat2 = category(e2);
+
+		if (cat1 != cat2)
+			return cat1 - cat2;
+
+		// cat1 == cat2
+
+		if (cat1 == PROJECT) {
+			IWorkbenchAdapter a1= (IWorkbenchAdapter)((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter a2= (IWorkbenchAdapter)((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
+			return getCollator().compare(a1.getLabel(e1), a2.getLabel(e2));
+		}
+
+		// non - c resources are sorted using the label from the viewers label provider
+		if (cat1 == RESOURCE) {
+			return compareWithLabelProvider(viewer, e1, e2);
+		}
+		
+		String name1;
+		String name2;
+
+		if (e1 instanceof ICElement) {
+			name1 = ((ICElement)e1).getElementName();
+		} else {
+			name1 = e1.toString();
+		}
+		if (e2 instanceof ICElement) {
+			name2 = ((ICElement)e2).getElementName();
+		} else {
+			name2 = e2.toString();
+		}
+		return getCollator().compare(name1, name2);		
+	}
+
+	private int compareWithLabelProvider(Viewer viewer, Object e1, Object e2) {
+		if (viewer == null || !(viewer instanceof ContentViewer)) {
+			IBaseLabelProvider prov = ((ContentViewer) viewer).getLabelProvider();
+			if (prov instanceof ILabelProvider) {
+				ILabelProvider lprov= (ILabelProvider) prov;
+				String name1 = lprov.getText(e1);
+				String name2 = lprov.getText(e2);
+				if (name1 != null && name2 != null) {
+					return getCollator().compare(name1, name2);
+				}
+			}
+		}
+		return 0; // can't compare
+	}
+
 }

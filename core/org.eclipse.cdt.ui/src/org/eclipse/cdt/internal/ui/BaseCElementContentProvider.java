@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
@@ -157,7 +158,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			} else {
 				return true;	
 			}
-		} else if (element instanceof ICContainer) {
+		}
+ 
+		if (element instanceof ICContainer) {
 			return true;
 		}
 		
@@ -173,13 +176,23 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * Method declared on ITreeContentProvider.
 	 */
 	public Object getParent(Object element) {
-		//if (!exists(element))
-		//	return null;
+		if (!exists(element)) {
+			return null;
+		}
+		return internalGetParent(element);
+	}
+
+	public Object internalGetParent(Object element) {
 		if (element instanceof ICElement) {
 			return ((ICElement)element).getParent();			
 		}
 		if (element instanceof IResource) {
-			return ((IResource)element).getParent();
+			IResource parent= ((IResource)element).getParent();
+			ICElement cParent= CoreModel.getDefault().create(parent);
+			if (cParent != null && cParent.exists()) {
+				return cParent;
+			}
+			return parent;
 		}
 		return null;
 	}

@@ -6,11 +6,12 @@ package org.eclipse.cdt.internal.ui;
  */
 
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -158,6 +159,9 @@ public class CElementImageProvider {
 		int type = celement.getElementType();
 		switch (type) {
 			case ICElement.C_VCONTAINER:
+				if (celement instanceof IBinaryModule) {
+					return CPluginImages.DESC_OBJS_BINARY;
+				}
 				return CPluginImages.DESC_OBJS_CONTAINER;
 
 			case ICElement.C_BINARY: {

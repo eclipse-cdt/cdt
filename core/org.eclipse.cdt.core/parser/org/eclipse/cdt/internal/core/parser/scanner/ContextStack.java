@@ -9,7 +9,7 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.IScannerContext.ContextKind;
+import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext.ContextKind;
 
 /**
  * @author aniefer

@@ -8,12 +8,13 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.internal.core.parser.problem.*;
 
 /**
  * @author jcamelon

@@ -8,7 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,10 +46,12 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.IMacroDescriptor.MacroType;
-import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.token.Token;
 
 /**
  * @author jcamelon
@@ -2035,7 +2037,7 @@ public class Scanner implements IScanner {
 			{
 				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
 			}
-			catch (ExpressionEvaluationException e) {
+			catch (ASTExpressionEvaluationException e) {
 				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
 			} catch (EndOfFileException e) {
 				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
@@ -2674,11 +2676,11 @@ public class Scanner implements IScanner {
 
 						// is this identifier in the parameterNames
 						// list? 
-						int index = parameterNames.indexOf(t.image);
+						int index = parameterNames.indexOf(t.getImage());
 						if (index == -1 ) {
 							// not found
 							// just add image to buffer
-							buffer.append(t.image );
+							buffer.append(t.getImage() );
 						} else {
 							buffer.append(
 								(String) parameterValues.elementAt(index) );
@@ -2687,7 +2689,7 @@ public class Scanner implements IScanner {
 						//next token should be a parameter which needs to be turned into
 						//a string literal
 						t = (Token) tokens.get( ++i );
-						int index = parameterNames.indexOf(t.image);
+						int index = parameterNames.indexOf(t.getImage());
 						if( index == -1 ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
 							return;
@@ -2736,7 +2738,7 @@ public class Scanner implements IScanner {
 								
 								break;
 							default:			 
-								buffer.append(t.image);				
+								buffer.append(t.getImage());				
 								break;
 						}
 					}

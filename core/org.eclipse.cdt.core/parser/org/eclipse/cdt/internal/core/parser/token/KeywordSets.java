@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.token;
 
 import java.util.HashSet;
 import java.util.Hashtable;

@@ -1,3 +1,6 @@
+2004-01-22 John Camelon
+	Updated Scanner tests for package updates in the core.  
+
 2004-01-19 John Camelon
 	Updated ParserSymbolTableTest to accommodate new constructors for COMPLETE_PARSE ASTNodes (line # info).  
 	Updated CModelElementsTest to enable testing for line numbers. 

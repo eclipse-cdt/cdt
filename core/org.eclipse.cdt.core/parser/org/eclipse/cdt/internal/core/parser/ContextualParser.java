@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
+import org.eclipse.cdt.internal.core.parser.token.*;
 
 /**
  * @author jcamelon

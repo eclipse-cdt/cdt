@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 
@@ -99,7 +99,7 @@ public class ASTExpression implements IASTExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#evaluateExpression()
 	 */
-	public int evaluateExpression() throws ExpressionEvaluationException {
+	public int evaluateExpression() throws ASTExpressionEvaluationException {
 		// primary expressions
 		if( getExpressionKind() == IASTExpression.Kind.PRIMARY_INTEGER_LITERAL )
 		{
@@ -115,7 +115,7 @@ public class ASTExpression implements IASTExpression {
 			}
 			catch( NumberFormatException nfe )
 			{
-				throw new ExpressionEvaluationException();
+				throw new ASTExpressionEvaluationException();
 			}
 		}	
 		if( getExpressionKind() == IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION ) 
@@ -171,7 +171,7 @@ public class ASTExpression implements IASTExpression {
 		if( getExpressionKind() == IASTExpression.Kind.LOGICALOREXPRESSION )
 			return( ( getLHSExpression().evaluateExpression() != 0 ) || ( getRHSExpression().evaluateExpression() != 0 ) ) ? 1 : 0 ;	 
 
-		throw new ExpressionEvaluationException();  
+		throw new ASTExpressionEvaluationException();  
 	}
 
     /* (non-Javadoc)

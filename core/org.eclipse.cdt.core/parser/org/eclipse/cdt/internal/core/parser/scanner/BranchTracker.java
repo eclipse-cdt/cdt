@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.EmptyStackException;
 import java.util.Stack;

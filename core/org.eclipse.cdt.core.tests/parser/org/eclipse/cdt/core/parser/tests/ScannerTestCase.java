@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.Token;
+import org.eclipse.cdt.internal.core.parser.token.Token;
 
 /**
  * @author jcamelon

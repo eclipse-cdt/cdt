@@ -8,13 +8,14 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.IOException;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IOffsetDuple;
+import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 
 /**
  * @author jcamelon

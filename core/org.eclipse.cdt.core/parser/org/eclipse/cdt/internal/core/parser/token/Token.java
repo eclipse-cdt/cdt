@@ -8,9 +8,10 @@
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.token;
 
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.parser.scanner.*;
 
 public class Token implements IToken {
 

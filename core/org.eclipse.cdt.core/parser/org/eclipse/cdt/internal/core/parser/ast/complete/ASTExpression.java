@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
@@ -114,9 +114,9 @@ public class ASTExpression implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#evaluateExpression()
      */
-    public int evaluateExpression() throws ExpressionEvaluationException
+    public int evaluateExpression() throws ASTExpressionEvaluationException
     {
-		throw new ExpressionEvaluationException();
+		throw new ASTExpressionEvaluationException();
     }
     
     public List getReferences()

@@ -8,30 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.core.parser.ast;
 
 /**
  * @author jcamelon
  *
  */
-public class ContextException extends Exception
+public class ASTExpressionEvaluationException extends Exception
 {
-	private final int id;
-
-	/**
-	 * @param i
-	 */
-	public ContextException(int i)
-	{
-		id = i;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getId()
-	{
-		return id;
-	}
-
 }

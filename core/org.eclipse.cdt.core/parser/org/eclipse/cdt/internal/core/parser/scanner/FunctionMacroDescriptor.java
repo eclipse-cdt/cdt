@@ -8,7 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.Iterator;
 import java.util.List;

@@ -60,7 +60,8 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
-import org.eclipse.cdt.internal.core.parser.KeywordSets.Key;
+import org.eclipse.cdt.internal.core.parser.token.*;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for

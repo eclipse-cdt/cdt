@@ -90,6 +90,30 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		private PathEntryManager() {
 	}
 
+	private class PathEntryContainerLock implements IPathEntryContainer {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
+		 */
+		public IPathEntry[] getPathEntries() {
+			return NO_PATHENTRIES;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getDescription()
+		 */
+		public String getDescription() {
+			return new String("Lock container"); //$NON-NLS-1$
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPath()
+		 */
+		public IPath getPath() {
+			return Path.EMPTY;
+		}
+		
+	}
 	/**
 	 * Return the singleton.
 	 */
@@ -449,35 +473,38 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	public IPathEntryContainer getPathEntryContainer(final IPath containerPath, final ICProject project) throws CModelException {
 		// Try the cache.
 		IPathEntryContainer container = containerGet(project, containerPath);
-		if (container == null) {
-			final PathEntryContainerInitializer initializer = getPathEntryContainerInitializer(containerPath.segment(0));
-			if (initializer != null) {
-				containerPut(project, containerPath, container);
-				boolean ok = false;
-				try {
-					// wrap initializer call with Safe runnable in case
-					// initializer would be
-					// causing some grief
-					Platform.run(new ISafeRunnable() {
-
-						public void handleException(Throwable exception) {
-							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
-									"Exception occurred in container initializer: "+initializer, exception); //$NON-NLS-1$
-							CCorePlugin.log(status);
+		if (container instanceof PathEntryContainerLock) {
+			synchronized(container) {
+				IPathEntryContainer newContainer = containerGet(project, containerPath);
+				if (newContainer == container) {
+					// remove the lock.
+					final PathEntryContainerInitializer initializer = getPathEntryContainerInitializer(containerPath.segment(0));
+					if (initializer != null) {
+						final boolean[] ok = {true};
+						// wrap initializer call with Safe runnable in case
+						// initializer would be
+						// causing some grief
+						Platform.run(new ISafeRunnable() {
+							
+							public void handleException(Throwable exception) {
+								IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
+										"Exception occurred in container initializer: "+initializer, exception); //$NON-NLS-1$
+								CCorePlugin.log(status);
+								ok[0] = false;
+							}
+								
+							public void run() throws Exception {
+								initializer.initialize(containerPath, project);
+							}
+						});
+						// retrieve value (if initialization was successful)
+						container = containerGet(project, containerPath);
+						if (!ok[0]) {
+							containerPut(project, containerPath, null); // flush
 						}
-
-						public void run() throws Exception {
-							initializer.initialize(containerPath, project);
-						}
-					});
-					// retrieve value (if initialization was successful)
-					container = containerGet(project, containerPath);
-					ok = true;
-				} finally {
-					if (!ok) {
-						containerPut(project, containerPath, null); // flush
-						// cache
 					}
+				} else { 
+					container = newContainer;
 				}
 			}
 		}
@@ -531,6 +558,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
 			Containers.put(cproject, projectContainers);
+			// Initialize the first time with a lock
+			projectContainers.put(containerPath, new PathEntryContainerLock());
 		}
 		IPathEntryContainer container = (IPathEntryContainer) projectContainers.get(containerPath);
 		return container;

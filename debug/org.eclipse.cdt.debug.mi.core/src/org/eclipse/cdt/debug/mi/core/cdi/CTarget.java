@@ -17,7 +17,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -33,6 +32,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadListIds;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
+import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
@@ -43,10 +43,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 public class CTarget  implements ICDITarget {
 
 	CSession session;
-	//CThread dummyThread = new CThread(this, 0); // Dummy for non multi-thread programs.
+	CThread[] noThreads = new CThread[0];
+	CThread[] currentThreads;
+	int currentThreadId;
 	
 	public CTarget(CSession s) {
 		session = s;
+		currentThreads = noThreads;
 	}
 	
 	CSession getCSession() {
@@ -54,75 +57,17 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#disconnect()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSession()
 	 */
-	public void disconnect() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MITargetDetach detach = factory.createMITargetDetach();
-		try {
-			mi.postCommand(detach);
-			MIInfo info = detach.getMIInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-		} catch (MIException e) {
-			throw new CDIException(e.toString());
-		}
+	public ICDISession getSession() {
+		return session;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#finish()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
 	 */
-	public void finish() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIExecFinish finish = factory.createMIExecFinish();
-		try {
-			mi.postCommand(finish);
-			MIInfo info = finish.getMIInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-		} catch (MIException e) {
-			throw new CDIException(e.toString());
-		}
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCMemoryBlock(long, long)
-	 */
-	public ICDIMemoryBlock getCMemoryBlock(long startAddress, long length)
-		throws CDIException {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getProcess()
-	 */
-	public Process getProcess() {
-		return session.getMISession().getMIInferior();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariables()
-	 */
-	public ICDIGlobalVariable[] getGlobalVariables() throws CDIException {
-		return new ICDIGlobalVariable[0];
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterGroups()
-	 */
-	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
-		return new ICDIRegisterGroup[0];
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSharedLibraries()
-	 */
-	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
-		return new ICDISharedLibrary[0];
+	public ICDITarget getTarget() {
+		return this;
 	}
 
 	/**
@@ -134,64 +79,104 @@ public class CTarget  implements ICDITarget {
 		if (id == 0) {
 			return;
 		}
+		// already the current thread?
+		if (currentThreadId != id) {
+			MISession mi = session.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIThreadSelect select = factory.createMIThreadSelect(id);
+			try {
+				mi.postCommand(select);
+				MIThreadSelectInfo info = select.getMIThreadSelectInfo();
+				currentThreadId = info.getNewThreadId();
+			} catch (MIException e) {
+				throw new CDIException(e.toString());
+			}
+		}
+
+		// We should be allright now.
+		if (currentThreadId != id) {
+			// thread is gone.  Generate a Thread destroyed.
+			MISession mi = session.getMISession();
+			mi.fireEvent(new MIThreadExitEvent(id));
+			throw new CDIException("Thread destroyed");
+		}
+	}
+
+	/**
+	 * Called when stopping because of breakpoints etc ..
+	 */
+	void updateState(int newThreadId) {
+		CThread[] oldThreads = currentThreads;
+		// get the new Threads.
+		CThread[] newThreads = getCThreads();
+
+		// Fire destroyedEvent for old threads.
+		if (oldThreads != null && oldThreads.length > 0) {
+			List dList = new ArrayList(oldThreads.length);
+			for (int i = 0; i < oldThreads.length; i++) {
+				boolean found = false;
+				for (int j = 0; j < newThreads.length; j++) {
+					if (newThreads[j].getId() == ((CThread)oldThreads[i]).getId()) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					dList.add(new Integer(oldThreads[i].getId()));
+				}
+			}
+			if (!dList.isEmpty()) {
+				// FIXME: Fire destroyed events.
+			}
+		}
+		currentThreads = newThreads;
+		currentThreadId = newThreadId;
+	}
+
+	/**
+	 * Do the real work of call -thread-list-ids.
+	 */
+	public CThread[] getCThreads() { //throws CDIException {
+		CThread[] cthreads = noThreads;
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIThreadSelect select = factory.createMIThreadSelect(id);
+		MIThreadListIds tids = factory.createMIThreadListIds();
 		try {
-			mi.postCommand(select);
-			MIThreadSelectInfo info = select.getMIThreadSelectInfo();
-			int newId = info.getNewThreadId();
+			// HACK/FIXME: gdb/mi thread-list-ids does not
+			// show any newly create thread, we workaround by
+			// issuing "info threads" before to force it. 
+			/*
+			if (oldThreads != null) {
+				mi.postCommand(new CLICommand("info threads"));
+			}
+			*/
+			mi.postCommand(tids);
+			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
+			int[] ids = info.getThreadIds();
+			if (ids != null && ids.length > 0) {
+				cthreads = new CThread[ids.length];
+				// Ok that means it is a multiThreaded.
+				for (int i = 0; i < ids.length; i++) {
+					cthreads[i] = new CThread(this, ids[i]);
+				}
+			} else {
+				// Provide a dummy.
+				cthreads = new CThread[]{new CThread(this, 0)};
+			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			//throw new CDIException(e.toString());
 		}
+		return cthreads;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThreads()
 	 */
 	public ICDIThread[] getThreads() throws CDIException {
-		ICDIThread[] cdiThreads;
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIThreadListIds tids = factory.createMIThreadListIds();
-		try {
-			mi.postCommand(tids);
-			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
-			int[] ids = info.getThreadIds();
-			if (ids != null && ids.length > 0) {
-				cdiThreads = new ICDIThread[ids.length];
-				// Ok that means it is a multiThreaded, remove the dummy Thread
-				for (int i = 0; i < ids.length; i++) {
-					cdiThreads[i] = new CThread(this, ids[i]);
-				}
-			} else {
-				cdiThreads = new ICDIThread[]{new CThread(this, 0)};
-			}
-		} catch (MIException e) {
-			throw new CDIException(e.toString());
+		if (currentThreads == null) {
+			currentThreads = getCThreads();
 		}
-		return cdiThreads;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isDisconnected()
-	 */
-	public boolean isDisconnected() {
-		return false;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isSuspended()
-	 */
-	public boolean isSuspended() {
-		return session.getMISession().getMIInferior().isSuspended();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isTerminated()
-	 */
-	public boolean isTerminated() {
-		return session.getMISession().getMIInferior().isTerminated();
+		return currentThreads;
 	}
 
 	/**
@@ -348,19 +333,40 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#terminate()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#disconnect()
 	 */
-	public void terminate() throws CDIException {
-		session.getMISession().getMIInferior().destroy();
+	public void disconnect() throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MITargetDetach detach = factory.createMITargetDetach();
+		try {
+			mi.postCommand(detach);
+			MIInfo info = detach.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#finish()
 	 */
-	public ICDITarget getTarget() {
-		return this;
+	public void finish() throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIExecFinish finish = factory.createMIExecFinish();
+		try {
+			mi.postCommand(finish);
+			MIInfo info = finish.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
 	}
-
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToString(String)
@@ -385,18 +391,75 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToValue(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#terminate()
 	 */
-	public ICDIValue evaluateExpressionToValue(String expressionText)
+	public void terminate() throws CDIException {
+		session.getMISession().getMIInferior().destroy();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return session.getMISession().getMIInferior().isTerminated();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isDisconnected()
+	 */
+	public boolean isDisconnected() {
+		return !session.getMISession().getMIInferior().isConnected();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isSuspended()
+	 */
+	public boolean isSuspended() {
+		return session.getMISession().getMIInferior().isSuspended();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariables()
+	 */
+	public ICDIGlobalVariable[] getGlobalVariables() throws CDIException {
+		return new ICDIGlobalVariable[0];
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterGroups()
+	 */
+	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
+		return new ICDIRegisterGroup[0];
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSharedLibraries()
+	 */
+	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
+		return new ICDISharedLibrary[0];
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCMemoryBlock(long, long)
+	 */
+	public ICDIMemoryBlock getCMemoryBlock(long startAddress, long length)
 		throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSession()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getProcess()
 	 */
-	public ICDISession getSession() {
-		return session;
+	public Process getProcess() {
+		return session.getMISession().getMIInferior();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToValue(String)
+	 */
+	public ICDIValue evaluateExpressionToValue(String expressionText)
+		throws CDIException {
+		return null;
 	}
 
 }

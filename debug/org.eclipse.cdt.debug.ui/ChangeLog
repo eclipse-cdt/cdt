@@ -1,4 +1,9 @@
 2003-02-07 Mikhail Khodjaiants
+	The 'Resume Without Signal' action added to the 'Run' menu of the workbench window.
+	* SignalZeroWorkbenchActionDelegate.java: new
+	* plugin.xml
+
+2003-02-07 Mikhail Khodjaiants
 	Rename 'SignalZeroActionDelegate' to 'SignalZeroObjectActionDelegate'.
 	* SignalZeroObjectActionDelegate.java
 	* plugin.xml

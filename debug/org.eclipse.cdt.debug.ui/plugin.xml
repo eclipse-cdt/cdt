@@ -243,6 +243,24 @@
                </pluginState>
             </enablement>
          </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
+               hoverIcon="icons/full/clcl16/signal0_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
+               disabledIcon="icons/full/dlcl16/signal0_co.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/signal0_co.gif"
+               helpContextId="resume_without_signal_action_context"
+               label="%SignalZeroAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup"
+               tooltip="Resume Ignoring Signal">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
       </actionSet>
    </extension>
    <extension
@@ -1041,6 +1059,9 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate">
          </action>
       </debugActionGroup>
    </extension>

@@ -286,7 +286,7 @@
 <context id ="new_proj_wiz_m_target">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_new_proj_wiz_m_target.htm"
-   	label="Select a Target"/>
+          label="Select a Project Type"/>
 </context>
 <context id ="new_proj_wiz_m_proj">
    <description>Click below to see help.</description>

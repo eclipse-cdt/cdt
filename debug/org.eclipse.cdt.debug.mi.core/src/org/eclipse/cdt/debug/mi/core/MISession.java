@@ -227,14 +227,14 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		// Destroy any MI Inferior(Process)
 		inferior.destroy();
 
+		getEventQueue().addItem(new MIExitEvent());
+		
 		// send the exit(-gdb-exit).
 		try {
 			MIGDBExit exit = factory.createMIGDBExit();
 			postCommand(exit);
 		} catch (MIException e) {
 		}
-
-		getEventQueue().addItem(new MIExitEvent());
 
 		// Close the input GDB prompt
 		try {

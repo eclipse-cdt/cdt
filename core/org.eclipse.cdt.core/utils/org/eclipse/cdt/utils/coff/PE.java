@@ -403,11 +403,11 @@ public class PE {
 
 		/* PE characteristics, FileHeader.f_flags.  */
 		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_DLL) != 0) {
-			attrib.type = attrib.PE_TYPE_SHLIB;
+			attrib.type = Attribute.PE_TYPE_SHLIB;
 		} else if ((filhdr.f_flags & PEConstants.IMAGE_FILE_EXECUTABLE_IMAGE) != 0) {
-			attrib.type = attrib.PE_TYPE_EXE;
+			attrib.type = Attribute.PE_TYPE_EXE;
 		} else {
-			attrib.type = attrib.PE_TYPE_OBJ;
+			attrib.type = Attribute.PE_TYPE_OBJ;
 		}
 
 		// For PE always assume little endian unless otherwise.

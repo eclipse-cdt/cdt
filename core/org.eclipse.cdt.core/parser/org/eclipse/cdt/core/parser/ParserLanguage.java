@@ -25,4 +25,11 @@ public class ParserLanguage extends Enum {
 	{
 		super( value ); 
 	}
+
+	/**
+	 * @return
+	 */
+	public boolean isCPP() {
+		return ( this == CPP );
+	}
 }

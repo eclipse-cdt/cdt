@@ -8,17 +8,29 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.internal.core.parser;
 
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 
 /**
  * @author jcamelon
@@ -29,7 +41,7 @@ public class ContextualParser extends Parser implements IParser {
 	protected IASTScope scope;
 	protected IASTNode context;
 	protected IToken finalToken;
-	private Set keywordSet = new HashSet();
+	private Set keywordSet;
 
 	/**
 	 * @param scanner
@@ -49,7 +61,26 @@ public class ContextualParser extends Parser implements IParser {
 	public IASTCompletionNode parse(int offset) throws ParserNotImplementedException {
 		scanner.setOffsetBoundary(offset);
 		translationUnit();
-		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), getKeywordSet() );
+		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ) );
+	}
+
+	/**
+	 * @param set
+	 * @param string
+	 * @return
+	 */
+	private Set reconcileKeywords(Set keywords, String prefix) {
+		Set resultSet = new TreeSet(); 
+		Iterator i = keywords.iterator(); 
+		while( i.hasNext() )
+		{
+			String value = (String) i.next();
+			if( value.startsWith( prefix ) ) 
+				resultSet.add( value );
+			else if( value.compareTo( prefix ) > 0 ) 
+				break;
+		}
+		return resultSet;
 	}
 
 	/**
@@ -115,6 +146,7 @@ public class ContextualParser extends Parser implements IParser {
 		this.kind = kind;
 	}    
 	
+	
 	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException
 	{
 		if ( isInlineFunction ) 
@@ -135,5 +167,12 @@ public class ContextualParser extends Parser implements IParser {
 		finalToken = exception.getFinalToken(); 
 		throw exception;
 	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionKeywords(java.lang.String[])
+	 */
+	protected void setCompletionKeywords(Set keywords) {
+		this.keywordSet = keywords;
+	}
 
 }

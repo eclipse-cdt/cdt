@@ -8,6 +8,7 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -57,19 +58,24 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 
 	}
 
-	public void testBaseCase() throws Exception
+	public void testBaseCase_SimpleDeclaration() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 
 		writer.write( "class ABC " ); 
 		writer.write( "{int x;}; " ); 
 		writer.write( "AB\n\n" );
 
-		IASTCompletionNode node = parse( writer.toString(), 21); 
+		IASTCompletionNode node = null;
+		Iterator keywords = null;
+		
+		node = parse( writer.toString(), 21); 
 		assertNotNull( node );
 		assertNotNull( node.getCompletionPrefix() );
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
 		assertEquals( node.getCompletionPrefix(), "A");
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.VARIABLE_TYPE );
+		keywords = node.getKeywords();
+		assertFalse( keywords.hasNext() );
 
 		node = parse( writer.toString(), 12); 
 		assertNotNull( node );
@@ -77,7 +83,11 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertTrue( node.getCompletionScope() instanceof IASTClassSpecifier );
 		assertEquals( node.getCompletionPrefix(), "i");
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.FIELD_TYPE );
-		
+		keywords = node.getKeywords(); 
+		assertTrue( keywords.hasNext() );
+		assertEquals( (String) keywords.next(), "inline");
+		assertEquals( (String) keywords.next(), "int");
+		assertFalse( keywords.hasNext() );
 		
 		node = parse( writer.toString(), 22); 
 		assertNotNull( node );
@@ -85,6 +95,8 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
 		assertEquals( node.getCompletionPrefix(), "AB");
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.VARIABLE_TYPE );
+		keywords = node.getKeywords(); 
+		assertFalse( keywords.hasNext() );
 	
 		node = parse( writer.toString(), 6); 
 		assertNotNull( node );
@@ -92,6 +104,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
 		assertEquals( node.getCompletionPrefix(), "");
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME );
-		
+		keywords = node.getKeywords(); 
+		assertFalse( keywords.hasNext() );
 	}
 }

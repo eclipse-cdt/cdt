@@ -105,7 +105,7 @@ public interface IASTCompletionNode {
 	public String			getCompletionPrefix(); 
 	
 	/**
-	 * @return
+	 * @return		iterator of string keywords
 	 */
 	public Iterator 		getKeywords();
 	

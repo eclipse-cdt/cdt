@@ -10,9 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -931,6 +931,7 @@ public abstract class Parser implements IParser
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, firstToken.getOffset(), ownerTemplate);
 
+        setCompletionKeywords( KeywordSets.getKeywords( KeywordSets.Key.DECL_SPECIFIER_SEQUENCE, language ) );
         declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, sdw );
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
             try
@@ -2685,6 +2686,7 @@ public abstract class Parser implements IParser
         ITokenDuple duple = null;
         
         setCompletionKind( CompletionKind.USER_SPECIFIED_NAME );
+        setCompletionKeywords( KeywordSets.getKeywords( KeywordSets.Key.EMPTY, language ) );
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
             duple = className();
@@ -5278,7 +5280,7 @@ public abstract class Parser implements IParser
     {
     }
     
-    protected void setCompletionKeywords( Collection keywords )
+    protected void setCompletionKeywords( Set keywords )
     {
     }
     

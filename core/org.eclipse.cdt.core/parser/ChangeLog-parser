@@ -1,3 +1,7 @@
+2003-12-12 John Camelon
+	Added preliminary keyword support into IASTCompletionNode::getKeywords().  
+	Refactored parser to put keyword string literals in one utility class.  
+
 2003-12-11 John Camelon
 	Added OffsetLimitReachedException and restructured Parser exceptions.  
 	Continued support for code assist/selection search parser.  

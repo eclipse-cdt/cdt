@@ -1318,12 +1318,22 @@ public class CPPSemantics {
 	    if( obj instanceof ICPPInternalBinding ){
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
-	        
-	        if( n != null && n.length > 0 )
-	            nd = (ASTNode) n[0];
-	        else if( cpp.getDefinition() != null )
-	            nd = (ASTNode) cpp.getDefinition();
-	        else 
+	        int o, offset = -1;
+	        if( n != null && n.length > 0 ) {
+	        	nd = (ASTNode) n[0];
+	        	offset = ((ASTNode) n[0]).getOffset();
+	        	for (int i = 1; i < n.length && n[i] != null; i++) {
+					o = ((ASTNode) n[i]).getOffset();
+					if( o < offset ) 
+						nd = (ASTNode) n[i];
+				}
+	        } 
+	        if( cpp.getDefinition() != null ){
+	        	if( nd == null || ((ASTNode)cpp.getDefinition()).getOffset() < nd.getOffset() )
+	        		nd = (ASTNode) cpp.getDefinition();
+	        	
+	        }
+	        if( nd == null ) 
 	            return true;
 	    } else if( obj instanceof ASTNode ){
 	        nd = (ASTNode) obj;

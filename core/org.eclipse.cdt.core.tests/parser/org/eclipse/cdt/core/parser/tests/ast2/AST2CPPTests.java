@@ -3120,5 +3120,23 @@ public class AST2CPPTests extends AST2BaseTest {
     	
     	assertTrue( col.getName(4).resolveBinding() instanceof ICPPConstructor );
     }
+    
+    public void testBug89851() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "class B * b;            \n"); //$NON-NLS-1$
+    	buffer.append( "class A {               \n"); //$NON-NLS-1$
+    	buffer.append( "   A * a;               \n"); //$NON-NLS-1$
+    	buffer.append( "};                      \n"); //$NON-NLS-1$
+    	buffer.append( "class A;                \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	assertTrue( col.getName(0).resolveBinding() instanceof ICPPClassType );
+    	assertTrue( col.getName(1).resolveBinding() instanceof ICPPVariable );
+    	assertTrue( col.getName(2).resolveBinding() instanceof ICPPClassType );
+    	assertTrue( col.getName(3).resolveBinding() instanceof ICPPClassType );
+    }
 }
 

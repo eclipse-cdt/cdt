@@ -1,3 +1,9 @@
+2003-06-17 Alain Magloire
+
+	PR 38934
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java (update):
+	We have to call "-var-update" to update the register values in gdb.
+
 2003-06-05 Mikhail Khodjaiants
 	gdb/mi support of infinite values of the floating point types.
 	* DoubleValue.java

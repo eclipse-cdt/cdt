@@ -24,16 +24,6 @@ public interface ICBreakpointManager extends ICSessionObject
 	ICBreakpoint[] getBreakpoints() throws CDIException;
 
 	/**
-	 * Returns the breakpoint associated with the given identifier or 
-	 * <code>null</code> if no such breakpoint exists.
-	 * 
-	 * @param breakpointId - the breakpoint identifier
-	 * @return the breakpoint associated with the given identifier
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	ICBreakpoint getBreakpoint( String breakpointId ) throws CDIException;
-
-	/**
 	 * Deletes the given breakpoint.
 	 * 
 	 * @param breakpoint - a breakpoint to be deleted

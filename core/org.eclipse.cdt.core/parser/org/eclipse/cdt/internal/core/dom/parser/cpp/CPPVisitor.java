@@ -1517,10 +1517,14 @@ public class CPPVisitor {
 	    try {
             ICPPScope scope = (ICPPScope) binding.getScope();
             while( scope != null ){
+            	IASTName n = scope.getScopeName();
+            	if( n == null )
+            		break;
                 if( scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope ) 
                     break;
+                if( scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0 )
+                    break;
             
-                IASTName n = scope.getScopeName();
                 ns = (IASTName[]) ArrayUtil.append( IASTName.class, ns, n );
                 scope = (ICPPScope) scope.getParent();
             }
@@ -1540,11 +1544,14 @@ public class CPPVisitor {
 	    try {
             ICPPScope scope = (ICPPScope) binding.getScope();
             while( scope != null ){
+            	IASTName n = scope.getScopeName();
+            	if( n == null )
+            		break;
                 if( scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope ) 
                     break;
                 if( scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0 )
                     break;
-                IASTName n = scope.getScopeName();
+                
                 ns = (IASTName[]) ArrayUtil.append( IASTName.class, ns, n );
                 scope = (ICPPScope) scope.getParent();
             }

@@ -4,8 +4,12 @@
  */
 package org.eclipse.cdt.debug.mi.core;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -131,7 +135,8 @@ public class MIPlugin extends Plugin {
 			}
 		}
 
-		Process pgdb = ProcessFactory.getFactory().exec(args);
+		Process pgdb = getGDBProcess(args, program);
+
 		MISession session;
 		try {
 			session = createMISession(pgdb, pty, MISession.PROGRAM);
@@ -181,7 +186,7 @@ public class MIPlugin extends Plugin {
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()};
 		}
-		Process pgdb = ProcessFactory.getFactory().exec(args);
+		Process pgdb = getGDBProcess(args, program);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.CORE);
@@ -214,7 +219,7 @@ public class MIPlugin extends Plugin {
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()};
 		}
-		Process pgdb = ProcessFactory.getFactory().exec(args);
+		Process pgdb = getGDBProcess(args, program);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.ATTACH);
@@ -281,6 +286,79 @@ public class MIPlugin extends Plugin {
 				System.err.println(message);
 			}
 		}
+	}
+
+	/**
+	 * Retrieve the session timeout.
+	 * 
+	 * Allow at least one second per megabyte as a minimum on the timeout
+	 * (note one second is an arbitrary choice based on swapping performance).
+	 * This is required for loading the symbols from very large programs.
+	 */
+	private int getAdjustedTimeout(File program) {
+		Preferences prefs = plugin.getPluginPreferences();
+		int timeout = prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT); //milliseconds
+		if(program != null && program.exists()) {
+			long programSize = program.length();
+			int minimumTimeout = (int)(programSize / 1000L);
+			if(timeout < minimumTimeout) {
+				//debugLog("Adjusting timeout from " + timeout + "ms to " + minimumTimeout + "ms");
+				timeout = minimumTimeout;			
+			}
+		}
+		return timeout;		
+	}
+
+	/**
+	 * Do some basic synchronisation, gdb make take some time to load
+	 * for whatever reasons.
+	 * @param args
+	 * @param program
+	 * @return Process
+	 * @throws IOException
+	 */
+	protected Process getGDBProcess(String[] args, File program) throws IOException {
+		final Process pgdb = ProcessFactory.getFactory().exec(args);
+		Thread syncStartup = new Thread("GDB Start") {
+			public void run() {
+				try {
+					String line;
+					InputStream stream = pgdb.getInputStream();
+					Reader r = new InputStreamReader(stream);
+					BufferedReader reader = new BufferedReader(r);
+					while ((line = reader.readLine()) != null) {
+						line = line.trim();
+						//System.out.println("GDB " + line);
+						if (line.startsWith("(gdb)")) {
+							break;
+						}
+					}
+				} catch (Exception e) {
+					// Do nothing
+				}
+				synchronized (pgdb) {
+					pgdb.notifyAll();
+				}
+			}
+		};
+		syncStartup.start();
+		
+		synchronized (pgdb) {
+			int timeout = getAdjustedTimeout(program);
+			while (syncStartup.isAlive()) {
+				try {
+					pgdb.wait(timeout);
+					break;
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		try {
+			syncStartup.interrupt();
+			syncStartup.join(1000);
+		} catch (InterruptedException e) {
+		}
+		return pgdb;
 	}
 
 	/* (non-Javadoc)

@@ -21,8 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
@@ -100,8 +102,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    }
 
    protected IToken currToken;
-   protected IToken lastToken;
-   protected IToken prevLastToken;
 
    /**
     * Look Ahead in the token list to see what is coming.
@@ -144,12 +144,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       return LA(i).getType();
    }
 
-   protected int calculateEndOffset( IASTNode n )
-   {
+   protected int calculateEndOffset(IASTNode n) {
       ASTNode node = (ASTNode) n;
       return node.getOffset() + node.getLength();
    }
-   
+
    /**
     * Consume the next token available, regardless of the type.
     * 
@@ -161,10 +160,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
       if (currToken == null)
          currToken = fetchToken();
-      if (currToken != null) {
-         prevLastToken = lastToken;
+      IToken lastToken = null;
+      if (currToken != null)
          lastToken = currToken;
-      }
       currToken = currToken.getNext();
       return lastToken;
    }
@@ -242,7 +240,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     */
    protected void backup(IToken mark) {
       currToken = mark;
-      lastToken = prevLastToken;
    }
 
    /**
@@ -367,15 +364,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
    private static final int DEFAULT_COMPOUNDSTATEMENT_LIST_SIZE = 8;
 
-   /**
-    *  
-    */
-   protected void cleanupLastToken() {
-      if (lastToken != null)
-         lastToken.setNext(null);
-      simpleDeclarationMark = null;
-   }
-
    public IASTTranslationUnit parse() {
       long startTime = System.currentTimeMillis();
       translationUnit();
@@ -396,14 +384,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     */
    protected abstract void nullifyTranslationUnit();
 
-   protected void skipOverCompoundStatement() throws BacktrackException,
+   protected IToken skipOverCompoundStatement() throws BacktrackException,
          EndOfFileException {
       // speed up the parser by skiping the body
       // simply look for matching brace and return
       consume(IToken.tLBRACE);
+      IToken result = null;
       int depth = 1;
       while (depth > 0) {
-         switch (consume().getType()) {
+         result = consume();
+         switch (result.getType()) {
             case IToken.tRBRACE:
                --depth;
                break;
@@ -412,6 +402,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                break;
          }
       }
+      return result;
    }
 
    /**
@@ -582,7 +573,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          secondExpression.setParent(expressionList);
          secondExpression
                .setPropertyInParent(IASTExpressionList.NESTED_EXPRESSION);
-         lastOffset = lastToken.getEndOffset();
+         lastOffset = calculateEndOffset(secondExpression);
       }
       ((ASTNode) expressionList).setLength(lastOffset - startingOffset);
       return expressionList;
@@ -622,7 +613,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          IASTExpression lhs) throws EndOfFileException, BacktrackException {
       consume();
       IASTExpression rhs = assignmentExpression();
-      return buildBinaryExpression(kind, lhs, rhs, lastToken.getEndOffset());
+      return buildBinaryExpression(kind, lhs, rhs, calculateEndOffset(rhs));
    }
 
    /**
@@ -646,7 +637,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          IASTExpression secondExpression = logicalAndExpression();
          firstExpression = buildBinaryExpression(
                IASTBinaryExpression.op_logicalOr, firstExpression,
-               secondExpression, lastToken.getEndOffset());
+               secondExpression, calculateEndOffset(secondExpression));
       }
       return firstExpression;
    }
@@ -663,7 +654,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          IASTExpression secondExpression = inclusiveOrExpression();
          firstExpression = buildBinaryExpression(
                IASTBinaryExpression.op_logicalAnd, firstExpression,
-               secondExpression, lastToken.getEndOffset());
+               secondExpression, calculateEndOffset(secondExpression));
       }
       return firstExpression;
    }
@@ -680,7 +671,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          IASTExpression secondExpression = exclusiveOrExpression();
          firstExpression = buildBinaryExpression(
                IASTBinaryExpression.op_binaryOr, firstExpression,
-               secondExpression, lastToken.getEndOffset());
+               secondExpression, calculateEndOffset(secondExpression));
       }
       return firstExpression;
    }
@@ -697,7 +688,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          IASTExpression secondExpression = andExpression();
          firstExpression = buildBinaryExpression(
                IASTBinaryExpression.op_binaryXor, firstExpression,
-               secondExpression, lastToken.getEndOffset());
+               secondExpression, calculateEndOffset(secondExpression));
       }
       return firstExpression;
    }
@@ -715,7 +706,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          IASTExpression secondExpression = equalityExpression();
          firstExpression = buildBinaryExpression(
                IASTBinaryExpression.op_binaryAnd, firstExpression,
-               secondExpression, lastToken.getEndOffset());
+               secondExpression, calculateEndOffset(secondExpression));
       }
       return firstExpression;
    }
@@ -736,8 +727,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                      : IASTBinaryExpression.op_notequals);
                IASTExpression secondExpression = relationalExpression();
                firstExpression = buildBinaryExpression(operator,
-                     firstExpression, secondExpression, lastToken
-                           .getEndOffset());
+                     firstExpression, secondExpression,
+                     calculateEndOffset(secondExpression));
                break;
             default:
                return firstExpression;
@@ -782,8 +773,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                      : IASTBinaryExpression.op_shiftRight;
                IASTExpression secondExpression = additiveExpression();
                firstExpression = buildBinaryExpression(operator,
-                     firstExpression, secondExpression, lastToken
-                           .getEndOffset());
+                     firstExpression, secondExpression,
+                     calculateEndOffset(secondExpression));
                break;
             default:
                return firstExpression;
@@ -807,8 +798,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                      : IASTBinaryExpression.op_minus;
                IASTExpression secondExpression = multiplicativeExpression();
                firstExpression = buildBinaryExpression(operator,
-                     firstExpression, secondExpression, lastToken
-                           .getEndOffset());
+                     firstExpression, secondExpression,
+                     calculateEndOffset(secondExpression));
                break;
             default:
                return firstExpression;
@@ -856,8 +847,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          throws EndOfFileException, BacktrackException {
       int offset = consume().getOffset();
       IASTExpression castExpression = castExpression();
-      return buildUnaryExpression(operator, castExpression, offset, lastToken
-            .getEndOffset());
+      return buildUnaryExpression(operator, castExpression, offset,
+            calculateEndOffset(castExpression));
    }
 
    /**
@@ -909,10 +900,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             backup(m);
             d = null;
             unaryExpression = unaryExpression();
-            lastOffset = lastToken.getEndOffset();
+            lastOffset = calculateEndOffset(unaryExpression);
          }
       } else {
          unaryExpression = unaryExpression();
+         lastOffset = calculateEndOffset(unaryExpression);
       }
       if (d != null & unaryExpression == null)
          return buildTypeIdExpression(IGNUASTTypeIdExpression.op_alignof, d,
@@ -934,7 +926,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       if (LT(1) == IToken.tLPAREN) {
          if (LT(2) == IToken.tLBRACE) {
             unaryExpression = compoundStatementExpression();
-            lastOffset = lastToken.getEndOffset();
+            lastOffset = calculateEndOffset(unaryExpression);
          } else
             try {
                consume(IToken.tLPAREN);
@@ -944,10 +936,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                backup(m);
                d = null;
                unaryExpression = unaryExpression();
-               lastOffset = lastToken.getEndOffset();
+               lastOffset = calculateEndOffset(unaryExpression);
             }
       } else {
          unaryExpression = unaryExpression();
+         lastOffset = calculateEndOffset(unaryExpression);
       }
       if (d != null & unaryExpression == null)
          return buildTypeIdExpression(IGNUASTTypeIdExpression.op_typeof, d,
@@ -961,14 +954,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    protected IASTStatement handleFunctionBody() throws BacktrackException,
          EndOfFileException {
       if (mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE) {
-         skipOverCompoundStatement();
-         return null;
+         IToken curr = LA(1);
+         IToken last = skipOverCompoundStatement();
+         IASTCompoundStatement cs = createCompoundStatement();
+         ((ASTNode) cs).setOffsetAndLength(curr.getOffset(), last
+               .getEndOffset()
+               - curr.getOffset());
+         return cs;
       } else if (mode == ParserMode.COMPLETION_PARSE
             || mode == ParserMode.SELECTION_PARSE) {
          if (scanner.isOnTopContext())
             return functionBody();
-         skipOverCompoundStatement();
-         return null;
+         IToken curr = LA(1);
+         IToken last = skipOverCompoundStatement();
+         IASTCompoundStatement cs = createCompoundStatement();
+         ((ASTNode) cs).setOffsetAndLength(curr.getOffset(), last
+               .getEndOffset()
+               - curr.getOffset());
+         return cs;
       } else if (mode == ParserMode.COMPLETE_PARSE)
          return functionBody();
       return null;
@@ -1102,12 +1105,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          result.setName(name);
          name.setParent(result);
          name.setPropertyInParent(IASTEnumerationSpecifier.ENUMERATION_NAME);
-         cleanupLastToken();
+
          consume(IToken.tLBRACE);
          while (LT(1) != IToken.tRBRACE) {
             IASTName enumeratorName = null;
+
+            int lastOffset = 0;
             if (LT(1) == IToken.tIDENTIFIER) {
                enumeratorName = createName(identifier());
+               lastOffset = calculateEndOffset(enumeratorName);
             } else {
                IToken la = LA(1);
                throwBacktrack(la.getOffset(), la.getLength());
@@ -1116,14 +1122,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             if (LT(1) == IToken.tASSIGN) {
                consume(IToken.tASSIGN);
                initialValue = constantExpression();
+               lastOffset = calculateEndOffset(initialValue);
             }
             IASTEnumerationSpecifier.IASTEnumerator enumerator = null;
             if (LT(1) == IToken.tRBRACE) {
                enumerator = createEnumerator();
                enumerator.setName(enumeratorName);
                ((ASTNode) enumerator).setOffsetAndLength(
-                     ((ASTNode) enumeratorName).getOffset(), lastToken
-                           .getEndOffset()
+                     ((ASTNode) enumeratorName).getOffset(), lastOffset
                            - ((ASTNode) enumeratorName).getOffset());
                enumeratorName.setParent(enumerator);
                enumeratorName
@@ -1138,7 +1144,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                enumerator.setParent(result);
                enumerator
                      .setPropertyInParent(IASTEnumerationSpecifier.ENUMERATOR);
-               cleanupLastToken();
+
                break;
             }
             if (LT(1) != IToken.tCOMMA) {
@@ -1148,8 +1154,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             enumerator = createEnumerator();
             enumerator.setName(enumeratorName);
             ((ASTNode) enumerator).setOffsetAndLength(
-                  ((ASTNode) enumeratorName).getOffset(), lastToken
-                        .getEndOffset()
+                  ((ASTNode) enumeratorName).getOffset(), lastOffset
                         - ((ASTNode) enumeratorName).getOffset());
             enumeratorName.setParent(enumerator);
             enumeratorName
@@ -1163,7 +1168,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             result.addEnumerator(enumerator);
             enumerator.setParent(result);
             enumerator.setPropertyInParent(IASTEnumerationSpecifier.ENUMERATOR);
-            cleanupLastToken();
 
             consume(IToken.tCOMMA);
          }
@@ -1207,7 +1211,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    protected IASTExpression condition() throws BacktrackException,
          EndOfFileException {
       IASTExpression cond = expression();
-      cleanupLastToken();
+
       return cond;
    }
 
@@ -1313,7 +1317,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       String assembly = consume(IToken.tSTRING).getImage();
       consume(IToken.tRPAREN);
       int lastOffset = consume(IToken.tSEMI).getEndOffset();
-      cleanupLastToken();
+
       return buildASMDirective(first.getOffset(), assembly, lastOffset);
    }
 
@@ -1411,7 +1415,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       }
 
       if (expressionStatement == null && ds != null) {
-         cleanupLastToken();
+
          return ds;
       }
       if (expressionStatement != null && ds == null) {
@@ -1419,7 +1423,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             if (consume() == lastTokenOfExpression)
                break;
          }
-         cleanupLastToken();
+
          return expressionStatement;
       }
 
@@ -1435,12 +1439,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             IASTExpression lhs = exp.getOperand1();
             if (lhs instanceof IASTBinaryExpression
                   && ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_multiply) {
-               cleanupLastToken();
+
                return ds;
             }
             if (lhs instanceof IASTBinaryExpression
                   && ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_binaryAnd) {
-               cleanupLastToken();
+
                return ds;
             }
          }
@@ -1458,7 +1462,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             if (consume() == lastTokenOfExpression)
                break;
          }
-         cleanupLastToken();
+
          return expressionStatement;
       }
       backup(mark);
@@ -1466,7 +1470,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          if (consume() == lastTokenOfExpression)
             break;
       }
-      cleanupLastToken();
+
       return expressionStatement;
    }
 
@@ -1497,7 +1501,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    protected IASTStatement parseNullStatement() throws EndOfFileException,
          BacktrackException {
       IToken t = consume(IToken.tSEMI);
-      cleanupLastToken();
+
       IASTNullStatement null_statement = createNullStatement();
       ((ASTNode) null_statement).setOffsetAndLength(t.getOffset(), t
             .getEndOffset()
@@ -1515,7 +1519,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       int startOffset = consume(IToken.t_goto).getOffset();
       IToken identifier = consume(IToken.tIDENTIFIER);
       int lastOffset = consume(IToken.tSEMI).getEndOffset();
-      cleanupLastToken();
+
       IASTName goto_label_name = createName(identifier);
       IASTGotoStatement goto_statement = createGoToStatement();
       ((ASTNode) goto_statement).setOffsetAndLength(startOffset, lastOffset
@@ -1535,7 +1539,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          BacktrackException {
       int startOffset = consume(IToken.t_break).getOffset();
       int lastOffset = consume(IToken.tSEMI).getEndOffset();
-      cleanupLastToken();
+
       IASTBreakStatement break_statement = createBreakStatement();
       ((ASTNode) break_statement).setOffsetAndLength(startOffset, lastOffset
             - startOffset);
@@ -1551,7 +1555,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          BacktrackException {
       int startOffset = consume(IToken.t_continue).getOffset();
       int lastOffset = consume(IToken.tSEMI).getEndOffset();
-      cleanupLastToken();
+
       IASTContinueStatement continue_statement = createContinueStatement();
       ((ASTNode) continue_statement).setOffsetAndLength(startOffset, lastOffset
             - startOffset);
@@ -1570,10 +1574,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       IASTExpression result = null;
       if (LT(1) != IToken.tSEMI) {
          result = expression();
-         cleanupLastToken();
+
       }
       int lastOffset = consume(IToken.tSEMI).getEndOffset();
-      cleanupLastToken();
+
       IASTReturnStatement return_statement = createReturnStatement();
       ((ASTNode) return_statement).setOffsetAndLength(startOffset, lastOffset
             - startOffset);
@@ -1603,15 +1607,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       IASTExpression iterationExpression = null;
       if (LT(1) != IToken.tRPAREN) {
          iterationExpression = expression();
-         cleanupLastToken();
+
       }
       consume(IToken.tRPAREN);
       IASTStatement for_body = statement();
       IASTForStatement for_statement = createForStatement();
-      ((ASTNode) for_statement).setOffsetAndLength(startOffset, lastToken
-            .getEndOffset()
-            - startOffset);
-      cleanupLastToken();
+      ((ASTNode) for_statement).setOffsetAndLength(startOffset,
+            calculateEndOffset(for_body) - startOffset);
+
       if (init instanceof IASTDeclaration) {
          for_statement.setInit((IASTDeclaration) init);
          ((IASTDeclaration) init).setParent(for_statement);
@@ -1653,7 +1656,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       consume(IToken.tLPAREN);
       IASTExpression do_condition = condition();
       int lastOffset = consume(IToken.tRPAREN).getEndOffset();
-      cleanupLastToken();
+
       IASTDoStatement do_statement = createDoStatement();
       ((ASTNode) do_statement).setOffsetAndLength(startOffset, lastOffset
             - startOffset);
@@ -1679,11 +1682,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       IASTExpression while_condition = condition();
       consume(IToken.tRPAREN);
       IASTStatement while_body = statement();
-      cleanupLastToken();
+
       IASTWhileStatement while_statement = createWhileStatement();
-      ((ASTNode) while_statement).setOffsetAndLength(startOffset, lastToken
-            .getEndOffset()
-            - startOffset);
+      ((ASTNode) while_statement).setOffsetAndLength(startOffset,
+            calculateEndOffset(while_body) - startOffset);
       while_statement.setCondition(while_condition);
       while_condition.setParent(while_statement);
       while_condition.setPropertyInParent(IASTWhileStatement.CONDITION);
@@ -1707,11 +1709,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       IASTExpression switch_condition = condition();
       consume(IToken.tRPAREN);
       IASTStatement switch_body = statement();
-      cleanupLastToken();
+
       IASTSwitchStatement switch_statement = createSwitchStatement();
-      ((ASTNode) switch_statement).setOffsetAndLength(startOffset, lastToken
-            .getEndOffset()
-            - startOffset);
+      ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
+            calculateEndOffset(switch_body) - startOffset);
       switch_statement.setController(switch_condition);
       switch_condition.setParent(switch_statement);
       switch_condition.setPropertyInParent(IASTSwitchStatement.CONTROLLER);
@@ -1770,7 +1771,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             consume(IToken.t_else);
             if (LT(1) == IToken.t_if) {
                //an else if, don't recurse, just loop and do another if
-               cleanupLastToken();
+
                if (if_statement != null) {
                   if_statement.setElseClause(new_if_statement);
                   new_if_statement.setParent(if_statement);
@@ -1787,14 +1788,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                if_statement.setElseClause(new_if_statement);
                new_if_statement.setParent(if_statement);
                new_if_statement.setPropertyInParent(IASTIfStatement.ELSE);
-            } else
+               ((ASTNode) new_if_statement)
+                     .setLength(calculateEndOffset(new_if_statement) - start);
+            } else {
+               ((ASTNode) new_if_statement)
+                     .setLength(calculateEndOffset(new_if_statement) - start);
                if_statement = new_if_statement;
-         } else
+            }
+         } else {
+            ((ASTNode) new_if_statement)
+                  .setLength(calculateEndOffset(new_if_statement) - start);
             if_statement = new_if_statement;
+         }
          break if_loop;
       }
-      cleanupLastToken();
-      ((ASTNode) if_statement).setLength(lastToken.getEndOffset() - start);
+
       return if_statement;
    }
 
@@ -1811,7 +1819,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    protected IASTStatement parseCompoundStatement() throws EndOfFileException,
          BacktrackException {
       IASTCompoundStatement compound = compoundStatement();
-      cleanupLastToken();
+
       return compound;
    }
 
@@ -1824,7 +1832,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          BacktrackException {
       int startOffset = consume(IToken.t_default).getOffset();
       int lastOffset = consume(IToken.tCOLON).getEndOffset();
-      cleanupLastToken();
+
       IASTDefaultStatement df = createDefaultStatement();
       ((ASTNode) df).setOffsetAndLength(startOffset, lastOffset - startOffset);
       return df;
@@ -1840,13 +1848,37 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       int startOffset = consume(IToken.t_case).getOffset();
       IASTExpression case_exp = constantExpression();
       int lastOffset = consume(IToken.tCOLON).getEndOffset();
-      cleanupLastToken();
+
       IASTCaseStatement cs = createCaseStatement();
       ((ASTNode) cs).setOffsetAndLength(startOffset, lastOffset - startOffset);
       cs.setExpression(case_exp);
       case_exp.setParent(cs);
       case_exp.setPropertyInParent(IASTCaseStatement.EXPRESSION);
       return cs;
+   }
+
+   /**
+    * @param declSpec
+    * @param declarators
+    * @return
+    */
+   protected int figureEndOffset(IASTDeclSpecifier declSpec, List declarators) {
+      if (declarators.isEmpty())
+         return calculateEndOffset(declSpec);
+      return calculateEndOffset((IASTDeclarator) declarators.get(declarators
+            .size() - 1));
+   }
+
+   /**
+    * @param declSpecifier
+    * @param declarator
+    * @return
+    */
+   protected int figureEndOffset(IASTDeclSpecifier declSpecifier,
+         IASTDeclarator declarator) {
+      if (declarator == null)
+         return calculateEndOffset(declSpecifier);
+      return calculateEndOffset(declarator);
    }
 
 }

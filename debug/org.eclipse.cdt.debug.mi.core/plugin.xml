@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
    id="org.eclipse.cdt.debug.mi.core"
-   name="org.eclipse.cdt.debug.mi.core"
-   version="1.0.0">
+   name="%Plugin.name"
+   version="1.0.0"
+   class="org.eclipse.cdt.debug.mi.core.MIPlugin">
 
    <runtime>
       <library name="micore.jar"/>
    </runtime>
+   <requires>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.debug.core"/>
+   </requires>
+
+
+   <extension
+         id="gdb"
+         name="%GDBDebugger.name"
+         point="org.eclipse.cdt.debug.core.CDebugger">
+      <debugger
+            class="org.eclipse.cdt.debug.mi.core.GDBDebugger">
+      </debugger>
+   </extension>
 
 </plugin>

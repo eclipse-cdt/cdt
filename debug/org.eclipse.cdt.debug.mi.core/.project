@@ -5,7 +5,9 @@
 	<projects>
 		<project>org.eclipse.cdt.debug.core</project>
 		<project>org.eclipse.core.boot</project>
+		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
+		<project>org.eclipse.debug.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

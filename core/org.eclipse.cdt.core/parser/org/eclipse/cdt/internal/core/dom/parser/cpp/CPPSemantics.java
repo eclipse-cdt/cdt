@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -31,15 +33,18 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -53,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -116,6 +122,7 @@ public class CPPSemantics {
 		public Object [] functionParameters;
 		public boolean forUserDefinedConversion;
         public ProblemBinding problem;
+        public boolean forAssociatedScopes = false;
 		
 		public LookupData( IASTName n ){
 			astName = n;
@@ -341,12 +348,13 @@ public class CPPSemantics {
 			return result;
 		}
 	}
+	
 	static protected IBinding resolveBinding( IASTName name ){
 //	    if( name instanceof ICPPASTQualifiedName && ((ICPPASTQualifiedName)name).isFullyQualified() ) 
 //	       return ((ICPPASTTranslationUnit)name.getTranslationUnit()).resolveBinding();
 	       
 		//1: get some context info off of the name to figure out what kind of lookup we want
-		LookupData data = createLookupData( name );
+		LookupData data = createLookupData( name, true );
 		
 		try {
             //2: lookup
@@ -422,26 +430,14 @@ public class CPPSemantics {
         return binding;
     }
 
-    static private CPPSemantics.LookupData createLookupData( IASTName name ){
+    static private CPPSemantics.LookupData createLookupData( IASTName name, boolean considerAssociatedScopes ){
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
 		IASTNode parent = name.getParent();
 		if( parent instanceof ICPPASTQualifiedName ){
 			parent = parent.getParent();
-			if( parent instanceof ICPPASTFunctionDeclarator ){
-				data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
-			} else if( parent instanceof IASTIdExpression ){
-				parent = parent.getParent();
-				if( parent instanceof IASTFunctionCallExpression ){
-					IASTExpression exp = ((IASTFunctionCallExpression)parent).getParameterExpression();
-					if( exp instanceof IASTExpressionList )
-						data.functionParameters = ((IASTExpressionList) exp ).getExpressions();
-					else if( exp != null )
-						data.functionParameters = new IASTExpression [] { exp };
-					else 
-						data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
-				}
-			}
-		} else if( parent instanceof ICPPASTFunctionDeclarator ){
+		}
+		
+		if( parent instanceof ICPPASTFunctionDeclarator ){
 			data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
 		} else if( parent instanceof IASTIdExpression ){
 			parent = parent.getParent();
@@ -464,13 +460,19 @@ public class CPPSemantics {
 				data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 		} else if( parent instanceof ICPPASTNamedTypeSpecifier && parent.getParent() instanceof IASTTypeId ){
 	        IASTTypeId typeId = (IASTTypeId) parent.getParent();
-	        if( typeId.getAbstractDeclarator() instanceof IASTFunctionDeclarator ){
-	            ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) typeId.getAbstractDeclarator();
-	            data.functionParameters = fdtor.getParameters();
+	        if( typeId.getParent() instanceof ICPPASTNewExpression ){
+	            ICPPASTNewExpression newExp = (ICPPASTNewExpression) typeId.getParent();
+	            IASTExpression init = newExp.getNewInitializer();
+	            if( init instanceof IASTExpressionList )
+					data.functionParameters = ((IASTExpressionList) init ).getExpressions();
+				else if( init != null )
+					data.functionParameters = new IASTExpression [] { init };
+				else
+					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 	        }
 		}
 		
-		if( !(name.getParent() instanceof ICPPASTQualifiedName) && data.functionCall() ){
+		if( considerAssociatedScopes && !(name.getParent() instanceof ICPPASTQualifiedName) && data.functionCall() ){
 		    data.associated = getAssociatedScopes( data );
 		}
 		
@@ -1045,7 +1047,7 @@ public class CPPSemantics {
 	    else if( bindings.length == 1 )
 	        return bindings[ 0 ];
 	    
-	    LookupData data = createLookupData( name );
+	    LookupData data = createLookupData( name, false );
 	    data.foundItems = bindings;
 	    try {
             return resolveAmbiguities( data, name );
@@ -1246,6 +1248,11 @@ public class CPPSemantics {
 				return fns[ 0 ];
 			return new CPPCompositeBinding( fns );
 		}
+		
+		//we don't have any arguments with which to resolve the function
+		if( data.functionParameters == null ){
+		    return resolveTargetedFunction( data, fns );
+		}
 		//reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable( data, fns );
 		
@@ -1402,7 +1409,221 @@ public class CPPSemantics {
 		return bestFn;
 	}
 	
-	static private Cost checkStandardConversionSequence( IType source, IType target ) throws DOMException {
+	/**
+	 * 13.4-1 A use of an overloaded function without arguments is resolved in certain contexts to a function
+     * @param data
+     * @param fns
+     * @return
+     */
+    private static IBinding resolveTargetedFunction( LookupData data, IBinding[] fns ) {
+        if( fns.length == 1 )
+            return fns[0];
+        
+        if( data.forAssociatedScopes ){
+            return new CPPCompositeBinding( fns );
+        }
+        
+        IBinding result = null;
+        
+        Object o = getTargetType( data );
+        IType type, types[] = null;
+        int idx = -1;
+        if( o instanceof IType [] ){
+            types = (IType[]) o;
+            type = types[ ++idx ];
+        } else
+            type = (IType) o;
+        
+        while( type != null ){
+            type = (type != null) ? getUltimateType( type, false ) : null;
+            if( type == null || !( type instanceof IFunctionType ) )
+                return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+
+            for( int i = 0; i < fns.length; i++ ){
+                IFunction fn = (IFunction) fns[i];
+                IType ft = null;
+                try {
+                     ft = fn.getType();
+                } catch ( DOMException e ) {
+                    ft = e.getProblem();
+                }
+                if( type.equals( ft ) ){
+                    if( result == null )
+                        result = fn;
+                    else
+                        return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+                }
+            }
+
+            if( idx > 0 && ++idx < types.length  ){
+                type = types[idx];
+            } else {
+                type = null;
+            }
+        }
+                
+        return ( result != null ) ? result : new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
+    }
+
+    private static Object getTargetType( LookupData data ){
+        IASTName name = data.astName;
+        
+        if( name.getPropertyInParent() == ICPPASTQualifiedName.SEGMENT_NAME )
+            name = (IASTName) name.getParent();
+        
+        if( name.getPropertyInParent() != IASTIdExpression.ID_NAME )
+            return null;
+        
+        IASTIdExpression idExp = (IASTIdExpression) name.getParent();
+        IASTNode node = idExp.getParent();
+        ASTNodeProperty prop = null;
+        while( node != null ){
+            prop = node.getPropertyInParent();
+            //target is an object or reference being initialized
+            if( prop == IASTInitializerExpression.INITIALIZER_EXPRESSION ){
+                IASTInitializerExpression initExp = (IASTInitializerExpression) node.getParent();
+                IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
+                return CPPVisitor.createType( dtor );
+            }
+            //target is the left side of an assignment
+            else if( prop == IASTBinaryExpression.OPERAND_TWO && 
+                     ((IASTBinaryExpression)node.getParent()).getOperator() == IASTBinaryExpression.op_assign )
+            {
+                IASTBinaryExpression binaryExp = (IASTBinaryExpression) node.getParent();
+                IASTExpression exp = binaryExp.getOperand1();
+                return CPPVisitor.getExpressionType( exp );
+            }
+            //target is a parameter of a function
+            else if( prop == IASTFunctionCallExpression.PARAMETERS ||
+                     (prop == IASTExpressionList.NESTED_EXPRESSION && node.getParent().getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS ) )
+            {
+                //if this function call refers to an overloaded function, there is more than one possiblity
+                //for the target type
+                IASTFunctionCallExpression fnCall = null;
+                int idx = -1;
+                if( prop == IASTFunctionCallExpression.PARAMETERS ){
+                    fnCall = (IASTFunctionCallExpression) node.getParent();
+                    idx = 0;
+                } else {
+                    IASTExpressionList list = (IASTExpressionList) node.getParent();
+                    fnCall = (IASTFunctionCallExpression) list.getParent();
+                    IASTExpression [] exps = list.getExpressions();
+                    for( int i = 0; i < exps.length; i++ ){
+                        if( exps[i] == node ){
+                            idx = i;
+                            break;
+                        }
+                    }
+                }
+                IFunctionType [] types = getPossibleFunctions( fnCall );
+                if( types == null ) return null;
+                IType [] result = null;
+                for( int i = 0; i < types.length && types[i] != null; i++ ){
+                    IType [] pts = null;
+                    try {
+                        pts = types[i].getParameterTypes();
+                    } catch ( DOMException e ) {
+                        continue;
+                    }
+                    if( pts.length > idx )
+                        result = (IType[]) ArrayUtil.append( IType.class, result, pts[idx] );
+                }
+                return result;
+            }
+            //target is an explicit type conversion
+//            else if( prop == ICPPASTSimpleTypeConstructorExpression.INITIALIZER_VALUE )
+//            {
+//                
+//            }
+            //target is an explicit type conversion
+            else if( prop == IASTCastExpression.OPERAND )
+            {
+            	IASTCastExpression cast = (IASTCastExpression) node.getParent();
+            	return CPPVisitor.createType( cast.getTypeId().getAbstractDeclarator() );
+            }
+            //target is the return value of a function, operator or conversion
+            else if( prop == IASTReturnStatement.RETURNVALUE )
+            {
+            	while( !( node instanceof IASTFunctionDefinition ) ){
+            		node = node.getParent();
+            	}
+            	IASTDeclarator dtor = ((IASTFunctionDefinition)node).getDeclarator();
+            	while( dtor.getNestedDeclarator() != null )
+            		dtor = dtor.getNestedDeclarator();
+            	IBinding binding = dtor.getName().resolveBinding();
+            	if( binding instanceof IFunction ){
+            		try {
+	            		IFunctionType ft = ((IFunction)binding).getType();
+	            		return ft.getReturnType();
+            		} catch ( DOMException e ) {
+            		}
+            	}
+            }
+            
+            else if( prop == IASTUnaryExpression.OPERAND ){
+                IASTUnaryExpression parent = (IASTUnaryExpression) node.getParent();
+                if( parent.getOperator() == IASTUnaryExpression.op_bracketedPrimary ||
+                    parent.getOperator() == IASTUnaryExpression.op_amper)
+                {
+                    node = parent;
+                	continue;
+                }
+            }
+            break;
+        }
+        return null;
+    }
+    
+    static private IFunctionType [] getPossibleFunctions( IASTFunctionCallExpression call ){
+        IFunctionType [] result = null;
+        
+        IASTExpression exp = call.getFunctionNameExpression();
+        if( exp instanceof IASTIdExpression ){
+            IASTIdExpression idExp = (IASTIdExpression) exp;
+            IASTName name = idExp.getName();
+	        LookupData data = createLookupData( name, false );
+			try {
+	            lookup( data, name );
+	        } catch ( DOMException e1 ) {
+	            return null;
+	        }
+	        if( data.foundItems != null && data.foundItems.length > 0 ){
+	            IBinding temp = null;
+	            for( int i = 0; i < data.foundItems.length; i++ ){
+	                Object o = data.foundItems[i];
+	                if( o == null ) break;
+	                if( o instanceof IASTName )
+	    	            temp = ((IASTName) o).resolveBinding();
+	    	        else if( o instanceof IBinding ){
+	    	            temp = (IBinding) o;
+	    	            if( !declaredBefore( temp, name ) )
+	    	                continue;
+	    	        } else
+	    	            continue;
+	                
+	                try {
+		                if( temp instanceof IFunction ){
+		                    result = (IFunctionType[]) ArrayUtil.append( IFunctionType.class, result, ((IFunction)temp).getType() );
+		                } else if( temp instanceof IVariable ){
+                            IType type = getUltimateType( ((IVariable) temp).getType(), false );
+                            if( type instanceof IFunctionType )
+                                result = (IFunctionType[]) ArrayUtil.append( IFunctionType.class, result, type );
+		                }
+	                } catch( DOMException e ){
+	                }
+	            }
+	        }
+        } else {
+            IType type = CPPVisitor.getExpressionType( exp );
+            type = getUltimateType( type, false );
+            if( type instanceof IFunctionType ){
+                result = new IFunctionType[] { (IFunctionType) type };
+            }
+        }
+        return result;
+    }
+    
+    static private Cost checkStandardConversionSequence( IType source, IType target ) throws DOMException {
 		Cost cost = lvalue_to_rvalue( source, target );
 		
 		if( cost.source == null || cost.target == null ){

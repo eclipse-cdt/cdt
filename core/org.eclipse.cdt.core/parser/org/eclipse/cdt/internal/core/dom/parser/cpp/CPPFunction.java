@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -157,10 +158,16 @@ public class CPPFunction implements IFunction, ICPPBinding {
 	public IScope getScope() {
 	    ICPPASTDeclSpecifier declSpec = null;
 	    if( definition != null ){
-	        IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
+	    	IASTNode node = definition.getParent();
+	    	while( node instanceof IASTDeclarator )
+	    		node = node.getParent();
+	        IASTFunctionDefinition def = (IASTFunctionDefinition) node;
 		    declSpec = (ICPPASTDeclSpecifier) def.getDeclSpecifier();    
 	    } else {
-	        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) declarations[0].getParent();
+	    	IASTNode node = declarations[0].getParent();
+	    	while( node instanceof IASTDeclarator )
+	    		node = node.getParent();
+	        IASTSimpleDeclaration decl = (IASTSimpleDeclaration)node; 
 	        declSpec = (ICPPASTDeclSpecifier) decl.getDeclSpecifier();
 	    }	
 

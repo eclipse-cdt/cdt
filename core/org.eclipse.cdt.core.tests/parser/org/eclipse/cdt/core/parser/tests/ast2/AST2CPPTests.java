@@ -1795,5 +1795,94 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( friends.length, 1 );
         assertSame( friends[0], helper );
     }
+    
+    public void testBug45763_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f( int );                         \n"); //$NON-NLS-1$
+        buffer.append( "void f( char );                        \n"); //$NON-NLS-1$
+        buffer.append( "void (*pf) (int) = &f;                 \n"); //$NON-NLS-1$
+        buffer.append( "void foo() {                           \n"); //$NON-NLS-1$
+        buffer.append( "   pf = &f;                            \n"); //$NON-NLS-1$
+        buffer.append( "}                                      \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+        IVariable pf = (IVariable) col.getName(4).resolveBinding();
+        
+        assertInstances( col, pf, 2 );
+        assertInstances( col, f1, 3 );
+        assertInstances( col, f2, 1 );
+    }
+    
+    public void testBug45763_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f( char );                        \n"); //$NON-NLS-1$
+        buffer.append( "void f( int  );                        \n"); //$NON-NLS-1$
+        buffer.append( "void g( void (*)( int ) ) {}           \n"); //$NON-NLS-1$
+        buffer.append( "void (*pg)( void(*)(int) );            \n"); //$NON-NLS-1$
+        buffer.append( "void foo() {                           \n"); //$NON-NLS-1$
+        buffer.append( "   g( &f );                            \n"); //$NON-NLS-1$
+        buffer.append( "   (*pg)( &f );                        \n"); //$NON-NLS-1$
+        buffer.append( "}                                      \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+        IFunction g = (IFunction) col.getName(4).resolveBinding();
+        IVariable pg = (IVariable) col.getName(7).resolveBinding();
+        
+        assertInstances( col, f1, 1 );
+        assertInstances( col, f2, 3 );
+        assertInstances( col, g, 2 );
+        assertInstances( col, pg, 2 );
+    }
+    
+    public void testBug45763_3() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f( int );                  \n"); //$NON-NLS-1$
+    	buffer.append("void f( char );                 \n"); //$NON-NLS-1$
+    	buffer.append("void (* bar () ) ( int ) {      \n"); //$NON-NLS-1$
+    	buffer.append("   return &f;                   \n"); //$NON-NLS-1$
+    	buffer.append("}                               \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+        IFunction bar = (IFunction) col.getName(4).resolveBinding();
+        assertNotNull( bar );
+        
+        assertInstances( col, f1, 2 );
+        assertInstances( col, f2, 1 );
+    }
+    public void _testBug45763_4() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f( int );                  \n"); //$NON-NLS-1$
+    	buffer.append("void f( char );                 \n"); //$NON-NLS-1$
+    	buffer.append("void foo () {                   \n"); //$NON-NLS-1$
+    	buffer.append("   ( void (*)(int) ) &f;        \n"); //$NON-NLS-1$
+    	buffer.append("}                               \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+        IFunction bar = (IFunction) col.getName(4).resolveBinding();
+        assertNotNull( bar );
+        
+        assertInstances( col, f1, 2 );
+        assertInstances( col, f2, 1 );
+    }
 }
 

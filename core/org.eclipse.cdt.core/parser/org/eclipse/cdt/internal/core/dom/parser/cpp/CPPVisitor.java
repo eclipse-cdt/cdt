@@ -425,6 +425,8 @@ public class CPPVisitor {
 		} else if( parent instanceof IASTParameterDeclaration ){
 			IASTParameterDeclaration param = (IASTParameterDeclaration) parent;
 			IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
+			if( fDtor.getParent() instanceof IASTDeclarator || fDtor.getNestedDeclarator() != null )
+			    return null;
 			IBinding temp = fDtor.getName().resolveBinding();
 			if( temp instanceof IFunction ){
 				CPPFunction function = (CPPFunction) temp;
@@ -582,11 +584,12 @@ public class CPPVisitor {
 		} else if( parent instanceof IASTFunctionDefinition ){
 		    IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
 			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
-			
-			try {
-                scope = function.getScope();
-			} catch ( DOMException e ) {
-            }           
+			if( function != null ){
+				try {
+	                scope = function.getScope();
+				} catch ( DOMException e ) {
+	            }    
+			}
 		}
 		
 		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
@@ -626,20 +629,33 @@ public class CPPVisitor {
 	}
 	
 	static private IBinding resolveBinding( IASTNode node ){
+		IASTName name = null;
 		while( node != null ) {
 			if( node instanceof IASTIdExpression ){
-				return CPPSemantics.resolveBinding( ((IASTIdExpression)node).getName() );
+				name = ((IASTIdExpression) node).getName();
+				break;
+				//return CPPSemantics.resolveBinding( ((IASTIdExpression)node).getName() );
 			} else if( node instanceof ICPPASTFieldReference ){
-				return CPPSemantics.resolveBinding( ((ICPPASTFieldReference)node).getFieldName() );
+				name = ((ICPPASTFieldReference)node).getFieldName();
+				break;
 			} else if( node instanceof IASTFunctionCallExpression ){
 				node = ((IASTFunctionCallExpression)node).getFunctionNameExpression();
 			} else if( node instanceof IASTUnaryExpression ){
 				node = ((IASTUnaryExpression)node).getOperand();
 			} else if( node instanceof IASTBinaryExpression ){
 				node = ((IASTBinaryExpression)node).getOperand2();
-			}
+			} else
+				node = null;
 		}
-		
+		if( name != null ){
+			IBinding binding = CPPSemantics.resolveBinding( name );
+			if( name instanceof ICPPASTQualifiedName ){
+				IASTName ns [] = ((ICPPASTQualifiedName)name).getNames();
+				name = ns[ ns.length - 1 ];
+			}
+			((CPPASTName)name).setBinding( binding );
+			return binding;
+		}
 		return null;
 	}
 	
@@ -1684,6 +1700,7 @@ public class CPPVisitor {
 		}
 		return type;
 	}
+
 	/**
 	 * @param expression
 	 * @return
@@ -1701,6 +1718,12 @@ public class CPPVisitor {
                 }
 			} else if( binding instanceof IProblemBinding ){
 				return (IType) binding;
+			} else if( binding instanceof IFunction ){
+				try {
+					return ((IFunction)binding).getType();
+				} catch ( DOMException e ){
+					return e.getProblem();
+				}
 			}
 	    } else if( expression instanceof IASTCastExpression ){
 	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();

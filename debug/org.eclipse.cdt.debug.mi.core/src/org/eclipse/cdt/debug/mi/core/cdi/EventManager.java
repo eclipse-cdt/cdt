@@ -39,37 +39,18 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		MIEvent miEvent = (MIEvent)arg;
 		CSession session = getCSession();
 		ICDIEvent cdiEvent = null;
-		int threadId = 0;
 
 		if (miEvent instanceof MIBreakpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent)miEvent;
-			//threadId = breakEvent.getThreadId();
-			//session.getCTarget().setCurrentThreadId(threadId);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIFunctionFinishedEvent) {
-			MIFunctionFinishedEvent funcEvent = (MIFunctionFinishedEvent)miEvent;
-			//threadId = funcEvent.getThreadId();
-			//session.getCTarget().setCurrentThreadId(threadId);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MILocationReachedEvent) {
-			MILocationReachedEvent locEvent = (MILocationReachedEvent)miEvent;
-			//threadId = locEvent.getThreadId();
-			//session.getCTarget().setCurrentThreadId(threadId);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MISignalEvent) {
-			MISignalEvent sigEvent = (MISignalEvent)miEvent;
-			//threadId = sigEvent.getThreadId();
-			//session.getCTarget().setCurrentThreadId(threadId);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MISteppingRangeEvent) {
-			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent)miEvent;
-			//threadId = rangeEvent.getThreadId();
-			//session.getCTarget().setCurrentThreadId(threadId);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIWatchpointEvent) {
-			MIWatchpointEvent watchEvent = (MIWatchpointEvent)miEvent;
-			//threadId = watchEvent.getThreadId();
-			//session.getCTarget().setCurrentThreadId(threadId);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIRunningEvent) {
 			cdiEvent = new ResumedEvent(session, (MIRunningEvent)miEvent);

@@ -45,17 +45,6 @@ public class DeltaProcessor {
 	ICElement movedFromElement = null;
 
 	/**
-	 * Generic processing for elements with changed contents:<ul>
-	 * <li>The element is closed such that any subsequent accesses will re-open
-	 * the element reflecting its new structure.
-	 * <li>An entry is made in the delta reporting a content change (K_CHANGE with F_CONTENT flag set).
-	 * </ul>
-	 */
-	protected void contentChanged(ICElement element, IResourceDelta delta) {
-		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
-	}
-
-	/**
 	 * Creates the create corresponding to this resource.
 	 * Returns null if none was found.
 	 */
@@ -206,8 +195,29 @@ public class DeltaProcessor {
 		}
 	}
 
+	/*
+	 * Closes the given element, which removes it from the cache of open elements.
+	 */
+	private void close(Openable element) {
+		try {
+			element.close();
+		} catch (CModelException e) {
+			// do nothing
+		}
+	}
+
+	/**
+	 * Generic processing for elements with changed contents:<ul>
+	 * <li>The element is closed such that any subsequent accesses will re-open
+	 * the element reflecting its new structure.
+	 * <li>An entry is made in the delta reporting a content change (K_CHANGE with F_CONTENT flag set).
+	 * </ul>
+	 */
 	protected void elementChanged(ICElement element, IResourceDelta delta) {
-			fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
+		if (element instanceof Openable) {
+			close((Openable)element);
+		}
+		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
 	}
 
 	/**
@@ -403,7 +413,7 @@ public class DeltaProcessor {
 				if ((flags & IResourceDelta.CONTENT) != 0) {
 					// content has changed
 					if (element != null) {
-						contentChanged(element, delta);
+						elementChanged(element, delta);
 						updateIndexAddResource(element, delta);
 					}
 				} else if (resource.getType() == IResource.PROJECT) {

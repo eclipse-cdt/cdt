@@ -1,5 +1,11 @@
 2002-11-06 Alex Chapiro
 
+	* library/Win32ProcessEx.c:
+	This is a fixing of Bug 25808. New binary attached.
+	* os/win32/x86/spawner.dll: Recompiled.
+
+2002-11-06 Alex Chapiro
+
 	* library/Win32ProcessEx.c (GetJVMProc): Removed.
 	This is a fixing of Bug 25808.
 	Remove not portable fragment of code (conversion start directory to native

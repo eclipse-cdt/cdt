@@ -359,10 +359,16 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			// folder we have to exclude it as a normal child.
 			if (o instanceof IFolder) {
 				IFolder folder = (IFolder)o;
+				boolean found = false;
 				for (int j = 0; j < roots.length; j++) {
 					if (roots[j].getPath().equals(folder.getFullPath())) {
-						continue;
+						found = true;
+						break;
 					}
+				}
+				// it is a sourceRoot skip it.
+				if (found) {
+					continue;
 				}
 			} else if (o instanceof IFile){
 				boolean found = false;

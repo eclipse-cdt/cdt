@@ -314,6 +314,7 @@
             name="%newCCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCCWizards">
       </category>
+<!-- old class wizard
       <wizard
             name="%NewWizards.class"
             icon="icons/full/ctool16/newclass_wiz.gif"
@@ -327,8 +328,9 @@
             %NewWizards.class.description
          </description>
       </wizard>
+-->
       <wizard
-            name="New C++ Class"
+            name="%NewWizards.class"
             icon="icons/full/ctool16/newclass_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"

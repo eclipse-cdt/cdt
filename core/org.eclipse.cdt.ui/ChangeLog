@@ -1,3 +1,8 @@
+2004-09-07 Chris Wiebe
+
+	comment out old class wizard
+	* plugin.xml
+
 2004-09-07 Bogdan Gheorghe
 
 	Fix for Bug 73191: Search not finding all references in a specific example

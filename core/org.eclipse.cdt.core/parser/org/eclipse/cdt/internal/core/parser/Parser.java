@@ -131,6 +131,14 @@ public abstract class Parser extends ExpressionParser implements IParser
 		}
 		super.failParse();
 	}
+	
+	protected void failParse( IProblem problem ){
+		if( problem != null ){
+			requestor.acceptProblem( problem );
+		}
+		super.failParse();
+	}
+
     // counter that keeps track of the number of times Parser.parse() is called
     private static int parseCount = 0;
     
@@ -2862,7 +2870,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 							                             (ASTAccessVisibility) data[1], 
 														 (ITokenDuple)data[2] );
 						} catch (ASTSemanticException e1) {
-							failParse();
+							failParse( e1.getProblem() );
 						}
 	            	}
 	            }
@@ -2875,7 +2883,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	        }
 	        catch (ASTSemanticException e)
 	        {
-				failParse();
+				failParse( e.getProblem() );
 	        } catch (Exception e)
 	        {
 	        	logException( "baseSpecifier_2::addBaseSpecifier", e ); //$NON-NLS-1$

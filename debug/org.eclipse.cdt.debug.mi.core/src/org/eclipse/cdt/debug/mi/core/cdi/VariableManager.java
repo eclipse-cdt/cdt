@@ -496,8 +496,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * Update the elements in the cache, from the response of the "-var-update *"
-	 * mi/command.
+	 * Update the elements in the cache, from the response of the "-var-update"
+	 * mi/command.  Althought tempting we do not use the "-var-update *" command, since
+	 * for some reason on gdb-5.2.1 it starts to misbehave until it hangs ... sigh
+	 * We take the approach of updating the variables ourselfs.  But we do it a smart
+	 * way by only updating the variables visible in the current stackframe but not
+	 * the other locals in different frames.  The downside if any side effects we loose,
+	 * This ok, since the IDE only a frame at a time.
 	 *
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createArgument(ICDIArgumentObject)
 	 */
@@ -507,27 +512,40 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		Variable[] vars = getVariables();
-		for (int i = 0; i < vars.length; i++) {
-			String varName = vars[i].getMIVar().getVarName();
-			MIVarChange[] changes = noChanges;
-			MIVarUpdate update = factory.createMIVarUpdate(varName);
-			try {
-				mi.postCommand(update);
-				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
-				}
-				changes = info.getMIVarChanges();
-			} catch (MIException e) {
-				//throw new MI2CDIException(e);
-				eventList.add(new MIVarDeletedEvent(varName));
+		ICDITarget currentTarget = session.getCurrentTarget();
+		ICDIStackFrame[] frames = null;
+		ICDIStackFrame currentStack = null;
+		if (currentTarget != null) {
+			ICDIThread currentThread = currentTarget.getCurrentThread();
+			if (currentThread != null) {
+				frames = currentThread.getStackFrames();
+				currentStack = currentThread.getCurrentStackFrame();
 			}
-			for (int j = 0 ; j < changes.length; j++) {
-				String n = changes[j].getVarName();
-				if (changes[j].isInScope()) {
-					eventList.add(new MIVarChangedEvent(n));
-				} else {
-					eventList.add(new MIVarDeletedEvent(n));
+		}
+		for (int i = 0; i < vars.length; i++) {
+			Variable variable = vars[i];
+			if (isVariableNeedsUpdate(variable, currentStack, frames )) {
+				String varName = variable.getMIVar().getVarName();
+				MIVarChange[] changes = noChanges;
+				MIVarUpdate update = factory.createMIVarUpdate(varName);
+				try {
+					mi.postCommand(update);
+					MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+					changes = info.getMIVarChanges();
+				} catch (MIException e) {
+					//throw new MI2CDIException(e);
+					eventList.add(new MIVarDeletedEvent(varName));
+				}
+				for (int j = 0 ; j < changes.length; j++) {
+					String n = changes[j].getVarName();
+					if (changes[j].isInScope()) {
+						eventList.add(new MIVarChangedEvent(n));
+					} else {
+						eventList.add(new MIVarDeletedEvent(n));
+					}
 				}
 			}
 		}
@@ -535,4 +553,42 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		mi.fireEvents(events);
 	}
 
+	/**
+	 * We are trying to minimize the impact of the updates, this can be very long and unncessary if we
+	 * have a very deep stack and lots of local variables.  We can assume here that the local variables
+	 * in the other non-selected stackframe will not change and only update the selected frame variables.
+	 * 
+	 * @param variable
+	 * @param current
+	 * @param frames
+	 * @return
+	 */
+	boolean isVariableNeedsUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames) throws CDIException {
+		ICDIStackFrame varStack = variable.getStackFrame();
+		boolean inScope = false;
+		
+		// Something wrong and the program terminated bail out here.
+		if (current == null || frames == null) {
+			return false;
+		}
+
+		// If the variable Stack is null, it means this is a global variable we should update
+		if (varStack == null) {
+			return true;
+		} else if (varStack.equals(current)) {
+			// The variable is in the current selected frame it should be updated
+			return true;
+		} else {
+			// Check if the Variable is still in Scope and below say yes
+			// if it is no longer in scope so update() call call "-var-delete".
+			for (int i = 0; i < frames.length; i++) {
+				if (varStack.equals(frames[i])) {
+					inScope = true;
+				}
+			}
+		}
+		// return true if the variable is no longer in scope we
+		// need to call -var-delete.
+		return !inScope;
+	}
 }

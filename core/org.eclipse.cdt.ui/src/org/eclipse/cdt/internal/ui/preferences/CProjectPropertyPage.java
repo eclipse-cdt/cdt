@@ -9,6 +9,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.IndexerBlock;
 import org.eclipse.cdt.ui.wizards.SettingsBlock;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
@@ -32,6 +33,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	
 	private TabFolder folder;
 	SettingsBlock settingsBlock;
+	IndexerBlock indexerBlock;
 
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -60,6 +62,15 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		item2.setData(settingsBlock);
 		item2.setControl(settingsBlock.getControl(folder));
 
+		indexerBlock = new IndexerBlock(this, getProject());
+		TabItem item3 = new TabItem(folder, SWT.NONE);
+		item3.setText(indexerBlock.getLabel());
+		Image img3 = indexerBlock.getImage();
+		if (img3 != null)
+			item3.setImage(img3);
+		item3.setData(indexerBlock);
+		item3.setControl(indexerBlock.getControl(folder));
+
 		WorkbenchHelp.setHelp(parent, ICHelpContextIds.PROJECT_PROPERTY_PAGE);	
 	}
 	
@@ -77,6 +88,9 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		if (ok && settingsBlock != null) {
 			ok = settingsBlock.isValid();
 		}
+		if (ok && indexerBlock != null) {
+			ok = indexerBlock.isValid();
+		}
 		setValid(ok);
 	}
 
@@ -86,7 +100,9 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	public boolean performOk() {
 		if (settingsBlock != null)
 			settingsBlock.doRun(getProject(), null);
-		
+		if (indexerBlock != null) {
+			indexerBlock.doRun(getProject(), null);
+		}
 		return true;
 	}
 		
@@ -105,6 +121,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		super.setVisible(visible);
 		if (visible && folder != null) {
 			settingsBlock.setVisible(visible);
+			indexerBlock.setVisible(visible);
 			folder.setFocus();
 		}
 	}	

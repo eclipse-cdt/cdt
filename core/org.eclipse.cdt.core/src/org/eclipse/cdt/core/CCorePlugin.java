@@ -487,6 +487,12 @@ public class CCorePlugin extends Plugin {
 		return ext;
 	}
 
+	/**
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 * @deprecated - use getBinaryParserExtensions(IProject project)
+	 */
 	public IBinaryParser[] getBinaryParser(IProject project) throws CoreException {
 		IBinaryParser parsers[] = null;
 		if (project != null) {

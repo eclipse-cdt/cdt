@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -71,27 +70,27 @@ public class ASTConditionalExpression extends ASTBinaryExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
 	 */
-	public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException {
-		super.reconcileReferences(manager);
-		thirdExpression.reconcileReferences(manager);
-		reconcileSubExpression((ASTExpression) thirdExpression, manager);
+	public void reconcileReferences() throws ASTNotImplementedException {
+		super.reconcileReferences();
+		thirdExpression.reconcileReferences();
+		reconcileSubExpression((ASTExpression) thirdExpression);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression#processCallbacks()
 	 */
-	protected void processCallbacks( ISourceElementRequestor requestor, IReferenceManager manager ) {
-		super.processCallbacks(requestor, manager);
-		thirdExpression.acceptElement( requestor, manager );
+	protected void processCallbacks( ISourceElementRequestor requestor ) {
+		super.processCallbacks(requestor );
+		thirdExpression.acceptElement( requestor );
 	}
 
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void freeReferences(IReferenceManager manager) {
-		super.freeReferences(manager);
-		thirdExpression.freeReferences(manager);
+	public void freeReferences() {
+		super.freeReferences();
+		thirdExpression.freeReferences();
 	}
 	public String toString(){
 		return ASTUtil.getExpressionString( this );

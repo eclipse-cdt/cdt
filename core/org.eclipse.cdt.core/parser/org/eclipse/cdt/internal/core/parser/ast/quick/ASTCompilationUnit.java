@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -42,13 +41,13 @@ public class ASTCompilationUnit extends ASTNode implements IASTCompilationUnit, 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#accept(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
         try
         {
@@ -63,7 +62,7 @@ public class ASTCompilationUnit extends ASTNode implements IASTCompilationUnit, 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exit(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
     	try
         {

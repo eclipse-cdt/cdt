@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 
 /**
@@ -57,11 +56,11 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
-    	accept( requestor, getNewPlacementExpressions(), manager );
-    	accept( requestor, getNewTypeIdExpressions() , manager);
-		accept( requestor, getNewInitializerExpressions() , manager);
+    	accept( requestor, getNewPlacementExpressions()  );
+    	accept( requestor, getNewTypeIdExpressions()  );
+		accept( requestor, getNewInitializerExpressions() );
     }
 
 
@@ -70,17 +69,17 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
      * @param iterator
      * @param manager
      */
-    protected void accept(ISourceElementRequestor requestor, Iterator iterator, IReferenceManager manager)
+    protected void accept(ISourceElementRequestor requestor, Iterator iterator)
     {
         while( iterator.hasNext() )
-        	((IASTExpression)iterator.next()).acceptElement(requestor, manager);
+        	((IASTExpression)iterator.next()).acceptElement(requestor);
     }
 
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
     }
 
@@ -88,7 +87,7 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
     }
 
@@ -96,10 +95,10 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void freeReferences(IReferenceManager manager) {
-    	free( newPlacementExpressions, manager );
-    	free( newTypeIdExpressions , manager);
-		free( newInitializerExpressions , manager);		
+	public void freeReferences() {
+    	free( newPlacementExpressions );
+    	free( newTypeIdExpressions );
+		free( newInitializerExpressions );		
 	}
 
 
@@ -107,10 +106,10 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 	 * @param list
 	 * @param manager
 	 */
-	private void free(List list, IReferenceManager manager) {
+	private void free(List list ) {
 		if( list == null || list.isEmpty() ) return;
 		for( int i = 0; i < list.size(); ++i)
-			((IASTExpression)list.get(i)).freeReferences(manager);
+			((IASTExpression)list.get(i)).freeReferences();
 	}
 
 }

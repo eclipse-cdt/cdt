@@ -57,5 +57,5 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 	/**
 	 * @param referenceManager
 	 */
-	public void releaseReferences(IReferenceManager referenceManager);   
+	public void releaseReferences();   
 }

@@ -25,5 +25,5 @@ public interface IASTEnumerationSpecifier extends ISourceElementCallbackDelegate
 	/**
 	 * @param referenceManager
 	 */
-	public void freeReferences(IReferenceManager referenceManager); 
+	public void freeReferences(); 
 }

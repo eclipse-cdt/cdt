@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
@@ -86,23 +86,23 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
-    	manager.processReferences( references, requestor );
+    	Parser.processReferences( references, requestor );
     	references = null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
     }
 }

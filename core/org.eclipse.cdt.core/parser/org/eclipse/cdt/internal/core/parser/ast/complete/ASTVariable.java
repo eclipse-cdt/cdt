@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
@@ -157,7 +157,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
         try
         {
@@ -167,26 +167,26 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
         {
             /* do nothing */
         }
-        manager.processReferences(references, requestor);
+        Parser.processReferences(references, requestor);
         references = null;
         if( initializerClause != null )
-        	initializerClause.acceptElement(requestor, manager);
+        	initializerClause.acceptElement(requestor);
         if( constructorExpression != null )
-        	constructorExpression.acceptElement(requestor, manager);
+        	constructorExpression.acceptElement(requestor);
 		if( getAbstractDeclaration() != null )
-			getAbstractDeclaration().acceptElement(requestor, manager);
+			getAbstractDeclaration().acceptElement(requestor);
 
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
     }
     /* (non-Javadoc)

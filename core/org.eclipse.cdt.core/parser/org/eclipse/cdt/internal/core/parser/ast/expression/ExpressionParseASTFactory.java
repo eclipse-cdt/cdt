@@ -59,7 +59,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
@@ -913,11 +912,4 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		//ignore
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getReferenceManager()
-	 */
-	public IReferenceManager getReferenceManager() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

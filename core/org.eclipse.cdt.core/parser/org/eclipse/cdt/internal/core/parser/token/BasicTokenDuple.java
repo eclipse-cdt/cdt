@@ -18,7 +18,6 @@ import java.util.NoSuchElementException;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
@@ -531,13 +530,13 @@ public class BasicTokenDuple implements ITokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void freeReferences(IReferenceManager manager) {
+	public void freeReferences() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#acceptElement(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager) {
+	public void acceptElement(ISourceElementRequestor requestor) {
 	}
 
 	/* (non-Javadoc)

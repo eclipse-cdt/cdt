@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -102,7 +101,7 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void freeReferences(IReferenceManager manager) {
+	public void freeReferences() {
 		if( argLists == null ) return;
 		for( int i = 0; i < argLists.length; ++i )
 		{
@@ -110,7 +109,7 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			for( int j = 0; j < argLists[i].size(); ++ j )
 			{
 				IASTExpression e = (IASTExpression) argLists[i].get(j);
-				e.freeReferences(manager);
+				e.freeReferences();
 				
 			}
 		}
@@ -120,7 +119,7 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#acceptElement(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager) {
+	public void acceptElement(ISourceElementRequestor requestor) {
 		if( argLists == null ) return;
 		for( int i = 0; i < argLists.length; ++i )
 		{
@@ -128,7 +127,7 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			for( int j = 0; j < argLists[i].size(); ++ j )
 			{
 				IASTExpression e = (IASTExpression) argLists[i].get(j);
-				e.acceptElement(requestor,manager);
+				e.acceptElement(requestor);
 			}
 		}
 	}

@@ -271,8 +271,5 @@ public interface IASTFactory
 	public boolean validateDirectMemberOperation(IASTNode node);
 
 	public void constructExpressions( boolean flag );
-	
-	public IReferenceManager getReferenceManager();
-
 
 }

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
@@ -66,20 +66,20 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
 		try
         {
-            reconcileReferences(manager);
+            reconcileReferences();
         }
         catch (ASTNotImplementedException e)
         {
         	// will not get thrown
         }
-        manager.processReferences( references, requestor );
+        Parser.processReferences( references, requestor );
         references = null;
     
-		processCallbacks(requestor, manager);
+		processCallbacks(requestor);
 			
 		try
 		{
@@ -96,19 +96,19 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
      * @param manager TODO
 	 * 
 	 */
-	protected void processCallbacks(ISourceElementRequestor requestor, IReferenceManager manager) {
+	protected void processCallbacks(ISourceElementRequestor requestor ) {
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
     }
  
@@ -128,24 +128,23 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
      */
-    public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException
+    public void reconcileReferences() throws ASTNotImplementedException
     {
     }
     
-    protected void reconcileSubExpression(ASTExpression subExpression, IReferenceManager manager)
+    protected void reconcileSubExpression(ASTExpression subExpression )
     {
         if( subExpression != null && subExpression.getReferences() != null )
         {
         	List refs = subExpression.getReferences();
         	int size = refs.size();
-        	for( int i = 0; i < size; i++ )
+        	for( int i = 0; i < refs.size(); i++ )
         	{
         		IASTReference aReference = (IASTReference)refs.get(i);
         		if( aReference != null && references.contains( aReference ) )
         		{
         		    refs.remove(i--);
-        		    size--;
-        			manager.returnReference( aReference );
+        		    size--;     			
         		}
         	}   		
         }
@@ -295,11 +294,9 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 		return null;
 	}
 	
-	public void freeReferences( IReferenceManager manager )
+	public void freeReferences( )
 	{
 		if( references == null || references.isEmpty() ) return;
-		for (int i = 0; i < references.size(); ++i)
-			manager.returnReference( (IASTReference) references.get(i));
 		references.clear();
 	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
@@ -79,30 +79,30 @@ public class ASTInitializerClause implements IASTInitializerClause
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+	public void acceptElement(ISourceElementRequestor requestor)
 	{
 		List initializers = getInitializersList();
 		int size = initializers.size();
 		for( int i = 0; i < size; i++ )
-			((IASTInitializerClause)initializers.get(i)).acceptElement(requestor, manager);
+			((IASTInitializerClause)initializers.get(i)).acceptElement(requestor);
     	
 		if( assignmentExpression != null )
-			assignmentExpression.acceptElement( requestor, manager );
+			assignmentExpression.acceptElement( requestor );
 			
-		manager.processReferences(references, requestor);
+		Parser.processReferences(references, requestor);
 		references = null;
 	}
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
     }
 

@@ -18,14 +18,10 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
-import org.eclipse.cdt.internal.core.parser.CompleteParser;
-import org.eclipse.cdt.internal.core.parser.CompletionParser;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
-import org.eclipse.cdt.internal.core.parser.QuickParser;
-import org.eclipse.cdt.internal.core.parser.SelectionParser;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
-import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
@@ -70,16 +66,7 @@ public class ParserFactory {
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
 		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );
 		IParserExtension extension = extensionFactory.createParserExtension();
-		if( ourMode == ParserMode.COMPLETE_PARSE)
-			return new CompleteParser( scanner, ourCallback, language, logService, extension);
-		else if( ourMode == ParserMode.STRUCTURAL_PARSE )
-			return new StructuralParser( scanner, ourCallback, language, logService, extension );
-		else if( ourMode == ParserMode.COMPLETION_PARSE )
-			return new CompletionParser( scanner, ourCallback, language, logService, extension );
-		else if (ourMode == ParserMode.SELECTION_PARSE )
-			return new SelectionParser( scanner, ourCallback, language, logService, extension );
-		else
-			return new QuickParser( scanner, ourCallback, language, logService, extension );
+		return new Parser( scanner, ourMode, ourCallback, language, logService, extension );
     }
  	 	
     /**

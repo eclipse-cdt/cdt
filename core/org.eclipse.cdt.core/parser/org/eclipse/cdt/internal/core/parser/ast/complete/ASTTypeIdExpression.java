@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -39,18 +38,18 @@ public class ASTTypeIdExpression extends ASTExpression {
 		return typeId;
 	}
 	
-	protected void processCallbacks(ISourceElementRequestor requestor, IReferenceManager manager) {
-		super.processCallbacks(requestor, manager);
-		typeId.acceptElement(requestor, manager);
+	protected void processCallbacks(ISourceElementRequestor requestor ) {
+		super.processCallbacks(requestor );
+		typeId.acceptElement(requestor);
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void freeReferences(IReferenceManager manager) {
-		super.freeReferences(manager);
-		typeId.freeReferences(manager);
+	public void freeReferences() {
+		super.freeReferences();
+		typeId.freeReferences();
 	}
 	
 	public String toString(){

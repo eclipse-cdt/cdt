@@ -585,7 +585,7 @@ public class DeltaProcessor {
 			case ICElement.C_UNIT:
 				IFile file = (IFile) delta.getResource();
 				IProject filesProject = file.getProject();
-				indexManager.addSource(file, filesProject.getFullPath());
+				indexManager.addSource(file, filesProject.getFullPath(), false);
 				break;						
 	    }
 		

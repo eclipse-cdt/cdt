@@ -60,8 +60,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 	private static final String DISC_COMMON_PREFIX = "ManageScannerConfigDialogCommon"; //$NON-NLS-1$
 	private static final String UP = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.up.label"; //$NON-NLS-1$
 	private static final String DOWN = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.down.label"; //$NON-NLS-1$
-	private static final String REMOVE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.remove.label"; //$NON-NLS-1$
-	private static final String RESTORE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.restore.label"; //$NON-NLS-1$
+	private static final String DISABLE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.disable.label"; //$NON-NLS-1$
+	private static final String ENABLE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.enable.label"; //$NON-NLS-1$
 	private static final String DELETE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.delete.label"; //$NON-NLS-1$
 	
 	private static final String CONTAINER_LABEL = PREFIX + ".title"; //$NON-NLS-1$
@@ -70,16 +70,16 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 	
 	private final int IDX_UP = 0;
 	private final int IDX_DOWN = 1;
-	private final int IDX_REMOVE = 2;
-	private final int IDX_RESTORE = 3;
+	private final int IDX_ENABLE = 2;
+	private final int IDX_DISABLE = 3;
 
 	private final int IDX_DELETE = 5;
 
 	private static final int DISC_UP = 0;
 	private static final int DISC_DOWN = 1;
 	
-	private static final int DO_REMOVE = 0;
-	private static final int DO_RESTORE = 1;
+	private static final int DO_DISABLE = 0;
+	private static final int DO_ENABLE = 1;
 
 	private ICProject fCProject;
 	private IContainerEntry fPathEntry;
@@ -97,8 +97,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		String[] buttonLabels = new String[]{
 				/* IDX_UP */	MakeUIPlugin.getResourceString(UP),
 				/* IDX_DOWN */	MakeUIPlugin.getResourceString(DOWN),
-				/* IDX_REMOVE */MakeUIPlugin.getResourceString(REMOVE),
-				/* IDX_RESTORE */MakeUIPlugin.getResourceString(RESTORE),
+				/* IDX_ENABLE */MakeUIPlugin.getResourceString(ENABLE),
+				/* IDX_DISABLE */MakeUIPlugin.getResourceString(DISABLE),
 				null,
 				/* IDX_DELETE */MakeUIPlugin.getResourceString(DELETE),
 		};
@@ -386,13 +386,13 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 				/* move entry down */
 				dirty |= moveDown();
 				break;
-			case IDX_REMOVE:
+			case IDX_DISABLE:
 				/* remove */
-				dirty |= removeRestoreEntry(DO_REMOVE);
+				dirty |= enableDisableEntry(DO_DISABLE);
 				break;
-			case IDX_RESTORE:
+			case IDX_ENABLE:
 				/* restore */
-				dirty |= removeRestoreEntry(DO_RESTORE);
+				dirty |= enableDisableEntry(DO_ENABLE);
 				break;
 			case IDX_DELETE:
 				/* delete */
@@ -466,9 +466,9 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 	 * 
 	 * @param remove
 	 */
-	private boolean removeRestoreEntry(int action) {
+	private boolean enableDisableEntry(int action) {
 		boolean rc = false;
-		boolean remove = (action == DO_REMOVE);
+		boolean remove = (action == DO_DISABLE);
 		List selElements = fDiscoveredContainerList.getSelectedElements();
 		for (int i = selElements.size() - 1; i >= 0; --i) {
 			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
@@ -546,8 +546,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		List selElements = fDiscoveredContainerList.getSelectedElements();
 		fDiscoveredContainerList.enableButton(IDX_UP, canMoveUpDown(selElements, DISC_UP));
 		fDiscoveredContainerList.enableButton(IDX_DOWN, canMoveUpDown(selElements, DISC_DOWN));
-		fDiscoveredContainerList.enableButton(IDX_REMOVE, canRemoveRestore(selElements));
-		fDiscoveredContainerList.enableButton(IDX_RESTORE, canRemoveRestore(selElements));
+		fDiscoveredContainerList.enableButton(IDX_DISABLE, canRemoveRestore(selElements));
+		fDiscoveredContainerList.enableButton(IDX_ENABLE, canRemoveRestore(selElements));
 		fDiscoveredContainerList.enableButton(IDX_DELETE, canDelete(selElements));
 	}
 	/**

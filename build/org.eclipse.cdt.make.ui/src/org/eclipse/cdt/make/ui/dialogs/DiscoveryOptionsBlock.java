@@ -159,12 +159,14 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 					if (needsSCNature) {
 						ScannerConfigNature.addScannerConfigNature(getContainer().getProject());
 						needsSCNature = false;
+						fCreatePathContainer = true;
 					}
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
 					if (fCreatePathContainer) {
 						createDiscoveredPathContainer(project, monitor);
 						// create a new discovered scanner config store
 						MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
+						fCreatePathContainer = false;
 					}
 				} else {
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);

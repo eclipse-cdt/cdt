@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.internal.ui.scannerconfig;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,6 +38,9 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	private ImageDescriptor fRemovedIncludeIcon, fRemovedMacroIcon;
 	private ImageDescriptorRegistry fRegistry;
 
+	private final String DISABLED_LABEL = MakeUIPlugin.
+			getResourceString("ManageScannerConfigDialogCommon.discoveredGroup.annotation.disabled");//$NON-NLS-1$ 
+		
 	public DiscoveredElementLabelProvider() {
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
@@ -98,10 +102,18 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 				case DiscoveredElement.CONTAINER:
 				case DiscoveredElement.INCLUDE_PATH:
 				case DiscoveredElement.SYMBOL_DEFINITION:
-					return elem.getEntry() + (elem.isRemoved() ? " (removed)" : "");
+					return elem.getEntry() + (elem.isRemoved() ? addAnnotation(DISABLED_LABEL) : "");	//$NON-NLS-1$
 			}
 		}
 		return super.getText(element);
+	}
+
+	/**
+	 * @param annotation
+	 * @return
+	 */
+	private String addAnnotation(String annotation) {
+		return " (" + annotation + ")";	//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)

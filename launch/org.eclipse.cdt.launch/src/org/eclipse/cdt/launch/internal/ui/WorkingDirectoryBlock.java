@@ -1,6 +1,8 @@
 package org.eclipse.cdt.launch.internal.ui;
 import java.io.File;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -246,12 +248,15 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 	 * Sets the default working directory
 	 */
 	protected void setDefaultWorkingDir() {
-			ILaunchConfiguration config = getLaunchConfiguration();
+		ILaunchConfiguration config = getLaunchConfiguration();
 		if (config != null) {
-//			IJavaProject javaProject = JavaRuntime.getJavaProject(config);
-			Object cProject = null;
+			ICProject cProject = null;
+			try {
+				cProject = AbstractCLaunchDelegate.getCProject(config);
+			} catch (CoreException e) {
+			}
 			if (cProject != null) {
-//				fWorkspaceDirText.setText(cProject.getPath().makeRelative().toOSString());
+				fWorkspaceDirText.setText(cProject.getPath().makeRelative().toOSString());
 				fLocalDirButton.setSelection(false);
 				fWorkspaceDirButton.setSelection(true);
 				return;

@@ -1,4 +1,10 @@
 2004-03-26 David Inglis
+	
+	Fixed NPE on path reorder
+	
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
+2004-03-26 David Inglis
 
 	Refactor to move exclusion matching methods out into public class.
 	

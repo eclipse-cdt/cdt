@@ -59,6 +59,7 @@ import org.w3c.dom.NodeList;
  *  
  */
 public class PathEntryManager implements ICDescriptorListener {
+
 	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "pathEntryContainerInitializer"; //$NON-NLS-1$
 	static String PATH_ENTRY = "pathentry"; //$NON-NLS-1$
 	static String PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
@@ -76,8 +77,7 @@ public class PathEntryManager implements ICDescriptorListener {
 	static String VALUE_TRUE = "true"; //$NON-NLS-1$
 	final static IPathEntry[] EMPTY = {};
 	/**
-	 * An empty array of strings indicating that a project doesn't have any
-	 * prerequesite projects.
+	 * An empty array of strings indicating that a project doesn't have any prerequesite projects.
 	 */
 	static final String[] NO_PREREQUISITES = new String[0];
 	/**
@@ -168,7 +168,7 @@ public class PathEntryManager implements ICDescriptorListener {
 		boolean foundSource = false;
 		boolean foundOutput = false;
 		for (int i = 0; i < pathEntries.size(); i++) {
-			IPathEntry rawEntry = (IPathEntry)pathEntries.get(i);
+			IPathEntry rawEntry = (IPathEntry) pathEntries.get(i);
 			if (rawEntry.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				foundSource = true;
 			}
@@ -239,6 +239,7 @@ public class PathEntryManager implements ICDescriptorListener {
 		// trigger model refresh
 		try {
 			CoreModel.run(new IWorkspaceRunnable() {
+
 				public void run(IProgressMonitor progressMonitor) throws CoreException {
 					boolean shouldFire = false;
 					CModelManager mgr = CModelManager.getDefault();
@@ -292,6 +293,7 @@ public class PathEntryManager implements ICDescriptorListener {
 					// initializer would be
 					// causing some grief
 					Platform.run(new ISafeRunnable() {
+
 						public void handleException(Throwable exception) {
 							//Util.log(exception, "Exception occurred in
 							// container initializer: "+initializer);
@@ -317,19 +319,16 @@ public class PathEntryManager implements ICDescriptorListener {
 	}
 
 	/**
-	 * Helper method finding the container initializer registered for a given
-	 * container ID or <code>null</code> if none was found while iterating
-	 * over the contributions to extension point to the extension point
+	 * Helper method finding the container initializer registered for a given container ID or <code>null</code> if none was found
+	 * while iterating over the contributions to extension point to the extension point
 	 * "org.eclipse.cdt.core.PathEntryContainerInitializer".
 	 * <p>
-	 * A containerID is the first segment of any container path, used to
-	 * identify the registered container initializer.
+	 * A containerID is the first segment of any container path, used to identify the registered container initializer.
 	 * <p>
 	 * 
 	 * @param containerID -
 	 *            a containerID identifying a registered initializer
-	 * @return PathEntryContainerInitializer - the registered container
-	 *         initializer or <code>null</code> if none was found.
+	 * @return PathEntryContainerInitializer - the registered container initializer or <code>null</code> if none was found.
 	 */
 	public PathEntryContainerInitializer getPathEntryContainerInitializer(String containerID) {
 		Plugin core = CCorePlugin.getDefault();
@@ -491,39 +490,41 @@ public class PathEntryManager implements ICDescriptorListener {
 	 * return a delta, with the specified change flag.
 	 */
 	protected ICElementDelta makePathEntryDelta(ICProject cproject, IPathEntry entry, boolean removed) {
-		int kind = entry.getEntryKind();
 		ICElement celement = null;
 		int flag = ICElementDelta.F_PATHENTRY_REORDER;
 		if (entry == null) {
 			celement = cproject;
 			flag = ICElementDelta.F_PATHENTRY_REORDER;
-		} else if (kind == IPathEntry.CDT_SOURCE) {
-			ISourceEntry source = (ISourceEntry) entry;
-			IPath path = source.getPath();
-			celement = CoreModel.getDefault().create(path);
-			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_SOURCE : ICElementDelta.F_ADDED_PATHENTRY_SOURCE;
-		} else if (kind == IPathEntry.CDT_LIBRARY) {
-			ILibraryEntry lib = (ILibraryEntry) entry;
-			celement = CProject.getLibraryReference(cproject, null, lib);
-			flag = (removed) ? ICElementDelta.F_ADDED_PATHENTRY_LIBRARY : ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY;
-		} else if (kind == IPathEntry.CDT_PROJECT) {
-			//IProjectEntry pentry = (IProjectEntry) entry;
-			celement = cproject;
-			flag = ICElementDelta.F_CHANGED_PATHENTRY_PROJECT;
-		} else if (kind == IPathEntry.CDT_INCLUDE) {
-			IIncludeEntry include = (IIncludeEntry) entry;
-			IPath path = include.getPath();
-			celement = CoreModel.getDefault().create(path);
-			flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
-		} else if (kind == IPathEntry.CDT_MACRO) {
-			IMacroEntry macro = (IMacroEntry) entry;
-			IPath path = macro.getPath();
-			celement = CoreModel.getDefault().create(path);
-			flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
-		} else if (kind == IPathEntry.CDT_CONTAINER) {
-			//IContainerEntry container = (IContainerEntry) entry;
-			//celement = cproject;
-			// SHOULD NOT BE HERE Container are resolved.
+		} else {
+			int kind = entry.getEntryKind();
+			if (kind == IPathEntry.CDT_SOURCE) {
+				ISourceEntry source = (ISourceEntry) entry;
+				IPath path = source.getPath();
+				celement = CoreModel.getDefault().create(path);
+				flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_SOURCE : ICElementDelta.F_ADDED_PATHENTRY_SOURCE;
+			} else if (kind == IPathEntry.CDT_LIBRARY) {
+				ILibraryEntry lib = (ILibraryEntry) entry;
+				celement = CProject.getLibraryReference(cproject, null, lib);
+				flag = (removed) ? ICElementDelta.F_ADDED_PATHENTRY_LIBRARY : ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY;
+			} else if (kind == IPathEntry.CDT_PROJECT) {
+				//IProjectEntry pentry = (IProjectEntry) entry;
+				celement = cproject;
+				flag = ICElementDelta.F_CHANGED_PATHENTRY_PROJECT;
+			} else if (kind == IPathEntry.CDT_INCLUDE) {
+				IIncludeEntry include = (IIncludeEntry) entry;
+				IPath path = include.getPath();
+				celement = CoreModel.getDefault().create(path);
+				flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
+			} else if (kind == IPathEntry.CDT_MACRO) {
+				IMacroEntry macro = (IMacroEntry) entry;
+				IPath path = macro.getPath();
+				celement = CoreModel.getDefault().create(path);
+				flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
+			} else if (kind == IPathEntry.CDT_CONTAINER) {
+				//IContainerEntry container = (IContainerEntry) entry;
+				//celement = cproject;
+				// SHOULD NOT BE HERE Container are resolved.
+			}
 		}
 		if (celement == null) {
 			celement = cproject;
@@ -574,12 +575,12 @@ public class PathEntryManager implements ICDescriptorListener {
 			path = projectPath.append(path);
 		}
 		// source attachment info (optional)
-		IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(element
-				.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
-		IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH) ? new Path(element
-				.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
-		IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(element
-				.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
+		IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
+				element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
+		IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH) ? new Path(
+				element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
+		IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
+				element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
 		// exclusion patterns (optional)
 		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);
 		IPath[] exclusionPatterns = APathEntry.NO_EXCLUSION_PATTERNS;
@@ -725,7 +726,9 @@ public class PathEntryManager implements ICDescriptorListener {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
 	 */
 	public void descriptorChanged(CDescriptorEvent event) {
@@ -751,6 +754,6 @@ public class PathEntryManager implements ICDescriptorListener {
 				} catch (CModelException e) {
 				}
 			}
-		}		
+		}
 	}
 }

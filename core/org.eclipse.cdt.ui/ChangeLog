@@ -1,4 +1,12 @@
 2004-03-09 Hoda Amer
+	A new UI tool for renaming model elements. 
+	Mainly under the ui/refactor folder.
+	This tool relies on search in finding all occurrences 
+	of a specific model element.
+	and changes the found occurrences in the code to a new name. 
+	It could be invoked by a menu item in the C/C++ Packages view. 
+
+2004-03-09 Hoda Amer
 	Fix for bug#52188: Content Assist: Disabling the '.' (dot) and '->' triggers has no effect.
 	
 2004-03-08 Hoda Amer

@@ -8,18 +8,21 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.corext.refactoring;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.cdt.internal.corext.refactoring.base.*;
 
 
+public interface IRenameProcessor extends IRefactoringProcessor {
 
-
-/**
- * Interface of an object participating in reconciling.
- */
-public interface IReconcilingParticipant {
+	public String getCurrentElementName();
 	
-	/**
-	 * Called after reconciling has been finished.
-	 */
-	void reconciled(boolean SomethingHasChanged);
+	public RefactoringStatus checkNewElementName(String newName) throws CoreException;
+	
+	public void setNewElementName(String newName);
+	
+	public String getNewElementName();
+	
 }

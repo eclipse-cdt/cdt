@@ -122,6 +122,14 @@ public class PreferenceConstants {
      */
     public final static String EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER= "taskIndicationInOverviewRuler"; //$NON-NLS-1$ 
     
+    public static final String REFACTOR_ERROR_PAGE_SEVERITY_THRESHOLD= "Refactoring.ErrorPage.severityThreshold"; //$NON-NLS-1$
+    public static final String REFACTOR_FATAL_SEVERITY= "4"; //$NON-NLS-1$
+    public static final String REFACTOR_ERROR_SEVERITY= "3"; //$NON-NLS-1$
+    public static final String REFACTOR_WARNING_SEVERITY= "2"; //$NON-NLS-1$
+    public static final String REFACTOR_INFO_SEVERITY= "1"; //$NON-NLS-1$
+    public static final String REFACTOR_OK_SEVERITY= "0"; //$NON-NLS-1$
+    public static final String REFACTOR_SAVE_ALL_EDITORS= "Refactoring.savealleditors"; //$NON-NLS-1$
+    
 	/**
 	 * Returns the JDT-UI preference store.
 	 * 

@@ -23,10 +23,15 @@ public interface ICHelpContextIds {
 	public static final String OPEN_CLASS_WIZARD_ACTION = PREFIX + "open_class_wizard_action"; //$NON-NLS-1$
 
 	// Actions
-	public static final String FILTER_PUBLIC_ACTION = PREFIX + "filter_public_action"; //$NON-NLS-1$
-	public static final String FILTER_FIELDS_ACTION = PREFIX + "filter_fields_action"; //$NON-NLS-1$
-	public static final String FILTER_STATIC_ACTION = PREFIX + "filter_static_action"; //$NON-NLS-1$
 
+	public static final String FILTER_PUBLIC_ACTION= PREFIX + "filter_public_action"; //$NON-NLS-1$
+	public static final String FILTER_FIELDS_ACTION= PREFIX + "filter_fields_action"; //$NON-NLS-1$
+	public static final String FILTER_STATIC_ACTION= PREFIX + "filter_static_action"; //$NON-NLS-1$
+	public static final String NEXT_CHANGE_ACTION=	 PREFIX + "next_change_action";	//$NON-NLS-1$
+	public static final String PREVIOUS_CHANGE_ACTION=PREFIX + "previous_change_action"; //$NON-NLS-1$
+	public static final String NEXT_PROBLEM_ACTION=	 PREFIX + "next_problem_action"; //$NON-NLS-1$
+	public static final String PREVIOUS_PROBLEM_ACTION= PREFIX + "previous_problem_action";	//$NON-NLS-1$
+	
 	// Preference/property pages
 	public static final String C_PREF_PAGE = PREFIX + "new_c_pref_page_context"; //$NON-NLS-1$
 	public static final String C_EDITOR_PREF_PAGE = PREFIX + "new_c_editor_pref_page_context"; //$NON-NLS-1$
@@ -64,4 +69,14 @@ public interface ICHelpContextIds {
 	public static final String MOVE_ACTION = PREFIX + "move_action_context"; //$NON-NLS-1$
 	public static final String RENAME_ACTION = PREFIX + "rename_action_context"; //$NON-NLS-1$
 
+	
+	public static final String REFACTORING_PREFERENCE_PAGE= PREFIX + "refactoring_preference_page_context"; //$NON-NLS-1$
+	public static final String REFACTORING_ERROR_WIZARD_PAGE=	PREFIX + "refactoring_error_wizard_page_context";  //$NON-NLS-1$
+	public static final String REFACTORING_PREVIEW_WIZARD_PAGE= PREFIX + "refactoring_preview_wizard_page_context"; //$NON-NLS-1$	
+	public static final String RENAME_PARAMS_WIZARD_PAGE= 	PREFIX + "rename_params_wizard_page"; //$NON-NLS-1$
+	public static final String RENAME_METHOD_WIZARD_PAGE= 	PREFIX + "rename_method_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_TYPE_WIZARD_PAGE= 	PREFIX + "rename_type_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_FIELD_WIZARD_PAGE=	PREFIX + "rename_field_wizard_page_context"; //$NON-NLS-1$
+	public static final String RENAME_RESOURCE_WIZARD_PAGE=	PREFIX + "rename_resource_wizard_page_context"; //$NON-NLS-1$
+	
 }

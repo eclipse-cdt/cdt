@@ -75,6 +75,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_CONTAINER= NAME_PREFIX + "container_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LIBRARY= NAME_PREFIX + "lib_obj.gif"; //$NON-NLS-1$
 
+
 	// Breakpoint images
 	public static final String IMG_OBJS_BREAKPOINT = NAME_PREFIX + "breakpoint.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "breakpoint_disabled.gif"; //$NON-NLS-1$
@@ -163,6 +164,21 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_SEARCH_DECL = createManaged(T_OBJ, IMG_OBJS_SEARCH_DECL);
 	public static final ImageDescriptor DESC_OBJS_SEARCH_REF  = createManaged(T_OBJ, IMG_OBJS_SEARCH_REF);
 	public static final ImageDescriptor DESC_OBJS_CSEARCH     = createManaged(T_OBJ, IMG_OBJS_CSEARCH);
+	
+	// refactoring
+	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.gif"; 	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_FIELD= create(T_WIZBAN, "fieldrefact_wiz.gif");	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_METHOD= create(T_WIZBAN, "methrefact_wiz.gif");	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_TYPE= create(T_WIZBAN, "typerefact_wiz.gif"); 	//$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= create(T_OBJ, "change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= create(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_CU_CHANGE= create(T_OBJ, "cu_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= create(T_OBJ, "file_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= create(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
 	
 	public static void initialize() {
 		//createManaged(registry, T_OBJ, IMG_OBJS_TUNIT);

@@ -8,18 +8,21 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.corext.refactoring;
 
-
-
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * Interface of an object participating in reconciling.
+ * A tagging interface for refactorings that are implemented using
+ * the processor/participant architecture
  */
-public interface IReconcilingParticipant {
+public interface IProcessorBasedRefactoring extends IAdaptable {
 	
 	/**
-	 * Called after reconciling has been finished.
+	 * Returns the refactoring's processor
+	 * 
+	 * @return the refactoring's processor
 	 */
-	void reconciled(boolean SomethingHasChanged);
+	public IRefactoringProcessor getProcessor();
+
 }

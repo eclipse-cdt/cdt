@@ -8,18 +8,22 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.ui.refactoring;
 
+import org.eclipse.jface.wizard.IWizardPage;
 
+import org.eclipse.cdt.internal.corext.refactoring.base.IChange;
 
+public interface IPreviewWizardPage extends IWizardPage {
 
-/**
- * Interface of an object participating in reconciling.
- */
-public interface IReconcilingParticipant {
+	/** The page's name */
+	public static final String PAGE_NAME= "PreviewPage"; //$NON-NLS-1$
 	
 	/**
-	 * Called after reconciling has been finished.
+	 * Sets that change for which the page is supposed to display a preview.
+	 * 
+	 * @param change the new change.
 	 */
-	void reconciled(boolean SomethingHasChanged);
+	public void setChange(IChange change);	
 }
+

@@ -8,18 +8,23 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.corext.refactoring.changes;
 
+import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.text.edits.UndoEdit;
 
+abstract class UndoTextChange extends AbstractTextChange {
 
-/**
- * Interface of an object participating in reconciling.
- */
-public interface IReconcilingParticipant {
+	private UndoEdit fUndos;
+
+	public UndoTextChange(String name, int changeKind, UndoEdit undos) {
+		super(name, changeKind);
+		fUndos= undos;
+	}
 	
-	/**
-	 * Called after reconciling has been finished.
-	 */
-	void reconciled(boolean SomethingHasChanged);
+	protected void addTextEdits(LocalTextEditProcessor editor) throws CoreException {
+		editor.add(fUndos);
+	}	
 }
+

@@ -8,18 +8,17 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.corext.refactoring;
 
 
-
-
-/**
- * Interface of an object participating in reconciling.
- */
-public interface IReconcilingParticipant {
+public final class RefactoringStyles {
 	
-	/**
-	 * Called after reconciling has been finished.
-	 */
-	void reconciled(boolean SomethingHasChanged);
+	public static final int NONE= 0;
+	public static final int NEEDS_PREVIEW= 1 << 0;
+	public static final int FORCE_PREVIEW= 1 << 1;
+	public static final int NEEDS_PROGRESS= 1 << 2;
+	
+	private RefactoringStyles() {
+		// no instance
+	}
 }

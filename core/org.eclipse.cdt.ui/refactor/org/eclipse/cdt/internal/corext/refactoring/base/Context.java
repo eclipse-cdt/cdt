@@ -8,18 +8,17 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.editor;
+package org.eclipse.cdt.internal.corext.refactoring.base;
 
 
-
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * Interface of an object participating in reconciling.
+ * A <code>Context<code> can be used to annotate a <code>RefactoringStatusEntry</code>with 
+ * additional information presentable in the UI.
  */
-public interface IReconcilingParticipant {
-	
-	/**
-	 * Called after reconciling has been finished.
-	 */
-	void reconciled(boolean SomethingHasChanged);
+public class Context {
+	public IAdaptable getCorrespondingElement() {
+		return null;
+	}
 }

@@ -1,5 +1,27 @@
 2002-10-12 Alain Magloire
 
+	The memory block is implemented with
+	-data-read-memory (MIDataReadMemory)
+	Since the ICDIMemoryBlock only have
+	byte[] getBytes()
+	We will always issue:
+	-data-read-memory address x 1 1 length
+	The CDI upper layer will deal with any conversions
+	
+	The problem now is how to send changedEvent when
+	an element of the memory changed.
+	
+	* cdi/MemoryBlock.java (getLength): Implemented
+	(getBytes): Implemented
+	(getStartAddress): Implemented
+
+	* cdi/MemoryManager.java: Implemented.
+	
+	* command/MIDataReadMemory (getMIDataReadMemoryInfo):
+	New helper method.
+
+2002-10-12 Alain Magloire
+
 	* cdi/Location (getInstructions): Methods removed
 	no longer define in ICDILocation.
 

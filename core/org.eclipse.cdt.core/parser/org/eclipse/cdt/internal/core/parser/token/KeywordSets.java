@@ -31,6 +31,8 @@ public class KeywordSets {
 		public static final Key DECL_SPECIFIER_SEQUENCE = new Key( 1 );
 		public static final Key DECLARATION = new Key( 2 );
 		public static final Key STATEMENT = new Key(3);
+		public static final Key BASE_SPECIFIER = new Key(4);
+		public static final Key POST_USING = new Key( 5 );
 		/**
 		 * @param enumValue
 		 */
@@ -50,6 +52,10 @@ public class KeywordSets {
 			return (Set) DECLARATION.get( language );
 		if( kind == Key.STATEMENT )
 			return (Set) STATEMENT.get( language );
+		if( kind == Key.BASE_SPECIFIER )
+			return BASE_SPECIFIER_CPP;
+		if( kind == Key.POST_USING )
+			return POST_USING_CPP;
 		
 		//TODO finish this
 		return null;
@@ -155,6 +161,7 @@ public class KeywordSets {
 	{
 		STATEMENT_CPP = new TreeSet( STATEMENT_C );
 		STATEMENT_CPP.add( Keywords.TRY );
+		//TODO finish this
 	}
 	
 	private static final Hashtable STATEMENT;
@@ -164,4 +171,22 @@ public class KeywordSets {
 		STATEMENT.put( ParserLanguage.CPP, STATEMENT_CPP);
 		STATEMENT.put( ParserLanguage.C, STATEMENT_C );
 	}
+	
+	private static final Set BASE_SPECIFIER_CPP;
+	static
+	{
+		BASE_SPECIFIER_CPP = new TreeSet();
+		BASE_SPECIFIER_CPP.add(Keywords.PUBLIC);
+		BASE_SPECIFIER_CPP.add(Keywords.PROTECTED);
+		BASE_SPECIFIER_CPP.add(Keywords.PRIVATE);
+		BASE_SPECIFIER_CPP.add(Keywords.VIRTUAL);
+	}
+	
+	private static final Set POST_USING_CPP;
+	static
+	{
+		POST_USING_CPP = new TreeSet();
+		POST_USING_CPP.add(Keywords.NAMESPACE);
+		POST_USING_CPP.add(Keywords.TYPENAME);
+	}	
 }

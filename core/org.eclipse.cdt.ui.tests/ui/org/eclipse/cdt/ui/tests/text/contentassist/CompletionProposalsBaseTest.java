@@ -161,7 +161,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			String[] expected = getExpectedResultsValues();
 			assertTrue(results.length >= expected.length);
 			
-			for (int i = 0; i<expected.length; i++){
+			for (int i = 0; i< expected.length; i++){
 				ICompletionProposal proposal = results[i];
 				String displayString = proposal.getDisplayString();
 				assertEquals(displayString, expected[i]);

@@ -36,10 +36,10 @@ import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ContextualParseTest extends CompleteParseBaseTest {
+public class CompletionParseTest extends CompleteParseBaseTest {
 
 	
-	public ContextualParseTest(String name) {
+	public CompletionParseTest(String name) {
 		super(name);
 	}
 
@@ -139,7 +139,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 			assertNotNull( prefix );
 			assertTrue( node.getCompletionScope() instanceof IASTFunction );
 			assertEquals( prefix, i == 0 ? "a" :"" );
-			assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.STATEMENT_START );
+			assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 			
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
@@ -419,7 +419,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( prefix, "a" );
 		
 		assertTrue( node.getCompletionScope() instanceof IASTCodeScope );
-		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.STATEMENT_START );
+		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 		assertNull( node.getCompletionContext() );
 				
 		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext() );
@@ -512,7 +512,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( inquestion.getName(), "SimpleTest");
 		assertTrue(inquestion.isConstructor());
 		
-		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.STATEMENT_START );
+		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 		assertNull(node.getCompletionContext());
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
@@ -545,7 +545,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( inquestion.getName(), "~SimpleTest");
 		assertTrue(inquestion.isDestructor());
 		
-		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.STATEMENT_START );
+		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 		assertNull(node.getCompletionContext());
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;

@@ -8,13 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
@@ -23,7 +22,7 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
  * Bug#50471 : Wrong completion kind after the "using" keyword
  *
  */
-public class CompletionFailedTest_NamespaceRef_Prefix_Bug50471  extends CompletionProposalsBaseTest{
+public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
 	
 	private final String fileName = "CompletionFailedTestStart4.cpp";
 	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
@@ -31,20 +30,20 @@ public class CompletionFailedTest_NamespaceRef_Prefix_Bug50471  extends Completi
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTCompilationUnit";
 	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; // should be CompletionKind.NAMESPACE_REFERENCE;
+	private final CompletionKind expectedKind = CompletionKind.TYPE_REFERENCE; 
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
 // Should be 			
 //			"aNamespace"
 	};
 	
-	public CompletionFailedTest_NamespaceRef_Prefix_Bug50471(String name) {
+	public CompletionTest_TypeRef_Prefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_NamespaceRef_Prefix_Bug50471.class.getName());
-		suite.addTest(new CompletionFailedTest_NamespaceRef_Prefix_Bug50471("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_TypeRef_Prefix.class.getName());
+		suite.addTest(new CompletionTest_TypeRef_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	

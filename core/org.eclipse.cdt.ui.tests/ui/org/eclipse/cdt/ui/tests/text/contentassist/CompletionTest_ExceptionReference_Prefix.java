@@ -9,6 +9,8 @@
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist;
+
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -17,38 +19,45 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing statement start, with no prefix
- * Lookup.THIS
+ * Testing Exception_Reference, with prefix
+ * Bug#50640 : Wrong completion kind when expecting an exception
  *
  */
-public class CompletionTest_StatementStart_NoPrefix  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart5.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+public class CompletionTest_ExceptionReference_Prefix  extends CompletionProposalsBaseTest{
+	
+	private final String fileName = "CompletionFailedTestStart9.cpp";
+	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.STATEMENT_START;
-	private final String expectedPrefix = "";
+	private final String expectedContextName = "null"; 
+	private final CompletionKind expectedKind = CompletionKind.EXCEPTION_REFERENCE;
+	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
-			"anotherField : int",
-			"anotherMethod() void"
+			//TODO Hoda please validate/verify this list
+// Should be 			
+//			"aClass",
+//			"anotherClass",
+//			"aNamespace",
+//			"anEnumeration",
+//			"AStruct"
 	};
 	
-	public CompletionTest_StatementStart_NoPrefix(String name) {
+	public CompletionTest_ExceptionReference_Prefix(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_StatementStart_NoPrefix.class.getName());
-		suite.addTest(new CompletionTest_StatementStart_NoPrefix("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_ExceptionReference_Prefix.class.getName());
+		suite.addTest(new CompletionTest_ExceptionReference_Prefix("testCompletionProposals"));
 		return suite;
 	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("    ") + 2;
+		return getBuffer().indexOf(" a ") + 2;
 	}
 
 	/* (non-Javadoc)

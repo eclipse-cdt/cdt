@@ -1,3 +1,14 @@
+2004-01-27 John Camelon
+	Updated COMPLETION_PARSE clients to use SINGLE_NAME_REFERENCE rather than STATEMENT_START.  
+	Renamed and updated CompletionTest_StatementStart_NoPrefix to CompletionTest_SingleName_Method_NoPrefix.
+	Renamed and updated CompletionTest_StatementStart_Prefix to CompletionTest_SingleName_Method_Prefix.
+	Renamed and updated CompletionFailedTest_ExceptionReference_NoPrefix_Bug50640 to CompletionTest_ExceptionReference_NoPrefix and moved to passed tests folder.
+	Renamed and updated CompletionFailedTest_ExceptionReference_Prefix_Bug50640 to CompletionTest_ExceptionReference_Prefix and moved to passed tests folder.
+	Renamed and updated CompletionFailedTest_NamespaceRef_NoPrefix_Bug50471 to CompletionTest_TypeRef_NoPrefix and moved to passed tests folder.
+	Renamed and updated CompletionFailedTest_NamespaceRef_Prefix_Bug50471 to CompletionTest_TypeRef_Prefix and moved to passed tests folder.
+	Renamed and updated CompletionFailedTest_ClassReference_Prefix_Bug50621 to CompletionTest_ClassReference_Prefix and moved to passed tests folder.
+	Renamed and updated CompletionFailedTest_ClassReference_NoPrefix_Bug50621 to CompletionTest_ClassReference_NoPrefix and moved to passed tests folder.
+
 2004-01-27 Hoda Amer
 	More Completion JUnit tests.
 

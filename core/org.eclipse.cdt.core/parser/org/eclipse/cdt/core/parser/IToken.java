@@ -137,7 +137,7 @@ public interface IToken {
 
 	static public final int tDIV = 52;
 
-	static public final int tCLASSNAME = 53;
+//	static public final int tCLASSNAME = 53;
 
 	static public final int t_and = 54;
 
@@ -306,5 +306,10 @@ public interface IToken {
 	static public final int t_restrict = 137;
 
 	static public final int tLAST = t_restrict;
+
+	/**
+	 * @return
+	 */
+	public abstract boolean isKeywordOrOperator();
 
 }

@@ -25,13 +25,17 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
-import org.eclipse.cdt.internal.core.parser.token.*;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
 /**
  * @author jcamelon
@@ -43,7 +47,6 @@ public class ContextualParser extends Parser implements IParser {
 	protected IASTNode context;
 	protected IToken finalToken;
 	private Set keywordSet;
-	private int boundaryOffset;
 
 	/**
 	 * @param scanner
@@ -62,7 +65,6 @@ public class ContextualParser extends Parser implements IParser {
 	 */
 	public IASTCompletionNode parse(int offset) {
 		scanner.setOffsetBoundary(offset);
-		boundaryOffset = offset;
 		translationUnit();
 		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ) );
 	}
@@ -135,7 +137,7 @@ public class ContextualParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCurrentScope(org.eclipse.cdt.core.parser.ast.IASTScope)
 	 */
-	protected void setCurrentScope(IASTScope scope) {
+	protected void setCompletionScope(IASTScope scope) {
 		this.scope = scope;
 	}
 	
@@ -168,8 +170,9 @@ public class ContextualParser extends Parser implements IParser {
 	 */
 	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws OffsetLimitReachedException {
 		setCompletionToken( exception.getFinalToken() );
-		if( (finalToken!= null )&& (finalToken.getEndOffset() != boundaryOffset ))
+		if( (finalToken!= null )&& (finalToken.isKeywordOrOperator() ))
 			setCompletionToken(null);
+	
 		throw exception;
 	}	
 
@@ -197,13 +200,77 @@ public class ContextualParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionContextForExpression(org.eclipse.cdt.core.parser.ast.IASTExpression, boolean)
 	 */
-	protected void setCompletionContextForExpression(
+	protected IASTNode getCompletionContextForExpression(
 		IASTExpression firstExpression,
 		boolean isTemplate) {
-		setCompletionContext( astFactory.getCompletionContext( (isTemplate
+		return astFactory.getCompletionContext( (isTemplate
 				? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
 				: IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION), 
-				firstExpression ) );
+				firstExpression ) ;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTNode, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key, java.lang.String)
+	 */
+	protected void setCompletionValues(
+		IASTScope scope,
+		CompletionKind kind,
+		Key key,
+		IASTNode node, String prefix) throws EndOfFileException {
+		setCompletionValues(scope, kind, key, node );
+		setCompletionToken( new Token( IToken.tIDENTIFIER, prefix ) );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTNode, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key)
+	 */
+	protected void setCompletionValues(
+		IASTScope scope,
+		CompletionKind kind,
+		Key key ) throws EndOfFileException {
+		setCompletionValues(scope, kind, key, null );
+	}
+	
+	protected void setCompletionValues(
+			IASTScope scope,
+			CompletionKind kind,
+			Key key,
+			IASTNode node ) throws EndOfFileException
+	{
+		setCompletionScope(scope);
+		setCompletionKeywords(key);
+		setCompletionKind(kind);
+		setCompletionContext(node);
+		checkEndOfFile();
+	}
+
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#getCompletionKindForDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	protected CompletionKind getCompletionKindForDeclaration(IASTScope scope) {
+		IASTCompletionNode.CompletionKind kind = null;
+		if( scope instanceof IASTClassSpecifier )
+			kind = CompletionKind.FIELD_TYPE;
+		else if (scope instanceof IASTCodeScope)
+//			kind = CompletionKind.STATEMENT_START;
+			kind = CompletionKind.SINGLE_NAME_REFERENCE;
+		else
+			kind = CompletionKind.VARIABLE_TYPE;
+		return kind;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key, org.eclipse.cdt.core.parser.ast.IASTExpression, boolean)
+	 */
+	protected void setCompletionValues(
+		IASTScope scope,
+		CompletionKind kind,
+		Key key,
+		IASTExpression firstExpression,
+		boolean isTemplate) throws EndOfFileException {
+		setCompletionValues(scope,kind,key, getCompletionContextForExpression(firstExpression,isTemplate) );
 	}
 
 }

@@ -467,44 +467,45 @@ public class CompletionEngine implements RelevanceConstants {
 				
 	}
 	
-	private void completionOnStatementStart( IASTCompletionNode completionNode )
-	{
-		IASTScope searchNode = completionNode.getCompletionScope();
-		
-		ILookupResult result = null;
-		if (completionNode.getCompletionPrefix().length() > 0){
-			// lookup fields and methods with the right visibility
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[8];
-			kinds[0] = IASTNode.LookupKind.FIELDS; 
-			kinds[1] = IASTNode.LookupKind.METHODS;
-			kinds[2] = IASTNode.LookupKind.VARIABLES; 
-			kinds[3] = IASTNode.LookupKind.STRUCTURES; 
-			kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
-			kinds[5] = IASTNode.LookupKind.NAMESPACES;
-			kinds[6] = IASTNode.LookupKind.FUNCTIONS;
-			kinds[7] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-			
-			result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, null);
-			addToCompletions (result);
+//	private void completionOnStatementStart( IASTCompletionNode completionNode )
+//	{
+//		IASTScope searchNode = completionNode.getCompletionScope();
+//		
+//		ILookupResult result = null;
+//		if (completionNode.getCompletionPrefix().length() > 0){
+//			// lookup fields and methods with the right visibility
+//			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[8];
+//			kinds[0] = IASTNode.LookupKind.FIELDS; 
+//			kinds[1] = IASTNode.LookupKind.METHODS;
+//			kinds[2] = IASTNode.LookupKind.VARIABLES; 
+//			kinds[3] = IASTNode.LookupKind.STRUCTURES; 
+//			kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
+//			kinds[5] = IASTNode.LookupKind.NAMESPACES;
+//			kinds[6] = IASTNode.LookupKind.FUNCTIONS;
+//			kinds[7] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+//			
+//			result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, null);
+//			addToCompletions (result);
+//	
+//			List macros = lookupMacros(completionNode.getCompletionPrefix());
+//			addMacrosToCompletions(macros.iterator());
+//		} 
+//		else // prefix is empty
+//		{
+//			// instead of only fields and methods
+//			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+//			kinds[0] = IASTNode.LookupKind.THIS;
+//			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+//			addToCompletions(result);
+//			
+//			kinds = new IASTNode.LookupKind[1];
+//			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+//			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+//			addToCompletions(result);
+//		}
+//		
+//	}
 	
-			List macros = lookupMacros(completionNode.getCompletionPrefix());
-			addMacrosToCompletions(macros.iterator());
-		} 
-		else // prefix is empty
-		{
-			// instead of only fields and methods
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-			kinds[0] = IASTNode.LookupKind.THIS;
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-			
-			kinds = new IASTNode.LookupKind[1];
-			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-		}
-		
-	}
 	private void completionOnScopedReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the name before the qualification 
@@ -598,6 +599,7 @@ public class CompletionEngine implements RelevanceConstants {
 		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
 		addToCompletions(result);
 	}
+	
 	private void completionOnNamespaceReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
 		IASTScope searchNode = completionNode.getCompletionScope();
@@ -692,11 +694,11 @@ public class CompletionEngine implements RelevanceConstants {
 			// completionOnMemberReference
 			completionOnScopedReference(completionNode);
 		}
-		else if(kind == CompletionKind.STATEMENT_START )
-		{
-			// CompletionOnStatementStart
-			completionOnStatementStart(completionNode);
-		}
+//		else if(kind == CompletionKind.STATEMENT_START )
+//		{
+//			// CompletionOnStatementStart
+//			completionOnStatementStart(completionNode);
+//		}
 		else if(kind == CompletionKind.FIELD_TYPE){
 			// CompletionOnFieldType
 			completionOnFieldType(completionNode);
@@ -789,8 +791,8 @@ public class CompletionEngine implements RelevanceConstants {
 			kindStr = "PREPROCESSOR_DIRECTIVE";
 		else if(kind == IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME)
 			kindStr = "USER_SPECIFIED_NAME";
-		else if(kind == IASTCompletionNode.CompletionKind.STATEMENT_START)
-			kindStr = "STATEMENT_START";
+//		else if(kind == IASTCompletionNode.CompletionKind.STATEMENT_START)
+//			kindStr = "STATEMENT_START";
 		else if(kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND)
 			kindStr = "NO_SUCH_KIND";
 

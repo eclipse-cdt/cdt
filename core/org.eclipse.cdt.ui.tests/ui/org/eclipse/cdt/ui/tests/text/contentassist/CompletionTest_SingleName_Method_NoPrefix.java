@@ -8,56 +8,48 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
-
-
+package org.eclipse.cdt.ui.tests.text.contentassist;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Exception_Reference, with prefix
- * Bug#50640 : Wrong completion kind when expecting an exception
+ * Testing statement start, with no prefix
+ * Lookup.THIS
  *
  */
-public class CompletionFailedTest_ExceptionReference_Prefix_Bug50640  extends CompletionProposalsBaseTest{
-	
-	private final String fileName = "CompletionFailedTestStart9.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart5.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // should be CompletionKind.EXCEPTION_REFERENCE ;
-	private final String expectedPrefix = "a"; 
+	private final String expectedContextName = "null";
+	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE;
+	private final String expectedPrefix = "";
+	
+	//TODO Hoda - please update this constant with what it is supposed to be
 	private final String[] expectedResults = {
-// Should be 			
-//			"aClass",
-//			"anotherClass",
-//			"aNamespace",
-//			"anEnumeration",
-//			"AStruct"
+			"anotherField : int",
 	};
 	
-	public CompletionFailedTest_ExceptionReference_Prefix_Bug50640(String name) {
+	public CompletionTest_SingleName_Method_NoPrefix(String name) {
 		super(name);
 	}
-
+	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_ExceptionReference_Prefix_Bug50640.class.getName());
-		suite.addTest(new CompletionFailedTest_ExceptionReference_Prefix_Bug50640("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_SingleName_Method_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_SingleName_Method_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2;
+		return getBuffer().indexOf("    ") + 2;
 	}
 
 	/* (non-Javadoc)

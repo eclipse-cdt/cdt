@@ -66,10 +66,7 @@ public interface IASTCompletionNode {
 		
 		// any place where a type or variable name is expected to be introduced
 		public static final CompletionKind USER_SPECIFIED_NAME = new CompletionKind( 15 );
-				
-		// the beginning of a statement
-		public static final CompletionKind STATEMENT_START = new CompletionKind( 16 );
-		
+						
 		// after a new expression
 		public static final CompletionKind NEW_TYPE_REFERENCE = new CompletionKind( 17 );
 		

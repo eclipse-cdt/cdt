@@ -31,7 +31,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(QuickParseASTTests.class);
 		suite.addTestSuite(ParserSymbolTableTest.class);
 		suite.addTestSuite(CModelElementsTests.class);
-		suite.addTestSuite(ContextualParseTest.class);
+		suite.addTestSuite(CompletionParseTest.class);
 //		suite.addTestSuite(MacroTests.class);
 		suite.addTestSuite( PreprocessorTest.class );
 		suite.addTestSuite( PreprocessorConditionalTest.class );

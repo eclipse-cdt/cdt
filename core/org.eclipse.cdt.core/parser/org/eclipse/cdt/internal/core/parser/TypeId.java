@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
@@ -26,13 +27,13 @@ public class TypeId implements IDeclarator
     private ITokenDuple name;
     private List arrayModifiers = new ArrayList();
     private List pointerOperators = new ArrayList();
+	private final IASTScope scope;
     /**
      * 
      */
-    public TypeId()
+    public TypeId(IASTScope scope )
     {
-        super();
-       
+       this.scope = scope;  
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IDeclarator#getPointerOperators()
@@ -76,4 +77,10 @@ public class TypeId implements IDeclarator
     {
         return name;
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IDeclarator#getScope()
+	 */
+	public IASTScope getScope() {
+		return scope;
+	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
@@ -452,6 +453,13 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 	 */
 	public boolean isVarArgs() {
 		return varArgs;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IDeclarator#getScope()
+	 */
+	public IASTScope getScope() {
+		return getDeclarationWrapper().getScope();
 	}
 
 }

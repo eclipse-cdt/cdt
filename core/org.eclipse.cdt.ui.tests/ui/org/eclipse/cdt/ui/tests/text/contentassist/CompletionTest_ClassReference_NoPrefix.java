@@ -8,49 +8,44 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
-
+package org.eclipse.cdt.ui.tests.text.contentassist;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Exception_Reference, with No prefix
- * Bug#50640 : Wrong completion kind when expecting an exception
+ * Testing Class_Reference, with No prefix
+ * Bug#50621 :Wrong completion kind in a class declaration
  *
  */
-public class CompletionFailedTest_ExceptionReference_NoPrefix_Bug50640  extends CompletionProposalsBaseTest{
+public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart10.cpp";
+	private final String fileName = "CompletionFailedTestStart8.h";
 	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCodeScope"; // should be "ASTMethod";
+	private final String expectedScopeName = "ASTCompilationUnit";
 	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.STATEMENT_START; // should be CompletionKind.EXCEPTION_REFERENCE ;
+	private final CompletionKind expectedKind = CompletionKind.CLASS_REFERENCE; 
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
 // Should be 			
 //			"aClass",
 //			"anotherClass",
-//			"aNamespace",
-//			"anEnumeration",
-//			"AStruct",
-//			"..."
+//			"xOtherClass"
 	};
 	
-	public CompletionFailedTest_ExceptionReference_NoPrefix_Bug50640(String name) {
+	public CompletionTest_ClassReference_NoPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_ExceptionReference_NoPrefix_Bug50640.class.getName());
-		suite.addTest(new CompletionFailedTest_ExceptionReference_NoPrefix_Bug50640("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_ClassReference_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_ClassReference_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	

@@ -31,7 +31,7 @@ public class CompletionFailedTest_ScopedReference_NoPrefix_Bug50152  extends Com
 	private final String expectedScopeName = "ASTMethod";
 	private final String expectedContextName = "null"; // should be "ASTNamespaceDefinition";
 	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // should be CompletionKind.SCOPED_REFERENCE;
-	private final String expectedPrefix = "::"; // should be "";
+	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
 			// shoud be "aNamespaceFunction() void"
 	};

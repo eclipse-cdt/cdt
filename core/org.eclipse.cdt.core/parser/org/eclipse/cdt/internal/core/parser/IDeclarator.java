@@ -14,12 +14,14 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 /**
  * @author jcamelon
  *
  */
 public interface IDeclarator
 {
+	public IASTScope getScope();
     /**
      * @return
      */

@@ -186,4 +186,18 @@ public class Token implements IToken {
 		return lineNumber;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#isKeyword()
+	 */
+	public boolean isKeywordOrOperator() {
+		if( type == IToken.tCHAR ) return false;
+		if( type == IToken.tFLOATINGPT ) return false;
+		if( type == IToken.tIDENTIFIER ) return false;
+		if( type == IToken.tINTEGER ) return false;
+		if( type == IToken.tSTRING ) return false;
+		if( type == IToken.tLSTRING ) return false;
+		if( type == IToken.tLCHAR ) return false;
+		return true;
+	}
+
 }

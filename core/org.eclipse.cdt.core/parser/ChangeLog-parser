@@ -1,3 +1,10 @@
+2004-01-27 John Camelon
+	Refactored parser to allow for cleaner content assist implementation.  
+	Removed IASTCompletionNode.CompletionKind.STATEMENT_START as it is redundant.  
+	Fixed bug 50640 - Wrong completion kind when expecting an exception 
+	Fixed bug 50471 - Wrong completion kind after the "using" keyword
+	Fixed bug 50621 - Wrong completion kind in a class declaration 
+
 2004-01-17 Hoda Amer
 	Added IASTCompletionNode.CompletionKind.New_Type_Reference
 	for a completion kind after a new expression.

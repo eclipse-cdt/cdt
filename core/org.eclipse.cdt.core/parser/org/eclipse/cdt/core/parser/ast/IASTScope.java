@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @author jcamelon
  *
  */
-public interface IASTScope extends IASTNode{
+public interface IASTScope extends IASTNode {
 
 	public Iterator getDeclarations() throws ASTNotImplementedException; 
 }

@@ -8,43 +8,49 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
+
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Namespace_Reference, with no prefix
- * Bug#50471 : Wrong completion kind after the "using" keyword
+ * Testing Exception_Reference, with No prefix
+ * Bug#50640 : Wrong completion kind when expecting an exception
  *
  */
-public class CompletionFailedTest_NamespaceRef_NoPrefix_Bug50471  extends CompletionProposalsBaseTest{
+public class CompletionTest_ExceptionReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart3.cpp";
+	private final String fileName = "CompletionFailedTestStart10.cpp";
 	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedScopeName = "ASTMethod"; 
 	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; // should be CompletionKind.NAMESPACE_REFERENCE;
+	private final CompletionKind expectedKind = CompletionKind.EXCEPTION_REFERENCE;
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
+			//TODO Hoda is this right?  namespaces should not be allowed, unless you mean for qualified type
 // Should be 			
+//			"aClass",
+//			"anotherClass",
 //			"aNamespace",
-//			"xNamespace"
+//			"anEnumeration",
+//			"AStruct",
+//			"..."
 	};
 	
-	public CompletionFailedTest_NamespaceRef_NoPrefix_Bug50471(String name) {
+	public CompletionTest_ExceptionReference_NoPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_NamespaceRef_NoPrefix_Bug50471.class.getName());
-		suite.addTest(new CompletionFailedTest_NamespaceRef_NoPrefix_Bug50471("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_ExceptionReference_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_ExceptionReference_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	
@@ -52,7 +58,7 @@ public class CompletionFailedTest_NamespaceRef_NoPrefix_Bug50471  extends Comple
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("using ") + 6;
+		return getBuffer().indexOf("      ") + 2;
 	}
 
 	/* (non-Javadoc)

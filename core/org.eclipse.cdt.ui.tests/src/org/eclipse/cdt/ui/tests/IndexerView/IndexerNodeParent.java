@@ -39,6 +39,7 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
         // create an IndexerFilterManager using the FilterIndexerViewDialog (since all of the work is done there anyways)
         FilterIndexerViewDialog dialog = new FilterIndexerViewDialog(CTestPlugin.getStandardDisplay().getActiveShell(), this, view.getProjectName());
         dialog.readSettings(dialog.getDialogSettings());
+        
         filterManager = dialog.createFilterManager();
         
         try {
@@ -173,5 +174,12 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     public void setView(IndexerView.ViewContentProvider view) {
         this.view = view;
     }
-    
+
+    public int getFilteredCount() {
+        int filteredCount=0;
+        for(int i=0; i<children.length; i++) {
+            if (filterManager.isFiltered(children[i])) filteredCount++;
+        }
+        return filteredCount;
+    }
 }

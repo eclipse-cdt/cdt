@@ -43,8 +43,6 @@ public class OpenIndexerViewAction implements IViewActionDelegate,
         IViewPart tempView = null;
 
         try {
-            // TODO Devin add support for multiple views
-//          tempView = viewPart.getSite().getPage().showView(IndexerView.VIEW_ID, proj.getName(), IWorkbenchPage.VIEW_ACTIVATE);
             tempView = viewPart.getSite().getPage().showView(IndexerView.VIEW_ID);
             if (tempView instanceof IndexerView)
                 ((IndexerView)tempView).setProject(proj);

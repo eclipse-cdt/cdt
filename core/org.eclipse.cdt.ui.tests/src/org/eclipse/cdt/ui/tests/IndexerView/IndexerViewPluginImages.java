@@ -85,6 +85,11 @@ public class IndexerViewPluginImages {
     public static final String IMG_FWD_UNION= NAME_PREFIX + "fwd_union.gif"; //$NON-NLS-1$
     public static final String IMG_WARNING= NAME_PREFIX + "warning_icon.gif"; //$NON-NLS-1$
     public static final String IMG_FILTER_BUTTON= NAME_PREFIX + "filterbutton.gif"; //$NON-NLS-1$
+    public static final String IMG_STATS= NAME_PREFIX + "stats.gif"; //$NON-NLS-1$
+    public static final String IMG_GROUPED_ALL= NAME_PREFIX + "grouped_all.gif"; //$NON-NLS-1$
+    public static final String IMG_GROUPED_DECL= NAME_PREFIX + "grouped_decl.gif"; //$NON-NLS-1$
+    public static final String IMG_GROUPED_REF= NAME_PREFIX + "grouped_ref.gif"; //$NON-NLS-1$
+    public static final String IMG_GROUPED_TYPE= NAME_PREFIX + "grouped_type.gif"; //$NON-NLS-1$
     
     public static final ImageDescriptor DESC_REF= createManaged(ICON_PREFIX, IMG_REF);
     public static final ImageDescriptor DESC_TYPE_REF= createManaged(ICON_PREFIX, IMG_TYPE_REF);
@@ -119,6 +124,11 @@ public class IndexerViewPluginImages {
     public static final ImageDescriptor DESC_FWD_UNION= createManaged(ICON_PREFIX, IMG_FWD_UNION);
     public static final ImageDescriptor DESC_WARNING= createManaged(ICON_PREFIX, IMG_WARNING);
     public static final ImageDescriptor DESC_FILTER_BUTTON= createManaged(ICON_PREFIX, IMG_FILTER_BUTTON);
+    public static final ImageDescriptor DESC_STATS= createManaged(ICON_PREFIX, IMG_STATS);
+    public static final ImageDescriptor DESC_GROUPED_ALL= createManaged(ICON_PREFIX, IMG_GROUPED_ALL);
+    public static final ImageDescriptor DESC_GROUPED_DECL= createManaged(ICON_PREFIX, IMG_GROUPED_DECL);
+    public static final ImageDescriptor DESC_GROUPED_REF= createManaged(ICON_PREFIX, IMG_GROUPED_REF);
+    public static final ImageDescriptor DESC_GROUPED_TYPE= createManaged(ICON_PREFIX, IMG_GROUPED_TYPE);
     
     private static ImageDescriptor createManaged(String prefix, String name) {
         return createManaged(imageRegistry, prefix, name);

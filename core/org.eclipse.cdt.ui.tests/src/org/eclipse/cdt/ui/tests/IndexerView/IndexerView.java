@@ -57,6 +57,10 @@ import org.eclipse.ui.views.properties.PropertySheet;
  * @author dsteffle
  */
 public class IndexerView extends ViewPart {
+    private static final String _TOTAL_IENTRYRESULTS = " total IEntryResults"; //$NON-NLS-1$
+    private static final String _FILTERED_IENTRY_RESULTS_ = " filtered IEntry Results\n"; //$NON-NLS-1$
+    private static final String INDEXER_STATS = "Indexer Stats"; //$NON-NLS-1$
+    private static final String DISPLAY_INDEX_STATS = "Display Index Stats"; //$NON-NLS-1$
     private static final String INDEXER_VIEW___ = "Indexer View - "; //$NON-NLS-1$
     private static final String _INDEXER_MENU_MANAGER = "#Indexer_Menu_Manager"; //$NON-NLS-1$
     private static final String SET_FILTERS = "Set Filters"; //$NON-NLS-1$
@@ -70,6 +74,7 @@ public class IndexerView extends ViewPart {
     protected Action nextPageAction;
     protected Action singleClickAction;
     protected Action setFiltersAction;
+    protected Action displayStatsAction;
     protected IIndexer[] indexers = new IIndexer[CTestPlugin.getWorkspace().getRoot().getProjects().length];
     protected IProject project = null;
         
@@ -85,6 +90,7 @@ public class IndexerView extends ViewPart {
         protected boolean displayBackwards=false;
         
         private class InitializeView extends Job {
+            private static final String NULL_PROJECT_SELECTED = "A null project was selected."; //$NON-NLS-1$
             private static final String ALL_NAME_SEARCH = "*"; //$NON-NLS-1$
             private static final String INDEXER_VIEW = "Indexer View"; //$NON-NLS-1$
             TableViewer theViewer = null;
@@ -102,7 +108,7 @@ public class IndexerView extends ViewPart {
                             CTestPlugin.getStandardDisplay().asyncExec(new Runnable() {
                                 public void run() {
                                     MessageDialog.openInformation(theViewer.getControl().getShell(), INDEXER_VIEW,
-                                    "SourceIndexer points to a null project."); //$NON-NLS-1$ //$NON-NLS-2$        
+                                    NULL_PROJECT_SELECTED);        
                                 }
                             });
                             
@@ -412,7 +418,7 @@ public class IndexerView extends ViewPart {
             public void run() {
                 if (!(viewer.getContentProvider() instanceof ViewContentProvider)) return;
 
-                FilterIndexerViewDialog dialog = new FilterIndexerViewDialog(getSite().getShell(), ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot(), project.getName());
+                FilterIndexerViewDialog dialog = new FilterIndexerViewDialog(getSite().getShell(), ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot(), (project==null?BLANK_STRING:project.getName()));
                 int result = dialog.open();
                 
                 if (result == IDialogConstants.OK_ID) {
@@ -427,6 +433,24 @@ public class IndexerView extends ViewPart {
         setFiltersAction.setText(SET_FILTERS);
         setFiltersAction.setToolTipText(SET_FILTERS);
         setFiltersAction.setImageDescriptor(IndexerViewPluginImages.DESC_FILTER_BUTTON);
+        
+        displayStatsAction = new Action() {
+            public void run() {
+                CTestPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        if (viewer.getContentProvider() instanceof ViewContentProvider) {
+                            IndexerNodeParent root = ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot();
+                            
+                            MessageDialog.openInformation(getSite().getShell(), INDEXER_STATS,
+                                    root.getFilteredCount() + _FILTERED_IENTRY_RESULTS_ + root.getFullLength() + _TOTAL_IENTRYRESULTS);
+                        }
+                    }
+                });
+            }
+        };
+        displayStatsAction.setText(DISPLAY_INDEX_STATS);
+        displayStatsAction.setToolTipText(DISPLAY_INDEX_STATS);
+        displayStatsAction.setImageDescriptor(IndexerViewPluginImages.DESC_STATS);
         
         singleClickAction = new IndexerHighlighterAction();
     }
@@ -459,7 +483,7 @@ public class IndexerView extends ViewPart {
             
             IViewPart part = getSite().getPage().findView(PROPERTIES_VIEW);
             if (part instanceof PropertySheet) {
-                ((PropertySheet)part).selectionChanged(getSite().getPart(), selection); // TODO Devin need to instead get the part that this action belongs to... 
+                ((PropertySheet)part).selectionChanged(getSite().getPart(), selection); 
             }
         }
     }
@@ -486,6 +510,8 @@ public class IndexerView extends ViewPart {
         manager.add(nextPageAction);
         manager.add(new Separator());
         manager.add(setFiltersAction);
+        manager.add(new Separator());
+        manager.add(displayStatsAction);
         manager.add(new Separator());
     }
 

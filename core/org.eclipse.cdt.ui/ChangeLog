@@ -1,3 +1,21 @@
+2004-08-04 Alain Magloire
+
+	Implementation of Grouping for includes.
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java
+	* src/org/eclipse/cdt/internal/ui/cview/LibraryRefContainer.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinerProvider.java
+	* src/org/eclipse/cdt/internal/ui/preferences/AppearancePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CPluginPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	* src/org/eclipse/cdt/ui/CElementGrouping.java
+	* src/org/eclipse/cdt/ui/CElementSorter.java
+	* src/org/eclipse/cdt/ui/IncludesGrouping.java
+	* src/org/eclipse/cdt/ui/PreferenceConstants.java
+
 2004-08-03 Tanya Wolff
 
 	Fix for 71033: English "Find Refs" in Workbench Key preferences.

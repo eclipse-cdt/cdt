@@ -22,7 +22,9 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -57,15 +59,17 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected boolean fProvideMembers= false;
 	protected boolean fProvideWorkingCopy= false;
+	protected boolean fIncludesGrouping= false;
 	
 	public BaseCElementContentProvider() {
+		this(false, false);
 	}
 	
 	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
-		fProvideMembers= provideMembers;
+	    fProvideMembers= provideMembers;
 		fProvideWorkingCopy= provideWorkingCopy;
 	}
-	
+
 	/**
 	 * Returns whether the members are provided when asking
 	 * for a TU's or ClassFile's children.
@@ -98,13 +102,22 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return fProvideWorkingCopy;
 	}
 
-	/* (non-Cdoc)
-	 * Method declared on IStructuredContentProvider.
+	/**
+	 * Can elements be group.
+	 * @return
 	 */
-	public Object[] getElements(Object parent) {
-		return getChildren(parent);
+	public boolean areIncludesGroup() {
+	    return fIncludesGrouping;
 	}
-	
+
+	/**
+	 * Allow Elements to be group.
+	 * @param b
+	 */
+	public void setIncludesGrouping(boolean b) {
+	    fIncludesGrouping = b;
+	}
+
 	/* (non-Cdoc)
 	 * Method declared on IContentProvider.
 	 */
@@ -117,6 +130,13 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	public void dispose() {
 	}
 
+	/* (non-Cdoc)
+	 * Method declared on IStructuredContentProvider.
+	 */
+	public Object[] getElements(Object parent) {
+		return getChildren(parent);
+	}
+	
 	/* (non-Cdoc)
 	 * Method declared on ITreeContentProvider.
 	 */
@@ -131,26 +151,22 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return getSourceRoots((ICProject)element);
 			} else if (element instanceof ICContainer) {
 				return getCResources((ICContainer)element);
-			} else if (element instanceof IBinaryContainer) {
-				return NO_CHILDREN; // we deal with this in the CVIewContentProvider
-			} else if (element instanceof IArchiveContainer) {
-				return NO_CHILDREN; // we deal with this in the CViewContentProvider
 			} else if (element instanceof ITranslationUnit) {
 				// if we want to get the chidren of a translation unit
 				if (fProvideMembers) {
 					// if we want to use the working copy of it
-					if(fProvideWorkingCopy){
+					ITranslationUnit tu = (ITranslationUnit)element;
+					if (fProvideWorkingCopy){
 						// if it is not already a working copy
-						if(!(element instanceof IWorkingCopy)){
+						if (!(element instanceof IWorkingCopy)){
 							// if it has a valid working copy
-							ITranslationUnit tu = (ITranslationUnit)element;
 							IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
-							if(copy != null) {
-								return ((IParent)copy).getChildren();
+							if (copy != null) {
+								tu = copy;
 							}
 						}
 					}
-					return ((IParent)element).getChildren();
+					return getTranslationUnitChildren(tu);
 				}
 			} else if (element instanceof IParent) {
 				return ((IParent)element).getChildren();
@@ -158,6 +174,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return getResources((IProject)element);
 			} else if (element instanceof IFolder) {
 				return getResources((IFolder)element);
+			} else if (element instanceof CElementGrouping) {
+				return ((CElementGrouping)element).getChildren(element);
 			}
 		} catch (CModelException e) {
 			//CUIPlugin.getDefault().log(e);
@@ -190,16 +208,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return false;
 			}
 			return true;	
-		}
-
-		if (element instanceof IBinaryContainer) {
-			try {
-				IBinaryContainer cont = (IBinaryContainer)element;
-				IBinary[] bins = getExecutables(cont);
-				return (bins != null) && bins.length > 0;
-			} catch (CModelException e) {
-				return false;
-			}
 		}
 
 		if (element instanceof IParent) {
@@ -295,6 +303,26 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 
 		return objects;
+	}
+
+	protected Object[] getTranslationUnitChildren(ITranslationUnit unit) throws CModelException {
+		if (fIncludesGrouping) {
+			boolean hasInclude = false;
+			ICElement[] children = unit.getChildren();
+			ArrayList list = new ArrayList(children.length);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getElementType() != ICElement.C_INCLUDE) {
+					list.add(children[i]);
+				} else {
+					hasInclude = true;
+				}
+			}
+			if (hasInclude) {
+				list.add (0, new IncludesGrouping(unit));
+			}
+			return list.toArray();
+		}
+		return unit.getChildren();
 	}
 
 	protected Object[] getCResources(ICContainer container) throws CModelException {
@@ -417,27 +445,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return ((ICElement)element).exists();
 		}
 		return true;
-	}
-
-	protected IBinary[] getExecutables(ICProject cproject) throws CModelException {
-		IBinaryContainer container = cproject.getBinaryContainer();
-		return getExecutables(container);
-	}
-	
-	protected IBinary[] getExecutables(IBinaryContainer container) throws CModelException {
-		ICElement[] celements = container.getChildren();
-		ArrayList list = new ArrayList(celements.length);
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i] instanceof IBinary) {
-				IBinary bin = (IBinary)celements[i];
-				if (bin.isExecutable() || bin.isSharedLib()) {
-					list.add(bin);
-				}
-			}
-		}
-		IBinary[] bins = new IBinary[list.size()];
-		list.toArray(bins);
-		return bins;
 	}
 
 	protected IBinary[] getBinaries(ICProject cproject) throws CModelException {

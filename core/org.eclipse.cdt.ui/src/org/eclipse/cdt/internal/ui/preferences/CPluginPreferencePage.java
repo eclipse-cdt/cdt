@@ -24,7 +24,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	
 
 	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label"; //$NON-NLS-1$
-	private static final String SHOW_CU_CHILDREN_LABEL= "CBasePreferencePage.CUChildren.label"; //$NON-NLS-1$
 	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= "CBasePreferencePage.OutlineView.structuralParseMode.label"; //$NON-NLS-1$
 	
 	public CPluginPreferencePage() {
@@ -49,8 +48,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		BooleanFieldEditor linkEditor= new BooleanFieldEditor(PreferenceConstants.PREF_LINK_TO_EDITOR, CUIPlugin.getResourceString(LINK_TO_EDITOR_LABEL), parent);
 		addField(linkEditor);
 
-		BooleanFieldEditor showCUChildrenEditor= new BooleanFieldEditor(PreferenceConstants.PREF_SHOW_CU_CHILDREN, CUIPlugin.getResourceString(SHOW_CU_CHILDREN_LABEL), parent);
-		addField(showCUChildrenEditor);
 		
 		BooleanFieldEditor useStructuralParseMode= new BooleanFieldEditor(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CUIPlugin.getResourceString(USE_STRUCTURAL_PARSE_MODE_LABEL), parent);
 		addField(useStructuralParseMode);		
@@ -65,10 +62,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.PREF_LINK_TO_EDITOR, enable);
 	}
 
-	public static boolean showCompilationUnitChildren() {
-		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
-	}
-	
 	public static boolean useStructuralParseMode() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
 	}
@@ -85,6 +78,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
+		// The field is under Appearance page/preference
 		prefs.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CCorePlugin.getDefault().useStructuralParseMode());
 		prefs.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);

@@ -50,7 +50,7 @@ public class PreferenceConstants {
 	public static final String PREF_LINK_TO_EDITOR= "org.eclipse.cdt.ui.editor.linkToEditor"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that speficies whether children of a translation unit are shown in the package explorer.
+	 * A named preference that speficies whether children of a translation unit are shown in the CView.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -269,7 +269,7 @@ public class PreferenceConstants {
 	public static final String OPEN_TYPE_HIERARCHY_IN_VIEW_PART= "viewPart"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if the C Browsing views are linked to the active editor.
+	 * A named preference that controls if the Outline view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -279,6 +279,16 @@ public class PreferenceConstants {
 	public static final String OUTLINE_GROUP_INCLUDES= "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls if the CView.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @see #LINK_PACKAGES_TO_EDITOR
+	 */
+	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 * 
 	 * @return the CDT-UI preference store
@@ -286,7 +296,7 @@ public class PreferenceConstants {
 	public static IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
-    
+
     /**
      * Initializes the given preference store with the default values.
      * 

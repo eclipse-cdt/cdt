@@ -180,6 +180,15 @@ public class CElementSorter extends ViewerSorter {
 			return LIBRARYREFCONTAINER;
 		} else if (element instanceof IncludeRefContainer) {
 			return INCLUDEREFCONTAINER;
+		} else if (element instanceof CElementGrouping) {
+			int type = ((CElementGrouping)element).getType();
+			if (type == CElementGrouping.INCLUDES_GROUPING) {
+				return INCLUDES;
+			} else if (type == CElementGrouping.CLASS_GROUPING) {
+				return VARIABLES;
+			} else if (type == CElementGrouping.NAMESPACE_GROUPING) {
+				return NAMESPACES;
+			}
 		}
 		return OTHERS;
 	}

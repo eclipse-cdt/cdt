@@ -10,9 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import java.util.ArrayList;
-
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
@@ -20,12 +17,10 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchAdapter;
 
 /*
  * CContentOutlinerProvider 
@@ -35,6 +30,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	CContentOutlinePage fOutliner;
 	ITranslationUnit root;
 	private ElementChangedListener fListener;
+	private IPropertyChangeListener fPropertyListener;
 
 	/**
 	 * The element change listener of the java outline viewer.
@@ -98,55 +94,25 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		}
 	}
 
-	/**
-	 * VirtualGrouping
-	 */
-	public class IncludesContainer extends WorkbenchAdapter implements IAdaptable {
-		ITranslationUnit tu;
-
-		public IncludesContainer(ITranslationUnit unit) {
-			tu = unit;
-		}
+	class PropertyListener implements IPropertyChangeListener {
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
-		public Object[] getChildren(Object object) {
-			try {
-				return tu.getChildrenOfType(ICElement.C_INCLUDE).toArray();
-			} catch (CModelException e) {
+		public void propertyChange(PropertyChangeEvent event) {
+			String prop = event.getProperty();
+			if (prop.equals(PreferenceConstants.OUTLINE_GROUP_INCLUDES)) {
+				Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					boolean value = ((Boolean)newValue).booleanValue();
+					if (areIncludesGroup() != value) {
+						setIncludesGrouping(value);
+						if (fOutliner != null) {
+							fOutliner.contentUpdated();
+						}
+					}
+				}
 			}
-			return NO_CHILDREN;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-		 */
-		public String getLabel(Object object) {
-			return "include statements";
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-		 */
-		public ImageDescriptor getImageDescriptor(Object object) {
-			return CPluginImages.DESC_OBJS_INCCONT;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-		 */
-		public Object getParent(Object object) {
-			return tu;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-		 */
-		public Object getAdapter(Class clas) {
-			if (clas == IWorkbenchAdapter.class)
-				return this;
-			return null;
 		}
 
 	}
@@ -157,40 +123,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	public CContentOutlinerProvider(CContentOutlinePage outliner) {
 		super(true, true);
 		fOutliner = outliner;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
-	public Object[] getChildren(Object element) {
-		if (element instanceof ITranslationUnit) {
-			ITranslationUnit unit = (ITranslationUnit)element;
-			try {
-				if (fOutliner != null && fOutliner.isIncludesGroupingEnabled()) {
-					boolean hasInclude = false;
-					ICElement[] children = unit.getChildren();
-					ArrayList list = new ArrayList(children.length);
-					for (int i = 0; i < children.length; i++) {
-						if (children[i].getElementType() != ICElement.C_INCLUDE) {
-							list.add(children[i]);
-						} else {
-							hasInclude = true;
-						}
-					}
-					if (hasInclude) {
-						list.add (0, new IncludesContainer(unit));
-					}
-					return list.toArray();
-				}
-			} catch (CModelException e) {
-				return NO_CHILDREN;
-			}
-			
-		} else if (element instanceof IncludesContainer) {
-			IncludesContainer includes = (IncludesContainer)element;
-			return includes.getChildren(element);
-		}
-		return super.getChildren(element);
+		setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 	}
 
 	/* (non-Javadoc)
@@ -201,7 +134,11 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		if (fListener != null) {
 			CoreModel.getDefault().removeElementChangedListener(fListener);
 			fListener= null;
-		}		
+		}
+		if (fPropertyListener != null) {
+			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyListener);
+			fPropertyListener = null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -211,9 +148,11 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		boolean isTU= (newInput instanceof ITranslationUnit);
 
 		if (isTU && fListener == null) {
+			root = (ITranslationUnit)newInput;
 			fListener= new ElementChangedListener();
 			CoreModel.getDefault().addElementChangedListener(fListener);
-			root = (ITranslationUnit)newInput;
+			fPropertyListener = new PropertyListener();
+			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 		} else if (!isTU && fListener != null) {
 			CoreModel.getDefault().removeElementChangedListener(fListener);
 			fListener= null;

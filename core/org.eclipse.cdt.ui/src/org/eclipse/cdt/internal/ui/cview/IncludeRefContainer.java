@@ -17,8 +17,8 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -26,7 +26,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * IncludeRefContainer
  */
-public class IncludeRefContainer implements IAdaptable, IWorkbenchAdapter{
+public class IncludeRefContainer extends CElementGrouping {
 
 	private Object[] EMPTY = new Object[0];
 	ICProject fCProject;
@@ -35,6 +35,7 @@ public class IncludeRefContainer implements IAdaptable, IWorkbenchAdapter{
 	 * 
 	 */
 	public IncludeRefContainer(ICProject cproject) {
+		super(INCLUDE_REF_CONTAINER);
 		fCProject = cproject;
 	}
 

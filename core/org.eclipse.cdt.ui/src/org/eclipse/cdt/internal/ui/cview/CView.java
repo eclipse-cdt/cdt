@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CElementSorter;
 import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -52,6 +51,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -408,7 +408,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * Sets the content provider for the viewer.
 	 */
 	void initContentProvider(TreeViewer viewer) {
-		CElementContentProvider provider = createContentProvider();
+		IContentProvider provider = createContentProvider();
 		viewer.setContentProvider(provider);
 	}
 
@@ -557,12 +557,15 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		return new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
-	protected CElementContentProvider createContentProvider() {
-		boolean showCUChildren = CPluginPreferencePage.showCompilationUnitChildren();
-		return new CViewContentProvider(showCUChildren, true);
+	protected IContentProvider createContentProvider() {
+		boolean showCUChildren = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+		boolean groupIncludes = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+		CViewContentProvider provider = new CViewContentProvider(showCUChildren, true);
+		provider.setIncludesGrouping(groupIncludes);
+		return provider;
 	}
 
-	protected CElementLabelProvider createLabelProvider() {
+	protected ILabelProvider createLabelProvider() {
 		return new CViewLabelProvider();
 	}
 
@@ -809,8 +812,11 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		String property = event.getProperty();
 
 		if (property.equals(PreferenceConstants.PREF_SHOW_CU_CHILDREN)) {
-			boolean showCUChildren = CPluginPreferencePage.showCompilationUnitChildren();
-			((CElementContentProvider) viewer.getContentProvider()).setProvideMembers(showCUChildren);
+			boolean showCUChildren = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
+			IContentProvider provider = viewer.getContentProvider();
+			if (provider instanceof CElementContentProvider) {
+				((CElementContentProvider) provider).setProvideMembers(showCUChildren);
+			}
 			refreshViewer = true;
 		} else if (property.equals(PreferenceConstants.PREF_LINK_TO_EDITOR)) {
 			CViewActionGroup group = getActionGroup();
@@ -818,6 +824,13 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				boolean enable = isLinkingEnabled();
 				((MainActionGroup)group).toggleLinkingAction.setChecked(enable);
 			}
+		} else if (property.equals(PreferenceConstants.CVIEW_GROUP_INCLUDES)) {
+			boolean groupIncludes = PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES);
+			IContentProvider provider = viewer.getContentProvider();
+			if (provider instanceof CElementContentProvider) {
+				((CElementContentProvider) provider).setIncludesGrouping(groupIncludes);
+			}
+			refreshViewer = true;
 		}
 
 		if (refreshViewer) {

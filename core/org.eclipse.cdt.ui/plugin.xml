@@ -403,6 +403,12 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             name="%CDTSearch.name"
             id="org.eclipse.cdt.ui.preferences.CSearchPreferencePage"/>
+      <page
+            name="%appearancePrefName"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.AppearancePreferencePage"
+            id="org.eclipse.cdt.ui.preferences.AppearancePreferencePage">
+      </page>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"

@@ -12,7 +12,9 @@
 package org.eclipse.cdt.internal.ui.cview;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
@@ -36,6 +38,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	 */
 	public CViewContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
 		super(provideMembers, provideWorkingCopy);
+		setIncludesGrouping(true);
 	}
 
 	
@@ -49,7 +52,7 @@ public class CViewContentProvider extends CElementContentProvider {
 			if (element instanceof ICProject) {
 				extras = getProjectChildren((ICProject)element);
 			} else if (element instanceof IBinaryContainer) {
-				extras = getExecutables((IBinaryContainer)element);
+				extras = getBinaries((IBinaryContainer)element);
 			} else if (element instanceof IArchiveContainer) {
 				extras = getArchives((IArchiveContainer)element);
 			} else if (element instanceof LibraryRefContainer) {
@@ -76,7 +79,7 @@ public class CViewContentProvider extends CElementContentProvider {
 			extras = new Object[] {archive};
 		}
 		IBinaryContainer bin = cproject.getBinaryContainer(); 
-		if (getExecutables(bin).length > 0) {
+		if (getBinaries(bin).length > 0) {
 			Object[] o = new Object[] {bin};
 			if (extras != null && extras.length > 0) {
 				extras = concatenate(extras, o);
@@ -129,5 +132,28 @@ public class CViewContentProvider extends CElementContentProvider {
 			parent = ((LibraryRefContainer)element).getCProject();
 		}
 		return parent;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+	 */
+	public boolean hasChildren(Object element) {
+		if (element instanceof IBinaryContainer) {
+			try {
+				IBinaryContainer cont = (IBinaryContainer)element;
+				IBinary[] bins = getBinaries(cont);
+				return (bins != null) && bins.length > 0;
+			} catch (CModelException e) {
+				return false;
+			}
+		} else if (element instanceof IArchiveContainer) {
+			try {
+				IArchiveContainer cont = (IArchiveContainer)element;
+				IArchive[] ars = getArchives(cont);
+				return (ars != null) && ars.length > 0;
+			} catch (CModelException e) {
+				return false;
+			}			
+		}
+		return super.hasChildren(element);
 	}
 }

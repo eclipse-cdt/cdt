@@ -97,6 +97,7 @@ import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 
@@ -3283,26 +3284,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getCompletionContext(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression)
-	 */
-	public IASTNode getCompletionContext(Kind kind, IASTExpression expression) {
-		IContainerSymbol context = null;
-		try {
-			context = getSearchScope( kind, expression, null );
-		} catch (ASTSemanticException e) {
-			return null;
-		}
-		
-		if( context != null ){
-			ISymbolASTExtension symbolExtension = context.getASTExtension();
-			return ( symbolExtension != null ) ? symbolExtension.getPrimaryDeclaration() : null;
-		}
-		
-		return null;
-		
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
 	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
@@ -3318,9 +3299,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getNodeForThisExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
 	 */
-	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression) {
+	public IASTNode expressionToMostPreciseASTNode(IASTScope scope, IASTExpression expression) {
 		if( expression == null ) return null;
 		if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION )
+		{
 			if( expression instanceof ASTExpression)
 			{
 				try {
@@ -3329,7 +3311,53 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 //	            	assert false : e;
 				}
 			}
+		}
+	
+		return expression;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#validateIndirectMemberOperation(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public boolean validateIndirectMemberOperation(IASTNode node) {
+		List pointerOps = null;
+		if( ( node instanceof ISymbolOwner ) )
+			pointerOps = ((ISymbolOwner) node).getSymbol().getTypeInfo().getFinalType().getPtrOperators();
+		else if( node instanceof ASTExpression )
+		{
+			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
+			if( typeSymbol != null )
+				pointerOps = typeSymbol.getTypeInfo().getFinalType().getPtrOperators();
+		}
+		else
+			return false;
 		
-		return null;
+		
+		if( pointerOps == null || pointerOps.isEmpty() ) return false;
+		TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
+		if( lastOperator.getType() == TypeInfo.PtrOp.t_array || lastOperator.getType() == TypeInfo.PtrOp.t_pointer ) return true;
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#validateDirectMemberOperation(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public boolean validateDirectMemberOperation(IASTNode node) {
+		List pointerOps = null;
+		if( ( node instanceof ISymbolOwner ) )
+			pointerOps = ((ISymbolOwner) node).getSymbol().getPtrOperators();
+		else if( node instanceof ASTExpression )
+		{
+			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
+			if( typeSymbol != null )
+				pointerOps = typeSymbol.getPtrOperators();
+		}
+		else
+			return false;
+		
+		if( pointerOps == null || pointerOps.isEmpty() ) return true;
+		TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
+		if( lastOperator.getType() == TypeInfo.PtrOp.t_reference ) return true;
+		return false;
 	}
 }

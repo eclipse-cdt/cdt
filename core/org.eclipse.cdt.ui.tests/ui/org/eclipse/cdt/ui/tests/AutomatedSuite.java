@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MacroRef_NoPre
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MacroRef_Prefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Arrow_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Arrow_Prefix;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Arrow_Prefix2;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Dot_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Dot_Prefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_NamespaceRef_NoPrefix;
@@ -87,7 +87,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_MemberReference_Dot_Prefix.suite());
 		addTest(CompletionTest_MemberReference_Dot_NoPrefix.suite());
 		addTest(CompletionTest_MemberReference_Arrow_Prefix.suite());
-		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
+		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_MemberReference_Arrow_NoPrefix.suite());
 		addTest(CompletionTest_NamespaceRef_Prefix.suite());
 		addTest(CompletionTest_NamespaceRef_NoPrefix.suite());

@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
  * @author jcamelon
  *
  */
-public class ASTExpression implements IASTExpression
+public class ASTExpression extends ASTNode implements IASTExpression
 {
     private final Kind kind;
     private final IASTExpression lhs;

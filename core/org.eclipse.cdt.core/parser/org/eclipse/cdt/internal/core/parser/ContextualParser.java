@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -21,11 +22,15 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
@@ -126,13 +131,6 @@ public class ContextualParser extends CompleteParser {
 		finalToken = token;
 	}
 
-	protected IASTNode getCompletionContextForExpression(IASTExpression firstExpression, boolean isTemplate) {
-		return astFactory.getCompletionContext( (isTemplate
-				? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
-				: IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION), 
-				firstExpression ) ;
-	}
-
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node, String prefix) throws EndOfFileException {
 		setCompletionToken( TokenFactory.createToken( IToken.tIDENTIFIER, prefix ) );
 		setCompletionValues(scope, kind, key, node );
@@ -171,9 +169,28 @@ public class ContextualParser extends CompleteParser {
 	
 	
 	
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, boolean isTemplate) throws EndOfFileException {
-		setCompletionValues(scope,kind,key, getCompletionContextForExpression(firstExpression,isTemplate)  );
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
+		IASTNode node = astFactory.expressionToMostPreciseASTNode( scope, firstExpression );
+		if( kind == CompletionKind.MEMBER_REFERENCE )
+		{
+			if( ! validMemberOperation( node, expressionKind ))
+				node =null;
+		}
+		setCompletionValues(scope,kind,key, node  );
 	}
+
+	/**
+	 * @param node
+	 * @param expressionKind
+	 * @return
+	 */
+	private boolean validMemberOperation(IASTNode node, Kind expressionKind) {
+		if( expressionKind == Kind.POSTFIX_ARROW_IDEXPRESSION || expressionKind == Kind.POSTFIX_ARROW_TEMPL_IDEXP )
+			return astFactory.validateIndirectMemberOperation( node );
+		else if( expressionKind == Kind.POSTFIX_DOT_IDEXPRESSION || expressionKind == Kind.POSTFIX_DOT_TEMPL_IDEXPRESS )
+			return astFactory.validateDirectMemberOperation( node );
+		return false;
+	}	
 
 	protected void setCompletionScope(IASTScope scope) {
 		this.contextualScope = scope;

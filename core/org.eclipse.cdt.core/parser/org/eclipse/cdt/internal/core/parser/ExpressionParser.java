@@ -2285,7 +2285,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            				 firstExpression.getRHSExpression().getIdExpression() != null )
 	            		{
 	            			setCurrentFunctionName( firstExpression.getRHSExpression().getIdExpression() );
-	            			context = astFactory.expressionToASTNode( scope, firstExpression.getLHSExpression() );
+	            			context = astFactory.expressionToMostPreciseASTNode( scope, firstExpression.getLHSExpression() );
 	            		}
 	            	}
 	            	
@@ -2375,19 +2375,20 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                        consume(IToken.t_template);
 	                        isTemplate = true;
 	                    }
-	        
-		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
-	                															
+
+	                Kind memberCompletionKind = (isTemplate
+                            ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
+                            : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION);
+		                															
+		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, memberCompletionKind  );
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE, key);
 	                
 	                try
 	                {
-	                    firstExpression =
+						firstExpression =
 	                        astFactory.createExpression(
 	                            scope,
-	                            (isTemplate
-	                                ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
-	                                : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION),
+	                            memberCompletionKind,
 	                            firstExpression,
 	                            secondExpression,
 	                            null,
@@ -2414,18 +2415,20 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                        consume(IToken.t_template);
 	                        isTemplate = true;
 	                    }
-	                
-		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );	                															
+
+                    Kind arrowCompletionKind = (isTemplate
+                         ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
+                         : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION);
+
+		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, arrowCompletionKind );	                															
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE, key);                 
 	
 	                try
 	                {
-	                    firstExpression =
+						firstExpression =
 	                        astFactory.createExpression(
 	                            scope,
-	                            (isTemplate
-	                                ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
-	                                : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION),
+	                            arrowCompletionKind,
 	                            firstExpression,
 	                            secondExpression,
 	                            null,
@@ -2826,7 +2829,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected void setCompletionValues(IASTScope scope, IASTCompletionNode.CompletionKind kind, KeywordSets.Key key, IASTNode node, String prefix) throws EndOfFileException {	
 	}
 
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, boolean isTemplate) throws EndOfFileException {
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
 	}
 	
 	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, Key key ) throws EndOfFileException {

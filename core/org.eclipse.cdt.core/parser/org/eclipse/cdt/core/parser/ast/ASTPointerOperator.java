@@ -31,4 +31,14 @@ public class ASTPointerOperator extends Enum
     {
         super(enumValue);
     }
+    
+    public boolean isStarOperator()
+    {
+    	return ( ( this == VOLATILE_POINTER ) || ( this == CONST_POINTER ) || ( this == RESTRICT_POINTER ) || ( this == POINTER ));
+    }
+    
+    public boolean isReferenceOperator()
+    {
+    	return ( this == REFERENCE );
+    }
 }

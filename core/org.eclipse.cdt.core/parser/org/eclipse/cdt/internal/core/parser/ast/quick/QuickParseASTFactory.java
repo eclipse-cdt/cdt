@@ -71,7 +71,6 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 
 	private static final boolean CREATE_EXCESS_CONSTRUCTS = true;
 
-
 	public QuickParseASTFactory( IASTFactoryExtension extension )
 	{
 		super(extension);
@@ -347,14 +346,6 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getCompletionContext(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression)
-	 */
-	public IASTNode getCompletionContext(Kind kind, IASTExpression expression) {
-		//we have no cross-reference information about the type of the expression
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
 	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
@@ -371,7 +362,23 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getNodeForThisExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
 	 */
-	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression) {
+	public IASTNode expressionToMostPreciseASTNode(IASTScope scope, IASTExpression expression) {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#validateIndirectMemberOperation(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public boolean validateIndirectMemberOperation(IASTNode node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#validateDirectMemberOperation(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public boolean validateDirectMemberOperation(IASTNode node) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

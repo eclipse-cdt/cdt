@@ -951,6 +951,7 @@ public class CompleteParseBaseTest extends TestCase
 	protected void assertQualifiedName(String [] fromAST, String [] theTruth)
 	{
 		assertTrue( qualifiedNamesEquals( fromAST, theTruth ));
-	}	
+	}
+
 
 }

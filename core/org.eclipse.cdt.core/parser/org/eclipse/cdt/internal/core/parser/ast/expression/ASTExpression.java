@@ -10,6 +10,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 
 
@@ -213,6 +214,14 @@ public class ASTExpression implements IASTExpression {
 	 */
 	public void purgeReferences() throws ASTNotImplementedException
 	{
+		throw new ASTNotImplementedException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind[], org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public ILookupResult lookup(String prefix, LookupKind[] k, IASTNode context) throws LookupError, ASTNotImplementedException {
+		// Not provided in this mode
 		throw new ASTNotImplementedException();
 	}
 

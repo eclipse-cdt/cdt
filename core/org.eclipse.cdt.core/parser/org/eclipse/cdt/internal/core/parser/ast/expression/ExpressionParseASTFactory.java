@@ -875,18 +875,6 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getCompletionContext(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind,
-	 *           org.eclipse.cdt.core.parser.ast.IASTExpression)
-	 */
-	public IASTNode getCompletionContext(
-		Kind kind,
-		IASTExpression expression) {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope,
 	 *           org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
@@ -898,7 +886,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getNodeForThisExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
 	 */
-	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression) {
+	public IASTNode expressionToMostPreciseASTNode(IASTScope scope, IASTExpression expression) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -908,6 +896,22 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	 */
 	public IASTScope getDeclaratorScope(IASTScope scope, ITokenDuple duple) {
 		return scope;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#validateIndirectMemberOperation(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public boolean validateIndirectMemberOperation(IASTNode node) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#validateDirectMemberOperation(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public boolean validateDirectMemberOperation(IASTNode node) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

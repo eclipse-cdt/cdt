@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
-import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 /**
  * @author jcamelon
  *
@@ -239,12 +238,6 @@ public interface IASTFactory
      * @param astClassSpecifier
      */
     public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier);
-
-	/**
-	 * @param kind
-	 * @param firstExpression
-	 */
-	public IASTNode getCompletionContext(Kind kind, IASTExpression expression);
 	
 	public IASTNode lookupSymbolInContext( IASTScope scope, ITokenDuple duple ) throws ASTNotImplementedException;
 
@@ -265,6 +258,18 @@ public interface IASTFactory
 	 * @param expression
 	 * @return
 	 */
-	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression);
+	public IASTNode expressionToMostPreciseASTNode(IASTScope scope, IASTExpression expression);
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public boolean validateIndirectMemberOperation(IASTNode node);
+
+	/**
+	 * @param node
+	 * @return
+	 */
+	public boolean validateDirectMemberOperation(IASTNode node);
 
 }

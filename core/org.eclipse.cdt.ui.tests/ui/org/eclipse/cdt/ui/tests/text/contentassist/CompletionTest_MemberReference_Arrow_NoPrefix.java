@@ -28,7 +28,7 @@ public class CompletionTest_MemberReference_Arrow_NoPrefix  extends CompletionPr
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTClassSpecifier";
+	private final String expectedContextName = "ASTVariable";
 	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
+import org.eclipse.cdt.core.parser.failedTests.CompletionParseFailedTest;
 import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
@@ -67,6 +68,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(ASTFailedTests.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(FailedCompleteParseASTTest.class);
+		suite.addTestSuite(CompletionParseFailedTest.class);
 
 		return suite;
 	}

@@ -20,21 +20,14 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
 	String gdbResult = "";
 	String returnValue = "";
-	int threadId;
-	MIFrame frame;
-
-	MIExecAsyncOutput exec;
-	MIResultRecord rr;
 
 	public MIFunctionFinishedEvent(MIExecAsyncOutput async) {
-		super(async.getToken());
-		exec = async;
+		super(async);
 		parse();
 	}
 
 	public MIFunctionFinishedEvent(MIResultRecord record) {
-		super(record.getToken());
-		rr = record;
+		super(record);
 		parse();
 	}
 
@@ -46,24 +39,22 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 		return returnValue;
 	}
 
-	public int getThreadId() {
-		return threadId;
-	}
-
-	public MIFrame getFrame() {
-		return frame;
-	}
-
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("gdb-result-var=" + gdbResult + "\n");;
 		buffer.append("return-value=" + returnValue + "\n");
-		buffer.append("thread-id=").append(threadId).append('\n');
-		buffer.append(frame.toString());
+		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		MIFrame f = getFrame();
+		if (f != null) {
+			buffer.append(f.toString());
+		}
 		return buffer.toString();
 	}
 
 	void parse () {
+		MIExecAsyncOutput exec = getMIExecAsyncOutput();
+		MIResultRecord rr = getMIResultRecord();
+
 		MIResult[] results = null;
 		if (exec != null) {
 			results = exec.getMIResults();
@@ -85,12 +76,14 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 					returnValue = str;
 				} else if (var.equals("thread-id")) {
 					try {
-						threadId = Integer.parseInt(str.trim());
+						int id = Integer.parseInt(str.trim());
+						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
 				} else if (var.equals("frame")) {
 					if (value instanceof MITuple) {
-						frame = new MIFrame((MITuple)value);
+						MIFrame f = new MIFrame((MITuple)value);
+						setFrame(f);
 					}
 				}
 			}

@@ -18,41 +18,31 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MILocationReachedEvent extends MIStoppedEvent {
 
-	int threadId;
-	MIFrame frame;
-
-	MIExecAsyncOutput exec;
-	MIResultRecord rr;
-
 	public MILocationReachedEvent(MIExecAsyncOutput async) {
-		super(async.getToken());
-		exec = async;
+		super(async);
 		parse();
 	}
 
 	public MILocationReachedEvent(MIResultRecord record) {
-		super(record.getToken());
-		rr = record;
+		super(record);
 		parse();
-	}
-
-	public int getThreadId() {
-		return threadId;
-	}
-
-	public MIFrame getFrame() {
-		return frame;
 	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("thread-id=").append(threadId).append('\n');
-		buffer.append(frame.toString());
+		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		MIFrame f = getFrame();
+		if (f != null) {
+			buffer.append(f.toString());
+		}
 		return buffer.toString();
 	}
 
 	void parse () {
 		MIResult[] results = null;
+		MIExecAsyncOutput exec = getMIExecAsyncOutput();
+		MIResultRecord rr = getMIResultRecord();
+
 		if (exec != null) {
 			results = exec.getMIResults();
 		} else if (rr != null) {
@@ -69,12 +59,14 @@ public class MILocationReachedEvent extends MIStoppedEvent {
 
 				if (var.equals("thread-id")) {
 					try {
-						threadId = Integer.parseInt(str.trim());
+						int id = Integer.parseInt(str.trim());
+						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
 				} else if (var.equals("frame")) {
 					if (value instanceof MITuple) {
-						frame = new MIFrame((MITuple)value);
+						MIFrame f = new MIFrame((MITuple)value);
+						setFrame(f);
 					}
 				}
 			}

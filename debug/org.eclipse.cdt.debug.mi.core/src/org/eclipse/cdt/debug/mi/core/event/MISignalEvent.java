@@ -21,21 +21,14 @@ public class MISignalEvent extends MIStoppedEvent {
 
 	String sigName = "";
 	String sigMeaning = "";
-	int threadId;
-	MIFrame frame;
-
-	MIExecAsyncOutput exec;
-	MIResultRecord rr;
 
 	public MISignalEvent(MIExecAsyncOutput async) {
-		super(async.getToken());
-		exec = async;
+		super(async);
 		parse();
 	}
 
 	public MISignalEvent(MIResultRecord record) {
-		super(record.getToken());
-		rr = record;
+		super(record);
 		parse();
 	}
 
@@ -47,25 +40,22 @@ public class MISignalEvent extends MIStoppedEvent {
 		return sigMeaning;
 	}
 
-
-	public int getThreadId() {
-		return threadId;
-	}
-
-	public MIFrame getFrame() {
-		return frame;
-	}
-
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("signal-name=" + sigName + "\n");;
 		buffer.append("signal-meaning=" + sigMeaning + "\n");;
-		buffer.append("thread-id=").append(threadId).append('\n');
-		buffer.append(frame.toString());
+		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		MIFrame f = getFrame();
+		if (f != null) {
+			buffer.append(f.toString());
+		}
 		return buffer.toString();
 	}
 
 	void parse () {
+		MIExecAsyncOutput exec = getMIExecAsyncOutput();
+		MIResultRecord rr = getMIResultRecord();
+
 		MIResult[] results = null;
 		if (exec != null) {
 			results = exec.getMIResults();
@@ -87,12 +77,14 @@ public class MISignalEvent extends MIStoppedEvent {
 					sigMeaning = str;
 				} else if (var.equals("thread-id")) {
 					try {
-						threadId = Integer.parseInt(str.trim());
+						int id = Integer.parseInt(str.trim());
+						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
 				} else if (var.equals("frame")) {
 					if (value instanceof MITuple) {
-						frame = new MIFrame((MITuple)value);
+						MIFrame f = new MIFrame((MITuple)value);
+						setFrame(f);
 					}
 				}
 			}

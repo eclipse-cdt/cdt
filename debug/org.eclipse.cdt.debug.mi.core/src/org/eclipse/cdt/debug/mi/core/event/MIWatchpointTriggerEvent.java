@@ -23,21 +23,14 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 	String exp = "";
 	String oldValue = "";
 	String newValue = "";
-	int threadId;
-	MIFrame frame;
-
-	MIExecAsyncOutput exec;
-	MIResultRecord rr;
 
 	public MIWatchpointTriggerEvent(MIExecAsyncOutput async) {
-		super(async.getToken());
-		exec = async;
+		super(async);
 		parse();
 	}
 
 	public MIWatchpointTriggerEvent(MIResultRecord record) {
-		super(record.getToken());
-		rr = record;
+		super(record);
 		parse();
 	}
 
@@ -57,13 +50,6 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 		return newValue;
 	}
 
-	public int getThreadId() {
-		return threadId;
-	}
-
-	public MIFrame getFrame() {
-		return frame;
-	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -72,13 +58,18 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 		;
 		buffer.append("old=" + oldValue + "\n");
 		buffer.append("new=" + newValue + "\n");
-		buffer.append("thread-id=").append(threadId).append('\n');
-		buffer.append(frame.toString());
+		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		MIFrame f = getFrame();
+		if (f != null) {
+			buffer.append(f.toString());
+		}
 		return buffer.toString();
 	}
 
 	void parse() {
 		MIResult[] results = null;
+		MIExecAsyncOutput exec = getMIExecAsyncOutput();
+		MIResultRecord rr = getMIResultRecord();
 		if (exec != null) {
 			results = exec.getMIResults();
 		} else if (rr != null) {
@@ -101,13 +92,15 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 					if (value instanceof MIConst) {
 						String str = ((MIConst) value).getString();
 						try {
-							threadId = Integer.parseInt(str.trim());
+							int id = Integer.parseInt(str.trim());
+							setThreadId(id);
 						} catch (NumberFormatException e) {
 						}
 					}
 				} else if (var.equals("frame")) {
 					if (value instanceof MITuple) {
-						frame = new MIFrame((MITuple) value);
+						MIFrame f = new MIFrame((MITuple) value);
+						setFrame(f);
 					}
 				}
 			}

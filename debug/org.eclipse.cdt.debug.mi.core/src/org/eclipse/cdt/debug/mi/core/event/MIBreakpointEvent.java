@@ -20,30 +20,20 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class MIBreakpointEvent extends MIStoppedEvent {
 
 	int bkptno;
-	int threadId;
 	MIFrame frame;
 
-	MIExecAsyncOutput exec;
-	MIResultRecord rr;
-
 	public MIBreakpointEvent(MIExecAsyncOutput record) {
-		super(record.getToken());
-		exec = record;
+		super(record);
 		parse();
 	}
 
 	public MIBreakpointEvent(MIResultRecord record) {
-		super(record.getToken());
-		rr = record;
+		super(record);
 		parse();
 	}
 
 	public int getNumber() {
 		return bkptno;
-	}
-
-	public int getThreadId() {
-		return threadId;
 	}
 
 	public MIFrame getMIFrame() {
@@ -53,13 +43,15 @@ public class MIBreakpointEvent extends MIStoppedEvent {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("number=").append(bkptno).append('\n');
-		buffer.append("thread-id=").append(threadId).append('\n');
+		buffer.append("thread-id=").append(getThreadId()).append('\n');
 		buffer.append(frame.toString());
 		return buffer.toString();
 	}
 
 	void parse () {
 		MIResult[] results = null;
+		MIExecAsyncOutput exec = getMIExecAsyncOutput();
+		MIResultRecord rr = getMIResultRecord();
 		if (exec != null) {
 			results = exec.getMIResults();
 		} else if (rr != null) {
@@ -81,7 +73,8 @@ public class MIBreakpointEvent extends MIStoppedEvent {
 					}
 				} else if (var.equals("thread-id")) {
 					try {
-						threadId = Integer.parseInt(str.trim());
+						int id = Integer.parseInt(str.trim());
+						setThreadId(id);
 					} catch (NumberFormatException e) {
 					}
 				} else if (var.equals("frame")) {

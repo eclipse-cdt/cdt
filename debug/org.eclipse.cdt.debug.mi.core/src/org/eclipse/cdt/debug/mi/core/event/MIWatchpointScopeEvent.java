@@ -20,21 +20,14 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class MIWatchpointScopeEvent extends MIStoppedEvent {
 
 	int number;
-	int threadId;
-	MIFrame frame;
-
-	MIExecAsyncOutput exec;
-	MIResultRecord rr;
 
 	public MIWatchpointScopeEvent(MIExecAsyncOutput async) {
-		super(async.getToken());
-		exec = async;
+		super(async);
 		parse();
 	}
 
 	public MIWatchpointScopeEvent(MIResultRecord record) {
-		super(record.getToken());
-		rr = record;
+		super(record);
 		parse();
 	}
 
@@ -42,15 +35,10 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
 		return number;
 	}
 
-	public int getThreadId() {
-		return threadId;
-	}
-
-	public MIFrame getFrame() {
-		return frame;
-	}
-
 	void parse() {
+		MIExecAsyncOutput exec = getMIExecAsyncOutput();
+		MIResultRecord rr = getMIResultRecord();
+
 		MIResult[] results = null;
 		if (exec != null) {
 			results = exec.getMIResults();
@@ -74,13 +62,15 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
 					if (value instanceof MIConst) {
 						String str = ((MIConst) value).getString();
 						try {
-							threadId = Integer.parseInt(str.trim());
+							int id = Integer.parseInt(str.trim());
+							setThreadId(id);
 						} catch (NumberFormatException e) {
 						}
 					}
 				} else if (var.equals("frame")) {
 					if (value instanceof MITuple) {
-						frame = new MIFrame((MITuple) value);
+						MIFrame f = new MIFrame((MITuple) value);
+						setFrame(f);
 					}
 				}
 			}

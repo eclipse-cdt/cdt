@@ -1,3 +1,7 @@
+2004-04-22 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=59179
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=59143
+
 2004-04-22 Andrew Niefer
 	- modify how ASTTemplateDeclaration.getOwnedDeclaration works
 	- fix bug in TemplateEngine.selectTemplateFunctions()

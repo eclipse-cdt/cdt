@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.DeclarationWrapper;
 import org.eclipse.cdt.internal.core.parser.IParserData;
 import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
+
 
 /**
  * @author jcamelon
@@ -29,10 +31,10 @@ public interface IParserExtension {
 	public ASTPointerOperator getPointerOperator( ParserLanguage language, int tokenType );
 	
 	public boolean isValidUnaryExpressionStart( int tokenType );
-	public IASTExpression parseUnaryExpression( IASTScope scope, IParserData data, CompletionKind kind );
+	public IASTExpression parseUnaryExpression( IASTScope scope, IParserData data, CompletionKind kind, Key key );
 	
 	public boolean isValidRelationalExpressionStart( ParserLanguage language, int tokenType );
-	public IASTExpression parseRelationalExpression( IASTScope scope, IParserData data, CompletionKind kind, IASTExpression lhsExpression );
+	public IASTExpression parseRelationalExpression( IASTScope scope, IParserData data, CompletionKind kind, Key key, IASTExpression lhsExpression );
 	/**
 	 * @param i
 	 * @return
@@ -49,7 +51,8 @@ public interface IParserExtension {
 	 * @param parser
 	 * @param flags
 	 * @param sdw
+	 * @param key TODO
 	 * @return TODO
 	 */
-	public IDeclSpecifierExtensionResult handleDeclSpecifierSequence(IParserData parser, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind );
+	public IDeclSpecifierExtensionResult parseDeclSpecifierSequence(IParserData parser, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind, Key key );
 }

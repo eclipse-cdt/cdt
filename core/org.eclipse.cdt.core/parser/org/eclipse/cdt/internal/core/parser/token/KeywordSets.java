@@ -189,7 +189,7 @@ public class KeywordSets {
 	private static final Set STATEMENT_CPP; 
 	static 
 	{
-		STATEMENT_CPP = new TreeSet( STATEMENT_C );
+		STATEMENT_CPP = new TreeSet( DECLARATION_CPP ); 
 		STATEMENT_CPP.add( Keywords.TRY );
 		//TODO finish this
 	}

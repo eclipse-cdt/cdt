@@ -30,6 +30,9 @@ import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.Parser.Flags;
 import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.ASTGCCSimpleTypeSpecifier;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
+
 
 /**
  * @author jcamelon
@@ -75,14 +78,14 @@ public class GCCParserExtension implements IParserExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#parseUnaryExpression(org.eclipse.cdt.internal.core.parser.IParserData)
 	 */
-	public IASTExpression parseUnaryExpression(IASTScope scope, IParserData data, IASTCompletionNode.CompletionKind kind) {
+	public IASTExpression parseUnaryExpression(IASTScope scope, IParserData data, IASTCompletionNode.CompletionKind kind, KeywordSets.Key key) {
 		try {
 			switch( data.LT(1))
 			{
 				case IGCCToken.t___alignof__:
-					return performUnaryExpression( data, scope, kind, UnaryExpressionKind.ALIGNOF );
+					return performUnaryExpression( data, scope, kind, key, UnaryExpressionKind.ALIGNOF );
 				case IGCCToken.t_typeof:
-					return performUnaryExpression( data, scope, kind, UnaryExpressionKind.TYPEOF );
+					return performUnaryExpression( data, scope, kind, key, UnaryExpressionKind.TYPEOF );
 				default:
 					break;
 			}
@@ -110,10 +113,11 @@ public class GCCParserExtension implements IParserExtension {
 	 * @param data
 	 * @param scope
 	 * @param kind
+	 * @param key TODO
 	 * @param type TODO
 	 * @return
 	 */
-	protected IASTExpression performUnaryExpression(IParserData data, IASTScope scope, CompletionKind kind, UnaryExpressionKind type) {
+	protected IASTExpression performUnaryExpression(IParserData data, IASTScope scope, CompletionKind kind, KeywordSets.Key key, UnaryExpressionKind type) {
 		IToken startingPoint = null;
 		try
 		{
@@ -145,12 +149,12 @@ public class GCCParserExtension implements IParserExtension {
 	            {
 	            	data.backup(mark);
 	            	d = null;
-	                unaryExpression = data.unaryExpression(scope,kind);
+	                unaryExpression = data.unaryExpression(scope,kind, key);
 	            }
 	        }
 	        else
 	        {
-	            unaryExpression = data.unaryExpression(scope,kind);
+	            unaryExpression = data.unaryExpression(scope,kind, key);
 	        }
 	        if (d != null & unaryExpression == null)
 	            try
@@ -237,7 +241,7 @@ public class GCCParserExtension implements IParserExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#handleDeclSpecifierSequence(org.eclipse.cdt.internal.core.parser.IParserData, org.eclipse.cdt.core.model.Flags, org.eclipse.cdt.internal.core.parser.DeclarationWrapper)
 	 */
-	public IDeclSpecifierExtensionResult handleDeclSpecifierSequence(IParserData data, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind) {
+	public IDeclSpecifierExtensionResult parseDeclSpecifierSequence(IParserData data, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind, Key key) {
 		IToken startingPoint = null;
 		try
 		{
@@ -252,7 +256,7 @@ public class GCCParserExtension implements IParserExtension {
 			switch( data.LT(1))
 			{
 				case IGCCToken.t_typeof:
-					IASTExpression typeOfExpression = performUnaryExpression( data, sdw.getScope(), kind, UnaryExpressionKind.TYPEOF );
+					IASTExpression typeOfExpression = performUnaryExpression( data, sdw.getScope(), kind, key, UnaryExpressionKind.TYPEOF );
 					if( typeOfExpression != null )
 					{
 						sdw.setSimpleType( IASTGCCSimpleTypeSpecifier.Type.TYPEOF );
@@ -332,7 +336,7 @@ public class GCCParserExtension implements IParserExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#parseRelationalExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.internal.core.parser.IParserData, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind)
 	 */
-	public IASTExpression parseRelationalExpression(IASTScope scope, IParserData data, CompletionKind kind, IASTExpression lhsExpression) {
+	public IASTExpression parseRelationalExpression(IASTScope scope, IParserData data, CompletionKind kind, KeywordSets.Key key, IASTExpression lhsExpression) {
 		if( data.getParserLanguage() == ParserLanguage.C ) return null;
 		IToken mark = null;
 		try {
@@ -359,7 +363,7 @@ public class GCCParserExtension implements IParserExtension {
 			}
 			
             IToken next = data.LA(1);
-            IASTExpression secondExpression = data.shiftExpression(scope,kind);
+            IASTExpression secondExpression = data.shiftExpression(scope,kind, key);
             if (next == data.LA(1))
             {
                 // we did not consume anything

@@ -1,3 +1,7 @@
+2004-04-22 John Camelon
+	Updated test clients for IExpressionParser interface changes.  
+	Added QuickParseASTTests.testBug59179().  
+
 2004-04-22 Andrew Niefer
 	- added parser/CompleteParseASTTemplateTest.test_14_7_3__12_ExplicitSpecializationOverloadedFunction()
 	- added parser/CompleteParseASTTemplateTest.testPartialSpecializationDefinitions()

@@ -731,7 +731,7 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 			String stringToCompleteAfter = ( i == 0 ) ? "::" : "::A";
 			IASTCompletionNode node = parse( code, code.indexOf( stringToCompleteAfter) + stringToCompleteAfter.length() );
 			
-			validateCompletionNode(node, ( i == 0 ? "" : "A"), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, getCompilationUnit() );
+			validateCompletionNode(node, ( i == 0 ? "" : "A"), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, getCompilationUnit(), false );
 			
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
@@ -772,13 +772,17 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 
 	/**
 	 * @param node
+	 * @param hasKeywords TODO
 	 */
-	protected void validateCompletionNode(IASTCompletionNode node, String prefix, CompletionKind kind, IASTNode context ) {
+	protected void validateCompletionNode(IASTCompletionNode node, String prefix, CompletionKind kind, IASTNode context, boolean hasKeywords ) {
 		assertNotNull( node );
 		assertEquals( node.getCompletionPrefix(), prefix);
 		assertEquals( node.getCompletionKind(), kind );
 		assertEquals( node.getCompletionContext(), context );
-		assertFalse( node.getKeywords().hasNext() );
+		if( hasKeywords )
+			assertTrue( node.getKeywords().hasNext() );
+		else
+			assertFalse( node.getKeywords().hasNext()  );
 	}
 	
 	public void testCompletionInFunctionBodyQualifiedName() throws Exception
@@ -811,7 +815,7 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 			assertNotNull( namespaceDefinition );
 			validateCompletionNode( node, 
 					( j == 0 ) ? "" : "D", 
-					IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, namespaceDefinition ); 
+					IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, namespaceDefinition, false ); 
 	
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
@@ -382,6 +383,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	if( isFunction)
            		return createMethodASTNode(declarator, false);
         	else 
+        		if( declarator.hasFunctionBody() )
+        			throw new ASTSemanticException( (IProblem)null );
             	return createFieldASTNode(declarator, false );
         }
         else 
@@ -389,6 +392,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	if (isFunction)
                		return createFunctionASTNode(declarator, false);
         	else 
+        		if( declarator.hasFunctionBody() )
+        			throw new ASTSemanticException( (IProblem)null );
             	return createVariableASTNode(declarator, false);
         }
     }

@@ -127,7 +127,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 		else
 			kind = CompletionKind.VARIABLE_TYPE;
 		return kind;
-	}
+	}	
 
 	protected void catchHandlerSequence(IASTScope scope)
 	throws EndOfFileException, BacktrackException {
@@ -142,7 +142,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 			if( LT(1) == IToken.tELLIPSIS )
 				consume( IToken.tELLIPSIS );
 			else 
-				simpleDeclarationStrategyUnion( scope, null, CompletionKind.EXCEPTION_REFERENCE); // was exceptionDeclaration
+				simpleDeclarationStrategyUnion( scope, null, CompletionKind.EXCEPTION_REFERENCE, Key.DECLARATION); // was exceptionDeclaration
 			consume(IToken.tRPAREN);
 			
 			catchBlockCompoundStatement(scope);

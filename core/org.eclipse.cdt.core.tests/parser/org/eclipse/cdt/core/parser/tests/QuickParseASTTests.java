@@ -2213,5 +2213,11 @@ public class QuickParseASTTests extends BaseASTTest
     {
     	parse("int c = a >? b;");
     }
+    
+    public void testBug59179() throws Exception
+    {
+    	Iterator i = parse( "class __decl  main{  int main; };", true, false ).getDeclarations();
+    	assertFalse( i.hasNext() );
+    }
 	
 }

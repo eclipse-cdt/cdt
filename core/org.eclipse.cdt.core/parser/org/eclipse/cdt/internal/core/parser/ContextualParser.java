@@ -155,10 +155,10 @@ public class ContextualParser extends CompleteParser {
 
 	
 	
-	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last ) throws EndOfFileException{		
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, Key key ) throws EndOfFileException{		
 		setCompletionScope( scope );
 		setCompletionKind( kind );
-		setCompletionKeywords( Key.EMPTY );
+		setCompletionKeywords(key);
 		ITokenDuple duple = new TokenDuple( first, last );
 		try {
 			setCompletionContext( astFactory.lookupSymbolInContext( scope, duple ) );
@@ -228,5 +228,17 @@ public class ContextualParser extends CompleteParser {
 			compoundStatement(scope, true);
 		else
 			skipOverCompoundStatement();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValuesNoContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key)
+	 */
+	protected void setCompletionValuesNoContext(IASTScope scope,
+			CompletionKind kind, Key key) throws EndOfFileException {
+		setCompletionScope(scope);
+		setCompletionKeywords(key);
+		setCompletionKind(kind);
+		checkEndOfFile();
 	}
 }

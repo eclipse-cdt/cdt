@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.parser.IFilenameProvider;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
 /**
  * @author jcamelon
@@ -25,12 +26,12 @@ public interface IExpressionParser extends IFilenameProvider {
 	/**
 	 * Request a parse from a pre-configured parser to parse an expression.    
 	 * 
+	 * @param key TODO
 	 * @param expression	Optional parameter representing an expression object that 
-	 * 						your particular IParserCallback instance would appreciate 
-	 * 	
+ * 						your particular IParserCallback instance would appreciate 
 	 * @throws BacktrackException	thrown if the Scanner/Stream provided does not yield a valid
 	 * 						expression	
 	 */
-	public IASTExpression expression(IASTScope scope, IASTCompletionNode.CompletionKind kind) throws BacktrackException, EndOfFileException;
+	public IASTExpression expression(IASTScope scope, IASTCompletionNode.CompletionKind kind, Key key) throws BacktrackException, EndOfFileException;
 	
 }

@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 /**
  * @author jcamelon
  *
@@ -92,9 +94,10 @@ public interface IParserData {
 	/**
 	 * @param scope
 	 * @param kind
+	 * @param key TODO
 	 * @return
 	 */
-	public IASTExpression unaryExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException;
+	public IASTExpression unaryExpression(IASTScope scope, CompletionKind kind, KeywordSets.Key key) throws EndOfFileException, BacktrackException;
 	/**
 	 * @return
 	 */
@@ -106,7 +109,8 @@ public interface IParserData {
 	/**
 	 * @param scope
 	 * @param kind
+	 * @param key TODO
 	 * @return
 	 */
-	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind) throws BacktrackException, EndOfFileException;
+	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException;
 }

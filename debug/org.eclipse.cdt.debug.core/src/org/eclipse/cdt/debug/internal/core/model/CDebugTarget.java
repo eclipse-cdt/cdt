@@ -1448,7 +1448,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		removeAllThreads();
 		setCurrentStateId( IState.EXITED );
-		setCurrentStateInfo( event.getExitInfo() );
+		setCurrentStateInfo( event.getReason() );
 		fireChangeEvent( DebugEvent.CONTENT );
 		try
 		{

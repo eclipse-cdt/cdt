@@ -1,4 +1,10 @@
-2002-11-1 Alain Magloire
+2002-11-05 Alain Magloire
+
+	* src/.../mi/core/cdi/Register.java (setValue): Fire a
+	MIRegisterChangedEvent when changing value.
+	Fix PR:25730
+
+2002-11-01 Alain Magloire
 
 	The change in MISession(), will catch things like starting gdb-5.0
 	with argument "-i mi1", that level of mi is not supported.

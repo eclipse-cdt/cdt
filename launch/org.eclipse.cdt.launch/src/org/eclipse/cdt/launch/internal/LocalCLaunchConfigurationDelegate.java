@@ -115,7 +115,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					config.getAttribute(
 						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
-				if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+				if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
 					dsession = cdebugger.createLaunchSession(config, exe);
 				}
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {

@@ -224,8 +224,17 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
   (JNIEnv * env, jobject proc, jint pid)
 {
-	int stat_loc;
-	return (waitpid(pid, &stat_loc, WEXITED));
+	int ret;
+	int val = -1;
+
+	ret = waitpid(pid, &stat_loc, WEXITED);
+	if (ret == -1 && errno == EINTR) {
+		// Throw an exception here.
+	}
+	if (WIFEXITED(stat_loc)) {
+		val = WEXITSTATUS(stat_loc);
+	}
+	return val;
 }
 
 

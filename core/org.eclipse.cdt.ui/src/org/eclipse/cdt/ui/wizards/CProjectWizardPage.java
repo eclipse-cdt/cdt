@@ -60,6 +60,7 @@ public class CProjectWizardPage extends WizardPage {
 	protected Text locationPathField;
 	protected Label locationLabel;
 	protected Button browseButton;
+	protected CProjectWizard wizard;
 
 	private Listener nameModifyListener = new Listener() {
 		public void handleEvent(Event e) {
@@ -271,10 +272,11 @@ public class CProjectWizardPage extends WizardPage {
 	 *
 	 * @param pageName the name of this page
 	 */
-	public CProjectWizardPage(String pageName) {
+	public CProjectWizardPage(CProjectWizard wizard, String pageName) {
 		super(pageName);
 		setPageComplete(false);
 		this.initialLocationFieldValue = Platform.getLocation();
+		this.wizard = wizard;
 	}
 
 	/**
@@ -304,6 +306,13 @@ public class CProjectWizardPage extends WizardPage {
 			return false;
 		}
 
+		// Give a chance to the wizard to do its own validation
+		IStatus validName = wizard.isValidName(projectFieldContents);
+		if (!validName.isOK()) {
+			setErrorMessage(validName.getMessage());
+			return false;		
+		}
+		
 		IStatus nameStatus =
 			workspace.validateName(projectFieldContents, IResource.PROJECT);
 		if (!nameStatus.isOK()) {

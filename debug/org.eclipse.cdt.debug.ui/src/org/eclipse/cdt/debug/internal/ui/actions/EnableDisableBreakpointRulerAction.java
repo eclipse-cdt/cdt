@@ -17,7 +17,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction {
 
@@ -28,7 +27,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		setInfo( info );
 		setTargetPart( part );
 		setText( ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$
-		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION );
+		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
 	}
 

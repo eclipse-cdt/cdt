@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint 
@@ -35,7 +34,7 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 		setInfo( info );
 		setTargetPart( part );
 		setText( ActionMessages.getString( "CBreakpointPropertiesRulerAction.Breakpoint_Properties" ) ); //$NON-NLS-1$
-		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION );
+		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
 	}
 

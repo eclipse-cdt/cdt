@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.modules.ModulesView;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
  
 /**
  * Action that controls the appearance of the details pane in debug views 
@@ -60,7 +59,7 @@ public class ToggleDetailPaneAction extends Action {
 			setDisabledImageDescriptor( CDebugImages.DESC_LCL_DETAIL_PANE_HIDE_DISABLED );
 			setHoverImageDescriptor( CDebugImages.DESC_LCL_DETAIL_PANE_HIDE );
 		}
-		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION );
+		view.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION );
 	}
 	
 	private ModulesView getModulesView() {

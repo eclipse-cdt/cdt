@@ -1,3 +1,12 @@
+2005-03-08 Mikhail Khodjaiants
+	Removed deprecated "WorkbenchHelp" references.
+	* CBreakpointPropertiesRulerAction.java
+	* EnableDisableBreakpointRulerAction.java
+	* ToggleBreakpointRulerAction.java
+	* ToggleDetailPaneAction.java
+	* CDebugPreferencePage.java
+	* SourcePreferencePage.java
+
 2005-02-25 Mikhail Khodjaiants
 	"Resume At Line" is disabled if the Disassembly view is opened during an active debug session.
 	* ResumeAtLineActionDelegate.java

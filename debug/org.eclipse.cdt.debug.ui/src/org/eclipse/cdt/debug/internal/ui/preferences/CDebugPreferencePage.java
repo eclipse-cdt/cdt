@@ -47,12 +47,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Preference page for debug preferences that apply specifically to C/C++ Debugging.
  */
 public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+	private IWorkbench fWorkbench;
 
 	// View setting widgets
 	private Button fPathsButton;
@@ -112,7 +113,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents( Composite parent ) {
-		WorkbenchHelp.setHelp( getControl(), ICDebugHelpContextIds.C_DEBUG_PREFERENCE_PAGE );
+		getWorkbench().getHelpSystem().setHelp( getControl(), ICDebugHelpContextIds.C_DEBUG_PREFERENCE_PAGE );
 		//The main composite
 		Composite composite = new Composite( parent, SWT.NULL );
 		GridLayout layout = new GridLayout();
@@ -166,6 +167,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init( IWorkbench workbench ) {
+		fWorkbench = workbench;
 	}
 
 	protected PropertyChangeListener getPropertyChangeListener() {
@@ -373,5 +375,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private ColorFieldEditor getDisassemblySourceColor() {
 		return fDisassemblySourceColor;
+	}
+
+	private IWorkbench getWorkbench() {
+		return fWorkbench;
 	}
 }

@@ -24,7 +24,6 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -53,7 +52,7 @@ public class ToggleBreakpointRulerAction extends Action {
 		fRuler = ruler;
 		setTargetPart( part );
 		fBreakpointAdapter = new ToggleBreakpointAdapter();
-		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.TOGGLE_BREAKPOINT_ACTION );
+		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.TOGGLE_BREAKPOINT_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
 	}
 

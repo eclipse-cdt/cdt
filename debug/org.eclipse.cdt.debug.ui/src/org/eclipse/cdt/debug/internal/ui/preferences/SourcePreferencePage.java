@@ -37,12 +37,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The "Source Code Locations" preference page.
  */
 public class SourcePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Observer {
+
+	private IWorkbench fWorkbench;
 
 	private SourceListDialogField fSourceListField;
 
@@ -62,7 +63,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents( Composite parent ) {
-		WorkbenchHelp.setHelp( getControl(), ICDebugHelpContextIds.SOURCE_PREFERENCE_PAGE );
+		getWorkbench().getHelpSystem().setHelp( getControl(), ICDebugHelpContextIds.SOURCE_PREFERENCE_PAGE );
 		fSourceListField = createSourceListField();
 		fSearchForDuplicateFiles = createSearchForDuplicateFilesButton();
 		Composite control = new Composite( parent, SWT.NONE );
@@ -210,5 +211,9 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	private void storeValues() {
 		CDebugCorePlugin.getDefault().saveCommonSourceLocations( getSourceLocations() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES, searchForDuplicateFiles() );
+	}
+
+	private IWorkbench getWorkbench() {
+		return fWorkbench;
 	}
 }

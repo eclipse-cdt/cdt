@@ -92,7 +92,7 @@ public class PathUtil {
     public static IPath makeRelativePath(IPath path, IPath relativeTo) {
         int segments = relativeTo.matchingFirstSegments(path);
         if (segments > 0) {
-            IPath prefix = relativeTo.removeFirstSegments(segments).removeLastSegments(1);
+            IPath prefix = relativeTo.removeFirstSegments(segments);
             IPath suffix = path.removeFirstSegments(segments);
             IPath relativePath = new Path(""); //$NON-NLS-1$
             for (int i = 0; i < prefix.segmentCount(); ++i) {
@@ -142,4 +142,19 @@ public class PathUtil {
 		}
 		return null;
     }
+    
+    public static IPath getValidEnclosingFolder(IPath fullPath) {
+		IWorkspaceRoot root = getWorkspaceRoot();
+		if (root != null) {
+			IPath path = getWorkspaceRelativePath(fullPath);
+			while (!path.isEmpty()) {
+				IResource res = root.findMember(path);
+				if (res != null && res.exists() && (res.getType() == IResource.PROJECT || res.getType() == IResource.FOLDER))
+				    return path;
+
+				path = path.removeLastSegments(1);
+			}
+		}
+		return null;
+	}
 }

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.utils.debug.DebugType;
+import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
 import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
@@ -142,10 +144,24 @@ public class Dwarf {
 		}
 	}
 
+	class CompileUnit {
+		long lowPC;
+		long highPC;
+		int stmtList;
+		String name;
+		int language;
+		int macroInfo;
+		String compDir;
+		String producer;
+		int identifierCase;
+	}
+
 	Map dwarfSections = new HashMap();
 	Map abbreviationMaps = new HashMap();
 
 	boolean isLE;
+
+	CompileUnit currentCU;
 
 	public Dwarf(String file) throws IOException {
 		Elf exe = new Elf(file);
@@ -569,6 +585,7 @@ public class Dwarf {
 				case DwarfConstants.DW_TAG_reference_type :
 					break;
 				case DwarfConstants.DW_TAG_compile_unit :
+					processCompileUnit(requestor, list);
 					break;
 				case DwarfConstants.DW_TAG_structure_type :
 					break;
@@ -599,6 +616,7 @@ public class Dwarf {
 				case DwarfConstants.DW_TAG_friend :
 					break;
 				case DwarfConstants.DW_TAG_subprogram :
+					processSubProgram(requestor, list);
 					break;
 				case DwarfConstants.DW_TAG_template_type_param :
 					break;
@@ -633,6 +651,90 @@ public class Dwarf {
 				// ????
 		}
 		return new Long(value);
+	}
+
+	void processSubProgram(IDebugEntryRequestor requestor, List list) {
+		long lowPC = 0;
+		long highPC = 0;
+		String funcName = "";
+		boolean isExtern = false;
+
+		for (int i = 0; i < list.size(); i++) {
+			AttributeValue av = (AttributeValue)list.get(i);
+			try {
+				int name = (int)av.attribute.name;
+				switch(name) {
+					case DwarfConstants.DW_AT_low_pc:
+						lowPC = ((Number)av.value).longValue();
+						break;
+
+					case DwarfConstants.DW_AT_high_pc:
+						highPC = ((Number)av.value).longValue();
+						break;
+
+					case DwarfConstants.DW_AT_name:
+						funcName = (String)av.value;
+						break;
+
+					case DwarfConstants.DW_AT_external:
+						isExtern = ((Number)av.value).intValue() > 0;
+						break;
+				}
+			} catch (ClassCastException e) {
+			}
+		}
+		requestor.enterFunction(funcName, new DebugUnknownType(""), isExtern, lowPC);
+		requestor.exitFunction(highPC);
+	}
+
+	void processCompileUnit(IDebugEntryRequestor requestor, List list) {
+		if (currentCU != null) {
+			requestor.exitCompilationUnit(currentCU.highPC);
+		}
+		currentCU = new CompileUnit();
+		for (int i = 0; i < list.size(); i++) {
+			AttributeValue av = (AttributeValue)list.get(i);
+			try {
+				int name = (int)av.attribute.name;
+				switch(name) {
+					case DwarfConstants.DW_AT_low_pc:
+						currentCU.lowPC = ((Number)av.value).longValue();
+						break;
+			
+					case DwarfConstants.DW_AT_high_pc:
+						currentCU.highPC = ((Number)av.value).longValue();
+						break;
+
+					case DwarfConstants.DW_AT_name:
+						currentCU.name = (String)av.value;
+						break;
+
+					case DwarfConstants.DW_AT_language:
+						currentCU.language = ((Number)av.value).intValue();
+						break;
+
+					case DwarfConstants.DW_AT_stmt_list:
+						currentCU.stmtList = ((Number)av.value).intValue();
+						break;
+
+					case DwarfConstants.DW_AT_macro_info:
+						currentCU.macroInfo = ((Number)av.value).intValue();
+						break;
+
+					case DwarfConstants.DW_AT_comp_dir:
+						currentCU.compDir = (String)av.value;
+						break;
+
+					case DwarfConstants.DW_AT_producer:
+						currentCU.producer = (String)av.value;
+						break;
+
+					//case DW_AT_identifier_case:
+				}
+			} catch (ClassCastException e) {
+			}
+		}
+		requestor.enterCompilationUnit(currentCU.name, currentCU.lowPC);
 	}
 
 	public static void main(String[] args) {

@@ -12,7 +12,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 
@@ -26,7 +25,6 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	/*
 	 * callback from Output Parser
 	 */
-	//public void addMarker(IFile file, int lineNumber, String errorDesc, int severity) {
 	public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 
 		try {

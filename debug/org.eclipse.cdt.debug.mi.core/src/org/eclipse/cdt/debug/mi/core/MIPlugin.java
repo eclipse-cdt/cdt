@@ -132,7 +132,13 @@ public class MIPlugin extends Plugin {
 		}
 
 		Process pgdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(pgdb, pty, MISession.PROGRAM);
+		MISession session;
+		try {
+			session = createMISession(pgdb, pty, MISession.PROGRAM);
+		} catch (MIException e) {
+			pgdb.destroy();
+			throw e;
+		}
 		// Try to detect if we have been attach via "target remote localhost:port"
 		// and set the state to be suspended.
 		try {
@@ -140,6 +146,7 @@ public class MIPlugin extends Plugin {
 			session.postCommand(cmd);
 			MIInfo info = cmd.getMIInfo();
 			if (info == null) {
+				pgdb.destroy();
 				throw new MIException("No answer");
 			}
 			//@@@ We have to manually set the suspended state when we attach
@@ -175,7 +182,13 @@ public class MIPlugin extends Plugin {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()};
 		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(pgdb, null, MISession.CORE);
+		MISession session;
+		try {
+			session = createMISession(pgdb, null, MISession.CORE);
+		} catch (MIException e) {
+			pgdb.destroy();
+			throw e;
+		}
 		return new Session(session);
 	}
 
@@ -202,13 +215,20 @@ public class MIPlugin extends Plugin {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()};
 		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(pgdb, null, MISession.ATTACH);
+		MISession session;
+		try {
+			session = createMISession(pgdb, null, MISession.ATTACH);
+		} catch (MIException e) {
+			pgdb.destroy();
+			throw e;
+		}
 		CommandFactory factory = session.getCommandFactory();
 		if (targetParams != null && targetParams.length > 0) {
 			MITargetSelect target = factory.createMITargetSelect(targetParams);
 			session.postCommand(target);
 			MIInfo info = target.getMIInfo();
 			if (info == null) {
+				pgdb.destroy();
 				throw new MIException("No answer");
 			}
 		}
@@ -217,6 +237,7 @@ public class MIPlugin extends Plugin {
 			session.postCommand(attach);
 			MIInfo info = attach.getMIInfo();
 			if (info == null) {
+				pgdb.destroy();
 				throw new MIException("No answer");
 			}
 		}

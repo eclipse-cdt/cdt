@@ -9,44 +9,43 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 
 /**
  * @author jcamelon
  */
-public class CASTName extends CASTNode implements IASTName {
+public class CASTLiteralExpression extends CASTNode implements
+        IASTLiteralExpression {
 
-    private final char[] name;
-    private static final char[] EMPTY_CHAR_ARRAY = { };
+    private int kind;
+    private String value = ""; //$NON-NLS-1$
 
-    /**
-     * @param name 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#getKind()
      */
-    public CASTName(char [] name ) {
-        this.name = name;
-    }
-
-    /**
-     * 
-     */
-    public CASTName() {
-        name = EMPTY_CHAR_ARRAY;
+    public int getKind() {
+        return kind;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
+     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#setKind(int)
      */
-    public IBinding resolveBinding() {
-        // TODO Auto-generated method stub
-        return null;
+    public void setKind(int value) {
+        kind = value;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#setValue(java.lang.String)
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        if( name == EMPTY_CHAR_ARRAY ) return null;
-        return new String( name );
+        return value;
     }
+
 }

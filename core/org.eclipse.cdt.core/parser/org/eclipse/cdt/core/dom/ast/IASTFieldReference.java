@@ -15,12 +15,17 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTFieldReference extends IASTExpression {
 
+    public static final ASTNodeProperty FIELD_OWNER = new ASTNodeProperty( "Field Owner"); //$NON-NLS-1$
+    public static final ASTNodeProperty FIELD_NAME  = new ASTNodeProperty( "Field Name"); //$NON-NLS-1$
+    
 	/**
 	 * This returns an expression for the object containing the field.
 	 * 
 	 * @return the field owner
 	 */
 	public IASTExpression getFieldOwner();
+	
+	public void setFieldOwner( IASTExpression expression );
 	
 	/**
 	 * This returns the name of the field being dereferenced.
@@ -29,6 +34,8 @@ public interface IASTFieldReference extends IASTExpression {
 	 */
 	public IASTName getFieldName();
 	
+	public void setFieldName( IASTName name );
+	
 	/**
 	 * This returns true of this is the arrow operator and not the
 	 * dot operator.
@@ -36,5 +43,7 @@ public interface IASTFieldReference extends IASTExpression {
 	 * @return is this a pointer dereference
 	 */
 	public boolean isPointerDereference();
+	
+	public void setIsPointerDereference( boolean value );
 	
 }

@@ -589,23 +589,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 
 
-    protected IASTExpression assignmentOperatorExpression(Object kind, Object lhs) throws EndOfFileException, BacktrackException {
-        IToken t = consume();
-        IASTExpression assignmentExpression = assignmentExpression();
-        int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-        try {
-            return null; /*
-                          * astFactory.createExpression(scope, kind, lhs,
-                          * assignmentExpression, null, null, null,
-                          * EMPTY_STRING, null); } catch (ASTSemanticException
-                          * e) { throwBacktrack(e.getProblem());
-                          */
-        } catch (Exception e) {
-            logException("assignmentOperatorExpression::createExpression()", e); //$NON-NLS-1$
-            throwBacktrack(t.getOffset(), endOffset, t.getLineNumber(), t
-                    .getFilename());
-        }
-        return null;
+    protected IASTExpression assignmentOperatorExpression(int kind, IASTExpression lhs) throws EndOfFileException, BacktrackException {
+        consume();
+        IASTExpression rhs = assignmentExpression();
+        IASTBinaryExpression result = createBinaryExpression();
+        result.setOffset( lhs.getOffset() );
+        result.setOperand1(lhs);
+        lhs.setParent( result );
+        lhs.setPropertyInParent( IASTBinaryExpression.OPERAND_ONE );
+        result.setOperand2(rhs );
+        rhs.setParent( result );
+        rhs.setPropertyInParent( IASTBinaryExpression.OPERAND_TWO );
+        return result;
     }
 
     /**

@@ -17,4 +17,14 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTLiteralExpression extends IASTExpression {
 
+    public static final int lk_integer_constant = 0;
+    public static final int lk_float_constant = 1;
+    public static final int lk_char_constant = 2;
+    public static final int lk_string_literal = 3;
+ 
+    public int getKind();
+    public void setKind( int value );
+    
+    public void setValue( String value );
+    
 }

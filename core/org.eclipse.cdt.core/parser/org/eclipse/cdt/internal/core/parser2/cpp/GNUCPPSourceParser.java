@@ -558,37 +558,37 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return conditionalExpression;
         switch (LT(1)) {
         case IToken.tASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_assign,
                     conditionalExpression);
         case IToken.tSTARASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_multiplyAssign,
                     conditionalExpression);
         case IToken.tDIVASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_divideAssign,
                     conditionalExpression);
         case IToken.tMODASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_moduloAssign,
                     conditionalExpression);
         case IToken.tPLUSASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_plusAssign,
                     conditionalExpression);
         case IToken.tMINUSASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_minusAssign,
                     conditionalExpression);
         case IToken.tSHIFTRASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_shiftRightAssign,
                     conditionalExpression);
         case IToken.tSHIFTLASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_shiftLeftAssign,
                     conditionalExpression);
         case IToken.tAMPERASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_binaryAndAssign,
                     conditionalExpression);
         case IToken.tXORASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_binaryXorAssign,
                     conditionalExpression);
         case IToken.tBITORASSIGN:
-            return assignmentOperatorExpression(null,
+            return assignmentOperatorExpression(IASTBinaryExpression.op_binaryOrAssign,
                     conditionalExpression);
         }
         return conditionalExpression;

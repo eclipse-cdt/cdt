@@ -16,10 +16,13 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTExpressionStatement extends IASTStatement {
 
+    public static final ASTNodeProperty EXPFRESSION = new ASTNodeProperty( "Expression");  //$NON-NLS-1$
 	/**
 	 * Get the expression in this statement.
 	 * 
 	 * @return the expression
 	 */
 	public IASTExpression getExpression();
+	
+	public void setExpression( IASTExpression expression );
 }

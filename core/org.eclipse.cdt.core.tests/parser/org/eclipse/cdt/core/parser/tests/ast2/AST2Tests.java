@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -220,8 +219,6 @@ public class AST2Tests extends TestCase {
 		// this an anonymous struct
 		IASTName name_struct = type.getName();
 		assertNull("", name_struct.toString()); //$NON-NLS-1$
-		ICompositeType type_struct = (ICompositeType) name_struct
-				.resolveBinding();
 		// member - x
 		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) type
 				.getMembers().get(0);
@@ -229,18 +226,15 @@ public class AST2Tests extends TestCase {
 				.getDeclSpecifier();
 		// it's an int
 		assertEquals(IASTSimpleDeclSpecifier.t_int, spec_x.getType());
-		IASTFieldDeclarator tor_x = (IASTFieldDeclarator) decl_x
+		IASTDeclarator tor_x = (IASTDeclarator) decl_x
 				.getDeclarators().get(0);
 		IASTName name_x = tor_x.getName();
 		assertEquals("x", name_x.toString()); //$NON-NLS-1$
-		IField field_x = (IField)name_x.resolveBinding();
+
 		// declarator S
 		IASTDeclarator tor_S = (IASTDeclarator) decl.getDeclarators().get(0);
 		IASTName name_S = tor_S.getName();
 		assertEquals("S", name_S.toString()); //$NON-NLS-1$
-		ITypedef typedef_S = (ITypedef) name_S.resolveBinding();
-		// make sure the typedef is hooked up correctly
-		assertEquals(type_struct, typedef_S.getType());
 
 		// function f
 		IASTFunctionDefinition def_f = (IASTFunctionDefinition) tu
@@ -255,18 +249,10 @@ public class AST2Tests extends TestCase {
 		IASTTypedefNameSpecifier type_spec_myS = (IASTTypedefNameSpecifier)decl_myS.getDeclSpecifier();
 		// the type name for myS
 		IASTName name_type_myS = type_spec_myS.getName();
-		// the typedef S for myS
-		ITypedef typedef_myS = (ITypedef)name_type_myS.resolveBinding();
-		assertEquals(typedef_S, typedef_myS);
-		// get the real type for S which is our anonymous struct
-		ICompositeType type_myS = (ICompositeType)typedef_myS.getType();
 		// the declarator for myS
 		IASTDeclarator tor_myS = (IASTDeclarator)decl_myS.getDeclarators().get(0);
 		// the name for myS
 		IASTName name_myS = tor_myS.getName();
-		// the variable myS
-		IVariable var_myS = (IVariable)name_myS.resolveBinding();
-		assertEquals(type_myS, var_myS.getType());
 		// the assignment expression statement
 		IASTExpressionStatement exprstmt = (IASTExpressionStatement)body_f.getStatements().get(1);
 		// the assignment expression
@@ -275,12 +261,25 @@ public class AST2Tests extends TestCase {
 		IASTFieldReference fieldref = (IASTFieldReference)assexpr.getOperand1();
 		// the reference to myS
 		IASTIdExpression ref_myS = (IASTIdExpression)fieldref.getFieldOwner();
-		// make sure this is our variable
-		assertEquals(var_myS, ref_myS.getName().resolveBinding());
-		// make sure the field is correct
-		assertEquals(field_x, fieldref.getFieldName().resolveBinding());
-		// while we're at it make sure the literal is correct
 		IASTLiteralExpression lit_5 = (IASTLiteralExpression)assexpr.getOperand2();
 		assertEquals("5", lit_5.toString()); //$NON-NLS-1$
+
+
+		//Logical Bindings In Test
+		ICompositeType type_struct = (ICompositeType) name_struct.resolveBinding();
+		ITypedef typedef_S = (ITypedef) name_S.resolveBinding();
+		// make sure the typedef is hooked up correctly
+		assertEquals(type_struct, typedef_S.getType());
+		// the typedef S for myS
+		ITypedef typedef_myS = (ITypedef)name_type_myS.resolveBinding();
+		assertEquals(typedef_S, typedef_myS);
+		// get the real type for S which is our anonymous struct
+		ICompositeType type_myS = (ICompositeType)typedef_myS.getType();
+		// the variable myS
+		IVariable var_myS = (IVariable)name_myS.resolveBinding();
+		assertEquals(type_myS, var_myS.getType());
+		assertEquals(var_myS, ref_myS.getName().resolveBinding());
+		IField field_x = (IField)name_x.resolveBinding();
+		assertEquals(field_x, fieldref.getFieldName().resolveBinding());
 	}
 }

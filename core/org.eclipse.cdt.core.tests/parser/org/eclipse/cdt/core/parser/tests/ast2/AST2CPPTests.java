@@ -3178,5 +3178,21 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, f, 2 );
         assertInstances( col, t1, 3 );
     }
+    
+    public void testBug90039_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f( void ) {                 \n"); //$NON-NLS-1$
+        buffer.append("   enum { one };                 \n"); //$NON-NLS-1$
+        buffer.append("}                                \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept( col );
+        assertTrue( col.getName(0).resolveBinding() instanceof IFunction );
+        assertTrue( col.getName(1).resolveBinding() instanceof IParameter );
+        IEnumeration e = (IEnumeration) col.getName(2).resolveBinding(); 
+        IEnumerator one = (IEnumerator) col.getName(3).resolveBinding();
+        assertSame( one.getType(), e );
+    }
 }
 

@@ -179,6 +179,11 @@ public class CScope implements ICScope {
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
     public IBinding getBinding( IASTName name, boolean resolve ) {
+        char [] c = name.toCharArray();
+        if( c.length == 0  ){
+            return null;
+        }
+        
         int type = getNamespaceType( name );
         Object o = bindings[type].get( name.toCharArray() );
         

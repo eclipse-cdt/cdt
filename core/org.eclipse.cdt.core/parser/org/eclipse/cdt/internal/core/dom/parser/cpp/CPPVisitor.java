@@ -179,7 +179,7 @@ public class CPPVisitor {
 	    IBinding binding;
         try {
             binding = functionScope.getBinding( name, false );
-            if( binding == null ){
+            if( binding == null || !(binding instanceof ILabel) ){
     	        binding = new CPPLabel( name );
     	        functionScope.addName( name );
     	    }
@@ -196,7 +196,7 @@ public class CPPVisitor {
 	    IBinding binding;
         try {
             binding = functionScope.getBinding( name, false );
-            if( binding == null ){
+            if( binding == null || !(binding instanceof ILabel) ){
     	        binding = new CPPLabel( name );
     	        functionScope.addName( name );
     	    } else {
@@ -214,7 +214,7 @@ public class CPPVisitor {
         IBinding enumtor;
         try {
             enumtor = scope.getBinding( enumerator.getName(), false );
-            if( enumtor == null ){
+            if( enumtor == null || !( enumtor instanceof IEnumerator ) ){
                 enumtor = new CPPEnumerator( enumerator.getName() );
                 scope.addName( enumerator.getName() );
             }
@@ -231,7 +231,7 @@ public class CPPVisitor {
         IBinding enumeration;
         try {
             enumeration = scope.getBinding( specifier.getName(), false );
-            if( enumeration == null ){
+            if( enumeration == null || !(enumeration instanceof IEnumeration) ){
                 enumeration = new CPPEnumeration( specifier.getName() );
                 scope.addName( specifier.getName() );
             }

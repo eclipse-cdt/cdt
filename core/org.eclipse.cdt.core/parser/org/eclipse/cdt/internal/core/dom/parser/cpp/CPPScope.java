@@ -109,7 +109,8 @@ abstract public class CPPScope implements ICPPScope{
 
 	public IBinding getBinding(IASTName name, boolean forceResolve) throws DOMException {
 	    char [] c = name.toCharArray();
-	    if( bindings == null )
+	    //can't look up bindings that don't have a name
+	    if( c.length == 0 || bindings == null )
 	        return null;
 	    
 	    Object obj = bindings.get( c );

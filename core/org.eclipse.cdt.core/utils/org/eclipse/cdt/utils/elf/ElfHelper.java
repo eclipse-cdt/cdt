@@ -123,10 +123,13 @@ public class ElfHelper {
 		for (int i = 0; i < dynsyms.length; i++) {
 			if (dynsyms[i].st_bind() == Elf.Symbol.STB_GLOBAL && dynsyms[i].st_type() == Elf.Symbol.STT_FUNC) {
 				int idx = dynsyms[i].st_shndx;
-				if (idx < 0)
-					continue;
-				if (sections[idx].sh_type == Elf.Section.SHT_NULL)
+				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
+					String name = dynsyms[i].toString();
+					if (name != null && name.trim().length() > 0)
+						v.add(dynsyms[i]);
+				} else if (idx >= 0 && sections[idx].sh_type == Elf.Section.SHT_NULL) {
 					v.add(dynsyms[i]);
+				}
 			}
 		}
 
@@ -144,11 +147,13 @@ public class ElfHelper {
 		for (int i = 0; i < dynsyms.length; i++) {
 			if (dynsyms[i].st_bind() == Elf.Symbol.STB_GLOBAL && dynsyms[i].st_type() == Elf.Symbol.STT_OBJECT) {
 				int idx = dynsyms[i].st_shndx;
-				if (idx < 0)
-					continue;
-
-				if (sections[idx].sh_type == Elf.Section.SHT_NULL)
+				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
+					String name = dynsyms[i].toString();
+					if (name != null && name.trim().length() > 0)
+						v.add(dynsyms[i]);
+				} else if (idx >= 0 && sections[idx].sh_type == Elf.Section.SHT_NULL) {
 					v.add(dynsyms[i]);
+				}
 			}
 		}
 
@@ -181,11 +186,13 @@ public class ElfHelper {
 		for (int i = 0; i < symbols.length; i++) {
 			if (symbols[i].st_bind() == Elf.Symbol.STB_GLOBAL && symbols[i].st_type() == Elf.Symbol.STT_FUNC) {
 				int idx = symbols[i].st_shndx;
-				if (idx < 0)
-					continue;
-
-				if (sections[idx].sh_type != Elf.Section.SHT_NULL)
+				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
+					String name = symbols[i].toString();
+					if (name != null && name.trim().length() > 0)
+						v.add(symbols[i]);
+				} else if (idx >= 0 && sections[idx].sh_type != Elf.Section.SHT_NULL) {
 					v.add(symbols[i]);
+				}
 			}
 		}
 
@@ -203,11 +210,13 @@ public class ElfHelper {
 		for (int i = 0; i < symbols.length; i++) {
 			if (symbols[i].st_bind() == Elf.Symbol.STB_GLOBAL && symbols[i].st_type() == Elf.Symbol.STT_OBJECT) {
 				int idx = symbols[i].st_shndx;
-				if (idx < 0)
-					continue;
-
-				if (sections[idx].sh_type != Elf.Section.SHT_NULL)
+				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
+					String name = symbols[i].toString();
+					if (name != null && name.trim().length() > 0)
+						v.add(symbols[i]);
+				} else if (idx >= 0 && sections[idx].sh_type != Elf.Section.SHT_NULL) {
 					v.add(symbols[i]);
+				}
 			}
 		}
 

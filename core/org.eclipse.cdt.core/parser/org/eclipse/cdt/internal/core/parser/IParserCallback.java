@@ -124,9 +124,9 @@ public interface IParserCallback {
 	public Object	explicitSpecializationBegin( Object container );
 	public void		explicitSpecializationEnd( Object instantiation );
 
-	public Object	templateDeclarationBegin( Object container, boolean exported );
+	public Object	templateDeclarationBegin( Object container, Token firstToken );
 	public void 	templateDeclarationAbort( Object templateDecl );
-	public void		templateDeclarationEnd( Object templateDecl );	
+	public void		templateDeclarationEnd( Object templateDecl, Token lastToken );	
 	
 	public Object	templateParameterListBegin( Object declaration );
 	public void		templateParameterListEnd( Object parameterList );

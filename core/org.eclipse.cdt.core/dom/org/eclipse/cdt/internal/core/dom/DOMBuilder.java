@@ -813,7 +813,7 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
-	public Object templateDeclarationBegin(Object container, boolean exported) {
+	public Object templateDeclarationBegin(Object container, Token exported) {
 		return new TemplateDeclaration( (IScope)container, exported );
 	}
 
@@ -827,8 +827,9 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
 	 */
-	public void templateDeclarationEnd(Object templateDecl) {
+	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
 		TemplateDeclaration decl = (TemplateDeclaration)templateDecl;
+		decl.setLastToken(lastToken);
 		decl.getOwnerScope().addDeclaration(decl);
 	}
 

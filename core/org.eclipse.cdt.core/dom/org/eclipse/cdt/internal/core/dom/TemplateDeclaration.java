@@ -16,21 +16,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.Token;
+
 /**
  * @author jcamelon
  *
  */
-public class TemplateDeclaration extends Declaration implements IScope, ITemplateParameterListOwner {
+public class TemplateDeclaration extends Declaration implements IScope, ITemplateParameterListOwner, IOffsetable {
 
-	private final boolean exported; 
+	private final boolean exported;
+	private Token firstToken, lastToken; 
 	private IScope ownerScope;  
 	private List declarations = new ArrayList(); 
 	private TemplateParameterList templateParms = null;                
 
-	public TemplateDeclaration( IScope ownerScope, boolean exported )
+	public TemplateDeclaration( IScope ownerScope, Token exported )
 	{
 		this.ownerScope = ownerScope;
-		this.exported = exported;
+		this.firstToken = exported; 
+		this.exported = exported.getType() == Token.t_export ? true : false;
 	}
 
 	/* (non-Javadoc)
@@ -73,6 +77,62 @@ public class TemplateDeclaration extends Declaration implements IScope, ITemplat
 	 */
 	public void setTemplateParms(TemplateParameterList list) {
 		templateParms = list;
+	}
+
+	/**
+	 * @return
+	 */
+	public Token getFirstToken() {
+		return firstToken;
+	}
+
+	/**
+	 * @return
+	 */
+	public Token getLastToken() {
+		return lastToken;
+	}
+
+	/**
+	 * @param token
+	 */
+	public void setFirstToken(Token token) {
+		firstToken = token;
+	}
+
+	/**
+	 * @param token
+	 */
+	public void setLastToken(Token token) {
+		lastToken = token;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getStartingOffset()
+	 */
+	public int getStartingOffset() {
+		return getFirstToken().getOffset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTotalLength()
+	 */
+	public int getTotalLength() {
+		return getLastToken().getOffset() + getLastToken().getLength() - getStartingOffset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setStartingOffset(int)
+	 */
+	public void setStartingOffset(int i) {
+		throw new Error( "Sorry, not implemented bucko!");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTotalLength(int)
+	 */
+	public void setTotalLength(int i) {
+		throw new Error( "Sorry, not implemented bucko!");
 	}
 
 }

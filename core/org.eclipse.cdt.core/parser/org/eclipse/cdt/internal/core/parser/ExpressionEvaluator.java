@@ -680,7 +680,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
-	public Object templateDeclarationBegin(Object container, boolean exported) {
+	public Object templateDeclarationBegin(Object container, Token exported) {
 		return null;
 	}
 
@@ -693,7 +693,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
 	 */
-	public void templateDeclarationEnd(Object templateDecl) {
+	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
 	}
 
 	/* (non-Javadoc)

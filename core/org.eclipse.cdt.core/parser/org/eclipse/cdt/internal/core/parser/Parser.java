@@ -283,14 +283,16 @@ c, quick);
 	 */
 	protected void templateDeclaration( Object container ) throws Backtrack
 	{
-		boolean export = false; 
+		Token firstToken = null; 
 		if( LT(1) == Token.t_export )
 		{
-			consume( Token.t_export ); 
-			export = true; 
+			firstToken = consume( Token.t_export );
+			consume( Token.t_template ); 
 		}
+		else
+			firstToken = consume( Token.t_template );
 		
-		consume( Token.t_template );
+		
 		if( LT(1) != Token.tLT )
 		{
 			// explicit-instantiation
@@ -318,11 +320,11 @@ c, quick);
 		Object templateDeclaration = null;
 		try
 		{
-			try{ templateDeclaration = callback.templateDeclarationBegin( container, export ); } catch ( Exception e ) {}
+			try{ templateDeclaration = callback.templateDeclarationBegin( container, firstToken ); } catch ( Exception e ) {}
 			templateParameterList( templateDeclaration );
 			consume( Token.tGT );
 			declaration( templateDeclaration ); 
-			try{ callback.templateDeclarationEnd( templateDeclaration ); } catch( Exception e ) {}
+			try{ callback.templateDeclarationEnd( templateDeclaration, lastToken ); } catch( Exception e ) {}
 			
 		} catch( Backtrack bt )
 		{

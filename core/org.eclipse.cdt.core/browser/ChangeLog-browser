@@ -1,4 +1,8 @@
-2005-03-9 Chris Wiebe
+2005-03-29 Chris Wiebe
+	small change for potential reduction in memory usage
+	* browser/org/eclipse/cdt/core/browser/QualifiedTypeName.java
+
+2005-03-29 Chris Wiebe
 	temporary fix for type parser timeout
 	* browser/org/eclipse/cdt/core/browser/cache/TypeParser.java
 

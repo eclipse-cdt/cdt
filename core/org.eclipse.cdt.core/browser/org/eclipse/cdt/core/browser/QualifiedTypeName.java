@@ -71,13 +71,17 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			lastIndex = 0;
 			qualifierIndex = qualifiedName.indexOf(QUALIFIER, 0);
 			while (qualifierIndex >= 0) {
-			    segments[segmentCount] = qualifiedName.substring(lastIndex, qualifierIndex);
+                // note: we allocate a new string rather than use the returned substring,
+                // otherwise we're holding a reference to the entire original string
+			    segments[segmentCount] = new String(qualifiedName.substring(lastIndex, qualifierIndex));
 				++segmentCount;
 				lastIndex = qualifierIndex + QUALIFIER.length();
 				qualifierIndex = qualifiedName.indexOf(QUALIFIER, lastIndex);
 			}
 			Assert.isTrue(segmentCount == (maxSegments - 1));
-			segments[segmentCount] = qualifiedName.substring(lastIndex);
+            // note: we allocate a new string rather than use the returned substring,
+            // otherwise we're holding a reference to the entire original string
+			segments[segmentCount] = new String(qualifiedName.substring(lastIndex));
 		}
 		return segments;
 	}

@@ -3,10 +3,16 @@
  * All Rights Reserved.
  *
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CThread;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;

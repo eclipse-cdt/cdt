@@ -2,11 +2,14 @@
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 
 /**

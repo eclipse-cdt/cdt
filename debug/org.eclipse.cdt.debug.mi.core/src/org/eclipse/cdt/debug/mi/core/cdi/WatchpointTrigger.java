@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 
 /**

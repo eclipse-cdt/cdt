@@ -3,13 +3,15 @@
  * All Rights Reserved.
  *
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.Format;
+import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
 import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
@@ -39,7 +41,7 @@ public class Variable extends CObject implements ICDIVariable {
 		return stack;
 	}
 
-	MIVar getMIVar() {
+	public MIVar getMIVar() {
 		return miVar;
 	}
 

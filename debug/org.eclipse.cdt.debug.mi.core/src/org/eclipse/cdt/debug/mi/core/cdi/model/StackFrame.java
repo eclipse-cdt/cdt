@@ -3,7 +3,7 @@
  * All Rights Reserved.
  *
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Location;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
@@ -40,7 +43,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		return frame;
 	}
 
-	CThread getCThread() {
+	public CThread getCThread() {
 		return cthread;
 	}
 

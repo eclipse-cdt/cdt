@@ -3,11 +3,13 @@
  * All Rights Reserved.
  *
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.ExitInfo;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 
 /**

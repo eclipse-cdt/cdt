@@ -3,7 +3,7 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;

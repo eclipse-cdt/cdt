@@ -1,7 +1,17 @@
 2003-01-08 Alain Magloire
 
+	Refactoring, split the org.eclipse.cdt.debug.mi.core.cdi in pacackages
+	org.eclipse.cdt.debug.mi.core.cdi
+	org.eclipse.cdt.debug.mi.core.cdi.event
+	org.eclipse.cdt.debug.mi.core.cdi.model
+	This help structure things up.
+	* src/.../mi/core/cdi/event: New files.
+	* src/.../mi/core/cdi/model: New files.
+
+2003-01-08 Alain Magloire
+
 	* src/.../mi/core/cdi/EventManager.java (update): bug fix
-	was calling DestroedEvent() incorrectly.
+	was calling DestroyedEvent() incorrectly.
 
 2003-01-08 Alain Magloire
 

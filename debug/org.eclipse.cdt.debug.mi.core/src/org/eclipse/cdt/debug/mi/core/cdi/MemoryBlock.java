@@ -8,6 +8,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteMemory;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;

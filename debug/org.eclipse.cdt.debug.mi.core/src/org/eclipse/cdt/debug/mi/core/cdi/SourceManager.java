@@ -11,6 +11,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
+import org.eclipse.cdt.debug.mi.core.cdi.model.MixedInstruction;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataDisassemble;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;

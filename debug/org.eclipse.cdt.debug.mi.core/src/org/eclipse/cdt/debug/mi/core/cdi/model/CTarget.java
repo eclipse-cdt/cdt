@@ -3,7 +3,7 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -54,11 +57,11 @@ public class CTarget  implements ICDITarget {
 		currentThreads = noThreads;
 	}
 	
-	CSession getCSession() {
+	public CSession getCSession() {
 		return session;
 	}
 
-	int getLastExecutionToken() {
+	public int getLastExecutionToken() {
 		return lastExecutionToken;
 	}
 
@@ -129,7 +132,7 @@ public class CTarget  implements ICDITarget {
 	/**
 	 * Called when stopping because of breakpoints etc ..
 	 */
-	void updateState(int newThreadId) {
+	public void updateState(int newThreadId) {
 		CThread[] oldThreads = currentThreads;
 
 		// If we use "info threads" in getCThreads() this

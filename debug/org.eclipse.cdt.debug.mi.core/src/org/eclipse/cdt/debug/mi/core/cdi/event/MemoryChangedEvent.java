@@ -2,13 +2,15 @@
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.MemoryBlock;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 
 /**

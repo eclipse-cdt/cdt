@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 
 /**

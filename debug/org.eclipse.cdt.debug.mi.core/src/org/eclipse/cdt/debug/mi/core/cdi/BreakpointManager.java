@@ -19,6 +19,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
@@ -34,8 +37,8 @@ import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakInsertInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakListInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakWatchInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
@@ -121,7 +124,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		return false;
 	}
 
-	Breakpoint getBreakpoint(int number) {
+	public Breakpoint getBreakpoint(int number) {
 		ICDIBreakpoint[] bkpts = listBreakpoints();
 		for (int i = 0; i < bkpts.length; i++) {
 			if (bkpts[i] instanceof Breakpoint) {
@@ -230,7 +233,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		mi.fireEvents(events);
 	}
 
-	Breakpoint deleteBreakpoint (int no) {
+	public Breakpoint deleteBreakpoint (int no) {
 		Breakpoint point = null;
 		Breakpoint[] points = (Breakpoint[])delList.toArray(new Breakpoint[delList.size()]);
 		for (int i = 0; i < points.length; i++) {

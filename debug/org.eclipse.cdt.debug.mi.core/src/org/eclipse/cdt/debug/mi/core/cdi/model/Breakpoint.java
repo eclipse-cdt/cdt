@@ -2,12 +2,15 @@
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Condition;
+import org.eclipse.cdt.debug.mi.core.cdi.Location;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
@@ -25,7 +28,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 		mgr = m;
 	}
 
-	MIBreakpoint getMIBreakpoint() {
+	public MIBreakpoint getMIBreakpoint() {
 		return miBreakpoint;
 	}
 	

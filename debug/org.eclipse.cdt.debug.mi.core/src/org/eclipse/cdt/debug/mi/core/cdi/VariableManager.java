@@ -15,6 +15,12 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Argument;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CThread;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
@@ -36,12 +42,12 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 	/**
 	 * Class container to regroup all info concerning a variable.
 	 */
-	class Element {
-		MIVar miVar;
-		String name;
-		StackFrame stackframe;
-		int stackdepth;
-		Variable variable;
+	public class Element {
+		public MIVar miVar;
+		public String name;
+		public StackFrame stackframe;
+		public int stackdepth;
+		public Variable variable;
 	}
 
 	public VariableManager(CSession session) {
@@ -53,7 +59,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 	/**
 	 * Return the element that have the uniq varName.
 	 */
-	Element getElement(String varName) {
+	public Element getElement(String varName) {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].miVar.getVarName().equals(varName)) {
@@ -183,7 +189,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 	/**
 	 * Remove element from the OutOfscope list(oos).
 	 */
-	Element removeOutOfScope(String varName) {
+	public Element removeOutOfScope(String varName) {
 		Element[] oos = (Element[])oosList.toArray(new Element[0]);
 		for (int i = 0; i < oos.length; i++) {
 			if (oos[i].miVar.getVarName().equals(varName)) {
@@ -249,7 +255,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		}
 	}
 
-	ICDIVariable createVariable(StackFrame stack, String name) throws CDIException {
+	public ICDIVariable createVariable(StackFrame stack, String name) throws CDIException {
 		Element element = createElement(stack, name);
 		Variable var;
 		if (element.variable != null) {
@@ -262,7 +268,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		return var;
 	}
 
-	Variable createVariable(StackFrame stack, String name, MIVar miVar )
+	public Variable createVariable(StackFrame stack, String name, MIVar miVar )
 		throws CDIException {
 		Element element = new Element();
 		element.miVar = miVar;
@@ -274,7 +280,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		return var;
 	}
 
-	ICDIArgument createArgument(StackFrame stack, String name) throws CDIException {
+	public ICDIArgument createArgument(StackFrame stack, String name) throws CDIException {
 		Element element = createElement(stack, name);
 		Argument carg;
 		if (element.variable != null && element.variable instanceof Argument) { 

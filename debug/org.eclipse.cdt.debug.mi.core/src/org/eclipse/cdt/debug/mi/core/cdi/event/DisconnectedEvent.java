@@ -1,7 +1,8 @@
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 
 /**
  */

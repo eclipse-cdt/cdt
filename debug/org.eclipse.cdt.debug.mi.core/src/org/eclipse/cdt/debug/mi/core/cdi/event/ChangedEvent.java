@@ -2,12 +2,18 @@
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;

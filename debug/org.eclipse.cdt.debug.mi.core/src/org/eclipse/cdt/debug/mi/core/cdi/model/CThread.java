@@ -3,7 +3,7 @@
  * All Rights Reserved.
  *
  */
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -11,6 +11,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackInfoDepth;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
@@ -41,7 +44,7 @@ public class CThread extends CObject implements ICDIThread {
 		return Integer.toString(id);
 	}
 
-	StackFrame getCurrentStackFrame() throws CDIException {
+	public StackFrame getCurrentStackFrame() throws CDIException {
 		if (currentFrame == null) {
 			ICDIStackFrame[] frames = getStackFrames(0, 0);
 			if (frames.length > 0) {

@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
@@ -60,7 +61,7 @@ public class RegisterManager extends SessionObject {
 		return (Register[])regList.toArray(new Register[0]);
 	}
 
-	Register getRegister(int regno) throws CDIException {
+	public Register getRegister(int regno) throws CDIException {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
 			if (regs[i].getId() == regno) {
@@ -80,7 +81,7 @@ public class RegisterManager extends SessionObject {
 		return null;
 	}
 	
-	Register createRegister(ICDIRegisterObject regObject) throws CDIException {
+	public Register createRegister(ICDIRegisterObject regObject) throws CDIException {
 		Register reg = getRegister(regObject);
 		if (reg == null) {
 			reg = new Register(getCSession().getCTarget(), regObject);
@@ -97,7 +98,7 @@ public class RegisterManager extends SessionObject {
 		return regs;
 	}
 
-	void update() throws CDIException {
+	public void update() throws CDIException {
 		MISession mi = getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListChangedRegisters changed = factory.createMIDataListChangedRegisters();

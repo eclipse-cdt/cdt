@@ -18,7 +18,9 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -2129,4 +2131,13 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write( "foo() i;" );
     	parse( writer.toString() );
 	}
+    
+    public void testBug77009() throws Exception
+    {
+    	Iterator i = parse("int foo(volatile int &);\n").getDeclarations(); //$NON-NLS-1$
+    	IASTFunction foo = (IASTFunction) i.next();
+    	Iterator parms = foo.getParameters();
+    	IASTParameterDeclaration blank = (IASTParameterDeclaration)parms.next();
+        assertEquals( ASTUtil.getType( (IASTAbstractDeclaration)blank ), "volatile int&" ); //$NON-NLS-1$
+    }
 }

@@ -127,6 +127,8 @@ public class ASTUtil {
 		
 		if(declaration.isConst())
 			type.append("const "); //$NON-NLS-1$
+		if(declaration.isVolatile())
+			type.append("volatile "); //$NON-NLS-1$
 		IASTTypeSpecifier typeSpecifier = declaration.getTypeSpecifier();
 		if(typeSpecifier instanceof IASTElaboratedTypeSpecifier){
 			IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) typeSpecifier;

@@ -30,7 +30,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
+import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
@@ -211,7 +211,7 @@ public abstract class CVariable extends CDebugElement
 				catch( CDIException e )
 				{
 					fCDIVariable = new ErrorVariable( getCDIVariableObject(), e );
-					setStatus( ICDebugElementErrorStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.0" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
+					setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.0" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 				}
 			}
 			return fCDIVariable;
@@ -419,7 +419,7 @@ public abstract class CVariable extends CDebugElement
 		fOriginal = createOriginal( cdiVariableObject );
 		fShadow = null;
 		if ( cdiVariableObject instanceof ErrorVariable )
-			setStatus( ICDebugElementErrorStatus.ERROR, 
+			setStatus( ICDebugElementStatus.ERROR, 
 					MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), new String[] { ((ErrorVariable)cdiVariableObject).getException().getMessage() } ) ); //$NON-NLS-1$
 		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
 		getCDISession().getEventManager().addEventListener( this );
@@ -631,7 +631,7 @@ public abstract class CVariable extends CDebugElement
 			if ( getCDIVariable() instanceof ErrorVariable )
 			{
 				getInternalVariable().invalidate();
-				setStatus( ICDebugElementErrorStatus.OK, null );
+				setStatus( ICDebugElementStatus.OK, null );
 			}
 		}
 		catch( CDIException e )

@@ -34,7 +34,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
-import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
+import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
@@ -154,7 +154,7 @@ public class CThread extends CDebugElement
 		}
 		catch( DebugException e )
 		{
-			setStatus( ICDebugElementErrorStatus.ERROR, e.getStatus().getMessage() );
+			setStatus( ICDebugElementStatus.ERROR, e.getStatus().getMessage() );
 			throw e;
 		}
 		return (IStackFrame[])list.toArray( new IStackFrame[list.size()] );
@@ -277,7 +277,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			setStatus( ICDebugElementErrorStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.0" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
+			setStatus( ICDebugElementStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.0" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return new ICDIStackFrame[0];
@@ -1050,7 +1050,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			setStatus( ICDebugElementErrorStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.1" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
+			setStatus( ICDebugElementStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.1" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 		}
 		return depth;
 	}

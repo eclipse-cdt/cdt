@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
-import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
+import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -39,11 +39,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
  */
 public class CDebugElement extends PlatformObject 
 						   implements ICDebugElement,
-						   			  ICDebugElementErrorStatus
+						   			  ICDebugElementStatus
 {
 	private CDebugTarget fDebugTarget;
 
-	private int fSeverity = ICDebugElementErrorStatus.OK;
+	private int fSeverity = ICDebugElementStatus.OK;
 	private String fMessage = null;
 
 	/**
@@ -337,20 +337,20 @@ public class CDebugElement extends PlatformObject
 
 	protected void resetStatus()
 	{
-		fSeverity = ICDebugElementErrorStatus.OK;
+		fSeverity = ICDebugElementStatus.OK;
 		fMessage = null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus#isOK()
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#isOK()
 	 */
 	public boolean isOK()
 	{
-		return ( fSeverity == ICDebugElementErrorStatus.OK );
+		return ( fSeverity == ICDebugElementStatus.OK );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus#getSeverity()
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#getSeverity()
 	 */
 	public int getSeverity()
 	{
@@ -358,7 +358,7 @@ public class CDebugElement extends PlatformObject
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus#getMessage()
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#getMessage()
 	 */
 	public String getMessage()
 	{

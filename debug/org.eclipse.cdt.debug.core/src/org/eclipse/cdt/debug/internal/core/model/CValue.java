@@ -32,7 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharValue;
-import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
+import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
@@ -141,7 +141,7 @@ public class CValue extends CDebugElement implements ICValue
 			{
 				fVariables = new ArrayList( 1 );
 				CModificationVariable var = new CModificationVariable( this, new CVariable.ErrorVariable( null, e ) );
-				var.setStatus( ICDebugElementErrorStatus.ERROR, e.getMessage() );
+				var.setStatus( ICDebugElementStatus.ERROR, e.getMessage() );
 				fVariables.add( var );
 			}
 		}

@@ -1,3 +1,13 @@
+2004-07-09 Mikhail Khodjaiants
+	Renamed "ICDebugElementErrorStatus" to "ICDebugElementStatus".
+	Added comments to ICDebugElementStatus.java.
+	* ICDebugElementStatus.java
+	* CDebugElement.java
+	* CDebugTarget.java
+	* CThread.java
+	* CValue.java
+	* CVariable.java
+ 
 2004-07-02 Alain Magloire
 
 	Move the CDI interface to its own source browser and library

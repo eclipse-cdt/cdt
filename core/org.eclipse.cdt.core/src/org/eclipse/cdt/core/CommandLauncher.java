@@ -154,27 +154,40 @@ public class CommandLauncher {
 		closure.runNonBlocking();
 		byte buffer[] = new byte[1024];
 		int nbytes;
+		int waited = 0;
+		boolean flushed = false;
 		while (!monitor.isCanceled() && closure.isAlive()) {
 			nbytes = 0;
 			try {
 				if ( errInPipe.available() > 0 ) {
 					nbytes = errInPipe.read(buffer);
 					err.write(buffer, 0, nbytes);
-					err.flush();
 				}
 				if ( inputPipe.available() > 0 ) {
 					nbytes = inputPipe.read(buffer);
 					output.write(buffer, 0, nbytes);
-					output.flush();
 				}
 			} catch( IOException e) {
 			}
 			monitor.worked(0);
 			if (nbytes == 0) {
+				//DELAY * 10 is half a second with no new input, flush anything thats waiting
+				if( !flushed && waited > DELAY * 10 ){
+					try {
+						err.flush();
+						output.flush();
+						flushed = true;
+					} catch (IOException e1) {
+					}
+					waited = 0;
+				}
 				try {
-						Thread.sleep(DELAY);
+					waited += DELAY;
+					Thread.sleep(DELAY);
 				} catch (InterruptedException ie) {
 				}
+			} else {
+				flushed = false;
 			}
 		}
 

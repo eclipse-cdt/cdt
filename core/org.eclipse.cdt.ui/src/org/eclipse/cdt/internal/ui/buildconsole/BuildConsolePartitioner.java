@@ -72,6 +72,9 @@ public class BuildConsolePartitioner
 	 */
 
 	public void appendToDocument(final String text, final BuildConsoleStream stream) {
+		if( text.length() == 0 )
+			return;
+		
 		Runnable r = new Runnable() {
 
 			public void run() {
@@ -298,7 +301,8 @@ public class BuildConsolePartitioner
 		}
 
 		public void flush() throws IOException {
-			appendToDocument(readBuffer(), fStream);
+			if( fBuffer.length() > 0 )
+				appendToDocument(readBuffer(), fStream);
 			fManager.showConsole();
 		}
 
@@ -308,7 +312,8 @@ public class BuildConsolePartitioner
 
 		public synchronized void write(byte[] b, int off, int len) throws IOException {
 			super.write(b, off, len);
-			flush();
+			if( fBuffer.length() > 4096 )
+				flush();
 		}
 	}
 

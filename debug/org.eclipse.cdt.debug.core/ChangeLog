@@ -1,3 +1,9 @@
+2004-03-16 Alain Magloire
+
+	Make this class extends ICDIEventListener
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIManager.java
+	
 2004-03-10 Tanya Wolff	
 	Externalized strings and marked non-translatable strings
 	Packages affected:

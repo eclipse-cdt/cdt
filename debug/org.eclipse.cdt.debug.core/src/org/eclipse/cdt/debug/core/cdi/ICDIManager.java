@@ -5,9 +5,11 @@
  */
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+
 /**
  */
-public interface ICDIManager extends ICDISessionObject {
+public interface ICDIManager extends ICDIEventListener, ICDISessionObject {
 
 	/**
 	 * When the target is suspended the manager will check

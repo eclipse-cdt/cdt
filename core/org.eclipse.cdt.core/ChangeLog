@@ -1,3 +1,12 @@
+2004-11-01 Alain Magloire
+
+	Change to the errorParserManager, ... finally
+	- do no reorder the arbitrary the error parsers array
+	- if IErrorParser.processLine() return true bail out.
+
+	* src/org/eclipse/cdt/core/ErrorParserManager.java
+	* plugin.xml
+
 2004-10-14 David Inglis
 
 	Move BinaryConfig into internal.model was no need to be public, also fixed it to

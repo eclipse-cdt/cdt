@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -66,7 +67,7 @@ public class ErrorParserManager extends OutputStream {
 		if (parsersIDs == null) {
 			enableAllParsers();
 		} else {
-			fErrorParsers = new HashMap(parsersIDs.length);
+			fErrorParsers = new LinkedHashMap(parsersIDs.length);
 			for (int i = 0; i < parsersIDs.length; i++) {
 				IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parsersIDs[i]);
 				fErrorParsers.put(parsersIDs[i], parsers);
@@ -104,7 +105,6 @@ public class ErrorParserManager extends OutputStream {
 			return (IPath) fDirectoryStack.lastElement();
 		}
 		// Fallback to the Project Location
-		// FIXME: if the build did not start in the Project ?
 		return fBaseDirectory;
 	}
 
@@ -136,7 +136,7 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	private void enableAllParsers() {
-		fErrorParsers = new HashMap();
+		fErrorParsers = new LinkedHashMap();
 		String[] parserIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
 		for (int i = 0; i < parserIDs.length; i++) {
 			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parserIDs[i]);
@@ -185,24 +185,37 @@ public class ErrorParserManager extends OutputStream {
 			parserIDs[i] = (String) items.next();
 		}
 
-		int top = parserIDs.length - 1;
-		int i = top;
-		do {
-			IErrorParser[] parsers = (IErrorParser[]) fErrorParsers.get(parserIDs[i]);
+		for (int i = 0; i <parserIDs.length; ++i) {
+			IErrorParser[] parsers = (IErrorParser[])fErrorParsers.get(parserIDs[i]);
 			for (int j = 0; j < parsers.length; j++) {
 				IErrorParser curr = parsers[j];
 				if (curr.processLine(line, this)) {
-					if (i != top) {
-						// move to top
-						Object used = fErrorParsers.remove(parserIDs[i]);
-						fErrorParsers.put(parserIDs[i], used);
-						//savePreferences();
-					}
 					return;
 				}
 			}
-			i--;
-		} while (i >= 0);
+		}
+
+// This old way of doing was trouble because it did not
+// respect the ordering provide by the users.
+//
+//		int top = parserIDs.length - 1;
+//		int i = top;
+//		do {
+//			IErrorParser[] parsers = (IErrorParser[]) fErrorParsers.get(parserIDs[i]);
+//			for (int j = 0; j < parsers.length; j++) {
+//				IErrorParser curr = parsers[j];
+//				if (curr.processLine(line, this)) {
+//					if (i != top) {
+//						// move to top
+//						Object used = fErrorParsers.remove(parserIDs[i]);
+//						fErrorParsers.put(parserIDs[i], used);
+//						//savePreferences();
+//					}
+//					return;
+//				}
+//			}
+//			i--;
+//		} while (i >= 0);
 	}
 
 	/**

@@ -101,17 +101,35 @@ public class MemoryPresentation
 	
 	public Point[] getAddressZones()
 	{
-		return (Point[])fAddressZones.toArray( new Point[0] );
+		return (Point[])fAddressZones.toArray( new Point[fAddressZones.size()] );
 	}
 	
 	public Point[] getChangedZones()
 	{
-		return (Point[])fChangedZones.toArray( new Point[0] );
+		fChangedZones.clear();
+		Long[] changedAddresses = getChangedAddresses();
+		for ( int i = 0; i < changedAddresses.length; ++i )
+		{
+			int dataOffset = getDataItemOffsetByAddress( changedAddresses[i] );
+			if ( dataOffset != -1 )
+			{
+				fChangedZones.add( new Point( dataOffset, dataOffset + getDataItemLength() - 1 ) );
+			}
+			if ( displayASCII() )
+			{
+				int asciiOffset = getAsciiOffsetByAddress( changedAddresses[i] );
+				if ( asciiOffset != -1 )
+				{
+					fChangedZones.add( new Point( asciiOffset, asciiOffset ) );
+				}
+			}			
+		}
+		return (Point[])fChangedZones.toArray( new Point[fChangedZones.size()] );
 	}
 	
 	public Point[] getDirtyZones()
 	{
-		return (Point[])fDirtyZones.toArray( new Point[0] );
+		return (Point[])fDirtyZones.toArray( new Point[fDirtyZones.size()] );
 	}
 	
 	public String getStartAddress()
@@ -359,6 +377,63 @@ public class MemoryPresentation
 	{
 		if ( getMemoryBlock() != null )
 			return getMemoryBlock().getFormat();
+		return -1;
+	}
+	
+	private Long[] getChangedAddresses()
+	{
+		return ( getMemoryBlock() != null ) ? getMemoryBlock().getChangedAddresses() : new Long[0];
+	}
+	
+	private int getDataItemOffsetByAddress( Long address )
+	{
+		if ( getMemoryBlock() != null )
+		{
+			IFormattedMemoryBlockRow[] rows = getMemoryBlock().getRows();
+			for ( int i = 0; i < rows.length; ++i )
+			{
+				int wordSize = getMemoryBlock().getWordSize();
+				int numberOfColumns = getMemoryBlock().getNumberOfColumns();
+				if ( address.longValue() >= rows[i].getAddress() && 
+					 address.longValue() < rows[i].getAddress() + (wordSize * numberOfColumns) )
+				{
+					for ( int j = 1; j < numberOfColumns; ++j )
+					{
+						if ( address.longValue() >= rows[i].getAddress() + ((j - 1) * wordSize) &&
+							 address.longValue() < rows[i].getAddress() + (j * wordSize) )
+						{
+							return (i * getRowLength()) + ((j - 1) * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS)) + getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA;
+						}
+					}
+				}
+			}
+			
+		}
+		return -1;
+	}
+	
+	private int getAsciiOffsetByAddress( Long address )
+	{
+		if ( getMemoryBlock() != null )
+		{
+			IFormattedMemoryBlockRow[] rows = getMemoryBlock().getRows();
+			if ( rows.length > 0 )
+			{
+				IFormattedMemoryBlockRow firstRow = rows[0];
+				IFormattedMemoryBlockRow lastRow = rows[rows.length - 1];
+				if ( address.longValue() >= firstRow.getAddress() && address.longValue() <= lastRow.getAddress() )
+				{
+					int asciiOffset = (int)(address.longValue() - firstRow.getAddress());
+					int asciiRowlength = getMemoryBlock().getWordSize() * getMemoryBlock().getNumberOfColumns();
+					int numberOfRows = asciiOffset / asciiRowlength;
+					int offsetInRow = asciiOffset % asciiRowlength;
+					return (numberOfRows * getRowLength()) + 
+						   getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+						   (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) * getMemoryBlock().getNumberOfColumns() +
+						   INTERVAL_BETWEEN_DATA_AND_ASCII + offsetInRow;
+				}
+			}
+		}
 		return -1;
 	}
 }

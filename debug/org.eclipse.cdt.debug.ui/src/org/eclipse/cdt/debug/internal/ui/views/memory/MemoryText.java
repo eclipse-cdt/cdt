@@ -99,26 +99,31 @@ public class MemoryText
 		fText.setBackground( getBackgroundColor() );
 		fText.setForeground( getForegroundColor() );
 		fText.setText( fPresentation.getText() );
-		List list = new LinkedList();
 		Point[] zones = fPresentation.getChangedZones();
 		for ( int i = 0; i < zones.length; ++i )
-			list.add( new StyleRange( zones[i].x,
-									  zones[i].y - zones[i].x + 1,
-									  getChangedColor(),
-									  getBackgroundColor() ) );
+		{
+			fText.setStyleRange( new StyleRange( zones[i].x,
+												 zones[i].y - zones[i].x + 1,
+												 getChangedColor(),
+												 getBackgroundColor() ) );
+
+		}
 		zones = fPresentation.getAddressZones();
 		for ( int i = 0; i < zones.length; ++i )
-			list.add( new StyleRange( zones[i].x,
-									  zones[i].y - zones[i].x + 1,
-									  getAddressColor(),
-									  getBackgroundColor() ) );
+		{
+			fText.setStyleRange( new StyleRange( zones[i].x,
+												 zones[i].y - zones[i].x + 1,
+												 getAddressColor(),
+												 getBackgroundColor() ) );
+		}
 		zones = fPresentation.getDirtyZones();
 		for ( int i = 0; i < zones.length; ++i )
-			list.add( new StyleRange( zones[i].x,
-									  zones[i].y - zones[i].x + 1,
-									  getDirtyColor(),
-									  getBackgroundColor() ) );
-		fText.setStyleRanges( (StyleRange[])list.toArray( new StyleRange[list.size()] ) );
+		{
+			fText.setStyleRange( new StyleRange( zones[i].x,
+												 zones[i].y - zones[i].x + 1,
+												 getDirtyColor(),
+												 getBackgroundColor() ) );
+		}
 		fText.redraw();
 	}
 	

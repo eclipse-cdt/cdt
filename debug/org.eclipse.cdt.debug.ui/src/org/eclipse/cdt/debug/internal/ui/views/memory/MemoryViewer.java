@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
+import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -92,7 +93,23 @@ public class MemoryViewer extends ContentViewer
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh()
+	{
+		CTabItem[] tabItems = fTabFolder.getItems();
+		for ( int i = 0; i < tabItems.length; ++i )
+			if ( tabItems[i].getControl() instanceof MemoryControlArea )
+				((MemoryControlArea)tabItems[i].getControl()).refresh();
+	}
+
+	public void refresh( Object element )
 	{		
+		if ( element instanceof IFormattedMemoryBlock )
+		{
+			MemoryControlArea mca = getMemoryControlArea( (IFormattedMemoryBlock)element );
+			if ( mca != null )
+			{
+				mca.refresh();
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -119,5 +136,26 @@ public class MemoryViewer extends ContentViewer
 	protected CTabFolder getTabFolder()
 	{
 		return fTabFolder;
+	}
+	
+	private MemoryControlArea getMemoryControlArea( int index )
+	{
+		CTabItem item = fTabFolder.getItem( index );
+		return ( item != null ) ? (MemoryControlArea)item.getControl() : null;
+	}
+	
+	private MemoryControlArea getMemoryControlArea( IFormattedMemoryBlock block )
+	{
+		CTabItem[] tabItems = fTabFolder.getItems();
+		for ( int i = 0; i < tabItems.length; ++i )
+		{
+			if ( tabItems[i].getControl() instanceof MemoryControlArea && 
+				 block != null &&
+				 block.equals( ((MemoryControlArea)tabItems[i].getControl()).getMemoryBlock() ) )
+				{
+					return (MemoryControlArea)tabItems[i].getControl();
+				}
+		}
+		return null;
 	}
 }

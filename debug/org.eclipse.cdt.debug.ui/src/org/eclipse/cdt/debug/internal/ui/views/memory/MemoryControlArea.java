@@ -174,7 +174,7 @@ public class MemoryControlArea extends Composite
 		refresh();
 	}
 	
-	private void refresh()
+	protected void refresh()
 	{
 		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" );
 		fMemoryText.refresh();
@@ -244,6 +244,9 @@ public class MemoryControlArea extends Composite
 																				   getNumberOfColumns(),
 																				   getPaddingChar() ) );
 			getPresentation().setMemoryBlock( getMemoryBlock() );
+
+//getMemoryBlock().setFrozen( false );
+
 		}
 		setMemoryTextState();
 	}

@@ -1,3 +1,11 @@
+2002-10-20 Mikhail Khodjaiants
+	Display the memory changes in different color in the memory view.
+	* MemoryControlArea.java
+	* MemoryPresentation.java
+	* MemoryText.java
+	* MemoryViewer.java
+	* MemoryViewEventHandler.java
+
 2002-10-18 Mikhail Khodjaiants
 	Implementing the memory view support:
 	Images for the view's actions:

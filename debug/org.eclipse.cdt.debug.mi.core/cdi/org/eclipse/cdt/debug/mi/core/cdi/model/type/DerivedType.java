@@ -35,8 +35,8 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 
 	public void setComponentType(String name) {
 		Target target = (Target)getTarget();
-		Session session = (Session)(target.getSession());
-		SourceManager sourceMgr = (SourceManager)session.getSourceManager();
+		Session session = (Session)target.getSession();
+		SourceManager sourceMgr = session.getSourceManager();
 		try {
 			derivedType = sourceMgr.getType(getVariableObject(), name);
 		} catch (CDIException e) {

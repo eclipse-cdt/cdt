@@ -22,7 +22,7 @@ public class SignalReceived extends SessionObject implements ICDISignalReceived 
 	ICDISignal signal;
 	public SignalReceived(Session session, MISignalEvent event) {
 		super(session);
-		SignalManager mgr = (SignalManager)session.getSignalManager();
+		SignalManager mgr = session.getSignalManager();
 		signal = mgr.getSignal(event.getMISession(), event.getName());
 	}
 

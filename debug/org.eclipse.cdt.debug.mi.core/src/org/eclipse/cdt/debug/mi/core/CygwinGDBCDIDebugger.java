@@ -12,7 +12,6 @@
 package org.eclipse.cdt.debug.mi.core;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -24,10 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @author User
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Cygwin debugger extension point.
  */
 public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 	static final CygwinCommandFactory commandFactory = new CygwinCommandFactory();
@@ -37,7 +33,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 	}
 
 	public Session createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
-		Session session = (Session) super.createLaunchSession(config, exe, monitor);
+		Session session = super.createLaunchSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = (Target)targets[i];
@@ -62,7 +58,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 	}
 
 	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
-		Session session = (Session) super.createAttachSession(config, exe, monitor);
+		Session session = super.createAttachSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = (Target)targets[i];
@@ -73,7 +69,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 	}
 
 	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
-		Session session = (Session) super.createCoreSession(config, exe, monitor);
+		Session session = super.createCoreSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = (Target)targets[i];

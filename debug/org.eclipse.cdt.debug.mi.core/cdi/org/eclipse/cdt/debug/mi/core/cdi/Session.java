@@ -252,26 +252,9 @@ public class Session implements ICDISession, ICDISessionObject {
 		eMgr.fireEvents(new ICDIEvent[] { new DestroyedEvent(this) });
 		eMgr.removeEventListeners();
 	}
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate(ICDITarget)
-	 */
-	public void terminate(ICDITarget target) throws CDIException {
-		((Target)target).getMISession().terminate();
-	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
-	 */
-	public void addSearchPaths(String[] dirs) throws CDIException {
-		addSearchPaths(getCurrentTarget(), dirs);
-	}
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
-	 */
-	public void addSearchPaths(ICDITarget target, String[] dirs) throws CDIException {
-		MISession miSession = ((Target)target).getMISession();
+	public void addSearchPaths(Target target, String[] dirs) throws CDIException {
+		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
 		try {
@@ -290,10 +273,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		return getSessionProcess(getCurrentTarget());
 	}
 	
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
-	 */
-	public Process getSessionProcess(ICDITarget target) throws CDIException {
+	public Process getSessionProcess(ICDITarget target) {
 		MISession miSession = ((Target)target).getMISession();
 		return miSession.getSessionProcess();
 	}

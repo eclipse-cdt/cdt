@@ -27,7 +27,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -79,13 +78,10 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		if (dsession != null) {
 			ICDITarget[] dtargets = dsession.getTargets();
 			for (int i = 0; i < dtargets.length; i++) {
-				if (dtargets[i] instanceof Target) {
-					Target target = (Target)dtargets[i];
-					Process debugger = target.getMISession().getSessionProcess();
-					if (debugger != null ) {
-						IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
-						launch.addProcess(debuggerProcess);
-					}
+				Process debugger = dsession.getSessionProcess(dtargets[i]);
+				if (debugger != null) {
+					IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
+					launch.addProcess(debuggerProcess);
 				}
 			}
 		}

@@ -166,7 +166,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			if (frame == null) {
 				frame = target.getCurrentThread().getCurrentStackFrame();
 			}
-			SourceManager sourceMgr = (SourceManager) session.getSourceManager();
+			SourceManager sourceMgr = session.getSourceManager();
 			String nametype = sourceMgr.getTypeName(this, getQualifiedName());
 			try {
 				type = sourceMgr.getType(this, nametype);

@@ -108,7 +108,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 
 	public ChangedEvent(Session s, MISignalChangedEvent sig) {
 		session = s;
-		SignalManager mgr = (SignalManager)session.getSignalManager();
+		SignalManager mgr = session.getSignalManager();
 		MISession miSession = sig.getMISession();
 		String name = sig.getName();
 		ICDISignal signal = mgr.getSignal(miSession, name);

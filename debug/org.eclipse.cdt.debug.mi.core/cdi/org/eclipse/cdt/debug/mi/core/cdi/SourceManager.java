@@ -461,7 +461,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		Target target = (Target)frame.getTarget();
 		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(currentThread, false);
+		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
@@ -485,7 +485,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		Target target = (Target)frame.getTarget();
 		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
-		target.setCurrentThread(currentThread, false);
+		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();

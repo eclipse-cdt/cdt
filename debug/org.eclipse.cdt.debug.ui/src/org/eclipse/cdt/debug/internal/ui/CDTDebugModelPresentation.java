@@ -193,7 +193,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return CDebugEditor.EDITOR_ID;
 		}
-		return null;
+		return id;
 	}
 
 	/* (non-Javadoc)

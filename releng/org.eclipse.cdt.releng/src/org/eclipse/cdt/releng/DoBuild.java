@@ -1,6 +1,5 @@
 package org.eclipse.cdt.releng;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,11 +8,9 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -259,10 +256,10 @@ public class DoBuild implements IPlatformRunnable {
 		String buildNum = versionElem.getAttribute("build");
 		buildNum = String.valueOf(Integer.decode(buildNum).intValue() + 1);
 		versionElem.setAttribute("build", buildNum);
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		File versionResult = new File(versionFile.getRawLocation().toOSString());
-		transformer.transform(new DOMSource(versionDoc), new StreamResult(versionResult));
+		OutputFormat xmlOutputFormat = new OutputFormat("xml", "UTF-8", false);
+		FileOutputStream versionResult = new FileOutputStream(versionFile.getRawLocation().toOSString());
+		XMLSerializer ser = new XMLSerializer(versionResult, xmlOutputFormat);
+		ser.serialize(versionDoc);
 		versionFile.refreshLocal(IResource.DEPTH_ONE, monitor);
 		version = versionId + "." + buildNum;
 		

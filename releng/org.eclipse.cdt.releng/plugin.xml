@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.pde.core"/>
       <import plugin="org.eclipse.pde.ui"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 

@@ -1,3 +1,7 @@
+2003-10-17 Mikhail Khodjaiants
+	Temporary fix for PR 39061: Attach source does not work for applications compiled in CygWin.
+	* CDirectorySourceLocation.java
+
 2003-10-16 Mikhail Khodjaiants
 	Fix for PR 38468: Error in files location.
 	Use the 'getCanonicalPath' method of the 'File' class to obtain the file name.

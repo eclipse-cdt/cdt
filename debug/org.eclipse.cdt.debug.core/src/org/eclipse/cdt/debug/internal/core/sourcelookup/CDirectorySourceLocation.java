@@ -85,15 +85,25 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	 */
 	public Object findSourceElement( String name ) throws CoreException
 	{
+		Object result = null;
 		if ( getDirectory() != null )
 		{
 			File file = new File( name );
 			if ( file.isAbsolute() )
-				return findFileByAbsolutePath( name );
+				result = findFileByAbsolutePath( name );
 			else
-				return findFileByRelativePath( name );
+				result = findFileByRelativePath( name );
+			if ( result == null && getAssociation() != null )
+			{
+				IPath path = new Path( name );
+				if ( path.segmentCount() > 1 && getAssociation().isPrefixOf( path ) )
+				{
+					path = getDirectory().append( path.removeFirstSegments( getAssociation().segmentCount() ) );
+					result = findFileByAbsolutePath( path.toOSString() );
+				}
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/* (non-Javadoc)

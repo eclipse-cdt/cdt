@@ -1,3 +1,11 @@
+2002-12-11 Judy N Green
+	* src/org/eclipse/cdt/internal/ui/text/BufferedDocumentScanner.java
+	Fix for the backwards display of typed text when the CDT ran within
+	Eclipse 2.1.
+	Patch submitted by Ed Burnette. 
+	Tested on M1, 2.1 (20021204 integration build) and 2.0.1 
+	Bugzilla Bug 24648 
+
 2002-12-11 Alain Magloire
 
 	Fix PR 27937.  NPE in the C Editor preference page.

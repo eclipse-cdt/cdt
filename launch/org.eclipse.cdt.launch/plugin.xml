@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.launch"
    name="CDT Launch Plug-in"
-   version="0.0.1"
+   version="1.0.0"
    provider-name="QNX Software Systems Ltd."
    class="org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin">
 
@@ -47,4 +47,5 @@
             id="org.eclipse.cdt.launch.localClaunchConfigurationTabGroup">
       </launchConfigurationTabGroup>
    </extension>
+
 </plugin>

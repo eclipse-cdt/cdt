@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory
 import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
-import org.eclipse.cdt.internal.core.parser.scanner.Preprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
 
 
@@ -111,19 +110,6 @@ public class ParserFactory {
 		return s; 
     }
     
-    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService logService, List workingCopies )
-    {
-    	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
-    	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
-    	if( info == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
-    	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
-    	IParserLogService log = ( logService == null ) ? createDefaultLogService() : logService;
-    	ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
-    	ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-    	IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, log, extensionFactory.createScannerExtension(), workingCopies );
-		return s;
-    }
-	
 	public static ILineOffsetReconciler createLineOffsetReconciler( Reader input )
 	{
 		return new LineOffsetReconciler( input ); 

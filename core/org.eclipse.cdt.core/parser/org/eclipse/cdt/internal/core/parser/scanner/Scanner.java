@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,8 @@ import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.IExpressionParser;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
+import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
@@ -67,7 +70,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  *
  */
 
-public class Scanner implements IScanner {
+public final class Scanner implements IScanner, IScannerData {
 
 	protected static final EndOfFileException EOF = new EndOfFileException();
 	static ScannerStringBuffer strbuff = new ScannerStringBuffer(100);
@@ -78,7 +81,22 @@ public class Scanner implements IScanner {
 	protected static final ObjectMacroDescriptor STDC_MACRO = new ObjectMacroDescriptor( __STDC__,  "1"); //$NON-NLS-1$
 	private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 	private final static String SCRATCH = "<scratch>"; //$NON-NLS-1$
-	protected final IScannerData scannerData;
+	private final List workingCopies;
+	private final ContextStack contextStack;
+	private IASTFactory astFactory = null;
+	private final ISourceElementRequestor requestor;
+	private final ParserMode parserMode;
+	private final String filename;
+	private final Reader reader;
+	private final ParserLanguage language;
+	protected final IParserLogService log;
+	private final IProblemFactory problemFactory = new ScannerProblemFactory();
+	private Map definitions = new Hashtable();
+	private BranchTracker branches = new BranchTracker();
+	private final IScannerInfo originalConfig;
+	private List includePathNames = new ArrayList();
+
+	private final Map privateDefinitions = new Hashtable();
 
 	private boolean initialContextInitialized = false;
 
@@ -100,42 +118,55 @@ public class Scanner implements IScanner {
 
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error, boolean extra ) throws ScannerException
 	{
-		IProblem problem = scannerData.getProblemFactory().createProblem( 
+		IProblem problem = problemFactory.createProblem( 
 				problemID, 
 				beginningOffset, 
 				getCurrentOffset(), 
-				scannerData.getContextStack().getCurrentLineNumber(), 
+				contextStack.getCurrentLineNumber(), 
 				getCurrentFile().toCharArray(), 
 				argument, 
 				warning, 
 				error );
 		
 		// trace log
-		TraceUtil.outputTrace(scannerData.getLogService(), "Scanner problem encountered: ", problem, null, null, null ); //$NON-NLS-1$
+		TraceUtil.outputTrace(log, "Scanner problem encountered: ", problem, null, null, null ); //$NON-NLS-1$
 		
-		if( (! scannerData.getClientRequestor().acceptProblem( problem )) && extra )
+		if( (! requestor.acceptProblem( problem )) && extra )
 			throw new ScannerException( problem );
 	}
 
 	Scanner( Reader reader, String filename, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
 	{
 		String [] incs = (String [])includePaths.toArray(STRING_ARRAY);
-    	scannerData = new ScannerData( this, log, requestor, mode, filename, reader, language, new ScannerInfo( definitions, incs ), new ContextStack( this, log ), null );
-    	
-		scannerExtension = extension;
-		
-		scannerData.setDefinitions( definitions );
-		scannerData.setIncludePathNames( includePaths );
-		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
+		this.log = log;
+		this.requestor = requestor;
+		this.parserMode = mode;
+		this.filename = filename;
+		this.reader = reader;
+		this.language = language;
+		this.originalConfig = new ScannerInfo( definitions, incs );
+		this.contextStack = new ContextStack( this, log );
+		this.workingCopies = null;
+		this.scannerExtension = extension;
+		this.definitions = definitions;
+		this.includePathNames = includePaths;
+		this.astFactory = ParserFactory.createASTFactory( this, parserMode, language );
 		setupBuiltInMacros();
 	}
 	
     public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies ) {
     	
-    	scannerData = new ScannerData( this, log, requestor, parserMode, filename, reader, language, info, new ContextStack( this, log ), workingCopies );
-
-		scannerExtension = extension;
-		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
+    	this.log = log;
+    	this.requestor = requestor;
+    	this.parserMode = parserMode;
+    	this.filename = filename;
+    	this.reader = reader;
+    	this.language = language;
+    	this.originalConfig = info;
+    	this.contextStack = new ContextStack( this, log );
+    	this.workingCopies = workingCopies;
+    	this.scannerExtension = extension;
+		this.astFactory = ParserFactory.createASTFactory( this, parserMode, language );
 		
 		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
 		TraceUtil.outputTrace(log, "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
@@ -152,7 +183,7 @@ public class Scanner implements IScanner {
 				if( value instanceof String )
 				{	
 					//TODO add in check here for '(' and ')'
-					addDefinition( symbolName, scannerExtension.initializeMacroValue(scannerData, (String) value));
+					addDefinition( symbolName, scannerExtension.initializeMacroValue(this, (String) value));
 					TraceUtil.outputTrace(log,  "\t\tNAME = ", symbolName, " VALUE = ", value.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
 					++numberOfSymbolsLogged;
 					
@@ -181,16 +212,51 @@ public class Scanner implements IScanner {
 		setupBuiltInMacros();
     }
 
+    public final ParserLanguage getLanguage() {
+    	return language;
+    }
+
+    public final Map getPrivateDefinitions() {
+    	return privateDefinitions;
+    }
+    
+    public final ContextStack getContextStack() {
+    	return contextStack;
+    }
+    
+    public final IParserLogService getLogService() {
+    	return log;
+    }
+
+    public final List getIncludePathNames() {
+    	return includePathNames;
+    }
+
+    public final Map getPublicDefinitions() {
+    	return definitions;
+    }
+    
+    public final ParserMode getParserMode() {
+    	return parserMode;
+    }
+    
+    public final ISourceElementRequestor getClientRequestor() {
+    	return requestor;
+    }
+    
+    public final Iterator getWorkingCopies() {
+    	return workingCopies != null ? workingCopies.iterator() : EmptyIterator.EMPTY_ITERATOR; 
+    }
     /**
 	 * 
 	 */
 	protected void setupBuiltInMacros() {
 		
-		scannerExtension.setupBuiltInMacros(scannerData);
+		scannerExtension.setupBuiltInMacros(this);
 		if( getDefinition(__STDC__) == null )
 			addDefinition( __STDC__, STDC_MACRO ); 
 		
-		if( scannerData.getLanguage() == ParserLanguage.C )
+		if( language == ParserLanguage.C )
 		{
 			if( getDefinition(__STDC_HOSTED__) == null )
 				addDefinition( __STDC_HOSTED__, STDC_HOSTED_MACRO); 
@@ -205,7 +271,7 @@ public class Scanner implements IScanner {
 			addDefinition(  __FILE__, 
 					new DynamicMacroDescriptor( __FILE__, new DynamicMacroEvaluator() {
 						public String execute() {
-							return scannerData.getContextStack().getMostRelevantFileContext().getContextName();
+							return contextStack.getMostRelevantFileContext().getContextName();
 						}				
 					} ) );
 		
@@ -213,7 +279,7 @@ public class Scanner implements IScanner {
 			addDefinition(  __LINE__, 
 					new DynamicMacroDescriptor( __LINE__, new DynamicMacroEvaluator() {
 						public String execute() {
-							return new Integer( scannerData.getContextStack().getCurrentLineNumber() ).toString();
+							return new Integer( contextStack.getCurrentLineNumber() ).toString();
 						}				
 			} ) );
 		
@@ -284,15 +350,15 @@ public class Scanner implements IScanner {
 
 	private void setupInitialContext()
     {
-    	String resolvedFilename = scannerData.getInitialFilename() == null ? TEXT : scannerData.getInitialFilename();
+    	String resolvedFilename = filename == null ? TEXT : filename;
     	IScannerContext context = null;
     	try
     	{
     		if( offsetLimit == NO_OFFSET_LIMIT )
-    			context = new ScannerContextTop(scannerData.getInitialReader(), resolvedFilename);
+    			context = new ScannerContextTop(reader, resolvedFilename);
     		else
-    			context = new LimitedScannerContext( this, scannerData.getInitialReader(), resolvedFilename, offsetLimit, 0 );
-    		scannerData.getContextStack().pushInitialContext( context ); 
+    			context = new LimitedScannerContext( this, reader, resolvedFilename, offsetLimit, 0 );
+    		contextStack.pushInitialContext( context ); 
     	} catch( ContextException  ce )
     	{
     		handleInternalError();
@@ -301,12 +367,12 @@ public class Scanner implements IScanner {
     }
 	
 	public void addIncludePath(String includePath) {
-		scannerData.getIncludePathNames().add(includePath);
+		includePathNames.add(includePath);
 	}
 
 	public void overwriteIncludePath(String [] newIncludePaths) {
 		if( newIncludePaths == null ) return;
-		scannerData.setIncludePathNames(new ArrayList(newIncludePaths.length));
+		includePathNames = new ArrayList(newIncludePaths.length);
 		
 		for( int i = 0; i < newIncludePaths.length; ++i )
 		{
@@ -325,13 +391,13 @@ public class Scanner implements IScanner {
 			}
 
 			if( file.exists() && file.isDirectory() )
-				scannerData.getIncludePathNames().add( path );
+				includePathNames.add( path );
 			
 		}		
 	}
 
 	public void addDefinition(String key, IMacroDescriptor macro) {
-		scannerData.getPublicDefinitions().put(key, macro);
+		definitions.put(key, macro);
 	}
 
 	public void addDefinition(String key, String value) {
@@ -339,22 +405,22 @@ public class Scanner implements IScanner {
 	}
 
 	public final IMacroDescriptor getDefinition(String key) {
-		IMacroDescriptor descriptor = (IMacroDescriptor) scannerData.getPublicDefinitions().get(key);
+		IMacroDescriptor descriptor = (IMacroDescriptor) definitions.get(key);
 		if( descriptor != null )
 			return descriptor;
-		return (IMacroDescriptor) scannerData.getPrivateDefinitions().get(key);
+		return (IMacroDescriptor) privateDefinitions.get(key);
 	}
 
 	public final String[] getIncludePaths() {
-		return (String[])scannerData.getIncludePathNames().toArray();
+		return (String[])includePathNames.toArray();
 	}
 
 	protected boolean skipOverWhitespace() throws ScannerException {
-		int c = getChar();
+		int c = getChar(false);
 		boolean result = false; 
 		while ((c != NOCHAR) && ((c == ' ') || (c == '\t')))
 		{
-			c = getChar();
+			c = getChar(false);
 			result = true;
 		}
 		if (c != NOCHAR)
@@ -366,7 +432,7 @@ public class Scanner implements IScanner {
 	protected String getRestOfPreprocessorLine() throws ScannerException, EndOfFileException {
 
 		skipOverWhitespace();
-		int c = getChar();
+		int c = getChar(false);
 		if (c == '\n') 
 			return ""; //$NON-NLS-1$
 		strbuff.startString();
@@ -394,7 +460,7 @@ public class Scanner implements IScanner {
 				
 				// we need to peek ahead at the next character to see if 
 				// this is a comment or not
-				int next = getChar();
+				int next = getChar(false);
 				if (next == '/') {
 					// single line comment
 					skipOverSinglelineComment();
@@ -449,12 +515,12 @@ public class Scanner implements IScanner {
 
 	protected void skipOverTextUntilNewline() throws ScannerException {
 		for (;;) {
-			switch (getChar()) {
+			switch (getChar(false)) {
 				case NOCHAR :
 				case '\n' :
 					return;
 				case '\\' :
-					getChar();
+					getChar(false);
 			}
 		}
 	}
@@ -473,32 +539,32 @@ public class Scanner implements IScanner {
 	}
 
 	protected IToken newToken(int t, String i) {
-		IToken token = TokenFactory.createUniquelyImagedToken(t, i, scannerData );
+		IToken token = TokenFactory.createUniquelyImagedToken(t, i, this );
 		setCurrentToken(token);
 		return currentToken;
 	}
 
 	protected IToken newConstantToken(int t) {
-		setCurrentToken( TokenFactory.createToken(t,scannerData));
+		setCurrentToken( TokenFactory.createToken(t, this));
 		return currentToken;
 	}
 	
 	protected String getNextIdentifier() throws ScannerException {
 		strbuff.startString();
 		skipOverWhitespace();
-		int c = getChar();
+		int c = getChar(false);
 
 		if (((c >= 'a') && (c <= 'z'))
 			|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
 			strbuff.append(c);
 
-			c = getChar();
+			c = getChar(false);
 			while (((c >= 'a') && (c <= 'z'))
 				|| ((c >= 'A') && (c <= 'Z'))
 				|| ((c >= '0') && (c <= '9'))
 				|| (c == '_')) {
 				strbuff.append(c);
-				c = getChar();
+				c = getChar(false);
 			}
 		}
 		ungetChar(c);
@@ -514,12 +580,12 @@ public class Scanner implements IScanner {
 			if( useIncludePaths ) // search include paths for this file
 			{
 				// iterate through the include paths 
-				Iterator iter = scannerData.getIncludePathNames().iterator();
+				Iterator iter = includePathNames.iterator();
 		
 				while (iter.hasNext()) {
 		
 					String path = (String)iter.next();
-					duple = ScannerUtility.createReaderDuple( path, fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
+					duple = ScannerUtility.createReaderDuple( path, fileName, requestor, getWorkingCopies() );
 					if( duple != null )
 						break totalLoop;
 				}
@@ -530,7 +596,7 @@ public class Scanner implements IScanner {
 			}
 			else // local inclusion
 			{
-				duple = ScannerUtility.createReaderDuple( new File( currentContext.getContextName() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
+				duple = ScannerUtility.createReaderDuple( new File( currentContext.getContextName() ).getParentFile().getAbsolutePath(), fileName, requestor, getWorkingCopies() );
 				if( duple != null )
 					break totalLoop;
 				useIncludePaths = true;
@@ -543,7 +609,7 @@ public class Scanner implements IScanner {
             try
             {
                 inclusion =
-                    scannerData.getASTFactory().createInclusion(
+                	astFactory.createInclusion(
                         fileName,
                         duple.getFilename(),
                         !useIncludePaths,
@@ -559,11 +625,11 @@ public class Scanner implements IScanner {
 			
 			try
 			{
-				scannerData.getContextStack().updateInclusionContext(
+				contextStack.updateInclusionContext(
 					duple.getUnderlyingReader(), 
 					duple.getFilename(),
 					inclusion, 
-					scannerData.getClientRequestor() );
+					requestor);
 			}
 			catch (ContextException e1)
 			{
@@ -690,30 +756,39 @@ public class Scanner implements IScanner {
 		tokenizingMacroReplacementList = mr;
 	}
 	
-	public int getCharacter() throws ScannerException
+	public final int getCharacter() throws ScannerException
 	{
 		if( ! initialContextInitialized )
 			setupInitialContext();
 		
-		return getChar();
+		return getChar(false);
 	}
 	
-	final int getChar() throws ScannerException
-	{
-		return getChar( false );
+	final int getChar() throws ScannerException {
+		return getChar(false);
 	}
-
-	private int getChar( boolean insideString ) throws ScannerException {	
-		int c = NOCHAR;
+	
+	private final int getChar( boolean insideString ) throws ScannerException {	
 		
 		lastContext = currentContext;
 		
 		if (lastContext.getKind() == IScannerContext.ContextKind.SENTINEL)
 			// past the end of file
-			return c;
+			return NOCHAR;
 		
-    	c = readFromStream();
-		
+    	int c = currentContext.getChar();
+    	if (c != NOCHAR)
+    		return c;
+    	
+    	while (contextStack.rollbackContext(requestor)) {
+    		c = currentContext.getChar();
+    		if (c != NOCHAR)
+    			return c;
+    	}
+
+    	return NOCHAR;
+
+  		/*
 		if (enableTrigraphReplacement && (!insideString || enableTrigraphReplacementInStrings)) {
 			// Trigraph processing
 			enableTrigraphReplacement = false;
@@ -818,34 +893,21 @@ public class Scanner implements IScanner {
 				enableDigraphReplacement = true;
 			}
 		}
-		return c;
+		return c;*/
 	}
-
-    protected int readFromStream()
-    {
-    	int c = currentContext.getChar();
-    	
-    	if (c != NOCHAR)
-    		return c;
-    	
-    	if (scannerData.getContextStack().rollbackContext(scannerData.getClientRequestor()) == false)
-    		return NOCHAR;
-    	
-    	return readFromStream();
-    }
 
 	final void ungetChar(int c) {
 		currentContext.ungetChar(c);
 		if( lastContext != currentContext)
-			scannerData.getContextStack().undoRollback( lastContext, scannerData.getClientRequestor() );
+			contextStack.undoRollback( lastContext, requestor );
 	}
 
 	protected boolean lookAheadForTokenPasting() throws ScannerException
 	{
-		int c = getChar(); 
+		int c = getChar(false); 
 		if( c == '#' )
 		{
-			c = getChar(); 
+			c = getChar(false); 
 			if( c == '#' )
 				return true; 
 			ungetChar( c );
@@ -859,7 +921,7 @@ public class Scanner implements IScanner {
 	protected void consumeUntilOutOfMacroExpansion() throws ScannerException
 	{
 		while( currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			getChar();
+			getChar(false);
 	}
 
 	public IToken nextToken() throws ScannerException, EndOfFileException {
@@ -884,10 +946,10 @@ public class Scanner implements IScanner {
 			storageBuffer.append( buff.toString() );
 			try
 			{
-				scannerData.getContextStack().updateMacroContext( 
+				contextStack.updateMacroContext( 
 					storageBuffer.toString(), 
 					PASTING,
-					scannerData.getClientRequestor(), -1, -1 );
+					requestor, -1, -1 );
 			}
 			catch (ContextException e)
 			{
@@ -1002,7 +1064,7 @@ public class Scanner implements IScanner {
 		strbuff.append(c);
 
 		int firstChar = c;
-		c = getChar();
+		c = getChar(false);
 		
 		if( ! firstCharZero && floatingPoint && !(c >= '0' && c <= '9') ){
 			//if pasting, there could actually be a float here instead of just a .
@@ -1010,7 +1072,7 @@ public class Scanner implements IScanner {
 				if( c == '*' ){
 					return newConstantToken( IToken.tDOTSTAR );
 				} else if( c == '.' ){
-					if( getChar() == '.' )
+					if( getChar(false) == '.' )
 						return newConstantToken( IToken.tELLIPSIS );
 					handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
 				} else {
@@ -1028,14 +1090,14 @@ public class Scanner implements IScanner {
 			}
 			strbuff.append(c);
 			hex = true;
-			c = getChar();
+			c = getChar(false);
 		}
 
 		while ((c >= '0' && c <= '9')
 			|| (hex
 				&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) {
 			strbuff.append(c);
-			c = getChar();
+			c = getChar(false);
 		}
 		
 		if( c == '.' )
@@ -1043,13 +1105,13 @@ public class Scanner implements IScanner {
 			strbuff.append(c);
 			
 			floatingPoint = true;
-			c= getChar(); 
+			c= getChar(false); 
 			while ((c >= '0' && c <= '9')
 			|| (hex
 				&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))))
 			{
 				strbuff.append(c);
-				c = getChar();
+				c = getChar(false);
 			}
 		}
 		
@@ -1059,48 +1121,48 @@ public class Scanner implements IScanner {
 			if( ! floatingPoint ) floatingPoint = true; 
 			// exponent type for floating point 
 			strbuff.append(c);
-			c = getChar(); 
+			c = getChar(false); 
 			
 			// optional + or - 
 			if( c == '+' || c == '-' )
 			{
 				strbuff.append(c );
-				c = getChar(); 
+				c = getChar(false); 
 			}
 			
 			// digit sequence of exponent part 
 			while ((c >= '0' && c <= '9') )
 			{
 				strbuff.append(c);
-				c = getChar();
+				c = getChar(false);
 			}
 			
 			// optional suffix 
 			if( c == 'l' || c == 'L' || c == 'f' || c == 'F' )
 			{
 				strbuff.append(c );
-				c = getChar(); 
+				c = getChar(false); 
 			}
 		} else {
 			if( floatingPoint ){
 				//floating-suffix
 				if( c == 'l' || c == 'L' || c == 'f' || c == 'F' ){
-					c = getChar();
+					c = getChar(false);
 				}
 			} else {
 				//integer suffix
 				if( c == 'u' || c == 'U' ){
-					c = getChar();
+					c = getChar(false);
 					if( c == 'l' || c == 'L')
-						c = getChar();
+						c = getChar(false);
 					if( c == 'l' || c == 'L')
-						c = getChar();
+						c = getChar(false);
 				} else if( c == 'l' || c == 'L' ){
-					c = getChar();
+					c = getChar(false);
 					if( c == 'l' || c == 'L')
-						c = getChar();
+						c = getChar(false);
 					if( c == 'u' || c == 'U' )
-						c = getChar();
+						c = getChar(false);
 				}
 			}
 		}
@@ -1133,12 +1195,12 @@ public class Scanner implements IScanner {
 	{
 		int c;
 		int beginningOffset = currentContext.getOffset() - 1;
-		int beginningLine = scannerData.getContextStack().getCurrentLineNumber();
+		int beginningLine = contextStack.getCurrentLineNumber();
 
 		// we are allowed arbitrary whitespace after the '#' and before the rest of the text
 		boolean skipped = skipOverWhitespace();
 
-		c = getChar();
+		c = getChar(false);
 		
 		if( c == '#' )
 		{
@@ -1156,7 +1218,7 @@ public class Scanner implements IScanner {
 		while (((c >= 'a') && (c <= 'z'))
 			|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
 			strbuff.append(c);
-			c = getChar();
+			c = getChar(false);
 		}
 		
 		ungetChar(c);
@@ -1169,7 +1231,7 @@ public class Scanner implements IScanner {
 		Object directive = ppDirectives.get(token);
 		if (directive == null) {
 			if( scannerExtension.canHandlePreprocessorDirective( token ) )
-				scannerExtension.handlePreprocessorDirective( scannerData, token, getRestOfPreprocessorLine() );
+				scannerExtension.handlePreprocessorDirective( this, token, getRestOfPreprocessorLine() );
 			else
 			{
 				if( passOnToClient )
@@ -1227,10 +1289,10 @@ public class Scanner implements IScanner {
 				
 				boolean expressionEvalResult = false;
 				
-				if( scannerData.getBranchTracker().queryCurrentBranchForIf() )
+				if( branches.queryCurrentBranchForIf() )
 				    expressionEvalResult = evaluateExpression(expression, currentOffset);
 				
-				passOnToClient = scannerData.getBranchTracker().poundIf( expressionEvalResult ); 
+				passOnToClient = branches.poundIf( expressionEvalResult ); 
 				return null;
 
 			case PreprocessorDirectives.IFDEF :
@@ -1242,11 +1304,11 @@ public class Scanner implements IScanner {
 					
 				if (getDefinition(definition) == null) {
 					// not defined	
-					passOnToClient = scannerData.getBranchTracker().poundIf( false );
+					passOnToClient = branches.poundIf( false );
 					skipOverTextUntilNewline();
 				} else 
 					// continue along, act like nothing is wrong :-)
-					passOnToClient = scannerData.getBranchTracker().poundIf( true ); 
+					passOnToClient = branches.poundIf( true ); 
 				return null;
 				
 			case PreprocessorDirectives.ENDIF :
@@ -1262,7 +1324,7 @@ public class Scanner implements IScanner {
 					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, strbuff.toString(), beginningOffset, false, true );
 				}
 				try{
-					passOnToClient = scannerData.getBranchTracker().poundEndif();
+					passOnToClient = branches.poundEndif();
 				}
 				catch( EmptyStackException ese )
 				{
@@ -1283,19 +1345,19 @@ public class Scanner implements IScanner {
 				if (getDefinition(definition2) != null) {
 					// not defined	
 					skipOverTextUntilNewline();
-					passOnToClient = scannerData.getBranchTracker().poundIf( false );
+					passOnToClient = branches.poundIf( false );
 					if( isLimitReached() )
 						handleInvalidCompletion();
 					
 				} else
 					// continue along, act like nothing is wrong :-)
-					passOnToClient = scannerData.getBranchTracker().poundIf( true ); 		
+					passOnToClient = branches.poundIf( true ); 		
 				return null;
 
 			case PreprocessorDirectives.ELSE :
 				try
 				{
-					passOnToClient = scannerData.getBranchTracker().poundElse();
+					passOnToClient = branches.poundElse();
 				}
 				catch( EmptyStackException ese )
 				{
@@ -1322,12 +1384,12 @@ public class Scanner implements IScanner {
 					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  ); //$NON-NLS-1$
 
 				boolean elsifResult = false;
-				if( scannerData.getBranchTracker().queryCurrentBranchForElif() )
+				if( branches.queryCurrentBranchForElif() )
 					elsifResult = evaluateExpression(elifExpression, co );
 
 				try
 				{
-					passOnToClient = scannerData.getBranchTracker().poundElif( elsifResult );
+					passOnToClient = branches.poundElif( elsifResult );
 				}
 				catch( EmptyStackException ese )
 				{
@@ -1394,7 +1456,7 @@ public class Scanner implements IScanner {
 		// first octet is mandatory
 		for( int i = 0; i < 4; ++i )
 		{
-			int c = getChar();
+			int c = getChar(false);
 			if( ! isHex( c ))
 				return false;
 			strbuff.append( c );
@@ -1403,7 +1465,7 @@ public class Scanner implements IScanner {
 		Vector v = new Vector();
 		Overall: for( int i = 0; i < 4; ++i )
 		{
-			int c = getChar();
+			int c = getChar(false);
 			if( ! isHex( c ))
 			{
 				ungetChar( c );
@@ -1466,7 +1528,7 @@ public class Scanner implements IScanner {
         int baseOffset = lastContext.getOffset() - 1;
 				
 		// String buffer is slow, we need a better way such as memory mapped files
-		int c = getChar();				
+		int c = getChar(false);				
 		
 		for( ; ; )
 		{
@@ -1475,14 +1537,14 @@ public class Scanner implements IScanner {
 					  scannerExtension.isValidIdentifierCharacter(c) ) || 
 					  isValidIdentifierCharacter(c) ) {
 				strbuff.append(c);
-				c = getChar();
+				c = getChar(false);
 				if (c == '\\') {
 					c = consumeNewlineAfterSlash();
 				}
 			}
 			if( c == '\\')
 			{
-				int next = getChar();
+				int next = getChar(false);
 				if( next == 'u' || next == 'U')
 				{
 					strbuff.append( '\\');
@@ -1503,7 +1565,7 @@ public class Scanner implements IScanner {
 		if (ident.equals(DEFINED))
 			return newToken(IToken.tINTEGER, handleDefinedMacro());
 		
-		if( ident.equals(_PRAGMA) && scannerData.getLanguage() == ParserLanguage.C )
+		if( ident.equals(_PRAGMA) && language == ParserLanguage.C )
 		{
 			handlePragmaOperator(); 
 			return null;
@@ -1512,7 +1574,7 @@ public class Scanner implements IScanner {
 		IMacroDescriptor mapping = getDefinition(ident);
 
 		if (mapping != null && !isLimitReached() && !mapping.isCircular() )
-			if( scannerData.getContextStack().shouldExpandDefinition( ident ) ) {					
+			if( contextStack.shouldExpandDefinition( ident ) ) {					
 				expandDefinition(ident, mapping, baseOffset);
 				return null;
 			}
@@ -1521,15 +1583,15 @@ public class Scanner implements IScanner {
 			return null;
 		
 		Object tokenTypeObject;
-		if( scannerData.getLanguage() == ParserLanguage.CPP )
+		if( language == ParserLanguage.CPP )
 		 	tokenTypeObject = cppKeywords.get(ident);
 		else
 			tokenTypeObject = cKeywords.get(ident);
 
 		if (tokenTypeObject != null)
 			return newConstantToken(((Integer) tokenTypeObject).intValue());
-		if( scannerExtension.isExtensionKeyword( scannerData.getLanguage(), ident ) )
-			return newExtensionToken( scannerExtension.createExtensionToken(scannerData, ident ));
+		if( scannerExtension.isExtensionKeyword( language, ident ) )
+			return newExtensionToken( scannerExtension.createExtensionToken(this, ident ));
 		return newToken(IToken.tIDENTIFIER, ident);
 	}
 	
@@ -1567,26 +1629,26 @@ public class Scanner implements IScanner {
 		IToken token;
 		count++;
 		
-		int c = getChar();
+		int c = getChar(false);
 
 		while (c != NOCHAR) {
 			if ( ! passOnToClient ) {
 				while (c != NOCHAR && c != '#' ) 
 				{
-					c = getChar();
+					c = getChar(false);
 					if( c == '/' )
 					{
-						c = getChar();
+						c = getChar(false);
 						if( c == '/' )
 						{
 							skipOverSinglelineComment();
-							c = getChar();
+							c = getChar(false);
 							continue;
 						}
 						else if( c == '*' )
 						{
 							skipOverMultilineComment();
-							c = getChar();
+							c = getChar(false);
 							continue;
 						}
 					}
@@ -1605,10 +1667,10 @@ public class Scanner implements IScanner {
 				case '\r' :
 				case '\t' :
 				case '\n' :
-					c = getChar();
+					c = getChar(false);
 					continue;
 				case ':' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case ':' : return newConstantToken(IToken.tCOLONCOLON);
 						// Diagraph
@@ -1620,18 +1682,18 @@ public class Scanner implements IScanner {
 				case ';' : return newConstantToken(IToken.tSEMI); 
 				case ',' : return newConstantToken(IToken.tCOMMA); 
 				case '?' : 
-					c = getChar();
+					c = getChar(false);
 					if (c == '?')
 					{
 						// trigraph
-						c = getChar();
+						c = getChar(false);
 						switch (c) {
 							case '=':
 								// this is the same as the # case
 								token = processPreprocessor();
 								if (token == null) 
 								{
-									c = getChar();
+									c = getChar(false);
 									continue;
 								}
 								return token;
@@ -1653,7 +1715,7 @@ public class Scanner implements IScanner {
 				case '{' : return newConstantToken(IToken.tLBRACE); 
 				case '}' : return newConstantToken(IToken.tRBRACE); 
 				case '+' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tPLUSASSIGN);
 						case '+' : return newConstantToken(IToken.tINCR);
@@ -1662,12 +1724,12 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tPLUS);
 					}
 				case '-' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tMINUSASSIGN);
 						case '-' : return newConstantToken(IToken.tDECR);
 						case '>' :
-							c = getChar();
+							c = getChar(false);
 							switch (c) {
 								case '*' : return newConstantToken(IToken.tARROWSTAR);
 								default :
@@ -1679,7 +1741,7 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tMINUS);
 					}
 				case '*' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tSTARASSIGN);
 						default :
@@ -1687,7 +1749,7 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tSTAR);
 					}
 				case '%' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {			
 						case '=' : return newConstantToken(IToken.tMODASSIGN);
 						
@@ -1698,7 +1760,7 @@ public class Scanner implements IScanner {
 							token = processPreprocessor();
 							if (token == null) 
 							{
-								c = getChar();
+								c = getChar(false);
 								continue;
 							}
 							return token;
@@ -1707,7 +1769,7 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tMOD);
 					}
 				case '^' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tXORASSIGN);
 						default :
@@ -1715,7 +1777,7 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tXOR);
 					}
 				case '&' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tAMPERASSIGN);
 						case '&' : return newConstantToken(IToken.tAND);
@@ -1724,7 +1786,7 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tAMPER);
 					}
 				case '|' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tBITORASSIGN);
 						case '|' : return newConstantToken(IToken.tOR);
@@ -1734,7 +1796,7 @@ public class Scanner implements IScanner {
 					}
 				case '~' : return newConstantToken(IToken.tCOMPL);
 				case '!' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tNOTEQUAL);
 						default :
@@ -1742,7 +1804,7 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tNOT);
 					}
 				case '=' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '=' : return newConstantToken(IToken.tEQUAL);
 						default :
@@ -1750,10 +1812,10 @@ public class Scanner implements IScanner {
 							return newConstantToken(IToken.tASSIGN);
 					}
 				case '<' :					
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '<' :
-							c = getChar();
+							c = getChar(false);
 							switch (c) {
 								case '=' : return newConstantToken(IToken.tSHIFTLASSIGN);
 								default :
@@ -1771,18 +1833,18 @@ public class Scanner implements IScanner {
 							strbuff.append('<');
 							strbuff.append(c);
 							String query = strbuff.toString();
-							if( scannerExtension.isExtensionOperator( scannerData.getLanguage(), query ) )
-								return newExtensionToken( scannerExtension.createExtensionToken( scannerData, query ));
+							if( scannerExtension.isExtensionOperator( language, query ) )
+								return newExtensionToken( scannerExtension.createExtensionToken( this, query ));
 							ungetChar(c);
 							if( forInclusion )
 								temporarilyReplaceDefinitionsMap();
 							return newConstantToken(IToken.tLT);
 					}
 				case '>' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '>' :
-							c = getChar();
+							c = getChar(false);
 							switch (c) {
 								case '=' : return newConstantToken(IToken.tSHIFTRASSIGN);
 								default :
@@ -1795,18 +1857,18 @@ public class Scanner implements IScanner {
 							strbuff.append('>');
 							strbuff.append( (char)c);
 							String query = strbuff.toString();
-							if( scannerExtension.isExtensionOperator( scannerData.getLanguage(), query ) )
-								return newExtensionToken( scannerExtension.createExtensionToken( scannerData, query ));
+							if( scannerExtension.isExtensionOperator( language, query ) )
+								return newExtensionToken( scannerExtension.createExtensionToken( this, query ));
 							ungetChar(c);
 							if( forInclusion )
 								temporarilyReplaceDefinitionsMap();
 							return newConstantToken(IToken.tGT);
 					}
 				case '.' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '.' :
-							c = getChar();
+							c = getChar(false);
 							switch (c) {
 								case '.' : return newConstantToken(IToken.tELLIPSIS);
 								default :
@@ -1844,15 +1906,15 @@ public class Scanner implements IScanner {
 //					continue;
 					
 				case '/' :
-					c = getChar();
+					c = getChar(false);
 					switch (c) {
 						case '/' :
 							skipOverSinglelineComment();
-							c = getChar();
+							c = getChar(false);
 							continue;
 						case '*' :
 							skipOverMultilineComment();
-							c = getChar();
+							c = getChar(false);
 							continue;
 						case '=' : return newConstantToken(IToken.tDIVASSIGN);
 						default :
@@ -1872,14 +1934,14 @@ public class Scanner implements IScanner {
 					token = processNumber(c, pasting);
 					if (token == null)
 					{
-						c = getChar();
+						c = getChar(false);
 						continue;
 					}
 					return token;
 						
 				case 'L' :
 					// check for wide literal
-					c = getChar(); 
+					c = getChar(false); 
 					if (c == '"')
 						token = processStringLiteral(true);
 					else if (c == '\'')
@@ -1894,7 +1956,7 @@ public class Scanner implements IScanner {
 					}
 					if (token == null) 
 					{
-						c = getChar();
+						c = getChar(false);
 						continue;
 					}
 					return token;
@@ -1956,7 +2018,7 @@ public class Scanner implements IScanner {
 					token = processKeywordOrIdentifier(pasting);
 					if (token == null) 
 					{
-						c = getChar();
+						c = getChar(false);
 						continue;
 					}
 					return token;
@@ -1964,7 +2026,7 @@ public class Scanner implements IScanner {
 					token = processStringLiteral(false);
 					if (token == null) 
 					{
-						c = getChar();
+						c = getChar(false);
 						continue;
 					}
 					return token;
@@ -1977,7 +2039,7 @@ public class Scanner implements IScanner {
 					token = processPreprocessor();
 					if (token == null) 
 					{
-						c = getChar();
+						c = getChar(false);
 						continue;
 					}
 					return token;
@@ -1992,14 +2054,14 @@ public class Scanner implements IScanner {
 						token = processKeywordOrIdentifier(pasting);
 						if (token == null) 
 						{
-							c = getChar();
+							c = getChar(false);
 							continue;
 						}
 						return token;
 					}
 					else if( c == '\\' )
 					{
-						int next = getChar();
+						int next = getChar(false);
 						strbuff.startString();
 						strbuff.append( '\\');
 						strbuff.append( next );
@@ -2009,13 +2071,13 @@ public class Scanner implements IScanner {
 							if( !processUniversalCharacterName() )
 							{
 								handleProblem( IProblem.SCANNER_BAD_CHARACTER, strbuff.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
-								c = getChar();
+								c = getChar(false);
 								continue;
 							}
 							token = processKeywordOrIdentifier( pasting );
 							if (token == null) 
 							{
-								c = getChar();
+								c = getChar(false);
 								continue;
 							}
 							return token;
@@ -2025,7 +2087,7 @@ public class Scanner implements IScanner {
 					}
 					
 					handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
-					c = getChar();
+					c = getChar(false);
 					continue;			
 			}
 		}
@@ -2055,7 +2117,7 @@ public class Scanner implements IScanner {
 	 */
 	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
 		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
-				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()), EMPTY_STRING, null );
+				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language), EMPTY_STRING, null );
 		
 		throwEOF( node ); 
 	}
@@ -2078,7 +2140,7 @@ public class Scanner implements IScanner {
 					Collections.EMPTY_LIST, 
 					NULL_REQUESTOR, 
 					ParserMode.QUICK_PARSE, 
-					scannerData.getLanguage(), 
+					language, 
 					NULL_LOG_SERVICE, 
 					scannerExtension );
 			IToken lastToken = null;
@@ -2114,7 +2176,7 @@ public class Scanner implements IScanner {
 		
 		IASTCompletionNode node = new ASTCompletionNode( kind, 
 				null, null, prefix, 
-				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), scannerData.getLanguage()), EMPTY_STRING, null );
+				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), language), EMPTY_STRING, null );
 		
 		throwEOF( node );
 	}
@@ -2129,18 +2191,18 @@ public class Scanner implements IScanner {
 
 	protected void handleInvalidCompletion() throws EndOfFileException
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) , EMPTY_STRING, null)); 
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language ) , EMPTY_STRING, null)); 
 	}
 	
 	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, scannerData.getLanguage() ), EMPTY_STRING, null));
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, language ), EMPTY_STRING, null));
 	}
 	/**
 	 * @param key
 	 */
 	protected void removeSymbol(String key) {
-		scannerData.getPublicDefinitions().remove(key);
+		definitions.remove(key);
 	}
 
 	/**
@@ -2194,13 +2256,13 @@ public class Scanner implements IScanner {
 
     protected String getCurrentFile()
 	{
-		return scannerData.getContextStack().getMostRelevantFileContext() != null ? scannerData.getContextStack().getMostRelevantFileContext().getContextName() : ""; //$NON-NLS-1$
+		return contextStack.getMostRelevantFileContext() != null ? contextStack.getMostRelevantFileContext().getContextName() : ""; //$NON-NLS-1$
 	}
 
 
     protected int getCurrentOffset()
     {
-        return scannerData.getContextStack().getMostRelevantFileContext() != null ? scannerData.getContextStack().getMostRelevantFileContext().getOffset() : -1;
+        return contextStack.getMostRelevantFileContext() != null ? contextStack.getMostRelevantFileContext().getOffset() : -1;
     }
 
 
@@ -2211,7 +2273,7 @@ public class Scanner implements IScanner {
     public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException
     {     
     	int beginOffset = getCurrentOffset();
-        int c = getChar();
+        int c = getChar(false);
         strbuff.startString();
 
         try {
@@ -2222,7 +2284,7 @@ public class Scanner implements IScanner {
                 	case '\t' :
                 	case '\n' :
                 		 if (strbuff.length() > 0) throw endOfMacroToken;                
-                         c = getChar();
+                         c = getChar(false);
                          continue;
                 	case '"' :
     	                if (strbuff.length() > 0) throw endOfMacroToken;
@@ -2245,7 +2307,7 @@ public class Scanner implements IScanner {
     	    
     	                }
     	                handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
-    	                c = getChar(); 
+    	                c = getChar(false); 
     	                continue;
     	        
                     case '\'' :
@@ -2262,15 +2324,15 @@ public class Scanner implements IScanner {
                         return newToken(IToken.tRPAREN, ")"); //$NON-NLS-1$
                     case '/' :
                         if (strbuff.length() > 0) throw endOfMacroToken;
-                        c = getChar();
+                        c = getChar(false);
                         switch (c) {
                             case '/' :
 								skipOverSinglelineComment();
-								c = getChar();
+								c = getChar(false);
                                 continue;
                             case '*' :
                                 skipOverMultilineComment();
-                                c = getChar();
+                                c = getChar(false);
                                 continue;
                             default:
                                 strbuff.append('/');
@@ -2278,7 +2340,7 @@ public class Scanner implements IScanner {
                         }
                     default :
                         strbuff.append(c);
-                        c = getChar();
+                        c = getChar(false);
                 }
             }
         } catch (endOfMacroTokenException e) {
@@ -2466,7 +2528,7 @@ public class Scanner implements IScanner {
 	}
 
 	public final int getDepth() {
-		return scannerData.getBranchTracker().getDepth(); 
+		return branches.getDepth(); 
 	}
 
 	protected boolean evaluateExpression(String expression, int beginningOffset )
@@ -2480,15 +2542,15 @@ public class Scanner implements IScanner {
 		IScanner trial = new Scanner( 
 				new StringReader(strbuff.toString()), 
 				EXPRESSION, 
-				scannerData.getPublicDefinitions(), 
-				scannerData.getIncludePathNames(),					
+				definitions,
+				includePathNames,
 				NULL_REQUESTOR,
 				ParserMode.QUICK_PARSE, 
-				scannerData.getLanguage(),  
+				language,
 				NULL_LOG_SERVICE,
 				scannerExtension );
 		
-        parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), NULL_LOG_SERVICE);
+        parser = InternalParserUtil.createExpressionParser(trial, language, NULL_LOG_SERVICE);
 		try {
 			IASTExpression exp = parser.expression(null, null, null);
 			if( exp.evaluateExpression() == 0 )
@@ -2496,16 +2558,16 @@ public class Scanner implements IScanner {
 			return true;
 		} catch( BacktrackException backtrack  )
 		{
-			if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+			if( parserMode == ParserMode.QUICK_PARSE )
 				return false;
 			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
 		}
 		catch (ASTExpressionEvaluationException e) {
-			if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+			if( parserMode == ParserMode.QUICK_PARSE )
 				return false;			
 			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
 		} catch (EndOfFileException e) {
-			if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+			if( parserMode == ParserMode.QUICK_PARSE )
 				return false;
 			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
 		}
@@ -2518,7 +2580,7 @@ public class Scanner implements IScanner {
 		
 		loop:
 		for (;;) {
-			c = getChar();
+			c = getChar(false);
 			switch (c) {
 				case NOCHAR :
 				case '\n' :
@@ -2540,7 +2602,7 @@ public class Scanner implements IScanner {
 		// state 1 == encountered *, expecting /
 		// state 2 == we are no longer in a comment
 
-		int c = getChar();
+		int c = getChar(false);
 		while (state != 2 && c != NOCHAR) {
 			if (c == '\n')
 				encounteredNewline = true;
@@ -2557,7 +2619,7 @@ public class Scanner implements IScanner {
 						state = 0;
 					break;
 			}
-			c = getChar();
+			c = getChar(false);
 		}
 
 		if ( state != 2)
@@ -2574,17 +2636,17 @@ public class Scanner implements IScanner {
 	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException, EndOfFileException {
 		skipOverWhitespace();				
 		int baseOffset = lastContext.getOffset() ;
-		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
+		int nameLine = contextStack.getCurrentLineNumber();
 		String includeLine = getRestOfPreprocessorLine();
 		if( isLimitReached() )
 			handleInvalidCompletion();
 
-		int endLine = scannerData.getContextStack().getCurrentLineNumber();
+		int endLine = contextStack.getCurrentLineNumber();
 
 		ScannerUtility.InclusionDirective directive = null;
 		try
 		{
-			directive = ScannerUtility.parseInclusionDirective( scannerData, scannerExtension, includeLine, baseOffset );
+			directive = ScannerUtility.parseInclusionDirective( this, scannerExtension, includeLine, baseOffset );
 		}
 		catch( ScannerUtility.InclusionParseException ipe )
 		{
@@ -2595,15 +2657,14 @@ public class Scanner implements IScanner {
 			return;
 		}
 		
-		if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
+		if( parserMode == ParserMode.QUICK_PARSE )
 		{ 
-			if( scannerData.getClientRequestor() != null )
+			if( requestor != null )
 			{
 				IASTInclusion i = null;
                 try
                 {
-                    i =
-                    	scannerData.getASTFactory().createInclusion(
+                    i = astFactory.createInclusion(
                             directive.getFilename(),
                             "", //$NON-NLS-1$
                             !directive.useIncludePaths(),
@@ -2618,8 +2679,8 @@ public class Scanner implements IScanner {
                 }
                 if( i != null )
                 {
-					i.enterScope( scannerData.getClientRequestor() );
-					i.exitScope( scannerData.getClientRequestor() );
+					i.enterScope( requestor );
+					i.exitScope( requestor );
                 }					 
 			}
 		}
@@ -2631,13 +2692,13 @@ public class Scanner implements IScanner {
 	
 	protected void temporarilyReplaceDefinitionsMap()
 	{
-		definitionsBackupMap = scannerData.getPublicDefinitions();
-		scannerData.setDefinitions( Collections.EMPTY_MAP );
+		definitionsBackupMap = definitions;
+		definitions = Collections.EMPTY_MAP;
 	}
 	
 	protected void restoreDefinitionsMap()
 	{
-		scannerData.setDefinitions( definitionsBackupMap );
+		definitions = definitionsBackupMap;
 		definitionsBackupMap = null;
 	}
 
@@ -2669,8 +2730,8 @@ public class Scanner implements IScanner {
 						SCRATCH,
 						getTemporaryHashtable(), Collections.EMPTY_LIST, 
 						NULL_REQUESTOR, 
-						scannerData.getParserMode(),
-						scannerData.getLanguage(),
+						parserMode,
+						language,
 						NULL_LOG_SERVICE, scannerExtension);
 		} catch (ParserFactoryError e1) {
 		}
@@ -2752,7 +2813,7 @@ public class Scanner implements IScanner {
 	protected IMacroDescriptor createObjectMacroDescriptor(String key, String value ) {
 		IToken t = null;
 		if( !value.trim().equals( "" ) )  //$NON-NLS-1$
-			t = TokenFactory.createUniquelyImagedToken( IToken.tIDENTIFIER, value, scannerData );
+			t = TokenFactory.createUniquelyImagedToken( IToken.tIDENTIFIER, value, this );
 	
 		return new ObjectMacroDescriptor( key,  
 				t, 
@@ -2763,7 +2824,7 @@ public class Scanner implements IScanner {
 		// definition 
 		String key = getNextIdentifier();
 		int offset = currentContext.getOffset() - key.length();
-		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
+		int nameLine = contextStack.getCurrentLineNumber();
 
 		// store the previous definition to check against later
 		IMacroDescriptor previousDefinition = getDefinition( key );
@@ -2772,18 +2833,18 @@ public class Scanner implements IScanner {
 		// the C++ standard says that macros must not put
 		// whitespace between the end of the definition 
 		// identifier and the opening parenthesis
-		int c = getChar();
+		int c = getChar(false);
 		if (c == '(') {
 			strbuff.startString();
 			c = getChar(true);
 			while (c != ')') {
 				if( c == '\\' ){
-					c = getChar();
+					c = getChar(false);
 					if( c == '\r' )
-						c = getChar();	
+						c = getChar(false);	
 					
 					if( c == '\n' ){
-						c = getChar();
+						c = getChar(false);
 						continue;
 					} 
 					ungetChar( c );
@@ -2859,7 +2920,7 @@ public class Scanner implements IScanner {
 		
 		} else if (c == '/') {
 			// this could be a comment	
-			c = getChar();
+			c = getChar(false);
 			if (c == '/') // one line comment
 				{
 				skipOverSinglelineComment();
@@ -2902,7 +2963,7 @@ public class Scanner implements IScanner {
 		
 		try
         {
-			scannerData.getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), scannerData.getContextStack().getCurrentLineNumber(), descriptor ).acceptElement( scannerData.getClientRequestor() );
+			astFactory.createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor ).acceptElement( requestor );
         }
         catch (Exception e)
         {
@@ -2916,7 +2977,7 @@ public class Scanner implements IScanner {
 		IMacroDescriptor newDefinition, int beginningOffset )
 		throws ScannerException 
 		{
-			if( scannerData.getParserMode() != ParserMode.QUICK_PARSE && previousDefinition != null ) 
+			if( parserMode != ParserMode.QUICK_PARSE && previousDefinition != null ) 
 			{
 				if( previousDefinition.compatible( newDefinition ) ) 
 					return; 							
@@ -2967,11 +3028,11 @@ public class Scanner implements IScanner {
 	        Scanner tokenizer  = new Scanner(
 	        		new StringReader((String)parameters.elementAt(i)), 
 					TEXT, 
-					scannerData.getPublicDefinitions(), 
+					definitions,
 					Collections.EMPTY_LIST, 
 					NULL_REQUESTOR, 
-					scannerData.getParserMode(), 
-					scannerData.getLanguage(), 
+					parserMode,
+					language,
 					NULL_LOG_SERVICE, 
 					scannerExtension );
 	        tokenizer.setThrowExceptionOnBadCharacterRead(false);
@@ -3040,10 +3101,10 @@ public class Scanner implements IScanner {
 			String replacementValue = expansion.getExpansionSignature();
 			try
 			{
-				scannerData.getContextStack().updateMacroContext( 
+				contextStack.updateMacroContext( 
 					replacementValue, 
 					symbol,
-					scannerData.getClientRequestor(), 
+					requestor,
 					symbolOffset, 
 					symbol.length());
 			}
@@ -3055,12 +3116,12 @@ public class Scanner implements IScanner {
 			}
 		} else if (expansion.getMacroType() == MacroType.FUNCTION_LIKE ) {
 			skipOverWhitespace();
-			int c = getChar();
+			int c = getChar(false);
 
 			if (c == '(') {
 				strbuff.startString();
 				int bracketCount = 1;
-				c = getChar();
+				c = getChar(false);
 
 				while (true) {
 					if (c == '(')
@@ -3203,10 +3264,10 @@ public class Scanner implements IScanner {
 				String finalString = strbuff.toString();
 				try
 				{
-					scannerData.getContextStack().updateMacroContext(
+					contextStack.updateMacroContext(
 						finalString,
 						expansion.getName(),
-						scannerData.getClientRequestor(), 
+						requestor,
 						symbolOffset, 
 						endMacroOffset - symbolOffset + 1 );
 				}
@@ -3225,7 +3286,7 @@ public class Scanner implements IScanner {
 
 		} 
 		else {
-			TraceUtil.outputTrace(scannerData.getLogService(), "Unexpected type of MacroDescriptor stored in definitions table: ", null, expansion.getMacroType().toString(), null, null); //$NON-NLS-1$
+			TraceUtil.outputTrace(log, "Unexpected type of MacroDescriptor stored in definitions table: ", null, expansion.getMacroType().toString(), null, null); //$NON-NLS-1$
 		}
 
 	}
@@ -3247,14 +3308,14 @@ public class Scanner implements IScanner {
 		int o = getCurrentOffset();
 		skipOverWhitespace();
 
-		int c = getChar();
+		int c = getChar(false);
 		
 		String definitionIdentifier = null;
 		if (c == '(') {
 
 			definitionIdentifier = getNextIdentifier(); 
 			skipOverWhitespace(); 
-			c = getChar();
+			c = getChar(false);
 			if (c != ')')
 			{
 				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, "defined()", o, false, true ); //$NON-NLS-1$
@@ -3281,7 +3342,7 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IScanner#setASTFactory(org.eclipse.cdt.internal.core.parser.ast.IASTFactory)
 	 */
 	public void setASTFactory(IASTFactory f) {
-		scannerData.setASTFactory(f);	
+		astFactory = f;
 	}
 
 	/* (non-Javadoc)
@@ -3295,7 +3356,7 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
 	 */
 	public Map getDefinitions() {
-		return Collections.unmodifiableMap(scannerData.getPublicDefinitions());
+		return Collections.unmodifiableMap(definitions);
 	}
 
 	/**
@@ -3342,13 +3403,77 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFileIndex()
 	 */
 	public int getCurrentFileIndex() {
-		return scannerData.getContextStack().getMostRelevantFileContextIndex();
-}
+		return contextStack.getMostRelevantFileContextIndex();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getFilenameForIndex(int)
 	 */
 	public String getFilenameForIndex(int index) {
 		if( index < 0 ) return EMPTY_STRING;
-		return scannerData.getContextStack().getInclusionFilename(index);
+		return contextStack.getInclusionFilename(index);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
+	 */
+	public IASTFactory getASTFactory() {
+		return astFactory;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getBranchTracker()
+	 */
+	public BranchTracker getBranchTracker() {
+		return branches;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getInitialFilename()
+	 */
+	public String getInitialFilename() {
+		return filename;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getInitialReader()
+	 */
+	public Reader getInitialReader() {
+		return reader;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getOriginalConfig()
+	 */
+	public IScannerInfo getOriginalConfig() {
+		return originalConfig;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getProblemFactory()
+	 */
+	public IProblemFactory getProblemFactory() {
+		return problemFactory;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getScanner()
+	 */
+	public IScanner getScanner() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setDefinitions(java.util.Map)
+	 */
+	public void setDefinitions(Map map) {
+		definitions = map;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setIncludePathNames(java.util.List)
+	 */
+	public void setIncludePathNames(List includePathNames) {
+		this.includePathNames = includePathNames;
 	}
 }

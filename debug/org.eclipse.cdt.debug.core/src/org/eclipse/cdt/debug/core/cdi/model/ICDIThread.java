@@ -49,10 +49,18 @@ public interface ICDIThread extends ICDIObject {
 	int getStackFrameCount() throws CDIException;
 
 	/**
-	 * Set the curretn Stack for the thread.
+	 * Set the current Stack for the thread.
 	 * @param - ICDIStackFrame
 	 */
 	void setCurrentStackFrame(ICDIStackFrame current) throws CDIException;
+
+	/**
+	 * Set the current frame whithout generation any events, for example
+	 * registers changed events.
+	 * @param frame
+	 * @param b
+	 */
+	void setCurrentStackFrame(ICDIStackFrame frame, boolean doUpdate) throws CDIException;
 
 	/**
 	 * Set the current stackframe.

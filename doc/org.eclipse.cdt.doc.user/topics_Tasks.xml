@@ -6,7 +6,7 @@
 		<topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
 		<topic label="Work with C or C++ project files" href="tasks/cdt_o_proj_files.htm">
 			<topic label="Display file members in the C/C++ Projects view" href="tasks/cdt_t_show_proj_files.htm"/>
-			<topic label="Assign a C or C++ nature to a project" href="tasks/cdt_t_conv_proj.htm"/>
+			<topic label="Converting a C or C++ nature for a project" href="tasks/cdt_t_conv_proj.htm"/>
 			<topic label="Create a C/C++ file" href="tasks/cdt_t_new_cpp.htm"/>
 			<topic label="Create a makefile" href="tasks/cdt_t_new_make.htm"/>
 			<topic label="Hide files of a given type" href="tasks/cdt_t_prvw_hide_files.htm"/>
@@ -17,17 +17,16 @@
 		<topic label="Write code" href="tasks/cdt_o_write_code.htm">
 			<topic label="Customize the C/C++ editor" href="tasks/cdt_t_cust_cpp_editor.htm"/>
 			<topic label="Comment out code" href="tasks/cdt_t_comment_out.htm"/>
-			<topic label="Use Content Assist" href="tasks/cdt_o_con_assist.htm">
-				<topic label="Inserting code elements and code templates into your code" href="tasks/cdt_t_contentassist.htm"/>
+			<topic label="Working with Content Assist" href="tasks/cdt_o_con_assist.htm">
+				<topic label="Using Content Assist" href="tasks/cdt_t_contentassist.htm"/>
 				<topic label="Creating and editing code templates" href="tasks/cdt_t_add_codetemp.htm"/>
 				<topic label="Importing and exporting code templates" href="tasks/cdt_t_imp_code_temp.htm"/>
 			</topic>
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
-			<topic label="Selection Search for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
 			<topic label="Refactoring" href="tasks/cdt_t_refactoring.htm"/>
 		</topic>
-		<topic label="Build your C or C++ projects" href="tasks/cdt_o_build_task.htm">
+		<topic label="Building projects" href="tasks/cdt_o_build_task.htm">
 			<topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
 			<topic label="Selecting referenced projects" href="tasks/cdt_t_proj_ref.htm"/>
 			<topic label="Defining build settings" href="tasks/cdt_t_proj_build_set.htm"/>
@@ -71,10 +70,11 @@
 				<topic label="Working with variables" href="tasks/cdt_t_variables.htm"/>
 				<topic label="Adding expressions" href="tasks/cdt_t_expressions.htm"/>
 				<topic label="Working with registers" href="tasks/cdt_t_registers.htm"/>
-				<topic label="Workign with memory" href="tasks/cdt_t_memory.htm"/>
+				<topic label="Working with memory" href="tasks/cdt_t_memory.htm"/>
 			</topic>
 		</topic>
 		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm">
+			<topic label="Selection Search for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Searching External Files" href="tasks/cdt_t_search_ext.htm"/>
 			<topic label="Enable/Disable the C/C++ Indexer" href="tasks/cdt_t_endis_indexer.htm"/>
 			<topic label="C/C++ Indexer Problem Reporting" href="tasks/cdt_t_indexer_prob_rep.htm"/>

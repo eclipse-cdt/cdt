@@ -27,37 +27,101 @@ include paths and symbols are correctly defined. For more information, see
   <li>Syntax examples</li>
 </ul>
 
-<p>To search for an element in your project:</p>
+
+
+<p>Performing a C/C++ Search can be done in a number of different ways but regardless of the manner chosen the same information must be provided to C/C++ Search.</p> 
+
+The info required to do a search is:
+
+<table border="1"  cellpadding="2" valign="top">
+	<tr>
+		<td valign="top"><b>Search string</b></td>
+		<td valign="top">this is the name of the element you are looking for. See <a href="../concepts/cdt_c_search.htm">C/C++ search</a> for more information on how to specify wildcard searches and how to further refine your searches by using fully qualified names</td>
+	</tr>
+	<tr>
+		<td valign="top"><b>Search For </b></td>
+		<td valign="top">this is the element type that you wish to search for. You can also select to search on ‘Any Element’ which will perform the search on a combination of all elements</td>
+	</tr>
+	<tr>
+		<td valign="top"><b>Limit To</b></td>
+		<td valign="top">this allows you to limit your search to declarations, definitions or references. You can also select ‘All Occurrences’ which will search for declarations, definitions and references that match the element</td>
+	</tr>
+	<tr>
+		<td valign="top"><b>Scope</b></td>
+		<td valign="top">this allows the user to limit the scope of the search. The three available scopes are:
+		<table border="0" cellpadding="2">
+			<tr>
+				<td valign="top"><b>Workspace</b></td>
+				<td valign="top">this searches all of the open projects in the workspace</td>
+			</tr>
+			<tr>
+				<td valign="top"><b>Selected Resources</b></td>
+				<td valign="top">this option becomes enabled whenever something is selected in one of the following views in the C/C++ perspective:
+				<ul>
+					<li>C/C++ Projects</li>
+					<li>Navigator</li>
+					<li>Search</li>
+					<li>Outline</li>
+				</ul>
+				<p>The scope will be limited to whatever element is selected in the view.</p>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top"><b>Working Set</b></td>
+				<td valign="top">working sets can be selected and created </td>
+				</tr>		
+			</table>
+		</td>
+	</tr>
+</table>
+
+<p>There are 3 main ways for initiating a C/C++ search:
+<ul>
+	<li>Using the <b>C/C++ Search</b> dialog</li>
+	<li>Selecting an element in the <b>Editor</b> view</li>
+	<li>Selecting an element in the <b>C/C++ Projects</b> view or Selecting an element from the <b>Outline</b> view</li>
+</ul>
+</p>
+
+
+
+<h3>Using the C/C++ Search dialog</h3>
+<p> <img src="../images/search.png"  alt="Search dialog box"></p>
 
 <ol>
-  <li>Do one of the following:</li>
-  <ul><li>In the C/C++ Projects view, select the files and/or projects that you want 
-    to include in your search.</li>
-    <li>In the C/C++ Projects view or in the Outline view, select the element 
-    that you want to search 
-    for.</li>
-    <p>In the Search dialog box, the Search string box will be populated with the 
-    selected element name and type.</p>
-    <li>In the C/C++ editor select the name of the element that you want to search for.</li>
-    <p>In the Search dialog box, the Search string box will be populated with the 
-    selected element name.</p></ul>
-  <li>Click <b>Search &gt; C/C++</b>.</li>
-  <li>In the <b>Search string</b> box, type a search string.<br>
-  <img src="../images/search.png"  alt="Search dialog box"></li>
-  <li>To make your search case sensitive, select the <b>Case sensitive</b> box.</li>
-  <li>Select an element in the <b>Search For</b> box.</li>
-  <li>Select a search limiter in the <b>Limit To</b> box.</li>
-  <li>Do one of the following:
-  <ul><li>To search all projects in your workspace, select <b>Workspace</b>.</li><li>
-    To search selected resources, select <b>Selected Resources</b>.</li>
-  <li>To search a predefined group of resources in your workspace, select <b>Working Set</b>.</li></ul>
-  <p>Search results are displayed in the Search view. Double-click a search 
-  result in the Search view to open the corresponding resource. The 
-  search element is highlighted.</p>
-  </ol>
+	<li>Enter the search string in the <b>Search String</b> field (optional mark it case sensitive). <br>
+	<b>Note: </b>that previous search queries (from the same work session) are remembered and can be accessed via the drop down list.</li>
+	<li>Select the <b>Search For</b> element.</li>
+	<li>Select the <b>Limit To</b>.</li>
+	<li>Select the <b>Scope</b>.</li>
+	<li>Press <b>Search</b>.</li>
+</ol>
+<p>Results are displayed in the <b>Search</b> view.</p>
+
+
+<h3>Selecting an element in the Editor view</h3>
+<ol>
+	<li>Select the desired element in the editor.</li>
+	<li>Right click and select <b>All Declarations</b> or <b>All References</b> and the scope you wish to search.</li>
+</ol>
+<p>Results are displayed in the <b>Search</b> view.</p>
+
+
+
+<h3>Selecting an element in C/C++ Projects or Outline View</h3>
+
+<ol>
+	<li>Select the desired element in the tree.</li>
+	<li>Right click and select <b>All Declarations</b> or <b>All References</b> and the scope you wish to search.</li>
+</ol>
+<p>Results are displayed in the <b>Search</b> view.</p>
+
+
 <p>For more information, see:
 <li><b>Workbench User Guide &gt; Concepts &gt; Views &gt; Search view</b></li>
+<li><b>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Working Set</b></li>
 <li><b>Workbench User Guide &gt; Tasks &gt; Navigating and finding resources</b></li>
+
 </ul>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
@@ -75,7 +139,7 @@ include paths and symbols are correctly defined. For more information, see
 <br>
 <a href="../reference/cdt_u_search.htm">C/C++ search page, Search dialog box</a></p>
 <p>&nbsp;</p>
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
 </body>
 

@@ -43,39 +43,9 @@ existing makefile.</p>
 files module.dep and module.mk are created for every project sub-directory. 
 These files are required for your managed make projects to build successfully.</p>
 
-<h3>How the CDT associates project natures</h3>
-
-<p>Projects are assigned natures and tags that identify the 
-properties of each project. The CDT uses natures to identify what can and cannot be done with each project. The 
-CDT also uses natures to filter projects that are contextually 
-irrelevant; for example, non-library projects from a list of library projects.</p>
-
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="56%">
-  <tr>
-    <th align="left" width="63%">Project</td>
-    <th align="left" width="37%">Associated natures</td>
-  </tr>
-  <tr>
-    <td width="63%">Standard Make C  Project</td>
-    <td width="37%">C, make</td>
-  </tr>
-  <tr>
-    <td width="63%">Managed Make C Project</td>
-    <td width="37%">C, gen make</td>
-  </tr>
-  <tr>
-    <td width="63%">Standard Make C++ Project</td>
-    <td width="37%">C, C++</td>
-  </tr>
-  <tr>
-    <td width="63%">Managed Make C++ Project</td>
-    <td width="37%">C, C++</td>
-  </tr>
-</table>
-
 <h2>Project conversion</h2>
 
-<p>You can convert projects can be converted from C to C++ (or from C++ to C).  If, for 
+<p>You can convert projects from C to C++ (or from C++ to C).  If, for 
 example, your requirements change and you must convert an existing C project to C++, 
 you can do this without recreating the project.  The CDT converts your project files and 
 resolves any source control issues.</p>
@@ -104,15 +74,16 @@ hello.c are separate files in UNIX but overwrite each other in Windows.</li>
 <a href="../getting_started/cdt_w_existing_code.htm">How to bring C/C++ source into Eclipse</a></p>
 <p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
-<a href="../tasks/cdt_o_proj_prop.htm">Defining project properties</a><br>
-<a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a></p>
+<a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a><br>
+<a href="../tasks/cdt_t_conv_proj.htm">Converting a C or C++ nature for a project</a>
+</p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="../reference/cdt_o_proj_prop_pages.htm">Project properties</a><br>
 <a href="../reference/cdt_o_views.htm">Views</a></p>
 
 
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
 </body>
 

@@ -16,7 +16,7 @@
 
 <p>A make target is an action called by the make utility to perform a customized 
 build-related task. For example, many makefiles support a target named clean, 
-which is called as make clean. You can call your own target (such as myMakeAction) to be called as make myMakeAction.</p>
+which is called using make clean. You can call your own target (such as myMakeAction) to be called as make myMakeAction.</p>
 
 <p>You can also use a make target 
 to pass options such as CPULIST=x86, which causes the make utility to build only 
@@ -33,12 +33,8 @@ Defining build settings</a>.</p>
   Target</b>.</li>
   <li>In the <b>Target Name</b> box, type the name of the make target.</li>
   <li>In the <b>Build Target</b> box, type a build target.</li>
-  <li>Select one of the following:</li>
-  <ul>
-  <li><b>Stop On Error</b> to stop the build when an error is encountered.</li>
-  <li><b>Keep Going On Error</b> to continue the build even if an error is 
-  encountered.</li>
-  </ul>
+  <li>Select <b>Stop On First Build Error</b> to stop the build when an error is encountered.</li>
+  <li>Select <b>Run all project builders</b> to run all builds.</li>
   <li>Select one of the following:</li>
   <ul>
   <li>Select the <b>Use Default</b> check box to use the default make command.</li>
@@ -60,7 +56,7 @@ Projects view context menu.</p>
 <a href="cdt_o_build_task.htm">Building</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
 <a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page, C/C++ Properties window</a></p>
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
 </body>
 

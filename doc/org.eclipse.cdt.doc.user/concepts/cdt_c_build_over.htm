@@ -10,18 +10,19 @@
 <body>
 <h1>Building C/C++ projects</h1>
 
-<p>The CDT relies on an external mae utility, such as GNU make, to build a project.  
+<p>The CDT relies on an external make utility, such as GNU make, to build a project.  
 The CDT can generate makefiles automatically when you create a Managed Make C project or a Managed Make C++ project. 
-You have the option of creating a Standard Make C project or a Standard Make C++ project and providing the makefile.</p>
+You have the option of creating a Standard Make C project or a Standard Make C++ project and providing the makefile yourself.</p>
 <h2>Required utilities</h2>
-<p>You must install and configure the following utilities:</p>
+<p>You must install and configure the following utilities:
 <ul>
-  <li>Build (such as <tt>make</tt>).</li>
-  <li>Compile (such as gcc). For more information, see <a href="http://gcc.gnu.org">http://gcc.gnu.org</a>.</li>
-  <li>Debug (such as gdb). For more information, see <a href="http://sources.redhat.com/gdb/">http://sources.redhat.com/gdb/</a>.</li>
+  <li>Build (e.g. make).</li>
+  <li>Compile (e.g. gcc).</li>
+  <li>Debug (e.g. gdb).</li>
 </ul>
+<b>Note: </b> while make, gcc and gdb are the examples used in the documentation, virtually any similar set of tools or utilities could be used.</p>
 
-<p><b>Tip: </b>Cygwin contains these utilities for a Windows environment, while running the cygwin installation ensure <tt>gcc</tt> and <tt>make</tt> are selected, they are not installed by default. 
+<p><b>Tip: </b>Cygwin contains these utilities (make, gcc and gdb) for a Windows environment, while running the cygwin installation ensure <tt>gcc</tt> and <tt>make</tt> are selected, they are not installed by default. 
 For more information, see <a href="http://www.cygwin.com">http://www.cygwin.com</a>. Red Hat users, all you need to build your project is included in the Red Hat Linux installation.
 For other operating systems please refer to your installation documentation.</p>
 </p>
@@ -47,7 +48,7 @@ For other operating systems please refer to your installation documentation.</p>
 <p>Build-related information is displayed as follows:</p>
 
 <ul>
-  <li>The Console view displays the output of the make utility.</li>
+  <li>The Console view displays the output of the build tools.</li>
   <li>The Tasks view displays a list of compiler errors and warnings related to your projects.</li>
   <li>Makefile targets are displayed in the Make Targets view.</li>
 </ul>
@@ -56,7 +57,7 @@ For other operating systems please refer to your installation documentation.</p>
 
 <h2>Getting a makefile</h2>
 
-<p>You can either create a C project for which you supply the <b>makefile</b> or create a C project for which the CDT generates makefiles automatically.</p>
+<p>You can either create a C/C++ project for which you supply the <b>makefile</b> or create a C/C++ project for which the CDT generates makefiles automatically.</p>
 
 <p>To create a new project, from the menu bar choose <b>File > New > Project</b>. In the dialog that appears:</p>
 
@@ -85,7 +86,7 @@ For other operating systems please refer to your installation documentation.</p>
 
 <p>The C/C++ compiler that a project uses is controlled by the project's <b>Properties</b> setting.
 To view a project's properties, right-click on the project and select <b>Properties</b>.
-In the dialog that appears, the <b>C/C++ Make Project</b> page enables you to control a variety of settings, including:</p>
+In the dialog that appears, the <b>C/C++ Standard Make Project</b> page enables you to control a variety of settings, including:</p>
 <dl>
 	<dt>Build Setting</dt>
 		<dd>Controls whether the compiler will <b>Stop On Error</b>or <b>Keep Going On Error</b>.
@@ -114,8 +115,8 @@ In the dialog that appears, the <b>C/C++ Make Project</b> page enables you to co
 <a href="../tasks/cdt_o_proj_prop.htm">Defining project properties</a><br>
 <a href="../tasks/cdt_o_build_task.htm">Building</a></p>
 <p>
-<img src="../images/rh03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14"><br>
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
+<img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement"><br>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement">
 </p>
 </body>
 

@@ -14,6 +14,7 @@
 	</topic>
 	<topic label="Editing C/C++ files" href="concepts/cdt_o_edit.htm"> 
 		<topic label="C/C++ editor" href="concepts/cdt_c_editor.htm"/>
+		<topic label="Makefile" href="concepts/cdt_c_makefile.htm"/>
 	</topic>
 	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 
 		<topic label="Outline View" href="concepts/cdt_c_outlineview.htm"/> 
@@ -25,7 +26,7 @@
 		<topic label="Manage Build Extensibility Document" href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Reference%20Documents/Managed_Build/Managed_Build_Extensibility.html?cvsroot=Tools_Project"/>
 	</topic>
 	<topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
-		<topic label="Adding Break Points" href="concepts/cdt_c_brkpnts.htm"/> 
+		<topic label="BreakPoints" href="concepts/cdt_c_brkpnts.htm"/> 
 		<topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/> 
 		<topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/> 
 	</topic>

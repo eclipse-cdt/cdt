@@ -13,7 +13,7 @@
 <h1>Content Assist</h1>
 
 <p>Content Assist is a set of tools built into the CDT that can reduce the number of keystrokes you must
-type to create your code.  The Content Assist plugin consists of several components that forecast what 
+type to create your code.  The Content Assist plug-in consists of several components that forecast what 
 a developer will type, based on the current context, scope, and prefix.</p>
 
 <h2>Code completion</h2>
@@ -34,7 +34,7 @@ the relevance of each proposal is determined in the following order:</p>
   <li>Enumerations</li>
 </ul>
 
-You trigger the Code completion feature when you call Content Assist (such as when you type <tt>Ctrl+Space</tt>), but it is autoacivated you type 
+You trigger the Code completion feature when you call Content Assist (such as when you type <tt>Ctrl+Space</tt>), but it is auto-activated when you type 
 &quot;<b>.</b>&quot;, &quot;<b>-></b>&quot; or &quot;<b>::</b>&quot;.</p>
 
 <p><img src="../images/contentAssist_example.png"  alt="C++ example showing Code Assist popup"></p>
@@ -70,6 +70,13 @@ main(int argc, char **argv) {
 	
 }</pre></p>
 
+<h2>No Completions</h2>
+
+<p>If you invoke Content Assist, but no completions are found a message will be displayed on the status to inform you that the Content Assist parser has timed out.</p>
+
+<p><img src="../images/cdt_ca_no_completions.png"  alt="Content Assist No completions available message"></p>
+
+
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="cdt_o_code_entry.htm">Code entry</a></p>
@@ -84,7 +91,7 @@ main(int argc, char **argv) {
 
 <p>
 
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14"></p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>
 
 </body>
 

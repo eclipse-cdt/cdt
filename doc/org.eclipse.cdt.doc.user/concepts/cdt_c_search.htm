@@ -32,10 +32,7 @@ through the use of search delimiters, correct syntax, and wildcards.</p>
 </ul>
 </p>
 
-<p>For information on:</p>
-
 For information on working sets, see <b>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Working sets</b><br>
-For information on the Eclipse workspace, see <b>Workbench User Guide &gt; Tasks &gt; Upgrading Eclipse</b></br>
 
 
   <h2>What you can search for</h2>
@@ -215,6 +212,40 @@ to help you conduct an effective search.</p>
 <p>Search results are displayed in the Search view. You can sort your search by Name, Parent Name and Path. You can also repeat 
 your last search.</p>
 
+<h2>Search Concepts</h2>
+
+<h3>Declarations</h3>
+<p>According to the ANSI C++ Spec, a declaration is a statement that “introduces a name into a translation unit or re-declares a name that has been previously introduced by a previous declaration.�?</p>
+<p>All C/C++ search elements can be searched for declarations.</p>
+
+<h3>Definitions</h3>
+<p>Most declarations are also definitions; in other words, they also define the entity for they declare the name for. However there are some elements that can have separate definitions from their declarations.</p>
+<p>For C/C++ search the following elements can be searched for definitions:
+<ul>
+	<li>Functions/Methods – the definition is where the code implementation resides</li>
+	<li>Variable:
+		<ol>
+			<li>Extern – the definition is where the variable is initialized</li>
+			<li>Non extern - the definition of a variable is where it is declared </li>
+		</ol></li>
+	<li>Field:
+		<ol>
+			<li>Static fields - the definition of a static field is where it gets initialized</li>
+			<li>Non static fields - the definition corresponds to the fields declaration</li>
+		</ol></li>
+	<li>Namespace – the definition of a namespace is the same as its declaration</li>
+</ul></p>
+
+<h3>References</h3>
+<p>By selecting references, C/C++ search will return all of the places the selected element is used.</p>
+
+<h3>All Occurrences</h3>
+<p>Selecting ‘All Occurrences’ in the Limit To section will result in a search for declarations, definitions (if applicable) and references for whatever element or elements have been selected.</p>
+
+<h3>Any Element</h3>
+<p>Selecting ‘Any Element’ in the Search For section will result in a search for all of the listed elements plus macros and typedefs.</p>
+
+
 <p>For more information, see:<ul>
   <li> <b>Workbench User Guide &gt; Concepts &gt; Views &gt; Search view</b></li>
   <li> <b>Workbench User Guide &gt; Tasks &gt; Navigating and finding resources</b></li>
@@ -231,7 +262,7 @@ your last search.</p>
 <a href="../reference/cdt_u_search.htm">C/C++ search page, Search dialog box</a><br>
 <a href="../reference/cdt_u_icons.htm">C/C++ perspective icons</a></p><p>
 
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14"></p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>
 
 </body>
 

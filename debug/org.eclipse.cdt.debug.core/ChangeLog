@@ -1,4 +1,11 @@
 2003-02-20 Mikhail Khodjaiants
+	No need to set the source search path to the debugger.
+	* ICSourceLocation.java
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CDebugTarget.java
+
+2003-02-20 Mikhail Khodjaiants
 	Changed to 'public' the access modifier of the 'setAssocition' method.
 	* CDirectorySourceLocation.java
 

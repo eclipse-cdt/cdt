@@ -34,7 +34,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
-import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -71,7 +70,6 @@ import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
@@ -297,7 +295,6 @@ public class CDebugTarget extends CDebugElement
 	protected void initialize() 
 	{
 		initializeState();
-		setSourceSearchPath();
 		initializeBreakpoints();
 		initializeRegisters();
 		initializeMemoryManager();
@@ -2178,33 +2175,6 @@ public class CDebugTarget extends CDebugElement
 		return getLaunch().getSourceLocator();
 	}
 	
-	protected void setSourceSearchPath()
-	{
-		ICDISourceManager mgr = getCDISession().getSourceManager();
-		ISourceLocator locator = getLaunch().getSourceLocator();
-		ArrayList list = new ArrayList();
-		if ( locator != null && locator instanceof ICSourceLocator )
-		{
-			ICSourceLocation[] locations = ((ICSourceLocator)locator).getSourceLocations();
-			for ( int i = 0; i < locations.length; ++i )
-			{
-				IPath[] paths = locations[i].getPaths();
-				for ( int j = 0; j < paths.length; ++j )
-				{
-					list.add( paths[j].toOSString() );
-				}
-			}
-		}
-		try
-		{
-			mgr.addSourcePaths( (String[])list.toArray( new String[list.size()] ) );
-		}
-		catch( CDIException e )
-		{
-			CDebugCorePlugin.log( e );
-		}
-	}
-
 	protected void resetRegisters()
 	{
 		Iterator it = fRegisterGroups.iterator();

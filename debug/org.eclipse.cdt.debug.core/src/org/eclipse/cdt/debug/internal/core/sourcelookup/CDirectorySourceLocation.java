@@ -202,14 +202,6 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		return new FileStorage( path );
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getPaths()
-	 */
-	public IPath[] getPaths()
-	{
-		return new IPath[] { fDirectory };
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getMemento()
 	 */

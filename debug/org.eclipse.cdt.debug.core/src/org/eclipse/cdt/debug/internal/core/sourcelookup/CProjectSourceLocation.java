@@ -177,23 +177,6 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		return result;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getPaths()
-	 */
-	public IPath[] getPaths()
-	{
-		IPath[] result = new IPath[0];
-		if ( getProject() != null )
-		{
-			IPath location = getProject().getLocation();
-			if ( location != null )
-			{
-				result = new IPath[] { location };
-			}
-		}
-		return result;
-	}
-	
 	private Object findFile( IContainer container, String fileName )
 	{
 		try

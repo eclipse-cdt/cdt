@@ -1,3 +1,7 @@
+2004-06-09 Mikhail Khodjaiants
+	Changed the synchronization scope.
+	* CSharedLibraryManager.java
+
 2004-06-02 Mikhail Khodjaiants
 	Fix for bug 65112: Debug Registers view is empty.
 	* CRegisterManager.java

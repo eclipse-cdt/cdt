@@ -45,10 +45,12 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#sharedLibararyLoaded(ICDISharedLibrary)
 	 */
-	public synchronized void sharedLibraryLoaded( ICDISharedLibrary cdiLibrary )
+	public void sharedLibraryLoaded( ICDISharedLibrary cdiLibrary )
 	{
 		CSharedLibrary library = new CSharedLibrary( getDebugTarget(), cdiLibrary );
-		fSharedLibraries.add( library );
+		synchronized( fSharedLibraries ) {
+			fSharedLibraries.add( library );
+		}
 		library.fireCreationEvent();
 		if ( library.areSymbolsLoaded() )
 			setBreakpoints();
@@ -62,7 +64,9 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 		CSharedLibrary library = find( cdiLibrary );
 		if ( library != null )
 		{
-			fSharedLibraries.remove( library );
+			synchronized( fSharedLibraries ) {
+				fSharedLibraries.remove( library );
+			}
 			library.dispose();
 			library.fireTerminateEvent();
 		}

@@ -16,24 +16,60 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
+ * This interface repesents a namespace definition in C++.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTNamespaceDefinition extends IASTDeclaration {
-    
-	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned" ); //$NON-NLS-1$
-	public static final ASTNodeProperty NAMESPACE_NAME    = new ASTNodeProperty( "Name"); //$NON-NLS-1$
-	
-	
-	public IASTName getName();
-	public void setName( IASTName name );
 
-    /**
+	/**
+	 * <code>OWNED_DECLARATION</code> is the role served by all the nested
+	 * declarations.
+	 */
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
+			"Owned"); //$NON-NLS-1$
+
+	/**
+	 * <code>NAMESPACE_NAME</code> is the role served by the name in this
+	 * interface.
+	 */
+	public static final ASTNodeProperty NAMESPACE_NAME = new ASTNodeProperty(
+			"Name"); //$NON-NLS-1$
+
+	/**
+	 * Get the name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getName();
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setName(IASTName name);
+
+	/**
 	 * A translation unit contains an ordered sequence of declarations.
 	 * 
-	 * @return List of IASTDeclaration
+	 * @return <code>IASTDeclaration []</code>
 	 */
-	public IASTDeclaration [] getDeclarations();
-	
-	public void addDeclaration( IASTDeclaration declaration );
+	public IASTDeclaration[] getDeclarations();
+
+	/**
+	 * Add a declaration to the namespace.
+	 * 
+	 * @param declaration
+	 *            <code>IASTDeclaration</code>
+	 */
+	public void addDeclaration(IASTDeclaration declaration);
+
+	/**
+	 * Get the scope object represented by this construct.
+	 * 
+	 * @return <code>IScope</code>
+	 */
 	public IScope getScope();
 }

@@ -19,24 +19,26 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
  * @author Doug Schaefer
  */
 public interface ICPPBase {
-	public static final ICPPBase [] EMPTY_BASE_ARRAY = new ICPPBase[0];
-	
+	public static final ICPPBase[] EMPTY_BASE_ARRAY = new ICPPBase[0];
+
 	/**
 	 * The base class.
 	 * 
 	 * @return
 	 */
 	public ICPPClassType getBaseClass() throws DOMException;
-	
+
 	/**
 	 * The visibility qualifier applied to the base class.
 	 * 
 	 * @return
 	 */
 	public int getVisibility() throws DOMException;
-	
+
 	public static final int v_private = ICPPASTBaseSpecifier.v_private;
+
 	public static final int v_protected = ICPPASTBaseSpecifier.v_protected;
+
 	public static final int v_public = ICPPASTBaseSpecifier.v_public;
 
 	/**

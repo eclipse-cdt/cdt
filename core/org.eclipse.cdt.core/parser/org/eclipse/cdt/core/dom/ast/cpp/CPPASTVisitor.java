@@ -17,13 +17,56 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
+/**
+ * C++ specific visitor class.
+ * 
+ * @author jcamelon
+ */
+public abstract class CPPASTVisitor extends ASTVisitor {
 
-public abstract class CPPASTVisitor extends ASTVisitor{
+	/**
+	 * Overide this value if you wish to visit base specifiers off composite
+	 * types.
+	 */
 	public boolean shouldVisitBaseSpecifiers = false;
-	public boolean shouldVisitNamespaces     = false;
+
+	/**
+	 * Overide this value if you wish to visit namespaces.
+	 */
+	public boolean shouldVisitNamespaces = false;
+
+	/**
+	 * Overide this value if you wish to visit template parameters.
+	 */
 	public boolean shouldVisitTemplateParameters = false;
-	
-	public int visit( ICPPASTBaseSpecifier specifier ) 		{ return PROCESS_CONTINUE; }
-	public int visit( ICPPASTNamespaceDefinition namespace ){ return PROCESS_CONTINUE; }
-	public int visit( ICPPASTTemplateParameter parameter ) 	{ return PROCESS_CONTINUE; }
+
+	/**
+	 * Visit BaseSpecifiers.
+	 * 
+	 * @param specifier
+	 * @return
+	 */
+	public int visit(ICPPASTBaseSpecifier specifier) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * Visit namespace definitions.
+	 * 
+	 * @param namespace
+	 * @return
+	 */
+	public int visit(ICPPASTNamespaceDefinition namespace) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * Visit template parameter.
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public int visit(ICPPASTTemplateParameter parameter) {
+		return PROCESS_CONTINUE;
+	}
 }

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
  */
 public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression {
 
-    public static final int op_typeid = IASTTypeIdExpression.op_last + 1;
-    public static final int op_last = op_typeid;
+	public static final int op_typeid = IASTTypeIdExpression.op_last + 1;
+
+	public static final int op_last = op_typeid;
 }

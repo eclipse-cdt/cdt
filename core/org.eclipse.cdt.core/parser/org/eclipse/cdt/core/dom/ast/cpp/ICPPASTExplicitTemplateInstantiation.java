@@ -14,12 +14,32 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
+ * This interface represents an explict template instantiation.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 
-    public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned Declaration"); //$NON-NLS-1$
-    public IASTDeclaration getDeclaration();
-    public void setDeclaration( IASTDeclaration declaration );
+	/**
+	 * <code>OWNED_DECLARATION</code> represents the role of the inner
+	 * declaration that this template refers to.
+	 */
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
+			"Owned Declaration"); //$NON-NLS-1$
+
+	/**
+	 * Get the owned declaration.
+	 * 
+	 * @return <code>IASTDeclaration</code>
+	 */
+	public IASTDeclaration getDeclaration();
+
+	/**
+	 * Set the owned declaration.
+	 * 
+	 * @param declaration
+	 *            <code>IASTDeclaration</code>
+	 */
+	public void setDeclaration(IASTDeclaration declaration);
 
 }

@@ -15,32 +15,73 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 /**
+ * Catch handler serves as a standalone stage.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTCatchHandler extends IASTStatement {
 
-	public static final ICPPASTCatchHandler [] EMPTY_CATCHHANDLER_ARRAY = new ICPPASTCatchHandler[0];
-	
-    public static final ASTNodeProperty DECLARATION = new ASTNodeProperty( "Declaration"); //$NON-NLS-1$
-    public static final ASTNodeProperty CATCH_BODY = new ASTNodeProperty( "Catch Body"); //$NON-NLS-1$
+	/**
+	 * Constant
+	 */
+	public static final ICPPASTCatchHandler[] EMPTY_CATCHHANDLER_ARRAY = new ICPPASTCatchHandler[0];
 
-    /**
-     * @param isEllipsis
-     */
-    public void setIsCatchAll(boolean isEllipsis);
-    public boolean isCatchAll();
+	/**
+	 * <code>DECLARATION</code> represnts the nested declaration within the
+	 * catch handler.
+	 */
+	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
+			"Declaration"); //$NON-NLS-1$
 
-    /**
-     * @param compoundStatement
-     */
-    public void setCatchBody(IASTStatement compoundStatement);
-    public IASTStatement getCatchBody();
+	/**
+	 * <code>CATCH_BODY</code> represents the nested (compound) statement.
+	 */
+	public static final ASTNodeProperty CATCH_BODY = new ASTNodeProperty(
+			"Catch Body"); //$NON-NLS-1$
 
-    /**
-     * @param decl
-     */
-    public void setDeclaration(IASTDeclaration decl);
-    public IASTDeclaration getDeclaration();
-    
+	/**
+	 * Set is catch all handler.
+	 * 
+	 * @param isEllipsis
+	 *            boolean
+	 */
+	public void setIsCatchAll(boolean isEllipsis);
+
+	/**
+	 * Is this catch handler for all exceptions?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCatchAll();
+
+	/**
+	 * Set the catch body.
+	 * 
+	 * @param compoundStatement
+	 *            <code>IASTStatement</code>
+	 */
+	public void setCatchBody(IASTStatement compoundStatement);
+
+	/**
+	 * Get the cathc body.
+	 * 
+	 * @return <code>IASTStatement</code>
+	 */
+	public IASTStatement getCatchBody();
+
+	/**
+	 * Set the declaration.
+	 * 
+	 * @param decl
+	 *            <code>IASTDeclaration</code>
+	 */
+	public void setDeclaration(IASTDeclaration decl);
+
+	/**
+	 * Get the declaration.
+	 * 
+	 * @return <code>IASTDeclaration</code>
+	 */
+	public IASTDeclaration getDeclaration();
 
 }

@@ -18,13 +18,15 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * This interface represents a C++ namespace
+ * 
  * @author aniefer
  */
 public interface ICPPNamespace extends IBinding {
-    /**
-     * get the scope object associated with this namespace
-     * @return
-     * @throws DOMException
-     */
+	/**
+	 * get the scope object associated with this namespace
+	 * 
+	 * @return
+	 * @throws DOMException
+	 */
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
 }

@@ -17,10 +17,22 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
  * 
  * @author Doug Schaefer
  */
-public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICPPASTDeclSpecifier {
+public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier,
+		ICPPASTDeclSpecifier {
 	// Extra types
+	/**
+	 * <code>t_bool</code> bool
+	 */
 	public static final int t_bool = IASTSimpleDeclSpecifier.t_last + 1;
+
+	/**
+	 * <code>t_wchar_t</code> wchar_t
+	 */
 	public static final int t_wchar_t = IASTSimpleDeclSpecifier.t_last + 2;
+
+	/**
+	 * <code>t_last</code> is specified for subinterfaces.
+	 */
 	public static final int t_last = t_wchar_t;
-	
+
 }

@@ -13,12 +13,25 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 
 /**
+ * Certain field references in C++ require the use the keyword template to
+ * specify the parse.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTFieldReference extends IASTFieldReference {
 
-    public boolean isTemplate();
-    public void setIsTemplate( boolean value );
-    
-    
+	/**
+	 * Was template keyword used?
+	 * 
+	 * @return
+	 */
+	public boolean isTemplate();
+
+	/**
+	 * Set the template keyword used.
+	 * 
+	 * @param value
+	 */
+	public void setIsTemplate(boolean value);
+
 }

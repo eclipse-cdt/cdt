@@ -15,16 +15,45 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
+ * This interface represents a using declaration.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTUsingDeclaration extends IASTDeclaration {
 
-    public static final ASTNodeProperty NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
-    
-    public void setIsTypename( boolean value );
-    public boolean isTypename();
+	/**
+	 * <code>NAME</code> is the qualified name brought into scope.
+	 */
+	public static final ASTNodeProperty NAME = new ASTNodeProperty("Name"); //$NON-NLS-1$
 
-    public IASTName getName();
-    public void setName(IASTName name);
-    
+	/**
+	 * Was the typename keyword used?
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setIsTypename(boolean value);
+
+	/**
+	 * Set that the typename keyword was/wasn't used.
+	 * 
+	 * @return boolean
+	 */
+	public boolean isTypename();
+
+	/**
+	 * Get the name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getName();
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setName(IASTName name);
+
 }

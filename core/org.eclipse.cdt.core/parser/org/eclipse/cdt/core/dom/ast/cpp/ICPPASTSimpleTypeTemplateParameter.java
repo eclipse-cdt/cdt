@@ -15,23 +15,78 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
+ * This interface represents a simple type template parameter.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTSimpleTypeTemplateParameter extends
-        ICPPASTTemplateParameter {
+		ICPPASTTemplateParameter {
 
-    public static final int st_class = 1;
-    public static final int st_typename = 2;
-    
-    public int getParameterType();
-    public void setParameterType( int value );
-    
-    public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty( "Name" ); //$NON-NLS-1$
-    public IASTName getName();
-    public void setName( IASTName name );
+	/**
+	 * <code>st_class</code> represents a class.
+	 */
+	public static final int st_class = 1;
 
-    public static final ASTNodeProperty DEFAULT_TYPE = new ASTNodeProperty( "Default Type"); //$NON-NLS-1$
-    public IASTTypeId getDefaultType();
-    public void setDefaultType( IASTTypeId typeId );
+	/**
+	 * <code>st_typename</code> represents a typename.
+	 */
+	public static final int st_typename = 2;
+
+	/**
+	 * Get the parameter type.
+	 * 
+	 * @return int
+	 */
+	public int getParameterType();
+
+	/**
+	 * Set the parameter type.
+	 * 
+	 * @param value
+	 *            int
+	 */
+	public void setParameterType(int value);
+
+	/**
+	 * The parameter name.
+	 */
+	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
+			"Name"); //$NON-NLS-1$
+
+	/**
+	 * Get the name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getName();
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setName(IASTName name);
+
+	/**
+	 * DEFAULT_TYPE is the optional default typeId value
+	 */
+	public static final ASTNodeProperty DEFAULT_TYPE = new ASTNodeProperty(
+			"Default Type"); //$NON-NLS-1$
+
+	/**
+	 * Get the default type.
+	 * 
+	 * @return <code>IASTTypeId</code>
+	 */
+	public IASTTypeId getDefaultType();
+
+	/**
+	 * Set the default type.
+	 * 
+	 * @param typeId
+	 *            <code>IASTTypeId</code>
+	 */
+	public void setDefaultType(IASTTypeId typeId);
 
 }

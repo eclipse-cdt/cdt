@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -22,14 +21,59 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  */
 public interface ICPPASTTemplateId extends IASTName {
 
-    public static final ASTNodeProperty TEMPLATE_NAME = new ASTNodeProperty( "TemplateId Name"); //$NON-NLS-1$
-    public IASTName getTemplateName();
-    public void setTemplateName( IASTName name );
-    
-    public static final ASTNodeProperty TEMPLATE_ID_ARGUMENT = new ASTNodeProperty( "TemplateId Arg"); //$NON-NLS-1$
-    public static final IASTNode[] EMPTY_ARG_ARRAY = new IASTNode[0];
-    public void addTemplateArgument( IASTTypeId typeId );
-    public void addTemplateArgument( IASTExpression expression );
-    public IASTNode[] getTemplateArguments();
-    
+	/**
+	 * TEMPLATE_NAME is the IASTName.
+	 */
+	public static final ASTNodeProperty TEMPLATE_NAME = new ASTNodeProperty(
+			"TemplateId Name"); //$NON-NLS-1$
+
+	/**
+	 * Get the name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getTemplateName();
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setTemplateName(IASTName name);
+
+	/**
+	 * TEMPLATE_ID_ARGUMENT = template id argument.
+	 */
+	public static final ASTNodeProperty TEMPLATE_ID_ARGUMENT = new ASTNodeProperty(
+			"TemplateId Arg"); //$NON-NLS-1$
+
+	/**
+	 * Constant.
+	 */
+	public static final IASTNode[] EMPTY_ARG_ARRAY = new IASTNode[0];
+
+	/**
+	 * Add template argument.
+	 * 
+	 * @param typeId
+	 *            <code>IASTTypeId</code>
+	 */
+	public void addTemplateArgument(IASTTypeId typeId);
+
+	/**
+	 * Add template argument.
+	 * 
+	 * @param expression
+	 *            <code>IASTExpression</code>
+	 */
+	public void addTemplateArgument(IASTExpression expression);
+
+	/**
+	 * Get all template arguments. (as nodes)
+	 * 
+	 * @return <code>IASTNode []</code>
+	 */
+	public IASTNode[] getTemplateArguments();
+
 }

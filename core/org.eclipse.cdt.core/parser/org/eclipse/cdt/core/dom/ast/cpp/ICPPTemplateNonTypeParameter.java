@@ -16,13 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 /**
  * @author Doug Schaefer
  */
-public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter, IVariable {
+public interface ICPPTemplateNonTypeParameter extends ICPPTemplateParameter,
+		IVariable {
 
 	/**
 	 * The default value for this parameter.
-	 *  
+	 * 
 	 * @return
 	 */
 	public IASTExpression getDefault();
-	
+
 }

@@ -19,24 +19,61 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  */
 public interface ICPPASTTypenameExpression extends IASTExpression {
 
-    /**
-     * @param templateTokenConsumed
-     */
-    public void setIsTemplate(boolean templateTokenConsumed);
-    public boolean isTemplate();
+	/**
+	 * Was template token consumed?
+	 * 
+	 * @param templateTokenConsumed
+	 *            boolean
+	 */
+	public void setIsTemplate(boolean templateTokenConsumed);
 
-    public static final ASTNodeProperty TYPENAME = new ASTNodeProperty( "Typename" ); //$NON-NLS-1$
-    /**
-     * @param name
-     */
-    public void setName(IASTName name);
-    public IASTName getName();
+	/**
+	 * Was template token consumed?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isTemplate();
 
-    public static final ASTNodeProperty INITIAL_VALUE = new ASTNodeProperty( "Initial Value"); //$NON-NLS-1$
-    /**
-     * @param expressionList
-     */
-    public void setInitialValue(IASTExpression expressionList);
-    public IASTExpression getInitialValue();
+	/**
+	 * <code>TYPENAME</code> is the name of the type.
+	 */
+	public static final ASTNodeProperty TYPENAME = new ASTNodeProperty(
+			"Typename"); //$NON-NLS-1$
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setName(IASTName name);
+
+	/**
+	 * Get the name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getName();
+
+	/**
+	 * <code>INITIAL_VALUE</code> is an expression.
+	 */
+	public static final ASTNodeProperty INITIAL_VALUE = new ASTNodeProperty(
+			"Initial Value"); //$NON-NLS-1$
+
+	/**
+	 * Set initial value.
+	 * 
+	 * @param expressionList
+	 *            <code>IASTExpression</code>
+	 */
+	public void setInitialValue(IASTExpression expressionList);
+
+	/**
+	 * Get initial value.
+	 * 
+	 * @return <code>IASTExpression</code>
+	 */
+	public IASTExpression getInitialValue();
 
 }

@@ -40,14 +40,14 @@ public class CPPASTNamespaceAlias extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#getQualifiedName()
      */
-    public IASTName getQualifiedName() {
+    public IASTName getMappingName() {
         return qualifiedName;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#setQualifiedName(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName)
      */
-    public void setQualifiedName(IASTName qualifiedName) {
+    public void setMappingName(IASTName qualifiedName) {
         this.qualifiedName = qualifiedName;
     }
 

@@ -15,13 +15,36 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
+ * This interface represents a C++ using directive.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTUsingDirective extends IASTDeclaration {
-	public static final ICPPASTUsingDirective [] EMPTY_USINGDIRECTIVE_ARRAY = new ICPPASTUsingDirective[0];
-    public static final ASTNodeProperty QUALIFIED_NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
-    
-    public IASTName getQualifiedName();
-    public void setQualifiedName( IASTName qualifiedName );
-    
+	/**
+	 * Constant.
+	 */
+	public static final ICPPASTUsingDirective[] EMPTY_USINGDIRECTIVE_ARRAY = new ICPPASTUsingDirective[0];
+
+	/**
+	 * <code>QUALIFIED_NAME</code> is the name that is brought into local
+	 * scope.
+	 */
+	public static final ASTNodeProperty QUALIFIED_NAME = new ASTNodeProperty(
+			"Name"); //$NON-NLS-1$
+
+	/**
+	 * Get the qualified name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getQualifiedName();
+
+	/**
+	 * Set the qualified name.
+	 * 
+	 * @param qualifiedName
+	 *            <code>IASTName</code>
+	 */
+	public void setQualifiedName(IASTName qualifiedName);
+
 }

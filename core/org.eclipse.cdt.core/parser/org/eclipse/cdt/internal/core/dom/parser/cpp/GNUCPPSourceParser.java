@@ -2495,7 +2495,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          alias.setAlias(name);
          name.setParent(alias);
          name.setPropertyInParent(ICPPASTNamespaceAlias.ALIAS_NAME);
-         alias.setQualifiedName(qualifiedName);
+         alias.setMappingName(qualifiedName);
          qualifiedName.setParent(alias);
          qualifiedName.setPropertyInParent(ICPPASTNamespaceAlias.MAPPING_NAME);
          return alias;

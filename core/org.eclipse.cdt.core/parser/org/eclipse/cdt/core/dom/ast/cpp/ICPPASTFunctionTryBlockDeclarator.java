@@ -13,12 +13,32 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 
 /**
+ * This is a function try block declarator.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTFunctionTryBlockDeclarator extends
-        ICPPASTFunctionDeclarator {
+		ICPPASTFunctionDeclarator {
 
-    public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty( "Catch Handler"); //$NON-NLS-1$
-    public void addCatchHandler( ICPPASTCatchHandler statement );
-    public ICPPASTCatchHandler [] getCatchHandlers();
+	/**
+	 * A <code>CATCH_HANDLER</code> is the role of an ICPPASTCatchHandler in
+	 * this interface.
+	 */
+	public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty(
+			"Catch Handler"); //$NON-NLS-1$
+
+	/**
+	 * Add a catch handler.
+	 * 
+	 * @param statement
+	 *            <code>ICPPASTCatchHandler</code>
+	 */
+	public void addCatchHandler(ICPPASTCatchHandler statement);
+
+	/**
+	 * Get catch handlers.
+	 * 
+	 * @return <code>ICPPASTCatchHandler</code>
+	 */
+	public ICPPASTCatchHandler[] getCatchHandlers();
 }

@@ -15,20 +15,31 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 
 /**
- * This is an initializer that is a call to the constructor for the
- * declarator.
+ * This is an initializer that is a call to the constructor for the declarator.
  * 
  * @author Doug Schaefer
  */
 public interface ICPPASTConstructorInitializer extends IASTInitializer {
 
 	/**
+	 * <code>EXPRESSION</code> represents the expression being conusmed in a
+	 * constructor.
+	 */
+	public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty(
+			"Expression"); //$NON-NLS-1$
+
+	/**
 	 * Get the arguments to the constructor.
 	 * 
 	 * @return IASTExpression
 	 */
-    public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty( "Expression"); //$NON-NLS-1$
 	public IASTExpression getExpression();
-	public void setExpression( IASTExpression expression );
-	
+
+	/**
+	 * Set the arguments to the constructor.
+	 * 
+	 * @param expression
+	 */
+	public void setExpression(IASTExpression expression);
+
 }

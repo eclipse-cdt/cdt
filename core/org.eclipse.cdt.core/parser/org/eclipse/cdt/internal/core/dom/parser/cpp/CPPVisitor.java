@@ -346,7 +346,7 @@ public class CPPVisitor {
 			return CPPSemantics.resolveBinding( ((ICPPASTUsingDirective) declaration).getQualifiedName() );
 		} else if( declaration instanceof ICPPASTNamespaceAlias ) {
 			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
-			return CPPSemantics.resolveBinding( alias.getQualifiedName() );
+			return CPPSemantics.resolveBinding( alias.getMappingName() );
 		}
 		
 			

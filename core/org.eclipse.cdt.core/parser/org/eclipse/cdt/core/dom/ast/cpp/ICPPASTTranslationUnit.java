@@ -20,5 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * @author aniefer
  */
 public interface ICPPASTTranslationUnit extends IASTTranslationUnit {
+
+	/**
+	 * Resolve the binding for translation unit.
+	 * 
+	 * @return <code>IBinding</code>
+	 */
 	public IBinding resolveBinding();
+
 }

@@ -16,6 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
  * @author jcamelon
  */
 public interface ICPPASTParameterDeclaration extends ICPPASTTemplateParameter,
-        IASTParameterDeclaration {
+		IASTParameterDeclaration {
 
 }

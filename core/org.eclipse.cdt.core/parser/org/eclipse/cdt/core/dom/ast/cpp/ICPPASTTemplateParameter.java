@@ -13,9 +13,14 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
+ * Base interface for all template parameters.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTTemplateParameter extends IASTNode {
-	public static final ICPPASTTemplateParameter [] EMPTY_TEMPLATEPARAMETER_ARRAY = new ICPPASTTemplateParameter[0];
+	/**
+	 * Constant
+	 */
+	public static final ICPPASTTemplateParameter[] EMPTY_TEMPLATEPARAMETER_ARRAY = new ICPPASTTemplateParameter[0];
 
 }

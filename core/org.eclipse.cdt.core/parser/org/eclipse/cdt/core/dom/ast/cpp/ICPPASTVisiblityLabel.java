@@ -13,15 +13,41 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
+ * C++ allows for visibility labels to be mixed interdeclaration in class
+ * specifiers.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTVisiblityLabel extends IASTDeclaration {
 
-    public static final int v_public = 1;
-    public static final int v_protected = 2;
-    public static final int v_private = 3;
-    
-    public int getVisibility();
-    public void setVisibility( int visibility );
-    
+	/**
+	 * <code>v_public</code> == public:
+	 */
+	public static final int v_public = 1;
+
+	/**
+	 * <code>v_protected</code> == protected:
+	 */
+	public static final int v_protected = 2;
+
+	/**
+	 * <code>v_private</code> == private:
+	 */
+	public static final int v_private = 3;
+
+	/**
+	 * Get the visibility.
+	 * 
+	 * @return int
+	 */
+	public int getVisibility();
+
+	/**
+	 * Set visibility.
+	 * 
+	 * @param visibility
+	 *            int
+	 */
+	public void setVisibility(int visibility);
+
 }

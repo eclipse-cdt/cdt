@@ -13,12 +13,29 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 
 /**
+ * C++ adds additional literal types to primary expression.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTLiteralExpression extends IASTLiteralExpression {
 
-    public static final int lk_this = IASTLiteralExpression.lk_last + 1;
-    public static final int lk_true = IASTLiteralExpression.lk_last + 2;
-    public static final int lk_false = IASTLiteralExpression.lk_last + 3;
-    public static final int lk_last = lk_false;
+	/**
+	 * <code>lk_this</code> represents the 'this' keyword.
+	 */
+	public static final int lk_this = IASTLiteralExpression.lk_last + 1;
+
+	/**
+	 * <code>lk_true</code> represents the 'true' keyword.
+	 */
+	public static final int lk_true = IASTLiteralExpression.lk_last + 2;
+
+	/**
+	 * <code>lk_false</code> represents the 'false' keyword.
+	 */
+	public static final int lk_false = IASTLiteralExpression.lk_last + 3;
+
+	/**
+	 * <code>lk_last</code> is maintained for future subinterfaces.
+	 */
+	public static final int lk_last = lk_false;
 }

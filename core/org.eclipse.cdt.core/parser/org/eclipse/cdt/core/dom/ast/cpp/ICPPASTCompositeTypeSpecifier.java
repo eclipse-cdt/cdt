@@ -18,35 +18,126 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 /**
  * @author jcamelon
  */
-public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifier,
-        ICPPASTDeclSpecifier {
+public interface ICPPASTCompositeTypeSpecifier extends
+		IASTCompositeTypeSpecifier, ICPPASTDeclSpecifier {
 
-    public static final int k_class = IASTCompositeTypeSpecifier.k_last + 1;
-    public static final int k_last = k_class;
-    
-    public static final ASTNodeProperty VISIBILITY_LABEL = new ASTNodeProperty( "Visibility Label"); //$NON-NLS-1$
-    public static final ASTNodeProperty BASE_SPECIFIER = new ASTNodeProperty( "Base Specifier"); //$NON-NLS-1$
-    
-    public static interface ICPPASTBaseSpecifier extends IASTNode
-    {
-    	public static final ICPPASTBaseSpecifier[] EMPTY_BASESPECIFIER_ARRAY = new ICPPASTBaseSpecifier[0];
-    	
-        public boolean isVirtual();
-        public void setVirtual( boolean value );
-        
-        public static final int v_public = 1;
-        public static final int v_protected = 2;
-        public static final int v_private = 3;
-        
-        public int getVisibility();
-        public void setVisibility( int visibility );
-        
-        public static final ASTNodeProperty NAME = new ASTNodeProperty( "BaseSpec Name"); //$NON-NLS-1$
-        public IASTName getName();
-        public void setName( IASTName name );
-    }
-    
-    public ICPPASTBaseSpecifier[] getBaseSpecifiers();
-    public void addBaseSpecifier( ICPPASTBaseSpecifier baseSpec );
-    
+	/**
+	 * <code>k_class</code> C++ introduces the class concept for composite
+	 * types.
+	 */
+	public static final int k_class = IASTCompositeTypeSpecifier.k_last + 1;
+
+	/**
+	 * <code>k_last</code> allows for subinterfaces to extend the kind type.
+	 */
+	public static final int k_last = k_class;
+
+	/**
+	 * <code>VISIBILITY_LABEL</code> is used to express the relationship for a
+	 * visibility label "declaration".
+	 */
+	public static final ASTNodeProperty VISIBILITY_LABEL = new ASTNodeProperty(
+			"Visibility Label"); //$NON-NLS-1$
+
+	/**
+	 * <code>BASE_SPECIFIER</code> expresses the subclass role.
+	 */
+	public static final ASTNodeProperty BASE_SPECIFIER = new ASTNodeProperty(
+			"Base Specifier"); //$NON-NLS-1$
+
+	/**
+	 * Base Specifiers are where a class expresses from whom it inherits.
+	 * 
+	 * @author jcamelon
+	 */
+	public static interface ICPPASTBaseSpecifier extends IASTNode {
+		/**
+		 * Constant.
+		 */
+		public static final ICPPASTBaseSpecifier[] EMPTY_BASESPECIFIER_ARRAY = new ICPPASTBaseSpecifier[0];
+
+		/**
+		 * Is the keyword virtual used?
+		 * 
+		 * @return boolean
+		 */
+		public boolean isVirtual();
+
+		/**
+		 * Set the virtual flag on/off.
+		 * 
+		 * @param value
+		 *            boolean
+		 */
+		public void setVirtual(boolean value);
+
+		/**
+		 * <code>v_public</code> was public keyword used in describing this
+		 * base class?
+		 */
+		public static final int v_public = 1;
+
+		/**
+		 * <code>v_protected</code> was protected keyword used in describing
+		 * this base class?
+		 */
+		public static final int v_protected = 2;
+
+		/**
+		 * <code>v_private</code> was private keyword used in describing this
+		 * base class?
+		 */
+		public static final int v_private = 3;
+
+		/**
+		 * Get the visibility.
+		 * 
+		 * @return int
+		 */
+		public int getVisibility();
+
+		/**
+		 * Set the visibility.
+		 * 
+		 * @param visibility
+		 */
+		public void setVisibility(int visibility);
+
+		/**
+		 * <code>NAME</code> is the name of the base class.
+		 */
+		public static final ASTNodeProperty NAME = new ASTNodeProperty(
+				"BaseSpec Name"); //$NON-NLS-1$
+
+		/**
+		 * Get the name.
+		 * 
+		 * @return <code>IASTName</code>
+		 */
+		public IASTName getName();
+
+		/**
+		 * Set the name.
+		 * 
+		 * @param name
+		 *            <code>IASTName</code>
+		 */
+		public void setName(IASTName name);
+	}
+
+	/**
+	 * Get the base specifiers.
+	 * 
+	 * @return <code>ICPPASTBaseSpecifier []</code>
+	 */
+	public ICPPASTBaseSpecifier[] getBaseSpecifiers();
+
+	/**
+	 * Add a base specifier.
+	 * 
+	 * @param baseSpec
+	 *            <code>ICPPASTBaseSpecifier</code>
+	 */
+	public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec);
+
 }

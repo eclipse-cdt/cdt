@@ -19,10 +19,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public interface ICPPTemplateTypeParameter extends ICPPTemplateParameter, IType {
 
 	/**
-	 * The default type for this parameter.
-	 * May be null
+	 * The default type for this parameter. May be null
+	 * 
 	 * @return
 	 */
 	public IType getDefault() throws DOMException;
-	
+
 }

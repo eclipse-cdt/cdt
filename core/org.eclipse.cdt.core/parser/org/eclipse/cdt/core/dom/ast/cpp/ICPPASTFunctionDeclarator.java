@@ -16,30 +16,106 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * C++ adds a few things to function declarators.
- *  
+ * 
  * @author Doug Schaefer
  */
-public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator {
+public interface ICPPASTFunctionDeclarator extends
+		IASTStandardFunctionDeclarator {
 
-	
-    public boolean isConst();
-	public void setConst( boolean value );
-	
+	/**
+	 * Is this a const method?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isConst();
+
+	/**
+	 * Set the method to be const or not.
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setConst(boolean value);
+
+	/**
+	 * Is this a volatile method?
+	 * 
+	 * @return boolean
+	 */
 	public boolean isVolatile();
-	public void setVolatile( boolean value );
-	
-	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty( "Exception TypeId"); //$NON-NLS-1$
-	public IASTTypeId [] getExceptionSpecification();
-	public void addExceptionSpecificationTypeId( IASTTypeId typeId );
-    /**
-     * @param isPureVirtual
-     */
-	public boolean isPureVirtual();
-    public void setPureVirtual(boolean isPureVirtual);
-	
-    public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty( "Constructor Chain Member"); //$NON-NLS-1$
-    public ICPPASTConstructorChainInitializer[] getConstructorChain();
-    public void addConstructorToChain( ICPPASTConstructorChainInitializer initializer );
 
-    public ICPPFunctionScope getFunctionScope();
+	/**
+	 * Set the method to be volatile or not.
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setVolatile(boolean value);
+
+	/**
+	 * <code>EXCEPTION_TYPEID</code> represents the type IDs throws in the
+	 * exception specification.
+	 */
+	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty(
+			"Exception TypeId"); //$NON-NLS-1$
+
+	/**
+	 * Get the exception specification.
+	 * 
+	 * @return <code>IASTTypeId []</code>
+	 */
+	public IASTTypeId[] getExceptionSpecification();
+
+	/**
+	 * Add an exception specification type Id.
+	 * 
+	 * @param typeId
+	 *            <code>IASTTypeId</code>
+	 */
+	public void addExceptionSpecificationTypeId(IASTTypeId typeId);
+
+	/**
+	 * Is the method pure virtual?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isPureVirtual();
+
+	/**
+	 * Set thid method to be pure virtual.
+	 * 
+	 * @param isPureVirtual
+	 *            boolean
+	 */
+	public void setPureVirtual(boolean isPureVirtual);
+
+	/**
+	 * <code>CONSTRUCTOR_CHAIN_MEMBER</code> is the role of a constructor
+	 * chain initializer.
+	 */
+	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
+			"Constructor Chain Member"); //$NON-NLS-1$
+
+	/**
+	 * Get constructor chain.
+	 * 
+	 * @return <code>ICPPASTConstructorChainInitializer[]</code>
+	 */
+	public ICPPASTConstructorChainInitializer[] getConstructorChain();
+
+	/**
+	 * Add a constructor chain initializer to constructor chain.
+	 * 
+	 * @param initializer
+	 *            ICPPASTConstructorChainInitializer
+	 */
+	public void addConstructorToChain(
+			ICPPASTConstructorChainInitializer initializer);
+
+	/**
+	 * Get function scope this node represents.
+	 * 
+	 * @return ICPPFunctionScope scope
+	 */
+	public ICPPFunctionScope getFunctionScope();
 }

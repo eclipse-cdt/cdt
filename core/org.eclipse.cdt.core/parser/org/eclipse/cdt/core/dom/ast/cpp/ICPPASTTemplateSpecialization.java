@@ -14,12 +14,31 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
+ * This interface represents a template specialization.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTTemplateSpecialization extends IASTDeclaration {
 
-    public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned Declaration"); //$NON-NLS-1$
-    public IASTDeclaration getDeclaration();
-    public void setDeclaration( IASTDeclaration declaration );
+	/**
+	 * The declaration that the specialization affects.
+	 */
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
+			"Owned Declaration"); //$NON-NLS-1$
+
+	/**
+	 * Get the declaration.
+	 * 
+	 * @return <code>IASTDeclaration</code>
+	 */
+	public IASTDeclaration getDeclaration();
+
+	/**
+	 * Set the declaration.
+	 * 
+	 * @param declaration
+	 *            <code>IASTDeclaration</code>
+	 */
+	public void setDeclaration(IASTDeclaration declaration);
 
 }

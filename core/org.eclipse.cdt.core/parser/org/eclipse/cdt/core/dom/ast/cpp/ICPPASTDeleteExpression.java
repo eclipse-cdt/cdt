@@ -14,23 +14,59 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
 /**
+ * This interface represents a delete expression. delete [] operand;
+ * 
  * @author jcamelon
  */
 public interface ICPPASTDeleteExpression extends IASTExpression {
 
-    public static final ASTNodeProperty OPERAND = new ASTNodeProperty( "Operand"); //$NON-NLS-1$
-    public IASTExpression getOperand();
-    public void setOperand( IASTExpression expression );
-    /**
-     * @param global
-     */
-    public void setIsGlobal(boolean global);
-    public boolean isGlobal();
+	/**
+	 * <code>OPERAND</code> is the expression representing the pointer being
+	 * deleted.
+	 */
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("Operand"); //$NON-NLS-1$
 
-    /**
-     * @param vectored
-     */
-    public void setIsVectored(boolean vectored);
-    public boolean isVectored();
+	/**
+	 * Get the operand.
+	 * 
+	 * @return <code>IASTExpression</code>
+	 */
+	public IASTExpression getOperand();
+
+	/**
+	 * @param expression
+	 *            <code>IASTExpression</code>
+	 */
+	public void setOperand(IASTExpression expression);
+
+	/**
+	 * Set this to be the global delete function called.
+	 * 
+	 * @param global
+	 *            boolean
+	 */
+	public void setIsGlobal(boolean global);
+
+	/**
+	 * Is this the global delete function called?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isGlobal();
+
+	/**
+	 * Set this to be a vector delete. ([])
+	 * 
+	 * @param vectored
+	 *            boolean
+	 */
+	public void setIsVectored(boolean vectored);
+
+	/**
+	 * Is this a delete [] ?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isVectored();
 
 }

@@ -19,14 +19,52 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  */
 public interface ICPPASTConstructorChainInitializer extends IASTNode {
-    public static final ICPPASTConstructorChainInitializer [] EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY = new ICPPASTConstructorChainInitializer[0];
-    
-    public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty( "Member Initializer Id"); //$NON-NLS-1$
-    public IASTName getMemberInitializerId();
-    public void setMemberInitializerId( IASTName name );
-    
-    public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty( "Expression Initializer"); //$NON-NLS-1$
-    public IASTExpression getInitializerValue();
-    public void setInitializerValue( IASTExpression expression );
+	/**
+	 * Constant.
+	 */
+	public static final ICPPASTConstructorChainInitializer[] EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY = new ICPPASTConstructorChainInitializer[0];
+
+	/**
+	 * <code>MEMBER_ID</code> represents the class field name being
+	 * initialized.
+	 */
+	public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty(
+			"Member Initializer Id"); //$NON-NLS-1$
+
+	/**
+	 * Get the field name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getMemberInitializerId();
+
+	/**
+	 * Set the field name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setMemberInitializerId(IASTName name);
+
+	/**
+	 * <code>Expression field is being initialized to.</code>
+	 */
+	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
+			"Expression Initializer"); //$NON-NLS-1$
+
+	/**
+	 * Get the initializer value.
+	 * 
+	 * @return <code>IASTExpression</code>
+	 */
+	public IASTExpression getInitializerValue();
+
+	/**
+	 * Set the initializer value.
+	 * 
+	 * @param expression
+	 *            <code>IASTExpression</code>
+	 */
+	public void setInitializerValue(IASTExpression expression);
 
 }

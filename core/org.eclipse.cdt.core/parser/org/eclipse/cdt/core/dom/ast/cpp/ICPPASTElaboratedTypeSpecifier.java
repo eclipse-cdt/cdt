@@ -13,12 +13,21 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 
 /**
+ * Elaborated types in C++ include classes.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTElaboratedTypeSpecifier extends
-        IASTElaboratedTypeSpecifier, ICPPASTDeclSpecifier {
+		IASTElaboratedTypeSpecifier, ICPPASTDeclSpecifier {
 
-    public static final int k_class = IASTElaboratedTypeSpecifier.k_last + 1;
-    public static final int k_last = k_class;
-    
+	/**
+	 * <code>k_class</code> represents elaborated class declaration
+	 */
+	public static final int k_class = IASTElaboratedTypeSpecifier.k_last + 1;
+
+	/**
+	 * <code>k_last</code> is defined for subinterfaces.
+	 */
+	public static final int k_last = k_class;
+
 }

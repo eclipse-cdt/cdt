@@ -14,14 +14,45 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
+ * This interface is a qualified name in C++.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTQualifiedName extends IASTName {
 
-    public static final ASTNodeProperty SEGMENT_NAME = new ASTNodeProperty( "Segment"); //$NON-NLS-1$
-    public void addName( IASTName name );
-    public IASTName [] getNames();
-    
-    public boolean isFullyQualified();
-    public void setFullyQualified( boolean value ); 
+	/**
+	 * Each IASTName segment has property being <code>SEGMENT_NAME</code>.
+	 */
+	public static final ASTNodeProperty SEGMENT_NAME = new ASTNodeProperty(
+			"Segment"); //$NON-NLS-1$
+
+	/**
+	 * Add a subname.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void addName(IASTName name);
+
+	/**
+	 * Get all subnames.
+	 * 
+	 * @return <code>IASTName []</code>
+	 */
+	public IASTName[] getNames();
+
+	/**
+	 * Is this name fully qualified?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isFullyQualified();
+
+	/**
+	 * Set this name to be fully qualified or not (true/false).
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setFullyQualified(boolean value);
 }

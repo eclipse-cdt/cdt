@@ -21,8 +21,24 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
  */
 public interface ICPPASTPointerToMember extends IASTPointer {
 
-    public static final ASTNodeProperty NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
-    public void setName( IASTName name );
-    public IASTName getName();
-	
+	/**
+	 * This property refers to the nested name.
+	 */
+	public static final ASTNodeProperty NAME = new ASTNodeProperty("Name"); //$NON-NLS-1$
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setName(IASTName name);
+
+	/**
+	 * Get the name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getName();
+
 }

@@ -14,18 +14,67 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
+ * Template declaration.
+ * 
  * @author jcamelon
  */
 public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 
-    public boolean isExported();
-    public void setExported( boolean value );
-    
-    public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned Declaration"); //$NON-NLS-1$
-    public IASTDeclaration getDeclaration();
-    public void setDeclaration( IASTDeclaration declaration );
-    
-    public static final ASTNodeProperty PARAMETER = new ASTNodeProperty( "Template Parameter"); //$NON-NLS-1$
-    public ICPPASTTemplateParameter [] getTemplateParameters();
-    public void addTemplateParamter( ICPPASTTemplateParameter parm );
+	/**
+	 * Is the export keyword used?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isExported();
+
+	/**
+	 * Should the export keyword be used?
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setExported(boolean value);
+
+	/**
+	 * <code>OWNED_DECLARATION</code> is the subdeclaration that we maintain
+	 * grammatically.
+	 */
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
+			"Owned Declaration"); //$NON-NLS-1$
+
+	/**
+	 * Get templated declaration.
+	 * 
+	 * @return <code>IASTDeclaration</code>
+	 */
+	public IASTDeclaration getDeclaration();
+
+	/**
+	 * Set the templated declaration.
+	 * 
+	 * @param declaration
+	 *            <code>IASTDeclaration</code>
+	 */
+	public void setDeclaration(IASTDeclaration declaration);
+
+	/**
+	 * <code>PARAMETER</code> is used for template parameters.
+	 */
+	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
+			"Template Parameter"); //$NON-NLS-1$
+
+	/**
+	 * Get template parameters.
+	 * 
+	 * @return <code>ICPPASTTemplateParameter []</code>
+	 */
+	public ICPPASTTemplateParameter[] getTemplateParameters();
+
+	/**
+	 * Add a template parameter.
+	 * 
+	 * @param parm
+	 *            <code>ICPPASTTemplateParameter</code>
+	 */
+	public void addTemplateParamter(ICPPASTTemplateParameter parm);
 }

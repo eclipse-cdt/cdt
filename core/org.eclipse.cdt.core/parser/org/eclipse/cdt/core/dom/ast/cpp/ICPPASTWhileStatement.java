@@ -15,13 +15,31 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 
 /**
+ * This inteface accommodates C++ allows for broader while loop syntax.
+ * 
  * @author jcamelon
- *
  */
 public interface ICPPASTWhileStatement extends IASTWhileStatement {
 
-	public static final ASTNodeProperty CONDITIONDECLARATION = new ASTNodeProperty("initDeclaration");  //$NON-NLS-1$
-	public IASTDeclaration getConditionDeclaration();	
+	/**
+	 * In C++ conditions can be declarations w/side effects.
+	 */
+	public static final ASTNodeProperty CONDITIONDECLARATION = new ASTNodeProperty(
+			"initDeclaration"); //$NON-NLS-1$
+
+	/**
+	 * Get the condition declaration.
+	 * 
+	 * @return <code>IASTDeclaration</code>
+	 */
+	public IASTDeclaration getConditionDeclaration();
+
+	/**
+	 * Set the condition declaration.
+	 * 
+	 * @param declaration
+	 *            <code>IASTDeclaration</code>
+	 */
 	public void setConditionDeclaration(IASTDeclaration declaration);
 
 }

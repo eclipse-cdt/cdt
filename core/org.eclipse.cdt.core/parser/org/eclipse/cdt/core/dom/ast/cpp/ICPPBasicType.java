@@ -19,7 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
  * @author aniefer
  */
 public interface ICPPBasicType extends IBasicType {
-	//Extra types
+	// Extra types
 	public static final int t_bool = ICPPASTSimpleDeclSpecifier.t_bool;
+
 	public static final int t_wchar_t = ICPPASTSimpleDeclSpecifier.t_wchar_t;
 }

@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.File;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -37,7 +37,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.GDBCDIDebugger#createLaunchSession(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Session createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor)
+	public Session createLaunchSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor)
 			throws CoreException {
 		Session session = null;
 		boolean failed = false;
@@ -105,7 +105,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.GDBCDIDebugger#createAttachSession(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor)
+	public Session createAttachSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor)
 			throws CoreException {
 		String msg = MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_attaching_unsupported"); //$NON-NLS-1$
 		throw newCoreException(msg, null);
@@ -114,7 +114,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.GDBCDIDebugger#createCoreSession(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor)
+	public Session createCoreSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor)
 			throws CoreException {
 		String msg = MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_corefiles_unsupported"); //$NON-NLS-1$
 		throw newCoreException(msg, null);

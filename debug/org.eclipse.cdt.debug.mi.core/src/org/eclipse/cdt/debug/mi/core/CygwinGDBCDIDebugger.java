@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.debug.mi.core;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -32,7 +32,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		// the "search-solib-path" and "stop-on-solib-events" options are not supported in CygWin
 	}
 
-	public Session createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createLaunchSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		Session session = super.createLaunchSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
@@ -57,7 +57,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		return session;
 	}
 
-	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createAttachSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		Session session = super.createAttachSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
@@ -68,7 +68,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		return session;
 	}
 
-	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createCoreSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		Session session = super.createCoreSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {

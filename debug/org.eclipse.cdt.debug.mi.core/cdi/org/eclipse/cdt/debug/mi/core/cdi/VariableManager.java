@@ -151,10 +151,10 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 	public void checkType(StackFrame frame, String type) throws CDIException {
 		if (type != null && type.length() > 0) {
 			Session session = (Session)getSession();
-			Target target = (Target)frame.getTarget();
 			Target currentTarget = session.getCurrentTarget();
-			ICDIThread currentThread = target.getCurrentThread();
+			ICDIThread currentThread = currentTarget.getCurrentThread();
 			ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+			Target target = (Target)frame.getTarget();
 			session.setCurrentTarget(target);
 			target.setCurrentThread(frame.getThread(), false);
 			frame.getThread().setCurrentStackFrame(frame, false);
@@ -238,7 +238,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				Target target = (Target)argObj.getTarget();
 				Target currentTarget = session.getCurrentTarget();
 				if (stack != null) {
-					currentThread = target.getCurrentThread();
+					currentThread = currentTarget.getCurrentThread();
 					currentFrame = currentThread.getCurrentStackFrame();
 					target.setCurrentThread(stack.getThread(), false);
 					stack.getThread().setCurrentStackFrame(stack, false);
@@ -276,10 +276,10 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 	public ICDIArgumentObject[] getArgumentObjects(ICDIStackFrame frame) throws CDIException {
 		List argObjects = new ArrayList();
 		Session session = (Session) getSession();
-		Target target = (Target)frame.getTarget();
 		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = target.getCurrentThread();
+		ICDIThread currentThread = currentTarget.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Target target = (Target)frame.getTarget();
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
@@ -406,10 +406,10 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 	public ICDIVariableObject[] getLocalVariableObjects(ICDIStackFrame frame) throws CDIException {
 		List varObjects = new ArrayList();
 		Session session = (Session) getSession();
-		Target target = (Target)frame.getTarget();
 		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = target.getCurrentThread();
+		ICDIThread currentThread = currentTarget.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Target target = (Target)frame.getTarget();
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
@@ -471,7 +471,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				Target target = (Target)varObj.getTarget();
 				Target currentTarget = session.getCurrentTarget();
 				if (stack != null) {
-					currentThread = target.getCurrentThread();
+					currentThread = currentTarget.getCurrentThread();
 					currentFrame = currentThread.getCurrentStackFrame();
 					target.setCurrentThread(stack.getThread(), false);
 					stack.getThread().setCurrentStackFrame(stack, false);

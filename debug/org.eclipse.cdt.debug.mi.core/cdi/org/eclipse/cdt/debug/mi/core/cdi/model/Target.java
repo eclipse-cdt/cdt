@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
@@ -627,12 +628,27 @@ public class Target  implements ICDITarget {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToString(String)
 	 */
-	public String evaluateExpressionToString(String expressionText)
-		throws CDIException {
-		CommandFactory factory = miSession.getCommandFactory();
-		MIDataEvaluateExpression evaluate = 
-			factory.createMIDataEvaluateExpression(expressionText);
+	public String evaluateExpressionToString(String expressionText) throws CDIException {
+		Session session = (Session)getSession();
+		Target currentTarget = session.getCurrentTarget();
+		ICDIThread currentThread = currentTarget.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		return evaluateExpressionToString(currentFrame, expressionText);
+	}
+	
+	public String evaluateExpressionToString(ICDIStackFrame frame, String expressionText) throws CDIException {
+		Session session = (Session)getSession();
+		Target currentTarget = session.getCurrentTarget();
+		ICDIThread currentThread = currentTarget.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Target target = (Target)frame.getTarget();
+		session.setCurrentTarget(target);
+		target.setCurrentThread(frame.getThread(), false);
+		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
+			CommandFactory factory = miSession.getCommandFactory();
+			MIDataEvaluateExpression evaluate = 
+			factory.createMIDataEvaluateExpression(expressionText);
 			miSession.postCommand(evaluate);
 			MIDataEvaluateExpressionInfo info =
 				evaluate.getMIDataEvaluateExpressionInfo();
@@ -642,6 +658,10 @@ public class Target  implements ICDITarget {
 			return info.getExpression();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			session.setCurrentTarget(currentTarget);
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 	}
 

@@ -457,10 +457,10 @@ public class SourceManager extends Manager implements ICDISourceManager {
 
 	public String getDetailTypeName(ICDIStackFrame frame, String typename) throws CDIException {
 		Session session = (Session)getSession();
-		Target target = (Target)frame.getTarget();
 		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = target.getCurrentThread();
+		ICDIThread currentThread = currentTarget.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Target target = (Target)frame.getTarget();
 		session.setCurrentTarget(target);
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
@@ -490,10 +490,10 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		Target currentTarget = session.getCurrentTarget();
 		ICDIThread currentThread = null;
 		ICDIStackFrame currentFrame = null;
-		session.setCurrentTarget(target);
 		if (frame != null) {
-			currentThread = target.getCurrentThread();
+			currentThread = currentTarget.getCurrentThread();
 			currentFrame = currentThread.getCurrentStackFrame();
+			session.setCurrentTarget(target);
 			target.setCurrentThread(frame.getThread(), false);
 			frame.getThread().setCurrentStackFrame(frame, false);
 		}

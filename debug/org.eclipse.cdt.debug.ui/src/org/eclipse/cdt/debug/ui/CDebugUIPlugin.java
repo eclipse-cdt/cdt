@@ -6,12 +6,12 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.IAsyncExecutor;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.model.ISwitchToThread;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
+import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
@@ -62,8 +62,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class CDebugUIPlugin extends AbstractUIPlugin 
 							implements ISelectionListener, 
-									   IDebugEventSetListener,
-									   IAsyncExecutor
+									   IDebugEventSetListener
 {
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
@@ -324,6 +323,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	public void shutdown() throws CoreException
 	{
 		DebugPlugin.getDefault().removeDebugEventListener( this );
+		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
 		IWorkbenchWindow ww = getActiveWorkbenchWindow();
 		if ( ww != null )
 		{
@@ -333,7 +333,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		{
 			fImageDescriptorRegistry.dispose();
 		}
-		CDebugCorePlugin.getDefault().setAsyncExecutor( null );
 		super.shutdown();
 	}
 	
@@ -348,7 +347,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		{
 			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		}
-		CDebugCorePlugin.getDefault().setAsyncExecutor( this );
+		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 		DebugPlugin.getDefault().addDebugEventListener( this );
 	}
 
@@ -497,18 +496,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		if ( fDisassemblyDocumentProvider == null )
 			fDisassemblyDocumentProvider = new DisassemblyDocumentProvider();
 		return fDisassemblyDocumentProvider;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IAsyncExecutor#asyncExec(Runnable)
-	 */
-	public void asyncExec( Runnable runnable )
-	{
-		Display display = getStandardDisplay();
-		if ( display != null )
-		{
-			display.asyncExec( runnable );
-		}
 	}
 
 	public static IPersistableSourceLocator createDefaultSourceLocator()

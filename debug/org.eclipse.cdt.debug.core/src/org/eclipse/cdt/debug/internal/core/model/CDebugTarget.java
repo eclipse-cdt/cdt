@@ -787,7 +787,7 @@ public class CDebugTarget extends CDebugElement
 			catch( DebugException e )
 			{
 			}
-			DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
+//			DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
 		}
 	}
 

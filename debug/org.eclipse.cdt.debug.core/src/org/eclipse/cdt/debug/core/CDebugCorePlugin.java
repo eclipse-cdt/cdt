@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
+import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceUtils;
@@ -37,12 +38,17 @@ public class CDebugCorePlugin extends Plugin
 	 */
 	public static final int INTERNAL_ERROR = 1000;
 
-	//The shared instance.
+	/**
+	 * The shared instance.
+	 */
 	private static CDebugCorePlugin plugin;
 
 	private HashMap fDebugConfigurations;
 
-	private IAsyncExecutor fAsyncExecutor = null;
+	/**
+	 * Breakpoint listener list.
+	 */
+	private ListenerList fBreakpointListeners;
 
 	private SessionManager fSessionManager = null;
 
@@ -175,6 +181,7 @@ public class CDebugCorePlugin extends Plugin
 	public void shutdown() throws CoreException
 	{
 		setSessionManager( null );
+		disposeBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		super.shutdown();
 	}
@@ -185,6 +192,7 @@ public class CDebugCorePlugin extends Plugin
 	public void startup() throws CoreException
 	{
 		super.startup();
+		createBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		setSessionManager( new SessionManager() );
 	}
@@ -208,17 +216,6 @@ public class CDebugCorePlugin extends Plugin
 			}
 		}
 	}
-	
-	public void setAsyncExecutor( IAsyncExecutor executor )
-	{
-		fAsyncExecutor = executor;
-	}
-	
-	public void asyncExec( Runnable runnable )
-	{
-		if ( fAsyncExecutor != null )
-			fAsyncExecutor.asyncExec( runnable );
-	}
 
 	protected SessionManager getSessionManager()
 	{
@@ -240,5 +237,41 @@ public class CDebugCorePlugin extends Plugin
 	public ICSourceLocation[] getCommonSourceLocations()
 	{
 		return SourceUtils.getCommonSourceLocationsFromMemento( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_SOURCE_LOCATIONS ) );
+	}
+
+	/**
+	 * Adds the given breakpoint listener to the debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public void addCBreakpointListener( ICBreakpointListener listener )
+	{
+		fBreakpointListeners.add( listener );
+	}
+
+	/**
+	 * Removes the given breakpoint listener from the debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public void removeCBreakpointListener( ICBreakpointListener listener ) 
+	{
+		fBreakpointListeners.remove( listener );
+	}
+
+	public Object[] getCBreakpointListeners()
+	{
+		return fBreakpointListeners.getListeners();
+	}
+
+	private void createBreakpointListenersList()
+	{
+		fBreakpointListeners = new ListenerList( 1 );
+	}
+
+	private void disposeBreakpointListenersList()
+	{
+		fBreakpointListeners.removeAll();
+		fBreakpointListeners = null;
 	}
 }

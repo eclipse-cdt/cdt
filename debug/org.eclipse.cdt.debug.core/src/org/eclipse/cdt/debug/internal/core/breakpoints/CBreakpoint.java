@@ -197,21 +197,22 @@ public abstract class CBreakpoint extends Breakpoint
 		return null;
 	}
 
-	/**
-	 * Resets the install count of this breakpoint
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#resetInstallCount()
 	 */
 	public void resetInstallCount() throws CoreException
 	{
 		setAttribute( INSTALL_COUNT, 0 );
 	}
 
-	/**
-	 * Increments the install count of this breakpoint
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#incrementInstallCount()
 	 */
-	public void incrementInstallCount() throws CoreException
+	public int incrementInstallCount() throws CoreException
 	{
 		int count = getInstallCount();
-		setAttribute( INSTALL_COUNT, count + 1 );
+		setAttribute( INSTALL_COUNT, ++count );
+		return count;
 	}
 
 	/**
@@ -223,16 +224,17 @@ public abstract class CBreakpoint extends Breakpoint
 		return ensureMarker().getAttribute( INSTALL_COUNT, 0 );
 	}
 
-	/**
-	 * Decrements the install count of this breakpoint.
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#decrementInstallCount()
 	 */
-	public void decrementInstallCount() throws CoreException
+	public int decrementInstallCount() throws CoreException
 	{
 		int count = getInstallCount();
 		if ( count > 0 )
 		{
-			setAttribute( INSTALL_COUNT, count - 1 );
+			setAttribute( INSTALL_COUNT, --count );
 		}
+		return count;
 	}
 
 	/* (non-Javadoc)

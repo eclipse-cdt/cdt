@@ -76,15 +76,6 @@ public interface ICDITarget extends ICDIObject {
 	ICDIRegister[] getRegisters(ICDIRegisterObject[] regObjects) throws CDIException;
 
 	/**
-	 * Returns a collection of global variables associated with 
-	 * this target.
-	 * 
-	 * @return a collection of global variables 
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIGlobalVariable[] getGlobalVariables() throws CDIException;
-
-	/**
 	 * Evaluates the expression specified by the given string.
 	 * Returns the evaluation result as a String.
 	 * 

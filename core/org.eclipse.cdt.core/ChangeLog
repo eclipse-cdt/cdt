@@ -1,3 +1,17 @@
+2003-09-16 Alain Magloire
+
+	Putting the draft work to do a special binary parser
+	that the addr2line and c++filt command could be set
+	via extension in the ui.
+
+	* utils/org/eclipse/cdt/utils/elf/parser/GNUElfParser.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryExecutable.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryShared.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/elf/parser/ARMember.java
+
 2003-09-16 David Inglis
 
 	Deprecate old make builder

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.IConsoleView;
@@ -24,9 +25,9 @@ public class BuildConsole extends AbstractConsole {
 	 */
 	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID  + ".CONSOLE_P_STREAM_COLOR";	 //$NON-NLS-1$
 
-	private BuildConsoleManager fConsoleManager;
+	private IBuildConsoleManager fConsoleManager;
 
-	public BuildConsole(BuildConsoleManager manager) {
+	public BuildConsole(IBuildConsoleManager manager) {
 		super(ConsoleMessages.getString("BuildConsole.buildConsole"), CPluginImages.DESC_BUILD_CONSOLE); //$NON-NLS-1$
 		fConsoleManager = manager;
 	}
@@ -43,7 +44,7 @@ public class BuildConsole extends AbstractConsole {
 		setName(title);
 	}
 
-	public BuildConsoleManager getConsoleManager() {
+	public IBuildConsoleManager getConsoleManager() {
 	    return fConsoleManager;
 	}
 }

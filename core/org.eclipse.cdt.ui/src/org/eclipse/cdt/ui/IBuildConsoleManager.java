@@ -17,6 +17,7 @@ import org.eclipse.jface.text.IDocument;
 public interface IBuildConsoleManager {
 	IConsole getConsole(IProject project);
 	IDocument getConsoleDocument(IProject project);
+	IProject getLastBuiltProject();
 	void addConsoleListener(IBuildConsoleListener listener);
 	void removeConsoleListener(IBuildConsoleListener listener);
 }

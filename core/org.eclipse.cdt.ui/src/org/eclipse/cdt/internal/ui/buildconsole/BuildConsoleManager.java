@@ -53,6 +53,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	static public final int BUILD_STREAM_TYPE_INFO = 0;
 	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
 	static public final int BUILD_STREAM_TYPE_ERROR = 2;
+	private IProject fLastProject;
 
 	public BuildConsoleManager() {
 	}
@@ -246,9 +247,19 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	public IConsole getConsole(IProject project) {
 		Assert.isNotNull(project);
+		fLastProject = project;
 		return getConsolePartioner(project).getConsole();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.ui.IBuildConsoleManager#getLastBuiltProject()
+	 */
+	public IProject getLastBuiltProject() {
+		return fLastProject;
+	}
+	
 	private BuildConsolePartitioner getConsolePartioner(IProject project) {
 		BuildConsolePartitioner partioner = (BuildConsolePartitioner)fConsoleMap.get(project);
 		if (partioner == null) {

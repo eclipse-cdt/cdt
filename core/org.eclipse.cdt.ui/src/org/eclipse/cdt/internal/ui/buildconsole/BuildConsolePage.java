@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,13 +34,16 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -47,10 +51,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -188,9 +197,8 @@ public class BuildConsolePage extends Page
 
 		getConsole().addPropertyChangeListener(this);
 
-		setDocument();
-		getConsole().setTitle(getProject());
 		fViewer.addTextListener(this);
+		setInitialSelection();
 	}
 
 	/**
@@ -321,14 +329,49 @@ public class BuildConsolePage extends Page
 
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
-		setProject(convertSelectionToProject(getSite().getPage().getSelection()));
-
 		getSite().getPage().addSelectionListener(this);
 		getConsole().getConsoleManager().addConsoleListener(this);
 	}
 
+	protected void setInitialSelection() {
+		// Use the selection, if any
+		Object input;
+		IWorkbenchPage page= getSite().getPage();
+		ISelection selection= null;
+		if (page != null)
+			selection= page.getSelection();
+		if (selection instanceof ITextSelection) {
+			Object part= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+			if (part instanceof IEditorPart) {
+				setSelectionFromEditor((IEditorPart)part);
+				return;
+			}
+		}
+		selectionChanged(null, selection);
+	}
+
+
+	void setSelectionFromEditor(IEditorPart part) {
+		if (part == null)
+			return;
+		IWorkbenchPartSite site= part.getSite();
+		if (site == null)
+			return;
+		ISelectionProvider provider= site.getSelectionProvider();
+		if (provider != null ) {
+			IEditorInput ei= part.getEditorInput();
+			if (ei instanceof IFileEditorInput) {
+				IFile file= ((IFileEditorInput)ei).getFile();
+				selectionChanged(part, new StructuredSelection(file));
+			}
+		}
+	}
+	
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IProject newProject = convertSelectionToProject(selection);
+		if (newProject == null) {
+			newProject = getConsole().getConsoleManager().getLastBuiltProject();
+		}
 		IProject oldProject = getProject();
 		if (oldProject == null || (newProject != null && !newProject.equals(oldProject))) {
 			setProject(newProject);

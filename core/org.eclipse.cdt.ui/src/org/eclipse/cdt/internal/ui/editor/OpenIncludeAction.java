@@ -5,18 +5,25 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
  
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -63,74 +70,81 @@ public class OpenIncludeAction extends Action {
 			IResource res = include.getUnderlyingResource();
 			ArrayList filesFound= new ArrayList(4);
 			if (res != null) {
-				findFile(res.getProject(), new Path(include.getElementName()), filesFound);
+				IProject proj = res.getProject();
+				String includeName = include.getElementName();
+				// Search in the scannerInfo information
+				IScannerInfoProvider provider =  CCorePlugin.getDefault().getScannerInfoProvider(proj);
+				if (provider != null) {
+					IScannerInfo info = provider.getScannerInformation(res);
+					// XXXX this should fall back to project by itself
+					if (info == null) {
+						info = provider.getScannerInformation(proj);
+					}
+					if (info != null) {
+						String[] includePaths = info.getIncludePaths();
+						findFile(includePaths, includeName, filesFound);
+					} else {
+						// Fall back and search the project
+						findFile(proj, new Path(includeName), filesFound);
+					}
+				}
 			}
-			IFile fileToOpen;
+			IPath fileToOpen;
 			int nElementsFound= filesFound.size();
 			if (nElementsFound == 0) {
 				fileToOpen= null;
 			} else if (nElementsFound == 1) {
-				fileToOpen= (IFile) filesFound.get(0);
+				fileToOpen= (IPath) filesFound.get(0);
 			} else {
 				fileToOpen= chooseFile(filesFound);
 			}
 			
 			if (fileToOpen != null) {
-				EditorUtility.openInEditor(fileToOpen);
-			} else { // Try to get via the include path.
-
-// This code is for getting the include paths from the builder.
-//				ICBuilder[] builders = CCorePlugin.getDefault().getBuilders(res.getProject());
-//				
-//				IPath includePath = null;
-//				for( int j = 0; includePath == null && j < builders.length; j++ ) {				
-//					IPath[] paths = builders[j].getIncludePaths();
-//
-//					for (int i = 0; i < paths.length; i++) {
-//						if (res != null) {
-//							// We've already scan the project.
-//							if (paths[i].isPrefixOf(res.getProject().getLocation()))
-//								continue;
-//						}
-//						IPath path = paths[i].append(include.getElementName());
-//						if (path.toFile().exists()) {
-//							includePath = path;
-//							break;
-//						}
-//					}
-//				}
-//
-//				if (includePath != null) {
-//					EditorUtility.openInEditor(includePath);
-//				}
-			}
+				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(fileToOpen);
+				if (file != null) {
+					EditorUtility.openInEditor(file);
+				}  else {
+					FileStorage storage = new FileStorage(null, fileToOpen);
+					EditorUtility.openInEditor(storage);
+				}
+			} 
 		} catch (CModelException e) {
 			CUIPlugin.getDefault().log(e.getStatus());
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e.getStatus());
 		}
 	}
-	
-	private void findFile(IContainer parent, IPath name, ArrayList res) throws CoreException {
+
+	private void findFile(String[] includePaths,  String name, ArrayList list)  throws CoreException {
+		for (int i = 0; i < includePaths.length; i++) {
+			IPath path = new Path(includePaths[i] + "/" + name);
+			File file = path.toFile();
+			if (file.exists()) {
+				list.add(path);
+			} 
+		}
+	}
+
+	private void findFile(IContainer parent, IPath name, ArrayList list) throws CoreException {
 		IResource found= parent.findMember(name);
 		if (found != null && found.getType() == IResource.FILE) {
-			res.add(found);
+			list.add(found.getLocation());
 		}
 		IResource[] children= parent.members();
 		for (int i= 0; i < children.length; i++) {
 			if (children[i] instanceof IContainer) {
-				findFile((IContainer)children[i], name, res);
+				findFile((IContainer)children[i], name, list);
 			}
 		}		
 	}
 
 
-	private IFile chooseFile(ArrayList filesFound) {
+	private IPath chooseFile(ArrayList filesFound) {
 		ILabelProvider renderer= new LabelProvider() {
 			public String getText(Object element) {
-				if (element instanceof IFile) {
-					IFile file= (IFile)element;
-					return file.getName() + " - " + file.getParent().getFullPath().toString();
+				if (element instanceof IPath) {
+					IPath file= (IPath)element;
+					return file.lastSegment() + " - "  + file.toString();
 				}
 				return super.getText(element);
 			}
@@ -142,7 +156,7 @@ public class OpenIncludeAction extends Action {
 		dialog.setElements(filesFound);
 		
 		if (dialog.open() == Window.OK) {
-			return (IFile) dialog.getSelectedElement();
+			return (IPath) dialog.getSelectedElement();
 		}
 		return null;
 	}
@@ -162,7 +176,14 @@ public class OpenIncludeAction extends Action {
 	}
 	
 	public static boolean canActionBeAdded(ISelection selection) {
-		return getIncludeStatement(selection) != null;
+		ICElement include = getIncludeStatement(selection);
+		if (include != null) {
+			IResource res = include.getUnderlyingResource();
+			if (res != null) {
+				return true; 
+			}
+		}
+		return false;
 	}	
 
 

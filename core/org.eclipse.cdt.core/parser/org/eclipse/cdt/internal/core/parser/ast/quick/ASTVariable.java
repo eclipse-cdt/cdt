@@ -53,7 +53,8 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		this.isStatic = isStatic;
 		this.name = name;
 		qualifiedName = new ASTQualifiedNamedElement( scope, name );
-
+		setStartingOffset(startingOffset);
+		setNameOffset(nameOffset);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isAuto()

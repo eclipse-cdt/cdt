@@ -123,6 +123,20 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         id="MachO"
+         name="%MachOParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <filter
+            name = "visibility"
+            value = "private">
+         </filter>
+         <run
+               class="org.eclipse.cdt.utils.macho.parser.MachOParser">
+         </run>
+      </cextension>
+   </extension>
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->
@@ -370,6 +384,10 @@
       <ignore
             enabled="true"
             pattern="*.exe">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.dylib">
       </ignore>
    </extension>
 <!-- =================================================================================== -->

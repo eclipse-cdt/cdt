@@ -703,6 +703,11 @@
             parserID="org.eclipse.cdt.core.XCOFF32"
             id="XcoffBinaryParserPage">
       </parserPage>
+      <parserPage
+            class="org.eclipse.cdt.ui.dialogs.MachOBinaryParserPage"
+            parserID="org.eclipse.cdt.core.MachO"
+            id="MachOBinaryParserPage">
+      </parserPage>
    </extension>
    <extension
          point="org.eclipse.ui.workingSets">

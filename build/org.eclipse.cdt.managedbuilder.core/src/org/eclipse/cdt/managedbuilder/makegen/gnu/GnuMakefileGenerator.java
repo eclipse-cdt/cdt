@@ -347,7 +347,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		outputPrefix = info.getOutputPrefix(outputExtension);
 		
 		// The command to build
-		String buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
+		String buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
 		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 		buffer.append(TAB + AT + buildCmd);
 		
@@ -583,7 +583,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE + NEWLINE);
 
 		// Always add a clean target

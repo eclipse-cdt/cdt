@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment
+   id="org.eclipse.cdt.core.macosx"
+   name="%fragmentName.macosx"
+   version="2.0.0"
+   provider-name="%providerName"
+   plugin-id="org.eclipse.cdt.core"
+   plugin-version="2.0.0">
+
+   <runtime>
+      <library name="cdt_macosx.jar"/>
+   </runtime>
+
+
+   <extension
+         point="org.eclipse.cdt.core.ProcessList">
+      <processList
+      		platform="macosx"
+            class="org.eclipse.cdt.internal.core.macosx.ProcessList">
+      </processList>
+   </extension>
+</fragment>

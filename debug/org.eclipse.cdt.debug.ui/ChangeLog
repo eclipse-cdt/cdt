@@ -1,3 +1,12 @@
+2004-05-13 Mikhail Khodjaiants
+	Added the "Instruction Stepping Mode" action.
+	* ToggleInstructionStepModeActionDelegate.java
+	* plugin.properties
+	* plugin.xml
+	* org.eclipse.cdt.debug.ui/icons/full/clcl16/instr_step.gif: new
+	* org.eclipse.cdt.debug.ui/icons/full/dlcl16/instr_step.gif: new
+	* org.eclipse.cdt.debug.ui/icons/full/elcl16/instr_step.gif: new
+
 2004-05-12 Mikhail Khodjaiants
 	The input member of 'DisassemblyAnnotationModel' can be null.
 	* DisassemblyAnnotationModel.java

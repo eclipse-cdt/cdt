@@ -1,5 +1,10 @@
 2004-09-15 Chris Wiebe
 
+	fixed selection
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesView.java
+
+2004-09-15 Chris Wiebe
+
 	fixed element navigation problems
 	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingContentProvider.java
 	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingElementFilter.java

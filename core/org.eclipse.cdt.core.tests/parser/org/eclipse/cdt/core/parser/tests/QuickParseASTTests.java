@@ -804,6 +804,12 @@ public class QuickParseASTTests extends BaseASTTest
 		parse(code.toString());
 	}
 	
+	
+	public void testBug39554() throws Exception
+	{
+		 parse("_Pragma(\"foobar\")", true, true, ParserLanguage.C );
+	}
+	
 	public void testBug36702() throws Exception
 	{
 		Writer code = new StringWriter(); 

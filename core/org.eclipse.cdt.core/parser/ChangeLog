@@ -1,3 +1,6 @@
+2003-11-07 John Camelon
+	Fixed Bug 39554 : _Pragma directive is not supported (ANSI C99) 
+
 2003-11-06 John Camelon
 	Removed one last remainder of core.model.Util in parser to unbreak 2.0 build.  
 

@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 
 public class Scanner implements IScanner {
    
+
 	protected final IParserLogService log;
 	private final static String SCRATCH = "<scratch>";
 	private Reader backupReader;
@@ -409,6 +410,7 @@ public class Scanner implements IScanner {
 	private static final String PASTING = "<pasting>";
 
 	private static final String DEFINED = "defined";
+	private static final String _PRAGMA = "_Pragma";
 	private static final String POUND_DEFINE = "#define ";
 
 	private ContextStack contextStack = null;
@@ -792,7 +794,7 @@ public class Scanner implements IScanner {
 		
 			} else if (
 				((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
+					|| ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
                         
                 int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
 						
@@ -817,6 +819,13 @@ public class Scanner implements IScanner {
 				if (ident.equals(DEFINED)) 
 					return newToken(IToken.tINTEGER, handleDefinedMacro());
 				
+				if( ident.equals(_PRAGMA) && language == ParserLanguage.C )
+				{
+					handlePragmaOperator(); 
+					c = getChar(); 
+					continue;
+				}
+					
 				Object mapping = definitions.get(ident);
 
 				if (mapping != null) {
@@ -1580,6 +1589,16 @@ public class Scanner implements IScanner {
 
 
     /**
+	 * 
+	 */
+	protected void handlePragmaOperator() throws ScannerException
+	{
+		// until we know what to do with pragmas, do the equivalent as 
+		// to what we do for #pragma blah blah blah (ignore it)
+		getRestOfPreprocessorLine();
+	}
+
+	/**
      * @param c
      * @param wideLiteral
      */

@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -35,11 +36,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("FUNCTION_MACRO( 1, a )\n	int i;");
     }
-    
-    public void testBug39554() throws Exception
-    {
-        assertCodeFailsParse("_Pragma(\"foobar\")");
-    }
+
     
     //Here C99-specific section ends
     //Here GCC-specific section starts

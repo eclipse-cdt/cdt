@@ -1,3 +1,6 @@
+2003-11-07 John Camelon
+	Moved testBug39554() from ASTFailedTests to QuickParseASTTests.  
+
 2003-11-05 John Camelon
 	Added CompleteParseASTTest::testBug44838().  
 	Added CompleteParseASTTest::testBug46165().  

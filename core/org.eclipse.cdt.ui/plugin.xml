@@ -686,7 +686,7 @@
       <extension
          point="org.eclipse.cdt.ui.PathContainerPage">
       <PathContainerPage
-            name="%defaultClasspathContainerPage"
+            name="%defaultPathContainerPage"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathContainerDefaultPage"
             id="*">
       </PathContainerPage>

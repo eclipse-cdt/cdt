@@ -61,9 +61,12 @@ public class CViewContentProvider extends CElementContentProvider {
 				extras = getArchives((IArchiveContainer)element);
 			} else if (element instanceof IIncludeReference) {
 				extras = getIncludeReferenceChildren((IIncludeReference)element);
-			} else if (element instanceof ILibraryReference) {
-				extras =  ((ILibraryReference)element).getChildren();
 			}
+			/*
+			 * Do not to this for now, since ILibraryReference is an Archive.
+			 else if (element instanceof ILibraryReference) {
+				extras =  ((ILibraryReference)element).getChildren();
+			}*/
 		} catch (CModelException e) {
 			extras = null;
 		}

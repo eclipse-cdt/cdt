@@ -1,3 +1,8 @@
+2003-11-05 John Camelon
+	Removed warnings from parser source tree.  
+	Removed preliminary task tags support to clean up parser interfaces and implementation.   
+	Added preliminary IProblem support to 
+
 2003-11-03 John Camelon
 	Added in preliminary interface for code completion mode.  
 

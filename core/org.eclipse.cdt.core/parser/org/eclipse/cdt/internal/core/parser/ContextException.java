@@ -10,17 +10,28 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import java.util.Map;
-
-import org.eclipse.cdt.core.parser.IProblem;
-
 /**
  * @author jcamelon
  *
  */
-public interface IProblemFactory {
+public class ContextException extends Exception
+{
+	private final int id;
 
-	 public IProblem createProblem( int id, int start, int end, int line, char [] file, Map arguments, boolean warn, boolean error );
-	 public String []  getRequiredAttributesForId( int id );
-	
+	/**
+	 * @param i
+	 */
+	public ContextException(int i)
+	{
+		id = i;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getId()
+	{
+		return id;
+	}
+
 }

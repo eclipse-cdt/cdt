@@ -17,10 +17,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -29,13 +31,11 @@ import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IProblemReporter;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ITranslationOptions;
-import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -56,8 +56,27 @@ import org.eclipse.cdt.internal.core.model.Util;
 public class Scanner implements IScanner {
    
 	private Reader backupReader;
+	private IProblemFactory problemFactory = new ScannerProblemFactory();
 
-    public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language ) {
+	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error ) throws ScannerException
+	{
+		handleProblem( problemID, argument, beginningOffset, warning, error, true );
+	}
+
+	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error, boolean extra ) throws ScannerException
+	{
+		Map arguments = new HashMap(); 
+		if( argument != null )
+		{
+			String attributes [] = problemFactory.getRequiredAttributesForId( problemID );
+			arguments.put( attributes[ 0 ], argument );
+		}
+		IProblem p = problemFactory.createProblem( problemID, beginningOffset, getCurrentOffset(), contextStack.getCurrentLineNumber(), getCurrentFile().toCharArray(), arguments, warning, error );
+		if( (! requestor.acceptProblem( p )) && extra )
+			throw new ScannerException( p );
+	}
+
+    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language ) {
 		this.requestor = requestor;
 		this.mode = parserMode;
 		this.language = language;
@@ -76,7 +95,7 @@ public class Scanner implements IScanner {
 				contextStack.push( new ScannerContext().initialize(reader, TEXT, ScannerContext.TOP, null ), requestor ); 
 			else
 				contextStack.push( new ScannerContext().initialize(reader, filename, ScannerContext.TOP, null ), requestor );
-		} catch( ScannerException se ) {
+		} catch( ContextException ce ) {
 			//won't happen since we aren't adding an include or a macro
 		} 
 		
@@ -87,15 +106,7 @@ public class Scanner implements IScanner {
 		if( info.getIncludePaths() != null )
 			overwriteIncludePath( info.getIncludePaths() );
             
-        this.problemReporter = problemReporter;
-        this.translationResult = unitResult;
-        
-        if (problemReporter != null && problemReporter.getOptions() != null) {
-			this.taskTagsInfo = new TaskTagsInfo(problemReporter.getOptions());
-        }
-	}
-
-
+    }
 
 	public void addIncludePath(String includePath) {
 		includePathNames.add(includePath);
@@ -327,8 +338,10 @@ public class Scanner implements IScanner {
 				}
 			}
 			
-			if (throwExceptionOnInclusionNotFound && inclusionReader == null )
-				throw new ScannerException( ScannerException.ErrorCode.INCLUSION_NOT_FOUND, fileName );
+			if (inclusionReader == null )
+			{
+				handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true, true );
+			}
 		}
 		else // local inclusion
 		{
@@ -371,7 +384,15 @@ public class Scanner implements IScanner {
             {
                 /* do nothing */
             } 
-			contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
+			
+			try
+			{
+				contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
+			}
+			catch (ContextException e1)
+			{
+				handleProblem( e1.getId(), fileName, beginOffset, false, true, true );
+			}
 		}
 	}
 
@@ -412,12 +433,6 @@ public class Scanner implements IScanner {
 	private boolean enableDigraphReplacement = true;
 	private boolean enableTrigraphReplacement = true;
 	private boolean enableTrigraphReplacementInStrings = true;
-	private boolean throwExceptionOnBadPreprocessorSyntax = true;
-	private boolean throwExceptionOnInclusionNotFound = true;
-	private boolean throwExceptionOnBadMacroExpansion = true;
-	private boolean throwExceptionOnUnboundedString = true;
-	private boolean throwExceptionOnEOFWithinMultilineComment = true;
-	private boolean throwExceptionOnEOFWithoutBalancedEndifs = true;
 	private boolean throwExceptionOnBadCharacterRead = false; 
 	private boolean atEOF = false;
 
@@ -607,7 +622,14 @@ public class Scanner implements IScanner {
 
 	private void ungetChar(int c) throws ScannerException{
 		contextStack.getCurrentContext().pushUndo(c);
-		contextStack.undoRollback( lastContext, requestor );
+		try
+		{
+			contextStack.undoRollback( lastContext, requestor );
+		}
+		catch (ContextException e)
+		{
+			handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+		}
 	}
 
 	protected boolean lookAheadForTokenPasting() throws ScannerException
@@ -631,7 +653,11 @@ public class Scanner implements IScanner {
 
 	}
 
-	
+	protected void consumeUntilOutOfMacroExpansion() throws ScannerException
+	{
+		while( contextStack.getCurrentContext().getKind() == IScannerContext.MACROEXPANSION )
+			getChar();
+	}
 
 	public IToken nextToken() throws ScannerException, EndOfFile {
 		return nextToken( true, false ); 
@@ -698,7 +724,7 @@ public class Scanner implements IScanner {
 				wideLiteral = true;
 				continue;
 			} else if (c == '"') {
-								 
+				int beginOffset = getCurrentOffset();
 				// string
 				StringBuffer buff = new StringBuffer(); 
 				int beforePrevious = NOCHAR;
@@ -709,8 +735,9 @@ public class Scanner implements IScanner {
 				{
 					if ( ( c =='"' ) && ( previous != '\\' || beforePrevious == '\\') ) break;
 					if ( ( c == '\n' ) && ( previous != '\\' || beforePrevious == '\\') )
-						if (throwExceptionOnUnboundedString)
-							throw new ScannerException( ScannerException.ErrorCode.UNBOUNDED_STRING, getCurrentFile(), getCurrentOffset() );
+					{
+						handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true, true );
+					}
 						
 					if( c == NOCHAR) break;  
 					buff.append((char) c);
@@ -755,10 +782,9 @@ public class Scanner implements IScanner {
 									
 					return returnToken; 
 	
-				} else {
-					if (throwExceptionOnUnboundedString)
-						throw new ScannerException( ScannerException.ErrorCode.UNBOUNDED_STRING, getCurrentFile(), getCurrentOffset() );
-				}
+				} else 
+					handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true, true );
+				
 		
 			} else if (
 				((c >= 'a') && (c <= 'z'))
@@ -825,7 +851,14 @@ public class Scanner implements IScanner {
 						if( storageBuffer != null )
 						{
 							storageBuffer.append( ident );
-							contextStack.updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
+							try
+							{
+								contextStack.updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
+							}
+							catch (ContextException e)
+							{
+								handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+							}
 							storageBuffer = null;  
 							c = getChar(); 
 							continue;
@@ -835,6 +868,7 @@ public class Scanner implements IScanner {
 
 				return newToken(tokenType, ident, contextStack.getCurrentContext());
 			} else if ((c >= '0') && (c <= '9') || c == '.' ) {
+				int beginOffset = getCurrentOffset();
 				StringBuffer buff;
 				
 				if( pasting )
@@ -865,7 +899,7 @@ public class Scanner implements IScanner {
 							if( getChar() == '.' )
 								return newToken( IToken.tELIPSE, "..." );
 							else
-								throw new ScannerException( ScannerException.ErrorCode.BAD_FLOATING_POINT, getCurrentFile(), getCurrentOffset() ); 
+								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true, true );				
 						} else {
 							ungetChar( c );
 							return newToken( IToken.tDOT, ".", contextStack.getCurrentContext() );
@@ -873,7 +907,11 @@ public class Scanner implements IScanner {
 					}
 				} else if (c == 'x') {
 					if( ! firstCharZero ) 
-						throw new ScannerException( ScannerException.ErrorCode.BAD_HEXIDECIMAL_FORMAT, getCurrentFile(), getCurrentOffset() );
+					{
+						handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, null, beginOffset, false, true, true );
+						c = getChar(); 
+						continue;
+					}
 					buff.append( (char)c );
 					hex = true;
 					c = getChar();
@@ -967,7 +1005,14 @@ public class Scanner implements IScanner {
 					{
 						if( storageBuffer != null )
 						{
-							contextStack.updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
+							try
+							{
+								contextStack.updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
+							}
+							catch (ContextException e)
+							{
+								handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+							}
 							storageBuffer = null;  
 							c = getChar(); 
 							continue;
@@ -1002,7 +1047,7 @@ public class Scanner implements IScanner {
 				if( c == '#' )
 				{
 					if( skipped )
-						throw new ScannerException(ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE,  getCurrentFile(), getCurrentOffset()); 
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true, true ); 
 					else 
 						return newToken( tPOUNDPOUND, "##" );
 				} else if( tokenizingMacroReplacementList ) {
@@ -1021,8 +1066,8 @@ public class Scanner implements IScanner {
 
 				Object directive = ppDirectives.get(token);
 				if (directive == null) {
-					if (throwExceptionOnBadPreprocessorSyntax)
-						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE,  getCurrentFile(), getCurrentOffset());							
+					if (true)
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#"+token, beginningOffset, false, true, true );							
 				} else {
 					int type = ((Integer) directive).intValue();
 					switch (type) {
@@ -1066,11 +1111,12 @@ public class Scanner implements IScanner {
 							continue;
 						case PreprocessorDirectives.IF :
 							// get the rest of the line		
+							int currentOffset = getCurrentOffset();
 							String expression = getRestOfPreprocessorLine();
 							
 							boolean expressionEvalResult = false;
 							try{
-								expressionEvalResult = evaluateExpression(expression);
+								expressionEvalResult = evaluateExpression(expression, currentOffset);
 							} catch( ScannerException e ){}
 							
 							passOnToClient = branches.poundif( expressionEvalResult ); 
@@ -1096,8 +1142,8 @@ public class Scanner implements IScanner {
 							continue;
 						case PreprocessorDirectives.ENDIF :
 							String restOfLine = getRestOfPreprocessorLine().trim();
-							if( ! restOfLine.equals( "" ) && throwExceptionOnBadPreprocessorSyntax )
-								throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+							if( ! restOfLine.equals( "" ) && true )
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#endif " + restOfLine, beginningOffset, false, true, true );
 							passOnToClient = branches.poundendif(); 
 							c = getChar();
 							continue;
@@ -1123,9 +1169,12 @@ public class Scanner implements IScanner {
 							{
 								passOnToClient = branches.poundelse();
 							}
-							catch( ScannerException se )
+							catch( EmptyStackException ese )
 							{
-								repackageScannerExceptionAndThrow(se); 
+								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
+									token, 
+									beginningOffset, 
+									false, true, true );  
 							}
 
 							skipOverTextUntilNewline();
@@ -1133,27 +1182,25 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.ELIF :
-
-							String elsifExpression = getRestOfPreprocessorLine();
+							int co = getCurrentOffset();
+							String elsifExpression = getRestOfPreprocessorLine().trim();
 
 							if (elsifExpression.equals(""))
-								if (throwExceptionOnBadPreprocessorSyntax)
-									throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true, true );
 
 							boolean elsifResult = false;
-							try{
-								elsifResult = evaluateExpression(elsifExpression );
-							} catch( ScannerException e )
-							{
-							}
+							elsifResult = evaluateExpression(elsifExpression, co );
 
 							try
 							{
 								passOnToClient = branches.poundelif( elsifResult );
 							}
-							catch( ScannerException se )
+							catch( EmptyStackException ese )
 							{
-								repackageScannerExceptionAndThrow( se ); 
+								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
+									token + ' ' + elsifExpression, 
+									beginningOffset, 
+									false, true, true );  
 							}
 							c = getChar();
 							continue;
@@ -1169,17 +1216,10 @@ public class Scanner implements IScanner {
 								c = getChar();
 								continue;
 							}
-
-							String error = getRestOfPreprocessorLine();
-
-							if (mode == ParserMode.COMPLETE_PARSE) {
-								throw new ScannerException(ScannerException.ErrorCode.POUND_ERROR, error, getCurrentFile(), getCurrentOffset() );
-							}
-							
+							handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, getRestOfPreprocessorLine(), beginningOffset, false, true, true );
 							c = getChar();
 							continue;
 						case PreprocessorDirectives.PRAGMA :
-							//TO DO 
 							skipOverTextUntilNewline();
 							c = getChar();
 							continue;
@@ -1187,15 +1227,12 @@ public class Scanner implements IScanner {
 							String remainderOfLine =
 								getRestOfPreprocessorLine().trim();
 							if (!remainderOfLine.equals("")) {
-								if (throwExceptionOnBadPreprocessorSyntax)
-								throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "# " + remainderOfLine, beginningOffset, false, true, true );
 							}
-
 							c = getChar();
 							continue;
 						default :
-							if (throwExceptionOnBadPreprocessorSyntax)
-						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+							handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#" + token, beginningOffset, false, true, true );
 					}
 				}
 			} else {
@@ -1513,23 +1550,19 @@ public class Scanner implements IScanner {
 									contextStack.getCurrentContext());
 						}
 					default :
-						if( throwExceptionOnBadCharacterRead )
-							throw new ScannerException( ScannerException.ErrorCode.BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentFile(), getCurrentOffset() );
-						else
-						{
-							c = ' ';
-							continue;
-						}
+						handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
+						c = ' ';
+						continue;
 				}
 
 				throw Parser.endOfFile;
 			}
 		}
 
-		if (throwExceptionOnEOFWithoutBalancedEndifs && ( getDepth() != 0) && !atEOF )
+		if (( getDepth() != 0) && !atEOF )
 		{
 			atEOF = true;
-			throw new ScannerException(ScannerException.ErrorCode.UNBALANCED_CONDITIONALS, getCurrentFile(), getCurrentOffset() );
+			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true, true );
 		}
 
 		// we're done
@@ -1545,6 +1578,7 @@ public class Scanner implements IScanner {
     protected IToken processCharacterLiteral(int c, boolean wideLiteral)
         throws ScannerException
     {
+    	int beginOffset = getCurrentOffset();
         int type = wideLiteral ? IToken.tLCHAR : IToken.tCHAR;
         
         StringBuffer buffer = new StringBuffer(); 
@@ -1558,72 +1592,33 @@ public class Scanner implements IScanner {
         	if( ( c == '\n' ) || 
         		( ( c == '\\' || c =='\'' )&& prev == '\\' ) || 
         	    ( c == NOCHAR ) )
-        		if( throwExceptionOnBadCharacterRead )
-					throw new ScannerException( ScannerException.ErrorCode.BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentFile(), getCurrentOffset() );
-				else
-					c = ' ';
-			
+        	{
+        		handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(),beginOffset, false, true, throwExceptionOnBadCharacterRead );
+        		c = ' ';
+			}			
 			// exit condition
 			if ( ( c =='\'' ) && ( prev != '\\' || prevPrev == '\\' ) ) break;
 			
-//			System.out.println( "Adding character " + (char)c + " to buffer");
         	buffer.append( (char)c);
         	prevPrev = prev;
         	prev = c;
         	c = getChar(true);
         }
         
-        return newToken( type, buffer.toString(), contextStack.getCurrentContext());       
-        
-//        int next = getChar(true);
-//        
-//        if (c == '\\')
-//        {
-//            c = next;
-//            next = getChar(true);
-//            if (next == '\'')
-//                return newToken( type, '\\' + new Character((char)c).toString(), contextStack.getCurrentContext());
-//            else 
-//				if( throwExceptionOnBadCharacterRead )
-//                	throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE,
-//                    	getCurrentFile(),
-//                    	getCurrentOffset());
-//        }
-//        else if (next == '\'')
-//            return newToken(
-//                type,
-//                new Character((char)c).toString(),
-//                contextStack.getCurrentContext());
-//
-//        throw new ScannerException(
-//            ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE,
-//            getCurrentFile(),
-//            getCurrentOffset());
-               
+        return newToken( type, buffer.toString(), contextStack.getCurrentContext());                      
     }
 
 
 
-    protected void repackageScannerExceptionAndThrow(ScannerException se)
-        throws ScannerException
-    {
-        throw new ScannerException( se.getErrorCode(), getCurrentFile(), getCurrentOffset() );
-    }
-
-
-	protected String getCurrentFile()
+    protected String getCurrentFile()
 	{
-		if( contextStack.getCurrentContext() != null )
-			return contextStack.getCurrentContext().getFilename();
-		return "";
+		return contextStack.getMostRelevantFileContext() != null ? contextStack.getMostRelevantFileContext().getFilename() : "";
 	}
 
 
     protected int getCurrentOffset()
     {
-		if( contextStack.getCurrentContext() != null )
-        	return contextStack.getCurrentContext().getOffset();
-        return -1;
+        return contextStack.getMostRelevantFileContext() != null ? contextStack.getMostRelevantFileContext().getOffset() : -1;
     }
 
 
@@ -1633,6 +1628,7 @@ public class Scanner implements IScanner {
     
     public IToken nextTokenForStringizing() throws ScannerException, EndOfFile
     {     
+    	int beginOffset = getCurrentOffset();
         int c = getChar();
         StringBuffer tokenImage = new StringBuffer();
 
@@ -1666,8 +1662,9 @@ public class Scanner implements IScanner {
                     return newToken( IToken.tSTRING, buff.toString(), contextStack.getCurrentContext());
     
                 } else {
-                    if (throwExceptionOnUnboundedString)
-                        throw new ScannerException( ScannerException.ErrorCode.UNBOUNDED_STRING, getCurrentFile(), getCurrentOffset() ); 
+                	handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true, true );
+                	c = getChar(); 
+                	continue;
                 }
         
             } else {
@@ -1878,7 +1875,7 @@ public class Scanner implements IScanner {
 		return branches.getDepth(); 
 	}
 
-	protected boolean evaluateExpression(String expression )
+	protected boolean evaluateExpression(String expression, int beginningOffset )
 		throws ScannerException {
 			
 		if( mode == ParserMode.QUICK_PARSE )
@@ -1902,26 +1899,22 @@ public class Scanner implements IScanner {
 				IASTExpression exp = parser.expression(null);
 				if( exp.evaluateExpression() == 0 )
 					return false;
-			} catch( Backtrack b )
+				return true;
+			} catch( Backtrack backtrack  )
 			{
-				throwExpressionEvaluationError(expression);
+				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true ); 
 			}
 			catch (ExpressionEvaluationException e) {
-				throwExpressionEvaluationError(expression);
+				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true );
 			}
 			return true; 
 		}
 	}
 
-	protected void throwExpressionEvaluationError(String expression) throws ScannerException {
-		throw new ScannerException( ScannerException.ErrorCode.EXPRESSION_EVALUATION_ERROR, expression, getCurrentFile(), getCurrentOffset());
-	}
 	
 	protected void skipOverSinglelineComment() throws ScannerException {
 		
 		StringBuffer comment = new StringBuffer("//");
-		int commentOffset = lastContext.getOffset() - lastContext.undoStackSize() - 2;
-		int commentStartLine = lastContext.getLine();
 		int c;
 		
 		loop:
@@ -1937,15 +1930,12 @@ public class Scanner implements IScanner {
 			}
 		}
 		
-		checkTaskTag(comment, commentOffset, commentStartLine);
 	}
 
 	protected boolean skipOverMultilineComment() throws ScannerException {
 		int state = 0;
 		boolean encounteredNewline = false;
 		StringBuffer comment = new StringBuffer("/*");
-		int commentOffset = lastContext.getOffset() - lastContext.undoStackSize() - 2;
-		int commentStartLine = lastContext.getLine();
 		// simple state machine to handle multi-line comments
 		// state 0 == no end of comment in site
 		// state 1 == encountered *, expecting /
@@ -1973,14 +1963,10 @@ public class Scanner implements IScanner {
 			comment.append((char)c);
 		}
 
-		if (c == NOCHAR) {
-			if (throwExceptionOnEOFWithinMultilineComment)
-				throw new ScannerException( ScannerException.ErrorCode.UNEXPECTED_EOF, getCurrentFile(), getCurrentOffset());
-		}
-
-		ungetChar(c);
+		if (c == NOCHAR)
+			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true, true );
 		
-		checkTaskTag(comment, commentOffset, commentStartLine);
+		ungetChar(c);
 
 		return encounteredNewline;
 	}
@@ -2000,8 +1986,6 @@ public class Scanner implements IScanner {
 										new StringReader(includeLine), 
 										null, 
 										new ScannerInfo(definitions, originalConfig.getIncludePaths()), 
-										problemReporter, 
-										translationResult,
 										new NullSourceElementRequestor(),
 										mode,
 										language );
@@ -2010,10 +1994,7 @@ public class Scanner implements IScanner {
 			try {
 				t = helperScanner.nextToken(false);
 			} catch (EndOfFile eof) {
-				if (throwExceptionOnBadPreprocessorSyntax) {
-					throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
-				}
-				
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );				
 				return;
 			}
 
@@ -2026,11 +2007,7 @@ public class Scanner implements IScanner {
 					
 					// This should throw EOF
 					t = helperScanner.nextToken(false);
-
-					if (throwExceptionOnBadPreprocessorSyntax) {
-						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
-					}
-					
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );					
 					return;
 				} else if (t.getType() == IToken.tLT) {
 					
@@ -2050,34 +2027,26 @@ public class Scanner implements IScanner {
 						endOffset = baseOffset + t.getEndOffset();
 						
 					} catch (EndOfFile eof) {
-						if (throwExceptionOnBadPreprocessorSyntax) {
-							throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
-						}
-				
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 						return;
 					}
 					
 					// This should throw EOF
-					 t = helperScanner.nextToken(false);
-
-					 if (throwExceptionOnBadPreprocessorSyntax) {
-						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
-					 }
+					t = helperScanner.nextToken(false);
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 	
-					 return;
+					return;
 					
-				} else if (throwExceptionOnBadPreprocessorSyntax) {
-					throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
-				}
+				} else 
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 			}
 			catch( EndOfFile eof )
 			{
 				// good
 			}
 			
-		} else if (throwExceptionOnBadPreprocessorSyntax) {
-			throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
-		}
+		} else 
+			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 
 		String f = fileName.toString();
 		
@@ -2141,18 +2110,15 @@ public class Scanner implements IScanner {
 						continue;
 					} else {
 						ungetChar( c );
-						if( throwExceptionOnBadPreprocessorSyntax )
-							throw new ScannerException( ScannerException.ErrorCode.MALFORMED_MACRO_DEFN, getCurrentFile(), getCurrentOffset());
-						else return;
+						handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + buffer.toString() + '\\' + (char)c, beginning, false, true, true );
+						return;
 					}
 				} else if( c == '\r' || c == '\n' ){
-					if( throwExceptionOnBadPreprocessorSyntax )
-						throw new ScannerException( ScannerException.ErrorCode.MALFORMED_MACRO_DEFN, getCurrentFile(), getCurrentOffset());
-					else return;
+					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + buffer.toString() + (char)c, beginning, false, true, true );
+					return;
 				} else if( c == NOCHAR ){
-					if( throwExceptionOnBadPreprocessorSyntax )
-						throw new ScannerException( ScannerException.ErrorCode.UNEXPECTED_EOF, getCurrentFile(), getCurrentOffset());
-					else return;
+					handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, beginning, false, true, true );
+					return;
 				}
 				
 				buffer.append((char) c);
@@ -2176,7 +2142,7 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, language, new NullSourceElementRequestor(), problemReporter, translationResult );
+				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, language, new NullSourceElementRequestor() );
 				helperScanner.setTokenizingMacroReplacementList( true );
 				IToken t = helperScanner.nextToken(false);
 	
@@ -2190,9 +2156,9 @@ public class Scanner implements IScanner {
 							int index = parameterIdentifiers.indexOf(t.getImage());
 							if (index == -1 ) {
 								//not found
-								if (throwExceptionOnBadPreprocessorSyntax)
-									throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() ); 
-									
+								
+								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "#define " + key + " " + replacementString,
+									beginning, false, true, true ); 									
 								return;
 							}
 						}
@@ -2214,13 +2180,13 @@ public class Scanner implements IScanner {
 				macroReplacementTokens,
 				key + "(" + parameters + ")");
 				
-			checkValidMacroRedefinition(key, previousDefinition, descriptor);
+			checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
 			addDefinition(key, descriptor);
 
 		}
 		else if ((c == '\n') || (c == '\r'))
 		{
-			checkValidMacroRedefinition(key, previousDefinition, "");				
+			checkValidMacroRedefinition(key, previousDefinition, "", beginning);				
 			addDefinition( key, "" );
 		}
 		else if ((c == ' ') || (c == '\t') ) {
@@ -2230,7 +2196,7 @@ public class Scanner implements IScanner {
 			// get what we are to map the name to and add it to the definitions list
 			String value = getRestOfPreprocessorLine();
 			
-			checkValidMacroRedefinition(key, previousDefinition, value);
+			checkValidMacroRedefinition(key, previousDefinition, value, beginning);
 			addDefinition( key, value ); 
 		
 		} else if (c == '/') {
@@ -2239,31 +2205,31 @@ public class Scanner implements IScanner {
 			if (c == '/') // one line comment
 				{
 				skipOverSinglelineComment();
-				checkValidMacroRedefinition(key, previousDefinition, "");
+				checkValidMacroRedefinition(key, previousDefinition, "", beginning);
 				addDefinition(key, "");
 			} else if (c == '*') // multi-line comment
 				{
 				if (skipOverMultilineComment()) {
 					// we have gone over a newline
 					// therefore, this symbol was defined to an empty string
-					checkValidMacroRedefinition(key, previousDefinition, "");
+					checkValidMacroRedefinition(key, previousDefinition, "", beginning);
 					addDefinition(key, "");
 				} else {
 					String value = getRestOfPreprocessorLine();
 					
-					checkValidMacroRedefinition(key, previousDefinition, "");
+					checkValidMacroRedefinition(key, previousDefinition, "", beginning);
 					addDefinition(key, value);
 				}
 			} else {
 				// this is not a comment 
 				// it is a bad statement
-				if (throwExceptionOnBadPreprocessorSyntax)
-					throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + key + " /" + getRestOfPreprocessorLine(), beginning, false, true, true );
+				return;
 			}
 		} else {
 			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c), IDebugLogConstants.PARSER);
-			if (throwExceptionOnBadPreprocessorSyntax)
-				throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+			handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + key + (char)c + getRestOfPreprocessorLine(), beginning, false, true, true );
+			return;
 		}
 		
 		try
@@ -2281,7 +2247,7 @@ public class Scanner implements IScanner {
 	protected void checkValidMacroRedefinition(
 		String key,
 		Object previousDefinition,
-		Object newDefinition )
+		Object newDefinition, int beginningOffset )
 		throws ScannerException 
 		{
 			if( mode == ParserMode.COMPLETE_PARSE && previousDefinition != null ) 
@@ -2299,9 +2265,9 @@ public class Scanner implements IScanner {
 					
 					if( previousDefinition instanceof String ) 
 					{
-						Scanner previous = new Scanner( new StringReader( (String)previousDefinition ), "redef-test", new ScannerInfo(), null, null, new NullSourceElementRequestor(), 
+						Scanner previous = new Scanner( new StringReader( (String)previousDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
 							mode, language );
-						Scanner current = new Scanner( new StringReader( (String)newDefinition ), "redef-test", new ScannerInfo(), null, null, new NullSourceElementRequestor(), 
+						Scanner current = new Scanner( new StringReader( (String)newDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
 													mode, language );
 						for ( ; ; )
 						{
@@ -2337,17 +2303,13 @@ public class Scanner implements IScanner {
 					}
 				}
 				
-				throw new ScannerException(
-					ScannerException.ErrorCode.ATTEMPTED_REDEFINITION, 
-					key, 
-					getCurrentFile(),
-					getCurrentOffset());
+				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN, key, beginningOffset, false, true, true );
 			}			
 	}
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), problemReporter, translationResult, new NullSourceElementRequestor(), mode, language);
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language);
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
@@ -2401,7 +2363,16 @@ public class Scanner implements IScanner {
         // will have dimensions (offset and length) equal to the expanding symbol.
 		if (expansion instanceof String ) {
 			String replacementValue = (String) expansion;
-			contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION, null, requestor, symbolOffset, symbol.length());
+			try
+			{
+				contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION, null, requestor, symbolOffset, symbol.length());
+			}
+			catch (ContextException e)
+			{
+				handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+				consumeUntilOutOfMacroExpansion();
+				return;
+			}
 		} else if (expansion instanceof IMacroDescriptor ) {
 			IMacroDescriptor macro = (IMacroDescriptor) expansion;
 			skipOverWhitespace();
@@ -2438,10 +2409,12 @@ public class Scanner implements IScanner {
 				List tokens = macro.getTokenizedExpansion();
 				List parameterNames = macro.getParameters();
 
-				if (parameterNames.size() != parameterValues.size()) {
-					if (throwExceptionOnBadMacroExpansion)
-						throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, symbol, getCurrentFile(), getCurrentOffset() ); 
-				}
+				if (parameterNames.size() != parameterValues.size())
+				{ 
+					handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true, true );	
+					consumeUntilOutOfMacroExpansion();
+					return;
+				}				
 
 				int numberOfTokens = tokens.size();
 
@@ -2466,8 +2439,8 @@ public class Scanner implements IScanner {
 						t = (Token) tokens.get( ++i );
 						int index = parameterNames.indexOf(t.image);
 						if( index == -1 ){
-							if (throwExceptionOnBadMacroExpansion)
-								throw new ScannerException(	ScannerException.ErrorCode.MACRO_PASTING_ERROR, getCurrentFile(), getCurrentOffset() );	
+							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, macro.getName(), getCurrentOffset(), false, true, true  );
+							return;
 						} else {
 							buffer.append('\"');
 							String value = (String)parameterValuesForStringizing.elementAt(index);
@@ -2519,12 +2492,24 @@ public class Scanner implements IScanner {
                         	buffer.append( " " ); 
 				}
 				String finalString = buffer.toString();
-				contextStack.updateContext(
-					new StringReader(finalString),
-					POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
-			} else 
-				if (throwExceptionOnBadMacroExpansion)
-					throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, symbol, getCurrentFile(), getCurrentOffset() );
+				try
+				{
+					contextStack.updateContext(
+						new StringReader(finalString),
+						POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
+				}
+				catch (ContextException e)
+				{
+					handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+					consumeUntilOutOfMacroExpansion();
+					return;
+				}
+			} else
+			{ 
+				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true, true );
+				consumeUntilOutOfMacroExpansion();
+				return;
+			}			
 
 		} else {
 			Util.debugLog(
@@ -2535,6 +2520,7 @@ public class Scanner implements IScanner {
 	}
 
 	protected String handleDefinedMacro() throws ScannerException {
+		int o = getCurrentOffset();
 		skipOverWhitespace();
 
 		int c = getChar();
@@ -2546,8 +2532,10 @@ public class Scanner implements IScanner {
 			skipOverWhitespace(); 
 			c = getChar();
 			if (c != ')')
-				if (throwExceptionOnBadMacroExpansion)
-					throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, "defined()", getCurrentFile(), getCurrentOffset() );
+			{
+				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, "defined()", o, false, true, true);
+				return "0";
+			}
 		}
 		else
 		{
@@ -2584,174 +2572,6 @@ public class Scanner implements IScanner {
 	public void setASTFactory(IASTFactory f) {
 		astFactory = f;	
 	}
-	
-	//	task tag support
-	 private class TaskTagsInfo {		
-		 char[][] taskTags = null;
-		 char[][] taskPriorities = null;
-				
-		 class FoundTaskInfo {
-			 char[] foundTaskTags = null;
-			 char[] foundTaskMessages = null;
-			 char[] foundTaskPriorities = null;
-			 int foundTaskStartOffset = -1;
-			 int foundTaskEndOffset = -1;
-			 int foundTaskLine = -1;
-		 };
-		
-		 FoundTaskInfo[] foundTaskInfo = null;
-		 int foundTaskCount = 0;
-		 
-		 TaskTagsInfo(ITranslationOptions options) {
-			this.taskTags = options.getTaskTags();
-			this.taskPriorities = options.getTaskPriorities();
-		 }
-	 }
-	 
-	IProblemReporter problemReporter = null;
-	ITranslationResult translationResult = null;
-	TaskTagsInfo taskTagsInfo = null;
-	
-	
-	//	check presence of task tags
-	 public void checkTaskTag(StringBuffer comment, int commentStart, int commentStartLine) {
-
-		 if (this.taskTagsInfo == null) return;
-		 
-    	 int commentLength = comment.length();
-    	 int tagStartLine = commentStartLine;
-		 int foundTaskIndex = taskTagsInfo.foundTaskCount;
-		 char[][] taskTags = taskTagsInfo.taskTags;
-		 char[][] taskPriorities = taskTagsInfo.taskPriorities; 
-
-		// only look for newer task tags		 
-		 if (foundTaskIndex > 0) {
-			 TaskTagsInfo.FoundTaskInfo lastInfo = taskTagsInfo.foundTaskInfo[foundTaskIndex-1];
-			 
-			 if (lastInfo.foundTaskStartOffset >= commentStart) 
-    		 	return;
-    	 }
-    	 
-    	 nextChar: 
-    	 for (int i = 0; i < commentLength; i++) {
-			if (comment.charAt(i) == '\n') tagStartLine++;
-    
-    		 int nextPos = -1;
-    		 char[] tag = null;
-    		 char[] priority = null;
-			 int tagLength = 0;
-    		
-    		 // check for tag occurrence
-    		 nextTag: 
-    		 for (int itag = 0; itag < taskTags.length; itag++) {
-    			 tag = taskTags[itag];
-				 tagLength = tag.length;
-    			 priority = (taskPriorities != null && itag < taskPriorities.length)
-			    				 ? taskPriorities[itag]
-			    				 : null;
-    			 
-    			 for (int t = 0; t < tagLength; t++){
-    				 if (comment.charAt(i+t) != tag[t]) continue nextTag;
-    			 }
-    			 nextPos = i + tagLength;
-    			 
-    			 int fTC = taskTagsInfo.foundTaskCount;
-    
-    			 if (taskTagsInfo.foundTaskInfo == null) {
-					 taskTagsInfo.foundTaskInfo = new TaskTagsInfo.FoundTaskInfo[5];
-    			 } else if (fTC == taskTagsInfo.foundTaskInfo.length) {
-					 TaskTagsInfo.FoundTaskInfo[] resizedFTI = new TaskTagsInfo.FoundTaskInfo[fTC*2];    			 	  
-    				 System.arraycopy(taskTagsInfo.foundTaskInfo, 0, resizedFTI, 0, fTC);
-    			 }
-    			 
-				 TaskTagsInfo.FoundTaskInfo lastFTI = taskTagsInfo.new FoundTaskInfo();
-    			 
-				 lastFTI.foundTaskTags = tag;
-				 lastFTI.foundTaskPriorities = priority;
-				 lastFTI.foundTaskStartOffset = i;
-				 lastFTI.foundTaskLine = tagStartLine;
-				 
-				 taskTagsInfo.foundTaskInfo[fTC] = lastFTI;
-				 taskTagsInfo.foundTaskCount++;
-    			
-    			 for (int jj=i+1; jj<nextPos; jj++) {
-    			 	if (comment.charAt(jj) == '\n') {
-    			 		tagStartLine++;
-    			 	}
-    			 }
-    			 
-				 i = nextPos;
-    		 }
-    	 }
-    	
-    	 for (int i = foundTaskIndex; i < taskTagsInfo.foundTaskCount; i++) {
-    		 // retrieve message start and end positions
-			 TaskTagsInfo.FoundTaskInfo fTI = taskTagsInfo.foundTaskInfo[i];
-			 TaskTagsInfo.FoundTaskInfo fTI2 = taskTagsInfo.foundTaskInfo[i+1];
-    		 int msgStart = fTI.foundTaskStartOffset + fTI.foundTaskTags.length;
-    		 int end;
-    		 char c;
-    		 int max_value = (i + 1 < taskTagsInfo.foundTaskCount) 
-    		 					? fTI2.foundTaskStartOffset - 1 
-    		 					: Integer.MAX_VALUE;
-    		
-    		 end = -1;
-    		 for (int j = msgStart; j < commentLength; j++){
-    			 if ((c = comment.charAt(j)) == '\n' || c == '\r'){
-    				 end = j - 1;
-    				 break;
-    			 }
-    		 }
-    		 end = end < max_value ? end : max_value;
-    		
-    		 if (end < 0){
-    			 for (int j = commentLength-1; j >= msgStart; j--){
-    				 if ((c = comment.charAt(j)) == '*') {
-    					 end = j-1;
-    					 break;
-    				 }
-    			 }
-    			 if (end < 0) end = commentLength-1;
-    		 }
-    		
-    		 // trim the message
-    		 while (Character.isWhitespace(comment.charAt(end)) && msgStart <= end) end--;
-    		 while (Character.isWhitespace(comment.charAt(msgStart)) && msgStart <= end) msgStart++;
-    
-    		 // update the end position of the task
-    		 fTI.foundTaskEndOffset = end;
-    		
-    		 // get the message source
-    		 final int messageLength = end-msgStart+1;
-    		 char[] message = new char[messageLength];
-    
-    		 comment.getChars(msgStart, msgStart + messageLength, message, 0);
-    		 fTI.foundTaskMessages = message;
-    		 
-    		 fTI.foundTaskStartOffset += commentStart;
-    		 fTI.foundTaskEndOffset += commentStart;
-    	 }
-	}
-	
-	
-	public void onParseEnd() {
-		if (problemReporter != null && taskTagsInfo != null){
-			for (int i = 0; i < taskTagsInfo.foundTaskCount; i++) {
-				TaskTagsInfo.FoundTaskInfo fTI = taskTagsInfo.foundTaskInfo[i];
-				
-				problemReporter.task(
-					new String(fTI.foundTaskTags), 
-					new String(fTI.foundTaskMessages),
-					fTI.foundTaskPriorities == null ? null : new String(fTI.foundTaskPriorities), 
-					fTI.foundTaskStartOffset, 
-					fTI.foundTaskEndOffset,
-					fTI.foundTaskLine,
-					this.translationResult);
-			}
-		}
-	}
-
-
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.IScanner#getLineNumberForOffset(int)

@@ -17,8 +17,10 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -82,9 +84,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
 	 */
-	public void acceptProblem(IProblem problem) {
-		// TODO Auto-generated method stub
-
+	public boolean acceptProblem(IProblem problem) {
+		return DefaultProblemHandler.ruleOnProblem( problem, ParserMode.COMPLETE_PARSE );
 	}
 
 	/* (non-Javadoc)

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -693,7 +694,7 @@ public class ScannerTestCase extends BaseScannerTest
 		catch (ScannerException se)
 		{
 			validateBalance(1);
-			assertTrue(se.getMessage().equals("#error Correct!"));
+			assertEquals( se.getProblem().getID(), IProblem.PREPROCESSOR_POUND_ERROR);
 		}
 		catch (Exception e)
 		{
@@ -1270,33 +1271,33 @@ public class ScannerTestCase extends BaseScannerTest
 		try{
 			validateEOF();
 		} catch ( ScannerException e ){
-			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.UNBOUNDED_STRING); 
+			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_DIRECTIVE ); 
 		}
 	
 		initializeScanner( "#include <foo.h" );
 		try{
 			validateEOF();
 		} catch ( ScannerException e ){
-			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE);
+			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_DIRECTIVE);
 		}		
 		initializeScanner( "#define FOO(A" );
 		try{
 			validateEOF();
 		} catch( ScannerException e ){
-			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.MALFORMED_MACRO_DEFN );
+			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
 		}
 		initializeScanner( "#define FOO(A \\ B" );
 		try{
 			validateEOF();
 		} catch( ScannerException e ){
-			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.MALFORMED_MACRO_DEFN );
+			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN);
 		}
 		
 		initializeScanner( "#define FOO(A,\\\nB) 1\n FOO(foo" );
 		try{
 			validateInteger("1");
 		} catch( ScannerException e ){
-			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.MACRO_USAGE_ERROR );
+			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_MACRO_USAGE_ERROR);
 		}
 	}
 	
@@ -1355,19 +1356,6 @@ public class ScannerTestCase extends BaseScannerTest
 		validateIdentifier("FooBar");
 		validateEOF();
 		
-		try {
-			initializeScanner( "Foo\\Bar" );
-			
-			validateIdentifier("Foo");
-			validateIdentifier("Bar");
-			validateEOF();
-			
-		} catch (ScannerException se) {
-			// if Scanner.throwExceptionOnBadCharacterRead == true
-			// we might end up with valid ScannerException "Invalid character ..."
-			// for '\'
-			assertTrue(se.getErrorCode() == ScannerException.ErrorCode.BAD_CHARACTER );
-		}
 	}
     
     public void testBug36701A() throws Exception
@@ -1483,7 +1471,7 @@ public class ScannerTestCase extends BaseScannerTest
 			}
 			catch( ScannerException se )
 			{
-					assertEquals( se.getErrorCode(), ScannerException.ErrorCode.ATTEMPTED_REDEFINITION );
+				assertTrue( se.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN);
 			}
 		}
 		

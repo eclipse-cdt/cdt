@@ -48,7 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
  */
 public interface ISourceElementRequestor {
 	
-	public void acceptProblem( IProblem problem );
+	public boolean acceptProblem( IProblem problem );
 
 	public void acceptMacro( IASTMacro macro );
 	public void acceptVariable( IASTVariable variable );

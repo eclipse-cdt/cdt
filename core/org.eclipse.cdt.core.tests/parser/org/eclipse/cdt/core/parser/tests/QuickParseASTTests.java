@@ -1667,7 +1667,7 @@ public class QuickParseASTTests extends BaseASTTest
 		code.write("  const char di_str glue(<, :)glue(:, >) = str(%:%:<::><%%>%:);\n");
 		code.write("  /* Check the glue macro actually pastes, and that the spelling of\n");
 		code.write("	 all digraphs is preserved.  */\n");
-		code.write("  if (glue(str, cmp) (di_str, \"%:%:<::><%%>%:\"))\n");
+		code.write("  if (glue(strc, mp) (di_str, \"%:%:<::><%%>%:\"))\n");
 		code.write("	err (\"Digraph spelling not preserved!\");\n");
 		code.write("  return 0;\n");
 		code.write("glue (%, >) /* } */\n");

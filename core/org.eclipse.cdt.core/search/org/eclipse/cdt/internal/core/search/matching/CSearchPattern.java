@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
+import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
@@ -61,7 +63,22 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	public static final int POSSIBLE_MATCH   = 1;
 	public static final int ACCURATE_MATCH   = 2;
 	public static final int INACCURATE_MATCH = 3;
-
+	
+	protected static class Requestor extends NullSourceElementRequestor
+	{
+		public Requestor( ParserMode mode )
+		{
+			super( mode );
+		}
+		
+		public boolean acceptProblem( IProblem problem )
+		{
+			if( problem.getID() == IProblem.SCANNER_BAD_CHARACTER ) return false;
+			return super.acceptProblem( problem );
+		}
+	}
+	
+	private static Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 	/**
 	 * @param matchMode
 	 * @param caseSensitive
@@ -154,7 +171,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
 		LinkedList list = scanForNames( scanner, null );
 		
 		char [] name = (char []) list.removeLast();
@@ -212,7 +229,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
 		LinkedList list = scanForNames( scanner, null );
 		
 		char [] name = (char []) list.removeLast();
@@ -242,7 +259,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( nameString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( nameString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
 		
 		LinkedList names = scanForNames( scanner, null );
 
@@ -289,7 +306,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 //			return orPattern;
 //		}
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
 		
 		IToken token = null;
 		ASTClassKind kind = null;
@@ -342,7 +359,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		String functionString = "void f " + paramString + ";";
 				
-		IScanner scanner = ParserFactory.createScanner( new StringReader( functionString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( functionString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
 		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();			   
 		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.QUICK_PARSE, ParserLanguage.CPP ); 
 
@@ -484,8 +501,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					try{
 						token = scanner.nextToken();
 					} catch ( ScannerException e ){
-						if( e.getErrorCode() == ScannerException.ErrorCode.BAD_CHARACTER ){
-							//TODO : This may not //, it could be another bad character
+						if( e.getProblem().getID() == IProblem.SCANNER_BAD_CHARACTER ){
+							//TODO : This may not be \\, it could be another bad character
 							if( !encounteredWild && !lastTokenWasOperator ) name += " ";
 							name += "\\";
 							encounteredWild = true;

@@ -11,8 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.compare;
 
+import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -136,7 +138,8 @@ public class SourceElementRequestorAdapter implements ISourceElementRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
 	 */
-	public void acceptProblem(IProblem problem) {
+	public boolean acceptProblem(IProblem problem) {
+		return DefaultProblemHandler.ruleOnProblem( problem, ParserMode.QUICK_PARSE );
 	}
 
 	/* (non-Javadoc)

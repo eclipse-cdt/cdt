@@ -22,17 +22,14 @@ public interface IScanner  {
 	
 	public IToken nextToken() throws ScannerException, EndOfFile;
 	public IToken nextToken( boolean next ) throws ScannerException, EndOfFile;
-	 
-	public void setLanguage( ParserLanguage value );
-		
+			
 	public int  getCount();
 	public int  getDepth();
 
 	public IToken nextTokenForStringizing() throws ScannerException, EndOfFile;
 	public void setTokenizingMacroReplacementList(boolean b);
 	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad );
-		
-	public void onParseEnd();
+
     /**
      * @param i
      * @return

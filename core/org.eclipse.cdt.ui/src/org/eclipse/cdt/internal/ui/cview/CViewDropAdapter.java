@@ -5,43 +5,37 @@ package org.eclipse.cdt.internal.ui.cview;
  * All Rights Reserved.
  */
  
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.CopyResourceAction;
+import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
+import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
+import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 ;
 
 /**
@@ -49,14 +43,6 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * that land on the resource navigator.
  */
 class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
-	/**
-	 * The time the mouse first started hovering over the current target
-	 */
-	protected long hoverStart = 0;
-	/**
-	 * The amount of time to hover over a tree item before expanding it
-	 */
-	protected static final long hoverThreshold = 1500;
 
 	/**
 	 * A flag indicating that the drop has been cancelled by the user.
@@ -68,132 +54,20 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	protected boolean alwaysOverwrite = false;
 
 	/**
-	 * Copies or moves the <code>source</code> file to the given <code>
-	 * destination</code>.  If overwrite is true, any resource that
-	 * already exists at the destination will be deleted before the
-	 * copy/move occurs.
+	 * The last valid operation.
 	 */
-	protected IStatus doCopy(final IResource source, final IPath destination, final boolean overwrite) {
-		final boolean copy = getCurrentOperation() == DND.DROP_COPY;
-		final IStatus[] result = new IStatus[] { ok()};
-		try {
-			new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					try {
-						if (overwrite) {
-							//delete the destination
-							IResource oldResource = source.getWorkspace().getRoot().findMember(destination);
-							if (oldResource.exists()) {
-								oldResource.delete(true, null);
-							}
-						}
-						if (copy) {
-							IPath newName = destination;
-							if (source.getWorkspace().getRoot().exists(destination))
-								newName = CopyResourceAction.getNewNameFor(destination, source.getWorkspace());
-							if (newName != null) {
-								source.copy(newName, false, monitor);
-							}
-						} else {
-							source.move(destination, false, monitor);
-						}
-					} catch (CoreException e) {
-						result[0] = e.getStatus();
-					}
-				}
-			});
-		} catch (InvocationTargetException e) {
-			//implementation doesn't throw this
-		} catch (InterruptedException e) {
-		}
-		return result[0];
-	}
+	private int lastValidOperation = DND.DROP_NONE;
 
-	/**
-	 * Copies the source into the target container.  Returns a status object
-	 * indicating success or failure.
+	/*
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
-	protected IStatus dragAndDropCopy(IContainer target, IResource source) {
-		if (isCanceled) {
-			return ok();
-		}
-		if (getCurrentOperation() != DND.DROP_COPY && (source.equals(target) || source.getParent().equals(target))) {
-			return info("Same Source And Destination"); //$NON-NLS-1$
-		}
-		if (source.getFullPath().isPrefixOf(target.getFullPath())) {
-			return error(source, "destination A SubFolder"); //$NON-NLS-1$
-		}
-		IPath destination = target.getFullPath().append(source.getName());
-
-		IStatus result = doCopy(source, destination, false);
-		if (result.getCode() == IResourceStatus.PATH_OCCUPIED) {
-			if (alwaysOverwrite) {
-				return doCopy(source, destination, true);
-			}
-			String query = queryOverwrite(destination.toString());
-			if (query == YES) {
-			   return doCopy(source, destination, true);
-			}
-			if (query == CANCEL) {
-				isCanceled = true;
-				return ok();
-			}
-			if (query == ALL) {
-				alwaysOverwrite = true;
-				return doCopy(source, destination, true);
-			}
-			if (query == NO) {
-				return ok();
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Performs an import of the given file into the provided
-	 * container.  Returns a status indicating if the import was successful.
-	 */
-	protected IStatus dragAndDropImport(IContainer target, String filePath) {
-		File toImport = new File(filePath);
-		if (target.getLocation().equals(toImport)) {
-			return info(("DropAdapter.canNotDropOntoSelf")); //$NON-NLS-1$
-		}
-		ImportOperation op = 
-			new ImportOperation(target.getFullPath(), new File(toImport.getParent()), FileSystemStructureProvider.INSTANCE, this, Arrays.asList(new File[] {toImport})); 
-		op.setCreateContainerStructure(false);
-		try {
-			new ProgressMonitorDialog(getShell()).run(true, true, op);
-		} catch (InterruptedException e) {
-			return info("Cancelled"); //$NON-NLS-1$
-		} catch (InvocationTargetException e) {
-			return error("Drop Operation Error", e.getTargetException());  //$NON-NLS-1$
-		}
-		return op.getStatus();
-	}
-
-	/**
-	 * The mouse has moved over the drop target.  If the
-	 * target item has changed, notify the action and check
-	 * that it is still enabled.
-	 */
-	public void dragOver(DropTargetEvent event) {
-		try {
-			//this method implements the UI behaviour that when the user hovers 
-			//over an unexpanded tree item long enough, it will auto-expand.
-			Object oldTarget = getCurrentTarget();
-			super.dragOver(event);
-			if (oldTarget != getCurrentTarget()) {
-				hoverStart = System.currentTimeMillis();
-			} else {
-				//if we've been hovering over this item awhile, expand it.
-				if (hoverStart > 0 && (System.currentTimeMillis() - hoverStart) > hoverThreshold) {
-					expandSelection((TreeItem) event.item);
-					hoverStart = 0;
-				}
-			}
-		} catch (Throwable t) {
-			handleException(t, event);
-		}
+	public void dragEnter(DropTargetEvent event) {
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType) &&
+			event.detail == DND.DROP_DEFAULT) {
+			// default to copy when dragging from outside Eclipse. Fixes bug 16308.
+			event.detail = DND.DROP_COPY;
+		}		
+		super.dragEnter(event);
 	}
 
 	/**
@@ -219,18 +93,6 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 			return error("Can Not Copy", null); //$NON-NLS-1$
 		} else {
 			return error("Can Not Move", null); //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * Expands the selection of the given tree viewer.
-	 */
-	protected void expandSelection(TreeItem selection) {
-		if (selection == null)
-			return;
-		if (!selection.getExpanded()) {
-			TreeViewer treeViewer = (TreeViewer) getViewer();
-			treeViewer.expandToLevel(selection.getData(), 1);
 		}
 	}
 
@@ -317,6 +179,9 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 * complex rules necessary for making the error dialog look nice.
 	 */
 	protected void openError(IStatus status) {
+		if (status == null)
+			return;
+
 		String genericTitle = "Error"; //$NON-NLS-1$
 		int codes = IStatus.ERROR | IStatus.WARNING;
 	
@@ -337,69 +202,149 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	}
 
 	/**
+	 * Returns the resource selection from the LocalSelectionTransfer.
+	 * 
+	 * @return the resource selection from the LocalSelectionTransfer
+	 */
+	private static final int typeMask = IResource.FOLDER | IResource.FILE;
+
+	private IResource[] getSelectedResources() {
+		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+		List resources = new ArrayList();
+
+		// Sanity checks
+		if (selection == null || !(selection instanceof IStructuredSelection) || selection.isEmpty()) {
+			return null;
+		}
+
+		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+
+		// loop through list and look for matching items
+		for (Iterator enum = structuredSelection.iterator(); enum.hasNext();) {
+			Object object = enum.next();
+			IResource resource = null;
+
+			if (object instanceof IResource) {
+				resource = (IResource) object;
+			} else if (object instanceof IAdaptable) {
+				resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
+			}
+			if (resource != null && (resource.getType() & typeMask) != 0) {
+				resources.add(resource);
+			}
+		}
+
+		IResource[] result = new IResource[resources.size()];
+		resources.toArray(result);
+
+		return result;
+	}
+
+	/**
 	 * Invoked when an action occurs. 
 	 * Argument context is the Window which contains the UI from which this action was fired.
 	 * This default implementation prints the name of this class and its label.
 	 * @see IAction#run
 	 */
-	public boolean performDrop(Object data) {
+	public boolean performDrop(final Object data) {
 		isCanceled = false;
 		alwaysOverwrite = false;
 		if (getCurrentTarget() == null || data == null) {
 			return false;
 		}
+		boolean result = false;
+		IStatus status = null;
+		IResource[] resources = null;
 		TransferData currentTransfer = getCurrentTransfer();
-		if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
-			return performResourceDrop(data);
+		if (LocalSelectionTransfer.getInstance().isSupportedType(currentTransfer)) {
+			resources = getSelectedResources();
+		} else if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
+			resources = (IResource[]) data;
+		} else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
+			status = performFileDrop(data);
+			result = status.isOK();
+		} else {
+			result = super.performDrop(data);
 		}
-		if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
-			return performFileDrop(data);
+		if (resources != null) {
+			if (getCurrentOperation() == DND.DROP_COPY) {
+				status = performResourceCopy(getShell(), resources);
+			} else {
+				status = performResourceMove(resources);
+			}
 		}
-		return super.performDrop(data);
+		openError(status);
+		return result;
 	}
 
 	/**
 	 * Performs a drop using the FileTransfer transfer type.
 	 */
-	protected boolean performFileDrop(Object data) {
-		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, "Problem Importing", null); //$NON-NLS-1$
-		mergeStatus(problems, validateTarget(getCurrentTarget()));
+	private IStatus performFileDrop(Object data) {
+		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, "ProblemI mporting", null); //$NON-NLS-1$
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		Object obj = getCurrentTarget();
 		IResource res = null;
-		if (obj instanceof ICElement) {
-			res = ((ICElement)obj).getUnderlyingResource();
+		if (obj instanceof IAdaptable) {
+			res = (IResource)((IAdaptable) obj).getAdapter(IResource.class);
 		}
-		IContainer targetResource = getActualTarget(res);
-		String[] names = (String[]) data;
-		for (int i = 0; i < names.length; i++) {
-			mergeStatus(problems, dragAndDropImport(targetResource, names[i]));
-		}
-		openError(problems);
-		return problems.isOK();
+		final IContainer target = getActualTarget(res);
+		final String[] names = (String[]) data;
+		// Run the import operation asynchronously. 
+		// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+		// while the operation executes. Fixes bug 16478.
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				getShell().forceActive();
+				CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
+				operation.copyFiles(names, target);
+			}
+		});
+		return problems;
 	}
 
 	/**
-	 * Performs a drop using the ResourceTransfer transfer type.
+	 * Performs a resource copy
 	 */
-	protected boolean performResourceDrop(Object data) {
+	private IStatus performResourceCopy(Shell shell, IResource[] sources) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, "Problems Moving", null); //$NON-NLS-1$
-		mergeStatus(problems, validateTarget(getCurrentTarget()));
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
 
 		Object obj = getCurrentTarget();
 		IResource res = null;
-		if (obj instanceof ICElement) {
-			res = ((ICElement)obj).getUnderlyingResource();
+		if (obj instanceof IAdaptable) {
+			res = (IResource)((IAdaptable) obj).getAdapter(IResource.class);
 		}
-		IContainer targetResource = getActualTarget(res);
-		IResource[] sources = (IResource[]) data;
-		for (int i = 0; i < sources.length; i++) {
-			mergeStatus(problems, dragAndDropCopy(targetResource, sources[i]));
-		}
-		openError(problems);
+		IContainer target = getActualTarget(res);
+		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
+		operation.copyResources(sources, target);
+		
+		return problems;
+	}
 
-		//always return false because we don't want the source to clean up
-		return false;
+	/**
+	 * Performs a resource move
+	 */
+	private IStatus performResourceMove(IResource[] sources) {
+		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, "Problems Moving", null); //$NON-NLS-1$
+		mergeStatus(problems, validateTarget(getCurrentTarget(), getCurrentTransfer()));
+
+		Object obj = getCurrentTarget();
+		IResource res = null;
+		if (obj instanceof IAdaptable) {
+			res = (IResource)((IAdaptable) obj).getAdapter(IResource.class);
+		}
+		IContainer target = getActualTarget(res);
+		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+			getShell(), 
+			"Move Resource Action",			//$NON-NLS-1$
+			"Move Resource Action");//$NON-NLS-1$	
+		sources = checker.checkReadOnlyResources(sources);
+		MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
+		operation.copyResources(sources, target);
+		
+		return problems;
 	}
 
 	/* (non-Javadoc)
@@ -425,34 +370,77 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 * This method is used to notify the action that some aspect of
 	 * the drop operation has changed.
 	 */
-	public boolean validateDrop(Object target, int operation, TransferData transferType) {
-		if (super.validateDrop(target, operation, transferType)) {
+	public boolean validateDrop(Object target, int dragOperation, TransferData transferType) {
+		if (dragOperation != DND.DROP_NONE) {
+			lastValidOperation = dragOperation;
+		}
+		if (FileTransfer.getInstance().isSupportedType(transferType) &&
+			lastValidOperation != DND.DROP_COPY) {
+			// only allow copying when dragging from outside Eclipse
+			return false;
+		}
+
+		if (super.validateDrop(target, dragOperation, transferType)) {
 			return true;
 		}
-		return validateTarget(target).isOK();
+		return validateTarget(target, transferType).isOK();
 	}
 
 	/**
 	 * Ensures that the drop target meets certain criteria
 	 */
-	protected IStatus validateTarget(Object target) {
-		if (target instanceof ICElement) {
-			IResource r = ((ICElement)target).getUnderlyingResource();
+	private IStatus validateTarget(Object target, TransferData transferType) {
+		if (target instanceof IAdaptable) {
+			IResource r = (IResource)((IAdaptable) target).getAdapter(IResource.class);
 			if (r == null)
 				return info("Target Must Be Resource"); //$NON-NLS-1$
 			target = r;
 		}
+
 		if (!(target instanceof IResource)) {
 			return info("Target Must Be Resource"); //$NON-NLS-1$
 		}
-		IResource resource = (IResource)target;
+		IResource resource = (IResource) target;
 		if (!resource.isAccessible()) {
 			return error("Can Not Drop Into Closed Project"); //$NON-NLS-1$
 		}
 		IContainer destination = getActualTarget(resource);
 		if (destination.getType() == IResource.ROOT) {
-			return error("Resources Can Not Be Siblings"); //$NON-NLS-2$
+			return error("Resources Can Not Be Siblings"); //$NON-NLS-1$
+		}
+		String message = null;
+		// drag within Eclipse?
+		if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
+			IResource[] selectedResources = getSelectedResources();
+			
+			if (selectedResources == null)
+				message = "Drop Operation Error Other"; //$NON-NLS-1$
+			else {
+				CopyFilesAndFoldersOperation operation;
+				if (lastValidOperation == DND.DROP_COPY) {
+					operation = new CopyFilesAndFoldersOperation(getShell());
+				}
+				else {
+					operation = new MoveFilesAndFoldersOperation(getShell());
+				}
+				message = operation.validateDestination(destination, selectedResources);
+			}
+		} // file import?
+		else if (FileTransfer.getInstance().isSupportedType(transferType)) {
+			String[] sourceNames = (String[]) FileTransfer.getInstance().nativeToJava(transferType);
+			if (sourceNames == null) {
+				// source names will be null on Linux. Use empty names to do destination validation.
+				// Fixes bug 29778
+				sourceNames = new String[0];
+			}				
+			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
+			message = copyOperation.validateImportDestination(destination, sourceNames);
+		}		
+		if (message != null) {
+			return error(message);
 		}
 		return ok();
 	}
+
+
 }

@@ -1,3 +1,14 @@
+2004-03-25 David Inglis
+
+	Fixed up getProcessList to filter on platform.
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	
+	Added schemas for CProject & CBuildConsole 
+	
+	* plugin.xml
+	
+
 2004-03-25 Hoda Amer
 	Joined effort with Bogdan: Added a TimeOut class to core.utils 
 	that implements a thread to control parser timeout.

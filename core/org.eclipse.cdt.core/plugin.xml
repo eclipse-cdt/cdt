@@ -22,11 +22,11 @@
    </requires>
 
 
-   <extension-point id="CProject" name="%CProject.name"/>
+   <extension-point id="CProject" name="%CProject.name" schema="schema/CProject.exsd"/>
 <!-- =================================================================================== -->
 <!-- Extension Point:(work in progress) IConsole, customize a C Build console output     -->
 <!-- =================================================================================== -->
-   <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
+   <extension-point id="CBuildConsole" name="%CBuildConsole.name" schema="schema/CBuildConsole.exsd"/>
 <!-- =================================================================================== -->
 <!-- Extension Point: IProcessList, returns a list of running processes                  -->
 <!-- =================================================================================== -->

@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -449,7 +450,7 @@ public class CCorePlugin extends Plugin {
 				for (int i = 0; i < extensions.length; i++) {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
-						String builderID = configElements[j].getAttribute("builderID"); //$NON-NLS-1$
+						String builderID = configElements[j].getAttribute("id"); //$NON-NLS-1$
 						if ((id == null && builderID == null) || (id != null && id.equals(builderID))) {
 							return (IConsole) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 						}
@@ -739,28 +740,37 @@ public class CCorePlugin extends Plugin {
 		convertProjectFromCtoCC(projectHandle, monitor);
 	}
 
-	// Extract the builder from the .cdtproject.  
-	//	public ICBuilder[] getBuilders(IProject project) throws CoreException {
-	//		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
-	//		ICBuilder builders[] = new ICBuilder[extensions.length];
-	//		System.arraycopy(extensions, 0, builders, 0, extensions.length);
-	//		return builders;
-	//	}
-
-	public IProcessList getProcessList() {
+	/**
+	 * Get the IProcessList contributed interface for the platform.
+	 * @return IProcessList
+	 */
+	public IProcessList getProcessList() throws CoreException {
 		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList"); //$NON-NLS-1$
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
-			if (configElements.length != 0) {
-				try {
-					return (IProcessList) configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
-				} catch (CoreException e) {
-					log(e);
+			IConfigurationElement defaultContributor = null;
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					if (configElements[j].getName().equals("processList")) { //$NON-NLS-1$
+						String platform = configElements[j].getAttribute("platform"); //$NON-NLS-1$
+						if (platform == null ) { // first contrbutor found with not platform will be default.
+							if (defaultContributor == null) {
+								defaultContributor = configElements[j];
+							}
+						} else if (platform.equals(BootLoader.getOS())) {
+							// found explicit contributor for this platform.
+							return (IProcessList) configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
+						}
+					}
 				}
+			}
+			if ( defaultContributor != null) { 
+				return (IProcessList) defaultContributor.createExecutableExtension("class"); //$NON-NLS-1$
 			}
 		}
 		return null;
+		
 	}
 	
 	/**

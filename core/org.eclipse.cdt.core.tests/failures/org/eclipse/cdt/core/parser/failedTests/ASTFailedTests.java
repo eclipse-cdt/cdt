@@ -39,14 +39,7 @@ public class ASTFailedTests extends BaseASTTest
     }
     public void testBug39504A() throws Exception
     {
-    	try
-    	{
-        	IASTVariable variable = (IASTVariable)parse("int y = sizeof(x[0]);").getDeclarations().next();
-    	}
-    	catch( ClassCastException cce )
-    	{
-    		assertFalse( "We should not get a cast error here", false );
-    	}
+      	assertCodeFailsParse("int y = sizeof(x[0]);");
     }
     public void testBug39504B() throws Exception
     {
@@ -65,10 +58,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("C &(C::*DD)(const C &x) = &C::operator=;");
     }
-    public void testBug39526() throws Exception
-    {
-        assertCodeFailsParse("UnitList unit_list (String(\"keV\"));");
-    }
+
     public void testBug39528() throws Exception
     {
         Writer code = new StringWriter();
@@ -254,8 +244,7 @@ public class ASTFailedTests extends BaseASTTest
     }
     public void testBug39698A() throws Exception
     {
-        Iterator declarations = parse("int c = a <? b;").getDeclarations();
-        assertFalse( "Should be 1 declaration, not 0", declarations.hasNext() );
+        assertCodeFailsParse("int c = a <? b;");
     }
     public void testBug39698B() throws Exception
     {

@@ -1,4 +1,8 @@
 2003-08-25 John Camelon
+	Moved testBug39526() from ASTFailedTests.java to QuickParseASTTests.java.
+	Moved testBug41520() from FullParseFailedTests.java to CompleteParseASTTest.java
+
+2003-08-25 John Camelon
 	Updated TranslationUnitTests to not include K&R testing.  
 
 2003-08-25 John Camelon

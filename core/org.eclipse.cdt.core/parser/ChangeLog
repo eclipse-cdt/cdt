@@ -1,4 +1,8 @@
 2003-08-25 John Camelon
+	Fixed bug39526 - Parser doesn't handle initializers correctly.  
+	Fixed bug41520 - FullParse : Constructor Initializer is mistaken as function prototype 
+
+2003-08-25 John Camelon
 	Fixed Bug 39530 - More problems with initializers. 
 	Fixed Bug 37424 - Crash when opening big files
 	Refactored pointerOperators & cvQualifiers to not throw backtracks in optional case.  

@@ -1768,5 +1768,11 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		parse( "X sPassed(-1)");
 	}
+
+	public void testBug39526() throws Exception
+	{
+		parse("UnitList unit_list (String(\"keV\"));");
+	}
+
 		
 }

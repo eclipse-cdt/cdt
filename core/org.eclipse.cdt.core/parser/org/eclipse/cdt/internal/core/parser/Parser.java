@@ -667,27 +667,47 @@ public class Parser implements IParser
                     return;
                 }
             default :
-                IToken mark = mark();
-                try
-                {
-                    simpleDeclaration(
-                        true,
-                        false,
-                        scope,
-                        ownerTemplate);
-                    // try it first with the original strategy
-                }
-                catch (Backtrack bt)
-                {
-                    // did not work 
-                    backup(mark);
-                    simpleDeclaration(
-                        false,
-                        false,
-                        scope,
-                        ownerTemplate);
-                    // try it again with the second strategy
-                }
+                simpleDeclarationStrategyUnion(scope, ownerTemplate);
+        }
+    }
+    protected void simpleDeclarationStrategyUnion(
+        IASTScope scope,
+        IASTTemplate ownerTemplate)
+        throws EndOfFile, Backtrack
+    {
+        IToken mark = mark();
+        try
+        {
+            simpleDeclaration(
+                SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
+                false,
+                scope,
+                ownerTemplate);
+            // try it first with the original strategy
+        }
+        catch (Backtrack bt)
+        {
+            // did not work 
+            backup(mark);
+            
+            try
+            {  
+            	simpleDeclaration(
+                	SimpleDeclarationStrategy.TRY_FUNCTION,
+	                false,
+    	            scope,
+        	        ownerTemplate);
+            }
+            catch( Backtrack bt2 )
+            {
+            	backup( mark ); 
+
+				simpleDeclaration(
+					SimpleDeclarationStrategy.TRY_VARIABLE,
+					false,
+					scope,
+					ownerTemplate);
+            }
         }
     }
     /**
@@ -784,7 +804,7 @@ public class Parser implements IParser
      * @throws Backtrack		request a backtrack
      */
     protected void simpleDeclaration(
-        boolean tryConstructor,
+        SimpleDeclarationStrategy strategy,
         boolean forKR,
         IASTScope scope,
         IASTTemplate ownerTemplate)
@@ -793,7 +813,7 @@ public class Parser implements IParser
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
 
-        declSpecifierSeq(false, tryConstructor, sdw, forKR );
+        declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, sdw, forKR );
         try
         {       
 	        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
@@ -814,27 +834,17 @@ public class Parser implements IParser
         
         Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
-            try
-            {
-                declarator = initDeclarator(sdw, forKR);
+        {
+            declarator = initDeclarator(sdw, forKR, strategy);
                 
-                while (LT(1) == IToken.tCOMMA)
-                {
-                    consume();
-                    try
-                    {
-                        initDeclarator(sdw, forKR);
-                    }
-                    catch (Backtrack b)
-                    {
-                        throw b;
-                    }
-                }
-            }
-            catch (Backtrack b)
+            while (LT(1) == IToken.tCOMMA)
             {
-                // allowed to be empty
+                consume();
+                initDeclarator(sdw, forKR, strategy);
             }
+        }
+
+
         boolean done = false;
         boolean hasFunctionBody = false;
         switch (LT(1))
@@ -1027,19 +1037,12 @@ public class Parser implements IParser
 	                    sdw.isUnsigned(), sdw.isTypeNamed()));
         }
         catch( ASTSemanticException se ) { 
-			failParse();
 			throw backtrack;
 		}
         
         if (LT(1) != IToken.tSEMI)
-            try
-            {
-                initDeclarator(sdw, false);
-            }
-            catch (Backtrack b)
-            {
-                // allowed to be empty
-            }
+           initDeclarator(sdw, false, SimpleDeclarationStrategy.TRY_FUNCTION );
+ 
         if (current == LA(1))
             throw backtrack;
         collection.addParameter(sdw);
@@ -1713,10 +1716,10 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator initDeclarator(
-        DeclarationWrapper sdw, boolean forKR )
+        DeclarationWrapper sdw, boolean forKR, SimpleDeclarationStrategy strategy )
         throws Backtrack
     {
-        Declarator d = declarator(sdw, sdw.getScope(), forKR );
+        Declarator d = declarator(sdw, sdw.getScope(), forKR, strategy );
         // handle = initializerClause
         if (LT(1) == IToken.tASSIGN)
         {
@@ -1811,7 +1814,7 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator declarator(
-        IDeclaratorOwner owner, IASTScope scope, boolean forKR )
+        IDeclaratorOwner owner, IASTScope scope, boolean forKR, SimpleDeclarationStrategy strategy )
         throws Backtrack
     {
         Declarator d = null;
@@ -1825,7 +1828,7 @@ public class Parser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                declarator(d, scope, forKR);
+                declarator(d, scope, forKR, strategy );
                 consume(IToken.tRPAREN);
             }
             else if (LT(1) == IToken.t_operator)
@@ -1875,7 +1878,7 @@ public class Parser implements IParser
                     		throw backtrack;
                     
                         // temporary fix for initializer/function declaration ambiguity
-                        if (!LA(2).looksLikeExpression()  )
+                        if (!LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE  )
                         {
                             // parameterDeclarationClause
                             d.setIsFunction(true);
@@ -2018,7 +2021,7 @@ public class Parser implements IParser
                                     do
                                     {
                                         simpleDeclaration(
-                                            false,
+                                            null,
                                             true,
                                             sdw.getScope(),
                                             sdw.getOwnerTemplate());

@@ -59,10 +59,7 @@ public class LaunchImages {
 	public static Image get(String key) {
 		return imageRegistry.get(key);
 	}
-	
-	private static ImageDescriptor create(String prefix, String name) {
-		return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
-	}
+
 	
 	private static URL makeIconFileURL(String prefix, String name) {
 		StringBuffer buffer= new StringBuffer(prefix);

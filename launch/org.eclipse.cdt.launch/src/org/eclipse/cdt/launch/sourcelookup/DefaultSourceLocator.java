@@ -166,6 +166,9 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
 	{
 		fSourceLocator = new CUISourceLocator( getProject( configuration ) );
+		String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
+		if ( !isEmpty( memento ) )
+			initializeFromMemento( memento );
 	}
 
 	/* (non-Javadoc)

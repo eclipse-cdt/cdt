@@ -56,17 +56,18 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	public void initializeFrom( ILaunchConfiguration configuration )
 	{
 		IProject project = getProject( configuration );
+		IProject oldProject = fBlock.getProject();
 		fBlock.setProject( getProject( configuration ) );
 		if ( project != null )
 		{
 			try
 			{
 				String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" );
-				if ( isEmpty( id )|| DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR.equals( id ) )
+				if ( isEmpty( id ) || DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR.equals( id ) )
 				{
 					DefaultSourceLocator locator = new DefaultSourceLocator();
 					String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
-					if ( !isEmpty( memento ) )
+					if ( project.equals( oldProject ) && !isEmpty( memento ) )
 					{
 						locator.initializeFromMemento( memento );				
 					}
@@ -100,7 +101,11 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 				locator.initializeDefaults( configuration );
 				ICSourceLocator clocator = (ICSourceLocator)locator.getAdapter( ICSourceLocator.class );
 				if ( clocator != null )
+				{
+					if ( !project.equals( fBlock.getProject() ) )
+						fBlock.initialize( clocator );
 					clocator.setSourceLocations( fBlock.getSourceLocations() );
+				}
 				configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
 			}
 			catch( CoreException e )

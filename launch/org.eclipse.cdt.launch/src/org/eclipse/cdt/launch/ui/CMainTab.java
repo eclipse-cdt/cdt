@@ -384,7 +384,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);
 		} else {
-			String name = getLaunchConfigurationDialog().generateName(cElement.getElementName());
+			String name = getLaunchConfigurationDialog().generateName(cElement.getCProject().getElementName());
 			config.rename(name);
 		}
 	}

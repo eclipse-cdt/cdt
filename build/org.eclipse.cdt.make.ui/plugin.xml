@@ -300,7 +300,7 @@
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            name="C/C++ Project Paths"
+            name="%ProjectPathProperies.name"
             nameFilter="*"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathPropertyPage"
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.CPathPropertyPage">

@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;

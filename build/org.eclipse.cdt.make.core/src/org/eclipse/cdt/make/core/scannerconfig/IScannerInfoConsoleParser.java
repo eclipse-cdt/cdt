@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
-import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.core.resources.IProject;
 
 /**

@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.make.internal.core.scannerconfig.util;
+package org.eclipse.cdt.make.core.scannerconfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

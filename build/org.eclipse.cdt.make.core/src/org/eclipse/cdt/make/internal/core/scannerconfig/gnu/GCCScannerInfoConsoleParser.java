@@ -15,8 +15,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			return false;
 		Iterator I = allTokens.iterator();
 		String token = ((String) I.next()).toLowerCase();
-		if (token.indexOf("gcc") != -1 || token.indexOf("g++") != -1) {//$NON-NLS-1$ //$NON-NLS-2$
+		if (token.indexOf("gcc") != -1 || token.indexOf("g++") != -1 || token.indexOf("qcc") != -1) {//$NON-NLS-1$ //$NON-NLS-2$
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();
 			List symbols = new ArrayList();

@@ -19,10 +19,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MessageLine;

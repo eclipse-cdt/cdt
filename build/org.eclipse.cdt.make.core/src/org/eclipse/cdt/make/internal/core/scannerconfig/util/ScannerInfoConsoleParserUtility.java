@@ -21,7 +21,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

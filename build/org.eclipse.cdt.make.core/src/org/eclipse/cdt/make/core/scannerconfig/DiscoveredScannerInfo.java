@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 

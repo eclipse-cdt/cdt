@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.make.internal.core.scannerconfig;
+package org.eclipse.cdt.make.core.scannerconfig;
 
 import java.util.List;
 

@@ -18,7 +18,7 @@ import java.util.List;
  * 
  * @author Doug Schaefer
  */
-public interface IASTSimpleDeclaration extends IASTNode {
+public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
 
 	/**
 	 * This returns the object representing the declSpecifiers for this

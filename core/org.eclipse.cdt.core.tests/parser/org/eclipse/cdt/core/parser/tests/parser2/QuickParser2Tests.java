@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.core.parser2.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.GPLUSPLUSParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
@@ -1394,7 +1394,7 @@ public class QuickParser2Tests extends TestCase {
         {
             ICPPParserExtensionConfiguration config = null;
             if( gcc )
-                config = new GPLUSPLUSParserExtensionConfiguration();
+                config = new GNUCPPParserExtensionConfiguration();
             else
                 config = new ANSICPPParserExtensionConfiguration();
             parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE, collector,

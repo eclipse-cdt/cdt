@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 /**
  * @author jcamelon
  */
-public class GPLUSPLUSParserExtensionConfiguration implements
+public class GNUCPPParserExtensionConfiguration implements
         ICPPParserExtensionConfiguration {
 
     /* (non-Javadoc)

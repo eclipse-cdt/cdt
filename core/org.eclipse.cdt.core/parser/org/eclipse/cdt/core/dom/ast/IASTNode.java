@@ -62,11 +62,5 @@ public interface IASTNode {
 	 */
 	public IASTNodeProperty getPropertyInParent();
 	
-	/**
-	 * This method is the entry point for visitors.
-	 *  
-	 * @param visitor
-	 */
-	public void accept(ASTVisitor visitor);
 
 }

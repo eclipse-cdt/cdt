@@ -328,14 +328,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throw backtrack;
     }
 
-    protected Object compilationUnit;
-
     protected IToken simpleDeclarationMark;
-
-    protected abstract void translationUnit();
-
-    protected abstract void statement(Object scope) throws EndOfFileException,
-            BacktrackException;
 
     /**
      *  
@@ -356,8 +349,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 + (++parseCount) + ": " //$NON-NLS-1$
                 + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
                 + (parsePassed ? "" : " - parse failure")); //$NON-NLS-1$ //$NON-NLS-2$
-        return null;
+        return getTranslationUnit();
     }
+
 
     protected void skipOverCompoundStatement() throws BacktrackException,
             EndOfFileException {
@@ -581,6 +575,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     protected abstract Object unaryExpression(Object scope)
     throws BacktrackException, EndOfFileException;
+
+    protected abstract void translationUnit();
+    protected abstract void statement(Object scope) throws EndOfFileException,
+            BacktrackException;
+    
+    protected abstract IASTTranslationUnit getTranslationUnit(); 
+
 
 
     protected Object assignmentOperatorExpression(Object scope, Object kind,

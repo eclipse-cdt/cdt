@@ -15,6 +15,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -24,7 +27,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.DeclarationWrapper;
@@ -245,8 +247,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return designatorList;
     }
 
-    protected void declaration(Object scope) throws EndOfFileException,
-            BacktrackException {
+    protected IASTDeclaration declaration(IASTNode parent)
+            throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.t_asm:
             IToken first = consume(IToken.t_asm);
@@ -270,21 +272,23 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // if we made it this far, then we have all we need
             // do the callback
             // 				resultDeclaration.acceptElement(requestor);
-            break;
+            cleanupLastToken();
+            return null;
         default:
-            simpleDeclaration(scope);
+            IASTDeclaration d = simpleDeclaration(parent);
+            cleanupLastToken();
+            return d;
         }
 
-        cleanupLastToken();
     }
 
     /**
-     * @param scope
+     * @param parent
      * @throws BacktrackException
      * @throws EndOfFileException
      */
-    protected Object simpleDeclaration(Object scope) throws BacktrackException,
-            EndOfFileException {
+    protected CASTSimpleDeclaration simpleDeclaration(IASTNode parent)
+            throws BacktrackException, EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
         int firstLine = firstToken.getLineNumber();
@@ -292,10 +296,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (firstToken.getType() == IToken.tLBRACE)
             throwBacktrack(firstToken.getOffset(), firstToken.getEndOffset(),
                     firstToken.getLineNumber(), firstToken.getFilename());
-        DeclarationWrapper sdw = new DeclarationWrapper(scope, firstToken
-                .getOffset(), firstToken.getLineNumber(), null, fn);
-        firstToken = null; // necessary for scalability
 
+        DeclarationWrapper sdw = new DeclarationWrapper(parent, firstToken
+                .getOffset(), firstToken.getLineNumber(), null, fn);
+
+        CASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration(
+                parent, firstToken);
+        firstToken = null; // necessary for scalability
         declSpecifierSeq(sdw, false);
         Object simpleTypeSpecifier = null;
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != null) //IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
@@ -461,24 +468,37 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
+     * @return
+     */
+    private CASTSimpleDeclaration createSimpleDeclaration(IASTNode parent,
+            IToken la) {
+        return new CASTSimpleDeclaration(parent, null, la.getOffset());
+    }
+
+    protected CASTTranslationUnit translationUnit;
+
+    protected CASTTranslationUnit createTranslationUnit() {
+        return new CASTTranslationUnit(null, null, 0);
+    }
+
+    /**
      * This is the top-level entry point into the ANSI C++ grammar.
      * 
      * translationUnit : (declaration)*
      */
-    protected void translationUnit() {
+protected void translationUnit() {
         try {
-            compilationUnit = null; /* astFactory.createCompilationUnit(); */
+            translationUnit = createTranslationUnit();
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;
         }
 
-        //		compilationUnit.enterScope( requestor );
-
+        int lastBacktrack = -1;
         while (true) {
             try {
                 int checkOffset = LA(1).hashCode();
-                declaration(compilationUnit);
+                declaration(translationUnit);
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
@@ -489,18 +509,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     // Mark as failure and try to reach a recovery point
                     failParse(b);
                     errorHandling();
-                    //                    if (lastBacktrack != -1 && lastBacktrack ==
-                    // LA(1).hashCode())
-                    //                    {
-                    //                        // we haven't progressed from the last backtrack
-                    //                        // try and find tne next definition
-                    //                        failParseWithErrorHandling();
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        // start again from here
-                    //                        lastBacktrack = LA(1).hashCode();
-                    //                    }
+                    if (lastBacktrack != -1 && lastBacktrack == LA(1).hashCode())
+                    {
+                        // we haven't progressed from the
+                        // last backtrack
+                        // try and find tne next definition
+                        failParseWithErrorHandling();
+                    }
+                    else
+                    {
+                        // start again from here
+                        lastBacktrack = LA(1).hashCode();
+                    }
                 } catch (EndOfFileException e) {
                     break;
                 }
@@ -527,7 +547,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
         //        compilationUnit.exitScope( requestor );
     }
-
     /**
      * @param expression
      * @throws BacktrackException
@@ -1274,7 +1293,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             statement(scope);
             cleanupLastToken();
             return;
-        
+
         //jump statement
         case IToken.t_break:
             consume();
@@ -1333,7 +1352,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             // declarationStatement
-            declaration(scope);
+            declaration((IASTNode) scope);
         }
 
     }
@@ -1810,7 +1829,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_struct:
             case IToken.t_union:
                 try {
-                    classSpecifier(sdw);
+                    structOrUnionSpecifier(sdw);
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
@@ -1859,7 +1878,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void classSpecifier(DeclarationWrapper sdw)
+    protected void structOrUnionSpecifier(DeclarationWrapper sdw)
             throws BacktrackException, EndOfFileException {
         Object nameType = null; //ClassNameType.IDENTIFIER;
         Object classKind = null;
@@ -1938,7 +1957,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         break memberDeclarationLoop;
                     default:
                         try {
-                            declaration(astClassSpecifier);
+                            declaration((IASTNode) astClassSpecifier);
                         } catch (BacktrackException bt) {
                             if (checkToken == LA(1).hashCode())
                                 failParseWithErrorHandling();
@@ -2053,7 +2072,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 declarator(d);
                 consume(IToken.tRPAREN);
-            } else if( LT(1) == IToken.tIDENTIFIER ){
+            } else if (LT(1) == IToken.tIDENTIFIER) {
                 identifier();
             }
 
@@ -2245,7 +2264,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
         collection.addParameter(sdw);
     }
-    
 
     /**
      * @throws BacktrackException
@@ -2261,13 +2279,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         } catch (BacktrackException bt) {
             backup(mark);
             try {
-                simpleDeclaration(scope);
+                simpleDeclaration((IASTNode) scope);
             } catch (BacktrackException b) {
                 failParse(b);
                 throwBacktrack(b);
             }
         }
 
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#getTranslationUnit()
+     */
+    protected IASTTranslationUnit getTranslationUnit() {
+        return translationUnit;
     }
 
 }

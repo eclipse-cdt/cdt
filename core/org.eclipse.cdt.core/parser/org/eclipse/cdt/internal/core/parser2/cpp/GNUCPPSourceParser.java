@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -47,7 +48,7 @@ import org.eclipse.cdt.internal.core.parser2.TypeId;
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
     private ScopeStack templateIdScopes = new ScopeStack();
-
+    protected Object translationUnit;
     private static class ScopeStack {
         private int[] stack;
 
@@ -4501,7 +4502,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected void translationUnit() {
         try {
-            compilationUnit = null; /* astFactory.createCompilationUnit(); */
+            translationUnit = null; /* astFactory.createCompilationUnit(); */
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;
@@ -4512,7 +4513,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         while (true) {
             try {
                 int checkOffset = LA(1).hashCode();
-                declaration(compilationUnit, null);
+                declaration(translationUnit, null);
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
@@ -4584,6 +4585,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             d.addArrayModifier(arrayMod);
         }
         return last;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#getTranslationUnit()
+     */
+    protected IASTTranslationUnit getTranslationUnit() {
+        return (IASTTranslationUnit) translationUnit;
     }
 
 }

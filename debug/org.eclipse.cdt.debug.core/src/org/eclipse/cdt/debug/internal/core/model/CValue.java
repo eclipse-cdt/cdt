@@ -271,45 +271,53 @@ public class CValue extends AbstractCValue {
 	}
 
 	private String getLongValueString( ICDILongValue value ) throws CDIException {
-		CVariableFormat format = getParentVariable().getFormat(); 
-		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
-			if ( isUnsigned() ) {
-				BigInteger bigValue = new BigInteger( value.getValueString() );
-				return bigValue.toString();
+		try {
+			CVariableFormat format = getParentVariable().getFormat(); 
+			if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+				if ( isUnsigned() ) {
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					return bigValue.toString();
+				}
+				return Long.toString( value.longValue() );
 			}
-			return Long.toString( value.longValue() );
+			else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
+				StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
+				if ( isUnsigned() ) {
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					sb.append( bigValue.toString( 16 ) );
+				}
+				else
+					sb.append( Long.toHexString( value.longValue() ) );
+				return sb.toString();
+			}
 		}
-		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
-			if ( isUnsigned() ) {
-				BigInteger bigValue = new BigInteger( value.getValueString() );
-				sb.append( bigValue.toString( 16 ) );
-			}
-			else
-				sb.append( Long.toHexString( value.longValue() ) );
-			return sb.toString();
+		catch( NumberFormatException e ) {
 		}
 		return null;
 	}
 
 	private String getLongLongValueString( ICDILongLongValue value ) throws CDIException {
-		CVariableFormat format = getParentVariable().getFormat(); 
-		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
-			if ( isUnsigned() ) {
-				BigInteger bigValue = new BigInteger( value.getValueString() );
-				return bigValue.toString();
+		try {
+			CVariableFormat format = getParentVariable().getFormat(); 
+			if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+				if ( isUnsigned() ) {
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					return bigValue.toString();
+				}
+				return Long.toString( value.longValue() );
 			}
-			return Long.toString( value.longValue() );
+			else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
+				StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
+				if ( isUnsigned() ) {
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					sb.append( bigValue.toString( 16 ) );
+				}
+				else
+					sb.append( Long.toHexString( value.longValue() ) );
+				return sb.toString();
+			}
 		}
-		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
-			if ( isUnsigned() ) {
-				BigInteger bigValue = new BigInteger( value.getValueString() );
-				sb.append( bigValue.toString( 16 ) );
-			}
-			else
-				sb.append( Long.toHexString( value.longValue() ) );
-			return sb.toString();
+		catch( NumberFormatException e ) {
 		}
 		return null;
 	}

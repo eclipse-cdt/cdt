@@ -1,3 +1,7 @@
+2004-12-20 Mikhail Khodjaiants
+	Fix for bug 81698: NumberFormatException in CValue.
+	* CValue.java
+
 2004-12-16 Mikhail Khodjaiants
 	Fix for bug 81381: Deadlock when single stepping.
 	* CThread.java

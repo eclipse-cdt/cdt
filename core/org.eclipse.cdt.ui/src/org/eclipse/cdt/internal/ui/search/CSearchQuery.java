@@ -144,23 +144,25 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		NewSearchResultCollector finalCollector= new NewSearchResultCollector(textResult, mainSearchPM);
 
 		ICSearchPattern pattern = null;
-		if( _searchFor.size() > 1 ){
-			OrPattern orPattern = new OrPattern();
-			for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
-				SearchFor element = (SearchFor)iter.next();
-				orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
+		if( _searchFor.size() > 0 ){
+			if( _searchFor.size() > 1 ){
+				OrPattern orPattern = new OrPattern();
+				for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
+					SearchFor element = (SearchFor)iter.next();
+					orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
+				}
+				
+				pattern = orPattern;
+				
+			} else {
+				Iterator iter = _searchFor.iterator();
+				pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
 			}
 			
-			pattern = orPattern;
-			
-		} else {
-			Iterator iter = _searchFor.iterator();
-			pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
-		}
-		
-		try {
-			engine.search( _workspace, pattern, _scope, finalCollector, false );
-		} catch (InterruptedException e) {
+			try {
+				engine.search( _workspace, pattern, _scope, finalCollector, false );
+			} catch (InterruptedException e) {
+			}
 		}
 		
 		matchCount = finalCollector.getMatchCount();

@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
@@ -1864,16 +1863,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void setMemoryBlockRetrieval( CExtendedMemoryBlockRetrieval memoryBlockRetrieval ) {
 		fMemoryBlockRetrieval = memoryBlockRetrieval;
-	}
-
-	public String evaluateExpressionToString( String expression ) throws DebugException {
-		try {
-			return getCDITarget().evaluateExpressionToString( expression );
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( e.getMessage(), null );
-		}
-		return null;
 	}
 
 	protected void failed( String message, Throwable e ) {

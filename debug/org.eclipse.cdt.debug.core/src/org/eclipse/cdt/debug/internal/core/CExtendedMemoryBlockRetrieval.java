@@ -54,9 +54,6 @@ public class CExtendedMemoryBlockRetrieval implements IExtendedMemoryBlockRetrie
 		}
 		IDebugTarget target = selected.getDebugTarget();
 		if ( target instanceof CDebugTarget ) {
-			if ( address == null ) {
-				address = ((CDebugTarget)target).evaluateExpressionToString( expression );
-			}
 			if ( address != null ) {
 				try {
 					BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$

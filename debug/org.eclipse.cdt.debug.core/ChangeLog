@@ -1,4 +1,10 @@
-2004-10-24 Alain Magloire
+2004-10-22 Mikhail Khodjaiants
+	Replaced the deprecated "evaluateExpressionTtoString" method of "ICDITarget.
+	* CDebugTarget.java
+	* CStackFrame.java
+	* CExtendedMemoryBlockRetrieval.java
+
+2004-10-22 Alain Magloire
 	Provide a context for ICDITarget.evaluateExpressionTtoString()
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
 

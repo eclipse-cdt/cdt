@@ -661,7 +661,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public String evaluateExpressionToString( String expression ) throws DebugException {
 		try {
-			return getCDITarget().evaluateExpressionToString( expression );
+			return getCDITarget().evaluateExpressionToString( getCDIStackFrame(), expression );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );

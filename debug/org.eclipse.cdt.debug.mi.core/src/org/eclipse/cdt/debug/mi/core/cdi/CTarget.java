@@ -354,11 +354,11 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#suspend()
 	 */
 	public void suspend() throws CDIException {
-		session.getMISession().getMIInferior().interrupt();
 		// send a noop to see if we get an aswer.
 		MISession mi = session.getMISession();
 		MICommand noop = new MICommand("");
 		try {
+			mi.getMIInferior().interrupt();
 			mi.postCommand(noop);
 			MIInfo info = noop.getMIInfo();
 			if (info == null) {

@@ -1207,17 +1207,37 @@ public class CompleteParser2Tests extends TestCase {
 		
 	public void testBug43679_A () throws Exception
 	{
-	    parse( "struct Sample { int size() const; }; extern const Sample * getSample(); int trouble() {  return getSample()->size(); } ", false ); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "struct Sample { int size() const; }; extern const Sample * getSample(); int trouble() {  return getSample()->size(); } " ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 7 );
+ 		ICompositeType sample = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICPPMethod size = (ICPPMethod) col.getName(1).resolveBinding();
+ 		IFunction getSample = (IFunction) col.getName(3).resolveBinding();
+
+ 		assertInstances( col, sample, 2 );
+ 		assertInstances( col, size, 2 );
+ 		assertInstances( col, getSample, 2 );
 	}
 
 	public void testBug43679_B () throws Exception
 	{ 
-		parse( "struct Sample{int size() const; }; struct Sample; ", false ); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "struct Sample{int size() const; }; struct Sample; " ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 3 );
+		ICompositeType sample = (ICompositeType) col.getName(0).resolveBinding();
+		ICPPMethod size = (ICPPMethod) col.getName(1).resolveBinding();
+		
+		assertInstances( col, sample, 2 );
+		assertInstances( col, size, 1 );
 	}
 	
 	public void testBug43951() throws Exception
 	{
-		parse( "class B{ B(); ~B(); }; B::B(){} B::~B(){}", false ); //$NON-NLS-1$
+		parse( "class B{ B(); ~B(); }; B::B(){} B::~B(){}" ); //$NON-NLS-1$
 	}	
 
 	public void testBug44342() throws Exception {

@@ -502,6 +502,8 @@ public class CPPVisitor {
 			return CPPSemantics.resolveBinding( ((IASTIdExpression)node).getName() );
 		} else if( node instanceof ICPPASTFieldReference ){
 			return CPPSemantics.resolveBinding( ((ICPPASTFieldReference)node).getFieldName() );
+		} else if( node instanceof IASTFunctionCallExpression ){
+		    return resolveBinding( ((IASTFunctionCallExpression)node).getFunctionNameExpression() );
 		}
 		return null;
 	}
@@ -1170,6 +1172,13 @@ public class CPPVisitor {
 	    			return new CPPPointerType( type );
 	    	}
 	    	
+	    } else if( expression instanceof IASTFunctionCallExpression ){
+	        IBinding binding = resolveBinding( expression );
+	        if( binding instanceof IFunction ){
+	            IFunctionType fType = ((IFunction)binding).getType();
+	            if( fType != null )
+	                return fType.getReturnType();
+	        }
 	    }
 	    return null;
 	}

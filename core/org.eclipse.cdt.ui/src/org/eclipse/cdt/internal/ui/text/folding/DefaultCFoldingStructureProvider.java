@@ -266,6 +266,7 @@ public class DefaultCFoldingStructureProvider implements IProjectionListener, IC
 			
 			case ICElement.C_STRUCT:
 			case ICElement.C_CLASS:
+			case ICElement.C_UNION:
 				collapse= fAllowCollapsing && fCollapseStructures;
 				createProjection= true;
 				break;
@@ -300,8 +301,14 @@ public class DefaultCFoldingStructureProvider implements IProjectionListener, IC
 			if (element instanceof ISourceReference) {
 				ISourceReference reference= (ISourceReference) element;
 				ISourceRange range= reference.getSourceRange();
-				
-				int start= fCachedDocument.getLineOfOffset(range.getStartPos());
+
+				// We need to start at the id position if not code like this
+				// static int
+				// foo()
+				// { }
+				// will be fold at the wrong line.
+
+				int start= fCachedDocument.getLineOfOffset(range.getIdStartPos());
 				int end= fCachedDocument.getLineOfOffset(range.getStartPos() + range.getLength());
 				if (start < end) {
 					int offset= fCachedDocument.getLineOffset(start);

@@ -1,3 +1,12 @@
+2005-02-14 Alain Magloire
+	Fix for PR 84640, do the folding at the start of the ID
+	so code like this
+	 static int
+	 foo () {
+	 }
+	will start the folding on "foo" and not on "static int"
+	* src/org/eclipse/cdt/internal/ui/text/folding/DefaultCFoldingStructureProvider.java
+
 2005-02-10 Bogdan Gheorghe
 	Fix for 75916: Errors and exceptions in log if you try create a C++ project with 
 	same name/different case.

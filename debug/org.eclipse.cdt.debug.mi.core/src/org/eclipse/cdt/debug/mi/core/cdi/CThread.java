@@ -11,10 +11,12 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIStackInfoDepth;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
 import org.eclipse.cdt.debug.mi.core.command.MIStackSelectFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
 
 /**
@@ -59,6 +61,62 @@ public class CThread extends CObject implements ICDIThread {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackListFrames frames = factory.createMIStackListFrames();
+		try {
+			ICDIThread oldThread = getCTarget().getCurrentThread();
+			getCTarget().setCurrentThread(this);
+			mi.postCommand(frames);
+			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			MIFrame[] miFrames = info.getMIFrames();
+			stack = new StackFrame[miFrames.length];
+			for (int i = 0; i < stack.length; i++) {
+				stack[i] = new StackFrame(this, miFrames[i]);
+			}
+			getCTarget().setCurrentThread(oldThread);
+			return stack;
+		} catch (MIException e) {
+			//throw new CDIException(e.getMessage());
+			//System.out.println(e);
+		} catch (CDIException e) {
+			//throw e;
+			//System.out.println(e);
+		}
+		return stack;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
+	 */
+	public int getStackFrameCount() throws CDIException {
+		CSession session = getCTarget().getCSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIStackInfoDepth depth = factory.createMIStackInfoDepth();
+		try {
+			mi.postCommand(depth);
+			MIStackInfoDepthInfo info = depth.getMIStackInfoDepthInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			return info.getDepth();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+			//System.out.println(e);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
+	 */
+	public ICDIStackFrame[] getStackFrames(int low, int high) throws CDIException {
+		StackFrame[] stack = noStack;
+		CSession session = getCTarget().getCSession();
+
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIStackListFrames frames = factory.createMIStackListFrames(low, high);
 		try {
 			ICDIThread oldThread = getCTarget().getCurrentThread();
 			getCTarget().setCurrentThread(this);

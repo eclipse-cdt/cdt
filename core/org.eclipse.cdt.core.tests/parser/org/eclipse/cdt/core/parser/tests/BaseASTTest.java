@@ -57,6 +57,11 @@ public class BaseASTTest extends TestCase
 		return parse( code, true, true );
 	}
 	
+	protected IASTCompilationUnit fullParse( String code ) throws ParserException
+	{
+		return parse( code, false, true );
+	}
+	
 	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException
 	{
 		Iterator declarationIter = null;
@@ -96,6 +101,20 @@ public class BaseASTTest extends TestCase
 			fail("The expected error did not occur.");
 	}
 
+	public void assertCodeFailsFullParse(String code) {
+		boolean testPassed = false;
+		try {
+			IASTCompilationUnit tu = fullParse(code);
+			testPassed = true;
+			fail( "We should not reach this point");
+		} catch (Throwable e) {
+			if (!(e instanceof ParserException))
+				fail("Unexpected Error: " + e.getMessage());
+		}
+		if (testPassed)
+			fail("The expected error did not occur.");
+	}
+	
     protected void assertSimpleReturnType(IASTFunction function, IASTSimpleTypeSpecifier.Type type)
     {
     	assertEquals( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).getType(), type ); 

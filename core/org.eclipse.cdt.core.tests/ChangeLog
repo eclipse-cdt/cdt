@@ -1,3 +1,7 @@
+2003-07-28 Andrew Niefer
+	This patch creates a new failing test class : FullParseFailedTests.  This 
+	is for writing failed tests on the parser doing COMPLETE_PARSE.
+
 2003-07-28 Victor Mozgin
 	Moved testBug39537() from ASTFailedTests.java to QuickParseASTTests.java.
 

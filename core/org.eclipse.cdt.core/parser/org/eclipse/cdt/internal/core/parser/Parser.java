@@ -866,7 +866,7 @@ public abstract class Parser extends ExpressionParser implements IParser
  
         IASTCompletionNode.CompletionKind kind = getCompletionKindForDeclaration(scope, null);
         
-        setCompletionValues(scope,CompletionKind.USER_SPECIFIED_NAME, Key.EMPTY );
+        setCompletionValues(scope,CompletionKind.NAMESPACE_REFERENCE, Key.EMPTY );
         IToken identifier = null;
         // optional name 		
         if (LT(1) == IToken.tIDENTIFIER)
@@ -1271,7 +1271,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 throw backtrack;
             }
         
-        setCompletionValues(scope,CompletionKind.USER_SPECIFIED_NAME,Key.EMPTY );     
+        setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY );     
         if (LT(1) != IToken.tSEMI)
            initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION, CompletionKind.VARIABLE_TYPE );
  
@@ -1643,30 +1643,22 @@ public abstract class Parser extends ExpressionParser implements IParser
                     // TODO - Kludgy way to handle constructors/destructors
                     if (flags.haveEncounteredRawType())
                     {
-                        if (typeNameBegin != null)
-                            sdw.setTypeName(
-                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        setTypeName(sdw, typeNameBegin, typeNameEnd);
                         return;
                     }
                     if (parm && flags.haveEncounteredTypename())
                     {
-                        if (typeNameBegin != null)
-                            sdw.setTypeName(
-                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        setTypeName(sdw, typeNameBegin, typeNameEnd);
                         return;
                     }
                     if (lookAheadForConstructorOrConversion(flags, sdw, kind))
                     {
-                        if (typeNameBegin != null)
-                            sdw.setTypeName(
-                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        setTypeName(sdw, typeNameBegin, typeNameEnd);
                         return;
                     }
                     if (lookAheadForDeclarator(flags))
                     {
-                        if (typeNameBegin != null)
-                            sdw.setTypeName(
-                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        setTypeName(sdw, typeNameBegin, typeNameEnd);
  
                         return;
                     }
@@ -1722,11 +1714,22 @@ public abstract class Parser extends ExpressionParser implements IParser
                     break declSpecifiers;
             }
         }
-        if (typeNameBegin != null)
-            sdw.setTypeName(new TokenDuple(typeNameBegin, typeNameEnd));
+        setTypeName(sdw, typeNameBegin, typeNameEnd);
         return;
     }
     /**
+	 * @param sdw
+	 * @param typeNameBegin
+	 * @param typeNameEnd
+	 */
+	private void setTypeName(DeclarationWrapper sdw, IToken typeNameBegin, IToken typeNameEnd) {
+		if (typeNameBegin != null)
+		    sdw.setTypeName(
+		        new TokenDuple(typeNameBegin, typeNameEnd));
+	}
+
+
+	/**
      * Parse an elaborated type specifier.  
      * 
      * @param decl			Declaration which owns the elaborated type 

@@ -168,6 +168,14 @@ public interface ICDITarget extends ICDIObject {
 	void suspend() throws CDIException;
 
 	/**
+	 * Steps to the next return statement in the current scope. Can 
+	 * only be called when the associated thread is suspended. 
+	 * 
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	void stepReturn() throws CDIException;
+
+	/**
 	 * Steps over the current source line. Can only be called
 	 * when the associated target is suspended. 
 	 * 

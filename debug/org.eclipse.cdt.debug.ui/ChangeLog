@@ -1,4 +1,10 @@
 2003-01-21 Mikhail Khodjaiants
+	Changed the viewer of the Shared Libraries view to TreeViewer.
+	* SharedLibrariesView.java
+	* SharedLibrariesViewContentProvider.java
+	* SharedLibrariesViewEventHandler.java
+
+2003-01-21 Mikhail Khodjaiants
 
 	* src/org/eclipse/cdt/debu/internal/ui/CDTDebugModelPresentation.java
 	(getTargetText): Use Signal.

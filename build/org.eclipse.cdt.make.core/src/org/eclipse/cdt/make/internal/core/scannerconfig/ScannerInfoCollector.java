@@ -61,7 +61,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	// cumulative values
 	private Map sumDiscoveredIncludes; 
 	private Map sumDiscoveredSymbols;
-	private Map sumDiscoveredTSO;	// target specific options
+//	private Map sumDiscoveredTSO;	// target specific options
 	
 	private IProject currentProject;	// project being built
 	
@@ -72,7 +72,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 		
 		sumDiscoveredIncludes = new HashMap();
 		sumDiscoveredSymbols = new HashMap();
-		sumDiscoveredTSO = new HashMap();
+//		sumDiscoveredTSO = new HashMap();
 	}
 	
 	public static ScannerInfoCollector getInstance() {
@@ -250,7 +250,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			// Step 4. Set resulting scanner config
 			discScanInfo.setDiscoveredIncludePaths(newPersistedIncludes);
 			
-			// Step 5. Invalidate discovered include paths and symbol definitions
+			// Step 5. Invalidate discovered include paths
 			discoveredIncludes.put(projectName, null);
 		}
 		return addedIncludes;
@@ -286,7 +286,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			// Step 4. Set resulting scanner config
 			discScanInfo.setDiscoveredSymbolDefinitions(candidateSymbols);
 			
-			// Step 5. Invalidate discovered include paths and symbol definitions
+			// Step 5. Invalidate discovered symbol definitions
 			discoveredSymbols.put(projectName, null);
 		}
 		return addedSymbols;

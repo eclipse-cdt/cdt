@@ -19,6 +19,7 @@ import java.util.List;
  * @author vhirsl
  */
 public class TraceUtil {
+	public static final String EOL = System.getProperty("line.separator");
 	public static boolean SCANNER_CONFIG = false;
 	
 	public static boolean isTracing() {
@@ -26,6 +27,7 @@ public class TraceUtil {
 	}
 	
 	public static void outputTrace(String prefix, String msg, String postfix) {
+		System.out.println();
 		System.out.println(prefix + ' ' + msg + ' ' + postfix);
 	}
 	

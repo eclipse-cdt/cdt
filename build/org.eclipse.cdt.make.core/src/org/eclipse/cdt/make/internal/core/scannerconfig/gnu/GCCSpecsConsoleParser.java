@@ -55,6 +55,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	public boolean processLine(String line) {
 		boolean rc = false;
+		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line:", TraceUtil.EOL, line);	//$NON-NLS-1$ //$NON-NLS-2$
 		// Known patterns:
 		// (a) gcc|g++ ... -Dxxx -Iyyy ...
 		switch (state) {

@@ -32,6 +32,7 @@ import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -99,6 +100,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			
 			OutputStream sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
 					cos, currentProject, buildInfo, collector);
+			TraceUtil.outputTrace("Default provider running command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher), fWorkingDirectory);
 			if (p != null) {
 				try {
@@ -157,7 +159,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			//TODO VMIR better error handling
 			MakeCorePlugin.log(e.getStatus());
 		}
-		IPath path2File = fWorkingDirectory.append(targetFile);
+		IPath path2File = MakeCorePlugin.getWorkingDirectory().append(targetFile);
 		if (!path2File.toFile().exists()) {
 			GCCScannerConfigUtil.createSpecs();
 		}

@@ -129,7 +129,7 @@ public class MakeCorePlugin extends Plugin {
 			scInfo.setESIProviderCommandEnabled(true);
 			scInfo.setUseDefaultESIProviderCmd(true);
 			scInfo.setESIProviderCommand(new Path("gcc")); //$NON-NLS-1$
-			scInfo.setESIProviderArguments("-E -v ${plugin_state_location}/${specs_file}");	//$NON-NLS-1$
+			scInfo.setESIProviderArguments("-E -P -v ${plugin_state_location}/${specs_file}");	//$NON-NLS-1$
 			scInfo.setESIProviderConsoleParserId(GCC_SPECS_CONSOLE_PARSER_ID);
 			scInfo.setMakeBuilderConsoleParserId(GCC_SCANNER_INFO_CONSOLE_PARSER_ID);
 		} catch (CoreException e) {

@@ -51,6 +51,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	public boolean processLine(String line) {
 		boolean rc = false;
+		TraceUtil.outputTrace("GCCScannerInfoConsoleParser parsing line:", TraceUtil.EOL, line);	//$NON-NLS-1$ //$NON-NLS-2$
 		// make\[[0-9]*\]:  error_desc
 		int firstColon= line.indexOf(':');
 		String make = line.substring(0, firstColon + 1);
@@ -75,7 +76,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			return false;
 		Iterator I = allTokens.iterator();
 		String token = ((String) I.next()).toLowerCase();
-		if (token.endsWith("gcc") || token.endsWith("g++")) {//$NON-NLS-1$ //$NON-NLS-2$
+		if (token.indexOf("gcc") != -1 || token.indexOf("g++") != -1) {//$NON-NLS-1$ //$NON-NLS-2$
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();
 			List symbols = new ArrayList();

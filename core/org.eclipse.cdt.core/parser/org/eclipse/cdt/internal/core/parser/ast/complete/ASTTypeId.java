@@ -228,7 +228,7 @@ public class ASTTypeId implements IASTTypeId
   		if( tokenDuple != null )
    			tokenDuple.freeReferences( manager );
    		
-		if( references.isEmpty() ) return;
+		if( references == null || references.isEmpty() ) return;
 		for( int i =0; i < references.size(); ++i)
 			manager.returnReference( (IASTReference) references.get(i));
 		references.clear();

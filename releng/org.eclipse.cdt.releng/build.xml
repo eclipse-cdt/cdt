@@ -21,6 +21,10 @@
         <ant antfile="main.xml" target="build"/>
     </target>
 
+	<target name="test" depends="bootstrap">
+		<ant antfile="main.xml" target="test"/>
+	</target>
+
     <target name="upload" depends="bootstrap">
         <ant antfile="main.xml" target="upload"/>
     </target>

@@ -23,7 +23,7 @@
 				<property file="build.number"/>
 				<echo message="Build number: ${{build.version}}.${{build.number}}"/>
 				<delete dir="build"/>
-				<unzip src="zips/eclipse-SDK-2.1.1-linux-gtk.zip" dest="."/>
+				<unzip src="zips/eclipse-SDK.zip" dest="."/>
 				<move todir="build">
 					<fileset dir="eclipse"/>
 				</move>
@@ -93,10 +93,9 @@
 					token="plugin.properties"
 					value="plugin.properties,src/"/>
 				
-				<!-- Generate build.xml files for projects -->
+				<!-- Generate build.xml files for projects using the host eclipse -->
 				<xslt in="manifest.xml" out="build/genscripts.xml" style="genscripts.xsl"/>
-				<chmod perm="+x" file="build/eclipse"/>
-				<exec executable="${{basedir}}/build/eclipse">
+				<exec executable="${{basedir}}/host/eclipse">
 					<arg line="-nosplash -data build/workspace"/>
 					<arg line="-application org.eclipse.ant.core.antRunner"/>
 					<arg line="-buildfile build/genscripts.xml"/>
@@ -195,10 +194,14 @@
 						</xsl:for-each>
 					</fileset>
 				</copy>
+			</target>
+			
+			<target name="test">
+				<property file="build.number"/>
 		
 				<!-- Set up the test environment -->
 				<delete dir="test"/>
-				<unzip src="zips/eclipse-SDK-2.1.1-linux-gtk.zip" dest="."/>
+				<unzip src="zips/eclipse-SDK.zip" dest="."/>
 				<move todir="test">
 					<fileset dir="eclipse"/>
 				</move>
@@ -222,7 +225,7 @@
 						</xsl:attribute>
 					</unjar>
 				</xsl:for-each>
-		
+				
 				<!-- Run the tests -->
 				<chmod perm="+x" file="test/eclipse"/>
 				<exec executable="${{basedir}}/test/eclipse" dir="test">
@@ -231,7 +234,6 @@
 					<arg line="-buildfile plugins/org.eclipse.cdt.core.tests_${{build.version}}.${{build.number}}/test.xml"/>
 					<arg line="-Dorg.eclipse.test=org.eclipse.test_2.1.0"/>
 					<arg line="-Declipse-home=${{basedir}}/test"/>
-					<arg line="-Dos=linux -Dws=gtk -Darch=x86"/>
 				</exec>
 		
 				<!-- Create the reports -->
@@ -258,6 +260,7 @@
 			</target>
 	
 			<target name="upload">
+				<property file="build.number"/>
 				<!-- Upload the update site -->
 				<ftp server="${{build.server}}"
 					userid="${{build.userid}}" password="${{build.password}}"
@@ -275,6 +278,7 @@
 			</target>
 	
 			<target name="mail">
+				<property file="build.number"/>
 				<mail from="dschaefe@ca.ibm.com"
 					tolist="cdt-test-dev@eclipse.org"
 					subject="CDT Build ${{build.version}}.${{build.number}} completed">
@@ -283,6 +287,7 @@
 			</target>
 	
 			<target name="all" depends="build,upload,mail"/>
+			<!-- test removed since it doesn't work right now -->
 			
 		</project>
 		

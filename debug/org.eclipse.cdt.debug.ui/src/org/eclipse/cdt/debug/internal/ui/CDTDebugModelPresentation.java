@@ -521,7 +521,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 				}
 			}
 			else
-				label += "<symbol not available>";
+				label += "<symbol is not available>";
 			return label;
 		}
 		IDummyStackFrame dummy = (IDummyStackFrame)stackFrame.getAdapter( IDummyStackFrame.class );

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser;
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
@@ -31,6 +32,8 @@ import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFac
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 
 /**
@@ -128,6 +131,11 @@ public class ParserFactory {
 	public static IParserLogService createDefaultLogService()
 	{
 		return defaultLogService;
+	}
+	
+	public static Set getAllKeywords( ParserLanguage language )
+	{
+		return KeywordSets.getKeywords( KeywordSetKey.ALL, language ); 
 	}
 	
 	private static IParserLogService defaultLogService = new DefaultLogService();

@@ -327,7 +327,7 @@ public class KeywordSets {
 	private static final Set ALL_C;
 	static
 	{
-		ALL_C = new TreeSet();
+		ALL_C = new TreeSet(PP_DIRECTIVES);
 		ALL_C.add( Keywords.AUTO);
 		ALL_C.add( Keywords.BREAK);
 		ALL_C.add( Keywords.CASE);
@@ -371,7 +371,7 @@ public class KeywordSets {
 	private static final Set ALL_CPP;
 	static
 	{
-		ALL_CPP = new TreeSet();
+		ALL_CPP = new TreeSet(PP_DIRECTIVES);
 		ALL_CPP.add( Keywords.AND );
 		ALL_CPP.add( Keywords.AND_EQ);
 		ALL_CPP.add( Keywords.ASM);

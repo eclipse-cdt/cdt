@@ -570,7 +570,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	 * @throws CoreException Thrown when the creation failed.
 	 * @throws InterruptedException Thrown when the operation was cancelled.
 	 */
-	public abstract void createFile(IProgressMonitor monitor);
+	public abstract void createFile(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns the created file. The method only returns a valid translation unit 

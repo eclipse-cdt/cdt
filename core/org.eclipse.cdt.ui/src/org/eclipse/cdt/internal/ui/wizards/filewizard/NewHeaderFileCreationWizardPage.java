@@ -139,7 +139,7 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 		return status;
 	}
 	
-	public void createFile(IProgressMonitor monitor) {
+	public void createFile(IProgressMonitor monitor) throws CoreException {
         IPath filePath = getFileFullPath();
         if (filePath != null) {
             if (monitor == null)
@@ -150,9 +150,6 @@ public class NewHeaderFileCreationWizardPage extends AbstractFileCreationWizardP
 	            if (newFile != null) {
 	            	fNewFileTU = (ITranslationUnit) CoreModel.getDefault().create(newFile);
 	            }
-	        } catch (CoreException e) {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
 	        } finally {
 	            monitor.done();
 	        }

@@ -1,3 +1,7 @@
+2005-03-03 Mikhail Khodjaiants
+	Conflicting methods.
+	* SolibSearchPathBlock.java
+
 2004-11-11 Mikhail Khodjaiants
 	Fix for bug 75627: Incorrect limit to port numbers.
 	* TCPSettingsBlock.java

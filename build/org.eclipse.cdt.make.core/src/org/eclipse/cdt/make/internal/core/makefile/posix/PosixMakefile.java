@@ -74,7 +74,19 @@ public class PosixMakefile extends AbstractMakefile {
 			startLine = endLine + 1;
 			endLine = reader.getLineNumber();
 
-			// Strip away any comments.
+			// 1- Try command first, since we do not strip '#' in commands
+			if (MakefileUtil.isCommand(line)) {
+				Command cmd = new Command(line);
+				// The commands are added to a Rule
+				if (rule != null) {
+					rule.addCommand(cmd);
+					rule.setEndLine(endLine);
+					continue;
+				}
+				// If it is not a command give the other rules a chance a fallthrough
+			}
+
+			// 2- Strip away any comments.
 			int pound = MakefileUtil.indexOfComment(line);
 			if (pound != -1) {
 				// Comment.
@@ -88,7 +100,7 @@ public class PosixMakefile extends AbstractMakefile {
 				}
 			}
 
-			// Empty lines ?
+			// 3- Empty lines ?
 			if (MakefileUtil.isEmptyLine(line)) {
 				// Empty Line.
 				Statement stmt = new EmptyLine();
@@ -97,19 +109,7 @@ public class PosixMakefile extends AbstractMakefile {
 				continue;
 			}
 
-			// Is this a command ?
-			if (MakefileUtil.isCommand(line)) {
-				Command cmd = new Command(line);
-				// The commands are added to a Rule
-				if (rule != null) {
-					rule.addCommand(cmd);
-					rule.setEndLine(endLine);
-					continue;
-				}
-				// If it is not a command give the other a chance a fallthrough
-			}
-
-			// Check for inference rule.
+			// 4- Check for inference rule.
 			if (MakefileUtil.isInferenceRule(line)) {
 				// Inference Rule
 				String tgt;
@@ -125,7 +125,7 @@ public class PosixMakefile extends AbstractMakefile {
 				continue;
 			}
 
-			// Target Rule ?
+			// 5- Target Rule ?
 			if (MakefileUtil.isTargetRule(line)) {
 				String[] targets;
 				String[] reqs = new String[0];
@@ -165,7 +165,7 @@ public class PosixMakefile extends AbstractMakefile {
 				continue;
 			}
 
-			// Macro Definiton ?
+			// 6- Macro Definiton ?
 			if (MakefileUtil.isMacroDefinition(line)) {
 				// MacroDefinition
 				Statement stmt = new MacroDefinition(line);
@@ -174,15 +174,23 @@ public class PosixMakefile extends AbstractMakefile {
 				continue;
 			}
 
-			// Should not be here.
-			Statement stmt = new BadStatement(line);
+			// Other type of processing ?
+			Statement stmt = processLine(line);
+			if (stmt == null) {
+				// Should not be here.
+				stmt = new BadStatement(line);
+			}
 			stmt.setLines(startLine, endLine);
 			addStatement(stmt);
 		}
 	}
 
+	protected Statement processLine(String line) {
+		return null;
+	}
+
 	public IStatement[] getStatements() {
-		return (IStatement[]) statements.toArray(new Statement[0]);
+		return (IStatement[]) statements.toArray(new IStatement[0]);
 	}
 
 	public IStatement[] getBuiltins() {

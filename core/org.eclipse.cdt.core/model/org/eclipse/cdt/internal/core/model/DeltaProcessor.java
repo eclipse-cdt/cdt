@@ -375,10 +375,9 @@ public class DeltaProcessor {
 			ICElementDelta[] result = new ICElementDelta[index];
 			System.arraycopy(realDeltas, 0, result, 0, index);
 			return result;
-		} else {
+		}
 			return NO_DELTA;
 		}
-	}
 
 	/**
 	 * Returns true if the given resource is contained in an open project
@@ -429,7 +428,7 @@ public class DeltaProcessor {
 		try {
 			IResource resource = delta.getResource();
 			ICElement current = createElement(resource);
-			updateChildren = updateCurrentDeltaAndIndex(delta);
+			updateChildren = updateCurrentDeltaAndIndex(current, delta);
 			if (current == null || current instanceof ISourceRoot) {
 				nonCResourcesChanged(parent, delta);
 			} else if (current instanceof ICProject) {
@@ -438,7 +437,8 @@ public class DeltaProcessor {
 				if (!cprj.getProject().isOpen() || cModel.findCProject(cprj.getProject()) == null) {
 					nonCResourcesChanged(parent, delta);
 				}
-			} else {
+			}
+			if (current != null) {
 				parent = current;
 			}
 		} catch (CModelException e) {
@@ -490,19 +490,15 @@ public class DeltaProcessor {
 	 * Returns whether the children of the given delta must be processed.
 	 * @throws a CModelException if the delta doesn't correspond to a c element of the given type.
 	 */
-	private boolean updateCurrentDeltaAndIndex(IResourceDelta delta) throws CModelException {
+	private boolean updateCurrentDeltaAndIndex(ICElement element, IResourceDelta delta) throws CModelException {
 
 		IResource resource = delta.getResource();
-		ICElement element = createElement(resource);
 
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
 				if (element != null) {
 					updateIndexAddResource(element, delta);
 					elementAdded(element, delta);
-					//If new project has been added, don't need to add the children 
-					//as the indexing job will do that for us
-					if (element.getElementType() == ICElement.C_PROJECT) return false;
 				}
 				return true;
 
@@ -511,7 +507,7 @@ public class DeltaProcessor {
 					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
 				}
-				return true;
+				return false;
 
 			case IResourceDelta.CHANGED :
 				int flags = delta.getFlags();
@@ -527,15 +523,21 @@ public class DeltaProcessor {
 				} else if (resource.getType() == IResource.PROJECT) {
 					if ((flags & IResourceDelta.OPEN) != 0) {
 						// project has been opened or closed
-						IProject res = (IProject)resource;
+						IProject project = (IProject)resource;
 						if (element != null) {
-							if (res.isOpen()) {
+							if (project.isOpen()) {
+								if ( CoreModel.hasCNature(project) ) { 
+									// project opening... lets add the runner to the 
+									// map but no need to start it since the deltas 
+									// will populate containers
+									CModelManager.getDefault().getBinaryRunner((ICProject)element, false);
+								}
 								elementOpened(element, delta);
 								updateIndexAddResource(element, delta);
-							} else {
+								return true;
+							}
 								elementClosed(element, delta);
 								updateIndexRemoveResource(element, delta);
-							}
 							//Don't process children
 							return false; 
 						}
@@ -556,7 +558,7 @@ public class DeltaProcessor {
 									elementRemoved(element, delta);
 									updateIndexRemoveResource(element, delta);
 								}
-								return false;
+								return true;
 							}
 						}
 					}

@@ -20,7 +20,7 @@ public class BinaryContainerInfo extends OpenableInfo {
 	}
 
 	synchronized void sync() {
-		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(getElement().getCProject());
+		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(getElement().getCProject(), true);
 		if (runner != null) {
 			runner.waitIfRunning();
 		}

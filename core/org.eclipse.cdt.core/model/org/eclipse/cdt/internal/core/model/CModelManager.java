@@ -152,8 +152,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 			// Register to the workspace;
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
-				 IResourceChangeEvent.PRE_BUILD
-				| IResourceChangeEvent.POST_CHANGE
+				IResourceChangeEvent.POST_CHANGE
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_CLOSE);
 
@@ -585,14 +584,16 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 	
-	public BinaryRunner getBinaryRunner(ICProject project) {
+	public BinaryRunner getBinaryRunner(ICProject project, boolean start) {
 		BinaryRunner runner = null;
 		synchronized(binaryRunners) {
 			runner = (BinaryRunner)binaryRunners.get(project.getProject());
 			if (runner == null) {
 				runner = new BinaryRunner(project.getProject());
 				binaryRunners.put(project.getProject(), runner);
-				runner.start();
+				if (start) {
+					runner.start();
+				}
 			}
 		}
 		return runner;
@@ -601,6 +602,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public void removeBinaryRunner(ICProject cproject) {
 		removeBinaryRunner(cproject.getProject());
 	}
+	
 	public void removeBinaryRunner(IProject project) {
 		BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
 		if (runner != null) {
@@ -675,13 +677,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						this.deleting((IProject) resource);}
 				}catch (CoreException e){
 				}
-				break;
-
-				case IResourceChangeEvent.PRE_BUILD :
-					// No need now.
-					if(delta != null) {
-						this.checkProjectsBeingAddedOrRemoved(delta);
-					}										
 				break;
 
 				case IResourceChangeEvent.POST_CHANGE :
@@ -928,52 +923,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 	
-	/**
-	 * Process the given delta and look for projects being added, opened,
-	 * or closed
-	 */
-	public void checkProjectsBeingAddedOrRemoved(IResourceDelta delta) {
-		IResource resource = delta.getResource();
-		switch (resource.getType()) {
-			case IResource.ROOT :
-			if (this.cProjectsCache == null) {
-				try {
-					this.cProjectsCache = this.getCModel().getCProjects();
-				} catch (CModelException e) {
-				}
-			}
-				
-			IResourceDelta[] children = delta.getAffectedChildren();
-			for (int i = 0, length = children.length; i < length; i++) {
-				this.checkProjectsBeingAddedOrRemoved(children[i]);
-			}			
-			break;
-		case IResource.PROJECT :
-			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
-				IProject project = (IProject) resource;
-				if (!project.isOpen()) {
-					// project closing... stop the runner.
-					BinaryRunner runner = (BinaryRunner)binaryRunners.get(project);
-					if (runner != null ) {
-						runner.stop();
-					}
-				} else {
-					if ( binaryRunners.get(project) == null ) { 
-						// project opening... lets add the runner to the 
-						// map but no need to start it since the deltas 
-						// will populate containers
-						binaryRunners.put(project, new BinaryRunner(project));
-					}
-				}
-			} else if (0 != (delta.getFlags() & IResourceDelta.REMOVED)) {
-				IProject project = (IProject) resource;
-				removeBinaryRunner(project);
-				binaryParsersMap.remove(project);
-			}
-		break;
-		}
-	}
-
 	/** 
 	 * Returns the set of elements which are out of synch with their buffers.
 	 */
@@ -1125,6 +1074,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public void deleting(IProject project){
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
+		removeBinaryRunner(project);
 	}
 
 }

@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
-     <topic label="Tasks" href="tasks/cdt_o_tasks.htm">
+     <toc label="Tasks" href="tasks/cdt_o_tasks.htm">
           <topic label="Updating the CDT" href="tasks/cdt_t_update_man.htm"/>
           <topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
           <topic label="Defining project properties" href="tasks/cdt_o_proj_prop.htm">
@@ -71,5 +71,4 @@
                <topic label="Working with registers" href="tasks/cdt_t_registers.htm"/>
                <topic label="Working with memory" href="tasks/cdt_t_memory.htm"/>
           </topic>
-     </topic>
 </toc>

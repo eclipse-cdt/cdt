@@ -9,7 +9,7 @@
 
    name = "C/C++ Development User Guide"
    id = "org.eclipse.cdt.doc.user"
-   version = "1.0"
+   version = "1.2.0"
   provider-name = "Rational Software: IBM Software Group">
    <!-- Configure the help contribution for this plugin --> 
    <!-- This part should be in a documentation plugin -->
@@ -50,7 +50,7 @@
        <contexts file="contexts_CDT_make.xml" plugin="org.eclipse.cdt.make.ui"/> 
    </extension>
    <extension point="org.eclipse.help.contexts">
-       <contexts file="context_CDT_LAUNCH.xml" plugin="org.eclipse.cdt.launch"/> 
+       <contexts file="contexts_CDT_LAUNCH.xml" plugin="org.eclipse.cdt.launch"/> 
    </extension>
 
 </plugin>

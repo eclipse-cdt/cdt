@@ -102,6 +102,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CPPSemantics {
 
+    protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("STRING_LOOKUP"); //$NON-NLS-1$
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  //$NON-NLS-1$
@@ -649,12 +650,12 @@ public class CPPSemantics {
 		
 		while( scope != null ){
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
-			if( scope.getPhysicalNode() != blockItem.getParent() && !(scope instanceof ICPPNamespaceScope) )
+			if( blockItem != null && scope.getPhysicalNode() != blockItem.getParent() && !(scope instanceof ICPPNamespaceScope) )
 				blockItem = node;
 			
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
-				if( scope.isFullyCached() && !data.prefixLookup ){
+				if( scope.isFullyCached() && !data.prefixLookup && data.astName != null ){
 					IBinding binding = data.prefixLookup ? null : scope.getBinding( data.astName, true );
 					if( binding != null && 
 						( CPPSemantics.declaredBefore( binding, data.astName ) || 
@@ -764,7 +765,7 @@ public class CPPSemantics {
 				//is circular inheritance
 				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
-					if( !data.prefixLookup && parent.isFullyCached() )
+					if( data.astName != null && !data.prefixLookup && parent.isFullyCached() )
 						inherited = parent.getBinding( data.astName, true );
 					else 
 						inherited = lookupInScope( data, parent, null, null );
@@ -998,6 +999,8 @@ public class CPPSemantics {
 		        }
 			}
 
+		    if( item instanceof IASTDeclarationStatement )
+		        item = ((IASTDeclarationStatement)item).getDeclaration();
 		    if( item instanceof ICPPASTUsingDirective  ||
 				  (item instanceof ICPPASTNamespaceDefinition &&
 				   ((ICPPASTNamespaceDefinition)item).getName().toCharArray().length == 0) ) 
@@ -1261,6 +1264,7 @@ public class CPPSemantics {
 	
 	static public boolean declaredBefore( Object obj, IASTNode node ){
 	    if( node == null ) return true;
+	    if( node.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 	    
 	    ASTNode nd = null;
 	    if( obj instanceof ICPPBinding ){
@@ -2271,56 +2275,50 @@ public class CPPSemantics {
 		return -1;
 	}
 	
-	/**
-	 * Find the binding for the type for the given name, if the given name is not a type, or can not 
-	 * be resolved, null is returned.
-	 * @param mostRelevantScope
-	 * @param name
-	 * @return
-	 */
-	public static IBinding findTypeBinding( IASTNode mostRelevantScope, IASTName name ){
-		IScope scope = null;
-		if( mostRelevantScope instanceof IASTCompoundStatement )
-			scope = ((IASTCompoundStatement) mostRelevantScope).getScope();
-		else if ( mostRelevantScope instanceof IASTTranslationUnit )
-			scope = ((IASTTranslationUnit) mostRelevantScope).getScope();
-		else if ( mostRelevantScope instanceof ICPPASTNamespaceDefinition )
-			scope = ((ICPPASTNamespaceDefinition) mostRelevantScope).getScope();
-		else if( mostRelevantScope instanceof ICPPASTCompositeTypeSpecifier )
-			scope = ((ICPPASTCompositeTypeSpecifier) mostRelevantScope).getScope();
-		
-		if( scope == null )
-			return null;
-		
-		LookupData data = new LookupData( name ){
-			public boolean typesOnly(){ return true; }
-			public boolean forUsingDeclaration(){ return false; }
-			public boolean forDefinition(){ return false; }
-			public boolean considerConstructors(){ return false; }
-			public boolean functionCall(){ return false; }
-			public boolean qualified(){ 
-				IASTNode p1 = astName.getParent();
-				if( p1 instanceof ICPPASTQualifiedName ){
-					return ((ICPPASTQualifiedName)p1).getNames()[0] != astName;
-				}
-				return false;
-			}
-		};
-		
-		try {
+	public static IBinding[] findBindings( IScope scope, String name ) throws DOMException{
+	    CPPASTName astName = new CPPASTName();
+	    astName.setName( name.toCharArray() );
+	    astName.setParent( scope.getPhysicalNode() );
+	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
+	    
+	    LookupData data = new LookupData( astName );
+	            
+	    try {
 			lookup( data, scope );
 		} catch (DOMException e) {
-			return null;
+			return new IBinding [] { e.getProblem() };
 		}
+		
+		Object [] items = (Object[]) data.foundItems;
+		if( items == null )
+		    return new IBinding[0];
+		
+		ObjectSet set = new ObjectSet( items.length );
 		IBinding binding = null;
-        try {
-            binding = resolveAmbiguities( data, name );
-        } catch ( DOMException e2 ) {
-        }
-        
-		return binding;
+		for( int i = 0; i < items.length; i++ ){
+		    if( items[i] instanceof IASTName )
+		        binding = ((IASTName) items[i]).resolveBinding();
+		    else if( items[i] instanceof IBinding )
+		        binding = (IBinding) items[i];
+		    else
+		        binding = null;
+		    
+		    if( binding != null )
+			    if( binding instanceof ICPPCompositeBinding ){
+			        try {
+	                    IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
+	                    for( int j = 0; j < bs.length; j++ ){
+	                        set.put( bs[j] );
+	                    }
+	                } catch ( DOMException e1 ) {
+	                }
+			    } else {
+			        set.put( binding );
+			    }
+		}
+		
+	    return (IBinding[]) ArrayUtil.trim( IBinding.class, set.keyArray(), true );
 	}
-	
     public static IBinding [] prefixLookup( IASTName name ){
         LookupData data = createLookupData( name, true );
         data.prefixLookup = true;

@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -51,10 +49,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -1591,41 +1589,41 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept( col);
     }
 
-    public void testFindTypeBinding_1() throws Exception {
-        IASTTranslationUnit tu = parse(
-                "int x = 5; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
-
-        IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
-                .getDeclarations()[1]).getDeclarators()[0];
-        IASTName name = fdtor.getParameters()[0].getDeclarator().getName();
-        IBinding binding = CPPSemantics.findTypeBinding(tu, name);
-        assertNull(binding);
-
-        tu = parse("struct x; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
-
-        fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
-                .getDeclarations()[1]).getDeclarators()[0];
-        name = ((ICPPASTNamedTypeSpecifier) fdtor.getParameters()[0]
-                .getDeclSpecifier()).getName();
-        binding = CPPSemantics.findTypeBinding(tu, name);
-        assertNotNull(binding);
-        assertTrue(binding instanceof ICPPClassType);
-    }
-
-    public void testFindTypeBinding_2() throws Exception {
-        IASTTranslationUnit tu = parse(
-                "struct B; void f() { B * bp; }", ParserLanguage.CPP); //$NON-NLS-1$
-        IASTCompoundStatement compound = (IASTCompoundStatement) ((IASTFunctionDefinition) tu
-                .getDeclarations()[1]).getBody();
-        IASTBinaryExpression b = (IASTBinaryExpression) ((IASTExpressionStatement)compound.getStatements()[0]).getExpression();
-        IBinding binding = ((IASTIdExpression)b.getOperand1()).getName().resolveBinding();
-//        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) ((IASTDeclarationStatement) compound
-//                .getStatements()[0]).getDeclaration();
-//        IBinding binding = CPPSemantics.findTypeBinding(compound,
-//                ((ICPPASTNamedTypeSpecifier)decl.getDeclSpecifier()).getName());
-        assertNotNull(binding);
-        assertTrue(binding instanceof ICPPClassType);
-    }
+//    public void testFindTypeBinding_1() throws Exception {
+//        IASTTranslationUnit tu = parse(
+//                "int x = 5; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
+//
+//        IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
+//                .getDeclarations()[1]).getDeclarators()[0];
+//        IASTName name = fdtor.getParameters()[0].getDeclarator().getName();
+//        IBinding binding = CPPSemantics.findTypeBinding(tu, name);
+//        assertNull(binding);
+//
+//        tu = parse("struct x; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
+//
+//        fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
+//                .getDeclarations()[1]).getDeclarators()[0];
+//        name = ((ICPPASTNamedTypeSpecifier) fdtor.getParameters()[0]
+//                .getDeclSpecifier()).getName();
+//        binding = CPPSemantics.findTypeBinding(tu, name);
+//        assertNotNull(binding);
+//        assertTrue(binding instanceof ICPPClassType);
+//    }
+//
+//    public void testFindTypeBinding_2() throws Exception {
+//        IASTTranslationUnit tu = parse(
+//                "struct B; void f() { B * bp; }", ParserLanguage.CPP); //$NON-NLS-1$
+//        IASTCompoundStatement compound = (IASTCompoundStatement) ((IASTFunctionDefinition) tu
+//                .getDeclarations()[1]).getBody();
+//        IASTBinaryExpression b = (IASTBinaryExpression) ((IASTExpressionStatement)compound.getStatements()[0]).getExpression();
+//        IBinding binding = ((IASTIdExpression)b.getOperand1()).getName().resolveBinding();
+////        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) ((IASTDeclarationStatement) compound
+////                .getStatements()[0]).getDeclaration();
+////        IBinding binding = CPPSemantics.findTypeBinding(compound,
+////                ((ICPPASTNamedTypeSpecifier)decl.getDeclSpecifier()).getName());
+//        assertNotNull(binding);
+//        assertTrue(binding instanceof ICPPClassType);
+//    }
 
 //    public void testBug85049() throws Exception {
 //        StringBuffer buffer = new StringBuffer( "struct B { };\n" ); //$NON-NLS-1$
@@ -2668,6 +2666,120 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTName [] refs = tu.getReferences( c );
         assertEquals( refs.length, 1 );
         assertSame( refs[0], col.getName(3) );
+    }
+    
+    public void testFind_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f( int par ) {            \n"); //$NON-NLS-1$
+        buffer.append("   int v1;                     \n"); //$NON-NLS-1$
+        buffer.append("   {                           \n"); //$NON-NLS-1$
+        buffer.append("      int v2;                  \n"); //$NON-NLS-1$
+        buffer.append("   }                           \n"); //$NON-NLS-1$
+        buffer.append("}                              \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        IVariable v1 = (IVariable) col.getName(2).resolveBinding();
+        IVariable v2 = (IVariable) col.getName(3).resolveBinding();
+        
+        ICPPBlockScope scope = (ICPPBlockScope) v2.getScope();
+        IBinding [] bs = scope.find( "v1" ); //$NON-NLS-1$
+        assertEquals( bs.length, 1 );
+        assertSame( bs[0], v1 );
+    }
+    public void testFind_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A { int a; };            \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {           \n"); //$NON-NLS-1$
+        buffer.append("   void f();                   \n"); //$NON-NLS-1$
+        buffer.append("};                             \n"); //$NON-NLS-1$
+        buffer.append("void B::f() {                  \n"); //$NON-NLS-1$
+        buffer.append("}                              \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPField a = (ICPPField) col.getName(1).resolveBinding();
+        ICPPMethod f = (ICPPMethod) col.getName(7).resolveBinding();
+        
+        IScope scope = f.getFunctionScope();
+        IBinding [] bs = scope.find( "a" ); //$NON-NLS-1$
+        assertEquals( bs.length, 1 );
+        assertSame( bs[0], a );
+        
+        bs = scope.find( "~B" ); //$NON-NLS-1$
+        assertEquals( bs.length, 1 );
+        assertTrue( bs[0] instanceof ICPPMethod );
+        assertTrue( bs[0].getName().equals( "~B" ) ); //$NON-NLS-1$
+        
+        bs = scope.find( "A" ); //$NON-NLS-1$
+        assertEquals( bs.length, 1 );
+        assertSame( bs[0], A );
+    }
+    public void testFind_3() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                       \n"); //$NON-NLS-1$
+        buffer.append("   void f( int );                   \n"); //$NON-NLS-1$
+        buffer.append("   void f( double );                \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        buffer.append("void g() {                          \n"); //$NON-NLS-1$
+        buffer.append("   void f( char );                  \n"); //$NON-NLS-1$
+        buffer.append("   using A::f;                      \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(1).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(3).resolveBinding();
+        IFunction f3 = (IFunction) col.getName(6).resolveBinding();
+        
+        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(5).getParent().getParent();
+        IScope scope = ((IASTCompoundStatement)def.getBody()).getScope();
+        IBinding [] bs = scope.find( "f" ); //$NON-NLS-1$
+        assertEquals( bs.length, 3 );
+        assertSame( bs[0], f3 );
+        assertSame( bs[1], f1 );
+        assertSame( bs[2], f2 );
+    }
+    
+    public void testFind_4() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                                  \n"); //$NON-NLS-1$
+        buffer.append("   struct f;                                   \n"); //$NON-NLS-1$
+        buffer.append("   void f();                                   \n"); //$NON-NLS-1$
+        buffer.append("}                                              \n"); //$NON-NLS-1$
+        buffer.append("namespace B {                                  \n"); //$NON-NLS-1$
+        buffer.append("   void f( int );                              \n"); //$NON-NLS-1$
+        buffer.append("}                                              \n"); //$NON-NLS-1$
+        buffer.append("namespace C {                                  \n"); //$NON-NLS-1$
+        buffer.append("   using namespace B;                          \n"); //$NON-NLS-1$
+        buffer.append("}                                              \n"); //$NON-NLS-1$
+        buffer.append("void g(){                                      \n"); //$NON-NLS-1$
+        buffer.append("   using namespace A;                          \n"); //$NON-NLS-1$
+        buffer.append("   using namespace C;                          \n"); //$NON-NLS-1$
+        buffer.append("}                                              \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPClassType f = (ICPPClassType) col.getName(1).resolveBinding();
+        IFunction f1 = (IFunction) col.getName(2).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(4).resolveBinding();
+        
+        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(8).getParent().getParent();
+        IScope scope = ((IASTCompoundStatement)def.getBody()).getScope();
+        IBinding [] bs = scope.find( "f" ); //$NON-NLS-1$
+        assertEquals( bs.length, 3 );
+        assertSame( bs[0], f );
+        assertSame( bs[1], f1 );
+        assertSame( bs[2], f2 );
     }
 }
 

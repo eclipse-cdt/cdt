@@ -186,6 +186,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 	
 	private boolean isConstructorReference( IASTName name ){
+	    if( name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY ) return false;
 	    IASTNode node = name.getParent();
 	    if( node instanceof ICPPASTQualifiedName ){
 	    	IASTName [] ns = ((ICPPASTQualifiedName)node).getNames();

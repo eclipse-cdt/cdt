@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
 
 /**
  * @author aniefer
@@ -147,7 +146,7 @@ abstract public class CPPScope implements ICPPScope{
 		return null;
 	}
 	
-	boolean isfull = false;
+	private boolean isfull = false;
 	public void setFullyCached( boolean full ){
 		isfull = full;
 	}
@@ -160,31 +159,6 @@ abstract public class CPPScope implements ICPPScope{
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) throws DOMException {
-	    char [] n = name.toCharArray();
-	    if( isFullyCached() ){
-	    	if( bindings != null ) {
-		        Object o = bindings.get( n );
-		        if( o instanceof IBinding[] )
-		            return (IBinding[]) ArrayUtil.trim( IBinding.class, (Object[]) o );
-	            return new IBinding[] { (IBinding) o };
-	    	}
-	    } else {
-		    LookupData data = new LookupData( n );
-			try {
-		        data.foundItems = CPPSemantics.lookupInScope( data, this, null, null );
-		    } catch ( DOMException e ) {
-		    }
-		    
-		    if( data.foundItems != null ){
-		        IASTName [] ns = (IASTName[]) data.foundItems;
-		        ObjectSet set = new ObjectSet( ns.length );
-		        for( int i = 0; i < ns.length && ns[i] != null; i++ ){
-		            set.put( ns[i].resolveBinding() );
-		        }
-		        return (IBinding[]) ArrayUtil.trim( IBinding.class, set.keyArray(), true );
-		    }
-	    }
-	    
-		return new IBinding[0];
+	    return CPPSemantics.findBindings( this, name );
 	}
 }

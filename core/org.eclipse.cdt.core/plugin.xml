@@ -223,7 +223,7 @@
       </fileTypes>
       <fileTypes
             type="text"
-            extension=".cdtproject">
+            extension="cdtproject">
       </fileTypes>
    </extension>
 <!-- =================================================================================== -->

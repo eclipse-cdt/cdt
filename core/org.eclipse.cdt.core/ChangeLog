@@ -1,3 +1,9 @@
+2004-03-03 Alain Magloire
+
+	Note from Brent Nicolle PR 53520.
+
+	* plugin.xml
+
 2004-03-02 Alain Magloire
 
 	Work to make it possible to set more the one binaryParser

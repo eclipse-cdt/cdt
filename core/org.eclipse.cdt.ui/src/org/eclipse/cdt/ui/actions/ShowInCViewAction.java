@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
@@ -40,8 +41,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class ShowInCViewAction extends SelectionProviderAction {
 
 	private IWorkbenchPage page;
-
 	private ITextEditor fEditor;
+
+	public ShowInCViewAction(IWorkbenchSite site) {
+		this(site.getPage(), site.getSelectionProvider());
+	}
+
+	public ShowInCViewAction(ITextEditor editor) {	
+		this(editor.getEditorSite().getWorkbenchWindow().getActivePage(), editor.getSelectionProvider());
+		fEditor = editor;
+	}
 
 	public ShowInCViewAction(IWorkbenchPage page, ISelectionProvider viewer) {
 		super(viewer, CEditorMessages.getString("ShowInCView.label")); //$NON-NLS-1$
@@ -50,15 +59,6 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		this.page = page;
 		setDescription(CEditorMessages.getString("ShowInCView.toolTip")); //$NON-NLS-1$
 		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
-	}
-
-	public ShowInCViewAction() {
-		this(null);
-	}
-	
-	public ShowInCViewAction(ITextEditor editor) {	
-		this(editor.getEditorSite().getWorkbenchWindow().getActivePage(), editor.getSelectionProvider());
-		fEditor = editor;
 	}
 
 	/**

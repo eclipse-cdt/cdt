@@ -1,3 +1,9 @@
+2004-02-24 Alain Magloire
+
+	New constructor for ShowInCView.
+
+	* src/org/eclipse/cdt/ui/actions/ShowInCView.java
+
 2004-02-20 Alain Magloire
 
 	Fix for PR 52618

@@ -46,13 +46,6 @@ public interface ICDISession {
 	String getAttribute(String key);
 
 	/**
-	 * Returns the signal manager of this debug session.
-	 * 
-	 * @return the signal manager
-	 */
-	ICDISignalManager getSignalManager();
-
-	/**
 	 * Returns the variable manager of this debug session.
 	 * 
 	 * @return the variable manager

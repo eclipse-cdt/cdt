@@ -52,7 +52,7 @@ public class CSignalManager extends CUpdateManager implements ICSignalManager
 		{
 			try
 			{
-				ICDISignal[] cdiSignals = getDebugTarget().getCDISession().getSignalManager().getSignals();
+				ICDISignal[] cdiSignals = getDebugTarget().getCDITarget().getSignals();
 				ArrayList list = new ArrayList( cdiSignals.length );
 				for ( int i = 0; i < cdiSignals.length; ++i )
 				{
@@ -130,10 +130,7 @@ public class CSignalManager extends CUpdateManager implements ICSignalManager
 
 	protected ICDIManager getCDIManager()
 	{
-		if ( getDebugTarget() != null )
-		{
-			return getDebugTarget().getCDISession().getSignalManager();
-		}
+		//FIXME: To change we no longer have a ICDISignalManager.
 		return null;
 	}
 	

@@ -9,21 +9,16 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
- * 
- * The signal manager manages the collection of signals defined 
- * for the debug session.
- * Auto update is off by default.
- * @since Jul 9, 2002
  */
-public interface ICDISignalManager extends ICDIManager {
+public interface ICDISignalManagement {
 
 	/**
-	 * Returns the array of signals defined for this session.
+	 * Returns the array of signals defined for this target.
 	 * 
 	 * @return the array of signals
 	 * @throws CDIException on failure. Reasons include:

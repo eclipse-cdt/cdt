@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 /**
  */
 public interface ICDIThreadGroup extends ICDIBreakpointManagement, ICDIExecuteStep, ICDIExecuteResume,
-	ICDISuspend, ICDIExpressionManagement, ICDIObject {
+	ICDISuspend, ICDISignalManagement, ICDIObject {
 
 	/**
 	 * Returns the threads contained in this target. 

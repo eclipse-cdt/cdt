@@ -1,3 +1,12 @@
+2004-10-26 Alain Magloire
+	Remove of ICDISignalManager in CDI
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISignalManager.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIThreadGroup.java
+
+	* CSignalManager.java
+
 2004-10-25 Mikhail Khodjaiants
 	NPE in "CVlaue.isUnsigned". Check if the type of the parent variable is null.
 	* CValue.java

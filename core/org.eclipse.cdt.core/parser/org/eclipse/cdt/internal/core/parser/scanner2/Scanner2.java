@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
@@ -101,6 +102,10 @@ public class Scanner2 implements IScanner, IScannerData {
 	private int[] bufferLimit = new int[bufferInitialSize];
 	private int[] lineNumbers = new int[bufferInitialSize];
 	private int[] lineOffsets = new int[bufferInitialSize];
+	
+	//inclusion stack
+	private Object[] callbackStack = new Object[bufferInitialSize];
+	private int callbackPos = -1;
 	
 	//branch tracking
 	private int branchStackPos = -1;
@@ -213,15 +218,41 @@ public class Scanner2 implements IScanner, IScannerData {
 		pushContext(buffer);
 		bufferData[bufferStackPos] = data;
 		if( data instanceof InclusionData )
-			requestor.enterInclusion( ((InclusionData)data).inclusion );
+			pushCallback( data );
 	}
 	
 	private void popContext() {
 		bufferStack[bufferStackPos] = null;
 		if( bufferData[bufferStackPos] instanceof InclusionData )
-			requestor.exitInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
+		    pushCallback( ((InclusionData) bufferData[bufferStackPos]).inclusion );
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
+	}
+	
+	private void pushCallback( Object obj ){
+	    if( ++callbackPos == callbackStack.length ){
+	        Object[] temp = new Object[ callbackStack.length << 1 ];
+	        System.arraycopy( callbackStack, 0, temp, 0, callbackStack.length );
+	        callbackStack = temp;
+	    }
+	    callbackStack[ callbackPos ] = obj;
+	}
+	
+	private void popCallbacks(){
+	    Object obj = null;
+	    for( int i = 0; i <= callbackPos; i++ ){
+	        obj = callbackStack[i];
+	        //on the stack, InclusionData means enter, IASTInclusion means exit
+	        if( obj instanceof InclusionData )
+	            requestor.enterInclusion( ((InclusionData)obj).inclusion );
+	        else if( obj instanceof IASTInclusion )
+	            requestor.exitInclusion( (IASTInclusion) obj );
+	        else if( obj instanceof IASTMacro )
+	            requestor.acceptMacro( (IASTMacro) obj );
+	        else if( obj instanceof IProblem )
+	    		requestor.acceptProblem( (IProblem) obj );
+	    }
+	    callbackPos = -1;   
 	}
 	
 	/* (non-Javadoc)
@@ -307,21 +338,23 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
 	 */
 	public IToken nextToken() throws ScannerException, EndOfFileException {
+		if (nextToken == null && !finished ) {
+			nextToken = fetchToken();
+			if (nextToken == null)
+			{
+			    finished = true;
+			}
+		}
+
+		if( callbackPos != -1 ){
+		    popCallbacks();
+		}
+		
 		if (finished)
 		{
 			if( offsetBoundary == -1 )
 				throw EOF;			
 			throwOLRE();
-		}
-		
-		if (nextToken == null) {
-			nextToken = fetchToken();
-			if (nextToken == null)
-			{
-				if( offsetBoundary == -1 )
-					throw EOF;
-				throwOLRE();
-			}
 		}
 		
 		if (lastToken != null)
@@ -945,7 +978,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void handleProblem(int id, int startOffset, char [] arg ) {
 		if( parserMode == ParserMode.COMPLETION_PARSE ) return;
 		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename(), arg != null ? arg : emptyCharArray, false, true );
-		requestor.acceptProblem( p );
+		pushCallback( p );
 	}
 
 	
@@ -1425,8 +1458,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( parserMode == ParserMode.QUICK_PARSE )
 		{
 			IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
-			requestor.enterInclusion( inclusion );
-			requestor.exitInclusion( inclusion );
+			pushCallback( new InclusionData( null, inclusion ) );
+		    pushCallback( inclusion );
 		}
 		else
 		{
@@ -1614,9 +1647,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		definitions.put(name, 	arglist == null
 				? new ObjectStyleMacro(name, text)
 						: new FunctionStyleMacro(name, text, arglist) );
-		
-		requestor.acceptMacro( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() )); //TODO - IMacroDescriptor? 
-		
+		 
+		pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() ) );//TODO - IMacroDescriptor?
 	}
 	
 	

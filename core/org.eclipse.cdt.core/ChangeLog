@@ -1,3 +1,10 @@
+2003-12-19 Alain Magloire
+
+	Added a getCommandLine() method on the CommandLauncher
+	to help PR 41417.
+
+	* src/org/eclipse/cdt/core/CommandLauncher.java
+
 2003-12-16 Alain Magloire
 
 	PR 48921.

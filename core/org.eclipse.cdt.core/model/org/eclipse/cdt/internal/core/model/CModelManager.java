@@ -897,9 +897,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 			if (insertedTree) {
 				return rootDelta;
-			} else {
-				return null;
 			}
+			return null;
 		}
 	}
 
@@ -919,15 +918,13 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {
 				throw (CModelException)ce;
-			} else {
-				if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
-					Throwable e= ce.getStatus().getException();
-					if (e instanceof CModelException) {
-						throw (CModelException) e;
-					}
+			} else if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
+				Throwable e= ce.getStatus().getException();
+				if (e instanceof CModelException) {
+					throw (CModelException) e;
 				}
-				throw new CModelException(ce);
 			}
+			throw new CModelException(ce);
 		} finally {
 // fire only if there were no awaiting deltas (if there were, they would come from a resource modifying operation)
 // and the operation has not modified any resource

@@ -58,7 +58,8 @@ public class TokenFactory {
 
 	public static ITokenDuple createTokenDuple( IToken first, IToken last, List templateArgLists )
 	{
-		if( (first == last) && ( templateArgLists == null ) && ( first instanceof ITokenDuple )) return (ITokenDuple) first;
+		if( (first == last) && ( templateArgLists == null ) && ( first instanceof ITokenDuple )) 
+			return (ITokenDuple) first;
 		if( templateArgLists != null && !templateArgLists.isEmpty())
 			return new TemplateTokenDuple( first, last, templateArgLists );
 		return new BasicTokenDuple( first, last );

@@ -3251,7 +3251,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				checkSymbol = ((ITemplateSymbol)checkSymbol).getTemplatedSymbol();
 			}
 			if (checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier
-					|| checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier) {
+					|| checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier || 
+					checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier ) {
 				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier(
 						checkSymbol, kind, startingOffset, startingLine, name
 								.getFirstToken().getOffset(), name
@@ -3261,9 +3262,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				attachSymbolExtension(checkSymbol, elab, !isForewardDecl);
 				return elab;
 			}
-			if (checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier)
-				return (IASTElaboratedTypeSpecifier) checkSymbol
-						.getASTExtension().getPrimaryDeclaration();
 		} else {
 			handleProblem(IProblem.SEMANTIC_NAME_NOT_FOUND, newSymbolName,
 					nameToken.getOffset(), nameToken.getEndOffset(), nameToken

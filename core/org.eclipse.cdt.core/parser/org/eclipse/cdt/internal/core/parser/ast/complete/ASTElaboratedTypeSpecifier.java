@@ -186,4 +186,25 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if( obj == null ) return false;
+		if( ! (obj instanceof IASTElaboratedTypeSpecifier )) return false;
+		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) obj;
+		if( elab.getClassKind() != getClassKind() ) return false;
+		if( elab.getName() != getName() ) return false;
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		String coded =getName().toString(); 
+		return coded.hashCode();
+	}
 }

@@ -135,7 +135,7 @@ public class TypeInfo implements ITypeInfo
 	}
 	
 	public boolean isEnclosedType() {
-		return (fQualifiedName.getEnclosingNames() != null);
+		return (fQualifiedName.isQualified());
 	}
 
 	public ITypeInfo getEnclosingType(int kinds[]) {
@@ -158,7 +158,7 @@ public class TypeInfo implements ITypeInfo
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		if (fTypeCache != null) {
-			return fTypeCache.getRootNamespace(this, true);
+			return fTypeCache.getRootNamespace(this, includeGlobalNamespace);
 		}
 		return null;
 	}

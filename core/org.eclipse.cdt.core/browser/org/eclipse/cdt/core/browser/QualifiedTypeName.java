@@ -10,60 +10,96 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CConventions;
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 public class QualifiedTypeName implements IQualifiedTypeName {
 
-	private String[] fSegments;
-	private int fHashCode;
+    private static final String[] NO_SEGMENTS = new String[0];
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final int INITIAL_SEGMENT_LENGTH = 12;
+	private static final int HASH_INIT = 17;
+    private static final int HASH_MULTIPLIER = 37;
+
+    private String[] fSegments = NO_SEGMENTS;
+	private int fHashCode = 0;
+
+	public static final QualifiedTypeName EMPTY = new QualifiedTypeName();
 
 	public QualifiedTypeName(IQualifiedTypeName typeName) {
-		this(typeName.segments());
+		Assert.isNotNull(typeName);
+	    fSegments = typeName.segments();
+	}
+	
+	public QualifiedTypeName(String qualifiedName) {
+		Assert.isNotNull(qualifiedName);
+	    fSegments = createSegments(qualifiedName);
 	}
 
 	public QualifiedTypeName(String[] names) {
-		fSegments = new String[names.length];
-		System.arraycopy(names, 0, fSegments, 0, names.length);
+		Assert.isNotNull(names);
+	    fSegments = createSegments(names);
 	}
 
 	public QualifiedTypeName(String name, String[] enclosingNames) {
-		if (enclosingNames != null) {
-			fSegments = new String[enclosingNames.length + 1];
-			System.arraycopy(enclosingNames, 0, fSegments, 0, enclosingNames.length);
-			fSegments[fSegments.length - 1] = name;
-		} else {
-			fSegments = new String[] { name };
-		}
+		Assert.isNotNull(name);
+		if (enclosingNames == null)
+		    fSegments = createSegments(name);
+		else
+		    fSegments = createSegments(name, enclosingNames);
 	}
 
-	public QualifiedTypeName(String qualifiedName) {
+	private QualifiedTypeName() {
+	}
+
+	private String[] createSegments(String qualifiedName) {
+	    String[] segments;
 		int qualifierIndex = qualifiedName.indexOf(QUALIFIER, 0);
 		if (qualifierIndex == -1) {
-			fSegments = new String[] { qualifiedName };
+		    segments = new String[] { qualifiedName };
 		} else {
-			ArrayList namesList = new ArrayList(5);
+		    int maxSegments = 1;
 			int lastIndex = 0;
-			String nextName;
 			while (qualifierIndex >= 0) {
-				nextName = qualifiedName.substring(lastIndex, qualifierIndex);
 				lastIndex = qualifierIndex + QUALIFIER.length();
-				namesList.add(nextName);
+				++maxSegments;
 				qualifierIndex = qualifiedName.indexOf(QUALIFIER, lastIndex);
 			}
-			nextName = qualifiedName.substring(lastIndex);
-			namesList.add(nextName);
-			fSegments = (String[]) namesList.toArray(new String[namesList.size()]);
+			segments = new String[maxSegments];
+			int segmentCount = 0;
+			lastIndex = 0;
+			qualifierIndex = qualifiedName.indexOf(QUALIFIER, 0);
+			while (qualifierIndex >= 0) {
+			    segments[segmentCount] = qualifiedName.substring(lastIndex, qualifierIndex);
+				++segmentCount;
+				lastIndex = qualifierIndex + QUALIFIER.length();
+				qualifierIndex = qualifiedName.indexOf(QUALIFIER, lastIndex);
+			}
+			Assert.isTrue(segmentCount == (maxSegments - 1));
+			segments[segmentCount] = qualifiedName.substring(lastIndex);
 		}
+		return segments;
+	}
+
+	private String[] createSegments(String[] names) {
+		String[] segments = new String[names.length];
+		System.arraycopy(names, 0, segments, 0, names.length);
+		return segments;
+	}
+
+	private String[] createSegments(String name, String[] enclosingNames) {
+	    String[] segments = new String[enclosingNames.length + 1];
+		System.arraycopy(enclosingNames, 0, segments, 0, enclosingNames.length);
+		segments[segments.length - 1] = name;
+	    return segments;
 	}
 
 	public String getName() {
 		if (fSegments.length > 0) {
 			return fSegments[fSegments.length - 1];
 		}
-		return null;
+		return EMPTY_STRING;
 	}
 
 	public String[] getEnclosingNames() {
@@ -72,12 +108,12 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			System.arraycopy(fSegments, 0, enclosingNames, 0, fSegments.length - 1);
 			return enclosingNames;
 		}
-		return null;
+		return NO_SEGMENTS;
 	}
 	
 	public String getFullyQualifiedName() {
 		if (fSegments.length > 0) {
-			StringBuffer buf = new StringBuffer();
+			StringBuffer buf = new StringBuffer(fSegments.length * INITIAL_SEGMENT_LENGTH);
 			for (int i = 0; i < fSegments.length; ++i) {
 				if (i > 0) {
 					buf.append(QUALIFIER);
@@ -86,13 +122,15 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			}
 			return buf.toString();
 		}
-		return null;
+		return EMPTY_STRING;
 	}
 
 	public IQualifiedTypeName getEnclosingTypeName() {
 		String[] enclosingNames = getEnclosingNames();
-		if (enclosingNames != null) {
-			return new QualifiedTypeName(enclosingNames);
+		if (enclosingNames.length > 0) {
+		    QualifiedTypeName enclosingTypeName = new QualifiedTypeName();
+		    enclosingTypeName.fSegments = enclosingNames;
+		    return enclosingTypeName;
 		}
 		return null;
 	}
@@ -102,25 +140,21 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public boolean isEmpty() {
-		return fSegments.length == 0;
+		return (fSegments.length == 0);
 	}
 	
 	public boolean isGlobal() {
-		if (fSegments.length <= 1) {
-			return true;
-		} else if (fSegments[0] == null || fSegments[0].length() == 0) {
-			return true;
-		}
-		return false;
+	    return (fSegments.length <= 1 || fSegments[0].length() == 0);
 	}
-
 
 	public int segmentCount() {
 		return fSegments.length;
 	}
 
 	public String[] segments() {
-		return fSegments;
+		String[] segmentCopy = new String[fSegments.length];
+		System.arraycopy(fSegments, 0, segmentCopy, 0, fSegments.length);
+		return segmentCopy;
 	}
 	
 	public String segment(int index) {
@@ -138,19 +172,21 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 	
 	public int matchingFirstSegments(IQualifiedTypeName typeName) {
+		Assert.isNotNull(typeName);
 		int max = Math.min(fSegments.length, typeName.segmentCount());
 		int count = 0;
 		for (int i = 0; i < max; ++i) {
 			if (!fSegments[i].equals(typeName.segment(i))) {
 				return count;
 			}
-			count++;
+			++count;
 		}
 		return count;
 	}
 
 	public boolean isPrefixOf(IQualifiedTypeName typeName) {
-		if (isEmpty())
+		Assert.isNotNull(typeName);
+		if (fSegments.length == 0)
 			return true;
 		
 		if (fSegments.length > typeName.segmentCount()) {
@@ -166,30 +202,48 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public IQualifiedTypeName append(String[] names) {
-		String[] newNames = new String[fSegments.length + names.length];
-		System.arraycopy(fSegments, 0, newNames, 0, fSegments.length);
-		System.arraycopy(names, 0, newNames, fSegments.length, names.length);
-		return new QualifiedTypeName(newNames);
+		Assert.isNotNull(names);
+		int length = fSegments.length;
+		int typeNameLength = names.length;
+		String[] newSegments = new String[length + typeNameLength];
+		System.arraycopy(fSegments, 0, newSegments, 0, length);
+		System.arraycopy(names, 0, newSegments, length, typeNameLength);
+		QualifiedTypeName newTypeName = new QualifiedTypeName();
+		newTypeName.fSegments = newSegments;
+		return newTypeName;
 	}
 
 	public IQualifiedTypeName append(IQualifiedTypeName typeName) {
-		return append(typeName.segments());
+		Assert.isNotNull(typeName);
+		int length = fSegments.length;
+		int typeNameLength = typeName.segmentCount();
+		String[] newSegments = new String[length + typeNameLength];
+		System.arraycopy(fSegments, 0, newSegments, 0, length);
+		for (int i = 0; i < typeNameLength; ++i) {
+		    newSegments[i + length] = typeName.segment(i);
+		}
+		QualifiedTypeName newTypeName = new QualifiedTypeName();
+		newTypeName.fSegments = newSegments;
+		return newTypeName;
 	}
 
 	public IQualifiedTypeName append(String qualifiedName) {
-		return append(new QualifiedTypeName(qualifiedName));
+		Assert.isNotNull(qualifiedName);
+		return append(createSegments(qualifiedName));
 	}
 	
 	public IQualifiedTypeName removeFirstSegments(int count) {
 		if (count == 0) {
 			return this;
 		} else if (count >= fSegments.length || count < 0) {
-			return new QualifiedTypeName(new String[0]);
+			return EMPTY;
 		} else {
 			int newSize = fSegments.length - count;
-			String[] newNames = new String[newSize];
-			System.arraycopy(fSegments, count, newNames, 0, newSize);
-			return new QualifiedTypeName(newNames);
+			String[] newSegments = new String[newSize];
+			System.arraycopy(fSegments, count, newSegments, 0, newSize);
+			QualifiedTypeName newTypeName = new QualifiedTypeName();
+			newTypeName.fSegments = newSegments;
+			return newTypeName;
 		}
 	}
 
@@ -197,12 +251,14 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		if (count == 0) {
 			return this;
 		} else if (count >= fSegments.length || count < 0) {
-			return new QualifiedTypeName(new String[0]);
+			return EMPTY;
 		} else {
 			int newSize = fSegments.length - count;
-			String[] newNames = new String[newSize];
-			System.arraycopy(fSegments, 0, newNames, 0, newSize);
-			return new QualifiedTypeName(newNames);
+			String[] newSegments = new String[newSize];
+			System.arraycopy(fSegments, 0, newSegments, 0, newSize);
+			QualifiedTypeName newTypeName = new QualifiedTypeName();
+			newTypeName.fSegments = newSegments;
+			return newTypeName;
 		}
 	}
 
@@ -215,26 +271,32 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		return false;
 	}
 
-	public boolean validate() {
+	public boolean isValid() {
 		for (int i = 0; i < fSegments.length; ++i) {
-			if (!isValidSegment(fSegments[i])) {
-				return false;
-			}
+		    String segment = fSegments[i];
+			// type name must follow C conventions
+			IStatus val = CConventions.validateIdentifier(segment);
+			if (val.getSeverity() == IStatus.ERROR)
+			    return false;
 		}
 		return true;
 	}
 	
-	private static boolean isValidSegment(String segment) {
+	public boolean isValidSegment(String segment) {
+		Assert.isNotNull(segment);
+		if (segment.indexOf(QUALIFIER) != -1)
+		    return false;
 		// type name must follow C conventions
-		IStatus val= CConventions.validateIdentifier(segment);
+		IStatus val = CConventions.validateIdentifier(segment);
 		return (val.getSeverity() != IStatus.ERROR);
 	}
 
 	public int hashCode() {
 		if (fHashCode == 0) {
-			String name = getFullyQualifiedName();
-			if (name != null)
-				fHashCode = name.hashCode();
+		    fHashCode = HASH_INIT;
+	        for (int i = 0; i < fSegments.length; ++i) {
+	            fHashCode = fHashCode * HASH_MULTIPLIER + fSegments[i].hashCode();
+	        }
 		}
 		return fHashCode;
 	}
@@ -258,14 +320,16 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return 0;
 		if (typeName == null)
 		    return 1;
-        String[] segments = typeName.segments();
-        int len = Math.min(fSegments.length, segments.length);
+
+		int length = fSegments.length;
+		int typeNameLength = typeName.segmentCount();
+		int len = Math.min(length, typeNameLength);
 		int result = 0;
         for (int i = 0; result == 0 && i < len; ++i) {
-            result = fSegments[i].compareTo(segments[i]);
+            result = fSegments[i].compareTo(typeName.segment(i));
         }
-        if (result == 0 && fSegments.length != segments.length) {
-            result = (fSegments.length < segments.length) ? -1 : 1;
+        if (result == 0 && length != typeNameLength) {
+            result = (length < typeNameLength) ? -1 : 1;
         }
         return result;
 	}
@@ -275,14 +339,16 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return 0;
 		if (typeName == null)
 		    return 1;
-        String[] segments = typeName.segments();
-        int len = Math.min(fSegments.length, segments.length);
+
+		int length = fSegments.length;
+		int typeNameLength = typeName.segmentCount();
+		int len = Math.min(length, typeNameLength);
 		int result = 0;
         for (int i = 0; result == 0 && i < len; ++i) {
-            result = fSegments[i].compareToIgnoreCase(segments[i]);
+            result = fSegments[i].compareToIgnoreCase(typeName.segment(i));
         }
-        if (result == 0 && fSegments.length != segments.length) {
-            result = (fSegments.length < segments.length) ? -1 : 1;
+        if (result == 0 && length != typeNameLength) {
+            result = (length < typeNameLength) ? -1 : 1;
         }
         return result;
 	}
@@ -292,7 +358,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return true;
 		}
 		if (!(obj instanceof IQualifiedTypeName)) {
-			throw new ClassCastException();
+		    return false;
 		}
 		return equals((IQualifiedTypeName)obj);
 	}
@@ -302,12 +368,13 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return true;
 		if (typeName == null)
 		    return false;
-        String[] segments = typeName.segments();
-        int len = segments.length;
-		if (fSegments.length != len)
+		
+		int length = fSegments.length;
+		int typeNameLength = typeName.segmentCount();
+		if (length != typeNameLength)
         	return false;
-        for (int i = 0; i < len; ++i) {
-            if (!fSegments[i].equals(segments[i]))
+        for (int i = 0; i < length; ++i) {
+            if (!fSegments[i].equals(typeName.segment(i)))
                 return false;
         }
         return true;
@@ -318,12 +385,13 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return true;
 		if (typeName == null)
 		    return false;
-        String[] segments = typeName.segments();
-        int len = segments.length;
-		if (fSegments.length != len)
+		
+		int length = fSegments.length;
+		int typeNameLength = typeName.segmentCount();
+		if (length != typeNameLength)
         	return false;
-        for (int i = 0; i < len; ++i) {
-            if (!fSegments[i].equalsIgnoreCase(segments[i]))
+        for (int i = 0; i < length; ++i) {
+            if (!fSegments[i].equalsIgnoreCase(typeName.segment(i)))
                 return false;
         }
         return true;

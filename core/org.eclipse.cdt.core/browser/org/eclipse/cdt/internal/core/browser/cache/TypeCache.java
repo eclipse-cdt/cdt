@@ -154,6 +154,10 @@ public class TypeCache implements ITypeCache {
 		    return false;
 		}
 		
+		public boolean isValidSegment(String segment) {
+		    return false;
+		}
+		
 		public int segmentCount() {
 			return 1;
 		}
@@ -204,7 +208,7 @@ public class TypeCache implements ITypeCache {
 			return false;
 		}
 		
-		public boolean validate() {
+		public boolean isValid() {
 			return true;
 		}
 		

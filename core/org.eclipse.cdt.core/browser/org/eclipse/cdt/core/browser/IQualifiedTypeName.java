@@ -38,7 +38,8 @@ public interface IQualifiedTypeName extends Comparable {
 	public boolean isPrefixOf(IQualifiedTypeName typeName);
 
 	public boolean isLowLevel();
-	public boolean validate();
+	public boolean isValidSegment(String segment);
+	public boolean isValid();
 	
 	public boolean equals(IQualifiedTypeName typeName);
 	public boolean equalsIgnoreCase(IQualifiedTypeName typeName);

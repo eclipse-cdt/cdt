@@ -521,6 +521,16 @@
             %BuildConsoleFontDefinition.description
          </description>
       </fontDefinition>
+            <fontDefinition
+            label="%cCompareFontDefiniton.label"
+            defaultsTo="org.eclipse.cdt.ui.editors.textfont"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            id="org.eclipse.cdt.internal.ui.compare.CMergeViewer">
+         <description>
+            %cCompareFontDefiniton.description
+         </description>
+      </fontDefinition>
+      
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

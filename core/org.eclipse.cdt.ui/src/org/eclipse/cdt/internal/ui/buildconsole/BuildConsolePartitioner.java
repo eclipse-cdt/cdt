@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -30,6 +31,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.console.ConsolePlugin;
 
 public class BuildConsolePartitioner
 		implements
@@ -54,6 +56,55 @@ public class BuildConsolePartitioner
 	boolean killed;
 	BuildConsoleManager fManager;
 
+	/**
+	 * A queue of stream entries written to standard out and standard err.
+	 * Entries appended to the end of the queue and removed from the front.
+	 * Intentionally a vector to obtain synchronization as entries are added and
+	 * removed.
+	 */
+	private Vector fQueue = new Vector(5);
+
+	private boolean fAppending;
+
+	class StreamEntry {
+
+		/**
+		 * Identifier of the stream written to.
+		 */
+		private BuildConsoleStream fStream;
+		/**
+		 * The text written
+		 */
+		private StringBuffer fText = null;
+
+		StreamEntry(String text, BuildConsoleStream stream) {
+			fText = new StringBuffer(text);
+			fStream = stream;
+		}
+
+		/**
+		 * Returns the stream identifier
+		 */
+		public BuildConsoleStream getStream() {
+			return fStream;
+		}
+
+		public void appendText(String text) {
+			fText.append(text);
+		}
+
+		public int size() {
+			return fText.length();
+		}
+
+		/**
+		 * Returns the text written
+		 */
+		public String getText() {
+			return fText.toString();
+		}
+	}
+
 	public BuildConsolePartitioner(BuildConsoleManager manager) {
 		fManager = manager;
 		fMaxLines = BuildConsolePreferencePage.buildConsoleLines();
@@ -71,19 +122,40 @@ public class BuildConsolePartitioner
 	 *            the stream to append to
 	 */
 
-	public void appendToDocument(final String text, final BuildConsoleStream stream) {
-		if( text.length() == 0 )
-			return;
-		
+	public void appendToDocument(String text, BuildConsoleStream stream) {
+		boolean addToQueue = true;
+		synchronized (fQueue) {
+			int i = fQueue.size();
+			if (i > 0) {
+				StreamEntry entry = (StreamEntry)fQueue.get(i - 1);
+				// if last stream is the same and we have not exceeded our
+				// display write limit, append.
+				if (entry.getStream() == stream && entry.size() < 10000) {
+					entry.appendText(text);
+					addToQueue = false;
+				}
+			}
+			if (addToQueue) {
+				fQueue.add(new StreamEntry(text, stream));
+			}
+		}
 		Runnable r = new Runnable() {
 
 			public void run() {
-				fLastStream = stream;
+				StreamEntry entry;
 				try {
-					if (stream == null) {
-						fDocument.set(text);
+					entry = (StreamEntry)fQueue.remove(0);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					return;
+				}
+				fLastStream = entry.getStream();
+				System.out.println(entry.getText().length());
+				try {
+					warnOfContentChange(fLastStream);
+					if (fLastStream == null) {
+						fDocument.set(entry.getText());
 					} else {
-						fDocument.replace(fDocument.getLength(), 0, text);
+						fDocument.replace(fDocument.getLength(), 0, entry.getText());
 						checkOverflow();
 					}
 				} catch (BadLocationException e) {
@@ -91,9 +163,16 @@ public class BuildConsolePartitioner
 			}
 		};
 		Display display = CUIPlugin.getStandardDisplay();
-		if (display != null) {
+		if (addToQueue && display != null) {
 			display.asyncExec(r);
 		}
+	}
+
+	private void warnOfContentChange(BuildConsoleStream stream) {
+		if (stream != null) {
+			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
+		}
+		fManager.showConsole();
 	}
 
 	public IDocument getDocument() {
@@ -285,11 +364,20 @@ public class BuildConsolePartitioner
 		}
 	}
 
-	public void start(IProject project) {
+	public void start(final IProject project) {
+		Display display = CUIPlugin.getStandardDisplay();
+		if (display != null) {
+			display.asyncExec(new Runnable() {
+
+				public void run() {
+					fManager.startConsoleActivity(project);
+				}
+			});
+		}
+
 		if (BuildConsolePreferencePage.isClearBuildConsole()) {
 			appendToDocument("", null); //$NON-NLS-1$
 		}
-		fManager.startConsoleActivity(project);
 	}
 
 	public class BuildOutputStream extends ConsoleOutputStream {
@@ -301,19 +389,14 @@ public class BuildConsolePartitioner
 		}
 
 		public void flush() throws IOException {
-			if( fBuffer.length() > 0 )
-				appendToDocument(readBuffer(), fStream);
-			fManager.showConsole();
 		}
 
 		public void close() throws IOException {
 			flush();
 		}
 
-		public synchronized void write(byte[] b, int off, int len) throws IOException {
-			super.write(b, off, len);
-			if( fBuffer.length() > 4096 )
-				flush();
+		public void write(byte[] b, int off, int len) throws IOException {
+			appendToDocument(new String(b, off, len), fStream);
 		}
 	}
 

@@ -117,20 +117,14 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	public void consoleChange(IBuildConsoleEvent event) {
 		if (event.getType() == IBuildConsoleEvent.CONSOLE_START || event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE) {
 			if (isAvailable()) {
-				Display display = getControl().getDisplay();
 				if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && getProject() != event.getProject()) {
 					return;
 				}
 				setProject(event.getProject());
-				display.asyncExec(new Runnable() {
-
-					public void run() {
-						if (isAvailable()) {
-							setDocument();
-							getConsole().setTitle(getProject());
-						}
-					}
-				});
+				if (isAvailable()) {
+					setDocument();
+					getConsole().setTitle(getProject());
+				}
 			}
 		}
 	}
@@ -178,14 +172,14 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * Fill the context menu
 	 * 
 	 * @param menu
-	 *        menu
+	 *            menu
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
-		menu.add((IAction) fGlobalActions.get(ActionFactory.COPY.getId()));
-		menu.add((IAction) fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
+		menu.add((IAction)fGlobalActions.get(ActionFactory.COPY.getId()));
+		menu.add((IAction)fGlobalActions.get(ActionFactory.SELECT_ALL.getId()));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction) fGlobalActions.get(ActionFactory.FIND.getId()));
-		menu.add((IAction) fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
+		menu.add((IAction)fGlobalActions.get(ActionFactory.FIND.getId()));
+		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -200,7 +194,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 		final String property = event.getProperty();
 
 		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStream) {
-			BuildConsoleStream stream = (BuildConsoleStream) source;
+			BuildConsoleStream stream = (BuildConsoleStream)source;
 			if (stream.getConsole().equals(getConsole()) && getControl() != null) {
 				Display display = getControl().getDisplay();
 				display.asyncExec(new Runnable() {
@@ -233,8 +227,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_TOOL_COPY_DISABLED));
-		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_COPY));
+		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action = new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.getString("BuildConsolePage.Select_&All@Ctrl+A_12"), //$NON-NLS-1$
@@ -255,14 +248,14 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	protected void updateSelectionDependentActions() {
 		Iterator iterator = fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			updateAction((String) iterator.next());
+			updateAction((String)iterator.next());
 		}
 	}
 
 	protected void updateAction(String actionId) {
-		IAction action = (IAction) fGlobalActions.get(actionId);
+		IAction action = (IAction)fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
-			((IUpdate) action).update();
+			((IUpdate)action).update();
 		}
 	}
 
@@ -320,19 +313,19 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 
 	IProject convertSelectionToProject(ISelection selection) {
 		IProject project = null;
-		if (selection == null || !(selection instanceof IStructuredSelection)) {
+		if (selection == null || ! (selection instanceof IStructuredSelection)) {
 			return project;
 		}
-		IStructuredSelection ssel = (IStructuredSelection) selection;
+		IStructuredSelection ssel = (IStructuredSelection)selection;
 		Object element = ssel.getFirstElement();
 		if (element instanceof IAdaptable) {
-			IAdaptable input = (IAdaptable) element;
+			IAdaptable input = (IAdaptable)element;
 			if (input != null) {
 				IResource resource = null;
 				if (input instanceof IResource) {
-					resource = (IResource) input;
+					resource = (IResource)input;
 				} else {
-					resource = (IResource) input.getAdapter(IResource.class);
+					resource = (IResource)input.getAdapter(IResource.class);
 				}
 				if (resource != null) {
 					project = resource.getProject();
@@ -380,7 +373,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * Sets the font for this page.
 	 * 
 	 * @param font
-	 *        font
+	 *            font
 	 */
 	protected void setFont(Font font) {
 		getViewer().getTextWidget().setFont(font);
@@ -390,7 +383,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * Sets the tab width for this page.
 	 * 
 	 * @param int
-	 *        tab width
+	 *            tab width
 	 */
 	protected void setTabs(int tabs) {
 		getViewer().getTextWidget().setTabs(tabs);

@@ -53,7 +53,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	static public final int BUILD_STREAM_TYPE_INFO = 0;
 	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
 	static public final int BUILD_STREAM_TYPE_ERROR = 2;
-	
+
 	public BuildConsoleManager() {
 	}
 
@@ -79,37 +79,32 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 * front.
 	 */
 	protected void showConsole() {
-		CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-
-			public void run() {
-				IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
-				if (window != null) {
-					IWorkbenchPage page = window.getActivePage();
-					if (page != null) {
-						IViewPart consoleView = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-						if (consoleView == null && BuildConsolePreferencePage.isAutoOpenConsole()) {
-							IWorkbenchPart activePart = page.getActivePart();
-							try {
-								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
-							} catch (PartInitException pie) {
-								CUIPlugin.getDefault().log(pie);
-							}
-							//restore focus stolen by the creation of the
-							// console
-							page.activate(activePart);
-						} else {
-							boolean bringToTop = shouldBringToTop(consoleView);
-							if (bringToTop) {
-								page.bringToTop(consoleView);
-							}
-						}
-						if (consoleView instanceof IConsoleView) {
-							((IConsoleView)consoleView).display(fConsole);
-						}
+		IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IViewPart consoleView = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+				if (consoleView == null && BuildConsolePreferencePage.isAutoOpenConsole()) {
+					IWorkbenchPart activePart = page.getActivePart();
+					try {
+						consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
+					} catch (PartInitException pie) {
+						CUIPlugin.getDefault().log(pie);
+					}
+					//restore focus stolen by the creation of the
+					// console
+					page.activate(activePart);
+				} else {
+					boolean bringToTop = shouldBringToTop(consoleView);
+					if (bringToTop) {
+						page.bringToTop(consoleView);
 					}
 				}
+				if (consoleView instanceof IConsoleView) {
+					((IConsoleView)consoleView).display(fConsole);
+				}
 			}
-		});
+		}
 	}
 
 	boolean shouldBringToTop(IViewPart consoleView) {
@@ -225,14 +220,14 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			errorColor = newColor;
 		}
 	}
-	
+
 	public BuildConsoleStream getStream(int type) throws CoreException {
-		switch(type) {
-			case BUILD_STREAM_TYPE_ERROR:
+		switch (type) {
+			case BUILD_STREAM_TYPE_ERROR :
 				return errorStream;
-			case BUILD_STREAM_TYPE_INFO:
+			case BUILD_STREAM_TYPE_INFO :
 				return infoStream;
-			case BUILD_STREAM_TYPE_OUTPUT:
+			case BUILD_STREAM_TYPE_OUTPUT :
 				return outputStream;
 		}
 		throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, "No Such Console", null)); //$NON-NLS-1$

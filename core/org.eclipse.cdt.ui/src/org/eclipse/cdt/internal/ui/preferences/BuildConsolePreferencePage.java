@@ -123,8 +123,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PREF_CLEAR_CONSOLE, true);
-		prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, false);
-		prefs.setDefault(PREF_CONSOLE_ON_TOP, true);
+		prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, true);
+		prefs.setDefault(PREF_CONSOLE_ON_TOP, false);
 		prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
 		prefs.setDefault(PREF_BUILDCONSOLE_TAB_WIDTH, 4);
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_OUTPUT_COLOR, new RGB(0, 0, 0));

@@ -46,12 +46,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModelManager implements IResourceChangeListener {
 
-    /**
-     * Unique handle onto the CModel
-     */
-    final CModel cModel = new CModel();
+	/**
+	 * Unique handle onto the CModel
+	 */
+	final CModel cModel = new CModel();
     
-    public static HashSet OptionNames = new HashSet(20);
+	public static HashSet OptionNames = new HashSet(20);
         
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
@@ -356,7 +356,11 @@ public class CModelManager implements IResourceChangeListener {
 		if (project != null) {
 			ICElement celement = create(project);
 			if (celement != null) {
+				// Let the function remove the children
+				// but it has the side of effect of removing the CProject also
+				// so we have to recall create again.
 				releaseCElement(celement);
+				celement = create(project);
 				// Fired and ICElementDelta.PARSER_CHANGED
 				CElementDelta delta = new CElementDelta(getCModel());
 				delta.binaryParserChanged(celement);
@@ -554,8 +558,8 @@ public class CModelManager implements IResourceChangeListener {
 				case IResourceChangeEvent.PRE_DELETE :
 				try{
 					if (resource.getType() == IResource.PROJECT && 	
-					    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
-					      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+						( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+						  ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
 						this.deleting((IProject) resource);}
 				}catch (CoreException e){
 				}

@@ -1,3 +1,49 @@
+2002-11-16 Alain Magloire
+
+	* src/.../model/IBinaryParser.java: New Interface for Binary parsers
+	extension-points.
+	* src/.../model/ICElement.java (getResource): New method added.
+	* src/.../internal/core/model/parser/BinaryContainerAdapter.java:
+	New file adapting an archive to a IContainer.
+	* src/.../internal/core/model/parser/BinaryFiledapter.java:
+	New file adapting a binary to a IFile.
+	* src/.../internal/core/model/parser/ElfBinaryArchive.java:
+	New file implements IBinaryArchive.
+	* src/.../internal/core/model/parser/ElfBinaryFile.java:
+	New file implements IBinaryObject etc ...
+	* src/.../internal/core/model/parser/ElfBinaryFile.java:
+	New file implements IBinaryParser.
+	* src/.../internal/core/model/Archive.java (isArchive): Removed.
+	(getResource): Added.
+	* src/.../internal/core/model/ArchiveContainer.java (getChildren):
+	Use new method CProject.setBinaryRunner().
+	* src/.../internal/core/model/ArchiveInfo.java:
+	rewritten to use IBinarParser interface.
+	* src/.../internal/core/model/BinaryContainer.java (getChildren):
+	Use new method CProject.setBinaryRunner().
+	* src/.../internal/core/model/BinaryInfo.java:
+	rewritten to use IBinarParser interface.
+	* src/.../internal/core/model/BinaryRunner.java: New File
+	replace the ElfRunner.java.
+	* src/.../internal/core/model/CProject.java: Rename the function
+	with *Elf* Binary.
+	* src/.../internal/core/model/ElfRunner.java: Rename to BinaryRunner.java
+	* src/.../internal/core/model/CElement.java: Use getResource() instead of
+	getCorrespondingResource().
+	* src/.../internal/core/model/CModelManager.java (ReleaseCElement):
+	Bug fix was not passing the key to hash.remove().
+	(isShared): Use IBinaryParser.
+	(isExecutable): Use IBinaryParser.
+	(isArchive): Use IBinaryParser.
+	* src/.../internal/core/model/Container.java: New file
+	* src/.../internal/core/model/Resource.java: New file
+	* src/.../internal/core/model/Marker.java: New file
+	* src/.../internal/core/model/SourceManipulation.java (getResource): New method.
+	* src/.../internal/core/model/Parent.java (getResource): New method.
+	* plugin.xml: Indentation.
+
+
+
 2002-11-13 Alain Magloire
 
 	* src/.../internal/errorparsers/GCCErrorParser.java (processLine):

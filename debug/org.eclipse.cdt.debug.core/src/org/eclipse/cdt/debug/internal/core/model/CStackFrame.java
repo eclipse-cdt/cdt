@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
@@ -39,7 +40,7 @@ import org.eclipse.debug.core.model.IVariable;
  * @since Aug 7, 2002
  */
 public class CStackFrame extends CDebugElement
-						 implements IStackFrame,
+						 implements ICStackFrame,
 						 			IStackFrameInfo,
 						 			IRestart,
 						 			IResumeWithoutSignal, 

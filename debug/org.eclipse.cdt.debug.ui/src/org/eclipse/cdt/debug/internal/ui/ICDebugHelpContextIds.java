@@ -37,15 +37,14 @@ public interface ICDebugHelpContextIds
 	public static final String AUTO_REFRESH_REGISTERS_ACTION = PREFIX + "auto_refresh_registers_action_context"; //$NON-NLS-1$
 
 	// Views
-	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
 	public static final String MEMORY_VIEW = PREFIX + "memory_view_context"; //$NON-NLS-1$
 	public static final String SHARED_LIBRARIES_VIEW = PREFIX + "shared_libraries_view_context"; //$NON-NLS-1$
 	public static final String SIGNALS_VIEW = PREFIX + "signals_view_context"; //$NON-NLS-1$
+	public static final String DISASSEMBLY_VIEW = PREFIX + "disassembly_view_context"; //$NON-NLS-1$
 
 	// Preference pages
 	public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page_context"; //$NON-NLS-1$
 	public static final String SHARED_LIBRARIES_PREFERENCE_PAGE = PREFIX + "shared_libraries_preference_page_context"; //$NON-NLS-1$
 	public static final String MEMORY_PREFERENCE_PAGE = PREFIX + "memory_preference_page_context"; //$NON-NLS-1$
-	public static final String REGISTERS_PREFERENCE_PAGE = PREFIX + "registers_preference_page_context"; //$NON-NLS-1$
 	public static final String C_DEBUG_PREFERENCE_PAGE = PREFIX + "c_debug_preference_page_context"; //$NON-NLS-1$
 }

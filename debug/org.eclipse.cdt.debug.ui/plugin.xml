@@ -61,6 +61,24 @@
             class="org.eclipse.cdt.debug.internal.ui.views.signals.SignalsView"
             id="org.eclipse.cdt.debug.ui.SignalsView">
       </view>
+      <view
+            name="%DisassemblyView.name"
+            icon="icons/full/cview16/disassembly_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"
+            id="org.eclipse.cdt.debug.ui.DisassemblyView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.fontDefinitions">
+      <fontDefinition
+            label="%DisassemblyFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            id="org.eclipse.cdt.debug.ui.DisassemblyFont">
+         <description>
+            %DetailPaneFontDefinition.description
+         </description>
+      </fontDefinition>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -95,6 +113,15 @@
          </viewShortcut>
          <viewShortcut
                id="org.eclipse.debug.ui.RegisterView">
+         </viewShortcut>
+         <view
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.DisassemblyView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.DisassemblyView">
          </viewShortcut>
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">
@@ -1175,6 +1202,14 @@
             super="org.eclipse.debug.core.breakpoint"
             name="org.eclipse.cdt.debug.core.breakpoint">
       </type>
+      <type
+            markerType="org.eclipse.cdt.debug.ui.disassemblyInstructionPointer.current"
+            name="org.eclipse.cdt.debug.ui.currentDisassemblyIP">
+      </type>
+      <type
+            markerType="org.eclipse.cdt.debug.ui.disassemblyInstructionPointer.secondary"
+            name="org.eclipse.cdt.debug.ui.secondaryDisassemblyIP">
+      </type>
    </extension>
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
@@ -1182,6 +1217,38 @@
             annotationImageProvider="org.eclipse.cdt.debug.internal.ui.BreakpointImageProvider"
             icon="icons/full/obj16/brkp_obj.gif"
             annotationType="org.eclipse.cdt.debug.core.breakpoint">
+      </specification>
+      <specification
+            colorPreferenceValue="217,255,226"
+            annotationType="org.eclipse.cdt.debug.ui.currentDisassemblyIP"
+            verticalRulerPreferenceValue="true"
+            colorPreferenceKey="currentDisassemblyIPColor"
+            highlightPreferenceKey="currentDisassemblyIPHighlight"
+            overviewRulerPreferenceValue="true"
+            highlightPreferenceValue="true"
+            presentationLayer="6"
+            icon="icons/full/obj16/inst_ptr_top.gif"
+            label="%DisassemblyCurrentInstructionPointer"
+            textPreferenceValue="false"
+            textPreferenceKey="currentDisassemblyIPIndication"
+            verticalRulerPreferenceKey="currentDisassemblyIPVerticalRuler"
+            overviewRulerPreferenceKey="currentDisassemblyIPOverviewRuler">
+      </specification>
+      <specification
+            colorPreferenceValue="217,255,226"
+            annotationType="org.eclipse.cdt.debug.ui.secondaryDisassemblyIP"
+            verticalRulerPreferenceValue="true"
+            colorPreferenceKey="secondaryDisassemblyIPColor"
+            highlightPreferenceKey="secondaryDisassemblyIPHighlight"
+            overviewRulerPreferenceValue="true"
+            highlightPreferenceValue="true"
+            presentationLayer="6"
+            icon="icons/full/obj16/inst_ptr.gif"
+            label="%DisassemblySecondaryInstructionPointer"
+            textPreferenceValue="false"
+            textPreferenceKey="secondaryDisassemblyIPIndication"
+            verticalRulerPreferenceKey="secondaryDisassemblyIPVerticalRuler"
+            overviewRulerPreferenceKey="secondaryDisassemblyIPOverviewRuler">
       </specification>
    </extension>
    <extension

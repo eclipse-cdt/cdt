@@ -1,3 +1,10 @@
+2004-04-15 Mikhail Khodjaiants
+	Implementing core support of disassembly.
+	* AsmInstruction.java
+	* CDebugTarget.java
+	* CStackFrame.java
+	* Disassembly.java: new
+
 2004-04-12 Mikhail Khodjaiants
 	Implementing retargettable breakpoint related actions.
 	* CDebugModel.java

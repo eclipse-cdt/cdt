@@ -30,6 +30,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
@@ -229,6 +230,11 @@ public class CDebugTarget extends CDebugElement
 	private DisassemblyManager fDisassemblyManager;
 
 	/**
+	 * A disassembly manager for this target.
+	 */
+	private Disassembly fDisassembly;
+
+	/**
 	 * A shared library manager for this target.
 	 */
 	private CSharedLibraryManager fSharedLibraryManager;
@@ -295,6 +301,7 @@ public class CDebugTarget extends CDebugElement
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		setThreadList( new ArrayList( 5 ) );
 		setDisassemblyManager( new DisassemblyManager( this ) );
+		createDisassembly();
 		setSharedLibraryManager( new CSharedLibraryManager( this ) );
 		setSignalManager( new CSignalManager( this ) );
 		setRegisterManager( new CRegisterManager( this ) );
@@ -1000,6 +1007,8 @@ public class CDebugTarget extends CDebugElement
 			return getSignalManager();
 		if ( adapter.equals( ICRegisterManager.class ) )
 			return getRegisterManager();
+		if ( adapter.equals( ICDISession.class ) )
+			return getCDISession();
 		return super.getAdapter( adapter );
 	}
 	
@@ -1232,6 +1241,7 @@ public class CDebugTarget extends CDebugElement
 		disposeSignalManager();
 		disposeRegisterManager();
 		disposeDisassemblyManager();
+		disposeDisassembly();
 		disposeSourceManager();
 		disposeBreakpointManager();
 		removeAllExpressions();
@@ -2369,8 +2379,7 @@ public class CDebugTarget extends CDebugElement
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getDisassembly()
 	 */
 	public IDisassembly getDisassembly() throws DebugException {
-		// TODO Auto-generated method stub
-		return null;
+		return fDisassembly;
 	}
 
 	/* (non-Javadoc)
@@ -2425,5 +2434,15 @@ public class CDebugTarget extends CDebugElement
 		if ( slm != null ) {
 			slm.loadSymbolsForAll();
 		}
+	}
+
+	private void createDisassembly() {
+		this.fDisassembly = new Disassembly( this );
+	}
+
+	private void disposeDisassembly() {
+		if ( fDisassembly != null )
+			fDisassembly.dispose();
+		fDisassembly = null;
 	}
 }

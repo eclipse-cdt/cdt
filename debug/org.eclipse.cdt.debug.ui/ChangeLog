@@ -1,3 +1,23 @@
+2004-04-15 Mikhail Khodjaiants
+	Implementing the Disassembly view.
+	New pacckage: org.eclipse.cdt.debug.internal.ui.views.disassembly
+	* DisassemblyMessages.properties: new
+	* DisassemblyDocumentProvider.java: new
+	* DisassemblyEditorInput.java: new
+	* DisassemblyInstructionPointerAnnotation.java: new
+	* DisassemblyMessages.java: new
+	* DisassemblyView.java: new
+	* DisassemblyViewer.java: new
+	* DisassemblyViewEventHandler.java: new
+	* IDisassemblyListener.java: new
+	* ICDebugHelpContextIds.java
+	* IInternalCDebugUIConstants.java
+	* plugin.properties
+	* plugin.xml
+	* icons/full/cview16/disassembly_view.gif: new
+	* icons/full/obj16/inst_ptr_top.gif: new
+	* icons/full/obj16/inst_ptr.gif: new
+
 2004-04-12 Mikhail Khodjaiants
 	Fixes in the breakpoint-related actions.
 	* ActionMessages.properties

@@ -1,6 +1,31 @@
+2002-10-23 Alain Magloire
+
+	gdb/mi for program control command will fire a change state event:
+	-exec-run
+	^running
+	This allow the UI to change its state and wait for the suspended.
+	Providing a gdb prompt adds some problems, since there is no state
+	change, i.e.(^running) after command like, next/step/...:
+	next
+	&"next\n"
+	...
+	So to palliate, the txthread do some query when the commands are
+	CLI commands trying to discover the type and fire any appropriate
+	events on behalf on gdb.
+
+	* src/.../core/RxThread.java (createEvent): Adjust the parser to
+	not rely on the oob "*stopped", since for CLI command it is not
+	in the result-class.  So the suspended state will be base of
+	the "reason" only.
+	* src/.../core/TxThread.java (processCLICommand): new method,
+	get the command and try to recognize if it is a program control
+	command like: next, step, etc ..
+	* src/.../core/command/CLICommand.java (getOperation): New method,
+	returns the command string.
+
 2002-10-22 Alain Magloire
 
-	Change the framewor to support access to gdb prompt.
+	Change the framework to support access to gdb prompt.
 	Trying to reuse as much as possible Eclipse framework.
 	The session/gdb process is available via CDI.
 

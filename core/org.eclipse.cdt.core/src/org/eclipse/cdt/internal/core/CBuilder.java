@@ -15,11 +15,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.errorparsers.ErrorParserManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -63,6 +63,7 @@ public class CBuilder extends ACBuilder {
 	
 	private boolean invokeMake(boolean fullBuild, IProgressMonitor monitor) {
 		boolean isClean = false;
+		boolean fatalBuild = false;
 		IProject currProject= getProject();
 		SubProgressMonitor subMonitor = null;
 
@@ -132,21 +133,20 @@ public class CBuilder extends ACBuilder {
 					String errorDesc= CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());
 					StringBuffer buf= new StringBuffer(errorDesc);
 					buf.append(System.getProperty("line.separator", "\n"));
-					buf.append("(");
-					buf.append(errMsg);
-					buf.append(")");
+					buf.append("(").append(errMsg).append(")");
 					cos.write(buf.toString().getBytes());
 					cos.flush();
+					fatalBuild = true;
+				} else {
+					fatalBuild = epm.reportProblems();
 				}
-				epm.close();
-				epm.reportProblems();
 				subMonitor.done();
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);
 		}
 		monitor.done();
-		return isClean;
+		return (isClean || fatalBuild);
 	}
 	
 	private String[] parseArguments(boolean fullBuild, String override_args) {

@@ -1,3 +1,10 @@
+2002-11-19 Alain Magloire
+
+	* src/.../mi/core/cdi/MemoryManager.java (compareBlocks):
+	The startAddress() may have change for example if we were
+	watching "char *p;" and the address move "p++".  Take this
+	into account now.
+
 2002-11-18 Alain Magloire
 
 	* src/.../mi/core/cdi/StackFrame.java (getCurrentStackFrame):

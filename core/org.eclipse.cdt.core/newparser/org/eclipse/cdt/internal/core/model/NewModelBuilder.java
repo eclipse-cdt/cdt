@@ -72,7 +72,7 @@ public class NewModelBuilder implements IParserCallback {
 		String name = currName.toString(); 
 		Structure elem = ((Structure)container.getElement());
 		elem.setElementName( name );
-		elem.setIdPos(currName.getEndOffset() - 2, name.length());
+		elem.setIdPos(currName.getEndOffset(), name.length());
 		elem.setPos(currName.getEndOffset(), name.length());
 	}
 

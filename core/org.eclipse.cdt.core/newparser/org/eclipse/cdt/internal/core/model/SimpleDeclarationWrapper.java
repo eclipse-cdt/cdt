@@ -112,7 +112,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements Declarati
 			}
 			
 			// hook up the offsets
-			declaration.setIdPos( currentDeclarator.getName().getEndOffset() - 2,currentDeclarator.getName().toString().length()); 
+			declaration.setIdPos( 
+currentDeclarator.getName().getEndOffset(),currentDeclarator.getName().toString().length());
 			declaration.setPos( currentDeclarator.getName().getEndOffset(), currentDeclarator.getName().toString().length() );
 			
 			// add to parent

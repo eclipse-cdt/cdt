@@ -260,7 +260,7 @@ public class Scanner implements IScanner {
 	}
 
 	// constants
-	private static final int NOCHAR = -1;
+	public static final int NOCHAR = -1;
 
 	private static final String TEXT = "<text>";
 	private static final String START = "<initial reader>";

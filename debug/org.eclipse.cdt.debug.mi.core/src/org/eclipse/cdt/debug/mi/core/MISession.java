@@ -15,6 +15,7 @@ import java.util.Observable;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -297,9 +298,9 @@ public class MISession extends Observable {
 		if (inferior.isRunning()) {
 			// REMINDER: if we support -exec-interrupt
 			// Let it throught:
-			// if (cmd instanceof MIExecInterrupt) { }
-			// else
-			throw new MIException("Target is not suspended");
+			if (!(cmd instanceof MIExecInterrupt)) {
+				throw new MIException("Target is not suspended");
+			}
 		}
 
 		if (isTerminated()) {

@@ -750,9 +750,10 @@ public class CThread extends CDebugElement
 		Iterator it = fStackFrames.iterator();
 		while( it.hasNext() )
 		{
-			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
-			if ( frame != null )
-				frame.dispose();
+			Object obj = it.next();
+			if ( obj instanceof CStackFrame ) {
+				((CStackFrame)obj).dispose();
+			}
 		}
 		fStackFrames.clear();
 		setLastStackDepth( 0 );

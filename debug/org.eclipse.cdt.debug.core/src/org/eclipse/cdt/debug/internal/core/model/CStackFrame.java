@@ -519,6 +519,12 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		if ( adapter == IRunToAddress.class ) {
 			return getDebugTarget().getAdapter( adapter );
 		}
+		if ( adapter == CStackFrame.class ) {
+			return this;
+		}
+		if ( adapter == ICStackFrame.class ) {
+			return this;
+		}
 		if ( adapter == IStackFrame.class ) {
 			return this;
 		}

@@ -27,7 +27,7 @@ public class COwner implements ICOwnerInfo {
 		if (extpoint != null) {
 			extension =  extpoint.getExtension(ownerID);
 		} else {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, -1, "Invalid CDTProject owner ID", (Throwable)null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner ID", (Throwable)null);
 			throw new CoreException(status);
 		}
 	}
@@ -62,7 +62,7 @@ public class COwner implements ICOwnerInfo {
 				return;
 			}
 		}
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
 		throw new CoreException(status);
 	}
 
@@ -75,7 +75,7 @@ public class COwner implements ICOwnerInfo {
 				return;
 			}
 		}
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
 		throw new CoreException(status);
 	}
 

@@ -99,9 +99,9 @@ public class CDescriptor implements ICDescriptor {
 			IStatus status;
 			readCDTProject(descriptionPath);
 			if ( fOwner.getID().equals(id)) {
-				status = new Status(IStatus.WARNING, CCorePlugin.getDefault().PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS, "CDTProject already exisits", (Throwable)null);
+				status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS, "CDTProject already exisits", (Throwable)null);
 			} else {
-				status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_MISMATCH, "CDTProject already exisits but does not match owner ID of creator", (Throwable)null);
+				status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_MISMATCH, "CDTProject already exisits but does not match owner ID of creator", (Throwable)null);
 			}
 			throw new CoreException(status);
 		}
@@ -119,7 +119,7 @@ public class CDescriptor implements ICDescriptor {
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
 		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, -1, "CDTProject file not found", (Throwable)null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "CDTProject file not found", (Throwable)null);
 			throw new CoreException(status);
 		}
 		readCDTProject(descriptionPath);

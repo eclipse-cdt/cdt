@@ -47,7 +47,7 @@ public class MakeBuilder extends AbstractCExtension implements ICBuilder {
 	}
 
 	public String getID() {
-		return CCorePlugin.getDefault().PLUGIN_ID + ".makeBuilder";
+		return CCorePlugin.PLUGIN_ID + ".makeBuilder";
 	}
 
 	public void setOptimization(IOptimization o) {

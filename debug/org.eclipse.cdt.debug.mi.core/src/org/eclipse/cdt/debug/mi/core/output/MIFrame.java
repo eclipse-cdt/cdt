@@ -89,13 +89,16 @@ public class MIFrame {
 					str = str.trim();
 					if ( str.equals( "??" ) )
 						func = "";
-					// In some situations gdb returns the function names that include parameter types.
-					// To make the presentation consistent truncate the parameters. PR 46592
-					int end = str.indexOf( '(' );
-					if ( end != -1 )
-						func = str.substring( 0, end );
 					else
-						func = str;
+					{
+						// In some situations gdb returns the function names that include parameter types.
+						// To make the presentation consistent truncate the parameters. PR 46592
+						int end = str.indexOf( '(' );
+						if ( end != -1 )
+							func = str.substring( 0, end );
+						else
+							func = str;
+					}
 				}
 			} else if (var.equals("file")) {
 				file = str;

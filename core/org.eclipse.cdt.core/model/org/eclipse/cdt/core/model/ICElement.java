@@ -201,9 +201,13 @@ public interface ICElement extends IAdaptable {
 	static final int CPP_PUBLIC = 0x2000;
 
 	/**
+	 * Modifier indicating a protected class
+	 */
+	static final int CPP_PROTECTED = 0x4000;
+	/**
 	 * Modifier indicating a friend class
 	 */
-	static final int CPP_FRIEND = 0x4000;
+	static final int CPP_FRIEND = 0x8000;
 
 	/**
 	 * Returns whether this C element exists in the model.

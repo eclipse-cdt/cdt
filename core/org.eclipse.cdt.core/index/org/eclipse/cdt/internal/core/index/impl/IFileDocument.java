@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.CharOperation;
 
 
 /**
@@ -54,7 +54,7 @@ public class IFileDocument extends PropertyDocument {
 		if (byteContents != null) return byteContents;
 		IPath location = file.getLocation();
 		if (location == null) return new byte[0];
-		return byteContents = org.eclipse.cdt.internal.core.search.Util.getFileByteContent(location.toFile());
+		return byteContents = org.eclipse.cdt.internal.core.Util.getFileByteContent(location.toFile());
 	}
 	/**
 	 * @see org.eclipse.jdt.internal.core.index.IDocument#getCharContent()
@@ -63,7 +63,7 @@ public class IFileDocument extends PropertyDocument {
 		if (charContents != null) return charContents;
 		IPath location = file.getLocation();
 		if (location == null) return CharOperation.NO_CHAR;
-		return charContents = org.eclipse.cdt.internal.core.search.Util.getFileCharContent(
+		return charContents = org.eclipse.cdt.internal.core.Util.getFileCharContent(
 					location.toFile(), 
 					getEncoding());
 	}

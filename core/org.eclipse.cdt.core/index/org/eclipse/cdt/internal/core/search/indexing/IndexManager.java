@@ -21,6 +21,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.CRC32;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.impl.Index;
+import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
+import org.eclipse.cdt.internal.core.search.IndexSelector;
+import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
+import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -28,16 +38,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.cdt.internal.core.search.processing.JobManager;
-import org.eclipse.cdt.internal.core.search.processing.IJob;
-import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
-import org.eclipse.cdt.internal.core.search.IndexSelector;
-import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
-import org.eclipse.cdt.internal.core.search.CharOperation;
-import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.impl.Index;
-import org.eclipse.cdt.internal.core.model.CProject;
-import org.eclipse.cdt.core.CCorePlugin;
+
 
 public class IndexManager extends JobManager implements IIndexConstants {
 	/* number of file contents in memory */
@@ -303,11 +304,11 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Name of the background process
 	 */
 	public String processName(){
-		return org.eclipse.cdt.internal.core.search.Util.bind("process.name"); //$NON-NLS-1$
+		return org.eclipse.cdt.internal.core.Util.bind("process.name"); //$NON-NLS-1$
 	}
 	
 	private void rebuildIndex(String indexName, IPath path) {
-		Object target = org.eclipse.cdt.internal.core.search.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
+		Object target = org.eclipse.cdt.internal.core.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
 		if (target == null) return;
 
 		if (VERBOSE)
@@ -546,7 +547,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 
 	private char[] readIndexState() {
 		try {
-			return org.eclipse.cdt.internal.core.search.Util.getFileCharContent(savedIndexNamesFile, null);
+			return org.eclipse.cdt.internal.core.Util.getFileCharContent(savedIndexNamesFile, null);
 		} catch (IOException ignored) {
 			if (VERBOSE)
 				JobManager.verbose("Failed to read saved index file names"); //$NON-NLS-1$

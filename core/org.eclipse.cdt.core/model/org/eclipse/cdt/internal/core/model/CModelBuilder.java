@@ -73,7 +73,9 @@ public class CModelBuilder {
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, quickParseCallback), quickParseCallback, mode );
+		IParser parser = ParserFactory.createParser( 
+			ParserFactory.createScanner( new StringReader( code ), "code", 
+			new ScannerInfo(), mode, quickParseCallback), quickParseCallback, mode );
 		parser.setCppNature(hasCppNature);
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
@@ -459,8 +461,7 @@ public class CModelBuilder {
 		}
 		element.setTypeName ( getType(varDeclaration.getAbstractDeclaration()) );
 		element.setConst(varDeclaration.getAbstractDeclaration().isConst());
-		// TODO : fix volatile for variables
-		// element.setVolatile(varDeclaration.isVolatile());
+		element.setVolatile(varDeclaration.getAbstractDeclaration().isVolatile());
 		element.setStatic(varDeclaration.isStatic());
 		// add to parent
 		parent.addChild( element ); 	
@@ -519,6 +520,8 @@ public class CModelBuilder {
 				}
 				
 			}
+			element.setVolatile(methodDeclaration.isVolatile());
+			element.setConst(methodDeclaration.isConst());				
 		}
 		else // instance of IASTFunction 
 		{
@@ -547,10 +550,7 @@ public class CModelBuilder {
 		}						
 		element.setParameterTypes(parameterTypes);
 		element.setReturnType( getType(functionDeclaration.getReturnType()) );
-		// TODO: Fix volatile and const
-		//element.setVolatile(functionDeclaration.isVolatile());
 		element.setStatic(functionDeclaration.isStatic());
-		//element.setConst(functionDeclaration.isConst());				
 
 		// add to parent
 		parent.addChild( element ); 	

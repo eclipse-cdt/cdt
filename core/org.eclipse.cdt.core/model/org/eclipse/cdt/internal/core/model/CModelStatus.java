@@ -44,7 +44,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Singleton OK object
 	 */
-	public static final ICModelStatus VERIFIED_OK = new CModelStatus(OK);
+	public static final ICModelStatus VERIFIED_OK = new CModelStatus(OK, OK, org.eclipse.cdt.internal.core.Util.bind("status.OK"));;
 
 	/**
 	 * Constructs an C model status with no corresponding elements.
@@ -59,7 +59,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus(int code) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		//fElements= CElementInfo.fgEmptyChildren;
+		fElements= CElementInfo.fgEmptyChildren;
 	}
 
 	/**
@@ -76,18 +76,22 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code, String string) {
-		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		//fElements= CElementInfo.fgEmptyChildren;
+		this(ERROR, code, string);
+	}
+
+	public CModelStatus(int severity, int code, String string) {
+		super(severity, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		fElements= CElementInfo.fgEmptyChildren;
 		fPath= null;
 		fString = string;
-	}
+	}	
 
 	/**
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code, Throwable throwable) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", throwable); //$NON-NLS-1$
-		//fElements= CElementInfo.fgEmptyChildren;
+		fElements= CElementInfo.fgEmptyChildren;
 	}
 
 	/**
@@ -95,7 +99,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus(int code, IPath path) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		//fElements= CElementInfo.fgEmptyChildren;
+		fElements= CElementInfo.fgEmptyChildren;
 		fPath= path;
 	}
 
@@ -115,6 +119,11 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		this(code, new ICElement[]{element});
 		fString= string;
 	}
+
+	public CModelStatus(int code, ICElement element, IPath path) {
+		this(code, new ICElement[]{element});
+		fPath = path;
+	}	
 
 	/**
 	 * Constructs an C model status with no corresponding elements.

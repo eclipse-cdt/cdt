@@ -21,7 +21,7 @@ import java.util.zip.CRC32;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
@@ -207,7 +207,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 	
 	private char[] readDTreeState() {
 		try {
-			return org.eclipse.cdt.internal.core.search.Util.getFileCharContent(savedDTreesFile, null);
+			return org.eclipse.cdt.internal.core.Util.getFileCharContent(savedDTreesFile, null);
 		} catch (IOException ignored) {
 			if (VERBOSE)
 				JobManager.verbose("Failed to read saved dTree file names"); //$NON-NLS-1$
@@ -216,7 +216,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 	}
 	
 	private void rebuildDTree(String treeName, IPath path) {
-		Object target = org.eclipse.cdt.internal.core.search.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
+		Object target = org.eclipse.cdt.internal.core.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
 		if (target == null) return;
 	
 		if (VERBOSE)

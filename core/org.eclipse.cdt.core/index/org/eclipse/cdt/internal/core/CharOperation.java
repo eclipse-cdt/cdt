@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.search;
+package org.eclipse.cdt.internal.core;
 
 /**
  * This class is a collection of helper methods to manipulate char arrays.

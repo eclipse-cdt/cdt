@@ -105,7 +105,7 @@ public class CModelElementsTests extends TestCase {
 	public void testCModelElements(){
 		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse(true); // require line numbers
+		Map newElement = tu.parse(); 
 		
 		// tu ---> include
 		checkInclude(tu);

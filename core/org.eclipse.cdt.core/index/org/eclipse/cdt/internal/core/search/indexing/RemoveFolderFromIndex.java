@@ -13,9 +13,9 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.cdt.internal.core.search.Util;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;

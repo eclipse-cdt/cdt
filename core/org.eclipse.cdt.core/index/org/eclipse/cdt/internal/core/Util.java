@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.search;
+package org.eclipse.cdt.internal.core;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.internal.core.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -33,7 +34,7 @@ public class Util {
 
 	/* Bundle containing messages */
 	protected static ResourceBundle bundle;
-	private final static String bundleName = "org.eclipse.cdt.internal.core.search.messages"; //$NON-NLS-1$
+	private final static String bundleName = "org.eclipse.cdt.internal.core.messages"; //$NON-NLS-1$
 	static {
 		relocalize();
 	}

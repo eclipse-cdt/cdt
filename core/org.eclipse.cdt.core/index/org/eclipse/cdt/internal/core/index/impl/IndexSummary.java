@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.CharOperation;
 
 /**
  * An indexSummary is used when saving an index into a BlocksIndexOuput or 

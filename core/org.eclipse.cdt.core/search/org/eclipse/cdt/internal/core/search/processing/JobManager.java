@@ -13,7 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.search.processing;
 
-import org.eclipse.cdt.internal.core.search.Util;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;

@@ -19,6 +19,7 @@ import junit.textui.TestRunner;
 
 import org.eclipse.cdt.core.build.managed.tests.AllBuildTests;
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
+import org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest;
 import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
 import org.eclipse.cdt.core.model.failedTests.CModelElementsFailedTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
@@ -91,6 +92,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTestSuite(OtherPatternTests.class );		
 		suite.addTest(IndexManagerTests.suite());
 		suite.addTestSuite( ParseTestOnSearchFiles.class);
+		suite.addTestSuite( CompletionProposalsTest.class);
 		
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("startFailedTests"));

@@ -1,3 +1,7 @@
+2003-08-12
+	Added class name validation to NewClassWizardPage
+	Used the new search (indexer) for Code completion in CCompletionProcessor
+
 2003-08-11 Andrew Niefer
 	- Added some code to CUIPlugin to access working copies 
 	

@@ -34,7 +34,7 @@ public class AddCompilationUnitToIndex extends AddFileToIndex {
 			try {
 				IPath location = resource.getLocation();
 				if (location != null)
-					this.contents = org.eclipse.cdt.internal.core.search.Util.getFileCharContent(location.toFile(), null);
+					this.contents = org.eclipse.cdt.internal.core.Util.getFileCharContent(location.toFile(), null);
 			} catch (IOException e) {
 			}
 		}

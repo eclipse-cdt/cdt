@@ -139,4 +139,74 @@ public class BasicSearchMatch implements IMatch {
 	public boolean isVolatile() {
 		return isVolatile;
 	}
+	/**
+	 * @return
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setEndOffset(int i) {
+		endOffset = i;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setConst(boolean b) {
+		isConst = b;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setStatic(boolean b) {
+		isStatic = b;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setVolatile(boolean b) {
+		isVolatile = b;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setName(String string) {
+		name = string;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setParentName(String string) {
+		parentName = string;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setStartOffset(int i) {
+		startOffset = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setType(int i) {
+		type = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setVisibility(int i) {
+		visibility = i;
+	}
+
 }

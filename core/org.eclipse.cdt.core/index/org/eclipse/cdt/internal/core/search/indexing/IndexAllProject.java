@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import  org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.search.Util;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;

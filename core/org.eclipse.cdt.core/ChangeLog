@@ -1,3 +1,8 @@
+2003-08-12 Hoda Amer
+	Moved CharOperations and Utils from internal.core.search to internal.core
+	Added CConventions class to validate class names
+	Used the new search (indexer) for Code completion in CCompletionProcessor
+	
 2003-08-11 Andrew Niefer
 	Added getSharedWorkingCopies to CCorePlugin.
 	

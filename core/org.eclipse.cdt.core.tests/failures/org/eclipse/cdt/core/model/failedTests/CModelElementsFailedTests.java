@@ -97,7 +97,7 @@ public class CModelElementsFailedTests extends TestCase {
 	public void testBug36379() {
 		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse(true); // require line numbers
+		Map newElement = tu.parse(); // require line numbers
 		
 		// tu ---> namespace: MyPackage
 		ArrayList tuPackages = tu.getChildrenOfType(ICElement.C_NAMESPACE);		

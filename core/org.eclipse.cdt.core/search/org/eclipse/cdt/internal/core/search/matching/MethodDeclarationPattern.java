@@ -25,10 +25,10 @@ import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
-import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 

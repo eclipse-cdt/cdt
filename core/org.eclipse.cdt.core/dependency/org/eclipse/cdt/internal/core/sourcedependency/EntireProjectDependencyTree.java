@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.core.sourcedependency;
 import java.util.HashSet;
 
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
-import org.eclipse.cdt.internal.core.search.Util;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;

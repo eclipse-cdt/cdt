@@ -321,7 +321,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 		
 		// generate structure
-		Map mapping = this.parse(false); // false since this is for working copies
+		Map mapping = this.parse(); 
 		
 		// this is temporary until the New Model Builder is implemented
 		if(mapping == null) {
@@ -481,7 +481,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	public Map parse(boolean requireLineNumbers){
+	public Map parse(){
 		try{
 			String buf =this.getBuffer().getContents();
 			if (buf != null) {

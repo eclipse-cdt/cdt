@@ -17,13 +17,13 @@ import java.util.HashSet;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.search.CSearchScope;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
-import org.eclipse.cdt.internal.core.search.Util;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;

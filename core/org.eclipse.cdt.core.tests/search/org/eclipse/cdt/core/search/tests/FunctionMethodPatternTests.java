@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.MethodDeclarationPattern;
 
 /**

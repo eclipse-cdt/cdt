@@ -26,10 +26,10 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
-import org.eclipse.cdt.internal.core.search.CharOperation;
 
 public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSearchConstants {
 	

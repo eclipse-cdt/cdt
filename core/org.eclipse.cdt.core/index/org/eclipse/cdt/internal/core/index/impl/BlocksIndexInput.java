@@ -15,11 +15,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.cdt.internal.core.search.Util;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 
 /**

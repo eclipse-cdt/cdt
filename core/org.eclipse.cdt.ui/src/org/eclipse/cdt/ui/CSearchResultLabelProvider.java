@@ -72,6 +72,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			case ICElement.C_UNION:			imageDescriptor = CPluginImages.DESC_OBJS_UNION;		break;
 			case ICElement.C_NAMESPACE:		imageDescriptor = CPluginImages.DESC_OBJS_CONTAINER;	break;
 			case ICElement.C_ENUMERATION:	imageDescriptor = CPluginImages.DESC_OBJS_ENUMERATION;	break;
+			case ICElement.C_MACRO:			imageDescriptor = CPluginImages.DESC_OBJS_MACRO;		break;
 			case ICElement.C_FUNCTION:		imageDescriptor = CPluginImages.DESC_OBJS_FUNCTION;		break;
 			case ICElement.C_VARIABLE:		imageDescriptor = CPluginImages.DESC_OBJS_FIELD;		break;
 			case ICElement.C_ENUMERATOR:	imageDescriptor = CPluginImages.DESC_OBJS_ENUMERATOR;	break;

@@ -98,7 +98,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 	protected ITranslationUnit getTU() {
 		TranslationUnit tu = new TranslationUnit(fCProject, sourceFile);
 		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse(false); // FALSE=require line numbers
+		Map newElement = tu.parse(); 
 		return tu;
 	}
 }

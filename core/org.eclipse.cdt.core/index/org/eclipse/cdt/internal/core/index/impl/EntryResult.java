@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.impl;
 
+import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.search.CharOperation;
 
 
 public class EntryResult implements IEntryResult {

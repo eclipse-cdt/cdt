@@ -7,24 +7,42 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.cdt.core.index.ITagEntry;
-import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.index.TagFlags;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.cdt.core.search.BasicSearchResultCollector;
+import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.model.CElement;
+import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
-import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -36,9 +54,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 
 /**
  * C completion processor.
@@ -55,11 +71,17 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
 
-	private CElementLabelProvider fElementLabelProvider;
-	//private ImageRegistry fImageRegistry;
-
+	BasicSearchResultCollector  resultCollector = null;
+	SearchEngine searchEngine = null;
+	CSearchResultLabelProvider labelProvider = null;
+	
 	public CCompletionProcessor(IEditorPart editor) {
 		fEditor = (CEditor) editor;
+	
+		// Needed for search
+		labelProvider = new CSearchResultLabelProvider();
+		resultCollector = new BasicSearchResultCollector ();
+		searchEngine = new SearchEngine();
 		
 		//Determine if this is a C or a C++ file for the context completion       +        //This is _totally_ ugly and likely belongs in the main editor class.
 		String contextNames[] = new String[2];
@@ -102,9 +124,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		fAllowAddIncludes = true;
 
 		fComparator = new CCompletionProposalComparator();
-
-		fElementLabelProvider = new CElementLabelProvider();
-		//fImageRegistry= CUIPlugin.getDefault().getImageRegistry();
 	}
 
 	/**
@@ -188,7 +207,9 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		//IDocument unit= fManager.getWorkingCopy(fEditor.getEditorInput());
+		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
+		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
+							
 		IDocument document = viewer.getDocument();
 
 		ICCompletionProposal[] results = null;
@@ -205,9 +226,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 					length = selection.y;
 				}
 
-				//CCompletionEvaluator evaluator= new CCompletionEvaluator(document, offset, length);
-				//evaluator.restrictProposalsToMatchingCases(fRestrictToMatchingCase);
-				results = evalProposals(document, offset, length);
+				results = evalProposals(document, offset, length, unit);
 			}
 		} catch (Exception e) {
 			CUIPlugin.getDefault().log(e);
@@ -248,22 +267,67 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		return results;
 	}
 
+	private ICElement getCurrentScope(ITranslationUnit unit, int documentOffset){
+		// quick parse the unit
+		Map elements = unit.parse();
+		// figure out what element is the enclosing the current offset
+		ICElement currentScope = unit;
+		Iterator i = elements.keySet().iterator();
+		while (i.hasNext()){
+			CElement element = (CElement) i.next();
+			
+			if ((element.getStartPos() < documentOffset ) 
+				&& ( element.getStartPos() + element.getLength() > documentOffset)
+				)
+			{
+				if(currentScope instanceof ITranslationUnit){
+					currentScope = element;
+				}else
+				if (currentScope instanceof CElement){
+					CElement currentScopeElement = (CElement) currentScope;
+					if(
+					 (currentScopeElement.getStartPos() < element.getStartPos())
+					 && (
+					 (currentScopeElement.getStartPos() + currentScopeElement.getLength() )
+					  > (element.getStartPos() + element.getLength()) )
+					)
+					currentScope = element;  
+				}
+			}
+		}
+		return currentScope;
+	}
+
 	/**
 	 * Order the given proposals.
 	 */
 	private ICCompletionProposal[] order(ICCompletionProposal[] proposals) {
-		Arrays.sort(proposals, fComparator);
+		if(proposals != null)
+			Arrays.sort(proposals, fComparator);
 		return proposals;
 	}
 
 	/**
 	 * Evaluate the actual proposals for C
 	 */
-	private ICCompletionProposal[] evalProposals(IDocument document, int pos, int length) {
+	public ICCompletionProposal[] evalProposals(IDocument document, int pos, int length, ITranslationUnit unit) {
+		return order (evalProposals(document, pos, length, getCurrentScope (unit, pos)));
+	}
+
+	private ICCompletionProposal[] evalProposals(IDocument document, int pos, int length, ICElement currentScope) {
 		boolean isDereference = false;
 		IRegion region; 
 		String frag = "";
-		
+
+		// TODO: Do all possible scopes
+		// possible scopes include IStructure, INamespace, and ITranslationUnit
+		if(	( !(currentScope instanceof IMethod))
+		&&  ( !(currentScope instanceof IMethodDeclaration)) 
+		&&  ( !(currentScope instanceof IFunction)) 
+		&&  ( !(currentScope instanceof IFunctionDeclaration)) 
+		){		
+			return null;
+		}
 		// Move back the pos by one the position is 0-based
 		if (pos > 0) {
 			pos--;
@@ -342,7 +406,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		ArrayList completions = new ArrayList();
 
 		// Look in index manager
-		addProposalsFromModel(region, frag, completions);
+		addProposalsFromModel(region, frag,currentScope,  completions);
 		
 		// Loot in the contributed completions
 		addProposalsFromCompletionContributors(region, frag, completions);
@@ -384,7 +448,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 	
-	private void addProposalsFromModel(IRegion region, String frag, ArrayList completions) {
+// It is not needed to follow referenced projects since search does this for us now
+/*	private void addProposalsFromModel(IRegion region, String frag, ICElement currentScope, ArrayList completions) {
 		IProject project = null;
 		IEditorInput input = fEditor.getEditorInput();
 		if (input instanceof IFileEditorInput) {
@@ -396,22 +461,182 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			}
 		}
 		if (project != null) {
-			addProjectCompletions(project, region, frag, completions);
+			addProjectCompletions(project, region, frag, currentScope, completions);
 			// Now query referenced projects
 			IProject referenced[];
 			try {
 				referenced = project.getReferencedProjects();
 				if (referenced.length > 0) {
 					for (int i = 0; i < referenced.length; i++) {
-						addProjectCompletions(referenced[i], region, frag, completions);
+						addProjectCompletions(referenced[i], region, frag, currentScope, completions);
 					}
 				}
 			} catch (CoreException e) {
 			}
 		}
 	}
+*/
+	private FunctionPrototypeSummary getPrototype (BasicSearchMatch match) {
+		switch(match.getElementType()){
+			case ICElement.C_FUNCTION:
+			case ICElement.C_FUNCTION_DECLARATION:
+			case ICElement.C_METHOD:
+			case ICElement.C_METHOD_DECLARATION:
+			{
+				return (new FunctionPrototypeSummary ( match.getName() ));
+			}
+		default:
+			return null;						
+		}
+	}
+	
+	private int calculateRelevance (BasicSearchMatch element){
+		
+		int type = element.getElementType();
+			
+		switch (type){
+			case ICElement.C_FIELD:
+				return 9;
+			case ICElement.C_VARIABLE:
+			case ICElement.C_VARIABLE_DECLARATION:
+				return 8;
+			case ICElement.C_METHOD:
+			case ICElement.C_METHOD_DECLARATION:
+				return 7;
+			case ICElement.C_FUNCTION:
+			case ICElement.C_FUNCTION_DECLARATION:
+				return 6;
+			case ICElement.C_CLASS:
+				return 5;
+			case ICElement.C_STRUCT:
+				return 4;
+			case ICElement.C_UNION:
+				return 3;
+			case ICElement.C_MACRO:
+				return 2;			
+			case ICElement.C_ENUMERATION:
+				return 1;
+			default :
+				return 0;
+		}
+	}
+	private void addProposalsFromModel (IRegion region, String frag, ICElement currentScope, ArrayList completions) {
+		List elementsFound = new LinkedList();
+		String prefix = frag + "*";
+		
+		//  TODO: change that to resource scope later
+		ICElement[] projectScopeElement = new ICElement[1];
+		projectScopeElement[0] = (ICElement)currentScope.getCProject();
+		ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
+		OrPattern orPattern = new OrPattern();
+		// search for global variables, functions, classes, structs, unions, enums and macros
+		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, true ));
+		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, true ));
+		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, true ));
+		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
+		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
+		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
+		searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector);
+		elementsFound.addAll(resultCollector.getSearchResults());
 
-	private void addProjectCompletions(IProject project, IRegion region, String frag, ArrayList completions) {
+		if((currentScope instanceof IMethod) || (currentScope instanceof IMethodDeclaration) ){
+			// add the methods and fields of the parent class
+/*			// use search with CElement Scope 
+			ICElement[] classScopeElements = new ICElement[1];
+			classScopeElements[0] = currentScope.getParent();		
+			ICSearchScope classScope = SearchEngine.createCSearchScope(classScopeElements);
+			OrPattern classOrPattern = new OrPattern();
+			classOrPattern.addPattern(SearchEngine.createSearchPattern(prefix, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true));
+			classOrPattern.addPattern(SearchEngine.createSearchPattern(prefix, ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, true));
+			classOrPattern.addPattern(SearchEngine.createSearchPattern(prefix, ICSearchConstants.METHOD, ICSearchConstants.DEFINITIONS, true));
+			searchEngine.search(CUIPlugin.getWorkspace(), classOrPattern, classScope, resultCollector);
+			elementsFound.addAll(resultCollector.getSearchResults());
+*/
+			// Work around until CElement scope is implemented
+			IStructure parentClass = (IStructure) currentScope.getParent();
+			ArrayList children = new ArrayList();
+			children.addAll(parentClass.getChildrenOfType(ICElement.C_METHOD));
+			children.addAll(parentClass.getChildrenOfType(ICElement.C_METHOD_DECLARATION));
+			children.addAll(parentClass.getChildrenOfType(ICElement.C_FIELD));
+			Iterator c = children.iterator();
+			while (c.hasNext()){
+				IMember child = (IMember)c.next();
+				if (child.getElementName().startsWith(frag))
+				{
+					BasicSearchMatch childMatch = new BasicSearchMatch();
+					childMatch.setType(child.getElementType());
+					childMatch.setParentName(parentClass.getElementName());
+					if(child.getVisibility() == ASTAccessVisibility.PUBLIC )
+						childMatch.setVisibility(ICElement.CPP_PUBLIC);
+					else if(child.getVisibility() == ASTAccessVisibility.PROTECTED )
+						childMatch.setVisibility(ICElement.CPP_PROTECTED);
+					else if(child.getVisibility() == ASTAccessVisibility.PRIVATE )
+						childMatch.setVisibility(ICElement.CPP_PRIVATE);
+					childMatch.setConst(child.isConst());
+					childMatch.setVolatile(child.isVolatile());
+					childMatch.setStatic(child.isStatic());
+					if(child instanceof IMethodDeclaration){
+						childMatch.setName(((IMethodDeclaration)child).getSignature());
+					}
+					else {
+						childMatch.setName(child.getElementName());
+					}
+				 
+					elementsFound.add(childMatch);		
+				}
+			}
+						
+		}
+
+		Iterator i = elementsFound.iterator();
+		while (i.hasNext()){
+			CCompletionProposal proposal;
+			FunctionPrototypeSummary fproto = null;
+			String fname = "";
+			String displayString = "";
+			Image image = null;
+			StringBuffer infoString = new StringBuffer();
+			
+			BasicSearchMatch match = (BasicSearchMatch)i.next();
+			fproto = getPrototype(match);						
+			fname = (fproto == null) ? match.getName() : fproto.getName();
+			displayString = (fproto == null) ? fname : fproto.getPrototypeString(true);
+			image = labelProvider.getImage(match);
+			infoString.append(displayString);
+			if(match.getParentName().length() > 0) {
+				infoString.append(" - Parent: ");
+				infoString.append(match.getParentName());
+			}							 
+			
+			
+			 
+			proposal = new CCompletionProposal(
+												fname, // replacement string
+											   	region.getOffset(), 
+											   	region.getLength(),
+											   	image,
+											   	displayString, // displayString
+											   	calculateRelevance(match)
+											  );
+			completions.add(proposal);
+
+			// No summary information available yet
+			// context information is available for methods only
+			if(fproto != null){
+				String fargs = fproto.getArguments();
+				if(fargs != null && fargs.length() > 0) {
+					proposal.setContextInformation(new ContextInformation(fname, fargs));
+				}
+			}
+			
+			// The info string could be populated with documentation info.
+			// For now, it has the name and the parent's name if available.
+			proposal.setAdditionalProposalInfo(infoString.toString());
+		}
+	}
+
+// Search (and the new indexer) is used now instead of the old indexer and CTags
+/*	private void addProjectCompletions(IProject project, IRegion region, String frag, ArrayList completions) {
 		IndexModel model = IndexModel.getDefault();
 
 		ITagEntry[] tags = model.query(project, frag + "*", false, false);
@@ -457,7 +682,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			}
 		}
 	}
-
+*/
 	private Image getTagImage(int kind) {
 		switch (kind) {
 			case TagFlags.T_PROTOTYPE :

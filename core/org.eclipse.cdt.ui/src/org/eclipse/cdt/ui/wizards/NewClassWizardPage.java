@@ -15,10 +15,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -347,7 +348,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			if(fBaseClassDialogField.getText().length() > 0)
 			{
 				fAccessButtons.setEnabled(true);
-				fBaseClassStatus = baseClassChanged();
+				fBaseClassStatus = baseClassNameChanged();
 			}
 			else{
 				fAccessButtons.setEnabled(false);
@@ -405,8 +406,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	private void searchForClasses(ICProject cProject, List elementsFound, IProgressMonitor monitor, int worked){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false );
-		//  TODO: change that to project scope later
-		ICSearchScope scope = SearchEngine.createWorkspaceScope();;
+		ICElement[] elements = new ICElement[1];
+		elements[0] = cProject;
+		ICSearchScope scope = SearchEngine.createCSearchScope(elements, true);
 
 		searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector);
 		elementsFound.addAll(resultCollector.getSearchResults());
@@ -761,13 +763,13 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		{
 			extendingBase = true;
 			List classElements = findClassElementsInProject();
-			BasicSearchMatch baseClass = (BasicSearchMatch)findInList(baseClassName, classElements);
+			BasicSearchMatch baseClass = (BasicSearchMatch)findInList(baseClassName, null, classElements);
 
-			if(baseClass != null){
-				baseClassFileName = baseClass.getLocation().toString();
-			} else {
+//			if(baseClass != null){
+//				baseClassFileName = baseClass.getLocation().toString();
+//			} else {
 				baseClassFileName = baseClassName + HEADER_EXT;
-			}
+//			}
 		}
 		
 		if(isIncludeGuard()){
@@ -915,26 +917,30 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	 */
 	protected IStatus classNameChanged() {
 		StatusInfo status= new StatusInfo();
-		String typeName= getNewClassName();
-		// class name must not be empty
-		if (typeName.length() == 0) {
+		String className= getNewClassName();
+		// must not be empty
+		if (className.length() == 0) {
 			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.EnterClassName")); //$NON-NLS-1$
 			return status;
 		}
-		
-		// class name must not be qualified
-		if (typeName.indexOf('.') != -1) {
+		if (className.indexOf("::") != -1) {
 			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.QualifiedName")); //$NON-NLS-1$
 			return status;
 		}
-		
-		// class name must follow the C/CPP convensions
+		IStatus val= CConventions.validateClassName(className);
+		if (val.getSeverity() == IStatus.ERROR) {
+			status.setError(NewWizardMessages.getFormattedString("NewClassWizardPage.error.InvalidClassName", val.getMessage())); //$NON-NLS-1$
+			return status;
+		} else if (val.getSeverity() == IStatus.WARNING) {
+			status.setWarning(NewWizardMessages.getFormattedString("NewClassWizardPage.warning.ClassNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+			// continue checking
+		}		
 
-		// class must NOT exist
-//		ArrayList elementsFound = findClassElementsInProject();
-//		if(foundInList(getNewClassName(), elementsFound)){
-//			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
-//		}
+		// must not exist
+		List elementsFound = findClassElementsInProject();
+		if(foundInList(getNewClassName(), getContainerPath(linkedResourceGroupForHeader), elementsFound)){
+			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+		}
 		return status;
 	}
 	/**
@@ -946,32 +952,48 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	 * 
 	 * @return the status of the validation
 	 */
-	protected IStatus baseClassChanged() {
+	protected IStatus baseClassNameChanged() {
+		String baseClassName = getBaseClassName();		
 		StatusInfo status= new StatusInfo();
+		if (baseClassName.length() == 0) {
+			// accept the empty field (stands for java.lang.Object)
+			return status;
+		}
 
 		// class name must follow the C/CPP convensions
+		IStatus val= CConventions.validateClassName(baseClassName);
+		if (val.getSeverity() == IStatus.ERROR) {
+			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.InvalidBaseClassName")); //$NON-NLS-1$
+			return status;
+		} 
 
 		// if class does not exist, give warning 
 		List elementsFound = findClassElementsInProject();
-		if(!foundInList(getBaseClassName(), elementsFound)){
+		if(!foundInList(baseClassName, null, elementsFound)){
 			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.warning.BaseClassNotExists")); //$NON-NLS-1$
 		}
-		return status;
-		
+		return status;		
 	}
-	
-	private Object findInList(String name, List elements){
+		
+	private Object findInList(String name, IPath path, List elements){
 		Iterator i = elements.iterator();
 		while (i.hasNext()){
 			BasicSearchMatch element = (BasicSearchMatch)i.next();
-			if (name.equals(element.getName()))
-				return element;
+			if(path != null){
+				// check both the name and the path
+				if ((name.equals(element.getName())) && (path.makeAbsolute().equals(element.getLocation())))
+					return element;
+			} else {
+				// we don't care about the path
+				if (name.equals(element.getName()))
+					return element;				
+			}
 		}
 		return null;
 	}
 	
-	private boolean foundInList(String name, List elements){
-		if(findInList(name, elements) != null)
+	private boolean foundInList(String name, IPath path, List elements){
+		if(findInList(name, path, elements) != null)
 			return true;
 		else
 			return false;

@@ -68,7 +68,7 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 	/**
 	 * @see Wizard#performFinish
 	 */
-	public boolean performFinish()  {
+	public boolean performFinish()  {			
 		IWorkspaceRunnable op= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 				try {

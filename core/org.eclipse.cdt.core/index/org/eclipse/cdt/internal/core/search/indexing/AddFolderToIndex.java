@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.internal.core.search.indexing;
 
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.search.Util;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.impl;
 
-import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.CharOperation;
 
 /**
  * An indexBlock stores wordEntries.

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
@@ -200,6 +201,8 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			match.type = ICElement.C_NAMESPACE;
 		} else if ( node instanceof IASTEnumerationSpecifier ){
 			match.type = ICElement.C_ENUMERATION;
+		} else if ( node instanceof IASTMacro ){
+			match.type = ICElement.C_MACRO;
 		} else if ( node instanceof IASTField ){
 			match.type = ICElement.C_FIELD;
 			IASTField  field = (IASTField)node;

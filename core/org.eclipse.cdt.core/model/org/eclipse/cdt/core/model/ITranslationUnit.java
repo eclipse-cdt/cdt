@@ -4,6 +4,8 @@ package org.eclipse.cdt.core.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.Map;
+
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -204,4 +206,9 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @return boolean
 	 */
 	boolean isWorkingCopy();	
+	/**
+	 * parse()
+	 * returns a map of all new elements and their element info
+	 */
+	Map parse();
 }

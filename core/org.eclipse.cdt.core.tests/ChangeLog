@@ -1,3 +1,7 @@
+2003-08-12
+	Added CompletionProposalsTest to the suit to test the generation 
+	of completion proposals.
+
 2003-08-12 Bogdan Gheorghe
 	- Changed testVariableIndexPrefix, testVariableDeclaration to
 	  reflect changes to the var search pattern

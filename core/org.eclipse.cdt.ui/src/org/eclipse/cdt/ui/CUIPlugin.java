@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
@@ -399,16 +398,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 		//Set debug tracing options
 		CUIPlugin.getDefault().configurePluginDebugOptions();
 		
-		runUI(new Runnable() {
-			public void run() {
-				registerAdapters();
-				CPluginImages.initialize();
-				
-				AllTypesCache.initialize(new IWorkingCopyProvider() {
-					public IWorkingCopy[] getWorkingCopies() {
-						return CUIPlugin.getSharedWorkingCopies();
-					}
-				});
+		registerAdapters();
+		AllTypesCache.initialize(new IWorkingCopyProvider() {
+			public IWorkingCopy[] getWorkingCopies() {
+				return CUIPlugin.getSharedWorkingCopies();
 			}
 		});
 	}

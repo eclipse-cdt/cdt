@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -88,10 +87,7 @@ public class CElementImageProvider {
 		DESC_OBJ_FOLDER= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
 	
-	private ImageDescriptorRegistry fRegistry;
-		
 	public CElementImageProvider() {
-		fRegistry= CUIPlugin.getImageDescriptorRegistry();
 	}	
 		
 	/**
@@ -117,7 +113,7 @@ public class CElementImageProvider {
 			descriptor= getWorkbenchImageDescriptor((IAdaptable) element, flags);
 		}
 		if (descriptor != null) {
-			return fRegistry.get(descriptor);
+			return CUIPlugin.getImageDescriptorRegistry().get(descriptor);
 		}
 		return null;
 	}

@@ -17,7 +17,6 @@ import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.search.CElementLabels;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -82,7 +81,6 @@ public class CElementLabelProvider extends LabelProvider {
 	
 	public final static int SHOW_DEFAULT= new Integer(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
 	
-	private ImageRegistry fImageRegistry;
 	private WorkbenchLabelProvider fWorkbenchLabelProvider;
 	private CElementImageProvider fImageLabelProvider;
 	private IAdornmentProvider[] fAdornmentProviders;
@@ -104,7 +102,6 @@ public class CElementLabelProvider extends LabelProvider {
 	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
 	 */
 	public CElementLabelProvider(int flags, IAdornmentProvider[] adormentProviders) {
-		fImageRegistry= CUIPlugin.getDefault().getImageRegistry();
 		fWorkbenchLabelProvider= new WorkbenchLabelProvider();
 		
 		fImageLabelProvider= new CElementImageProvider();
@@ -223,7 +220,6 @@ public class CElementLabelProvider extends LabelProvider {
 			fWorkbenchLabelProvider.dispose();
 			fWorkbenchLabelProvider= null;
 		}
-		fImageRegistry= null;
 		if(fImageLabelProvider != null) {
 			fImageLabelProvider.dispose();
 		}

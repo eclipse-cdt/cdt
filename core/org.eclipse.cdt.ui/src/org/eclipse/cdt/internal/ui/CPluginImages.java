@@ -229,26 +229,6 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= create(T_OBJ, "file_change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= create(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
 	
-	public static void initialize() {
-		//createManaged(registry, T_OBJ, IMG_OBJS_TUNIT);
-		//createManaged(registry, T_OBJ, IMG_OBJS_FIELD);
-		//createManaged(registry, T_OBJ, IMG_OBJS_CLASS);
-		//createManaged(registry, T_OBJ, IMG_OBJS_STRUCT);
-		//createManaged(registry, T_OBJ, IMG_OBJS_UNION);
-		//createManaged(registry, T_OBJ, IMG_OBJS_FUNCTION);
-		//createManaged(registry, T_OBJ, IMG_OBJS_INCLUDE);
-		//createManaged(registry, T_OBJ, IMG_OBJS_DEFINE);
-
-		//createManaged(registry, T_OBJ, IMG_OBJS_ARCHIVE);
-		//createManaged(registry, T_OBJ, IMG_OBJS_SHLIB);
-		//createManaged(registry, T_OBJ, IMG_OBJS_BINARY);
-		//createManaged(registry, T_OBJ, IMG_OBJS_CEXEC);
-		//createManaged(registry, T_OBJ, IMG_OBJS_CEXEC_DEBUG);
-		//createManaged(registry, T_OBJ, IMG_OBJS_CONTAINER);
-
-		//createManaged(registry, T_OBJ, IMG_OBJS_TEMPLATE);
-	}
-	
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}

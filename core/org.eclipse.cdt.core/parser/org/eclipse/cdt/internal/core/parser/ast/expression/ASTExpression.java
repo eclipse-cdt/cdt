@@ -154,7 +154,12 @@ public class ASTExpression implements IASTExpression {
 			return( ( getLHSExpression().evaluateExpression() != 0 ) &&  ( getRHSExpression().evaluateExpression() != 0 ) ) ? 1 : 0 ;	 
 		// logical or  
 		if( getExpressionKind() == IASTExpression.Kind.LOGICALOREXPRESSION )
-			return( ( getLHSExpression().evaluateExpression() != 0 ) || ( getRHSExpression().evaluateExpression() != 0 ) ) ? 1 : 0 ;	 
+			return( ( getLHSExpression().evaluateExpression() != 0 ) || ( getRHSExpression().evaluateExpression() != 0 ) ) ? 1 : 0 ;
+		
+		if( getExpressionKind() == IASTExpression.Kind.CONDITIONALEXPRESSION )
+		{
+			return ( getLHSExpression().evaluateExpression() != 0 ) ? getRHSExpression().evaluateExpression() : getThirdExpression().evaluateExpression(); 
+		}
 
 		throw new ASTExpressionEvaluationException();
 	}

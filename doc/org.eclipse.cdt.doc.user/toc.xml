@@ -132,8 +132,9 @@
                     <topic label="C/C++ Projects view" href="topic_under_dev.htm"/>
                     <topic label="C-Build view" href="topic_under_dev.htm"/>
                     <topic label="Make Targets view" href="topic_under_dev.htm"/>
-                    <topic label="Debug view" href="topic_under_dev.htm">
-                         <topic label="Debug launch controls" href="topic_under_dev.htm"/>
+                    <topic label="Debug Perspective" href="topic_under_dev.htm">
+                         <topic label="Debug view" href="cdt_u_dbg_view.htm"/>
+                         <topic label="Debug launch controls" href="cdt_u_debuglaunch.htm"/>
                          <topic label="Memory view" href="topic_under_dev.htm"/>
                          <topic label="Registers view" href="topic_under_dev.htm"/>
                          <topic label="Shared Libraries view" href="topic_under_dev.htm"/>

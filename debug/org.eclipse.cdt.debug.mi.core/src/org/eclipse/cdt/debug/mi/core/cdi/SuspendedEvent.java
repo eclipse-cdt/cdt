@@ -53,43 +53,10 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	 */
 	public ICDIObject getSource() {
 		CTarget target = session.getCTarget();
-
-		// This not necessary, we can send the target as the source
-		// it will mean to cdi that all threads are suspended.
-		// FIXME: Remove this comment code after testing.
-		/*
-		int threadId = 0;
-		if (event instanceof MIBreakpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
-			threadId = breakEvent.getThreadId();
-		} else if (event instanceof MIWatchpointEvent) {
-			MIWatchpointEvent watchEvent = (MIWatchpointEvent) event;
-			threadId = watchEvent.getThreadId();
-		} else if (event instanceof MISteppingRangeEvent) {
-			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent) event;
-			threadId = rangeEvent.getThreadId();
-		} else if (event instanceof MISignalEvent) {
-			MISignalEvent sigEvent = (MISignalEvent) event;
-			threadId = sigEvent.getThreadId();
-		} else if (event instanceof MILocationReachedEvent) {
-			MILocationReachedEvent locEvent = (MILocationReachedEvent) event;
-			threadId = locEvent.getThreadId();
-		} else if (event instanceof MIFunctionFinishedEvent) {
-			MIFunctionFinishedEvent funcEvent = (MIFunctionFinishedEvent) event;
-			threadId = funcEvent.getThreadId();
-		}
-
-		try {
-			// If it came from a thread return it as the source.
-			ICDIThread[] cthreads = target.getThreads();
-			for (int i = 0; i < cthreads.length; i++) {
-				if (((CThread)cthreads[i]).getId() == threadId) {
-					return cthreads[i];
-				}
-			}
-		} catch (CDIException e) {
-		}
-		*/
+		// We can send the target as the Source.  CDI
+		// Will assume that all threads are supended for this.
+		// This is true for gdb when it suspend the inferior
+		// all threads are suspended.
 		return target;
 	}
 }

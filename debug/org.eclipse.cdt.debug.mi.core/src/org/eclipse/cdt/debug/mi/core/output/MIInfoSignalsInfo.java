@@ -60,7 +60,7 @@ public class MIInfoSignalsInfo extends MIInfo {
 			// Pass the header and th tailer.
 			// ~"Signal        Stop\tPrint\tPass to program\tDescription\n"
 			// ~"Use the \"handle\" command to change these tables.\n"
-			if (!str.startsWith("Signal ") && str.startsWith("Use ")) {
+			if (!str.startsWith("Signal ") && !str.startsWith("Use ")) {
 				String signal = "";
 				boolean stop = false;
 				boolean print = false;
@@ -70,7 +70,7 @@ public class MIInfoSignalsInfo extends MIInfo {
 				StringTokenizer tokenizer = new StringTokenizer(str);
 				for (int i = 0; tokenizer.hasMoreTokens(); i++) {
 					String sub = null;
-					if (i == 3) {
+					if (i == 4) {
 						sub = tokenizer.nextToken("\n");
 					} else {
 						sub = tokenizer.nextToken();

@@ -1,5 +1,13 @@
 2003-10-08 Alain Magloire
 
+	For Open on the header do a fallback and look for the header
+	in the project.  This code should be revisit once, the
+	CPathEntry and the ScannerInfoProvider are getting smarter.
+
+	* src/org/eclipse/cdt/internal/ui/OpenIncludeAction.java
+
+2003-10-08 Alain Magloire
+
 	Do selection better for Binary objects,  the binary
 	elements do not have offset information but only line number.
 	We can leverage, by looking at the offset corresponding to

@@ -1,3 +1,10 @@
+2003-11-25 Alain Magloire
+
+	Process the suspend event even if there is not threads
+	or stack associated with the target.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+
 2003-11-22 Alain Magloire
 
 	In MISession constructor if the initialization fails shutdown

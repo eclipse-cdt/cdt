@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.core;
  
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
@@ -53,7 +54,13 @@ public class CLIProcessor {
 			// So the easiest way is to let the top layer handle it. 
 			session.fireEvent(new MIBreakpointChangedEvent(0));
 		} else if (isSettingSignal(operation)) {
+			// We do no know which signal let the upper layer find it.
 			session.fireEvent(new MISignalChangedEvent(""));
+		} else if (isDetach(operation)) {
+			// if it was a "detach" command change the state.
+			session.getMIInferior().setDisconnected();
+			MIEvent event = new MIDetachedEvent(cmd.getToken());
+			session.fireEvent(event);
 		}
 	}
 
@@ -143,5 +150,14 @@ public class CLIProcessor {
 		}
 		return isChange;
 	}
+
+	/**
+	 * @param operation
+	 * @return
+	 */
+	boolean isDetach(String operation) {
+		return (operation.startsWith("det")  && "detach".indexOf(operation) != -1);
+	}
+
 
 }

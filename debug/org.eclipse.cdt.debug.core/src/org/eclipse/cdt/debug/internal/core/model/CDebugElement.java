@@ -12,6 +12,8 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.model.CDebugElementState;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
@@ -31,7 +33,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * @since Aug 1, 2002
  */
 public class CDebugElement extends PlatformObject 
-						   implements IDebugElement,
+						   implements ICDebugElement,
 						   			  ICDebugElementErrorStatus
 {
 	private CDebugTarget fDebugTarget;
@@ -356,5 +358,27 @@ public class CDebugElement extends PlatformObject
 	public String getMessage()
 	{
 		return fMessage;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getState()
+	 */
+	public CDebugElementState getState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getStatus()
+	 */
+	public IStatus getStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getSubModelIdentifier()
+	 */
+	public String getSubModelIdentifier() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

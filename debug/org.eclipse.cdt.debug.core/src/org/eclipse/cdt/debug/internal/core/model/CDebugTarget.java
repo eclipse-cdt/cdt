@@ -58,7 +58,10 @@ import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
+import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariable;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
@@ -2386,5 +2389,67 @@ public class CDebugTarget extends CDebugElement
 		{
 		}
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getDisassembly()
+	 */
+	public IDisassembly getDisassembly() throws DebugException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getSharedLibraries()
+	 */
+	public ICSharedLibrary[] getSharedLibraries() throws DebugException {
+		ICSharedLibraryManager slm = getSharedLibraryManager();
+		if ( slm != null ) {
+			return slm.getSharedLibraries();
+		}
+		return new ICSharedLibrary[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getSignals()
+	 */
+	public ICSignal[] getSignals() throws DebugException {
+		ICSignalManager sm = getSignalManager();
+		if ( sm != null ) {
+			return sm.getSignals();
+		}
+		return new ICSignal[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#hasSharedLibraries()
+	 */
+	public boolean hasSharedLibraries() throws DebugException {
+		ICSharedLibraryManager slm = getSharedLibraryManager();
+		if ( slm != null ) {
+			return ( slm.getSharedLibraries().length > 0 );
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#hasSignals()
+	 */
+	public boolean hasSignals() throws DebugException {
+		ICSignalManager sm = getSignalManager();
+		if ( sm != null ) {
+			return ( sm.getSignals().length > 0 );
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#loadSymbols()
+	 */
+	public void loadSymbols() throws DebugException {
+		ICSharedLibraryManager slm = getSharedLibraryManager();
+		if ( slm != null ) {
+			slm.loadSymbolsForAll();
+		}
 	}
 }

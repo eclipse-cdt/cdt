@@ -1,3 +1,21 @@
+2004-04-01 Mikhail Khodjaiants
+	Changes and additions to support the new implementations of Shared Libraries, 
+	Signals and Disassembly views.
+	* CDebugElementState.java
+	* IAsmInstruction.java
+	* ICDebugElement.java
+	* ICDebugTarget.java
+	* ICDebugTargetGroup.java
+	* ICSharedLibrary.java
+	* ICSignal.java
+	* ICStackFrame.java
+	* IDisassembly.java
+	* CSharedLibraryManager.java
+	* CSignalManager.java
+	* CDebugElement.java
+	* CDebugTarget.java
+	* CSignal.java
+
 2004-03-31 Mikhail Khodjaiants
 	Added default preferences to the C/C++ Debug preference page.
 	* CDebugCorePlugin.java

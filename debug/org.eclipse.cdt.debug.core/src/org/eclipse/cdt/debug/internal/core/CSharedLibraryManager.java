@@ -97,7 +97,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 		Iterator it = fSharedLibraries.iterator();
 		while( it.hasNext() )
 		{
-			((ICSharedLibrary)it.next()).dispose();
+			((CSharedLibrary)it.next()).dispose();
 		}
 		fSharedLibraries.clear();
 	}

@@ -71,7 +71,7 @@ public class CSignalManager extends CUpdateManager implements ICSignalManager
 		if ( fSignals != null )
 		for ( int i = 0; i < fSignals.length; ++i )
 		{
-			fSignals[i].dispose();
+			((CSignal)fSignals[i]).dispose();
 		}
 		fSignals = null;
 		fIsDisposed = true;

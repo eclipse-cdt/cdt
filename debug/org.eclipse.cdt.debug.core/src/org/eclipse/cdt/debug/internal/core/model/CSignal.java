@@ -35,7 +35,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#getDescription()
 	 */
-	public String getDescription()
+	public String getDescription() throws DebugException
 	{
 		return getCDISignal().getDescription();
 	}
@@ -43,7 +43,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#getName()
 	 */
-	public String getName()
+	public String getName() throws DebugException
 	{
 		return getCDISignal().getName();
 	}
@@ -51,7 +51,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#isPassEnabled()
 	 */
-	public boolean isPassEnabled()
+	public boolean isPassEnabled() throws DebugException
 	{
 		return !getCDISignal().isIgnore();
 	}
@@ -59,7 +59,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#isStopEnabled()
 	 */
-	public boolean isStopEnabled()
+	public boolean isStopEnabled() throws DebugException
 	{
 		return getCDISignal().isStopSet();
 	}
@@ -126,4 +126,9 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 			targetRequestFailed( e.getMessage(), null );
 		}
 	}	
+
+	public boolean canModify() {
+		// TODO add canModify method to ICDISignal
+		return true;
+	}
 }

@@ -1,3 +1,15 @@
+2003-12-16 Alain Magloire
+	In JDK-1.4.x a new method was added to StringBuffer
+	StringBuffer.append(StringBuffer).  This is not in
+	JDK-1.3.x, So when compiling with JDK-1.4.x
+	Running on JDK-1.3.x will not work.
+	We need to force the toString(), this:
+				buffer.append(sb.toString());
+	instead of 
+			buffer.append(sb);
+
+	* src/org/eclipose/cdt/debug/mi/core/command/MICommand.java
+
 2003-12-16 Mikhail Khodjaiants
 
 	Show the gdb arguments when tracing.

@@ -1,3 +1,12 @@
+2003-01-31 Mikhail Khodjaiants
+	Implementing the 'Signals' view.
+	* ICSharedLibraryManager.java
+	* ICSignalManager.java: new
+	* ICSignal.java: new
+	* CSignalManager.java: new
+	* CSignal.java: new
+	* CDebugTarget.java	
+
 2003-01-30 Mikhail Khodjaiants
 	Create an address breakpoint if the source locator can not find the file specified by gdb.
 	* CDebugTarget.java

@@ -5,17 +5,18 @@
  */
 package org.eclipse.cdt.debug.core;
 
-import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugException;
 
 /**
  * Enter type comment.
  * 
- * @since: Jan 15, 2003
+ * @since: Jan 31, 2003
  */
-public interface ICSharedLibraryManager extends IAdaptable
+public interface ICSignalManager extends IAdaptable
 {
-	ICSharedLibrary[] getSharedLibraries();
+	ICSignal[] getSignals() throws DebugException;
 
 	void dispose();
 }

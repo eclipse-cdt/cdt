@@ -55,6 +55,13 @@
             class="org.eclipse.cdt.debug.internal.ui.views.sharedlibs.SharedLibrariesView"
             id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
       </view>
+      <view
+            name="%SignalsView.name"
+            icon="icons/full/cview16/signals_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.signals.SignalsView"
+            id="org.eclipse.cdt.debug.ui.SignalsView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -74,6 +81,11 @@
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
+         </view>
+         <view
+               relative="org.eclipse.debug.ui.VariableView"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.SignalsView">
          </view>
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">
@@ -654,11 +666,30 @@
          <action
                label="%LoadSymbolsAction.label"
                icon="icons/full/clcl16/load_symbols_co.gif"
-               helpContextId="breakpoint_properties_action_context"
+               helpContextId="load_symbols_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.debug.core.model.ICSignal"
+            id="org.eclipse.cdt.debug.ui.SignalActions">
+         <action
+               label="%SignalAction.label"
+               icon="icons/full/clcl16/signal_co.gif"
+               helpContextId="signal_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.SignalActionDelegate">
             <enablement>
                <pluginState
                      value="activated"

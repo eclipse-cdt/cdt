@@ -22,13 +22,10 @@ public interface IASTServiceProvider {
     {
     }
 
-    public String getName();
-
     public IASTTranslationUnit getTranslationUnit( IFile fileToParse) throws UnsupportedDialectException;
     
     public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator  )throws UnsupportedDialectException;
 
     public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration )throws UnsupportedDialectException;
-    
-    public String [] getSupportedDialects();
+
 }

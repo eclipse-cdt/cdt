@@ -207,7 +207,7 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
          IPopulateDOMASTAction action = null;
          IASTTranslationUnit tu = null;
          try {
-            tu = CDOM.getInstance().getDefaultASTService().getTranslationUnit(
+            tu = CDOM.getInstance().getASTService().getTranslationUnit(
                   aFile,
                   CDOM.getInstance().getCodeReaderFactory(
                         CDOM.PARSE_SAVED_RESOURCES));

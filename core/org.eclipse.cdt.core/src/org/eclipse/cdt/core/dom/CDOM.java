@@ -9,8 +9,10 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.core.dom;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
+import org.eclipse.core.resources.IFile;
 
 /**
  * @author jcamelon
@@ -18,7 +20,7 @@ import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
  * This class serves as the manager of the AST/DOM mechanisms for the CDT.
  * It should be eventually added to CCorePlugin for startup.  
  */
-public class CDOM {
+public class CDOM implements IASTServiceProvider {
     
     private CDOM() 
     {
@@ -29,45 +31,14 @@ public class CDOM {
     {
         return instance;
     }
-    private IASTServiceProvider [] services = { new InternalASTServiceProvider() };    
+    
+    private IASTServiceProvider defaultService = new InternalASTServiceProvider();    
 
-    public IASTServiceProvider[] getASTServices() {
-        return services;
+    
+    public IASTServiceProvider getASTService() {
+        return this;
     }
     
-    public IASTServiceProvider getDefaultASTService() {
-        IASTServiceProvider [] factories = getASTServices();
-        if( factories != null && factories.length > 0 )
-            return factories[0];
-        return null;
-    }
-    
-    public IASTServiceProvider getASTServiceByName(String name) {
-        IASTServiceProvider [] factories = getASTServices();
-        if( factories == null || factories.length == 0 )
-            return null;
-        for( int i = 0; i < factories.length; ++i )
-            if( factories[i] != null && factories[i].getName().equals( name ) )
-                return factories[i];
-        return null;
-    }
-    
-    public IASTServiceProvider getASTServiceByDialect( String dialect )
-    {
-        IASTServiceProvider [] factories = getASTServices();
-        if( factories == null || factories.length == 0 )
-            return null;
-        for( int i = 0; i < factories.length; ++i )
-            if( factories[i] != null )
-            {
-                String [] dialects = factories[i].getSupportedDialects();
-                if( dialects != null )
-                    for( int j = 0; j < dialects.length; ++j )
-                        if( dialects[j].equals( dialect ))
-                            return factories[i];
-            }
-        return null;        
-    }
 
     public static final int PARSE_SAVED_RESOURCES = 0; 
     public static final int PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS = 1;
@@ -86,7 +57,26 @@ public class CDOM {
         }
         return null;
     }
-    
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.core.resources.IFile)
+     */
+    public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
+        return defaultService.getTranslationUnit(fileToParse);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.core.resources.IFile, org.eclipse.cdt.core.dom.ICodeReaderFactory)
+     */
+    public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+        return defaultService.getTranslationUnit(fileToParse, fileCreator );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.core.resources.IFile, org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.dom.IParserConfiguration)
+     */
+    public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException {
+        return defaultService.getTranslationUnit(fileToParse, fileCreator, configuration );
+    }
 
 }

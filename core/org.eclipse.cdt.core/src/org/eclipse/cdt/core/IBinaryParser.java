@@ -82,6 +82,7 @@ public interface IBinaryParser {
 	
 		String getName();
 		long getAddress();
+		long getSize();
 		int getStartLine();
 		int getEndLine();
 		IPath getFilename();

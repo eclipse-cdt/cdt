@@ -45,12 +45,12 @@ public class TypeInfoProvider
 		}
 	}	
 
-	public ITypeInfo getTypeInfo( eType type )
+	public ITypeInfo getTypeInfo( eType t )
 	{
 	    int idx = BASIC;
-	    if( type == ITypeInfo.t_type || type == ITypeInfo.t_enumerator )					
+	    if( t == ITypeInfo.t_type || t == ITypeInfo.t_enumerator )					
 	        idx = TYPE;
-	    else if( type == ITypeInfo.t_templateParameter ) 
+	    else if( t == ITypeInfo.t_templateParameter ) 
 	        idx = TEMPLATE;
 	    
 	    ITypeInfo returnType = null;
@@ -66,16 +66,16 @@ public class TypeInfoProvider
 		}
 		if( returnType == null ){
 			//if there is nothing free, just give them a new one
-			if( type == ITypeInfo.t_type ){
+			if( t == ITypeInfo.t_type ){
 			    returnType = new TypeInfo();
-		    } else if( type == ITypeInfo.t_templateParameter ) {
+		    } else if( t == ITypeInfo.t_templateParameter ) {
 		        returnType = new TemplateParameterTypeInfo();
 		    } else {
 		        returnType = new BasicTypeInfo();
 		    }
 		}
 		
-		returnType.setType( type );
+		returnType.setType( t );
 		return returnType;
 	}
 	

@@ -1,3 +1,12 @@
+2005-02-10 Bogdan Gheorghe
+	Fix for 75916: Errors and exceptions in log if you try create a C++ project with 
+	same name/different case.
+	Refactored CUIPlugin.errorDialog to take a boolean logError.
+	
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* src/org/eclipse/cdt/ui/dialogs/TabFolderOptionBlock.java
+	* src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java
+	
 2005-02-09 Alain Magloire
 	PR 84841: Description of the template in the hover was incorrect.
 	* src/org/eclipse/cdt/internal/ui/text/TemplateEngine.java

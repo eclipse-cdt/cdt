@@ -242,7 +242,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 			String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
                        
 			Throwable th= e.getTargetException();
-			CUIPlugin.errorDialog(shell, title, message, th);
+			CUIPlugin.errorDialog(shell, title, message, th, false);
 			try {
 				getProjectHandle().delete(false, false, null);
 			} catch (CoreException ignore) {

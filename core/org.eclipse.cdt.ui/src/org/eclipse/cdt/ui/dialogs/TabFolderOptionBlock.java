@@ -163,7 +163,7 @@ public abstract class TabFolderOptionBlock {
 				} catch (CoreException e) {
 					CUIPlugin.errorDialog(
 							composite.getShell(),
-							CUIMessages.getString("TabFolderOptionBlock.error"), CUIMessages.getString("TabFolderOptionBlock.error.settingOptions"), e); //$NON-NLS-1$ //$NON-NLS-2$
+							CUIMessages.getString("TabFolderOptionBlock.error"), CUIMessages.getString("TabFolderOptionBlock.error.settingOptions"), e, true); //$NON-NLS-1$ //$NON-NLS-2$
 					return false;
 				}
 			}

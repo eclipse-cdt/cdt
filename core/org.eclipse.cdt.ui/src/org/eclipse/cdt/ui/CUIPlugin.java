@@ -294,9 +294,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	* Utility method with conventions
+	 * @param logError TODO
 	*/
-	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
-		getDefault().log(s);
+	public static void errorDialog(Shell shell, String title, String message, IStatus s, boolean logError) {
+		if (logError)
+		    getDefault().log(s);
+		
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
 		if (s != null && message.equals(s.getMessage())) {
@@ -307,9 +310,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	* Utility method with conventions
+	 * @param logError TODO
 	*/
-	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
-		getDefault().log(t);
+	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
+		if (logError)
+		    getDefault().log(t);	
+		
 		IStatus status;
 		if (t instanceof CoreException) {
 			status = ((CoreException) t).getStatus();

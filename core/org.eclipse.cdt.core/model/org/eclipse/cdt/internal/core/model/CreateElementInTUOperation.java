@@ -62,7 +62,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	/**
 	 * The element that is being created.
 	 */
-	protected ISourceReference fCreatedElement = null;;
+	protected ISourceReference fCreatedElement = null;
 
 	/**
 	 * The element that the newly created element is

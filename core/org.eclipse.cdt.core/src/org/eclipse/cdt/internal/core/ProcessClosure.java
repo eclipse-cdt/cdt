@@ -38,7 +38,7 @@ public class ProcessClosure {
 			fOutputStream= out;
 			fInputStream= in;
 			setDaemon(true);
-			lineSeparator =	(String) System.getProperty("line.separator"); //$NON-NLS-1$
+			lineSeparator =	System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		
 		public void run() {

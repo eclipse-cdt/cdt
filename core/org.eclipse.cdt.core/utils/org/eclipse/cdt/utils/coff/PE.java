@@ -232,7 +232,7 @@ public class PE {
 			buffer.append("StackCommit = ").append(SizeOfStackCommit).append(NL); //$NON-NLS-1$
 			buffer.append("HeapReserve = ").append(SizeOfHeapReserve).append(NL); //$NON-NLS-1$
 			buffer.append("HeapCommit = ").append(SizeOfHeapCommit).append(NL); //$NON-NLS-1$
-			buffer.append("LoaderFlags = ").append(LoaderFlags).append(NL);; //$NON-NLS-1$
+			buffer.append("LoaderFlags = ").append(LoaderFlags).append(NL); //$NON-NLS-1$
 			buffer.append("#Rva size = ").append(NumberOfRvaAndSizes).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}

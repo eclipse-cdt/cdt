@@ -70,7 +70,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	public void commit(boolean force, IProgressMonitor monitor)
 		throws CModelException {
-			ITranslationUnit original = (ITranslationUnit)this.getOriginalElement();
+			ITranslationUnit original = this.getOriginalElement();
 			if (original.exists()) {
 				CommitWorkingCopyOperation op= new CommitWorkingCopyOperation(this, force);
 				runOperation(op, monitor);
@@ -248,7 +248,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 
 		// set the buffer source if needed
 		if (buffer.getCharacters() == null){
-			ITranslationUnit original= (ITranslationUnit)this.getOriginalElement();
+			ITranslationUnit original= this.getOriginalElement();
 			IBuffer originalBuffer = null;
 			try {
 				originalBuffer = original.getBuffer();

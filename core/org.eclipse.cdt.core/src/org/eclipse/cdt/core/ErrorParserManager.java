@@ -253,7 +253,7 @@ public class ErrorParserManager extends OutputStream {
 				path = fp;
 			}
 		} else {
-			path = (IPath) getWorkingDirectory().append(filePath);
+			path = getWorkingDirectory().append(filePath);
 		}
 
 		IFile file = null;

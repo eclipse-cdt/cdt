@@ -62,7 +62,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 		try {
 			beginTask("workingCopy.commit", 2); //$NON-NLS-1$
 			WorkingCopy copy = (WorkingCopy)getElementToProcess();
-			ITranslationUnit original = (ITranslationUnit) copy.getOriginalElement();
+			ITranslationUnit original = copy.getOriginalElement();
 		
 			
 			// creates the delta builder (this remembers the content of the cu)	
@@ -127,7 +127,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 			return new CModelStatus(ICModelStatusConstants.INVALID_ELEMENT_TYPES, wc);
 		}
 	
-		ITranslationUnit original= (ITranslationUnit)wc.getOriginalElement();
+		ITranslationUnit original= wc.getOriginalElement();
 		IResource resource = original.getResource();
 		if (!wc.isBasedOn(resource) && !fForce) {
 			return new CModelStatus(ICModelStatusConstants.UPDATE_CONFLICT);

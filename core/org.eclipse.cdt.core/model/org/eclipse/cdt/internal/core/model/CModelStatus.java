@@ -44,7 +44,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Singleton OK object
 	 */
-	public static final ICModelStatus VERIFIED_OK = new CModelStatus(OK, OK, org.eclipse.cdt.internal.core.Util.bind("status.OK"));; //$NON-NLS-1$
+	public static final ICModelStatus VERIFIED_OK = new CModelStatus(OK, OK, org.eclipse.cdt.internal.core.Util.bind("status.OK")); //$NON-NLS-1$
 
 	/**
 	 * Constructs an C model status with no corresponding elements.

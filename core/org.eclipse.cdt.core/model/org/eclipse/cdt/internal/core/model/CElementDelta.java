@@ -398,7 +398,7 @@ public class CElementDelta implements ICElementDelta {
 			if (equalsAndSameParent(delta.getElement(), element)) { // handle case of two jars that can be equals but not in the same project
 				return delta;
 			} else {
-				delta = ((CElementDelta)delta).getDeltaFor(element);
+				delta = delta.getDeltaFor(element);
 				if (delta != null)
 					return delta;
 			}

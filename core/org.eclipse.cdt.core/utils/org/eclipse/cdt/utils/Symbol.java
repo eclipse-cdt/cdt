@@ -106,7 +106,7 @@ public class Symbol implements ISymbol, Comparable {
 		} else if (obj instanceof Long) {
 			Long val = (Long) obj;
 			anotherVal = val.longValue();
-			thisVal = (long) this.addr;
+			thisVal = this.addr;
 		}
 		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 	}

@@ -352,7 +352,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		} else {
 			Openable openableParent = (Openable)getOpenableParent();
 			if (openableParent != null) {
-				CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo((ICElement) openableParent);
+				CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo(openableParent);
 				if (openableParentInfo == null) {
 					openableParent.openWhenClosed(null);
 				} 

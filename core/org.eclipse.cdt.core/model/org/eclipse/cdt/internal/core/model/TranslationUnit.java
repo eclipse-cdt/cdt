@@ -320,7 +320,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		///////////////////////////////////////////////////////////////
 		
 		if (isWorkingCopy()) {
-			ITranslationUnit original = (ITranslationUnit) ((IWorkingCopy)this).getOriginalElement();
+			ITranslationUnit original =  ((IWorkingCopy)this).getOriginalElement();
 			// might be IResource.NULL_STAMP if original does not exist
 			IResource r = original.getResource();
 			if (r != null && r instanceof  IFile) {

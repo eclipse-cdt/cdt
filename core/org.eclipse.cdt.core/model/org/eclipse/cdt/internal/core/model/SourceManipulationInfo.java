@@ -22,9 +22,12 @@ import org.eclipse.cdt.core.model.CModelException;
 /* package */
 class SourceManipulationInfo extends CElementInfo {
 
+	int modifiers;
+
 	protected SourceManipulationInfo(CElement element) {
 		super(element);
 		setIsStructureKnown(true);
+		modifiers = 0;
 	}
 
 	protected ISourceRange getSourceRange() {
@@ -128,4 +131,20 @@ class SourceManipulationInfo extends CElementInfo {
 		String[] renamings= new String[] {name};
 		getElement().getCRoot().rename(elements, dests, renamings, force, monitor);
 	}
+	
+	/**
+	 * return the element modifiers
+	 * @return int
+	 */
+	public int getModifiers(){
+		return modifiers;
+	}
+	
+	/**
+	 *  subclasses  should override
+	 */
+	public boolean hasSameContentsAs( SourceManipulationInfo otherInfo){
+		return true;
+	}
+	
 }

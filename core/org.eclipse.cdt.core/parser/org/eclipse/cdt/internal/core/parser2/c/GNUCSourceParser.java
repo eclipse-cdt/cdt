@@ -48,7 +48,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @param parserMode
      * @param callback
      */
-    public GNUCSourceParser(IScanner scanner, ParserMode parserMode, IProblemRequestor callback, IParserLogService logService,
+    public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
+            IProblemRequestor callback, IParserLogService logService,
             ICParserExtensionConfiguration config) {
         super(scanner, logService, parserMode, callback, config
                 .supportStatementsInExpressions(), config
@@ -282,7 +283,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      * @throws EndOfFileException
      */
-    protected Object simpleDeclaration(Object scope) throws BacktrackException, EndOfFileException {
+    protected Object simpleDeclaration(Object scope) throws BacktrackException,
+            EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
         int firstLine = firstToken.getLineNumber();
@@ -1179,7 +1181,160 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected void statement(Object scope) throws EndOfFileException,
             BacktrackException {
-        // TODO Auto-generated method stub
+
+        switch (LT(1)) {
+        // labeled statements
+        case IToken.t_case:
+            consume(IToken.t_case);
+            constantExpression(scope);
+            cleanupLastToken();
+            consume(IToken.tCOLON);
+            statement(scope);
+            cleanupLastToken();
+            return;
+        case IToken.t_default:
+            consume(IToken.t_default);
+            consume(IToken.tCOLON);
+            statement(scope);
+            cleanupLastToken();
+            return;
+        // compound statement
+        case IToken.tLBRACE:
+            compoundStatement(scope, true);
+            cleanupLastToken();
+            return;
+        // selection statement
+        case IToken.t_if:
+            consume(IToken.t_if);
+            consume(IToken.tLPAREN);
+            condition(scope);
+            consume(IToken.tRPAREN);
+            if (LT(1) != IToken.tLBRACE)
+                singleStatementScope(scope);
+            else
+                statement(scope);
+            if (LT(1) == IToken.t_else) {
+                consume(IToken.t_else);
+                if (LT(1) == IToken.t_if) {
+                    //an else if, return and get the rest of the else if as
+                    // the next statement instead of recursing
+                    cleanupLastToken();
+                    return;
+                } else if (LT(1) != IToken.tLBRACE)
+                    singleStatementScope(scope);
+                else
+                    statement(scope);
+            }
+            cleanupLastToken();
+            return;
+        case IToken.t_switch:
+            consume();
+            consume(IToken.tLPAREN);
+            condition(scope);
+            consume(IToken.tRPAREN);
+            statement(scope);
+            cleanupLastToken();
+            return;
+        //iteration statements
+        case IToken.t_while:
+            consume(IToken.t_while);
+            consume(IToken.tLPAREN);
+            condition(scope);
+            consume(IToken.tRPAREN);
+            if (LT(1) != IToken.tLBRACE)
+                singleStatementScope(scope);
+            else
+                statement(scope);
+            cleanupLastToken();
+            return;
+        case IToken.t_do:
+            consume(IToken.t_do);
+            if (LT(1) != IToken.tLBRACE)
+                singleStatementScope(scope);
+            else
+                statement(scope);
+            consume(IToken.t_while);
+            consume(IToken.tLPAREN);
+            condition(scope);
+            consume(IToken.tRPAREN);
+            cleanupLastToken();
+            return;
+        case IToken.t_for:
+            consume();
+            consume(IToken.tLPAREN);
+            forInitStatement(scope);
+            if (LT(1) != IToken.tSEMI)
+                condition(scope);
+            consume(IToken.tSEMI);
+            if (LT(1) != IToken.tRPAREN) {
+                expression(scope);
+                cleanupLastToken();
+            }
+            consume(IToken.tRPAREN);
+            statement(scope);
+            cleanupLastToken();
+            return;
+        
+        //jump statement
+        case IToken.t_break:
+            consume();
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            return;
+        case IToken.t_continue:
+            consume();
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            return;
+        case IToken.t_return:
+            consume();
+            if (LT(1) != IToken.tSEMI) {
+                expression(scope);
+                cleanupLastToken();
+            }
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            return;
+        case IToken.t_goto:
+            consume();
+            consume(IToken.tIDENTIFIER);
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            return;
+        case IToken.tSEMI:
+            consume();
+            cleanupLastToken();
+            return;
+        default:
+            // can be many things:
+            // label
+            if (LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON) {
+                consume(IToken.tIDENTIFIER);
+                consume(IToken.tCOLON);
+                statement(scope);
+                cleanupLastToken();
+                return;
+            }
+            // expressionStatement
+            // Note: the function style cast ambiguity is handled in
+            // expression
+            // Since it only happens when we are in a statement
+            IToken mark = mark();
+            Object expressionStatement = null;
+            try {
+                expressionStatement = expression(scope);
+                consume(IToken.tSEMI);
+                cleanupLastToken();
+                return;
+            } catch (BacktrackException b) {
+                backup(mark);
+                //					if (expressionStatement != null)
+                //						expressionStatement.freeReferences();
+            }
+
+            // declarationStatement
+            declaration(scope);
+        }
 
     }
 
@@ -1434,7 +1589,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 if (successful == null) {
-                    d.addPointerOperator(null /* ASTPointerOperator.POINTER */);
+                    d
+                            .addPointerOperator(null /* ASTPointerOperator.POINTER */);
                 }
                 continue;
             }
@@ -1477,11 +1633,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             declarator
                     .addPointerOperator(null/* ASTPointerOperator.RESTRICT_POINTER */);
             break;
-        default:
-            IToken la = LA(1);
-            throwBacktrack(startingOffset, la.getEndOffset(), la
-                    .getLineNumber(), la.getFilename());
-
         }
         return result;
     }
@@ -1869,22 +2020,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    protected Declarator initDeclarator(DeclarationWrapper sdw )
+    protected Declarator initDeclarator(DeclarationWrapper sdw)
             throws EndOfFileException, BacktrackException {
-        Declarator d = declarator(sdw );
+        Declarator d = declarator(sdw);
 
         try {
             //			astFactory.constructExpressions(constructInitializers);
-              optionalCInitializer(d);
+            optionalCInitializer(d);
             sdw.addDeclarator(d);
             return d;
         } finally {
             //			astFactory.constructExpressions(true);
         }
     }
-    
-    protected Declarator declarator(IDeclaratorOwner owner ) throws EndOfFileException,
-            BacktrackException {
+
+    protected Declarator declarator(IDeclaratorOwner owner)
+            throws EndOfFileException, BacktrackException {
         Declarator d = null;
         DeclarationWrapper sdw = owner.getDeclarationWrapper();
         Object scope = sdw.getScope();
@@ -1902,8 +2053,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 declarator(d);
                 consume(IToken.tRPAREN);
-            } else
-            {
+            } else if( LT(1) == IToken.tIDENTIFIER ){
                 identifier();
             }
 
@@ -1912,11 +2062,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.tLPAREN:
 
                     boolean failed = false;
-                    Object parameterScope = null; /*astFactory
-                     .getDeclaratorScope(scope, d.getNameDuple()); */
+                    Object parameterScope = null; /*
+                                                   * astFactory
+                                                   * .getDeclaratorScope(scope,
+                                                   * d.getNameDuple());
+                                                   */
                     // temporary fix for initializer/function declaration
                     // ambiguity
-                    if ( !LA(2).looksLikeExpression() ) {
+                    if (!LA(2).looksLikeExpression()) {
                         if (LT(2) == IToken.tIDENTIFIER) {
                             IToken newMark = mark();
                             consume(IToken.tLPAREN);
@@ -1924,7 +2077,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             try {
                                 try {
                                     IToken i = identifier();
-                                    queryName = TokenFactory.createTokenDuple(i, i);
+                                    queryName = TokenFactory.createTokenDuple(
+                                            i, i);
                                     // look it up
                                     failed = true;
                                 } catch (Exception e) {
@@ -1945,9 +2099,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             backup(newMark);
                         }
                     }
-                    if ((!LA(2).looksLikeExpression()
-                            && !failed)
-                            ) {
+                    if ((!LA(2).looksLikeExpression() && !failed)) {
                         // parameterDeclarationClause
                         d.setIsFunction(true);
                         // TODO need to create a temporary scope object here
@@ -1999,36 +2151,34 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return d;
     }
 
-    protected IToken consumeArrayModifiers(IDeclarator d, Object scope) throws EndOfFileException, BacktrackException {
+    protected IToken consumeArrayModifiers(IDeclarator d, Object scope)
+            throws EndOfFileException, BacktrackException {
         int startingOffset = LA(1).getOffset();
         IToken last = null;
         while (LT(1) == IToken.tLBRACKET) {
             consume(IToken.tLBRACKET); // eat the '['
-    
+
             boolean encounteredModifier = false;
-            if( d instanceof Declarator )
-            {
-	            outerLoop: do
-	            {
-	                switch( LT(1) )
-	                {
-	                case IToken.t_static: 
-	                case IToken.t_const: 
-	                case IToken.t_volatile:
-	                case IToken.t_restrict: 
-	                    //TODO should store these somewhere
-	                    consume();
-	                    encounteredModifier = true;
-	                    continue;
-	                default:
-	                    break outerLoop;
-	                }
-	            } while( true );
+            if (d instanceof Declarator) {
+                outerLoop: do {
+                    switch (LT(1)) {
+                    case IToken.t_static:
+                    case IToken.t_const:
+                    case IToken.t_volatile:
+                    case IToken.t_restrict:
+                        //TODO should store these somewhere
+                        consume();
+                        encounteredModifier = true;
+                        continue;
+                    default:
+                        break outerLoop;
+                    }
+                } while (true);
             }
             Object exp = null;
-            
+
             if (LT(1) != IToken.tRBRACKET) {
-                if( encounteredModifier )
+                if (encounteredModifier)
                     exp = assignmentExpression(scope);
                 else
                     exp = constantExpression(scope);
@@ -2054,9 +2204,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         DeclarationWrapper sdw = new DeclarationWrapper(scope, current
                 .getOffset(), current.getLineNumber(), null, current
                 .getFilename());
-        declSpecifierSeq(sdw, true );
-        if (sdw.getTypeSpecifier() == null
-                && sdw.getSimpleType() != null )//IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
+        declSpecifierSeq(sdw, true);
+        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != null)//IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
             try {
                 sdw.setTypeSpecifier(null /*
                                            * astFactory.createSimpleTypeSpecifier(
@@ -2095,6 +2244,30 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     .getLineNumber(), current.getFilename());
         }
         collection.addParameter(sdw);
+    }
+    
+
+    /**
+     * @throws BacktrackException
+     */
+    protected void forInitStatement(Object scope) throws BacktrackException,
+            EndOfFileException {
+        IToken mark = mark();
+        try {
+            expression(scope);
+            consume(IToken.tSEMI);
+            //			e.acceptElement(requestor);
+
+        } catch (BacktrackException bt) {
+            backup(mark);
+            try {
+                simpleDeclaration(scope);
+            } catch (BacktrackException b) {
+                failParse(b);
+                throwBacktrack(b);
+            }
+        }
+
     }
 
 }

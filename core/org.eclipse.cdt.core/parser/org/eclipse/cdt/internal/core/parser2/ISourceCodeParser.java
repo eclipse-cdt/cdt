@@ -18,10 +18,7 @@ public interface ISourceCodeParser {
 
     public void cancel();
 
-    /**
-     * @return Returns the backtrackCount.
-     */
-    public int getBacktrackCount();
-
-    public IASTTranslationUnit parse(); 
+    public IASTTranslationUnit parse();
+    
+    public boolean encounteredError();
 }

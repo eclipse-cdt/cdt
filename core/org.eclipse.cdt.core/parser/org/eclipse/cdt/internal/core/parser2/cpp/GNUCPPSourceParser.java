@@ -2988,6 +2988,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             if( hasFunctionBody )
                 handleFunctionBody(null );
+            
+            if (hasFunctionTryBlock)
+              catchHandlerSequence(scope);
+
 //            try {
 //                l = sdw.createASTNodes();
 ////            } catch (ASTSemanticException e) {
@@ -4464,35 +4468,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 skipOverCompoundStatement();
         } else if (mode == ParserMode.COMPLETE_PARSE)
             compoundStatement(scope, true);
-    }
-
-    protected void singleStatementScope(Object scope)
-            throws EndOfFileException, BacktrackException {
-        Object newScope;
-        try {
-            newScope = null; /*astFactory.createNewCodeBlock(scope); */
-        } catch (Exception e) {
-            logException("singleStatementScope:createNewCodeBlock", e); //$NON-NLS-1$
-            IToken la = LA(1);
-            throwBacktrack(la.getOffset(), la.getEndOffset(), la
-                    .getLineNumber(), la.getFilename());
-            return;
-        }
-        //		newScope.enterScope(requestor);
-        try {
-            statement(newScope);
-        } finally {
-            //			newScope.exitScope(requestor);
-        }
-    }
-
-    /**
-     * @throws BacktrackException
-     */
-    protected void condition(Object scope) throws BacktrackException,
-            EndOfFileException {
-        expression(scope);
-        cleanupLastToken();
     }
 
     /**

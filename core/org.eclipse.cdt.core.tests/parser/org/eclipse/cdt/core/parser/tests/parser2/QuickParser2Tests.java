@@ -1247,8 +1247,7 @@ public class QuickParser2Tests extends TestCase {
         writer.write("inline X<E>(int); // This also fails \n"); //$NON-NLS-1$
         writer.write("inline ~X<E>(); // This works fine \n"); //$NON-NLS-1$
         writer.write("};\n"); //$NON-NLS-1$
-        parse(writer
-                .toString());
+        parse(writer.toString());
     }
 
     public void testBug39536A() throws Exception {
@@ -1414,6 +1413,8 @@ public class QuickParser2Tests extends TestCase {
                 NULL_LOG, config );
         }
         IASTTranslationUnit tu = parser2.parse();
+        if( parser2.encounteredError() && expectedToPass )
+            throw new ParserException( "FAILURE"); //$NON-NLS-1$
         if( expectedToPass )
             assertTrue( collector.hasNoProblems() );
     }
@@ -1552,7 +1553,7 @@ public class QuickParser2Tests extends TestCase {
     
     public void testBug39677() throws Exception
     {
-        parse("B::B() : a(({ 1; })) {}"); //$NON-NLS-1$
+        parse("B::B() : a(({ 1; })) {}", true, ParserLanguage.CPP, true); //$NON-NLS-1$
         Writer writer = new StringWriter();
         writer.write( "B::B() : a(( { int y = foo (); int z;\n" ); //$NON-NLS-1$
         writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$

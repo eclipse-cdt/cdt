@@ -26,6 +26,28 @@ public interface ICDISignal extends ICDIObject {
 	 * 
 	 * @return the meaning of this signal
 	 */
-	String getMeaning();
+	String getDescription();
 
+	/**
+	 * if false means program will see the signal.
+	 * Otherwise program does not know.
+	 * 
+	 * @return boolean
+	 */
+	boolean isIgnore();
+
+	/**
+	 * Means reenter debugger if this signal happens
+	 * 
+	 * Method  isStopSet.
+	 * @return boolean
+	 */
+	boolean isStopSet();
+
+	/**
+	 * Continue program giving it this signal.
+	 * 
+	 * Method signal.
+	 */
+	void signal();
 }

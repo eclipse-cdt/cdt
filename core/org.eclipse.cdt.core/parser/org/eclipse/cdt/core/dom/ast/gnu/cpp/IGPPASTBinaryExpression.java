@@ -15,5 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
  * @author jcamelon
  */
 public interface IGPPASTBinaryExpression extends IASTBinaryExpression {
+    
+    public static final int op_max = IASTBinaryExpression.op_last + 1;
+    public static final int op_min = IASTBinaryExpression.op_last + 2;
 
 }

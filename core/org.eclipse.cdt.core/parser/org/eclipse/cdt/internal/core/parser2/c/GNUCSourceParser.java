@@ -18,54 +18,39 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
-import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
-import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
-import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
@@ -1323,6 +1308,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (lookAheadForDeclarator(flags)) {
                     break declSpecifiers;
                 }
+                switch( LT(2) )
+                {
+                	case IToken.tSEMI:
+                	case IToken.tLPAREN:
+                	case IToken.tASSIGN: 
+                	    //TODO more
+                	    break declSpecifiers;
+                }
 
                 identifier = identifier();
                 isIdentifier = true;
@@ -1410,25 +1403,21 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             name.setPropertyInParent( IASTTypedefNameSpecifier.NAME );
             return declSpec;
         }
-        if (simpleType != IASTSimpleDeclSpecifier.t_unspecified || isLong
-                || isShort || isUnsigned || isSigned) {
-            ICASTSimpleDeclSpecifier declSpec = createSimpleTypeSpecifier();
-            declSpec.setConst(isConst);
-            declSpec.setRestrict(isRestrict);
-            declSpec.setVolatile(isVolatile);
-            declSpec.setInline(isInline);
-            declSpec.setStorageClass(storageClass);
+        ICASTSimpleDeclSpecifier declSpec = createSimpleTypeSpecifier();
+        declSpec.setConst(isConst);
+        declSpec.setRestrict(isRestrict);
+        declSpec.setVolatile(isVolatile);
+        declSpec.setInline(isInline);
+        declSpec.setStorageClass(storageClass);
 
-            declSpec.setType(simpleType);
-            declSpec.setLong(isLong);
-            declSpec.setUnsigned(isUnsigned);
-            declSpec.setSigned(isSigned);
-            declSpec.setShort(isShort);
+        declSpec.setType(simpleType);
+        declSpec.setLong(isLong);
+        declSpec.setUnsigned(isUnsigned);
+        declSpec.setSigned(isSigned);
+        declSpec.setShort(isShort);
 
-            ((CASTNode)declSpec).setOffset(startingOffset);
-            return declSpec;
-        }
-        return null;
+        ((CASTNode)declSpec).setOffset(startingOffset);
+        return declSpec;
     }
 
     /**

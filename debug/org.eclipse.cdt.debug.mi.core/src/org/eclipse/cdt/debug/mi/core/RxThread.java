@@ -72,9 +72,9 @@ MIPlugin.getDefault().debugLog(line);
 			}
 		} catch (IOException e) {
 			//e.printStackTrace();
-		} finally {
 			session.getMIInferior().setTerminated();
 			session.terminate();
+		} finally {
 			fireEvent(new MIExitEvent());
 		}
 	}

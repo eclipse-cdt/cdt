@@ -18,8 +18,8 @@ import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -143,10 +143,10 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	
 	protected ICDIManager getCDIManager()
 	{
-		if ( getDebugTarget() != null )
-		{
-			return getDebugTarget().getCDISession().getSharedLibraryManager();
-		}
+//		if ( getDebugTarget() != null )
+//		{
+//			return getDebugTarget().getCDISession().getSharedLibraryManager();
+//		}
 		return null;
 	}
 
@@ -155,19 +155,14 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	 */
 	public void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException
 	{
-		ICDISharedLibraryManager slm = (ICDISharedLibraryManager)getCDIManager();
-		if ( slm != null )
+		ICDITarget target = getDebugTarget().getCDITarget();
+		for (int i = 0; i < libraries.length; ++i)
 		{
-			ArrayList cdiLibs = new ArrayList( libraries.length );
-			for ( int i = 0; i < libraries.length; ++i )
+			try 
 			{
-				cdiLibs.add( ((CSharedLibrary)libraries[i]).getCDISharedLibrary() );
+				((CSharedLibrary)libraries[i]).getCDISharedLibrary().loadSymbols();
 			}
-			try
-			{
-				slm.loadSymbols( (ICDISharedLibrary[])cdiLibs.toArray( new ICDISharedLibrary[cdiLibs.size()] ) );
-			}
-			catch( CDIException e )
+			catch ( CDIException e ) 
 			{
 				CDebugElement.targetRequestFailed( e.getMessage(), null );
 			}
@@ -179,17 +174,18 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	 */
 	public void loadSymbolsForAll() throws DebugException
 	{
-		ICDISharedLibraryManager slm = (ICDISharedLibraryManager)getCDIManager();
-		if ( slm != null )
+		ICDITarget target = getDebugTarget().getCDITarget();
+		try 
 		{
-			try
+			ICDISharedLibrary[] libraries = target.getSharedLibraries();
+			for (int i = 0; i < libraries.length; ++i)
 			{
-				slm.loadSymbols();
+				libraries[i].loadSymbols();
 			}
-			catch( CDIException e )
-			{
-				CDebugElement.targetRequestFailed( e.getMessage(), null );
-			}
+		}
+		catch ( CDIException e ) 
+		{
+			CDebugElement.targetRequestFailed( e.getMessage(), null );
 		}
 	}
 

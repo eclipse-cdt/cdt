@@ -1,3 +1,12 @@
+2004-10-29 Alain Magloire
+	Remove of ICDISharedLibraryManager
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISharedLibraryManager.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDISharedLibraryManagement.java
+
+	* CSharedLibraryManager.java
+
 2004-10-28 Alain Magloire
 	Add getType() method.
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIExpression.java

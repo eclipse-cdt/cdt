@@ -67,13 +67,6 @@ public interface ICDISession {
 	ICDIEventManager getEventManager();
 
 	/**
-	 * Returns the shared library manager of this debug session.
-	 * 
-	 * @return the shared library manager
-	 */
-	ICDISharedLibraryManager getSharedLibraryManager();
-
-	/**
 	 * Returns the configuration description of this debug session.
 	 * 
 	 * @return the configuration description

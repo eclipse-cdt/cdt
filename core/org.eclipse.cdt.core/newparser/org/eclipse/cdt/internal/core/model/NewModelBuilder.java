@@ -130,9 +130,10 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginArguments()
 	 */
-	public void argumentsBegin() {
+	public Object argumentsBegin() {
 		isFunction = true;
 		inArguments = true;
+		return null; 
 	}
 
 	/**

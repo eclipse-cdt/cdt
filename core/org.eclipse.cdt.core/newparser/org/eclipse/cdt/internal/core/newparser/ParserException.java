@@ -15,4 +15,8 @@ public class ParserException extends Exception {
 	public ParserException(Token t) {
 	}
 	
+	public ParserException( String msg ) 
+	{
+		super( msg ); 
+	}
 }

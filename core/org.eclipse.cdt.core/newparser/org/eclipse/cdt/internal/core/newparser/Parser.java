@@ -117,22 +117,32 @@ c, quick);
 	public void declaration( Object container ) throws Exception {
 		switch (LT(1)) {
 			case Token.t_asm:
-				return; // asmDefinition();
+				// asmDefinition( );
+				return; 
 			case Token.t_namespace:
-				return; // namespaceDefinition();
+				// namespaceDefinition();
+				return; 
 			case Token.t_using:
-				return; // usingDeclaration();
+				// usingDeclaration();
+				return; 
 			case Token.t_export:
 			case Token.t_template:
-				return; // templateDeclaration();
+				// templateDeclaration();
+				return; 
 			case Token.t_extern:
 				if (LT(1) == Token.tSTRING)
-					return; // linkageSpecification();
+				{
+					// linkageSpecification();
+					return; 
+				}
+					
 				// else drop through
 			default:
 				simpleDeclaration( container ); 
 		}
 	}
+	
+	
 	
 	/**
 	 * simpleDeclaration
@@ -196,10 +206,28 @@ c, quick);
 				callback.functionBodyEnd();
 				break;
 			default:
-				throw backtrack;
+				break;
 		}
 		
 		callback.simpleDeclarationEnd(simpleDecl);
+	}
+	
+	
+	public void parameterDeclaration( Object containerObject ) throws Exception
+	{
+		Object parameterDecl = callback.parameterDeclarationBegin( containerObject, LA(1) );
+		declSpecifierSeq( parameterDecl );
+		
+		if (LT(1) != Token.tSEMI)
+			try {
+				initDeclarator(parameterDecl);
+				
+			} catch (Backtrack b) {
+				// allowed to be empty
+			}
+ 		 
+		callback.parameterDeclarationEnd( parameterDecl );
+		 
 	}
 	
 	/**
@@ -375,7 +403,7 @@ c, quick);
 			switch (LT(1)) {
 				case Token.tLPAREN:
 					// parameterDeclarationClause
-					callback.argumentsBegin();
+					Object clause = callback.argumentsBegin(declarator);
 					consume();
 					parameterDeclarationLoop:
 					for (;;) {
@@ -390,8 +418,7 @@ c, quick);
 								consume();
 								break;
 							default:
-								declSpecifierSeq(container);
-								declarator(container);
+								parameterDeclaration( clause );  
 						}
 					}
 					callback.argumentsEnd();

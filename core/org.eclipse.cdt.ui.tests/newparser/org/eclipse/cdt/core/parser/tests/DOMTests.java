@@ -1,19 +1,24 @@
 package org.eclipse.cdt.core.parser.tests;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DeclarationSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.Name;
+import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
+import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.newparser.Parser;
-
-import junit.framework.TestCase;
+import org.eclipse.cdt.internal.core.newparser.ParserException;
 
 /**
  * Tests the construction of DOMs for snippets of code
@@ -23,7 +28,7 @@ public class DOMTests extends TestCase {
 	public TranslationUnit parse(String code) throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();
 		Parser parser = new Parser(code, domBuilder);
-		parser.parse();
+		if( ! parser.parse() ) throw new ParserException( "Parse failure" ); 
 		
 		return domBuilder.getTranslationUnit();
 	}
@@ -42,7 +47,7 @@ public class DOMTests extends TestCase {
 		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it is only an int
-		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		assertEquals(DeclarationSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the declarator and check its name
 		List declarators = declaration.getDeclarators();
@@ -68,7 +73,7 @@ public class DOMTests extends TestCase {
 		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it is a type specifier
-		assertEquals(0, declaration.getDeclSpecifierSeq());
+		assertEquals(0, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
@@ -102,7 +107,7 @@ public class DOMTests extends TestCase {
 		assertEquals(0, declaration.getDeclarators().size());
 
 		// Make sure it's a type specifier
-		assertEquals(0, declaration.getDeclSpecifierSeq());
+		assertEquals(0, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
@@ -115,7 +120,7 @@ public class DOMTests extends TestCase {
 		declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it's an int
-		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		assertEquals(DeclarationSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the declarator and check it's name
 		List declarators = declaration.getDeclarators();
@@ -125,7 +130,7 @@ public class DOMTests extends TestCase {
 		assertEquals("x", name.getName());
 	}
 	/**
-	 * Test code: class A { public: int x; };
+	 * Test code: class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; }
 	 * Purpose: tests a declaration in a class scope.
 	 */
 	public void testSimpleClassMembers() throws Exception {
@@ -143,7 +148,7 @@ public class DOMTests extends TestCase {
 		assertEquals(0, declaration.getDeclarators().size());
 
 		// Make sure it's a type specifier
-		assertEquals(0, declaration.getDeclSpecifierSeq());
+		assertEquals(0, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
@@ -174,7 +179,7 @@ public class DOMTests extends TestCase {
 		declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it's an int
-		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		assertEquals(DeclarationSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the declarator and check it's name
 		List declarators = declaration.getDeclarators();
@@ -188,7 +193,7 @@ public class DOMTests extends TestCase {
 		
 		declaration = (SimpleDeclaration)declarations.get(1); 
 		// Make sure it's an float
-		assertEquals(SimpleDeclaration.t_float, declaration.getDeclSpecifierSeq());
+		assertEquals(DeclarationSpecifier.t_float, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		declarators = declaration.getDeclarators(); 
 		assertEquals( 3, declarators.size() );
 		name  = ((Declarator)declarators.get(0)).getName(); 
@@ -198,6 +203,107 @@ public class DOMTests extends TestCase {
 		name  = ((Declarator)declarators.get(2)).getName();		
 		assertEquals( "c", name.getName() );
 		
-	}	
+	}
+	
+
+	/**
+	 * Test code: int myFunction( void ); 
+	 */
+	public void testSimpleFunctionDeclaration() throws Exception
+	{
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("void myFunction( void );");
+		TranslationUnit translationUnit = parse(code.toString());
+		
+		// Get the declaration
+		List declarations = translationUnit.getDeclarations();
+		assertEquals(1, declarations.size());
+		SimpleDeclaration simpleDeclaration = (SimpleDeclaration)declarations.get(0);
+		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclarationSpecifier.t_void );
+		List declarators  = simpleDeclaration.getDeclarators(); 
+		assertEquals( 1, declarators.size() ); 
+		Declarator functionDeclarator = (Declarator)declarators.get( 0 ); 
+		assertEquals( functionDeclarator.getName().getName(), "myFunction" );
+		ParameterDeclarationClause pdc = functionDeclarator.getParms(); 
+		assertNotNull( pdc ); 
+		List parameterDecls = pdc.getDeclarations(); 
+		assertEquals( 1, parameterDecls.size() );
+		ParameterDeclaration parm1 = (ParameterDeclaration)parameterDecls.get( 0 );
+		assertEquals( DeclarationSpecifier.t_void, parm1.getDeclSpecifier().getType() );
+		List parm1Decls = parm1.getDeclarators(); 
+		assertEquals( 1, parm1Decls.size() ); 
+		Declarator parm1Declarator = (Declarator) parm1Decls.get(0); 
+		assertNull( parm1Declarator.getName() );  
+	}
+	
+	/**
+	 * Test code:  "class A { int floor( double input ), someInt; };"
+	 */
+	public void testMultipleDeclarators() throws Exception
+	{
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("class A { int floor( double input ), someInt; };");
+		TranslationUnit translationUnit = parse(code.toString());
+		
+		List tudeclarations = translationUnit.getDeclarations(); 
+		assertEquals( 1, tudeclarations.size() ); 
+		SimpleDeclaration classDecl = (SimpleDeclaration)tudeclarations.get(0);
+		assertEquals( 0, classDecl.getDeclarators().size() ); 
+		ClassSpecifier classSpec = (ClassSpecifier)classDecl.getTypeSpecifier();
+		 
+		List classDeclarations = classSpec.getDeclarations(); 
+		assertEquals( classDeclarations.size(), 1 ); 
+		SimpleDeclaration simpleDeclaration = (SimpleDeclaration)classDeclarations.get(0);
+		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclarationSpecifier.t_int );
+		List simpleDeclarators =  simpleDeclaration.getDeclarators(); 
+		assertEquals( simpleDeclarators.size(), 2 ); 
+		Declarator methodDeclarator = (Declarator)simpleDeclarators.get(0);
+		assertEquals( methodDeclarator.getName().getName(), "floor" ); 
+		ParameterDeclarationClause pdc = methodDeclarator.getParms(); 
+		assertNotNull( pdc );
+		List parameterDeclarations = pdc.getDeclarations(); 
+		assertEquals( 1, parameterDeclarations.size() ); 
+		ParameterDeclaration parm1Declaration = (ParameterDeclaration)parameterDeclarations.get(0);
+		assertEquals(  DeclarationSpecifier.t_double, parm1Declaration.getDeclSpecifier().getType() ); 
+		List parm1Declarators = parm1Declaration.getDeclarators(); 
+		assertEquals( parm1Declarators.size(), 1 ); 
+		Declarator parm1Declarator = (Declarator)parm1Declarators.get(0);
+		assertEquals( parm1Declarator.getName().getName(), "input" );
+		Declarator integerDeclarator = (Declarator)simpleDeclarators.get(1);
+		assertEquals( integerDeclarator.getName().getName(), "someInt" ); 
+		assertNull( integerDeclarator.getParms() ); 
+	}
+
+//	public void testErrors()
+//	{
+//		validateWeEncounterAnError( "void myFunc( int hey, flo );");
+//	}
+ 
+	public void validateWeEncounterAnError( String codeText )
+	{
+		try
+		{
+			// Parse and get the translaton unit
+			Writer code = new StringWriter();
+			code.write(codeText);
+			try
+			{
+				TranslationUnit translationUnit = parse(code.toString());
+				fail( "We should not reach this line.  Failure."); 
+			} catch( ParserException pe )
+			{
+			}
+			catch( Exception e )
+			{
+				fail( "Unknown exception " + e.getMessage() );
+			}
+		}catch( IOException io )
+		{
+			fail( "IOException thrown");
+		}
+				
+	}
 }
 

@@ -8,7 +8,8 @@ import org.eclipse.cdt.internal.core.newparser.Token;
 /**
  * This is the parser callback that creates objects in the DOM.
  */
-public class DOMBuilder implements IParserCallback {
+public class DOMBuilder implements IParserCallback 
+{
 
 	private TranslationUnit translationUnit;
 	
@@ -19,7 +20,10 @@ public class DOMBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsBegin()
 	 */
-	public void argumentsBegin() {
+	public Object argumentsBegin( Object declarator ) {
+		Declarator decl = ((Declarator)declarator);
+		ParameterDeclarationClause clause = new ParameterDeclarationClause( decl ); 
+		return clause; 
 	}
 
 	/**
@@ -70,7 +74,7 @@ public class DOMBuilder implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorBegin()
 	 */
 	public Object declaratorBegin(Object container) {
-		SimpleDeclaration decl = (SimpleDeclaration)container; 
+		DeclarationSpecifier.Container decl = (DeclarationSpecifier.Container )container; 
 		Declarator declarator = new Declarator(decl);
 		decl.addDeclarator(declarator);
 		return declarator; 
@@ -93,77 +97,83 @@ public class DOMBuilder implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void simpleDeclSpecifier(Object Container, Token specifier) {
-		SimpleDeclaration decl = (SimpleDeclaration)Container;
+		DeclarationSpecifier.Container decl = (DeclarationSpecifier.Container)Container;
+		DeclarationSpecifier declSpec = decl.getDeclSpecifier(); 
+		if( declSpec == null )
+		{
+			declSpec = new DeclarationSpecifier(); 
+			decl.setDeclSpecifier( declSpec ); 
+		}
 		
 		switch (specifier.getType()) {
 			case Token.t_auto:
-				decl.setAuto(true);
+				declSpec.setAuto(true);
 				break;
 			case Token.t_register:
-				decl.setRegister(true);
+				declSpec.setRegister(true);
 				break;
 			case Token.t_static:
-				decl.setStatic(true);
+				declSpec.setStatic(true);
 				break;
 			case Token.t_extern:
-				decl.setExtern(true);
+				declSpec.setExtern(true);
 				break;
 			case Token.t_mutable:
-				decl.setMutable(true);
+				declSpec.setMutable(true);
 				break;
 			case Token.t_inline:
-				decl.setInline(true);
+				declSpec.setInline(true);
 				break;
 			case Token.t_virtual:
-				decl.setVirtual(true);
+				declSpec.setVirtual(true);
 				break;
 			case Token.t_explicit:
-				decl.setExplicit(true);
+				declSpec.setExplicit(true);
 				break;
 			case Token.t_typedef:
-				decl.setTypedef(true);
+				declSpec.setTypedef(true);
 				break;
 			case Token.t_friend:
-				decl.setFriend(true);
+				declSpec.setFriend(true);
 				break;
 			case Token.t_const:
-				decl.setConst(true);
+				declSpec.setConst(true);
 				break;
 			case Token.t_volatile:
-				decl.setVolatile(true);
+				declSpec.setVolatile(true);
 				break;
 			case Token.t_char:
-				decl.setType(SimpleDeclaration.t_char);
+				declSpec.setType(DeclarationSpecifier.t_char);
 				break;
 			case Token.t_wchar_t:
-				decl.setType(SimpleDeclaration.t_wchar_t);
+				declSpec.setType(DeclarationSpecifier.t_wchar_t);
 				break;
 			case Token.t_bool:
-				decl.setType(SimpleDeclaration.t_bool);
+				declSpec.setType(DeclarationSpecifier.t_bool);
 				break;
 			case Token.t_short:
-				decl.setShort(true);
+				declSpec.setShort(true);
 				break;
 			case Token.t_int:
-				decl.setType(SimpleDeclaration.t_int);
+				declSpec.setType(DeclarationSpecifier.t_int);
 				break;
 			case Token.t_long:
-				decl.setLong(true);
+			declSpec.setLong(true);
 				break;
 			case Token.t_signed:
-				decl.setUnsigned(false);
+			declSpec.setUnsigned(false);
 				break;
 			case Token.t_unsigned:
-				decl.setUnsigned(true);
+			declSpec.setUnsigned(true);
 				break;
 			case Token.t_float:
-				decl.setType(SimpleDeclaration.t_float);
+			declSpec.setType(DeclarationSpecifier.t_float);
 				break;
 			case Token.t_double:
-				decl.setType(SimpleDeclaration.t_double);
+			declSpec.setType(DeclarationSpecifier.t_double);
 				break;
 			case Token.t_void:
-				decl.setType(SimpleDeclaration.t_void);
+			declSpec.setType(DeclarationSpecifier.t_void);
 				break;
 		}
 	}
@@ -298,5 +308,16 @@ public class DOMBuilder implements IParserCallback {
 	public void baseSpecifierName( Object baseSpecifier )
 	{
 		((BaseSpecifier)baseSpecifier).setName(currName.getName());		
+	}
+	
+	public Object parameterDeclarationBegin( Object container, Token firstToken )
+	{
+		ParameterDeclarationClause clause = (ParameterDeclarationClause)container; 
+		ParameterDeclaration pd = new ParameterDeclaration();
+		clause.addDeclaration( pd ); 
+		return pd;
+	}
+	
+	public void  parameterDeclarationEnd( Object declaration ){
 	}
 }

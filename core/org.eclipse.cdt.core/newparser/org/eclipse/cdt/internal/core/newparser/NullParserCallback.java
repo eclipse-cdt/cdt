@@ -4,7 +4,8 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginArguments()
 	 */
-	public void argumentsBegin() {
+	public Object argumentsBegin( Object container ) { 
+		return null; 
 	}
 
 	/**
@@ -156,6 +157,14 @@ public class NullParserCallback implements IParserCallback {
 
 	public void baseSpecifierVirtual( Object baseSpecifier, boolean virtual )
 	{
+	}
+
+	public Object parameterDeclarationBegin( Object container, Token firstToken )
+	{
+		return null; 
+	}
+	
+	public void  parameterDeclarationEnd( Object declaration ){
 	}
 
 }

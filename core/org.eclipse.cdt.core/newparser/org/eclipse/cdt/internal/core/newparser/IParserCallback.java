@@ -22,6 +22,9 @@ public interface IParserCallback {
 	public Object simpleDeclarationBegin(Object Container, Token firstToken);
 	public void simpleDeclarationEnd(Object declaration);
 	
+	public Object parameterDeclarationBegin( Object Container, Token firstToken ); 
+	public void  parameterDeclarationEnd( Object declaration ); 
+	
 	public void simpleDeclSpecifier(Object Container, Token specifier);
 	
 	public void nameBegin(Token firstToken);
@@ -29,7 +32,7 @@ public interface IParserCallback {
 	
 	public Object declaratorBegin(Object container);
 	public void declaratorId(Object declarator);
-	public void argumentsBegin();
+	public Object argumentsBegin( Object declarator );
 	public void argumentsEnd();
 	public void declaratorEnd(Object declarator);
 	

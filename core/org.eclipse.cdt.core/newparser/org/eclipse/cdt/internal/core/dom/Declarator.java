@@ -2,17 +2,17 @@ package org.eclipse.cdt.internal.core.dom;
 
 public class Declarator {
 	
-	public Declarator(SimpleDeclaration declaration) {
+	public Declarator(DeclarationSpecifier.Container declaration) {
 		this.declaration = declaration;
 	}
 	
-	private SimpleDeclaration declaration;
+	private DeclarationSpecifier.Container declaration;
 	
 	/**
 	 * Returns the declaration.
 	 * @return SimpleDeclaration
 	 */
-	public SimpleDeclaration getDeclaration() {
+	public DeclarationSpecifier.Container getDeclaration() {
 		return declaration;
 	}
 
@@ -40,6 +40,21 @@ public class Declarator {
 	 */
 	public void setName(Name name) {
 		this.name = name;
+	}
+	
+	ParameterDeclarationClause parms = null; 
+
+	public void addParms( ParameterDeclarationClause parms )
+	{
+		this.parms = parms; 
+	}	
+	
+	/**
+	 * Returns the parms.
+	 * @return ParameterDeclarationClause
+	 */
+	public ParameterDeclarationClause getParms() {
+		return parms;
 	}
 
 }

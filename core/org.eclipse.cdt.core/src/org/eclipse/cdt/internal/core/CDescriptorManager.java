@@ -105,9 +105,13 @@ public class CDescriptorManager implements IResourceChangeListener {
 		if ( fDescriptorMap == null ) {
 			fDescriptorMap = new HashMap();
 		}
-		if ( fDescriptorMap.get(project) != null ) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS, CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), (Throwable)null); //$NON-NLS-1$
-			throw new CoreException(status);
+		cproject = (CDescriptor) fDescriptorMap.get(project);
+		if ( cproject != null ) {
+			if ( !cproject.getProjectOwner().getID().equals(id) ) {
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS, CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), (Throwable)null); //$NON-NLS-1$
+				throw new CoreException(status);
+			}
+			return;
 		}
 		try {
 			cproject = new CDescriptor(project, id);

@@ -967,7 +967,9 @@ public class CPPVisitor {
 		if( name instanceof ICPPASTQualifiedName ){
 			IASTName [] names = ((ICPPASTQualifiedName)name).getNames();
 			for( int i = 0; i < names.length; i++ ){
-				if( !visitName( names[i], action ) ) return false;
+				if( i == names.length - 1 ){
+					if( names[i].toCharArray().length > 0 && !visitName( names[i], action ) ) return false;
+				} else if( !visitName( names[i], action ) ) return false;
 			}
 		}
 		return true;
@@ -1031,6 +1033,15 @@ public class CPPVisitor {
 	        }
 		}
 			
+		IASTPointerOperator [] ptrs = declarator.getPointerOperators();
+		if( ptrs.length > 0 ){
+			for( int i = 0; i < ptrs.length; i++ ){
+				if( ptrs[i] instanceof ICPPASTPointerToMember ){
+					if( !visitName( ((ICPPASTPointerToMember) ptrs[i]).getName(), action ) ) return false;
+				}
+			}
+		}
+		
 		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
 			declarator.getNestedDeclarator() == null )
 		{

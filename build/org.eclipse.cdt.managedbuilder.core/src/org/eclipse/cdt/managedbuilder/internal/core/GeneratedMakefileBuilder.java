@@ -642,10 +642,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH));
 					try {
 						currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-						for (int j = 0; j < referencedProjects.length; ++j) {
-							IProject project = referencedProjects[j];
-							project.refreshLocal(IResource.DEPTH_INFINITE, null);
-						}
 					} catch (CoreException e) {
 						monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH_ERROR));
 					}

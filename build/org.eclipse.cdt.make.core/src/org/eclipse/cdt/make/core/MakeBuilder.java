@@ -111,6 +111,9 @@ public class MakeBuilder extends ACBuilder {
 				removeAllMarkers(currProject);
 
 				IPath workingDirectory = info.getBuildLocation();
+				if (workingDirectory.isEmpty()) {
+					workingDirectory = currProject.getLocation();
+				}
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals("clean")) //$NON-NLS-1$
 					isClean = true;

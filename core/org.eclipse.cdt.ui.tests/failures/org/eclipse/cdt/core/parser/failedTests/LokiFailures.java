@@ -28,10 +28,6 @@ public class LokiFailures extends BaseDOMTest  {
 	public void testBugSingleton192() {
 		failTest("int Test::* pMember_;" );
 	}
-	
-	public void testBugFunctor758() {
-		failTest( "template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" ); 
-	}
 
     public void testBugTypeManip151()
     {

@@ -25,6 +25,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop";
 	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole";
 	public static final String PREF_BUILDCONSOLE_LINES = "buildConsoleLines";
+	public static final String PREF_BUILDCONSOLE_LINES_ERROR = "CBasePreferencePage.buildConsole.errorMessage"; //$NON-NLS-1$
 
 	private static final String CLEAR_CONSOLE_LABEL= "CBasePreferencePage.clearConsole.label";
 	private static final String CONSOLE_ON_TOP_LABEL= "CBasePreferencePage.consoleOnTop.label";
@@ -50,6 +51,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		addField(consoleOnTop);
 
 		IntegerFieldEditor buildCount = new IntegerFieldEditor( PREF_BUILDCONSOLE_LINES, "&Build console lines: ", parent );
+		buildCount.setErrorMessage(CUIPlugin.getResourceString(PREF_BUILDCONSOLE_LINES_ERROR));
 		buildCount.setValidRange( 10, Integer.MAX_VALUE );
 		addField( buildCount );
 

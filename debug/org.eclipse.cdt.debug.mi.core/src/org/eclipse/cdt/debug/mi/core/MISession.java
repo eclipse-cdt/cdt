@@ -47,6 +47,7 @@ public class MISession extends Observable {
 	 */
 	public static long REQUEST_TIMEOUT = 10000; // 10 * 1000 (~ 10 secs);
 
+	boolean terminated;
 
 	// hold the type of the session(post-mortem, attach etc ..)
 	int sessionType;
@@ -285,7 +286,7 @@ public class MISession extends Observable {
 	 * Check if the gdb session is terminated.
 	 */
 	public boolean isTerminated() {
-		return (!txThread.isAlive() || !rxThread.isAlive());
+		return terminated;
 	}
 	
 	/**
@@ -293,9 +294,16 @@ public class MISession extends Observable {
 	 */
 	public void terminate() {
 
+		// Sanity check.
+		if (isTerminated()) {
+			return;
+		}
+		
+		terminated = true;
+		
 		// Destroy any MI Inferior(Process) and streams.
 		inferior.destroy();
-
+		
 		// Tell the observers that the session
 		// is finish, but we can not use the Event Thread.
 		// The Event Thread is being kill below.

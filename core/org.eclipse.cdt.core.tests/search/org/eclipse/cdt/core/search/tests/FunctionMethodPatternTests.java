@@ -191,4 +191,16 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 	}
+	
+	public void testLookupForDefinition(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "turn", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 2 );
+		
+		pattern = SearchEngine.createSearchPattern( "Direction::turn", METHOD, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 0 );
+	}
 }

@@ -106,11 +106,14 @@ public class ParserSymbolTable {
 		LinkedList transitives = new LinkedList();	//list of transitive using directives
 		
 		//if this name define in this scope?
-		Map map = lookupInContained( data, inSymbol );
-		if( data.foundItems == null || data.foundItems.isEmpty() ){
-			data.foundItems = map;
-		} else {
-			mergeResults( data, data.foundItems, map );
+		Map map = null;
+		if( !data.usingDirectivesOnly ){
+			map = lookupInContained( data, inSymbol );
+			if( data.foundItems == null || data.foundItems.isEmpty() ){
+				data.foundItems = map;
+			} else {
+				mergeResults( data, data.foundItems, map );
+			}	
 		}
 		
 		if( inSymbol.getSymbolTable().getLanguage() == ParserLanguage.CPP &&
@@ -149,7 +152,7 @@ public class ParserSymbolTable {
 			return;
 		}
 			
-		if( inSymbol instanceof IDerivableContainerSymbol ){
+		if( !data.usingDirectivesOnly && inSymbol instanceof IDerivableContainerSymbol ){
 			//if we still havn't found it, check any parents we have
 			data.visited.clear();	//each virtual base class is searched at most once
 			map = lookupInParents( data, (IDerivableContainerSymbol)inSymbol );
@@ -162,10 +165,19 @@ public class ParserSymbolTable {
 		}
 					
 		//if still not found, check our containing scope.			
-		if( ( data.foundItems == null || data.foundItems.isEmpty() || ( data.mode == LookupMode.PREFIX && !data.qualified ) )
+		if( ( data.foundItems == null || data.foundItems.isEmpty() || data.mode == LookupMode.PREFIX )
 			&& inSymbol.getContainingSymbol() != null )
 		{ 
-			lookup( data, inSymbol.getContainingSymbol() );
+			if( data.qualified ){
+				if( data.usingDirectives != null && !data.usingDirectives.isEmpty() ){
+					data.usingDirectivesOnly = true;
+					lookup( data, inSymbol.getContainingSymbol() );
+					
+				}
+			} else {
+				lookup( data, inSymbol.getContainingSymbol() );	
+			}
+			
 		}
 
 		return;
@@ -393,7 +405,14 @@ public class ParserSymbolTable {
 							} else if( foundSymbol.getTypeInfo().isForwardDeclaration() && foundSymbol.getTypeSymbol() == cls ){
 								//decl is a forward declaration of cls, we already have what we want (cls)
 							} else {
-								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+								if( data.mode == LookupMode.PREFIX ){
+									if( data.ambiguities == null ){
+										data.ambiguities = new HashSet();
+									}
+									data.ambiguities.add( foundSymbol.getName() );
+								} else {
+									throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+								}
 							}
 						}
 					} else {
@@ -401,7 +420,14 @@ public class ParserSymbolTable {
 						if( obj == null ){
 							obj = foundSymbol;	
 						} else {
-							throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ); 
+							if( data.mode == LookupMode.PREFIX ){
+								if( data.ambiguities == null ){
+									data.ambiguities = new HashSet();
+								}
+								data.ambiguities.add( foundSymbol.getName() );
+							} else {
+								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+							} 
 						}
 					}
 				}
@@ -447,10 +473,17 @@ public class ParserSymbolTable {
 		}
 		
 		if( ambiguous ){
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-		} else {
-			return cls;
-		}
+			if( data.mode == LookupMode.PREFIX ){
+				if( data.ambiguities == null ){
+					data.ambiguities = new HashSet();
+				}
+				data.ambiguities.add( foundSymbol.getName() );
+			} else {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+			} 
+		} 
+		
+		return cls;
 	}
 	/**
 	 * 
@@ -546,7 +579,17 @@ public class ParserSymbolTable {
 					while( iter.hasNext() ){
 						key = iter.next();
 						if( symbol.containsKey( key ) ){
-							checkAmbiguity( symbol.get( key ), temp.get( key ) );
+							ISymbol sym = (ISymbol) symbol.get( key );
+							if( !checkAmbiguity( sym, temp.get( key ) ) ){
+								if( data.mode == LookupMode.PREFIX ){
+									if( data.ambiguities == null ){
+										data.ambiguities = new HashSet();
+									}
+									data.ambiguities.add( sym.getName() );
+								} else {
+									throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+								} 								
+							}
 						} else {
 							symbol.put( key, temp.get( key ) );
 						}
@@ -562,7 +605,7 @@ public class ParserSymbolTable {
 		return symbol;	
 	}
 	
-	private static void checkAmbiguity( Object obj1, Object obj2 ) throws ParserSymbolTableException{
+	private static boolean checkAmbiguity( Object obj1, Object obj2 ) throws ParserSymbolTableException{
 		//it is not ambiguous if they are the same thing and it is static or an enumerator
 		if( obj1 == obj2 ){
 			
@@ -571,7 +614,7 @@ public class ParserSymbolTable {
 			while( symbol != null ) {
 				TypeInfo type = ((ISymbol)obj1).getTypeInfo();
 				if( !type.checkBit( TypeInfo.isStatic ) && !type.isType( TypeInfo.t_enumerator ) ){
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+					return false;
 				}
 				
 				if( iter != null && iter.hasNext() ){
@@ -580,9 +623,9 @@ public class ParserSymbolTable {
 					symbol = null;
 				}
 			}
-			return;
+			return true;
 		} 
-		throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		return false;
 	}
 	
 	/**
@@ -1160,6 +1203,7 @@ public class ParserSymbolTable {
 		//if( symbol.getType() == TypeInfo.t_class ){
 		if( symbol instanceof IDerivableContainerSymbol ){
 			associated.add( symbol );
+			associated.add( symbol.getContainingSymbol() );
 			getBaseClassesAndContainingNamespaces( (IDerivableContainerSymbol) symbol, associated );
 		} 
 		//if T is a union or enumeration type, its associated namespace is the namespace in 
@@ -2188,6 +2232,7 @@ public class ParserSymbolTable {
 	static protected class LookupData
 	{
 		
+		public Set ambiguities;
 		public String name;
 		public Map usingDirectives; 
 		public Set visited = new HashSet();	//used to ensure we don't visit things more than once
@@ -2202,6 +2247,7 @@ public class ParserSymbolTable {
 		public TypeInfo.eType upperType = TypeInfo.t_undef;
 		public boolean qualified = false;
 		public boolean ignoreUsingDirectives = false;
+		public boolean usingDirectivesOnly = false;
 		public boolean forUserDefinedConversion = false;
 
 		public Map foundItems = null;

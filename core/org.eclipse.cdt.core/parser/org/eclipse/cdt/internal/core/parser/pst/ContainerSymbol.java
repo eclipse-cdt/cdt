@@ -158,6 +158,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		if( namespace.getType() != TypeInfo.t_namespace ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
 		}
+		//7.3.4 A using-directive shall not appear in class scope
+		if( isType( TypeInfo.t_class, TypeInfo.t_union ) ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
+		}
 		
 		//handle namespace aliasing
 		ISymbol alias = namespace.getTypeSymbol();
@@ -334,6 +338,26 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return ParserSymbolTable.resolveAmbiguities( data );
 	}
 
+	public IParameterizedSymbol lookupMethodForDefinition( String name, List parameters ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		data.qualified = true;
+		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
+		
+		IContainerSymbol container = this;
+		
+		//handle namespace aliases
+		if( container.isType( TypeInfo.t_namespace ) ){
+			ISymbol symbol = container.getTypeSymbol();
+			if( symbol != null && symbol.isType( TypeInfo.t_namespace ) ){
+				container = (IContainerSymbol) symbol;
+			}
+		}
+		
+		data.foundItems = ParserSymbolTable.lookupInContained( data, container );
+		
+		ISymbol symbol = ParserSymbolTable.resolveAmbiguities( data ); 
+		return (IParameterizedSymbol) (( symbol instanceof IParameterizedSymbol ) ? symbol : null);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupNestedNameSpecifier(java.lang.String)
 	 */
@@ -479,6 +503,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				if( associated.contains( associatedScope ) ){
 					data.qualified = true;
 					data.ignoreUsingDirectives = true;
+					data.usingDirectivesOnly = false;
 					ParserSymbolTable.lookup( data, associatedScope );
 				}
 			}
@@ -556,6 +581,14 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		if( data.foundItems == null || data.foundItems.isEmpty() ){
 			return null;
 		} else {
+			//remove any ambiguous symbols
+			if( data.ambiguities != null && !data.ambiguities.isEmpty() ){
+				Iterator iter = data.ambiguities.iterator();
+				while( iter.hasNext() ){
+					data.foundItems.remove( iter.next() );
+				}
+			}
+			
 			List list = new LinkedList();
 			
 			Iterator iter = data.foundItems.keySet().iterator();

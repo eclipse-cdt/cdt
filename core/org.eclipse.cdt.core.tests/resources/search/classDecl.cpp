@@ -28,9 +28,13 @@ namespace NS {
 			Three
 		};
 		
-		using namespace NS2;
+		void f(){
+			using namespace NS2;
+			a aStruct;
+		}
 		
-		a aStruct;
+		
+
 		AA anotherStruct;
 	};
 	union u{ } ;

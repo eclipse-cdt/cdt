@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -101,6 +102,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	SUBSCRIPT.add( TypeInfo.OperatorExpression.subscript );
     }
 
+    static private class LookupType extends Enum {
+		public static final LookupType QUALIFIED = new LookupType( 1 );
+		public static final LookupType UNQUALIFIED = new LookupType( 2 );
+		public static final LookupType FORDEFINITION = new LookupType( 3 );
+
+		private LookupType( int constant)
+		{
+			super( constant ); 
+		}
+    }
+    
     public CompleteParseASTFactory( ParserLanguage language )
     {
         super();
@@ -146,7 +158,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return true;
 	}
 	
-	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters) throws ParserSymbolTableException{
+	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, LookupType lookupType ) throws ParserSymbolTableException{
 		ISymbol result = null;
 		try {
 			if((type == TypeInfo.t_function) || (type == TypeInfo.t_constructor)){
@@ -156,13 +168,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						IDerivableContainerSymbol startingDerivableScope = (IDerivableContainerSymbol) startingScope;
 						result = startingDerivableScope.lookupConstructor( new LinkedList(parameters));
 					}
-					else
-						result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));				
+					else {
+						if( lookupType == LookupType.QUALIFIED )
+							result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
+						else if( lookupType == LookupType.UNQUALIFIED )
+							result = startingScope.unqualifiedFunctionLookup( name, new LinkedList( parameters ) );
+						else 
+							result = startingScope.lookupMethodForDefinition( name, new LinkedList( parameters ) );
+					}
 				else
 					result = null;
 			}else{
 				// looking for something else
-				result = startingScope.qualifiedLookup(name, type);
+				if( lookupType == LookupType.QUALIFIED )
+					result = startingScope.qualifiedLookup(name, type);
+				else if( lookupType == LookupType.UNQUALIFIED )
+					result = startingScope.elaboratedLookup( type, name );
+				else
+					result = startingScope.lookupMemberForDefinition( name );
 			}
 		} catch (ParserSymbolTableException e) {
 			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction )
@@ -171,11 +194,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return result;		
 	}
 	
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, List references, boolean throwOnError ) throws ASTSemanticException{
-		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, 0, references, throwOnError);
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException{
+		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, 0, references, throwOnError, lookup );
 	}
 
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError ) throws ASTSemanticException
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
 	{
 		ISymbol result = null;
 		try
@@ -183,7 +206,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( name == null ) throw new ASTSemanticException();
 			try
 			{
-				result = lookupElement(startingScope, name, type, parameters);
+				result = lookupElement(startingScope, name, type, parameters, lookup);
 				if( result != null ) 
 					addReference(references, createReference( result, name, offset ));
 				else
@@ -206,10 +229,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references, boolean throwOnError ) throws ASTSemanticException{
-		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, references, throwOnError);
+		return lookupQualifiedName(startingScope, name, references, throwOnError, LookupType.UNQUALIFIED);
 	}
-
-		protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError ) throws ASTSemanticException
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException{
+		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, references, throwOnError, lookup );
+	}
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError ) throws ASTSemanticException{
+		return lookupQualifiedName( startingScope, name, type, parameters, references, throwOnError, LookupType.UNQUALIFIED );
+	}
+	
+		protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
 		{
 			ISymbol result = null;
 			IToken firstSymbol = null;
@@ -226,7 +255,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						firstSymbol = name.getFirstToken();
 						try
 		                {
-							result = lookupElement(startingScope, firstSymbol.getImage(), type, parameters);
+							result = lookupElement(startingScope, firstSymbol.getImage(), type, parameters, lookup );
 		                    if( result != null ) 
 								addReference( references, createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
 							else
@@ -252,7 +281,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 							try
 							{
 								if( t == name.getLastToken() ) 
-									result = lookupElement((IContainerSymbol)result, t.getImage(), type, parameters);
+									result = lookupElement((IContainerSymbol)result, t.getImage(), type, parameters, ( lookup == LookupType.FORDEFINITION ) ? lookup : LookupType.QUALIFIED );
 								else
 									result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
 								addReference( references, createReference( result, t.getImage(), t.getOffset() ));
@@ -814,7 +843,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// If the expression is lookup symbol if it is in the scope of a type after a "." or an "->"
 		IContainerSymbol searchScope = getSearchScope(kind, lhs, startingScope);
 		if (!searchScope.equals(startingScope))
-			symbol = lookupQualifiedName(searchScope, ((ASTExpression)rhs).getIdExpressionTokenDuple(), references, false);
+			symbol = lookupQualifiedName(searchScope, ((ASTExpression)rhs).getIdExpressionTokenDuple(), references, false, LookupType.QUALIFIED );
 			    			
 		// get symbol if it is the "this" pointer
 		// go up the scope until you hit a class
@@ -839,7 +868,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				parameters = new ArrayList();
 				parameters.add(expResult.getResult());
 			}
-			symbol = lookupQualifiedName(functionScope, functionId, TypeInfo.t_function, parameters, references, false);
+			if( functionScope.equals( startingScope ) )
+				symbol = lookupQualifiedName(functionScope, functionId, TypeInfo.t_function, parameters, references, false);
+			else
+				symbol = lookupQualifiedName(functionScope, functionId, TypeInfo.t_function, parameters, references, false, LookupType.QUALIFIED );
 		}
 		
     	return symbol;
@@ -1634,7 +1666,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			IParameterizedSymbol functionDeclaration = null; 
 			
 			functionDeclaration = 
-				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getLastToken().getImage(), TypeInfo.t_function, functionParameters, 0, new ArrayList(), false);                
+				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getLastToken().getImage(), TypeInfo.t_function, functionParameters, 0, new ArrayList(), false, LookupType.UNQUALIFIED );                
 
 			if( functionDeclaration != null )
 			{
@@ -1935,8 +1967,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 			List functionReferences = new ArrayList();
 			functionDeclaration = 
-				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name, isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, 0, functionReferences, false);                
-			
+				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name, isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, 0, functionReferences, false, LookupType.FORDEFINITION );                
+
 			if( functionDeclaration != null )
 			{
 				previouslyDeclared = true;
@@ -1994,7 +2026,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					ASTConstructorMemberInitializer realInitializer = ((ASTConstructorMemberInitializer)initializer);
 					try
 					{
-						lookupQualifiedName( symbol, initializer.getName(), realInitializer.getNameOffset(), realInitializer.getReferences(), false );
+						IDerivableContainerSymbol container = (IDerivableContainerSymbol) symbol.getContainingSymbol(); 
+						lookupQualifiedName(container, initializer.getName(), TypeInfo.t_any, null, realInitializer.getNameOffset(), realInitializer.getReferences(), false, LookupType.QUALIFIED);
 					}
 					catch( ASTSemanticException ase )
 					{
@@ -2007,19 +2040,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		
 		
-	}
-
-	/**
-	 * @param symbol
-	 * @param string
-	 * @param i
-	 * @param list
-	 * @param b
-	 * @return
-	 */
-	protected ISymbol lookupQualifiedName(IParameterizedSymbol startingScope, String name, int nameOffset, List references, boolean throwOnError) throws ASTSemanticException
-	{
-		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, nameOffset, references, throwOnError);
 	}
 
 	/**
@@ -2080,17 +2100,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			Iterator i = tokens.iterator();
 			while (i.hasNext() && (numOfTokens++) < tokens.size()){
 				String token = (String) i.next();
-				IContainerSymbol parentSymbol =
-				(IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_class, null, offset, references, false);
-				if(parentSymbol == null){
-					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_namespace, null, offset, references, false);						
+
+				IContainerSymbol parentSymbol = null;
+				try {
+					parentSymbol = (IContainerSymbol) parentScope.lookupNestedNameSpecifier( token );
+					if( parentSymbol != null )	
+						addReference( references, createReference( parentSymbol, name, offset ));
+				} catch (ParserSymbolTableException e1) {
+					//do nothing		
 				}
-				if(parentSymbol == null){
-					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_struct, null, offset, references, false);						
-				}
-				if(parentSymbol == null){
-					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_union, null, offset, references, false);						
-				}
+				
 				if(parentSymbol == null)
 					break;
 				else {
@@ -2124,7 +2143,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		newSymbol.setIsForwardDeclaration(isStatic);
 		boolean previouslyDeclared = false;
 		if(!isStatic){
-			ISymbol variableDeclaration = (ISymbol) lookupQualifiedName(ownerScope, name, new ArrayList(), false);                
+			ISymbol variableDeclaration = (ISymbol) lookupQualifiedName(ownerScope, name, new ArrayList(), false, LookupType.UNQUALIFIED);                
 	
 			if( variableDeclaration != null )
 			{
@@ -2331,7 +2350,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean previouslyDeclared = false;
 		if(!isStatic){
 			List fieldReferences = new ArrayList();		
-			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, name, fieldReferences, false);                
+			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, name, fieldReferences, false, LookupType.FORDEFINITION);                
 				
 			if( fieldDeclaration != null )
 			{

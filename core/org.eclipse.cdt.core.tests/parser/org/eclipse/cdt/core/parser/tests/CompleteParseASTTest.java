@@ -1074,4 +1074,32 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertAllReferences( 1, createTaskList( new Task( structS ) ) );
 		assertFalse( i.hasNext() );
 	}
+	
+	public void testQualifiedLookup() throws Exception{
+		//this is meant to test that on a->f, the lookup for f is qualified
+		//the namespace is necessary because of bug 47926
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "namespace N {" );
+		buffer.append( "   void f () {} \n" );
+		buffer.append( "   class A { }; \n" );
+		buffer.append( "}" );
+		buffer.append( "void main() { N::A * a = new N::A();  a->f(); } ");
+		
+		Iterator i = parse( buffer.toString() ).getDeclarations();
+		
+		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition) i.next();
+		Iterator nsIter = getDeclarations( namespace );
+		
+		IASTFunction f = (IASTFunction) nsIter.next();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)nsIter.next()).getTypeSpecifier();
+		
+		assertFalse( nsIter.hasNext() );
+		
+		IASTFunction main = (IASTFunction) i.next();
+		
+		Iterator fnIter = getDeclarations( main );
+		IASTVariable a = (IASTVariable) fnIter.next();
+		
+		assertAllReferences( 5, createTaskList( new Task( namespace, 2 ), new Task( classA, 2 ), new Task( a ) ) );
+	}
 }

@@ -25,4 +25,10 @@ class DeclsAndDefns{
 void forwardFunction();
 
 
+class Direction{
+   void turn();
+};
+class Right : public Direction  {
+   void turn() { }
+};
 #endif

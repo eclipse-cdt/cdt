@@ -148,7 +148,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 2 );
+		assertEquals( matches.size(), 1 );
 		
 		IMatch match = (IMatch) matches.iterator().next();
 		assertTrue( match.getParentName().equals( "NS::B" ) );
@@ -185,7 +185,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		search( workspace, orPattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 6 );
+		assertEquals( matches.size(), 5 );
 	}
 
 	public void testMacroPattern(){

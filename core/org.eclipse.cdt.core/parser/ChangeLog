@@ -1,3 +1,11 @@
+2003-12-03 Andrew Niefer
+	- Symbol table - modify prefix lookup handling of ambiguities
+	               - fix up qualified lookup
+	               - add IContainerSymbol.lookupMethodForDefinition
+	- Parser - modify Complete parse AST factory to use the correct lookups in different situations
+	         - Created a LookupType enum to specify what kind of lookup is needed (Qualified, unqualified, for definition)
+	
+
 2003-11-27 Andrew Niefer
 	fix bug 47264: Parse fails when using  struct s foo; and int s; in function bodies
 

@@ -1950,10 +1950,10 @@ public class ParserSymbolTableTest extends TestCase {
 		B.setType( TypeInfo.t_namespace );
 		
 		mark = table.setMark();
-		A.addUsingDirective( B );
-		assertEquals( A.getUsingDirectives().size(), 1 );
+		C.addUsingDirective( B );
+		assertEquals( C.getUsingDirectives().size(), 1 );
 		table.rollBack( mark );
-		assertEquals( A.getUsingDirectives().size(), 0 );
+		assertEquals( C.getUsingDirectives().size(), 0 );
 	}
 	
 	/**
@@ -3107,5 +3107,93 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( results.contains( af2 ) );
 	}
 	
+	/**
+	 * int aa;
+	 * namespace {
+	 *    namespace U {
+	 *       int a;
+	 *    }
+	 *    namespace V{
+	 *       int a;
+	 *    }
+	 *    namespace W{
+	 *       int a;
+	 *    }
+	 * 
+	 *    void f(){
+	 *       using namespace U;
+	 *       using namespace V;
+	 *       using namespace W;
+	 *       a(CTRL+SPACE)
+	 *    }
+	 *  }
+	 * 
+	 * @throws Exception
+	 */
+	public void testPrefixLookup_Ambiguities() throws Exception{
+		newTable();
+		
+		ISymbol aa = table.newSymbol( "aa", TypeInfo.t_int );
+		table.getCompilationUnit().addSymbol( aa );
+		
+		IContainerSymbol ns = table.newContainerSymbol( "", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( ns );
+		
+		IContainerSymbol U = table.newContainerSymbol( "U", TypeInfo.t_namespace );
+		ns.addSymbol( U );
+		ISymbol a1 = table.newSymbol( "a", TypeInfo.t_int );
+		U.addSymbol( a1 );
+		
+		IContainerSymbol V = table.newContainerSymbol( "V", TypeInfo.t_namespace );
+		ns.addSymbol( V );
+		ISymbol a2 = table.newSymbol( "a", TypeInfo.t_int );
+		V.addSymbol( a2 );
+		
+		IContainerSymbol W = table.newContainerSymbol( "W", TypeInfo.t_namespace );
+		ns.addSymbol( W );
+		ISymbol a3 = table.newSymbol( "a", TypeInfo.t_int );
+		W.addSymbol( a3 );
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		ns.addSymbol( f );
+
+		f.addUsingDirective( U );
+		f.addUsingDirective( V );
+		f.addUsingDirective( W );
+		
+		List results = f.prefixLookup( TypeInfo.t_any, "a", false );
+		
+		assertTrue( results != null );
+		assertEquals( results.size(), 1 );
+		assertTrue( results.contains( aa ) );
+	}
+	
+	/**
+	 * int i;
+	 * class A { 
+	 *    void g(){
+	 *       A a;
+	 *       a.i++;  //fail qualified lookup, no i in A
+	 *       i++;	 //success unqualified lookup
+	 *    }    
+	 * };
+	 * 
+	 * @throws Exception
+	 */
+	public void testQualifiedUnqualifiedLookup() throws Exception{
+		newTable();
+		
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_int );
+		table.getCompilationUnit().addSymbol( i );
+		
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( A );
+		
+		IParameterizedSymbol g = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		A.addSymbol( g );
+		
+		assertEquals( null, A.qualifiedLookup( "i" ) );
+		assertEquals( i, g.lookup( "i" ) );
+	}
 }
 

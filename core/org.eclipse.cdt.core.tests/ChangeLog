@@ -1,3 +1,16 @@
+2003-12-03 Andrew Niefer
+	-modified FailedCompleteParseASTTest.testPMDotStarPointerToMemberFunction_Bug43242
+										.testPMArrowStarPointerToMemberFunction_Bug43242
+										.testPMDotStar_bug43579
+										.testPMArrowStar_bug43579
+	-created: FailedCompleteParseASTTest.testBug47926
+			  CompleteParseASTTest.testQualifiedLookup
+			  ParserSymbolTableTest.testPrefixLookup_Ambiguities
+			  ParserSymbolTableTest.testQualifiedUnqualifiedLookup
+	-modified resources/search/classDecl.cpp & include.h
+	-created FunctionMethodPatternTests.testLookupForDefinition
+	
+
 2003-11-27 Andrew Niefer
 	tests for Symbol table prefix lookup
 		ParserSymbolTableTest.testBug46882

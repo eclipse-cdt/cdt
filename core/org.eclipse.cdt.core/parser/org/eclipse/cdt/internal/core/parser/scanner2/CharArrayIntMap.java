@@ -53,4 +53,11 @@ public class CharArrayIntMap extends CharTable {
 			return valueTable[i];
 		return undefined;
 	}
+	
+    public Object clone(){
+         CharArrayIntMap newMap = (CharArrayIntMap) super.clone();
+         newMap.valueTable = new int[ capacity() ];
+         System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
+         return newMap;
+     }
 }

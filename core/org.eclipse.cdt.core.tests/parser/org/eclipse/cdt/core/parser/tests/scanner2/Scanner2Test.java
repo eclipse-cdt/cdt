@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -1827,4 +1828,14 @@ public class Scanner2Test extends BaseScanner2Test
 		initializeScanner( writer.toString() );
 		fullyTokenize();
 	}
+    
+    public void testBug74180() throws Exception{
+        initializeScanner( "true false", ParserLanguage.C ); //$NON-NLS-1$
+        validateIdentifier( "true" ); //$NON-NLS-1$
+        validateIdentifier( "false" ); //$NON-NLS-1$
+        
+        initializeScanner( "true false", ParserLanguage.CPP ); //$NON-NLS-1$
+        validateToken( IToken.t_true );
+        validateToken( IToken.t_false);
+    }
 }

@@ -52,7 +52,12 @@ public class BaseScanner2Test extends TestCase {
 	{
 		initializeScanner( input, mode, new NullSourceElementRequestor( mode ));
 	}
-
+	protected void initializeScanner( String input, ParserLanguage language ) throws ParserFactoryError
+	{
+	    scanner = createScanner( new CodeReader(input.toCharArray()), 
+	                             new ScannerInfo(), ParserMode.COMPLETE_PARSE, language, 
+	                             new NullSourceElementRequestor( ParserMode.COMPLETE_PARSE ), null, null ); 
+	}
 	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor ) throws ParserFactoryError
 	{
 		scanner = createScanner( new CodeReader(input.toCharArray()), new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null, null ); //$NON-NLS-1$

@@ -38,6 +38,16 @@ public class CharTable extends HashTable {
 		for( int i = 0; i < capacity(); i++ )
 			keyTable[i] = null;
 	}
+	
+	public Object clone(){
+		CharTable newTable = (CharTable) super.clone();
+
+	     int size = capacity();
+	     newTable.keyTable = new char[size][];
+	     System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
+
+         return newTable;
+     }
 	protected final int hash(char[] source, int start, int length) {
 		return CharArrayUtils.hash(source, start, length) & ((keyTable.length * 2) - 1);
 	}

@@ -16,7 +16,7 @@ import java.util.Comparator;
 /**
  * @author ddaoust
  */
-public class HashTable {
+public class HashTable implements Cloneable {
 
 	protected static final int minHashSize = 2;
 	protected int currEntry = -1;
@@ -47,6 +47,26 @@ public class HashTable {
 		}
 	}
 	
+	public Object clone(){
+        HashTable newTable = null;
+	    try {
+	    	newTable = (HashTable) super.clone();
+	    } catch ( CloneNotSupportedException e ) {
+	        //shouldn't happen because object supports clone.
+	        return null;
+	    }
+	
+	    int size = capacity();
+	
+	    if( hashTable != null ){
+			newTable.hashTable = new int[ size*2 ];
+			newTable.nextTable = new int[ size ];
+			System.arraycopy(hashTable, 0, newTable.hashTable, 0, hashTable.length);
+			System.arraycopy(nextTable, 0, newTable.nextTable, 0, nextTable.length);
+		}
+		newTable.currEntry = currEntry;
+		return newTable;
+     }
 	protected void resize() {
 		resize(capacity() << 1);
 	}

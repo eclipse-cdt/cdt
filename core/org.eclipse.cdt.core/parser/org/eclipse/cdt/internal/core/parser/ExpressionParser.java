@@ -227,6 +227,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		try {
 			if (firstErrorOffset == FIRST_ERROR_OFFSET_UNSET)
 				firstErrorOffset = LA(1).getOffset();
+			consume(); // get past this token
 		} catch (EndOfFileException eof) {
 			// do nothing
 		} finally {

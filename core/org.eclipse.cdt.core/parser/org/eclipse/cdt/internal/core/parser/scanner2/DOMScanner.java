@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 public class DOMScanner extends BaseScanner {
 
     private final ICodeReaderFactory codeReaderFactory;
-    private int overallOffset = 0;
+//    private int overallOffset = 0;
 
 
     /**

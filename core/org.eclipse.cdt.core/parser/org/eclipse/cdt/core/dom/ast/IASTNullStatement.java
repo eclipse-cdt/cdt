@@ -7,9 +7,8 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
-package org.eclipse.cdt.core.dom.ast.c;
+package org.eclipse.cdt.core.dom.ast;
 
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 /**
  * @author jcamelon

@@ -9,7 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import org.eclipse.cdt.core.dom.ast.c.IASTNullStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 
 /**
  * @author jcamelon

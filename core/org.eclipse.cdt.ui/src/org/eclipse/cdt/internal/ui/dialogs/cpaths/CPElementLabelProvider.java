@@ -39,8 +39,8 @@ class CPElementLabelProvider extends LabelProvider {
 		fCreateLabel = CPathEntryMessages.getString("CPListLabelProvider.willbecreated"); //$NON-NLS-1$
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 
-		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
-		fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
+		fExtLibIcon = fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
+		fExtLibWSrcIcon = fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
 		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
 		fMacroIcon = CPluginImages.DESC_OBJS_MACRO;
 		fFolderImage = CPluginImages.DESC_OBJS_SOURCE_ROOT;
@@ -238,8 +238,7 @@ class CPElementLabelProvider extends LabelProvider {
 		} else if (element instanceof CPElementAttribute) {
 			String key = ((CPElementAttribute)element).getKey();
 			if (key.equals(CPElement.SOURCEATTACHMENT)) {
-				//				return
-				// fRegistry.get(CPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB);
+				return fRegistry.get(CPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB);
 			} else if (key.equals(CPElement.EXCLUSION)) {
 				return CPluginImages.get(CPluginImages.IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
 			}

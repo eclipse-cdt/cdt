@@ -1,4 +1,9 @@
 2004-05-27 Bogdan Gheorghe
+	Fix for Bug 58716 - [Refactoring] Subdirectories confuse refactoring
+	Added a listener to path change events from the core model; retrigger 
+	indexing based on the granularity of the change event
+	
+2004-05-27 Bogdan Gheorghe
 	Fix for Bug 62015 - Indexer to not rely on file extension for translation Unit
 	Changed all indexer file type checking to use the CoreModel file resolution services.
 	

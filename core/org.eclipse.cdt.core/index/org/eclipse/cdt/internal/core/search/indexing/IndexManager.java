@@ -82,6 +82,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	
 	private  TimeOut timeoutThread = null; 
 	
+	private IndexerModelListener indexModelListener = null;
+	
 	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".newindexmodel"; //$NON-NLS-1$
 	public final static String ACTIVATION = "enable"; //$NON-NLS-1$
 	public final static String PROBLEM_ACTIVATION = "problemEnable"; //$NON-NLS-1$
@@ -542,6 +544,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		
 		this.indexNames = new SimpleLookupTable();
 		this.cCorePluginLocation = null;
+		
+		indexModelListener = IndexerModelListener.getDefault();
 	
 	}
 	

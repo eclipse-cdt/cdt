@@ -16,10 +16,12 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -2067,7 +2069,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request for a backtrack
      */
-    protected Object usingClause(Object scope) throws EndOfFileException,
+    protected Object usingClause() throws EndOfFileException,
             BacktrackException {
         IToken firstToken = consume(IToken.t_using);
 
@@ -2167,7 +2169,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request for a backtrack
      */
-    protected Object linkageSpecification(Object scope)
+    protected Object linkageSpecification()
             throws EndOfFileException, BacktrackException {
         IToken firstToken = consume(IToken.t_extern);
         if (LT(1) != IToken.tSTRING)
@@ -2202,7 +2204,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         break linkageDeclarationLoop;
                     default:
                         try {
-                            declaration(linkage, null);
+                            declaration();
                         } catch (BacktrackException bt) {
                             failParse(bt);
                             if (checkToken == LA(1).hashCode())
@@ -2240,7 +2242,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
         //		linkage.enterScope( requestor );
         try {
-            declaration(linkage, null);
+            declaration();
         } finally {
             //			linkage.exitScope( requestor );
         }
@@ -2264,7 +2266,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request for a backtrack
      */
-    protected Object templateDeclaration(Object scope)
+    protected Object templateDeclaration()
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
         IToken firstToken = null;
@@ -2310,7 +2312,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             //            templateInstantiation.enterScope( requestor );
             try {
-                declaration(templateInstantiation, templateInstantiation);
+                declaration();
                 //            	templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(),
                 // lastToken.getLineNumber());
             } finally {
@@ -2342,7 +2344,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             //			templateSpecialization.enterScope(requestor);
             try {
-                declaration(templateSpecialization, templateSpecialization);
+                declaration();
                 //				templateSpecialization.setEndingOffsetAndLineNumber(
                 //							lastToken.getEndOffset(), lastToken.getLineNumber());
             } finally {
@@ -2352,7 +2354,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         try {
-            List parms = templateParameterList(scope);
+            List parms = templateParameterList();
             IToken gt = consume(IToken.tGT);
             Object templateDecl;
             try {
@@ -2371,7 +2373,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             //            templateDecl.enterScope( requestor );
             try {
-                declaration(templateDecl, templateDecl);
+                declaration();
                 //            	templateDecl.setEndingOffsetAndLineNumber(
                 // lastToken.getEndOffset(), lastToken.getLineNumber() );
             } finally {
@@ -2405,15 +2407,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request for a backtrack
      */
-    protected List templateParameterList(Object scope)
+    protected List templateParameterList()
             throws BacktrackException, EndOfFileException {
         // if we have gotten this far then we have a true template-declaration
         // iterate through the template parameter list
         List returnValue = new ArrayList();
 
         Object parameterScope = null; /* astFactory.createNewCodeBlock( scope ); */
-        if (parameterScope == null)
-            parameterScope = scope;
 
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -2484,7 +2484,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 IToken startingToken = lastToken;
                 consume(IToken.tLT);
 
-                List subResult = templateParameterList(parameterScope);
+                List subResult = templateParameterList();
                 consume(IToken.tGT);
                 consume(IToken.t_class);
                 IToken optionalId = null;
@@ -2602,7 +2602,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void declaration(Object scope, Object ownerTemplate)
+    protected IASTDeclaration declaration()
             throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.t_asm:
@@ -2629,40 +2629,40 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // 				resultDeclaration.acceptElement(requestor);
             break;
         case IToken.t_namespace:
-            namespaceDefinition(scope);
+            namespaceDefinition();
             break;
         case IToken.t_using:
-            usingClause(scope);
+            usingClause();
             break;
         case IToken.t_export:
         case IToken.t_template:
-            templateDeclaration(scope);
+            templateDeclaration();
             break;
         case IToken.t_extern:
             if (LT(2) == IToken.tSTRING) {
-                linkageSpecification(scope);
+                linkageSpecification();
                 break;
             }
         default:
             if (supportExtendedTemplateSyntax
                     && (LT(1) == IToken.t_static || LT(1) == IToken.t_inline || LT(1) == IToken.t_extern)
                     && LT(2) == IToken.t_template)
-                templateDeclaration(scope);
+                templateDeclaration();
             else
-                simpleDeclarationStrategyUnion(scope, ownerTemplate);
+                simpleDeclarationStrategyUnion();
         }
 
         cleanupLastToken();
+        return null;
     }
 
-    protected Object simpleDeclarationStrategyUnion(Object scope,
-            Object ownerTemplate) throws EndOfFileException, BacktrackException {
+    protected Object simpleDeclarationStrategyUnion() throws EndOfFileException, BacktrackException {
         simpleDeclarationMark = mark();
         IProblem firstFailure = null;
         IProblem secondFailure = null;
         try {
             return simpleDeclaration(SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
-                    ownerTemplate, false);
+                    false);
             // try it first with the original strategy
         } catch (BacktrackException bt) {
             if (simpleDeclarationMark == null)
@@ -2673,8 +2673,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             try {
                 return simpleDeclaration(
-                        SimpleDeclarationStrategy.TRY_FUNCTION, ownerTemplate,
-                        false);
+                        SimpleDeclarationStrategy.TRY_FUNCTION, false);
             } catch (BacktrackException bt2) {
                 if (simpleDeclarationMark == null) {
                     if (firstFailure != null && (bt2.getProblem() == null))
@@ -2688,8 +2687,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
                 try {
                     return simpleDeclaration(
-                            SimpleDeclarationStrategy.TRY_VARIABLE, ownerTemplate,
-                            false);
+                            SimpleDeclarationStrategy.TRY_VARIABLE, false);
                 } catch (BacktrackException b3) {
                     backup(simpleDeclarationMark); //TODO - necessary?
 
@@ -2720,7 +2718,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request a backtrack
      *  
      */
-    protected Object namespaceDefinition(Object scope)
+    protected Object namespaceDefinition()
             throws BacktrackException, EndOfFileException {
         IToken first = consume(IToken.t_namespace);
 
@@ -2770,7 +2768,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         break namespaceDeclarationLoop;
                     default:
                         try {
-                            declaration(namespaceDefinition, null);
+                            declaration();
                         } catch (BacktrackException bt) {
                             failParse(bt);
                             if (checkToken == LA(1).hashCode())
@@ -2844,13 +2842,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param tryConstructor
      *            true == take strategy1 (constructor ) : false == take strategy
      *            2 ( pointer to function)
-     * 
      * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
     protected Object simpleDeclaration(SimpleDeclarationStrategy strategy,
-            Object ownerTemplate, boolean fromCatchHandler)
+            boolean fromCatchHandler)
             throws BacktrackException, EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
@@ -2860,7 +2857,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(firstToken.getOffset(), firstToken.getEndOffset(),
                     firstToken.getLineNumber(), firstToken.getFilename());
         DeclarationWrapper sdw = new DeclarationWrapper(null, firstToken
-                .getOffset(), firstToken.getLineNumber(), ownerTemplate, fn);
+                .getOffset(), firstToken.getLineNumber(), null, fn);
         firstToken = null; // necessary for scalability
 
         declSpecifierSeq(sdw, false,
@@ -4091,7 +4088,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         break memberDeclarationLoop;
                     default:
                         try {
-                            declaration(astClassSpecifier, null);
+                            declaration();
                         } catch (BacktrackException bt) {
                             if (checkToken == LA(1).hashCode())
                                 failParseWithErrorHandling();
@@ -4220,173 +4217,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    /**
-     * Parses a statement.
-     * 
-     * @throws BacktrackException
-     *             request a backtrack
-     */
-    protected IASTStatement statement() throws EndOfFileException,
-            BacktrackException {
-
-        switch (LT(1)) {
-        case IToken.t_case:
-            consume(IToken.t_case);
-            constantExpression();
-            cleanupLastToken();
-            consume(IToken.tCOLON);
-            statement();
-            cleanupLastToken();
-            return null;
-        case IToken.t_default:
-            consume(IToken.t_default);
-            consume(IToken.tCOLON);
-            statement();
-            cleanupLastToken();
-            return null;
-        case IToken.tLBRACE:
-            compoundStatement();
-            cleanupLastToken();
-            return null;
-        case IToken.t_if:
-            consume(IToken.t_if);
-            consume(IToken.tLPAREN);
-            condition();
-            consume(IToken.tRPAREN);
-            if (LT(1) != IToken.tLBRACE)
-                statement();
-            else
-                statement();
-            if (LT(1) == IToken.t_else) {
-                consume(IToken.t_else);
-                if (LT(1) == IToken.t_if) {
-                    //an else if, return and get the rest of the else if as
-                    // the next statement instead of recursing
-                    cleanupLastToken();
-                    return null;
-                } else if (LT(1) != IToken.tLBRACE)
-                    statement();
-                else
-                    statement();
-            }
-            cleanupLastToken();
-            return null;
-        case IToken.t_switch:
-            consume();
-            consume(IToken.tLPAREN);
-            condition();
-            consume(IToken.tRPAREN);
-            statement();
-            cleanupLastToken();
-            return null;
-        case IToken.t_while:
-            consume(IToken.t_while);
-            consume(IToken.tLPAREN);
-            condition();
-            consume(IToken.tRPAREN);
-            if (LT(1) != IToken.tLBRACE)
-                statement();
-            else
-                statement();
-            cleanupLastToken();
-            return null;
-        case IToken.t_do:
-            consume(IToken.t_do);
-            if (LT(1) != IToken.tLBRACE)
-                statement();
-            else
-                statement();
-            consume(IToken.t_while);
-            consume(IToken.tLPAREN);
-            condition();
-            consume(IToken.tRPAREN);
-            cleanupLastToken();
-            return null;
-        case IToken.t_for:
-            consume();
-            consume(IToken.tLPAREN);
-            forInitStatement();
-            if (LT(1) != IToken.tSEMI)
-                condition();
-            consume(IToken.tSEMI);
-            if (LT(1) != IToken.tRPAREN) {
-                expression();
-                cleanupLastToken();
-            }
-            consume(IToken.tRPAREN);
-            statement();
-            cleanupLastToken();
-            return null;
-        case IToken.t_break:
-            consume();
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            return null;
-        case IToken.t_continue:
-            consume();
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            return null;
-        case IToken.t_return:
-            consume();
-            if (LT(1) != IToken.tSEMI) {
-                expression();
-                cleanupLastToken();
-            }
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            return null;
-        case IToken.t_goto:
-            consume();
-            consume(IToken.tIDENTIFIER);
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            return null;
-        case IToken.t_try:
-            consume();
-            compoundStatement();
-            catchHandlerSequence();
-            cleanupLastToken();
-            return null;
-        case IToken.tSEMI:
-            consume();
-            cleanupLastToken();
-            return null;
-        default:
-            // can be many things:
-            // label
-
-            if (LT(1) == IToken.tIDENTIFIER
-                    && LT(2) == IToken.tCOLON) {
-                consume(IToken.tIDENTIFIER);
-                consume(IToken.tCOLON);
-                statement();
-                cleanupLastToken();
-                return null;
-            }
-            // expressionStatement
-            // Note: the function style cast ambiguity is handled in
-            // expression
-            // Since it only happens when we are in a statement
-            IToken mark = mark();
-            Object expressionStatement = null;
-            try {
-                expressionStatement = expression();
-                consume(IToken.tSEMI);
-                cleanupLastToken();
-                return null;
-            } catch (BacktrackException b) {
-                backup(mark);
-                //					if (expressionStatement != null)
-                //						expressionStatement.freeReferences();
-            }
-
-            // declarationStatement
-            declaration(null, null);
-            return null;
-        }
-
-    }
 
     protected void catchHandlerSequence()
             throws EndOfFileException, BacktrackException {
@@ -4403,7 +4233,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     consume(IToken.tELLIPSIS);
                 else
                     simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE,
-                            null, true);
+                            true);
                 consume(IToken.tRPAREN);
 
                 catchBlockCompoundStatement();
@@ -4432,21 +4262,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @throws BacktrackException
      */
-    protected void forInitStatement() throws BacktrackException,
+    protected IASTNode forInitStatement() throws BacktrackException,
             EndOfFileException {
         IToken mark = mark();
         try {
             expression();
             consume(IToken.tSEMI);
             //			e.acceptElement(requestor);
+            return null;
 
         } catch (BacktrackException bt) {
             backup(mark);
             try {
-                simpleDeclarationStrategyUnion(null, null);
+                return (IASTNode) simpleDeclarationStrategyUnion();
             } catch (BacktrackException b) {
                 failParse(b);
                 throwBacktrack(b);
+                return null;
             }
         }
 
@@ -4471,7 +4303,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         while (true) {
             try {
                 int checkOffset = LA(1).hashCode();
-                declaration(translationUnit, null);
+                declaration();
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {

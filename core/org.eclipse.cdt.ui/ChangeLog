@@ -1,5 +1,11 @@
 2004-06-01 Alain Magloire
 
+	Format the source Hovering better.
+	* src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java
+	* src/org/eclipse/cdt/internal/ui/text/c/hover/SourceViewerInformationControl.java
+
+2004-06-01 Alain Magloire
+
 	A release of the CDT was distributed with
 	a typ "ELF" instead of "Elf" we provide
 	and extension point pointing back to "ELF"

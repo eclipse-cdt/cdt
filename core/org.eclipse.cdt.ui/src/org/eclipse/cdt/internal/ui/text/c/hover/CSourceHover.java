@@ -25,15 +25,21 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
 /**
  * CSourceHover
  */
-public class CSourceHover extends AbstractCEditorTextHover {
+public class CSourceHover extends AbstractCEditorTextHover implements ITextHoverExtension, IInformationProviderExtension2 {
 
 	/**
 	 * 
@@ -128,6 +134,32 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		if (i < 0)
 			return source;
 		return source.substring(i);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
+	 * @since 3.0
+	 */
+	public IInformationControlCreator getHoverControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new SourceViewerInformationControl(parent, getTooltipAffordanceString());
+			}
+		};
+	}
+
+	/*
+	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @since 3.0
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int shellStyle= SWT.RESIZE;
+				int style= SWT.V_SCROLL | SWT.H_SCROLL;				
+				return new SourceViewerInformationControl(parent, shellStyle, style);
+			}
+		};
 	}
 
 }

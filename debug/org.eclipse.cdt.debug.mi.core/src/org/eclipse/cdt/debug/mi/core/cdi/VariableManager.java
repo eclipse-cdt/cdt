@@ -396,6 +396,8 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		ICDIVariableObject[] locals = getLocalVariableObjects(frame);
 		ICDIVariableObject[] args = getArgumentObjects(frame);
 		ICDIVariableObject[] vars = new ICDIVariableObject[locals.length + args.length];
+		System.arraycopy(locals, 0, vars, 0, locals.length);
+		System.arraycopy(args, 0, vars, locals.length, args.length);
 		return vars;
 	}
 

@@ -34,10 +34,18 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 */
 	public ICDIMemoryBlock createMemoryBlock(long address, int length)
 		throws CDIException {
+		String addr = "0x" + Long.toHexString(address);
+		return createMemoryBlock(addr, length);
+	}
+		
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(string, int)
+	 */
+	public ICDIMemoryBlock createMemoryBlock(String address, int length)
+		throws CDIException {
 		MISession mi = getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String addr = "0x" + Long.toHexString(address);
-		MIDataReadMemory mem = factory.createMIDataReadMemory(0, addr, MIFormat.HEXADECIMAL, 1, 1, length, null);
+		MIDataReadMemory mem = factory.createMIDataReadMemory(0, address, MIFormat.HEXADECIMAL, 1, 1, length, null);
 		try {
 			mi.postCommand(mem);
 			MIDataReadMemoryInfo info = mem.getMIDataReadMemoryInfo();

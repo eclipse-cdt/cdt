@@ -176,6 +176,8 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 						list.add(new CygwinSymbol(this, name, type, addr, size, file, startLine, endLine));
 					} catch (IOException e) {
 						addr2line = null;
+						// the symbol still needs to be added
+						list.add(new CygwinSymbol(this, name, type, addr, size));
 					}
 				} else {
 					list.add(new CygwinSymbol(this, name, type, addr, size));

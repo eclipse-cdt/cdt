@@ -136,6 +136,9 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 					int endLine = addr2line.getLineNumber(addr + size - 1);
 					list.add(new GNUSymbol(this, name, type, addr, size, file, startLine, endLine));
 				} catch (IOException e) {
+					addr2line = null;
+					// the symbol still needs to be added
+					list.add(new GNUSymbol(this, name, type, addr, size));
 				}
 			} else {
 				list.add(new GNUSymbol(this, name, type, addr, size));

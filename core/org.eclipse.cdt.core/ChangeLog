@@ -1,3 +1,21 @@
+2004-07-16 Vladimir Hirsl
+	1. Implementation of HP-UX SOM binary parser.
+                                                                                                                             
+	* utils/org/eclipse/cdt/utils/som/AR.java
+	* utils/org/eclipse/cdt/utils/som/SOM.java
+                                                                                                                             
+	* utils/org/eclipse/cdt/utils/som/parser/ARMember.java
+	* utils/org/eclipse/cdt/utils/som/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/som/parser/SOMParser.java
+	* utils/org/eclipse/cdt/utils/som/parser/SOMBinaryObject.java
+	* utils/org/eclipse/cdt/utils/som/parser/SomSymbol.java
+                                                                                                                             
+	2. Fixed a slight ommision in XXXBinaryObject classes
+                                                                                                                             
+	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEBinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/GNUElfBinaryObject.java
+	* utils/org/eclipse/cdt/utils/xcoff/parser/XCOFFBinaryObject.java
+
 2004-07-15 Alain Magloire
 
 	Check for Empty path in the binary and copy the []IPathEntry

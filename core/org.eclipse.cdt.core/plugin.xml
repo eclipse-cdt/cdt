@@ -107,6 +107,16 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         id="SOM"
+         name="%SOMParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.som.parser.SOMParser">
+         </run>
+      </cextension>
+   </extension>
    <!-- This is for backward compatibility: an Typo was introduce in on of the realease
         and "ELF" instead of "Elf" -->
    <extension

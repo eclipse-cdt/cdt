@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
 
 /**
- * TODO Provide description
+ * Representation of AIX XCOFF32 binary format
  * 
  * @author vhirsl
  */

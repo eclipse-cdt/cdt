@@ -226,8 +226,8 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setFormat()
 	 */
-	public void setFormat(int format) throws CDIException {
-		format = Format.toMIFormat(format);
+	public void setFormat(int fmt) throws CDIException {
+		format = Format.toMIFormat(fmt);
 	}
 
 	/**

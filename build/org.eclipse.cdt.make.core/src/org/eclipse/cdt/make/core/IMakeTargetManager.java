@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IMakeTargetManager {
-	IMakeTarget createTarget(String targetName, String targetID);
+	IMakeTarget createTarget(IProject project, String targetName, String targetID) throws CoreException;
 	void addTarget(IContainer container, IMakeTarget target) throws CoreException;
 	void removeTarget(IMakeTarget target) throws CoreException;
 	void renameTarget(IMakeTarget target, String name) throws CoreException;

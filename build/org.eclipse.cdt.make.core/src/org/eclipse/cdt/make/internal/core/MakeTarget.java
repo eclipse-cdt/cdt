@@ -33,10 +33,15 @@ public class MakeTarget implements IMakeTarget {
 	private IContainer container;
 	private MakeTargetManager manager;
 	
-	MakeTarget(MakeTargetManager manager, String targetBuilderID, String name) {
+	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
 		this.targetBuilderID = targetBuilderID;
 		this.name = name;
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(project, manager.getBuilderID(targetBuilderID));
+		buildCommand = info.getBuildCommand();
+		buildArguments = info.getBuildArguments();
+		isDefaultBuildCmd = info.isDefaultBuildCmd();
+		isStopOnError = info.isStopOnError();
 	}
 
 	void setContainer(IContainer container) {

@@ -58,8 +58,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	public MakeTargetManager() {
 	}
 
-	public IMakeTarget createTarget(String name, String targetBuilderID) {
-		return new MakeTarget(this, targetBuilderID, name);
+	public IMakeTarget createTarget(IProject project, String name, String targetBuilderID) throws CoreException {
+		return new MakeTarget(this, project, targetBuilderID, name);
 	}
 	
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
@@ -123,7 +123,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public String[] getTargetBuilders(IProject project) {
-		if (fProjects.contains(project)) {
+		if (fProjects.contains(project) || hasTargetBuilder(project)) {
 			try {
 				Vector ids = new Vector();
 				IProjectDescription description = project.getDescription();

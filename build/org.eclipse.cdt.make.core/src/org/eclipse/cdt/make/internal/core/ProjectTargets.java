@@ -42,9 +42,9 @@ public class ProjectTargets {
 	private static final String TARGET_STOP_ON_ERROR = "stopOnError";
 	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand";
 	private static final String TARGET_ARGUMENTS = "buildArguments";
-	private static final String TARGET_COMMAND ="buildCommand";
+	private static final String TARGET_COMMAND = "buildCommand";
 	private static final String TARGET = "buidlTarget";
-	
+
 	private HashMap targetMap = new HashMap();
 
 	private IProject project;
@@ -79,29 +79,34 @@ public class ProjectTargets {
 					} else {
 						container = project;
 					}
-					MakeTarget target = new MakeTarget(manager, attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(), attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue()); 
-					target.setContainer(container);
-					String option = getString(node, TARGET_STOP_ON_ERROR);
-					if (option != null) {
-						target.setStopOnError(Boolean.valueOf(option).booleanValue());
-					}
-					option = getString(node, TARGET_USE_DEFAULT_CMD);
-					if (option != null) {
-						target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
-					}
-					option = getString(node, TARGET_COMMAND);
-					if (option != null) {
-						target.setBuildCommand(new Path(option));
-					}
-					option = getString(node, TARGET_ARGUMENTS);
-					if (option != null) {
-						target.setBuildArguments(option);
-					}
-					option = getString(node, TARGET);
-					if (option != null) {
-						target.setBuildTarget(option);
-					}
 					try {
+						MakeTarget target =
+							new MakeTarget(
+								manager,
+								project,
+								attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(),
+								attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue());
+						target.setContainer(container);
+						String option = getString(node, TARGET_STOP_ON_ERROR);
+						if (option != null) {
+							target.setStopOnError(Boolean.valueOf(option).booleanValue());
+						}
+						option = getString(node, TARGET_USE_DEFAULT_CMD);
+						if (option != null) {
+							target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
+						}
+						option = getString(node, TARGET_COMMAND);
+						if (option != null) {
+							target.setBuildCommand(new Path(option));
+						}
+						option = getString(node, TARGET_ARGUMENTS);
+						if (option != null) {
+							target.setBuildArguments(option);
+						}
+						option = getString(node, TARGET);
+						if (option != null) {
+							target.setBuildTarget(option);
+						}
 						add(target);
 					} catch (CoreException e) {
 						MakeCorePlugin.log(e);
@@ -188,7 +193,7 @@ public class ProjectTargets {
 		doc.appendChild(targetsRootElement);
 		Iterator container = targetMap.entrySet().iterator();
 		while (container.hasNext()) {
-			List targets = (List) ((Map.Entry)container.next()).getValue();
+			List targets = (List) ((Map.Entry) container.next()).getValue();
 			for (int i = 0; i < targets.size(); i++) {
 				MakeTarget target = (MakeTarget) targets.get(i);
 				targetsRootElement.appendChild(createTargetElement(doc, target));
@@ -205,7 +210,7 @@ public class ProjectTargets {
 		Element elem = doc.createElement(TARGET_COMMAND);
 		targetElem.appendChild(elem);
 		elem.appendChild(doc.createTextNode(target.getBuildCommand().toString()));
-		
+
 		elem = doc.createElement(TARGET_ARGUMENTS);
 		elem.appendChild(doc.createTextNode(target.getBuildArguments()));
 		targetElem.appendChild(elem);
@@ -217,11 +222,11 @@ public class ProjectTargets {
 		elem = doc.createElement(TARGET_STOP_ON_ERROR);
 		elem.appendChild(doc.createTextNode(new Boolean(target.isStopOnError()).toString()));
 		targetElem.appendChild(elem);
-		
+
 		elem = doc.createElement(TARGET_USE_DEFAULT_CMD);
 		elem.appendChild(doc.createTextNode(new Boolean(target.isDefaultBuildCmd()).toString()));
 		targetElem.appendChild(elem);
-		return targetElem;		
+		return targetElem;
 	}
 
 	public void saveTargets(OutputStream output) throws IOException {

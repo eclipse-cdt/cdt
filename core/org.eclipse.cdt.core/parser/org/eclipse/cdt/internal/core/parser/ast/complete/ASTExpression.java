@@ -352,9 +352,16 @@ public class ASTExpression extends ASTNode implements IASTExpression
 	{
 		if( expression == null ) return false;
 		if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION &&
-			expression instanceof ASTExpression && 
-			((ASTExpression)expression).getIdExpressionTokenDuple().equals( duple ) )
-			return true;
+			expression instanceof ASTExpression )
+		{
+			ITokenDuple expressionDuple = ((ASTExpression)expression).getIdExpressionTokenDuple();
+			// check equality
+			if( expressionDuple.equals( duple ) )
+				return true;
+			// check subduple
+			if( expressionDuple.contains( duple ) )
+				return true;
+		}
 		return false;
 	}
 }

@@ -53,4 +53,9 @@ public interface ITokenDuple {
 	public abstract boolean syntaxOfName();
 	
 	public String extractNameFromTemplateId();
+	/**
+	 * @param duple
+	 * @return
+	 */
+	public boolean contains(ITokenDuple duple);
 }

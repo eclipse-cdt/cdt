@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -183,4 +184,20 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertEquals( destructor.getName(), "~Gonzo" ); //$NON-NLS-1$
 		assertTrue( destructor.isDestructor() );
 	}	
+	
+	public void testBug60264() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "namespace Muppets { int i;	}\n" ); //$NON-NLS-1$
+		writer.write( "int	main(int argc, char **argv) {	Muppets::i = 1; }\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int index = code.indexOf( "Muppets::"); //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 7 );
+		assertNotNull( node );
+		assertTrue( node instanceof IASTNamespaceDefinition );
+		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition) node;
+		assertEquals( namespace.getName(), "Muppets"); //$NON-NLS-1$
+		assertEquals( namespace.getStartingLine(), 1 );
+
+	}
 }

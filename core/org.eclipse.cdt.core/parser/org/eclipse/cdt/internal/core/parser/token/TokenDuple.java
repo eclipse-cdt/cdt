@@ -475,4 +475,23 @@ public class TokenDuple implements ITokenDuple {
     	
     	return nameBuffer.toString();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#contains(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public boolean contains(ITokenDuple duple) {
+		if( duple == null ) return false;
+		boolean foundFirst = false;
+		boolean foundLast = false;
+		Iterator i = iterator();
+		while( i.hasNext() )
+		{
+			IToken current = (IToken) i.next();
+			if( current == firstToken ) foundFirst = true;
+			if( current == lastToken ) foundLast = true;
+			if( foundFirst && foundLast ) break;
+		}
+
+		return ( foundFirst && foundLast );
+	}
 }

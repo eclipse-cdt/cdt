@@ -368,7 +368,7 @@ public class SimpleToken extends AbstractToken implements IToken {
 		case IToken.tCOMPL :		return Keywords.cpCOMPL;
 		case IToken.tNOTEQUAL :		return Keywords.cpNOTEQUAL;
 		case IToken.tNOT :			return Keywords.cpNOT;
-		case IToken.tEQUAL :		return Keywords.cpEQUALS;
+		case IToken.tEQUAL :		return Keywords.cpEQUAL;
 		case IToken.tASSIGN :		return Keywords.cpASSIGN;
 		case IToken.tSHIFTL :		return Keywords.cpSHIFTL;
 		case IToken.tLTEQUAL :		return Keywords.cpLTEQUAL;

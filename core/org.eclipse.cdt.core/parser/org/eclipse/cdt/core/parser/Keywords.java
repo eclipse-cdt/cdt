@@ -225,5 +225,4 @@ public class Keywords {
 	public static final char[] cpDIV = 	"/".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUND = "#".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUNDPOUND = "##".toCharArray(); //$NON-NLS-1$
-	public static final char[] cpEQUALS = "=".toCharArray(); //$NON-NLS-1$
 }

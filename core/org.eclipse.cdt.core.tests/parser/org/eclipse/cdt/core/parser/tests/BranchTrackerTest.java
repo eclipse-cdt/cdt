@@ -4,7 +4,6 @@ import java.util.EmptyStackException;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.BranchTracker;
 
 /**

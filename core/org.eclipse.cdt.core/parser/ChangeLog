@@ -1,3 +1,6 @@
+2003-11-07 John Camelon
+	Fixed Bug 39554 : _Pragma directive is not supported (ANSI C99) 
+
 2003-11-05 John Camelon
 	Fixed Bug 44838 : exception when resolving parameter references in a constructor 
 	Fixed Bug 46165 : fields referenced in constructor chains are not called back upon 

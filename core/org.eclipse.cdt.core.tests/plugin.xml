@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.cdt.managedbuilder.core"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
    </requires>
 
 

@@ -10,18 +10,22 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.build.standard.StandardBuildManager;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.resources.IStandardBuildInfo;
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.MakeBuilder;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.MakeScannerInfo;
+import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -35,12 +39,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 ***********************************************************************/
 
 public class StandardBuildTests extends TestCase {
-	private static final String DEFAULT_MAKE_CMD = "make";
+	private static final String DEFAULT_BUILD_COMMAND = "make";
 	private static final String EMPTY_STRING = "";
 	private static final boolean OFF = false;
 	private static final boolean ON = true;
-	private static final String OVR_BUILD_ARGS = "all";
-	private static final String OVR_BUILD_LOCATION = "/home/tester/bin/nmake";
+	private static final String OVR_BUILD_ARGS = "-f";
+	private static final String OVR_BUILD_COMMAND = "/home/tester/bin/nmake";
+	private static final String OVR_BUILD_LOCATION = "src";
 	private static final String[] OVR_INC_PATHS = {"/test", "C:\\windows", "//dev/home/include"};
 	private static final String[] OVR_PREPROC_SYMS = {"_RELEASE", "NO ", " YES=1"};
 	private static final String PROJECT_NAME = "StandardBuildTest";
@@ -48,7 +53,8 @@ public class StandardBuildTests extends TestCase {
 	private class ScannerListener implements IScannerInfoChangeListener {
 		private final String[] expectedPaths = {"/usr/include", "/home/tester/include", "/opt/gnome/include"};
 		private final String[] expectedSymbols = {"_DEBUG", "TRUE=1", "FALSE ", ""};
-
+		private boolean bNotified = false;
+		
 		public void changeNotification(IResource project, IScannerInfo info) {
 			// Are there any symbols
 			Map definedSymbols = info.getDefinedSymbols();
@@ -69,6 +75,7 @@ public class StandardBuildTests extends TestCase {
 			if (paths.length > 0) {
 				assertTrue(Arrays.equals(expectedPaths, paths));
 			}
+			bNotified = true;
 		}
 		/**
 		 * @return
@@ -77,6 +84,9 @@ public class StandardBuildTests extends TestCase {
 			return expectedPaths;
 		}
 
+		public boolean triggedNotification() {
+			return bNotified;
+		}
 		/**
 		 * @return
 		 */
@@ -109,44 +119,50 @@ public class StandardBuildTests extends TestCase {
 		assertNotNull(project);
 
 		// There should not be any include path or defined symbols for the project
-		IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
-		assertNotNull(info);
-		String[] includePaths = info.getIncludePaths();
+		MakeScannerInfo scannerInfo = MakeScannerProvider.getDefault().getMakeScannerInfo(project, true);
+		assertNotNull(scannerInfo);
+		String[] includePaths = scannerInfo.getIncludePaths();
 		assertNotNull(includePaths);
 		assertEquals(0, includePaths.length);
-		String[] definedSymbols = info.getPreprocessorSymbols();
+		String[] definedSymbols = scannerInfo.getPreprocessorSymbols();
 		assertNotNull(definedSymbols);
 		assertEquals(0, definedSymbols.length);
 		
+		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
 		// Check the rest of the project information
-		assertEquals(ON, info.isDefaultBuildCmd());
-		assertEquals(OFF,info.isStopOnError());
-		assertEquals(DEFAULT_MAKE_CMD, info.getBuildLocation());
-		assertEquals(EMPTY_STRING, info.getFullBuildArguments());
-		assertEquals(EMPTY_STRING, info.getIncrementalBuildArguments()); 
+		assertEquals(ON, builderInfo.isDefaultBuildCmd());
+		assertEquals(OFF,builderInfo.isStopOnError());
+		assertEquals(new Path(DEFAULT_BUILD_COMMAND), builderInfo.getBuildCommand());
+		assertEquals(EMPTY_STRING, builderInfo.getBuildArguments());
+		assertEquals(false, builderInfo.isAutoBuildEnable());	
+		assertEquals("all", builderInfo.getAutoBuildTarget()); 
+		assertEquals(true, builderInfo.isIncrementalBuildEnabled());	
+		assertEquals("all", builderInfo.getIncrementalBuildTarget()); 
+		assertEquals(true, builderInfo.isFullBuildEnabled());	
+		assertEquals("clean all", builderInfo.getFullBuildTarget()); 
 	}
 	
 	private void checkOverriddenProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
 
-		// Check that the new stuff is there
-		IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
-		assertNotNull(info);
-		String[] includePaths = info.getIncludePaths();
+		MakeScannerInfo scannerInfo = MakeScannerProvider.getDefault().getMakeScannerInfo(project, true);
+		assertNotNull(scannerInfo);
+		String[] includePaths = scannerInfo.getIncludePaths();
 		assertNotNull(includePaths);
 		assertEquals(3, includePaths.length);
 		assertTrue(Arrays.equals(includePaths, OVR_INC_PATHS));
-		String[] definedSymbols = info.getPreprocessorSymbols();
+		String[] definedSymbols = scannerInfo.getPreprocessorSymbols();
 		assertNotNull(definedSymbols);
 		assertEquals(3, definedSymbols.length);
 		assertTrue(Arrays.equals(definedSymbols, OVR_PREPROC_SYMS));
 		
 		// Check the rest of the project information
-		assertEquals(OFF, info.isDefaultBuildCmd());
-		assertEquals(ON, info.isStopOnError());
-		assertEquals(OVR_BUILD_LOCATION, info.getBuildLocation());
-		assertEquals(OVR_BUILD_ARGS, info.getFullBuildArguments());
-		assertEquals(EMPTY_STRING, info.getIncrementalBuildArguments()); 
+		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
+		assertEquals(OFF, builderInfo.isDefaultBuildCmd());
+		assertEquals(ON, builderInfo.isStopOnError());
+		assertEquals(new Path(OVR_BUILD_COMMAND), builderInfo.getBuildCommand());
+		assertEquals(OVR_BUILD_ARGS, builderInfo.getBuildArguments());
+		assertEquals(new Path(OVR_BUILD_LOCATION), builderInfo.getBuildLocation());
 	}
 
 	/**
@@ -218,14 +234,12 @@ public class StandardBuildTests extends TestCase {
 			fail("StandardBuildTest testProjectConversion failed to convert project: " + e.getLocalizedMessage());
 		}
 
-		// Save, Close, and Reopen the project
-		StandardBuildManager.saveBuildInfo(project);
+		// Close, and Reopen the project
 		try {
 			project.close(new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectConversion failed to close project " + e.getLocalizedMessage());
 		}
-		StandardBuildManager.removeBuildInfo(project);
 		try {
 			project.open(new NullProgressMonitor());
 		} catch (CoreException e) {
@@ -252,7 +266,8 @@ public class StandardBuildTests extends TestCase {
 		try {
 			project = createProject(PROJECT_NAME); 
 			// Convert the new project to a standard make project
-			CCorePlugin.getDefault().convertProjectToCC(project, new NullProgressMonitor(), CCorePlugin.PLUGIN_ID + ".make");
+			CCorePlugin.getDefault().convertProjectToCC(project, new NullProgressMonitor(), MakeCorePlugin.getUniqueIdentifier() + ".make");
+			MakeProjectNature.addNature(project, null);
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectCreation failed creating project: " + e.getLocalizedMessage());
 		}
@@ -264,16 +279,12 @@ public class StandardBuildTests extends TestCase {
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectCreation failed getting nature: " + e.getLocalizedMessage());
 		}
-
-		// Associate the project with the standard builder so the clients can get proper information
+		// Make sure it has a MakeNature
 		try {
-			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
-			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, StandardBuildManager.INTERFACE_IDENTITY);
+			project.hasNature(MakeProjectNature.NATURE_ID);
 		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectCreation failed setting the StandardBuildManager: " + e.getLocalizedMessage());
+			fail("StandardBuildTest testProjectCreation failed getting nature: " + e.getLocalizedMessage());
 		}
-		
 		// Check the default settings
 		checkDefaultProjectSettings(project);
 	}
@@ -289,24 +300,23 @@ public class StandardBuildTests extends TestCase {
 		assertNotNull(project);
 		
 		// Change the settings
-		StandardBuildManager.setIncludePaths(project, OVR_INC_PATHS);
-		StandardBuildManager.setPreprocessorSymbols(project, OVR_PREPROC_SYMS);
+		MakeScannerInfo scannerInfo = MakeScannerProvider.getDefault().getMakeScannerInfo(project, false);
+		scannerInfo.setIncludePaths(OVR_INC_PATHS);
+		scannerInfo.setPreprocessorSymbols(OVR_PREPROC_SYMS);
+		scannerInfo.update();
 		
 		// Use the build info for the rest of the settings
-		IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
-		info.setStopOnError(ON);
-		info.setUseDefaultBuildCmd(OFF);
-		info.setBuildLocation(OVR_BUILD_LOCATION);
-		info.setFullBuildArguments(OVR_BUILD_ARGS);
-		
-		// Save, Close, and Reopen the project
-		StandardBuildManager.saveBuildInfo(project);
+		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
+		builderInfo.setStopOnError(ON);
+		builderInfo.setUseDefaultBuildCmd(OFF);
+		builderInfo.setBuildCommand(new Path(OVR_BUILD_COMMAND));
+		builderInfo.setBuildArguments(OVR_BUILD_ARGS);
+		builderInfo.setBuildLocation(new Path(OVR_BUILD_LOCATION));
 		try {
 			project.close(new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectSettings failed to close project " + e.getLocalizedMessage());
 		}
-		StandardBuildManager.removeBuildInfo(project);
 		try {
 			project.open(new NullProgressMonitor());
 		} catch (CoreException e) {
@@ -344,17 +354,19 @@ public class StandardBuildTests extends TestCase {
 		assertTrue(Arrays.equals(OVR_INC_PATHS, currentPaths));
 		
 		// Remove what's there
-		StandardBuildManager.setIncludePaths(project, new String[0]);
-		StandardBuildManager.setPreprocessorSymbols(project, new String[0]);
-
+		MakeScannerInfo info = MakeScannerProvider.getDefault().getMakeScannerInfo(project, false);
+		info.setIncludePaths(new String[0]);
+		info.setPreprocessorSymbols(new String[0]);
+		info.update();
 		// Subscribe
 		ScannerListener listener = new ScannerListener();
 		provider.subscribe(project, listener);
 		
 		// Change the settings
-		StandardBuildManager.setIncludePaths(project, listener.getExpectedPaths());
-		StandardBuildManager.setPreprocessorSymbols(project, listener.getExpectedSymbols());
-		
+		info.setIncludePaths(listener.getExpectedPaths());
+		info.setPreprocessorSymbols(listener.getExpectedSymbols());
+		info.update();
+		assertEquals(true, listener.triggedNotification());
 		// Unsubscribe
 		provider.unsubscribe(project, listener);
 	}

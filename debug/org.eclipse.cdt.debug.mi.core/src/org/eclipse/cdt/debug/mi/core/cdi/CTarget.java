@@ -171,6 +171,20 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCurrentThread()
+	 */
+	public ICDIThread getCurrentThread() throws CDIException {
+		ICDIThread[] threads = getThreads();
+		for (int i = 0; i < threads.length; i++) {
+			CThread cthread = (CThread)threads[i];
+			if (cthread.getId() == currentThreadId) {
+				return cthread;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThreads()
 	 */
 	public ICDIThread[] getThreads() throws CDIException {

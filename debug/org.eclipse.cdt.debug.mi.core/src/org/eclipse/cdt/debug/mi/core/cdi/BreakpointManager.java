@@ -63,6 +63,10 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		return null;
 	}
 
+	Watchpoint getWatchpoint(int number) {
+		return (Watchpoint)getBreakpoint(number);
+	}
+
 	Breakpoint[] listBreakpoints() {
 		return (Breakpoint[]) breakList.toArray(
 			new Breakpoint[breakList.size()]);

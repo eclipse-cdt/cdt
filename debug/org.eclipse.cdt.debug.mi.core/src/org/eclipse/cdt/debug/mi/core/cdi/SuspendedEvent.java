@@ -32,22 +32,14 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	}
 
 	public ICDISessionObject getReason() {
-		if (event instanceof MIBreakpointEvent || event instanceof MIWatchpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent)event;
-			int number = breakEvent.getNumber();
-			BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
-			// Ask the breakpointManager for the breakpoint
-			// We need to return the same object as the reason.
-			Breakpoint point = mgr.getBreakpoint(number);
-			if (point != null) {
-				return point;
-			}  else {
-				// FIXME: Create a new breakpoint.
-			}
+		if (event instanceof MIBreakpointEvent) {
+			return new BreakpointHit(session, (MIBreakpointEvent)event);
+		} else if (event instanceof MIWatchpointEvent) {
+			return new WatchpointTrigger(session, (MIWatchpointEvent)event);
 		} else if (event instanceof MISteppingRangeEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MISignalEvent) {
-			return new Signal(session, (MISignalEvent) event);
+			return new Signal(session, (MISignalEvent)event);
 		} else if (event instanceof MILocationReachedEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MIFunctionFinishedEvent) {

@@ -12,7 +12,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
 /**
  */
-public class Breakpoint extends SessionObject implements ICDILocationBreakpoint {
+public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
 	ICDILocation location;
 	ICDICondition condition;
@@ -20,7 +20,7 @@ public class Breakpoint extends SessionObject implements ICDILocationBreakpoint 
 	BreakpointManager mgr;
 
 	public Breakpoint(BreakpointManager m, MIBreakPoint miBreak) {
-		super(m.getCSession());
+		super(m.getCSession().getCTarget());
 		miBreakPoint = miBreak;
 		mgr = m;
 	}

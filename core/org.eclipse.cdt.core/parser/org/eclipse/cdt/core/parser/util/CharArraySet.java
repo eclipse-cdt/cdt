@@ -10,9 +10,9 @@
  *******************************************************************************/
 
 /*
- * Created on Jul 15, 2004
+ * Created on Jul 21, 2004
  */
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.parser.util;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,21 +20,22 @@ import java.util.List;
 /**
  * @author aniefer
  */
-public class ObjectSet extends ObjectTable {
-    public static final ObjectSet EMPTY_SET = new ObjectSet( 0 ){
+public class CharArraySet extends CharTable {
+	
+    public static final CharArraySet EMPTY_SET = new CharArraySet( 0 ){
         public Object clone()               { return this; }
         public List toList()                { return Collections.EMPTY_LIST; }
-        public void put( Object key )       { throw new UnsupportedOperationException(); }
+        public void put( char[] key )       { throw new UnsupportedOperationException(); }
         public void addAll( List list )     { throw new UnsupportedOperationException(); }
-        public void addAll( ObjectSet set ) { throw new UnsupportedOperationException(); }
+        public void addAll( CharArraySet set ) { throw new UnsupportedOperationException(); }
     };
 
-	public ObjectSet(int initialSize) {
-		super( initialSize );
+	public CharArraySet(int initialSize) {
+		super(initialSize);
 	}
 	
-	public void put(Object key ){
-		add(key);
+	public void put(char[] key ){
+		addIndex(key);
 	}
 	
 	public void addAll( List list ){
@@ -43,25 +44,35 @@ public class ObjectSet extends ObjectTable {
 	    
 	    int size = list.size();
 	    for( int i = 0; i < size; i++ ){
-	        add( list.get( i ) );
+	        addIndex( (char[]) list.get( i ) );
 	    }
 	}
 	
-	public void addAll( ObjectSet set ){
+	public void addAll( CharArraySet set ){
 	    if( set == null )
 	        return;
 	    int size = set.size();
 	    for( int i = 0; i < size; i++ ){
-	        add( set.keyAt( i ) );
+	        addIndex( set.keyAt( i ) );
 	    }
 	}
-
-	public boolean remove( Object key ) {
+	
+	final public boolean remove( char[] key ) {
 		int i = lookup(key);
 		if (i < 0)
 			return false;
 
 		removeEntry(i);
 		return true;
+	}
+
+	final public void clear(){
+	    for( int i = 0; i < keyTable.length; i++ ){
+	        keyTable[i] = null;
+	        hashTable[ 2*i ] = 0;
+	        hashTable[ 2*i + 1 ] = 0;
+	        nextTable[i] = 0;
+	    }
+	    currEntry = -1;
 	}
 }

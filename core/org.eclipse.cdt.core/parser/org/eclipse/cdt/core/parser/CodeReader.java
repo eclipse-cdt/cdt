@@ -19,7 +19,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author jcamelon

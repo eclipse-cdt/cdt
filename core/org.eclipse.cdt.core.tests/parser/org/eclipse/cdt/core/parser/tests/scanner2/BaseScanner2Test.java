@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -27,12 +28,11 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 
 /**
@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
  */
 public class BaseScanner2Test extends TestCase {
 
-	protected Scanner2 scanner;
+	protected IScanner scanner;
 	
 	public BaseScanner2Test( String x )
 	{
@@ -91,13 +91,9 @@ public class BaseScanner2Test extends TestCase {
 		catch ( EndOfFileException e)
 		{
 		}
-		catch (ScannerException se)
-		{
-			throw se;
-		}
 		return scanner.getCount();
 	}
-	public void validateIdentifier(String expectedImage) throws ScannerException
+	public void validateIdentifier(String expectedImage) throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -108,7 +104,7 @@ public class BaseScanner2Test extends TestCase {
 		} 
 	}
 
-	public void validateInteger(String expectedImage) throws ScannerException
+	public void validateInteger(String expectedImage) throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -119,7 +115,7 @@ public class BaseScanner2Test extends TestCase {
 		}
 	}
 	
-	public void validateFloatingPointLiteral(String expectedImage) throws ScannerException
+	public void validateFloatingPointLiteral(String expectedImage) throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -130,7 +126,7 @@ public class BaseScanner2Test extends TestCase {
 		}
 	}
 	
-	public void validateChar( char expected )throws ScannerException
+	public void validateChar( char expected )throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -142,7 +138,7 @@ public class BaseScanner2Test extends TestCase {
 		}
 	}
 
-	public void validateChar( String expected ) throws ScannerException
+	public void validateChar( String expected ) throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -153,12 +149,12 @@ public class BaseScanner2Test extends TestCase {
 		} 
 	}
 
-	public void validateString( String expectedImage ) throws ScannerException
+	public void validateString( String expectedImage ) throws Exception
 	{
 		validateString( expectedImage, false );
 	}
 
-	public void validateString(String expectedImage, boolean lString ) throws ScannerException
+	public void validateString(String expectedImage, boolean lString ) throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -168,11 +164,11 @@ public class BaseScanner2Test extends TestCase {
 				assertEquals(IToken.tSTRING, t.getType());
 			assertEquals(expectedImage, t.getImage());
 		} catch (EndOfFileException e) {
-			fail("EOF received");
+			fail("EOF received"); //$NON-NLS-1$
 		} 
 	}
 
-	public void validateToken(int tokenType) throws ScannerException
+	public void validateToken(int tokenType) throws Exception
 	{
 		try {
 			IToken t= scanner.nextToken();
@@ -188,12 +184,7 @@ public class BaseScanner2Test extends TestCase {
 		//assertTrue(scanner.getDepth() == expected);
 	}
 
-	public void validateBalance()
-	{
-		assertTrue(scanner.getDepth() == 0);
-	}
-
-	public void validateEOF() throws ScannerException
+	public void validateEOF() throws Exception
 	{
 		try {
 			assertNull(scanner.nextToken());
@@ -221,7 +212,7 @@ public class BaseScanner2Test extends TestCase {
 
 	public void validateAsUndefined(String name)
 	{
-		assertNull(scanner.getDefinition(name));
+		assertNull(scanner.getDefinitions().get(name.toCharArray()));
 	}
 
 	public static final String EXCEPTION_THROWN = "Exception thrown "; //$NON-NLS-1$
@@ -240,7 +231,7 @@ public class BaseScanner2Test extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			assertEquals(IToken.tLCHAR, t.getType());
-			assertEquals(t.getImage(), "L\'" + string + "\'"); 
+			assertEquals(t.getImage(), "L\'" + string + "\'");  //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}		

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.parser.util;
 
 import java.util.Comparator;
 

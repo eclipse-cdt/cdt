@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;
-import org.eclipse.cdt.internal.core.parser.scanner.GCCScannerExtension;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtension;
 
 /**
  * @author jcamelon

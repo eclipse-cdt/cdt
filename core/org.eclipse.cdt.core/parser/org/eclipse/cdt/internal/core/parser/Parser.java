@@ -59,8 +59,8 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
 /**

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.expression;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -100,7 +99,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameLine,
 		int endingOffset,
 		int endingLine,
-		IMacroDescriptor info, char[] fn) {
+		char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}

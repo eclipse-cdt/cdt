@@ -15,8 +15,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer

@@ -13,16 +13,9 @@ package org.eclipse.cdt.internal.core.parser.token;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 
 public class SimpleToken extends AbstractToken implements IToken {
-	
-	public SimpleToken(int t, ContextStack contextStack, char [] filename ) {
-		super(t,contextStack.getCurrentLineNumber(), filename );
-		setOffsetAndLength(contextStack.getCurrentContext());
-	}
-	
+		
 	public SimpleToken( int t, int endOffset, char [] filename, int line  )
 	{
 		super( t, filename, line );
@@ -39,13 +32,6 @@ public class SimpleToken extends AbstractToken implements IToken {
 	
 	public int getLength() {
 		return getCharImage().length;
-	}
-	
-	/**
-	 * @param context
-	 */
-	protected void setOffsetAndLength(IScannerContext context) {
-		offset = context.getOffset() - getLength();		
 	}
 	
 	protected void setOffsetAndLength( int endOffset )

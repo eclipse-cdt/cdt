@@ -10,8 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
-import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 
 /**
  * @author johnc
@@ -19,17 +17,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 public class ImagedToken extends SimpleToken {
 
 	protected char [] image = null;
-	
-	/**
-	 * @param t
-	 * @param contextStack
-	 * @param i
-	 */
-	public ImagedToken(int t, ContextStack contextStack, char[] i, char [] f) {
-		super(t, contextStack, f );
-		setImage( i );
-		setOffsetAndLength(contextStack.getCurrentContext());
-	}
 	
 	public ImagedToken( int t, char[] i, int endOffset, char [] f, int l ) {
 		super( t, 0, f, l );
@@ -60,19 +47,7 @@ public class ImagedToken extends SimpleToken {
 	{
 		this.image = image;
 	}
-	
-	/**
-	 * @param context
-	 */
-	protected void setOffsetAndLength(IScannerContext context) {
-		if( getImage() == null ) return;
-		offset = context.getOffset() - getCharImage().length;		
-		if( getType() == tSTRING || getType() == tCHAR )
-			offset--;
-		else if( getType() == tLSTRING || getType() == tLCHAR )
-			offset -= 2;
-	}
-	
+		
 	public int getLength() {
 		if( getCharImage() == null )
 			return 0;

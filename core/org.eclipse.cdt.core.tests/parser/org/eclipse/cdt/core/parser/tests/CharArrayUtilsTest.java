@@ -12,9 +12,9 @@ package org.eclipse.cdt.core.parser.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayPool;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayPool;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author Doug Schaefer

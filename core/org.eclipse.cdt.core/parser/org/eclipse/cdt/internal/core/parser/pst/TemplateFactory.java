@@ -15,11 +15,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateSpecialization;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer

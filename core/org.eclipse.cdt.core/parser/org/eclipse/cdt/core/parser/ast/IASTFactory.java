@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -28,7 +27,7 @@ public interface IASTFactory
         char[] name,
         int startingOffset,
         int startingLine,
-        int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IMacroDescriptor info, char[] fn);
+        int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn);
         
     public IASTInclusion createInclusion(
         char[] name,

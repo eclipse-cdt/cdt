@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.parser.util;
 
 /**
  * @author Doug Schaefer

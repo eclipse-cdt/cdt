@@ -11,23 +11,11 @@
 package org.eclipse.cdt.internal.core.parser.token;
 
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
-import org.eclipse.cdt.internal.core.parser.scanner.ScannerContextMacro;
 
 /**
  * @author johnc
  */
 public class ImagedExpansionToken extends ImagedToken implements IToken {
-
-	/**
-	 * @param t
-	 * @param contextStack
-	 * @param i
-	 */
-	public ImagedExpansionToken(int t, ContextStack contextStack, char[] i, char [] f) {
-		super(t, contextStack, i, f);
-	}
 	
 	/**
 	 * @param t
@@ -47,16 +35,7 @@ public class ImagedExpansionToken extends ImagedToken implements IToken {
 
 	
 	protected int length;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.token.SimpleToken#setOffsetAndLength(org.eclipse.cdt.internal.core.parser.scanner.IScannerContext)
-	 */
-	protected void setOffsetAndLength(IScannerContext context) {
-		ScannerContextMacro m = (ScannerContextMacro) context;
-		offset = m.getOffset();
-		length = m.getMacroLength();
-	}
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.token.AbstractToken#getLength()
 	 */

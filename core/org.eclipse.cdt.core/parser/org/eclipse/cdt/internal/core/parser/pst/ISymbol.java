@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author jcamelon

@@ -12,7 +12,7 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 
 /**
  * @author aniefer

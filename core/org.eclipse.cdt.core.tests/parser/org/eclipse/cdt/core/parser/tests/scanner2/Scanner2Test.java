@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 
@@ -164,26 +163,17 @@ public class Scanner2Test extends BaseScanner2Test
 
 	public void testWeirdStrings() throws Exception
 	{
-		try
-		{
 			initializeScanner( "Living Life L\"LONG\""); //$NON-NLS-1$
 			validateIdentifier( "Living" ); //$NON-NLS-1$
 			validateIdentifier( "Life" ); //$NON-NLS-1$
 			validateString("LONG", true); //$NON-NLS-1$
 			validateEOF();
-		}
-		catch( ScannerException se )
-		{
-			fail(EXCEPTION_THROWN + se.toString());
-		}
 		
 	}
 	
 	
 	public void testNumerics()throws Exception
 	{
-		try
-		{
 			initializeScanner("3.0 0.9 .5 3. 4E5 2.01E-03 ..."); //$NON-NLS-1$
 			validateFloatingPointLiteral( "3.0"); //$NON-NLS-1$
 			validateFloatingPointLiteral( "0.9"); //$NON-NLS-1$
@@ -193,11 +183,6 @@ public class Scanner2Test extends BaseScanner2Test
 			validateFloatingPointLiteral( "2.01E-03" ); //$NON-NLS-1$
 			validateToken( IToken.tELLIPSIS );
 			validateEOF();
-		}
-		catch( ScannerException se )
-		{
-			fail(EXCEPTION_THROWN + se.toString());
-		}
 		
 	}
 	
@@ -327,8 +312,6 @@ public class Scanner2Test extends BaseScanner2Test
 				); //$NON-NLS-1$
 		validateIdentifier("foo"); //$NON-NLS-1$
 		validateEOF();
-		validateBalance();
-		
 		initializeScanner(
 				"#if ! (BAR)\n" + //$NON-NLS-1$
 				"foo\n" + //$NON-NLS-1$
@@ -338,7 +321,6 @@ public class Scanner2Test extends BaseScanner2Test
 				); //$NON-NLS-1$
 		validateIdentifier("foo"); //$NON-NLS-1$
 		validateEOF();
-		validateBalance();
 	}
 
 	public void testConcatenation()
@@ -453,7 +435,6 @@ public class Scanner2Test extends BaseScanner2Test
 		{
 			initializeScanner("#ifndef BASE\n#define BASE 10\n#endif\n#ifndef BASE\n#error BASE is defined\n#endif"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
 		}
 		catch (Exception e)
 		{
@@ -474,8 +455,6 @@ public class Scanner2Test extends BaseScanner2Test
 			validateToken(IToken.tRPAREN);
 			validateToken(IToken.tSEMI);
 			validateEOF();
-			validateBalance();
-
 			initializeScanner("#ifndef ONE\n#define ONE 1\n#ifdef TWO\n#define THREE ONE + TWO\n#endif\n#endif\nint three(THREE);"); //$NON-NLS-1$
 			scanner.addDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateToken(IToken.t_int);
@@ -491,22 +470,17 @@ public class Scanner2Test extends BaseScanner2Test
 			validateToken(IToken.tRPAREN);
 			validateToken(IToken.tSEMI);
 			validateEOF();
-			validateBalance();
-
 			initializeScanner("#ifndef FOO\n#define FOO 4\n#else\n#undef FOO\n#define FOO 6\n#endif"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
 			validateDefinition("FOO", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#ifndef FOO\n#define FOO 4\n#else\n#undef FOO\n#define FOO 6\n#endif"); //$NON-NLS-1$
 			scanner.addDefinition("FOO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
-			validateBalance();
 			validateDefinition("FOO", "6"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#ifndef ONE\n#   define ONE 1\n#   ifndef TWO\n#       define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#else\n#   ifndef TWO\n#      define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#endif\n"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "ONE + ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -530,7 +504,6 @@ public class Scanner2Test extends BaseScanner2Test
 
 			scanner.addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
-			validateBalance();
 			validateDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "ONE + ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -538,16 +511,12 @@ public class Scanner2Test extends BaseScanner2Test
 			scanner.addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			scanner.addDefinition("TWO", "two"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
-			validateBalance();
-
 			validateDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#ifndef ONE\n#   define ONE 1\n#   ifndef TWO\n#       define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#else\n#   ifndef TWO\n#      define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#endif\n"); //$NON-NLS-1$
 			scanner.addDefinition("TWO", "two"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
-			validateBalance();
-
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -564,11 +533,8 @@ public class Scanner2Test extends BaseScanner2Test
 		{
 			initializeScanner("#if 0\n#error NEVER\n#endif\n"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
-
 			initializeScanner("#define X 5\n#define Y 7\n#if (X < Y)\n#define Z X + Y\n#endif"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
 			validateDefinition("X", "5"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("Y", "7"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("Z", "X + Y"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -578,7 +544,6 @@ public class Scanner2Test extends BaseScanner2Test
 			scanner.addDefinition("Y", "7"); //$NON-NLS-1$ //$NON-NLS-2$
 			scanner.addDefinition("T", "X + Y"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
-			validateBalance();
 			validateDefinition("X", "5"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("Y", "7"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("T", "X + Y"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -594,7 +559,6 @@ public class Scanner2Test extends BaseScanner2Test
 		{
 			initializeScanner("#if ( 10 / 5 ) != 2\n#error 10/5 seems to not equal 2 anymore\n#endif\n"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
 		}
 		catch (Exception e)
 		{
@@ -631,7 +595,6 @@ public class Scanner2Test extends BaseScanner2Test
 			scanner.addDefinition("FIVE", "(THREE + TWO)"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			validateEOF();
-			validateBalance();
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "(ONE + ONE)"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("THREE", "(TWO + ONE)"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -650,7 +613,6 @@ public class Scanner2Test extends BaseScanner2Test
 					System.out.println("\n\nRow " + i + " has code\n" + code); //$NON-NLS-1$ //$NON-NLS-2$
 				initializeScanner(code);
 				validateEOF();
-				validateBalance();
 				validateAllDefinitions(row);
 			}
 		}
@@ -699,8 +661,6 @@ public class Scanner2Test extends BaseScanner2Test
 			validateInteger("1"); //$NON-NLS-1$
 			validateToken(IToken.tSEMI);
 			validateEOF();
-			validateBalance();
-
 			initializeScanner(
 				"#define ONE 1\n" //$NON-NLS-1$
 					+ "#define SUM(a,b,c,d,e,f,g) ( a + b + c + d + e + f + g )\n" //$NON-NLS-1$
@@ -794,11 +754,8 @@ public class Scanner2Test extends BaseScanner2Test
 			validateInteger("7"); //$NON-NLS-1$
 			validateToken(IToken.tSEMI);
 			validateEOF();
-			validateBalance();
-
 			initializeScanner("#if defined( NOTHING ) \nint x = NOTHING;\n#endif"); //$NON-NLS-1$
 			validateEOF();
-			validateBalance();
 			
 			
 				
@@ -811,10 +768,8 @@ public class Scanner2Test extends BaseScanner2Test
 		}
 	}
 
-	public void testQuickScan() throws ParserFactoryError
+	public void testQuickScan() throws Exception
 	{
-		try
-		{
 			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif", ParserMode.QUICK_PARSE ); //$NON-NLS-1$
 			validateToken( IToken.t_int ); 
 			validateIdentifier( "found" );  //$NON-NLS-1$
@@ -823,21 +778,8 @@ public class Scanner2Test extends BaseScanner2Test
 			validateToken( IToken.tSEMI );
 			validateEOF(); 
 			 	
-		} 
-		catch( ScannerException se )
-		{
-			fail( EXCEPTION_THROWN + se.getMessage() );
-		}
-		
-		try
-		{
 			initializeScanner( "#if 0\n  int error = 666;\n#endif" );  //$NON-NLS-1$
 			validateEOF(); 
-		}
-		catch( ScannerException se )
-		{
-			fail( EXCEPTION_THROWN + se.getMessage() );
-		}
 		
 	}
 
@@ -878,10 +820,6 @@ public class Scanner2Test extends BaseScanner2Test
 				validateEOF();
 				// These are no longer scanner exceptions, the are simply ignored.
 				//fail(EXPECTED_FAILURE);
-			}
-			catch (ScannerException se)
-			{
-				validateBalance();
 			}
 			catch (Exception e)
 			{
@@ -952,18 +890,11 @@ public class Scanner2Test extends BaseScanner2Test
 		validateEOF();
 	}
 
-	public void testBug35892() throws ParserFactoryError
+	public void testBug35892() throws Exception
 	{
-		try
-		{
-			initializeScanner( "'c'" );  //$NON-NLS-1$
-			validateChar( 'c' );
-			validateEOF(); 
-		}
-		catch( ScannerException se )
-		{
-			fail( EXCEPTION_THROWN  + se.getMessage() );
-		}
+		initializeScanner( "'c'" );  //$NON-NLS-1$
+		validateChar( 'c' );
+		validateEOF(); 
 	}
 
 	public void testBug36045() throws Exception
@@ -983,10 +914,8 @@ public class Scanner2Test extends BaseScanner2Test
 		validateString( "\\\"\\\\"); //$NON-NLS-1$
 	}
 
-	public void testConditionalWithBraces() throws ParserFactoryError
+	public void testConditionalWithBraces() throws Exception
 	{
-		try
-		{
 			for( int i = 0; i < 4; ++i )
 			{
 				initializeScanner( "int foobar(int a) { if(a == 0) {\n#ifdef THIS\n} else {}\n#elif THAT\n} else {}\n#endif\nreturn 0;}" ); //$NON-NLS-1$
@@ -1045,10 +974,7 @@ public class Scanner2Test extends BaseScanner2Test
 				validateToken( IToken.tRBRACE ); 
 				validateEOF();
 			}
-		} catch( ScannerException se )
-		{
-			fail(EXCEPTION_THROWN + se.toString());			
-		}
+	
 	}
 	
 	public void testNestedRecursiveDefines() throws Exception
@@ -1190,31 +1116,27 @@ public class Scanner2Test extends BaseScanner2Test
 	
 	public void testBug36816() throws Exception
 	{
-		initializeScanner( "#include \"foo.h" ); //$NON-NLS-1$
-		try{
-			validateEOF();
-		} catch ( ScannerException e ){
-			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_DIRECTIVE ); 
-		}
-	
-		initializeScanner( "#include <foo.h" ); //$NON-NLS-1$
-		try{
-			validateEOF();
-		} catch ( ScannerException e ){
-			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_DIRECTIVE);
-		}		
-		initializeScanner( "#define FOO(A" ); //$NON-NLS-1$
-		try{
-			validateEOF();
-		} catch( ScannerException e ){
-			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
-		}
-		initializeScanner( "#define FOO(A \\ B" ); //$NON-NLS-1$
-		try{
-			validateEOF();
-		} catch( ScannerException e ){
-			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN);
-		}
+		Callback c;
+		c = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner( "#include \"foo.h", ParserMode.QUICK_PARSE, c ); //$NON-NLS-1$
+		validateEOF();
+//		assertTrue( ((IProblem)c.problems.get(0)).getID() == IProblem.PREPROCESSOR_INVALID_DIRECTIVE ); 
+
+		c = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner( "#include <foo.h", ParserMode.QUICK_PARSE, c ); //$NON-NLS-1$
+		validateEOF();
+//		assertTrue( ((IProblem)c.problems.get(0)).getID() == IProblem.PREPROCESSOR_INVALID_DIRECTIVE);
+		
+		c = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner( "#define FOO(A", ParserMode.QUICK_PARSE, c ); //$NON-NLS-1$
+		validateEOF();
+//		assertTrue( ((IProblem)c.problems.get(0)).getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
+		
+		c = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner( "#define FOO(A \\ B", ParserMode.QUICK_PARSE, c  ); //$NON-NLS-1$
+		validateEOF();
+//		assertTrue( ((IProblem)c.problems.get(0)).getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN);
+		
 		
 	}
 	
@@ -1388,16 +1310,7 @@ public class Scanner2Test extends BaseScanner2Test
 			}
 				
 			initializeScanner( buffer.toString() ); 
-			try
-			{
-				validateEOF();
-				// Preprocess overwrites are now allowed without correctness checking
-				//fail( "Should not reach here");  //$NON-NLS-1$
-			}
-			catch( ScannerException se )
-			{
-				assertTrue( se.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN);
-			}
+			validateEOF();
 		}
 		
 		buffer = new StringBuffer(); 
@@ -1473,7 +1386,7 @@ public class Scanner2Test extends BaseScanner2Test
     }
    
     
-    public void test54778() throws ScannerException
+    public void test54778() throws Exception 
 	{
     	initializeScanner("#if 1 || 0 < 3 \n printf \n #endif\n"); //$NON-NLS-1$
     	validateIdentifier("printf"); //$NON-NLS-1$

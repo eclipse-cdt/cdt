@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.ObjectStyleMacro;
+
 /**
  * @author Doug Schaefer
  */

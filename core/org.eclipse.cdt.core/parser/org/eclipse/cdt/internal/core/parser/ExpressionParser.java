@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
@@ -40,9 +39,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
-import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * @author jcamelon
@@ -2725,14 +2723,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			limitReached = true;
 			handleOffsetLimitException(olre);
 			return null;
-		} catch (ScannerException e) {
-			TraceUtil
-					.outputTrace(
-							log,
-							"ScannerException thrown : ", e.getProblem() ); //$NON-NLS-1$
-//			log.errorLog("Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$
-			return fetchToken();
-		}
+		} 
 	}
 
 	/**

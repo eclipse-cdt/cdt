@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -32,23 +31,18 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.BranchTracker;
-import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
-import org.eclipse.cdt.internal.core.parser.scanner.ScannerProblemFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
-import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
-import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
@@ -168,8 +162,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				if( value instanceof String ) {	
 					//TODO add in check here for '(' and ')'
 					addDefinition( symbolName, scannerExtension.initializeMacroValue(this, (String) value));
-				} else if( value instanceof IMacroDescriptor )
-					addDefinition( symbolName, (IMacroDescriptor)value);
+				} 
 			}
 		}
 		
@@ -296,13 +289,6 @@ public class Scanner2 implements IScanner, IScannerData {
 	    }
 	    callbackPos = -1;   
 	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String, org.eclipse.cdt.core.parser.IMacroDescriptor)
-	 */
-	public void addDefinition(String key, IMacroDescriptor macroToBeAdded) {
-		//definitions.put(key.toCharArray(), macroToBeAdded);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String, java.lang.String)
@@ -317,13 +303,6 @@ public class Scanner2 implements IScanner, IScannerData {
 	 */
 	public int getCount() {
 		return count;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinition(java.lang.String)
-	 */
-	public IMacroDescriptor getDefinition(String key) {
-		return (IMacroDescriptor)definitions.get(key.toCharArray());
 	}
 
 	/* (non-Javadoc)
@@ -344,13 +323,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		return definitions;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#getDepth()
-	 */
-	public int getDepth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#getIncludePaths()
@@ -379,7 +351,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
 	 */
-	public IToken nextToken() throws ScannerException, EndOfFileException {
+	public IToken nextToken() throws EndOfFileException {
 		if (nextToken == null && !finished ) {
 			nextToken = fetchToken();
 			if (nextToken == null)
@@ -446,7 +418,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 
 	// Return null to signify end of file
-	private IToken fetchToken() throws ScannerException, EndOfFileException{
+	private IToken fetchToken() throws EndOfFileException{
 		++count;
 		contextLoop:
 		while (bufferStackPos >= 0) {
@@ -1270,7 +1242,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	    return false;
 	}
 	
-	private void handlePPDirective(int pos) throws ScannerException, EndOfFileException {
+	private void handlePPDirective(int pos) throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int startingLineNumber = getLineNumber( pos );
@@ -1690,7 +1662,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				? new ObjectStyleMacro(name, text)
 						: new FunctionStyleMacro(name, text, arglist) );
 		 
-		pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() ) );//TODO - IMacroDescriptor?
+		pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename() ) );
 	}
 	
 	
@@ -2839,30 +2811,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		*/
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken(boolean)
-	 */
-	public IToken nextToken(boolean next) throws ScannerException,
-			EndOfFileException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#nextTokenForStringizing()
-	 */
-	public IToken nextTokenForStringizing() throws ScannerException,
-			EndOfFileException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#overwriteIncludePath(java.lang.String[])
-	 */
-	public void overwriteIncludePath(String[] newIncludePaths) {
-		// TODO Auto-generated method stub
 
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setASTFactory(org.eclipse.cdt.core.parser.ast.IASTFactory)
 	 */
@@ -2876,27 +2825,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		offsetBoundary = offset;
 		bufferLimit[0] = offset;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#setScannerContext(org.eclipse.cdt.internal.core.parser.scanner.IScannerContext)
-	 */
-	public void setScannerContext(IScannerContext context) {
-		// TODO Auto-generated method stub
 
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#setThrowExceptionOnBadCharacterRead(boolean)
-	 */
-	public void setThrowExceptionOnBadCharacterRead(boolean throwOnBad) {
-		// TODO Auto-generated method stub
-
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScanner#setTokenizingMacroReplacementList(boolean)
-	 */
-	public void setTokenizingMacroReplacementList(boolean b) {
-		// TODO Auto-generated method stub
-
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
 	 */
@@ -2905,47 +2834,14 @@ public class Scanner2 implements IScanner, IScannerData {
 			astFactory = ParserFactory.createASTFactory( parserMode, language );
 		return astFactory;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getBranchTracker()
-	 */
-	public BranchTracker getBranchTracker() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getClientRequestor()
 	 */
 	public ISourceElementRequestor getClientRequestor() {
 		return requestor;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getContextStack()
-	 */
-	public ContextStack getContextStack() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getFileCache()
-	 */
-	public Map getFileCache() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getIncludePathNames()
-	 */
-	public List getIncludePathNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getInitialReader()
-	 */
-	public CodeReader getInitialReader() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getLanguage()
 	 */
@@ -2958,46 +2854,19 @@ public class Scanner2 implements IScanner, IScannerData {
 	public IParserLogService getLogService() {
 		return log;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getOriginalConfig()
-	 */
-	public IScannerInfo getOriginalConfig() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getParserMode()
 	 */
 	public ParserMode getParserMode() {
 		return parserMode;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getPrivateDefinitions()
-	 */
-	public Map getPrivateDefinitions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getProblemFactory()
 	 */
 	public IProblemFactory getProblemFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getPublicDefinitions()
-	 */
-	public Map getPublicDefinitions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getScanner()
-	 */
-	public IScanner getScanner() {
-		// TODO Auto-generated method stub
-		return null;
+		return spf;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getWorkingCopies()
@@ -3006,28 +2875,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( workingCopies == null ) return EmptyIterator.EMPTY_ITERATOR;
 		return workingCopies.iterator();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#parseInclusionDirective(java.lang.String, int)
-	 */
-	public InclusionDirective parseInclusionDirective(String restOfLine,
-			int offset) throws InclusionParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setDefinitions(java.util.Map)
-	 */
-	public void setDefinitions(Map map) {
-		// TODO Auto-generated method stub
 
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setIncludePathNames(java.util.List)
-	 */
-	public void setIncludePathNames(List includePathNames) {
-		// TODO Auto-generated method stub
-
-	}
 	
 	private final char[] getCurrentFilename() {
 		for( int i = bufferStackPos; i >= 0; --i )

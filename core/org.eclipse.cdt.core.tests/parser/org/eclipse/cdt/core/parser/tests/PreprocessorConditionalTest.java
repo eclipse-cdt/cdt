@@ -21,14 +21,14 @@ import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.tests.scanner2.BaseScanner2Test;
 
 /**
  * @author jcamelon
  *
  */
-public class PreprocessorConditionalTest extends BaseScannerTest
+public class PreprocessorConditionalTest extends BaseScanner2Test
 {
 
 	private ISourceElementRequestor nullSourceElementRequestor = new NullSourceElementRequestor();
@@ -64,7 +64,7 @@ public class PreprocessorConditionalTest extends BaseScannerTest
     /**
      * 
      */
-    private void evaluate()
+    private void evaluate() throws Exception
     {
         try
         {
@@ -73,10 +73,6 @@ public class PreprocessorConditionalTest extends BaseScannerTest
         	validateToken( IToken.tSEMI );
         	scanner.nextToken();
         	fail( "Should have hit EOF by now"); 	 //$NON-NLS-1$
-        }
-        catch( ScannerException se )
-        {
-        	fail( "Got #error, should not have gotten that."); //$NON-NLS-1$
         }
         catch( EndOfFileException eof )
         {

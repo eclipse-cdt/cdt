@@ -23,12 +23,12 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArraySet;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
  * @author aniefer

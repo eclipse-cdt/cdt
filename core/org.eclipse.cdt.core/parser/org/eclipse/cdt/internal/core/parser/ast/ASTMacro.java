@@ -11,9 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast;
 
 
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
@@ -25,17 +23,15 @@ public class ASTMacro implements IASTMacro {
 
 	private int nameEndOffset = 0;
     private final char[] name;
-    private final IMacroDescriptor innerMacro;
 	private final char[] fn;
     
-	public ASTMacro( char[] name, IMacroDescriptor info, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn )
+	public ASTMacro( char[] name, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn )
 	{
 		this.name =name; 
 		setStartingOffsetAndLineNumber(start, startLine);
 		setNameOffset(nameBeg);
 		setNameEndOffsetAndLineNumber(nameEnd, nameLine);
 		setEndingOffsetAndLineNumber(end, endLine);
-		innerMacro = info;
 		this.fn = fn;
 	}
 	
@@ -131,42 +127,6 @@ public class ASTMacro implements IASTMacro {
 		nameEndOffset = offset;
 		nameLineNumber = lineNumber;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getMacroType()
-	 */
-	public IMacroDescriptor.MacroType getMacroType() {
-		return innerMacro.getMacroType();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getParameters()
-	 */
-	public String[] getParameters() {
-		return innerMacro.getParameters();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
-	 */
-	public IToken[] getTokenizedExpansion() {
-		return innerMacro.getTokenizedExpansion();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getCompleteSignature()
-	 */
-	public String getCompleteSignature() {
-		return innerMacro.getCompleteSignature();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getExpansionSignature()
-	 */
-	public String getExpansionSignature() {
-		return innerMacro.getExpansionSignature();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#compatible(org.eclipse.cdt.core.parser.IMacroDescriptor)
-	 */
-	public boolean compatible(IMacroDescriptor descriptor) {
-		return innerMacro.compatible(descriptor);
-	}
 	
 	private int startingLineNumber, endingLineNumber, nameLineNumber;
 	/* (non-Javadoc)
@@ -187,12 +147,7 @@ public class ASTMacro implements IASTMacro {
 	public int getNameLineNumber() {
 		return nameLineNumber;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
-	 */
-	public boolean isCircular() {
-		return innerMacro.isCircular();
-	}
+
 	
 	private int fileIndex;
 	/* (non-Javadoc)

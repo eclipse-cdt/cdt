@@ -13,7 +13,7 @@
  * For use by the Parser Symbol Table
  * Created on Jul 15, 2004
  */
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.parser.util;
 
 import java.util.ArrayList;
 import java.util.List;

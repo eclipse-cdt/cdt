@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
 
 /**
  * @author Doug Schaefer
@@ -85,7 +84,7 @@ public class ScannerSpeedTest extends SpeedTest {
 		int count = 0;
 		try {
 			while (true) {
-				try {
+				
 					IToken t = scanner.nextToken();
 					
 					if (stream != null)
@@ -94,8 +93,7 @@ public class ScannerSpeedTest extends SpeedTest {
 					if (t == null)
 						break;
 					++count;
-				} catch (ScannerException e) {
-				}
+				
 			}
 		} catch (EndOfFileException e2) {
 		}

@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.parser.extension;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerData;
 
 /**
  * @author jcamelon

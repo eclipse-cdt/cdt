@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTClassSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTField;
@@ -43,8 +45,6 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 
 
 

@@ -13,7 +13,7 @@
  * cloned from CharArrayMap & CharArrayObjectMap
  * Created on Jul 14, 2004
  */
-package org.eclipse.cdt.internal.core.parser.scanner2;
+package org.eclipse.cdt.core.parser.util;
 
 import java.util.Collections;
 import java.util.Comparator;

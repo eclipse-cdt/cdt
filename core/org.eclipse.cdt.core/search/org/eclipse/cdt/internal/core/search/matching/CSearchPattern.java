@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
@@ -370,7 +369,6 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			token = scanner.nextToken();
 		} catch (EndOfFileException e) {
-		} catch (ScannerException e) {
 		}
 		
 		if( token != null ){
@@ -609,8 +607,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			}
 		} catch (EndOfFileException e) {	
 			list.addLast( name.toCharArray() );
-		} catch (ScannerException e) {
-		}
+		} 
 		
 		return list;	
 	}

@@ -18,7 +18,7 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * @author aniefer

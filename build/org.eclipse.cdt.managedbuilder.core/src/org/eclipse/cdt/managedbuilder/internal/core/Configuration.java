@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -60,6 +61,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		this.name = parent.getName();
 		this.target = target;
 		this.parent = parent;
+		
+		// Get the tool references from the parent
+		getLocalToolReferences().addAll(((Configuration)parent).getLocalToolReferences());
 		
 		target.addConfiguration(this);
 	}
@@ -147,29 +151,34 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (parent != null)
 			element.setAttribute(IConfiguration.PARENT, parent.getId());
 		
-		for (int i = 0; i < getToolReferences().size(); ++i) {
-			ToolReference toolRef = (ToolReference)getToolReferences().get(i);
+		// Serialize only the tool references defined in the configuration
+		Iterator iter = getLocalToolReferences().listIterator();
+		while (iter.hasNext()) {
+			ToolReference toolRef = (ToolReference) iter.next();
 			Element toolRefElement = doc.createElement(IConfiguration.TOOL_REF);
 			element.appendChild(toolRefElement);
 			toolRef.serialize(doc, toolRefElement);
 		}
 	}
 	
+	/* (non-javadoc)
+	 * A safety method to avoid NPEs. It answers the tool reference list in the 
+	 * receiver. It does not look at the tool references defined in the parent.
+	 * 
+	 * @return List
+	 */
+	protected List getLocalToolReferences() {
+		if (toolReferences == null) {
+			toolReferences = new ArrayList();
+		}
+		return toolReferences;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getName()
 	 */
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
-	}
-
-	/*
-	 * @return
-	 */
-	private List getToolReferences() {
-		if (toolReferences == null) {
-			toolReferences = new ArrayList();
-		}
-		return toolReferences;
 	}
 
 	/* (non-Javadoc)
@@ -180,7 +189,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			? parent.getTools()
 			: target.getTools();
 		
-		// Replace tools with overrides
+		// Replace tools with local overrides
 		for (int i = 0; i < tools.length; ++i) {
 			ToolReference ref = getToolReference(tools[i]);
 			if (ref != null)
@@ -195,7 +204,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public void reset(IConfigurationElement element) {
 		// I just need to reset the tool references
-		getToolReferences().clear();
+		getLocalToolReferences().clear();
 		IConfigurationElement[] configElements = element.getChildren();
 		for (int l = 0; l < configElements.length; ++l) {
 			IConfigurationElement configElement = configElements[l];
@@ -210,6 +219,35 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public IConfiguration getParent() {
 		return parent;
+	}
+	
+	/* (non-javadoc)
+	 * 
+	 * @param tool
+	 * @return List
+	 */
+	protected List getOptionReferences(ITool tool) {
+		List references = new ArrayList();
+		
+		// Get all the option references I add for this tool
+		ToolReference toolRef = getToolReference(tool);
+		if (toolRef != null) {
+			references.addAll(toolRef.getLocalOptionRefs());
+		}
+		
+		// See if there is anything that my parents add that I don't
+		if (parent != null) {
+			List temp = ((Configuration)parent).getOptionReferences(tool);
+			Iterator iter = temp.listIterator();
+			while (iter.hasNext()) {
+				OptionReference ref = (OptionReference) iter.next();
+				if (!references.contains(ref)) {
+					references.add(ref);
+				}
+			}
+		}
+		
+		return references;
 	}
 
 	/* (non-Javadoc)
@@ -227,22 +265,29 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	/**
-	 * Returns the reference for a given tool.
+	 * Returns the reference for a given tool or <code>null</code> if one is not
+	 * found.
 	 * 
 	 * @param tool
-	 * @return
+	 * @return ToolReference
 	 */
 	private ToolReference getToolReference(ITool tool) {
-		for (int i = 0; i < getToolReferences().size(); ++i) {
-			ToolReference toolRef = (ToolReference)getToolReferences().get(i);
-			if (toolRef.references(tool))
-				return toolRef;
+		// See if the receiver has a reference to the tool
+		ToolReference ref = null;
+		Iterator iter = getLocalToolReferences().listIterator();
+		while (iter.hasNext()) {
+			ToolReference temp = (ToolReference)iter.next(); 
+			if (temp.references(tool)) {
+				ref = temp;
+				break;
+			}
 		}
-		return null;
+		
+		return ref;
 	}
 	
 	public void addToolReference(ToolReference toolRef) {
-		getToolReferences().add(toolRef);
+		getLocalToolReferences().add(toolRef);
 	}
 	
 	public OptionReference createOptionReference(IOption option) {

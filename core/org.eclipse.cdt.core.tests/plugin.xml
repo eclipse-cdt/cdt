@@ -37,7 +37,8 @@
             isAbstract="false"
             makeCommand="make"
             binaryParser="org.eclipse.cdt.core.PE"
-            makeFlags="-k">
+            makeFlags="-k"
+            osList="win32">
          <tool
                sources="foo,bar"
                name="Root Tool"
@@ -118,6 +119,28 @@
                </optionReference>
             </toolReference>
          </configuration>
+         <configuration
+               name="Complete Override Config"
+               id="complete.override.config">
+            <toolReference
+                  id="root.tool">
+               <optionReference
+                     id="string.option"
+                     defaultValue="overridden">
+               </optionReference>
+               <optionReference
+                     id="boolean.option"
+                     defaultValue="true">
+               </optionReference>
+               <optionReference
+                     defaultValue="-e2"
+                     id="enumerated.option">
+               </optionReference>
+               <optionReference
+                     id="list.option">
+               </optionReference>
+            </toolReference>
+         </configuration>
       </target>
       <target
             name="Test Sub"
@@ -128,7 +151,8 @@
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
             makeFlags="-d"
-            parent="test.root">
+            parent="test.root"
+            osList="win32,linux,solaris">
          <configuration
                name="Sub Config"
                id="sub.config">

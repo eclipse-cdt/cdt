@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,15 @@ public class ToolReference implements ITool {
 	}
 	
 	/**
+	 * Adds the option reference specified in the argument to the receiver.
+	 * 
+	 * @param optionRef
+	 */
+	public void addOptionReference(OptionReference optionRef) {
+		getLocalOptionRefs().add(optionRef);
+	}
+	
+	/**
 	 * Created tool reference from an extension defined in a plugin manifest.
 	 * 
 	 * @param owner The <code>Configuration</code> the receiver will be added to.
@@ -58,7 +68,7 @@ public class ToolReference implements ITool {
 	public ToolReference(Configuration owner, IConfigurationElement element) {
 		this.owner = owner;
 		
-		parent = ((Target)owner.getTarget()).getTool(element.getAttribute("id"));
+		parent = ((Target)owner.getTarget()).getTool(element.getAttribute(ID));
 
 		owner.addToolReference(this);
 		
@@ -104,14 +114,13 @@ public class ToolReference implements ITool {
 	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(ITool.ID, parent.getId());
-		
-		if (optionReferences != null)
-			for (int i = 0; i < optionReferences.size(); ++i) {
-				OptionReference optionRef = (OptionReference)optionReferences.get(i);
-				Element optionRefElement = doc.createElement(ITool.OPTION_REF);
-				element.appendChild(optionRefElement);
-				optionRef.serialize(doc, optionRefElement);
-			}
+		Iterator iter = getLocalOptionRefs().listIterator();
+		while (iter.hasNext()) {
+			OptionReference optionRef = (OptionReference) iter.next();
+			Element optionRefElement = doc.createElement(ITool.OPTION_REF);
+			element.appendChild(optionRefElement);
+			optionRef.serialize(doc, optionRefElement);
+		}
 	}
 
 	public IConfiguration getConfiguration() {
@@ -254,6 +263,11 @@ public class ToolReference implements ITool {
 		return parent.producesFileType(outputExtension);
 	}
 
+	protected List getAllOptionRefs() {
+		// First get all the option references this tool reference contains
+		return ((Configuration)owner).getOptionReferences(parent);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
 	 */
@@ -283,35 +297,63 @@ public class ToolReference implements ITool {
 	}
 
 	public boolean references(ITool target) {
-		if (equals(target))
+		if (equals(target)) {
 			// we are the target
 			return true;
-		else if (parent instanceof ToolReference)
+		}
+		else if (parent instanceof ToolReference) {
 			// check the reference we are overriding
 			return ((ToolReference)parent).references(target);
-		else
+		}
+		else if (target instanceof ToolReference) {
+			return parent.equals(((ToolReference)target).parent); 
+		}
+		else {
 			// the real reference
 			return parent.equals(target);
+		}
 	}
 	
+	/* (non-javadoc)
+	 * Answers an option reference that overrides the option, or <code>null</code>
+	 * 
+	 * @param option
+	 * @return OptionReference
+	 */
 	private OptionReference getOptionReference(IOption option) {
-		if (optionReferences != null)
-			for (int i = 0; i < optionReferences.size(); ++i) {
-				OptionReference optionRef = (OptionReference)optionReferences.get(i);
-				if (optionRef.references(option))
-					return optionRef;
-			}
+		// Get all the option references for this option
+		Iterator iter = getAllOptionRefs().listIterator();
+		while (iter.hasNext()) {
+			OptionReference optionRef = (OptionReference) iter.next();
+			if (optionRef.references(option))
+				return optionRef;
+		}
+
 		return null;
 	}
 	
-	public OptionReference createOptionReference(IOption option) {
-		return new OptionReference(this, option);
+	protected List getLocalOptionRefs() {
+		if (optionReferences == null) {
+			optionReferences = new ArrayList();
+			optionReferences.clear();
+		}
+		return optionReferences;
 	}
 	
-	public void addOptionReference(OptionReference optionRef) {
-		if (optionReferences == null)
-			optionReferences = new ArrayList();
-		optionReferences.add(optionRef);
+	/**
+	 * Answers a reference to the option. If the reference does not exist, 
+	 * a new reference is created. 
+	 * 
+	 * @param option
+	 * @return OptionReference
+	 */
+	public OptionReference createOptionReference(IOption option) {
+		// Check if the option reference already exists
+		OptionReference ref = getOptionReference(option);
+		if (ref == null) {
+			ref = new OptionReference(this, option); 
+		}
+		return ref;
 	}
 	
 	/* (non-Javadoc)

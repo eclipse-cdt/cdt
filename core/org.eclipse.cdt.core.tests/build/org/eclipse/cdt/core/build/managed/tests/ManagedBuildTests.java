@@ -32,6 +32,7 @@ import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -156,7 +157,7 @@ public class ManagedBuildTests extends TestCase {
 		// These are the expected path settings
 		final String[] expectedPaths = new String[4];
 		// This first path is a built-in, so it will not be manipulated by build manager
-		expectedPaths[0] = "/usr/gnu/include";
+	 	expectedPaths[0] = "/usr/gnu/include";
 		expectedPaths[1] = (new Path("/usr/include")).toOSString();
 		expectedPaths[2] = (new Path("/opt/gnome/include")).toOSString();
 		expectedPaths[3] = (new Path("C:\\home\\tester/include")).toOSString();
@@ -187,9 +188,9 @@ public class ManagedBuildTests extends TestCase {
 				
 		// Change the default configuration to the sub config
 		IConfiguration[] configs = newTarget.getConfigurations();
-		assertEquals(3, configs.length);
+		assertEquals(4, configs.length);
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
-		buildInfo.setDefaultConfiguration(newTarget.getConfiguration("sub.config.2"));
+		buildInfo.setDefaultConfiguration(newTarget.getConfiguration(configs[3].getId()));
 
 		// Use the plugin mechanism to discover the supplier of the path information
 		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
@@ -275,6 +276,8 @@ public class ManagedBuildTests extends TestCase {
 		String rootName = "Root Config";
 		String overrideConfigId = "test.root.1.1";
 		String overrideName = "Root Override Config";
+		String completeOverrideConfigId = "test.root.1.2";
+		String completeOverrideName = "Complete Override Config";
 		
 		// Open the test project
 		IProject project = createProject(projectName);
@@ -284,16 +287,18 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(1, definedTargets.length);
 		ITarget rootTarget = definedTargets[0];
 		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
-		assertEquals(2, definedConfigs.length);
+		assertEquals(3, definedConfigs.length);
 		IConfiguration baseConfig = definedConfigs[0];
 		assertEquals(definedConfigs[0].getId(), rootConfigId);
 		assertEquals(definedConfigs[0].getName(), rootName);
 		assertEquals(definedConfigs[1].getId(), overrideConfigId);
 		assertEquals(definedConfigs[1].getName(), overrideName);
+		assertEquals(definedConfigs[2].getId(), completeOverrideConfigId);
+		assertEquals(definedConfigs[2].getName(), completeOverrideName);
 		
 		// Create a new configuration and test the rename function
 		IConfiguration newConfig = rootTarget.createConfiguration(baseConfig, testConfigId);
-		assertEquals(3, rootTarget.getConfigurations().length);
+		assertEquals(4, rootTarget.getConfigurations().length);
 		newConfig.setName(testConfigName);
 		assertEquals(newConfig.getId(), testConfigId);
 		assertEquals(newConfig.getName(), testConfigName);
@@ -332,10 +337,10 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(1, definedTargets.length);
 		rootTarget = definedTargets[0];
 		definedConfigs = rootTarget.getConfigurations(); 		
-		assertEquals(3, definedConfigs.length);
+		assertEquals(4, definedConfigs.length);
 		rootTarget.removeConfiguration(testConfigId);
 		definedConfigs = rootTarget.getConfigurations(); 		
-		assertEquals(2, definedConfigs.length);
+		assertEquals(3, definedConfigs.length);
 		assertEquals(definedConfigs[0].getId(), rootConfigId);
 		assertEquals(definedConfigs[0].getName(), rootName);
 		assertEquals(definedConfigs[1].getId(), overrideConfigId);
@@ -554,7 +559,7 @@ public class ManagedBuildTests extends TestCase {
 
 		// Now get the configs
 		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
-		assertEquals(3, definedConfigs.length);
+		assertEquals(4, definedConfigs.length);
 		IConfiguration newConfig = rootTarget.getConfiguration(testConfigId);
 		assertNotNull(newConfig);
 
@@ -603,11 +608,13 @@ public class ManagedBuildTests extends TestCase {
 		// Target stuff
 		String expectedCleanCmd = "del /myworld";
 		String expectedParserId = "org.eclipse.cdt.core.PE";
+		String[] expectedOSList = {"win32"};
 		assertTrue(target.isTestTarget());
 		assertEquals(target.getDefaultExtension(), rootExt);
 		assertEquals(expectedCleanCmd, target.getCleanCommand());
 		assertEquals("make", target.getMakeCommand());
 		assertEquals(expectedParserId, target.getBinaryParserId());
+		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
 		
 		// Tools
 		ITool[] tools = target.getTools();
@@ -663,8 +670,10 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("String Option in Category", options[0].getName());
 		assertEquals("Enumerated Option in Category", options[1].getName());
 
-		// Configs
+		// There should be 3 defined configs
 		IConfiguration[] configs = target.getConfigurations();
+		assertEquals(3, configs.length);
+		
 		// Root Config
 		IConfiguration rootConfig = configs[0];
 		assertEquals("Root Config", rootConfig.getName());
@@ -679,7 +688,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("doIt", tools[0].getToolCommand());
 		assertEquals("", tools[0].getOutputPrefix());
 
-		// Root Override Config
+		// Partially Overriden Configuration
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
 		assertEquals(1, tools.length);
@@ -693,6 +702,8 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
 		assertEquals("Boolean Option in Top", options[1].getName());
+		assertEquals(true, options[1].getBooleanValue());
+		assertEquals("-b", options[1].getCommand());
 		categories = topCategory.getChildCategories();
 		options = categories[0].getOptions(configs[1]);
 		assertEquals(2, options.length);
@@ -712,6 +723,41 @@ public class ManagedBuildTests extends TestCase {
 		assertTrue(tools[0].buildsFileType("bar"));
 		assertTrue(tools[0].producesFileType("toor"));
 		assertEquals("doIt", tools[0].getToolCommand());
+		
+		// Completely Overridden configuration
+		assertEquals("Complete Override Config", configs[2].getName());
+		tools = configs[2].getTools();
+		assertEquals(1, tools.length);
+		assertTrue(tools[0] instanceof ToolReference);
+		assertEquals("Root Tool", tools[0].getName());
+		topCategory = tools[0].getTopOptionCategory();
+		options = topCategory.getOptions(configs[2]);
+		assertEquals(2, options.length);
+		// Check that there's an empty string list and a true boolean (commands should not have changed)
+		assertTrue(options[0] instanceof OptionReference);
+		assertEquals("List Option in Top", options[0].getName());
+		assertEquals(IOption.STRING_LIST, options[0].getValueType());
+		valueList = options[0].getStringListValue();
+		assertTrue(valueList.length == 0);
+		assertEquals("-L", options[0].getCommand());
+		assertEquals("Boolean Option in Top", options[1].getName());
+		assertTrue(options[1] instanceof OptionReference);
+		assertEquals("Boolean Option in Top", options[1].getName());
+		assertEquals(IOption.BOOLEAN, options[1].getValueType());
+		assertEquals(true, options[1].getBooleanValue());
+		assertEquals("-b", options[1].getCommand());
+		// Check that there's an overridden enumeration and string
+		categories = topCategory.getChildCategories();
+		options = categories[0].getOptions(configs[2]);
+		assertEquals(2, options.length);
+		assertTrue(options[0] instanceof OptionReference);
+		assertEquals("String Option in Category", options[0].getName());
+		assertEquals(IOption.STRING, options[0].getValueType());
+		assertEquals("overridden", options[0].getStringValue());
+		assertTrue(options[1] instanceof OptionReference);
+		assertEquals("Enumerated Option in Category", options[1].getName());
+		assertEquals(IOption.ENUMERATED, options[1].getValueType());
+		assertEquals("-e2", options[1].getSelectedEnum());
 	}
 
 	/*
@@ -724,6 +770,9 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("nmake", target.getMakeCommand());
 		// Make sure we get the proper binary parser
 		assertEquals("org.eclipse.cdt.core.ELF", target.getBinaryParserId());
+		// Make sure the list is inherited
+		String[] expectedOSList = {"win32","linux","solaris"};
+		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
 	}
 
 	/*
@@ -740,6 +789,8 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("make", target.getMakeCommand());
 		// Make sure the binary parser is hard-coded and available
 		assertEquals("org.eclipse.cdt.core.PE", target.getBinaryParserId());
+		String[] expectedOSList = {"win32","linux","solaris"};
+		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
 
 		// Make sure this is a test target
 		assertTrue(target.isTestTarget());
@@ -791,15 +842,14 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("C:\\home\\tester/include", moreIncPath[0]);
 		assertEquals("-I", subOpts[2].getCommand());
 
-		// Get the configs for this target
+		// Get the configs for this target; it should inherit all the configs defined for the parent
 		IConfiguration[] configs = target.getConfigurations();
-		// Check inheritance
+		assertEquals(4, configs.length);
 		IConfiguration rootConfig = configs[0];
 		assertEquals("Root Config", rootConfig.getName());
 		assertEquals("Root Override Config", configs[1].getName());
-		// Check the defined config for target
-		IConfiguration subConfig = configs[2];
-		assertEquals("Sub Config", subConfig.getName());
+		assertEquals("Complete Override Config", configs[2].getName());
+		assertEquals("Sub Config", configs[3].getName());
 	}
 
 	/**

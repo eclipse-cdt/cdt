@@ -61,19 +61,21 @@
          </filter>
       </page>
    </extension>
+<!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
       <target
-            makeFlags="-k"
-            isTest="false"
-            cleanCommand="rm -rf"
             name="Cygwin"
-            binaryParser="org.eclipse.cdt.core.PE"
+            id="cygwin"
+            cleanCommand="rm -rf"
+            isTest="false"
             isAbstract="true"
             makeCommand="make"
-            id="cygwin">
+            binaryParser="org.eclipse.cdt.core.PE"
+            makeFlags="-k"
+            osList="win32">
          <tool
                sources="c,cc,cpp,cxx,C"
                name="%ToolName.compiler"
@@ -88,7 +90,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not search system directories (-nostdinc)"
+                  name="%Option.Posix.Nostdinc"
                   category="cygwin.compiler.category.preprocessor"
                   command="-nostdinc"
                   valueType="boolean"
@@ -210,7 +212,7 @@
                </listOptionValue>
             </option>
             <option
-                  name="Undefined symbols (-U)"
+                  name="%Option.Posix.UndefSym"
                   category="cygwin.gnu.compiler.category.symbols"
                   command="-U"
                   valueType="stringList"
@@ -222,35 +224,29 @@
                   id="cygwin.compiler.category.general">
             </optionCategory>
             <option
-                  defaultValue="-c"
-                  name="Compiler Flags"
-                  category="cygwin.compiler.category.general"
-                  valueType="string"
-                  id="cygwin.compiler.general.ccflags">
-            </option>
-            <option
                   name="Optimization Level"
                   category="cygwin.compiler.category.general"
                   valueType="enumerated"
                   id="cygwin.compiler.general.optimization.level">
                <enumeratedOptionValue
-                     name="None (-O0)"
+                     name="%Option.Posix.Optimize.None"
+                     isDefault="false"
                      command="-O0"
                      id="cygwin.optimization.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize (-O1)"
+                     name="%Option.Posix.Optimize.Optimize"
                      command="-O1"
                      id="cygwin.optimization.level.optimize">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize more (-O2)"
+                     name="%Option.Posix.Optimize.More"
                      isDefault="true"
                      command="-O2"
                      id="cygwin.optimization.level.more">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize most (-O3)"
+                     name="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="cygwin.optimization.level.most">
                </enumeratedOptionValue>
@@ -294,13 +290,78 @@
                      builtIn="true">
                </listOptionValue>
             </option>
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.compiler"
+                  name="%OptionCategory.Warn"
+                  id="cygwin.compiler.category.warnings">
+            </optionCategory>
             <option
                   defaultValue="false"
-                  name="Verbose"
-                  category="cygwin.compiler.category.general"
+                  name="Check syntax only (-fsyntax-only)"
+                  category="cygwin.compiler.category.warnings"
+                  command="-fsyntax-only"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.warnings.syntax">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Pedantic (-pedantic)"
+                  category="cygwin.compiler.category.warnings"
+                  command="-pedantic"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.warnings.pedantic">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  category="cygwin.compiler.category.warnings"
+                  command="-pedantic-errors"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.warnings.pedantic.error">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Inhibit all warnings (-w)"
+                  category="cygwin.compiler.category.warnings"
+                  command="-w"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.warnings.nowarn">
+            </option>
+            <option
+                  defaultValue="true"
+                  name="All warnings (-Wall)"
+                  category="cygwin.compiler.category.warnings"
+                  command="-Wall"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.warnings.allwarn">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Warnings as errors (-werror)"
+                  category="cygwin.compiler.category.warnings"
+                  command="-werror"
+                  valueType="boolean"
+                  id="cygwin.gnu.compiler.warnings.toerrors">
+            </option>
+            <optionCategory
+                  owner="cdt.build.tool.linux.gnu.compiler"
+                  name="%OptionCategory.Misc"
+                  id="cygwin.compiler.category.other">
+            </optionCategory>
+            <option
+                  defaultValue="-c"
+                  name="%Option.OtherFlags"
+                  category="cygwin.compiler.category.other"
+                  valueType="string"
+                  id="cygwin.compiler.misc.other">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="%Option.Posix.Verbose"
+                  category="cygwin.compiler.category.other"
                   command="-v"
                   valueType="boolean"
-                  id="cygwin.compiler.general.verbose">
+                  id="cygwin.compiler.misc.verbose">
             </option>
          </tool>
       </target>
@@ -315,10 +376,35 @@
          <configuration
                name="%ConfigName.Rel"
                id="cygwin.exec.release">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     command="-O3"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="cygwin.exec.debug">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     command="-O0"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     command="-g3"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                name="%ToolName.linker"
@@ -364,10 +450,35 @@
          <configuration
                name="%ConfigName.Rel"
                id="cygwin.so.release">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     command="-O3"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="cygwin.so.debug">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     command="-O0"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     command="-g3"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                name="%ToolName.linker"
@@ -415,10 +526,35 @@
          <configuration
                name="%ConfigName.Rel"
                id="cygwin.exp.release">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     command="-O3"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="cygwin.exp.debug">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     command="-O0"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     command="-g3"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                name="%ToolName.linker"
@@ -466,10 +602,35 @@
          <configuration
                name="%ConfigName.Rel"
                id="cygwin.lib.release">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     command="-O3"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="cygwin.lib.debug">
+            <toolReference
+                  id="org.eclipse.cdt.build.tool.cygwin.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     command="-O0"
+                     id="cygwin.compiler.general.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     command="-g3"
+                     id="cygwin.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                name="%ToolName.archiver"
@@ -492,14 +653,15 @@
          </tool>
       </target>
       <target
-            makeFlags="-k"
-            isTest="false"
-            cleanCommand="rm -rf"
             name="Linux"
-            binaryParser="org.eclipse.cdt.core.ELF"
+            id="linux.gnu"
+            cleanCommand="rm -rf"
+            isTest="false"
             isAbstract="true"
             makeCommand="make"
-            id="linux.gnu">
+            binaryParser="org.eclipse.cdt.core.ELF"
+            makeFlags="-k"
+            osList="linux">
          <tool
                sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler"
@@ -514,7 +676,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not search system directories (-nostdinc)"
+                  name="%Option.Posix.Nostdinc"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-nostdinc"
                   valueType="boolean"
@@ -595,6 +757,13 @@
                      builtIn="true">
                </listOptionValue>
             </option>
+            <option
+                  name="%Option.Posix.UndefSym"
+                  category="linux.gnu.compiler.category.preprocessor"
+                  command="-U"
+                  valueType="stringList"
+                  id="linux.gnu.compiler.preprocessor.undef">
+            </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.compiler"
                   name="%OptionCategory.Dirs"
@@ -626,23 +795,23 @@
                   valueType="enumerated"
                   id="linux.gnu.compiler.optimization.level">
                <enumeratedOptionValue
-                     name="None (-O0)"
+                     name="%Option.Posix.Optimize.None"
                      command="-O0"
                      id="linux.gnu.compiler.optimization.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize (-O1)"
+                     name="%Option.Posix.Optimize.Optimize"
                      command="-O1"
                      id="linux.gnu.compiler.optimization.level.optimize">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize more (-O2)"
+                     name="%Option.Posix.Optimize.More"
                      isDefault="true"
                      command="-O2"
                      id="linux.gnu.compiler.optimization.level.more">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize most (-O3)"
+                     name="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="linux.gnu.compiler.optimization.level.most">
                </enumeratedOptionValue>
@@ -767,19 +936,19 @@
                   id="linux.gnu.compiler.category.other">
             </optionCategory>
             <option
+                  defaultValue="-c"
+                  name="%Option.OtherFlags"
+                  category="linux.gnu.compiler.category.other"
+                  valueType="string"
+                  id="linux.gnu.compiler.other.other">
+            </option>
+            <option
                   defaultValue="false"
-                  name="Verbose (-v)"
+                  name="%Option.Posix.Verbose"
                   category="linux.gnu.compiler.category.other"
                   command="-v"
                   valueType="boolean"
                   id="linux.gnu.compiler.other.verbose">
-            </option>
-            <option
-                  defaultValue="-c"
-                  name="Other flags"
-                  category="linux.gnu.compiler.category.other"
-                  valueType="string"
-                  id="linux.gnu.compiler.other.other">
             </option>
          </tool>
       </target>
@@ -793,10 +962,32 @@
          <configuration
                name="%ConfigName.Rel"
                id="linux.gnu.exec.release">
+            <toolReference
+                  id="cdt.build.tool.linux.gnu.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     id="linux.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="linux.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="linux.gnu.exec.debug">
+            <toolReference
+                  id="cdt.build.tool.linux.gnu.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     id="linux.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     id="linux.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                sources="o"
@@ -862,6 +1053,12 @@
                   id="linux.gnu.linker.category.libs">
             </optionCategory>
             <option
+                  name="%Option.Posix.Linker.Flags"
+                  category="linux.gnu.linker.category.libs"
+                  valueType="string"
+                  id="linux.gnu.linker.libs.flags">
+            </option>
+            <option
                   name="%Option.Posix.Libs"
                   category="linux.gnu.linker.category.libs"
                   command="-l"
@@ -888,10 +1085,32 @@
          <configuration
                name="%ConfigName.Rel"
                id="linux.gnu.so.release">
+            <toolReference
+                  id="cdt.build.tool.linux.gnu.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     id="linux.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="linux.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="linux.gnu.so.debug">
+            <toolReference
+                  id="cdt.build.tool.linux.gnu.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     id="linux.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     id="linux.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                sources="o"
@@ -967,6 +1186,12 @@
                   id="linux.gnu.solink.category.libs">
             </optionCategory>
             <option
+                  category="linux.gnu.solink.category.libs"
+                  name="%Option.Posix.Linker.Flags"
+                  id="linux.gnu.solink.libs.flags"
+                  valueType="string">
+            </option>
+            <option
                   name="%Option.Posix.Libs"
                   category="linux.gnu.solink.category.libs"
                   command="-l"
@@ -993,10 +1218,32 @@
          <configuration
                name="%ConfigName.Rel"
                id="linux.gnu.lib.release">
+            <toolReference
+                  id="cdt.build.tool.linux.gnu.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     id="linux.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="linux.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="linux.gnu.lib.debug">
+            <toolReference
+                  id="cdt.build.tool.linux.gnu.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     id="linux.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     id="linux.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                sources="o"
@@ -1020,14 +1267,15 @@
          </tool>
       </target>
       <target
-            makeFlags="-k"
-            isTest="false"
-            cleanCommand="rm -rf"
             name="Solaris"
-            binaryParser="org.eclipse.cdt.core.ELF"
+            id="solaris.gnu"
+            cleanCommand="rm -rf"
+            isTest="false"
             isAbstract="true"
             makeCommand="make"
-            id="solaris.gnu">
+            binaryParser="org.eclipse.cdt.core.ELF"
+            makeFlags="-k"
+            osList="solaris">
          <tool
                sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler"
@@ -1042,7 +1290,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not search system directories (-nostdinc)"
+                  name="%Option.Posix.Nostdinc"
                   category="solaris.gnu.compiler.category.preprocessor"
                   command="-nostdinc"
                   valueType="boolean"
@@ -1146,23 +1394,23 @@
                   valueType="enumerated"
                   id="solaris.gnu.compiler.optimization.level">
                <enumeratedOptionValue
-                     name="None (-O0)"
+                     name="%Option.Posix.Optimize.None"
                      command="-O0"
                      id="solaris.gnu.compiler.optimization.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize (-O1)"
+                     name="%Option.Posix.Optimize.Optimize"
                      command="-O1"
                      id="solaris.gnu.compiler.optimization.level.optimize">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize more (-O2)"
+                     name="%Option.Posix.Optimize.More"
                      isDefault="true"
                      command="-O2"
                      id="solaris.gnu.compiler.optimization.level.more">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Optimize most (-O3)"
+                     name="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="solaris.gnu.compiler.optimization.level.most">
                </enumeratedOptionValue>
@@ -1287,19 +1535,19 @@
                   id="solaris.gnu.compiler.category.other">
             </optionCategory>
             <option
+                  defaultValue="-c"
+                  name="%Option.OtherFlags"
+                  category="solaris.gnu.compiler.category.other"
+                  valueType="string"
+                  id="solaris.gnu.compiler.other.other">
+            </option>
+            <option
                   defaultValue="false"
-                  name="Verbose (-v)"
+                  name="%Option.Posix.Verbose"
                   category="solaris.gnu.compiler.category.other"
                   command="-v"
                   valueType="boolean"
                   id="solaris.gnu.compiler.other.verbose">
-            </option>
-            <option
-                  defaultValue="-c"
-                  name="Other flags"
-                  category="solaris.gnu.compiler.category.other"
-                  valueType="string"
-                  id="solaris.gnu.compiler.other.other">
             </option>
          </tool>
       </target>
@@ -1313,10 +1561,32 @@
          <configuration
                name="%ConfigName.Rel"
                id="solaris.gnu.exec.release">
+            <toolReference
+                  id="cdt.build.tool.solaris.gnu.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     id="solaris.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="solaris.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="solaris.gnu.exec.debug">
+            <toolReference
+                  id="cdt.build.tool.solaris.gnu.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     id="solaris.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     id="solaris.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                sources="o"
@@ -1382,6 +1652,12 @@
                   id="solaris.gnu.linker.category.libs">
             </optionCategory>
             <option
+                  category="solaris.gnu.linker.category.libs"
+                  name="%Option.Posix.Linker.Flags"
+                  id="solaris.gnu.linker.libs.flags"
+                  valueType="string">
+            </option>
+            <option
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.linker.category.libs"
                   command="-l"
@@ -1408,10 +1684,32 @@
          <configuration
                name="%ConfigName.Rel"
                id="solaris.gnu.so.release">
+            <toolReference
+                  id="cdt.build.tool.solaris.gnu.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     id="solaris.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="solaris.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="solaris.gnu.so.debug">
+            <toolReference
+                  id="cdt.build.tool.solaris.gnu.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     id="solaris.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     id="solaris.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                sources="o"
@@ -1487,6 +1785,12 @@
                   id="solaris.gnu.solink.category.libs">
             </optionCategory>
             <option
+                  name="%Option.Posix.Linker.Flags"
+                  category="solaris.gnu.solink.category.libs"
+                  valueType="string"
+                  id="solaris.gnu.solink.libs.flags">
+            </option>
+            <option
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.solink.category.libs"
                   command="-l"
@@ -1513,10 +1817,32 @@
          <configuration
                name="%ConfigName.Rel"
                id="solaris.gnu.lib.release">
+            <toolReference
+                  id="cdt.build.tool.solaris.gnu.compiler">
+               <optionReference
+                     defaultValue="Optimize most (-O3)"
+                     id="solaris.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="None"
+                     id="solaris.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <configuration
                name="%ConfigName.Dbg"
                id="solaris.gnu.lib.debug">
+            <toolReference
+                  id="cdt.build.tool.solaris.gnu.compiler">
+               <optionReference
+                     defaultValue="None (-O0)"
+                     id="solaris.gnu.compiler.optimization.level">
+               </optionReference>
+               <optionReference
+                     defaultValue="Maximum (-g3)"
+                     id="solaris.gnu.compiler.debugging.level">
+               </optionReference>
+            </toolReference>
          </configuration>
          <tool
                sources="o"

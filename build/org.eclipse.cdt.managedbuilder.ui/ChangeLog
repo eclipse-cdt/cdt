@@ -1,3 +1,24 @@
+2003-09-25 Sean Evoy
+	This patch contains a lot of changes needed to implement fixes for 42648 and 
+	43122. 
+	
+	The properties file has been updated to externalize some of the option labels
+	to try and address some of the concern about continuity between UIs on 
+	different platforms.
+	* plugin.properties
+	
+	There are changes in the plugin XML file to accomodate showing the targets 
+	only on the correct host platform. Option names have bee replaced with 
+	externalized equivalents where possible. The release and debug configurations 
+	for each configuration now apply "reasonable" defaults for debug and optimization
+	option. Finally, the Cygwinb tool specification has been brought closer to those 
+	for *nix.
+	* plugin.xml
+	
+	Only targets that correspond to the host platforms are shown in the drop-down
+	list.
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/CProjectPlatformPage.java
+
 2003-09-23 Sean Evoy
 	I added a fix for critical bug 43439. The new project wizard is ready to be hooked 
 	up to the help system content on F1. There is a new file with the string constant 

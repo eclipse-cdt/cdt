@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -42,8 +43,9 @@ public class Target extends BuildObject implements ITarget {
 	private String makeCommand;
 	private IResource owner;
 	private ITarget parent;
+	private List targetOSList;
 	private Map toolMap;
-	private List tools;
+	private List toolList;
 
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
 	private static final String EMPTY_STRING = new String();
@@ -78,7 +80,8 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/**
-	 * This constructor is called to create a target defined by an extension.
+	 * This constructor is called to create a target defined by an extension point in 
+	 * a plugin manifest file.
 	 * 
 	 * @param element
 	 */
@@ -113,8 +116,7 @@ public class Target extends BuildObject implements ITarget {
 		}
 
 		// isAbstract
-		if ("true".equals(element.getAttribute(IS_ABSTRACT)))
-			isAbstract = true;
+		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT)));
 
 		// Is this a test target
 		isTest = ("true".equals(element.getAttribute(IS_TEST)));
@@ -133,12 +135,29 @@ public class Target extends BuildObject implements ITarget {
 			makeCommand = parent.getMakeCommand();
 		}
 
+		// Get the comma-separated list of valid OS
+		String os = element.getAttribute(OS_LIST);
+		if (os != null) {
+			targetOSList = new ArrayList();
+			StringTokenizer tokens = new StringTokenizer(os, ",");
+			while (tokens.hasMoreTokens()) {
+				targetOSList.add(tokens.nextToken().trim());
+			}
+		}
+		
 		IConfigurationElement[] targetElements = element.getChildren();
-		for (int k = 0; k < targetElements.length; ++k) {
+		int k;
+		// Load the tools first
+		for (k = 0; k < targetElements.length; ++k) {
 			IConfigurationElement targetElement = targetElements[k];
 			if (targetElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
 				new Tool(this, targetElement);
-			} else if (targetElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
+			}
+		}
+		// Then load the configurations which may have tool references
+		for (k = 0; k < targetElements.length; ++k) {
+			IConfigurationElement targetElement = targetElements[k];
+			if (targetElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 				new Configuration(this, targetElement);
 			}
 		}
@@ -146,7 +165,7 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/**
-	 * Create target from project file
+	 * Create target from project file.
 	 * 
 	 * @param buildInfo
 	 * @param element
@@ -166,9 +185,6 @@ public class Target extends BuildObject implements ITarget {
 		// Get the name of the build artifact associated with target (should
 		// contain what the user entered in the UI).
 		artifactName = element.getAttribute(ARTIFACT_NAME);
-
-		// Get the ID of the binary parser
-		binaryParserId = element.getAttribute(BINARY_PARSER);
 
 		// Get the default extension
 		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
@@ -238,7 +254,6 @@ public class Target extends BuildObject implements ITarget {
 			element.setAttribute(PARENT, parent.getId());
 		element.setAttribute(IS_ABSTRACT, isAbstract ? "true" : "false");
 		element.setAttribute(ARTIFACT_NAME, getArtifactName());
-		element.setAttribute(BINARY_PARSER, getBinaryParserId());
 		element.setAttribute(DEFAULT_EXTENSION, getDefaultExtension());
 		element.setAttribute(IS_TEST, isTest ? "true" : "false");
 		element.setAttribute(CLEAN_COMMAND, getCleanCommand());
@@ -278,6 +293,22 @@ public class Target extends BuildObject implements ITarget {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTargetOSList()
+	 */
+	public String[] getTargetOSList() {
+		if (targetOSList == null) {
+			// Ask parent for its list
+			if (parent != null) {
+				return parent.getTargetOSList();
+			} else {
+				// I have no parent and no defined list but never return null
+				return new String[0];
+			}
+		}
+		return (String[]) targetOSList.toArray(new String[targetOSList.size()]);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getOwner()
 	 */
 	public IResource getOwner() {
@@ -285,25 +316,41 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	private int getNumTools() {
-		int n = (tools == null) ? 0 : tools.size();
+		int n = getToolList().size();
 		if (parent != null)
 			n += ((Target)parent).getNumTools();
 		return n;
 	}
 	
+
 	private int addToolsToArray(ITool[] toolArray, int start) {
 		int n = start;
 		if (parent != null)
 			n = ((Target)parent).addToolsToArray(toolArray, start);
 
-		if (tools != null) {
-			for (int i = 0; i < tools.size(); ++i)
-				toolArray[n++] = (ITool)tools.get(i); 
+		for (int i = 0; i < getToolList().size(); ++i) {
+			toolArray[n++] = (ITool)getToolList().get(i); 
 		}
 		
 		return n;
 	}
 	
+	private List getToolList() {
+		if (toolList == null) {
+			toolList = new ArrayList();
+			toolList.clear();
+		}
+		return toolList;
+	}
+
+	private Map getToolMap() {
+		if (toolMap == null) {
+			toolMap = new HashMap();
+			toolMap.clear();
+		}
+		return toolMap;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTools()
 	 */
@@ -322,16 +369,19 @@ public class Target extends BuildObject implements ITarget {
 
 	/**
 	 * @param id
-	 * @return
+	 * @return ITool
 	 */
 	public ITool getTool(String id) {
 		ITool result = null;
+
 		// See if receiver has it in list
-		result = (ITool)toolMap.get(id);
+			result = (ITool) getToolMap().get(id);
+
 		// If not, check if parent has it
 		if (result == null && parent != null) {
 			result = ((Target)parent).getTool(id);
 		}
+
 		return result;
 	}
 
@@ -339,13 +389,8 @@ public class Target extends BuildObject implements ITarget {
 	 * @param tool
 	 */
 	public void addTool(ITool tool) {
-		if (tools == null) {
-			tools = new ArrayList();
-			toolMap = new HashMap();
-		}
-		
-		tools.add(tool);
-		toolMap.put(tool.getId(), tool);
+		getToolList().add(tool);
+		getToolMap().put(tool.getId(), tool);
 	}
 	
 	/* (non-Javadoc)
@@ -377,15 +422,33 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getArtifactName()
 	 */
 	public String getArtifactName() {
-		// Return name or an empty string
-		return artifactName == null ? EMPTY_STRING : artifactName;
+		if (artifactName == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getArtifactName();
+			} else {
+				// I'm it and this is not good!
+				return EMPTY_STRING;
+			}
+		} else {
+			return artifactName;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getBinaryParserId()
 	 */
 	public String getBinaryParserId() {
-		return binaryParserId == null ? EMPTY_STRING : binaryParserId;
+		if (binaryParserId == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getBinaryParserId();
+			} else {
+				// I'm it and this is not good!
+				return EMPTY_STRING;
+			}
+		}
+		return binaryParserId;
 	}
 
 	/* (non-Javadoc)

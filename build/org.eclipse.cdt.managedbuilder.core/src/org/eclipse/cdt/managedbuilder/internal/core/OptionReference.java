@@ -76,11 +76,15 @@ public class OptionReference implements IOption {
 				value = element.getAttribute(IOption.DEFAULT_VALUE);
 				break;
 			case IOption.ENUMERATED:
-				try {
-					value = option.getSelectedEnum();
-				} catch (BuildException e) {
-					value = new String();
+				String temp = element.getAttribute(DEFAULT_VALUE);
+				if (temp == null) {
+					try {
+						temp = option.getSelectedEnum();
+					} catch (BuildException e) {
+						temp = new String();
+					}
 				}
+				value = temp;
 				break;
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:

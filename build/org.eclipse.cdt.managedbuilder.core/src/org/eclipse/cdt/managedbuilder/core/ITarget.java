@@ -25,6 +25,7 @@ public interface ITarget extends IBuildObject {
 	public static final String IS_ABSTRACT = "isAbstract";	//$NON-NLS-1$
 	public static final String IS_TEST = "isTest";	//$NON-NLS-1$
 	public static final String MAKE_COMMAND = "makeCommand";	//$NON-NLS-1$
+	public static final String OS_LIST = "osList";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 	
 	/**
@@ -35,7 +36,7 @@ public interface ITarget extends IBuildObject {
 	 * 
 	 * @param parent The <code>IConfiguration</code> to use as a settings template
 	 * @param id The unique id the new configuration will have
-	 * @return
+	 * @return IConfiguration
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id);
 
@@ -44,34 +45,35 @@ public interface ITarget extends IBuildObject {
 	 * the tools defined for that target and options set at their defaults.
 	 * 
 	 * @param id id for this configuration.
-	 * @return
+	 * @return IConfiguration
 	 */
 	public IConfiguration createConfiguration(String id);
 	
 	/**
 	 * Get the name of the final build artifact.
 	 * 
-	 * @return 
+	 * @return String
 	 */
 	public String getArtifactName();
 	
 	/**
 	 * Answers the unique ID of the binary parser associated with the target.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getBinaryParserId();
 	
 	/**
 	 * Answers the OS-specific command to remove files created by the build
 	 *  
-	 * @return
+	 * @return String
 	 */
 	public String getCleanCommand();
 
 	/**
 	 * Returns all of the configurations defined by this target.
-	 * @return
+	 * 
+	 * @return IConfiguration[]
 	 */
 	public IConfiguration[] getConfigurations();
 
@@ -79,14 +81,14 @@ public interface ITarget extends IBuildObject {
 	 * Get the default extension that should be applied to build artifacts
 	 * created by this target.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getDefaultExtension();	
 
 	/**
 	 * Answers the name of the make utility for the target.
 	 *  
-	 * @return
+	 * @return String
 	 */
 	public String getMakeCommand();
 
@@ -94,27 +96,36 @@ public interface ITarget extends IBuildObject {
 	 * Returns the configuration with the given id, or <code>null</code> if not found.
 	 * 
 	 * @param id
-	 * @return
+	 * @return IConfiguration
 	 */
 	public IConfiguration getConfiguration(String id);
 	
 	/**
 	 * Gets the resource that this target is applied to.
 	 * 
-	 * @return
+	 * @return IResource
 	 */
 	public IResource getOwner();
 
 	/**
-	 * @return the <code>ITarget</code> that is the parent of the receiver.
+	 * Answers the <code>ITarget</code> that is the parent of the receiver.
+	 * 
+	 * @return ITarget
 	 */
 	public ITarget getParent();
 	
 	/**
+	 * Answers an array of operating systems the target can be created on.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getTargetOSList();
+
+	/**
 	 * Returns the list of platform specific tools associated with this
 	 * platform.
 	 * 
-	 * @return
+	 * @return ITool[]
 	 */
 	public ITool[] getTools();
 
@@ -123,13 +134,13 @@ public interface ITarget extends IBuildObject {
 	 * Answers true if the receiver has a make command that differs from its 
 	 * parent specification.
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public boolean hasOverridenMakeCommand();
 	
 	/**
 	 * Returns whether this target is abstract.
-	 * @return 
+	 * @return boolean 
 	 */
 	public boolean isAbstract();
 	
@@ -138,7 +149,7 @@ public interface ITarget extends IBuildObject {
 	 * for testing purposes only, else <code>false</code>. A test target will 
 	 * not be shown in the UI but can still be manipulated programmatically.
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isTestTarget();
 
@@ -170,4 +181,5 @@ public interface ITarget extends IBuildObject {
 	 * @param command
 	 */
 	public void setMakeCommand(String command);
+
 }

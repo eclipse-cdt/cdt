@@ -1,3 +1,46 @@
+2003-09-25 Sean Evoy
+	This patch contains a lot of changes needed to implement fixes for 42648 and 
+	43122. 
+
+	For 42648, the schema for the the target had to be modified to include a 
+	comma-separated list of valid host platforms.
+	* schema/ManagedBuildTools.exsd
+	
+	The target had to be updated to properly read in and understand this info, and
+	the interface had to be updated to return a list to the clients in the UI. The 
+	target was also changed slightly. It now uses a safer accessor method to get at 
+	the list of tools it maintains. I have also stopped persisting non-variant info 
+	to the project file on serialize. There are elements of the target that are not 
+	subject to change by the user (yet) so they should not be saved.
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+	
+	For 43122, I started by simply adding a tool reference to the configurations. 
+	The tool reference had option references for debug and optimization levels. It 
+	should have worked, but the model was not handling the inheritance properly. The 
+	JUnit tests were not finding it because of how they were configured. It was most 
+	evident in the UI. So, the way configurations and tool reference search for 
+	overridden option references had to be modified. While I was in there, I cleaned 
+	up some of the accessor and iteration code in ToolReference and OptionReference.
+	
+	For the configuration, the only significant change was a new search method to 
+	find all option references for a given tool, no matter where they are stored. 
+	The method had to consider what was overridden in a child config, what was added by 
+	a child config, and what the parent (or parents) define.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java
+	
+	Option reference now pays attention to overidden values in the plugin file. Until 
+	now, it only handled the overrides in the project file.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java
+
+	The ToolReference now distinguishes between local option references which it 
+	manages directly, and option references held by tool references in the parent(s) 
+	of its owner. It only serializes its own references, but when asked for options 
+	relating to the tool it references, it replies with all option references in its 
+	hierarchy.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java
+	
+
 2003-09-24 Sean Evoy
 	Changed the implementor of IScannerInfo to answer only absolute paths when asked for 
 	includes paths. Users will specify the includes paths in the managed build UI in such a way

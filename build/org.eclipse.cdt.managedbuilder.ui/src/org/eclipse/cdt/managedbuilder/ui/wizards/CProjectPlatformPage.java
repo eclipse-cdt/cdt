@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -202,11 +204,15 @@ public class CProjectPlatformPage extends WizardPage {
 		// Get a list of platforms defined by plugins
 		ITarget[] allTargets = ManagedBuildManager.getDefinedTargets(null);
 		targets = new ArrayList();
+		String os = BootLoader.getOS();
 		// Add all of the concrete targets to the target list
 		for (int index = 0; index < allTargets.length; ++index) {
 			ITarget target = allTargets[index];
 			if (!target.isAbstract() && !target.isTestTarget()) {
-				targets.add(target);
+				List targetOSList = Arrays.asList(target.getTargetOSList());
+				if (targetOSList.contains(os)) {
+					targets.add(target);
+				}
 			}
 		}
 		targets.trimToSize();

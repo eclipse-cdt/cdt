@@ -394,6 +394,13 @@ Two additional types exist to flag options of special relevance to the build mod
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="osList" type="string">
+            <annotation>
+               <documentation>
+                  This field is used by the managed build system to decide when to show the user the target. The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, and &quot;solaris&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

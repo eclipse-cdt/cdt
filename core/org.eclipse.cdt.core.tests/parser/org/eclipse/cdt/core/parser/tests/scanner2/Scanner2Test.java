@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.parser.tests.scanner2;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 
 /**
  * @author jcamelon
@@ -1690,4 +1692,15 @@ public class Scanner2Test extends BaseScanner2Test
     	validateEOF();
 	}
 
+    public void testEmptyIncludeDirective() throws Exception
+	{
+    	QuickParseCallback qpc = new QuickParseCallback();
+    	initializeScanner( "#include \n#include <foo.h>\n", ParserMode.QUICK_PARSE, qpc ); //$NON-NLS-1$
+    	validateEOF();
+    	Iterator i = qpc.getInclusions();
+    	assertTrue( i.hasNext() );
+    	IASTInclusion inc = (IASTInclusion) i.next();
+    	assertFalse( i.hasNext() );
+    	assertEquals( inc.getName(), "foo.h"); //$NON-NLS-1$
+	}
 }

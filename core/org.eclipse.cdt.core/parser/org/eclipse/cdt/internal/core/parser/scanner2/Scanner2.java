@@ -1146,7 +1146,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	}		
 
 	private void handlePPInclude(int pos2, boolean next) {
-		char[] buffer = bufferStack[bufferStackPos];
+ 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
 		skipOverWhiteSpace();
@@ -1164,6 +1164,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		int nameLine= 0, startLine= 0, endLine = 0; 
 		char c = buffer[pos];
+		if( c == '\n') return;
 		if (c == '"') {
 			local = true;
 			int start = bufferPos[bufferStackPos] + 1;
@@ -1229,13 +1230,27 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 			if (expObject != null) {
 				--bufferPos[bufferStackPos];
+				char [] t = null;
 				if (expObject instanceof FunctionStyleMacro) 
 				{
-					filename = new String( handleFunctionStyleMacro((FunctionStyleMacro)expObject, false) );
+					t = handleFunctionStyleMacro((FunctionStyleMacro)expObject, false);
 				}
 				else if ( expObject instanceof ObjectStyleMacro )
 				{
-					filename = new String( ((ObjectStyleMacro)expObject).expansion );
+					t = ((ObjectStyleMacro)expObject).expansion;
+				}
+				if( t != null ) 
+				{
+					if( (t[ t.length - 1 ] ==  t[0] ) && ( t[0] == '\"') )
+					{
+						local = true;
+						filename = new String( t, 1, t.length - 2 );
+					}
+					else if( t[0] == '<' && t[t.length - 1] == '>' )
+					{
+						local = false;
+						filename = new String( t, 1, t.length - 2 );						
+					}
 				}
 			}
 		}

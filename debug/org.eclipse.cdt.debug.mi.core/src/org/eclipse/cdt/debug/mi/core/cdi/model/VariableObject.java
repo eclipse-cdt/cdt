@@ -18,7 +18,13 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	ICDIStackFrame frame;
 	int stackdepth;
 
-	public VariableObject(ICDITarget target, String n, ICDIStackFrame stack, int pos, int depth) {
+	public VariableObject(VariableObject obj, String n) {
+		this(obj.getTarget(), n, obj.getStackFrame(),
+			obj.getPosition(), obj.getStackDepth());
+	}
+
+	public VariableObject(ICDITarget target, String n, ICDIStackFrame stack,
+		int pos, int depth) {
 		super(target);
 		name = n;
 		frame = stack;

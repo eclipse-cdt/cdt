@@ -91,7 +91,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	int count;
 	
 	private ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
-	private final Map fileCache = new HashMap(100);
+	private final CharArrayObjectMap fileCache = new CharArrayObjectMap(100);
 	
 	// The context stack
 	private static final int bufferInitialSize = 8;
@@ -1497,12 +1497,13 @@ public class Scanner2 implements IScanner, IScannerData {
 				{
 					String absolutePath = parentFile.getAbsolutePath();
 					String finalPath = ScannerUtility.createReconciledPath( absolutePath, filename );
-					reader = (CodeReader)fileCache.get(finalPath);
-					if (reader == null)
+					reader = (CodeReader)fileCache.get(finalPath.toCharArray());
+					if (reader == null){
 						reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
-					if (reader != null) {
-						if (reader.filename != null)
+						if (reader != null && reader.filename != null) 
 							fileCache.put(reader.filename, reader);
+					}
+					if (reader != null) {
 						if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 						IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 						pushContext(reader.buffer, new InclusionData( reader, inclusion ));
@@ -1524,12 +1525,13 @@ public class Scanner2 implements IScanner, IScannerData {
 							continue;
 						}
 					} else {
-						reader = (CodeReader)fileCache.get(finalPath);
-						if (reader == null)
+						reader = (CodeReader)fileCache.get(finalPath.toCharArray());
+						if (reader == null){
 							reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
-						if (reader != null) {
-							if (reader.filename != null)
+							if (reader != null && reader.filename != null)
 								fileCache.put(reader.filename, reader);
+						}
+						if (reader != null) {
 							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 							IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 							pushContext(reader.buffer, new InclusionData( reader, inclusion ));

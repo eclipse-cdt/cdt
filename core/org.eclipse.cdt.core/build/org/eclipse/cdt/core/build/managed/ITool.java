@@ -15,15 +15,16 @@ package org.eclipse.cdt.core.build.managed;
  */
 public interface ITool extends IBuildObject {
 	// Schema element names
-	public static final String COMMAND = "command";
-	public static final String OPTION = "option";
-	public static final String OPTION_CAT = "optionCategory";
-	public static final String OPTION_REF = "optionReference";
-	public static final String OUTPUT_FLAG = "outputFlag";
-	public static final String OUTPUT_PREFIX = "outputPrefix";
-	public static final String OUTPUTS = "outputs";
-	public static final String SOURCES = "sources";
-	public static final String WHITE_SPACE = " ";
+	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
+	public static final String COMMAND = "command";	//$NON-NLS-1$
+	public static final String OPTION = "option";	//$NON-NLS-1$
+	public static final String OPTION_CAT = "optionCategory";	//$NON-NLS-1$
+	public static final String OPTION_REF = "optionReference";	//$NON-NLS-1$
+	public static final String OUTPUT_FLAG = "outputFlag";	//$NON-NLS-1$
+	public static final String OUTPUT_PREFIX = "outputPrefix";	//$NON-NLS-1$
+	public static final String OUTPUTS = "outputs";	//$NON-NLS-1$
+	public static final String SOURCES = "sources";	//$NON-NLS-1$
+	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 
 	/**
 	 * Return <code>true</code> if the receiver builds files with the

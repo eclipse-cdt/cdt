@@ -64,6 +64,7 @@ public class ManagedBuildTests extends TestCase {
 		suite.addTest(new ManagedBuildTests("testExtensions"));
 		suite.addTest(new ManagedBuildTests("testProjectCreation"));
 		suite.addTest(new ManagedBuildTests("testConfigurations"));
+		suite.addTest(new ManagedBuildTests("testConfigurationReset"));
 		suite.addTest(new ManagedBuildTests("testTargetArtifacts"));
 		suite.addTest(new ManagedBuildTests("testScannerInfoInterface"));
 		suite.addTest(new ManagedBuildTests("cleanup"));
@@ -264,6 +265,39 @@ public class ManagedBuildTests extends TestCase {
 
 		// Test the values in the new configuration
 		checkOptionReferences(project);
+	}
+	
+	public void testConfigurationReset() {
+		// Open the test project
+		IProject project = null;
+		try {
+			project = createProject(projectName);
+		} catch (CoreException e) {
+			fail("Failed to open project: " + e.getLocalizedMessage());
+		}
+
+		// Get the default configuration
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		assertNotNull(info);
+		ITarget defaultTarget = info.getDefaultTarget();
+		assertNotNull(defaultTarget);
+		IConfiguration defaultConfig = info.getDefaultConfiguration(defaultTarget);
+		assertNotNull(defaultConfig);
+		
+		// See if it still contains the overridden values (see testProjectCreation())
+		try {
+			checkRootTarget(defaultTarget, "z");
+		} catch (BuildException e1) {
+			fail("Overridden root target check failed: " + e1.getLocalizedMessage());
+		}
+		
+		// Reset the config and retest
+		ManagedBuildManager.resetConfiguration(project, defaultConfig);
+		try {
+			checkRootTarget(defaultTarget, "x");
+		} catch (BuildException e2) {
+			fail("Reset root target check failed: " + e2.getLocalizedMessage());
+		}
 	}
 	
 	/**

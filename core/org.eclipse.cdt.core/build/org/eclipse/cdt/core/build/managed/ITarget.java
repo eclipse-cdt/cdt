@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
  * is some type of resource built using a given collection of tools.
  */
 public interface ITarget extends IBuildObject {
+	public static final String TARGET_ELEMENT_NAME = "target";	//$NON-NLS-1$
 
 	/**
 	 * Creates a configuration for the target populated with the tools and

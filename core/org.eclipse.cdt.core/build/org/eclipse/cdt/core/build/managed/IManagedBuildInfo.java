@@ -52,6 +52,14 @@ public interface IManagedBuildInfo {
 	 * @return
 	 */
 	public String getConfigurationName();
+	
+	/**
+	 * Answers a <code>String</code> array containing the names of all the configurations
+	 * defined for the project's current target.
+	 *  
+	 * @return
+	 */
+	public String[] getConfigurationNames();
 
 	/**
 	 * Get the default configuration associated with the receiver

@@ -14,8 +14,9 @@ import org.eclipse.core.resources.IResource;
 
 public interface IConfiguration extends IBuildObject {
 	// Schema element names
-	public static final String TOOL_REF = "toolReference";
-	public static final String PARENT = "parent";
+	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
+	public static final String TOOL_REF = "toolReference";	//$NON-NLS-1$
+	public static final String PARENT = "parent";	//$NON-NLS-1$
 
 	/**
 	 * Returns the target for this configuration.
@@ -29,6 +30,13 @@ public interface IConfiguration extends IBuildObject {
 	 * @return
 	 */
 	public IResource getOwner();
+	
+	/**
+	 * Answers the configuration that the receiver is based on. 
+	 * 
+	 * @return
+	 */
+	public IConfiguration getParent();
 	
 	/**
 	 * Returns the tools that are used in this configuration.

@@ -134,6 +134,19 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getConfigurationNames()
+	 */
+	public String[] getConfigurationNames() {
+		ArrayList configNames = new ArrayList();
+		IConfiguration[] configs = getDefaultTarget().getConfigurations();
+		for (int i = 0; i < configs.length; i++) {
+			IConfiguration configuration = configs[i];
+			configNames.add(configuration.getName());
+		}
+		return (String[])configNames.toArray(new String[configNames.size()]);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getDefaultConfiguration()
 	 */
 	public IConfiguration getDefaultConfiguration(ITarget target) {

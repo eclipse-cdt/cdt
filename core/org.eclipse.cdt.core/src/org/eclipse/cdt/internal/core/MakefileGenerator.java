@@ -29,6 +29,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IResourceStatus;
@@ -69,11 +71,13 @@ public class MakefileGenerator {
 
 	// Local variables needed by generator
 	protected IManagedBuildInfo info;
-	protected List moduleList;
+	protected List modifiedList;
 	protected IProgressMonitor monitor;
+	protected List subdirList;
 	protected IProject project;
 	protected List ruleList;
 	protected IPath topBuildDir;
+	protected boolean shouldRunBuild;
 	
 	/**
 	 * This class is used to recursively walk the project and determine which
@@ -107,7 +111,9 @@ public class MakefileGenerator {
 				IResource resource = proxy.requestResource();
 				String ext = resource.getFileExtension();
 				if (info.buildsFileType(ext)) {
-					generator.appendModule(resource);
+					if (!generator.isGeneratedResource(resource)) {
+						generator.appendBuildSubdirectory(resource);
+					}
 				}
 				return false;
 			}
@@ -118,6 +124,77 @@ public class MakefileGenerator {
 
 	}
 
+	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
+		private MakefileGenerator generator;
+		private IManagedBuildInfo info;
+
+		/**
+		 * 
+		 */
+		public ResourceDeltaVisitor(MakefileGenerator generator, IManagedBuildInfo info) {
+			this.generator = generator;
+			this.info = info;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			// Should the visitor keep iterating in current directory 
+			boolean keepLooking = false;
+			IResource resource = delta.getResource();
+			
+			// What kind of resource change has occurred
+			if (resource.getType() == IResource.FILE) {
+				String ext = resource.getFileExtension();
+				switch (delta.getKind()) {
+					case IResourceDelta.ADDED:
+					case IResourceDelta.REMOVED:
+						// Add the container of the resource and any resources that depend on it
+						if (info.buildsFileType(ext)) {
+							if (!generator.isGeneratedResource(resource)) {
+								// Here's the container
+								generator.appendModifiedSubdirectory(resource);
+								// and all the dependents
+								DependencyManager depMgr = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
+								List deps = depMgr.getProjectDependsForFile(resource.getLocation().toOSString());
+								if (deps != null) {
+									ListIterator iter = deps.listIterator();
+									while (iter.hasNext()) {
+										generator.appendModifiedSubdirectory(resource);
+									}
+								}
+								// A build should run						
+								generator.shouldRunBuild(true);
+							}
+						}
+						break;
+					case IResourceDelta.CHANGED:
+						if (info.buildsFileType(ext)) {
+							switch (delta.getFlags()) {
+								case IResourceDelta.CONTENT:
+									// If the contents changed then just do a build
+									generator.shouldRunBuild(true);
+									keepLooking = true;
+								default:
+									keepLooking = true;
+							}							
+						}
+						break;
+					default:
+						keepLooking = true;
+						break;
+				}
+			} else {
+				// If the resource is part of the generated directory structure don't recurse
+				if (!generator.isGeneratedResource(resource)) {
+					keepLooking = true;
+				}
+			}
+			return keepLooking;
+		}
+	}	
+
 	public MakefileGenerator(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
 		super();
 		// Save the project so we can get path and member information
@@ -126,9 +203,12 @@ public class MakefileGenerator {
 		this.monitor = monitor;
 		// Get the build info for the project
 		this.info = info;
+		// By default a build never runs
+		shouldRunBuild = false;
 	}
 
-	/**
+	/* (non-javadoc)
+	 * 
 	 * @param module
 	 * @return
 	 */
@@ -184,7 +264,7 @@ public class MakefileGenerator {
 		return buffer;
 	}
 
-	/**
+	/* (non-javadoc)
 	 * @param buffer
 	 * @param info
 	 */
@@ -202,13 +282,13 @@ public class MakefileGenerator {
 		buffer.append("C_SRCS := " + NEWLINE);
 		buffer.append("CC_SRCS := " + NEWLINE + NEWLINE);
 		
-		// Add the libraries this project dependes on
+		// Add the libraries this project depends on
 		buffer.append("LIBS := ");
 		buffer.append(NEWLINE + NEWLINE);
 		return buffer;
 	}
 
-	/**
+	/* (non-javadoc)
 	 * @return
 	 */
 	protected StringBuffer addModules() {
@@ -216,16 +296,21 @@ public class MakefileGenerator {
 		// Add the comment
 		buffer.append(CCorePlugin.getResourceString(MOD_LIST) + NEWLINE);
 		buffer.append("MODULES := " + LINEBREAK + NEWLINE);
-		buffer.append("." + LINEBREAK + NEWLINE);
 		
 		// Get all the module names
-		ListIterator iter = getModuleList().listIterator();
+		ListIterator iter = getSubdirList().listIterator();
 		while (iter.hasNext()) {
 			IContainer container = (IContainer) iter.next();
-			IPath path = container.getProjectRelativePath();
-			buffer.append(path.toString() +  WHITESPACE + LINEBREAK + NEWLINE);
+			// Check the special case where the module is the project root
+			if (container.getFullPath() == project.getFullPath()) {
+				buffer.append("." +  WHITESPACE + LINEBREAK + NEWLINE);
+			} else {
+				IPath path = container.getProjectRelativePath();
+				buffer.append(path.toString() +  WHITESPACE + LINEBREAK + NEWLINE);
+			}
 		}
 
+		// Now add the makefile instruction to include all the subdirectory makefile fragments
 		buffer.append(NEWLINE);
 		buffer.append(CCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
 		buffer.append("include ${patsubst %, %/module.mk, $(MODULES)}" + NEWLINE);
@@ -235,7 +320,7 @@ public class MakefileGenerator {
 	}
 
 
-	/**
+	/* (non-javadoc)
 	 * Answers a <code>StringBuffer</code> containing all of the sources contributed by
 	 * a container to the build.
 	 * @param module
@@ -282,7 +367,7 @@ public class MakefileGenerator {
 		return buffer;
 	}
 
-	/**
+	/* (non-javadoc)
 	 * Answers a <code>StrinBuffer</code> containing all of the required targets to
 	 * properly build the project.
 	 */
@@ -398,26 +483,36 @@ public class MakefileGenerator {
 	}
 	
 	/**
+	 * Adds the container of the argument to the list of folders in the project that
+	 * contribute source files to the build. The resource visitor has already established 
+	 * that the build model knows how to build the files. It has also checked that
+	 * the resouce is not generated as part of the build.
+	 *  
 	 * @param resource
 	 */
-	public void appendModule(IResource resource) {
-		// The build model knows how to build this file
+	public void appendBuildSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
-
-		// But is this a generated directory ...
-		IPath root = new Path(info.getConfigurationName());
-		IPath path = container.getProjectRelativePath();
-		if (root.isPrefixOf(path)) {
-			return;
+		if (!getSubdirList().contains(container)) {
+			getSubdirList().add(container);		
 		}
-
-		if (!getModuleList().contains(container)) {
-			getModuleList().add(container);		
+	}
+	
+	/**
+	 * Adds the container of the argument to a list of subdirectories that are part 
+	 * of an incremental rebuild of the project. The makefile fragments for these 
+	 * directories will be regenerated as a result of the build.
+	 * 
+	 * @param resource
+	 */
+	public void appendModifiedSubdirectory(IResource resource) {
+		IContainer container = resource.getParent();
+		if (!getModifiedList().contains(container)) {
+			getModifiedList().add(container);		
 		}
 	}
 
 	/**
-	 * Check whether the build has been canceled. Cancellation requests 
+	 * Check whether the build has been cancelled. Cancellation requests 
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
 	 * 
 	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
@@ -428,17 +523,93 @@ public class MakefileGenerator {
 		}
 	}
 
+
 	/**
-	 * @return
+	 * Clients call this method when an incremental rebuild is required. The argument
+	 * contains a set of resource deltas that will be used to determine which 
+	 * subdirectories need a new makefile and dependency list (if any). 
+	 * 
+	 * @param delta
+	 * @throws CoreException
 	 */
-	private List getModuleList() {
-		if (moduleList == null) {
-			moduleList = new ArrayList();
+	public void generateMakefiles(IResourceDelta delta) throws CoreException {
+		/*
+		 * Let's do a sanity check right now. This is an incremental build, so if the top-level directory is not there, then
+		 * a rebuild is needed anyway.
+		 */
+		IFolder folder = project.getFolder(info.getConfigurationName());
+		if (!folder.exists()) {
+			regenerateMakefiles();
+			shouldRunBuild(true);
+			return;
 		}
-		return moduleList;
+
+		// Visit the resources in the delta and compile a list of subdirectories to regenerate
+		ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(this, info);
+		delta.accept(visitor);
+		// There may be nothing to regenerate and no content changes that require a rebuild 
+		if (getModifiedList().isEmpty() && !shouldRunBuild()) {
+			// There is nothing to build
+			IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR, "", null);
+			throw new CoreException(status);
+		}
+
+		// See if the user has cancelled the build
+		checkCancel();
+	
+		// The top-level makefile needs this information
+		ResourceProxyVisitor resourceVisitor = new ResourceProxyVisitor(this, info);
+		project.accept(resourceVisitor, IResource.NONE);
+		if (getSubdirList().isEmpty()) {
+			// There is nothing to build (but we should never throw this exception)
+			IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR, "", null);
+			throw new CoreException(status);
+		}
+		checkCancel();
+
+		// Regenerate any fragments that are missing for the exisiting directories NOT modified
+		Iterator iter = getSubdirList().listIterator();
+		while (iter.hasNext()) {
+			IContainer subdirectory = (IContainer)iter.next();
+			if (!getModifiedList().contains(subdirectory)) {
+				// Make sure a fragment makefile and dependency file exist
+				IFile makeFragment = project.getFile(subdirectory.getFullPath().addTrailingSeparator().append(MODFILE_NAME));
+				IFile depFragment = project.getFile(subdirectory.getFullPath().addTrailingSeparator().append(DEPFILE_NAME));
+				if (!makeFragment.exists() || !depFragment.exists()) {
+					// If one or both are missing, then add it to the list to be generated
+					getModifiedList().add(subdirectory);
+				}
+			}
+		}
+
+		// Re-create the top-level makefile
+		topBuildDir = createDirectory(info.getConfigurationName());
+		IPath makefilePath = topBuildDir.addTrailingSeparator().append(MAKEFILE_NAME);
+		IFile makefileHandle = createFile(makefilePath);
+		populateTopMakefile(makefileHandle);
+		checkCancel();
+		
+		// Regenerate any fragments for modified directories
+		iter = getModifiedList().listIterator();
+		while (iter.hasNext()) {
+			populateFragmentMakefile((IContainer) iter.next());
+			checkCancel();
+		}
 	}
 	
-	/**
+	/* (non-javadoc)
+	 * @return
+	 */
+	private List getModifiedList() {
+		if (modifiedList == null) {
+			modifiedList = new ArrayList();
+		}
+		return modifiedList;
+	}
+
+	/* (non-javadoc)
+	 * Answers the list of known build rules. This keeps me from generating duplicate
+	 * rules for known file extensions.
 	 * 
 	 */
 	private List getRuleList() {
@@ -448,7 +619,18 @@ public class MakefileGenerator {
 		return ruleList;
 	}
 
-	/**
+	/* (non-javadoc)
+	 * Answers the list of subdirectories contributing source code to the build
+	 * @return
+	 */
+	private List getSubdirList() {
+		if (subdirList == null) {
+			subdirList = new ArrayList();
+		}
+		return subdirList;
+	}
+
+	/* (non-javadoc)
 	 * @param string
 	 * @return
 	 */
@@ -481,7 +663,7 @@ public class MakefileGenerator {
 		return folder.getFullPath();
 	}
 
-	/**
+	/* (non-javadoc)
 	 * @param makefilePath
 	 * @param monitor
 	 * @return
@@ -505,7 +687,7 @@ public class MakefileGenerator {
 			else
 				throw e;
 		}
-		// TODO handle long running file operation
+
 		return newFile;
 	}
 
@@ -520,13 +702,32 @@ public class MakefileGenerator {
 	}
 
 	/**
+	 * Answers <code>true</code> if the argument is found in a generated container 
+	 * @param resource
+	 * @return
+	 */
+	public boolean isGeneratedResource(IResource resource) {
+		// Is this a generated directory ...
+		IPath path = resource.getProjectRelativePath();
+		String[] configNames = info.getConfigurationNames();
+		for (int i = 0; i < configNames.length; i++) {
+			String name = configNames[i];
+			IPath root = new Path(name);
+			// It is if it is a root of the resource pathname
+			if (root.isPrefixOf(path)) return true;
+		}
+		
+		return false;
+	}
+
+	/* (non-javadoc)
 	 * Create the entire contents of the makefile.
 	 * 
 	 * @param fileHandle The file to place the contents in.
 	 * @param info
 	 * @param monitor
 	 */
-	protected void populateMakefile(IFile fileHandle) {
+	protected void populateTopMakefile(IFile fileHandle) {
 		StringBuffer buffer = new StringBuffer();
 		
 		// Add the macro definitions
@@ -541,16 +742,16 @@ public class MakefileGenerator {
 		// Save the file
 		try {
 			Util.save(buffer, fileHandle);
-		} catch (CoreException e1) {
+		} catch (CoreException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
-	/**
+	/* (non-javadoc)
 	 * @param module
 	 */
-	protected void populateModMakefile(IContainer module) throws CoreException {
+	protected void populateFragmentMakefile(IContainer module) throws CoreException {
 		// Calcualte the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		IPath buildRoot = getTopBuildDir().removeFirstSegments(1);
@@ -578,11 +779,14 @@ public class MakefileGenerator {
 	}
 
 
+	/**
+	 * @throws CoreException
+	 */
 	public void regenerateMakefiles() throws CoreException {
 		// Visit the resources in the project
 		ResourceProxyVisitor visitor = new ResourceProxyVisitor(this, info);
 		project.accept(visitor, IResource.NONE);
-		if (getModuleList().isEmpty()) {
+		if (getSubdirList().isEmpty()) {
 			// There is nothing to build
 			IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR, "", null);
 			throw new CoreException(status);
@@ -599,15 +803,33 @@ public class MakefileGenerator {
 		IFile makefileHandle = createFile(makefilePath);
 		
 		// Populate the makefile
-		populateMakefile(makefileHandle);
+		populateTopMakefile(makefileHandle);
 		checkCancel();
 		
 		// Now populate the module makefiles
-		ListIterator iter = getModuleList().listIterator();
+		ListIterator iter = getSubdirList().listIterator();
 		while (iter.hasNext()) {
-			populateModMakefile((IContainer)iter.next());
+			populateFragmentMakefile((IContainer)iter.next());
 			checkCancel();
 		}
+	}
+	/**
+	 * Answers whether a build is required after the makefiles have been 
+	 * generated.
+	 * 
+	 * @return
+	 */
+	public boolean shouldRunBuild() {
+		return shouldRunBuild;
+	}
+
+	/**
+	 * Sets the build flag to the value of the argument.
+	 * 
+	 * @param b
+	 */
+	public void shouldRunBuild(boolean b) {
+		shouldRunBuild = b;
 	}
 
 }

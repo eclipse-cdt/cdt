@@ -31,6 +31,7 @@ import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.*;
+import org.eclipse.cdt.internal.core.build.managed.Configuration;
 import org.eclipse.cdt.internal.core.build.managed.ManagedBuildInfo;
 import org.eclipse.cdt.internal.core.build.managed.Target;
 import org.eclipse.core.resources.IFile;
@@ -52,11 +53,12 @@ import org.w3c.dom.Node;
 public class ManagedBuildManager extends AbstractCExtension implements IScannerInfoProvider {
 
 	private static final QualifiedName buildInfoProperty = new QualifiedName(CCorePlugin.PLUGIN_ID, "managedBuildInfo");
-	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";
-	private static final String FILE_NAME = ".cdtbuild";
+	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
+	private static final String FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	public static final String INTERFACE_IDENTITY = CCorePlugin.PLUGIN_ID + "." + "ManagedBuildManager";
-
+	public static final String INTERFACE_IDENTITY = CCorePlugin.PLUGIN_ID + "." + "ManagedBuildManager";	//$NON-NLS-1$
+	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";		//$NON-NLS-1$
+	
 	// Targets defined by extensions (i.e., not associated with a resource)
 	private static boolean extensionTargetsLoaded = false;
 	private static List extensionTargets;
@@ -311,10 +313,54 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 
+	/**
+	 * @param resource
+	 */
 	public static void removeBuildInfo(IResource resource) {
 		try {
 			resource.setSessionProperty(buildInfoProperty, null);
 		} catch (CoreException e) {
+		}
+	}
+
+	/**
+	 * Resets the build information for the project and configuration specified in the arguments. 
+	 * The build information will contain the settings defined in the plugin manifest. 
+	 * 
+	 * @param project
+	 * @param configuration
+	 */
+	public static void resetConfiguration(IProject project, IConfiguration configuration) {
+		// Make sure the extensions are loaded
+		loadExtensions();
+
+		// Find out the parent of the configuration
+		IConfiguration parentConfig = configuration.getParent();
+		// Find the parent target the configuration 
+		ITarget parentTarget = parentConfig.getTarget();
+
+		// Get the extension point information		
+		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_ID);
+		IExtension[] extensions = extensionPoint.getExtensions();
+		for (int i = 0; i < extensions.length; ++i) {
+			IExtension extension = extensions[i];
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (int j = 0; j < elements.length; ++j) {
+				IConfigurationElement element = elements[j];
+				if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME) && 
+					element.getAttribute(ITarget.ID).equals(parentTarget.getId())) {
+					// We have the parent target so get the definition for the parent config
+					IConfigurationElement[] targetElements = element.getChildren();
+					for (int k = 0; k < targetElements.length; ++k) {
+						IConfigurationElement targetElement = targetElements[k];
+						if (targetElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME) && 
+							targetElement.getAttribute(IConfiguration.ID).equals(parentConfig.getId())) {
+							// We now have the plugin element the target was originally based on
+							((Configuration)configuration).reset(targetElement);							 
+						}
+					}
+				}
+			}
 		}
 	}
 	
@@ -356,14 +402,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return;
 		extensionTargetsLoaded = true;
 
-		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
+		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (int j = 0; j < elements.length; ++j) {
 				IConfigurationElement element = elements[j];
-				if (element.getName().equals("target")) {
+				if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
 					new Target(element);
 				}
 			}
@@ -516,4 +562,5 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			map.put(project, list);
 		}
 	}
+
 }

@@ -147,13 +147,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (parent != null)
 			element.setAttribute(IConfiguration.PARENT, parent.getId());
 		
-		if (toolReferences != null)
-			for (int i = 0; i < toolReferences.size(); ++i) {
-				ToolReference toolRef = (ToolReference)toolReferences.get(i);
-				Element toolRefElement = doc.createElement(IConfiguration.TOOL_REF);
-				element.appendChild(toolRefElement);
-				toolRef.serialize(doc, toolRefElement);
-			}
+		for (int i = 0; i < getToolReferences().size(); ++i) {
+			ToolReference toolRef = (ToolReference)getToolReferences().get(i);
+			Element toolRefElement = doc.createElement(IConfiguration.TOOL_REF);
+			element.appendChild(toolRefElement);
+			toolRef.serialize(doc, toolRefElement);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -161,6 +160,16 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
+	}
+
+	/*
+	 * @return
+	 */
+	private List getToolReferences() {
+		if (toolReferences == null) {
+			toolReferences = new ArrayList();
+		}
+		return toolReferences;
 	}
 
 	/* (non-Javadoc)
@@ -179,6 +188,21 @@ public class Configuration extends BuildObject implements IConfiguration {
 		}
 		
 		return tools;
+	}
+
+	/**
+	 * @param targetElement
+	 */
+	public void reset(IConfigurationElement element) {
+		// I just need to reset the tool references
+		getToolReferences().clear();
+		IConfigurationElement[] configElements = element.getChildren();
+		for (int l = 0; l < configElements.length; ++l) {
+			IConfigurationElement configElement = configElements[l];
+			if (configElement.getName().equals(IConfiguration.TOOL_REF)) {
+				new ToolReference(this, configElement);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -209,19 +233,16 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return
 	 */
 	private ToolReference getToolReference(ITool tool) {
-		if (toolReferences != null)
-			for (int i = 0; i < toolReferences.size(); ++i) {
-				ToolReference toolRef = (ToolReference)toolReferences.get(i);
-				if (toolRef.references(tool))
-					return toolRef;
-			}
+		for (int i = 0; i < getToolReferences().size(); ++i) {
+			ToolReference toolRef = (ToolReference)getToolReferences().get(i);
+			if (toolRef.references(tool))
+				return toolRef;
+		}
 		return null;
 	}
 	
 	public void addToolReference(ToolReference toolRef) {
-		if (toolReferences == null)
-			toolReferences = new ArrayList();
-		toolReferences.add(toolRef);
+		getToolReferences().add(toolRef);
 	}
 	
 	public OptionReference createOptionReference(IOption option) {
@@ -293,4 +314,6 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(!Arrays.equals(value, oldValue))
 			createOptionReference(option).setValue(value);
 	}
+
+
 }

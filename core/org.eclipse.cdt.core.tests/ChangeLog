@@ -1,3 +1,9 @@
+2003-09-10 Sean Evoy
+	Added a test for resetting the value of a configuration to the defaults defined in the 
+	plugin file. Work completed to resolve [Bug 41412] Restore Default in Managed Build 
+	project's settings Not Working.
+	* build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
+
 2003-09-09 Hoda Amer
 	Moved three failed tests (bugs #42822, #42823, & #42822B)
 	from FailedCompleteParseASTExpressionTest to CompleteParseASTExpressionTest 

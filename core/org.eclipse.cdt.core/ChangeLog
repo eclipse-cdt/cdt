@@ -1,3 +1,34 @@
+2003-09-10 Sean Evoy
+	Work completed to resolve [Bug 41412] "Restore Default in Managed Build project's 
+	settings Not Working". The configuration now has a reset method that removes 
+	any user settings and replaces them with the values defined in the plugin 
+	manifest. The Configuration class also has a new, safe accessor for getting 
+	at the defined tool references. Replaced all the checks for null with the accessor. 
+	Added some string constants to the IConfiguration and ITarget interfaces 
+	so manifest element lookup will be easier to maintain should the element names change. 
+	Switched the Target class to use the new string constants during element lookup. 
+	Added back a method in IConfiguration to lookup the parent configuration (which is the 
+	plugin element I need to do the reset). 
+	* build/org/eclipse/cdt/internal/core/build/managed/Configuration.java
+	* build/org/eclipse/cdt/core/build/managed/IConfiguration.java
+	* build/org/eclipse/cdt/core/build/managed/ITarget.java
+	* build/org/eclipse/cdt/core/build/managed/ITool.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Target.java
+	
+	Work to resolve [Bug 42735] "Manage Make will try to generate makefile for Release or 
+	Debug directory". Added a new method to return all the configuration names so 
+	the generator will know that the directory <project_root>/<config_name> should be ignored.
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java
+	* build/org/eclipse/cdt/core/build/managed/IManagedBuildInfo.java
+
+	Work to partially implement incremental build. New incremental build logic in the 
+	incrementalBuild() method in the GeneratedMakefileBuilder class. It now calls a 
+	specialized method in the makefile generator that calculates and generates the
+	needed makefiles and fragments. It then calls build if there are any changes worthy
+	of a build.
+	* src/org/eclipse/cdt/internal/core/GeneratedMakefileBuilder.java
+	* src/org/eclipse/cdt/internal/core/MakefileGenerator.java
+
 2003-09-05 Bogdan Gheorghe
 
 	Hooked in the dependency checking on file changes in Delta

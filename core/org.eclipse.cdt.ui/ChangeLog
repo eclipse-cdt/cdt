@@ -1,3 +1,11 @@
+2003-09-10 Sean Evoy
+	Work completed to resolve [Bug 41412] Restore Default in Managed Build 
+	project's settings Not Working. Added an event handler to reset the selected 
+	configuration settings back to the defaults defined in the plugin manifest.
+	Work to resolve [Bug 42736] New: C/C++ Build Settings not remembering Configuration.
+	Used the managed build info to get the current config for the target.
+	* build/org/eclipse/cdt/ui/build/properties/BuildPropertyPage.java
+	
 2003-09-08 Bogdan Gheorghe
 	- Changed search pop up menu in CEditor and CContentOutlinePage
 

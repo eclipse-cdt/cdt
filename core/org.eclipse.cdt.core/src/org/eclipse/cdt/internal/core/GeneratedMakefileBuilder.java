@@ -64,18 +64,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 	
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
-		boolean bContinue;
+		private boolean buildNeeded = false;
 
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
+			// If the project has changed, then a build is needed and we can stop
 			if (resource != null && resource.getProject() == getProject()) {
-				bContinue = true;
+				buildNeeded = true;
 				return false;
 			}
+
 			return true;
 		}
+
 		public boolean shouldBuild() {
-			return bContinue;
+			return buildNeeded;
 		}
 	}
 
@@ -255,10 +258,27 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 		statusMsg = CCorePlugin.getFormattedString(INCREMENTAL, currentProject.getName());
 		monitor.subTask(statusMsg);
-
+		
+		// Ask the makefile generator to generate any makefiles needed to build delta
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
-		IPath buildDir = new Path(info.getConfigurationName());
-		invokeMake(false, buildDir, info, monitor);
+		MakefileGenerator generator = new MakefileGenerator(currentProject, info, monitor);
+		try {
+			generator.generateMakefiles(delta);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR) {
+				// There is nothing to build so bail
+				monitor.worked(1);
+				return;		
+			} else {
+				throw e;
+			}
+		}	
+
+		// Run the build if there is any relevant change
+		if (generator.shouldRunBuild()) {
+			IPath buildDir = new Path(info.getConfigurationName());
+			invokeMake(false, buildDir, info, monitor);
+		}
 		
 		monitor.worked(1);		
 	}

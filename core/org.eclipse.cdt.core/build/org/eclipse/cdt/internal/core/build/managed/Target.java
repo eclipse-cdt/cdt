@@ -132,9 +132,9 @@ public class Target extends BuildObject implements ITarget {
 		IConfigurationElement[] targetElements = element.getChildren();
 		for (int k = 0; k < targetElements.length; ++k) {
 			IConfigurationElement targetElement = targetElements[k];
-			if (targetElement.getName().equals("tool")) {
+			if (targetElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
 				new Tool(this, targetElement);
-			} else if (targetElement.getName().equals("configuration")) {
+			} else if (targetElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 				new Configuration(this, targetElement);
 			}
 		}
@@ -186,7 +186,7 @@ public class Target extends BuildObject implements ITarget {
 	
 		Node child = element.getFirstChild();
 		while (child != null) {
-			if (child.getNodeName().equals("configuration")) {
+			if (child.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 				new Configuration(this, (Element)child);
 			}
 			child = child.getNextSibling();

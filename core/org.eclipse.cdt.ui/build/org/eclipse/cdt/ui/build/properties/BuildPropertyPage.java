@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
@@ -276,7 +277,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 */
 	private void displayOptionsForCategory(IOptionCategory category) {
 		// Do nothing if the selected category is is unchanged
-		if (selectedCategory == category) {
+		if (category == selectedCategory) {
 			return;
 		}
 		selectedCategory = category;
@@ -451,13 +452,38 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		populateConfigurations();		
 	}
 
-	/**
+	/* 
+	 *  (non-javadoc)
 	 * Initialize the relative weights (widths) of the 2 sides of the sash.
 	 */
 	protected void initializeSashForm() {
 		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 	}
 
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		// Empty the page list
+		List pages = getPagesForConfig();
+		pages.clear();
+		
+		// Get the build manager to reset build info for project
+		ManagedBuildManager.resetConfiguration(getProject(), getSelectedConfiguration());
+		
+		// Recreate the settings store for the configuration
+		settingsStore = new BuildToolsSettingsStore(getSelectedConfiguration());
+
+		// Reset the category selection and run selection event handler
+		selectedCategory = null;
+		handleOptionSelection();
+	}
+
+	/* 
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
 	public boolean performOk() {
 		// Force each settings page to update
 		List pages = getPagesForConfig();
@@ -485,7 +511,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		configSelector.setItems(getConfigurationNames());
 		
 		// Make sure the active configuration is selected
-		configSelector.select(0);
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		IConfiguration defaultConfig = info.getDefaultConfiguration(selectedTarget);
+		int index = configSelector.indexOf(defaultConfig.getName());
+		configSelector.select(index == -1 ? 0 : index);
 		handleConfigSelection();
 	}
 	

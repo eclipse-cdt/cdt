@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
+
+     <topic label="Tutorial" href="getting_started/cdt_o_tutorial.htm">
+          <topic label="Creating your project" href="getting_started/cdt_w_newproj.htm"/>
+          <topic label="Creating your C++ file" href="getting_started/cdt_w_newcpp.htm"/>
+          <topic label="Creating your makefile" href="getting_started/cdt_w_newmake.htm"/>
+          <topic label="Building your project" href="getting_started/cdt_w_build.htm"/>
+          <topic label="Debugging your project" href="getting_started/cdt_w_debug.htm"/>
+     </topic>     
+</toc>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
+
+    <topic label="Concepts" href="concepts/cdt_o_concepts.htm">
+          <topic label="What's new" href="concepts/cdt_c_whatsnew.htm"/>
+          <topic label="CDT overview" href="concepts/cdt_c_over_cdt.htm"/>
+          <topic label="How to bring C/C++ source files into Eclipse" href="concepts/cdt_w_existing_code.htm"/>
+          <topic label="CDT Projects" href="concepts/cdt_o_projects.htm">
+               <topic label="CDT projects" href="concepts/cdt_c_projects.htm"/>
+               <topic label="Project file views" href="concepts/cdt_c_proj_file_views.htm"/>
+          </topic>
+          <topic label="Coding aids" href="concepts/cdt_o_code_entry.htm">
+               <topic label="Outline view" href="concepts/cdt_c_outlineview.htm"/>
+               <topic label="Comments" href="concepts/cdt_c_comments.htm"/>
+               <topic label="Content assist" href="concepts/cdt_c_content_assist.htm"/>
+               <topic label="C/C ++ search" href="concepts/cdt_c_search.htm"/>
+               <topic label="Open declarations" href="concepts/cdt_c_open_declarations.htm"/>
+          </topic>
+          <topic label="Build" href="concepts/cdt_o_build_conc.htm">
+               <topic label="Build overview" href="concepts/cdt_c_build_over.htm"/>
+          </topic>
+          <topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
+               <topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/>
+               <topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/>
+          </topic>
+     </topic>
+</toc>

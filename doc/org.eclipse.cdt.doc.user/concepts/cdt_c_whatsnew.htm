@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>What's new</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<h1>What's new</h1>
+
+<p>Find out what's new in CDT 1.2.</p>
+
+<h2>C/C++ Search</h2>
+<p>You can search the projects in your workspace for references to, declarations 
+or definitions of, particular elements. Only header files referenced by a source 
+file in your workspace are included in a search.</p>
+<h2>Build</h2>
+<h3>Managed build</h3>
+<p>You can now create a Managed build and have makefiles generated for you.</p>
+<h3>Error parser</h3>
+<p>The error parsers are now extension-points that can contributed by other 
+plugins. The error parsers are used to detect errors or warnings or 
+informational messages from compilers, linkers, etc... during a build.</p>
+<h3>New Global preferences for all Standard Make Project properties</h3>
+<h4>Make builder options</h4>
+<p>Support changing/enabling default make targets for each workbench build type. 
+New default build location setting.</p>
+<h4>Make project options</h4>
+<p>New user settable error parser configuration. User can enable/disable and 
+change older of the build error parsers used during the project build.</p>
+<p>New Includes paths and Preprocessor symbols entry to allow proper indexing 
+and search of the project.</p>
+<h4>Make target</h4>
+<p>Make targets now support Stop on error build option and ability to change the 
+default build command.</p>
+<h4>New Standard Make projects</h4>
+<p>Old Standard Make projects will be automatically updated to support the new 
+options. If update is declined, then selecting Update Old Make project... from 
+the context menu of the project will update the project to a new Standard Make 
+project.</p>
+<h2>Debug</h2>
+<h3>Formatting of variables and expressions</h3>
+<p>You can now select the number system (natural, decimal, hexadecimal) used to display 
+variables and expressions.</p>
+<h3>Variable view, detail pane</h3>
+<p>In the Variable view, a detail pane has been 
+added to let you see the value of a selected variable. This is practical when 
+looking at a string (char *).</p>
+<h3>Casting of variables, expressions and registers</h3>
+<p>In the Variable view, a variable can be cast to a different type or be restored to 
+its original type. Also, a pointer can be cast to an array type.</p>
+<h3>Debug disable variable query</h3>
+<p>The value of variables are queried at every step.</p>
+<p>This can be time-consuming on certain embedded targets. The automatic 
+query of variables can be disabled. Manual queries are now an option.</p>
+<h2>Source location</h2>
+<p>A new source locator in the Run/Debug dialog box makes it possible to add directories 
+to search, mapping, and the order of the search.</p>
+<h3>GDB/MI new shared library launch pane</h3>
+<p>For GDB/MI code, two new actions are added in the launch view, stop-on-solib 
+and auto-load-symbols. Stop-on-solib will force the debugger to stop on any 
+shared library events. Auto load will load the symbols for any shared library.</p>
+<h3>GDB/MI improvements in display of arrays</h3>
+<p>Arrays are now separated into ranges, to limit the possibility of a timeout 
+on large arrays.</p>
+<h2>What's new for previous releases</h2>
+
+<p>You can keep track of previous release-specific developments in the CDT.</p>
+
+<p>For more information, see <b> <a href="http://www.eclipse.org/cdt/">http://www.eclipse.org/cdt/</a> 
+&gt; CDT Project Management/Plans</b>. The <b>Official CDT Plans</b> section lists 
+previous releases.</p>
+
+<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="cdt_c_search.htm">C/C++ search</a><br>
+<a href="cdt_c_build_over.htm">Build overview</a></p>
+<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_proj_new.htm">Creating a project</a><br>
+<a href="../tasks/cdt_o_proj_prop.htm">Defining project properties</a></p>
+<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<br>
+&nbsp;</p>
+<img src="../images/ng2003.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14"> 
+
+</body>
+
+</html>

@@ -1,3 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<!--
+******************************************************************
+**  (C) COPYRIGHT International Business Machines Corp. 2001,2003
+**  All Rights Reserved * Licensed Materials - Property of IBM
+******************************************************************
+-->
+
 <contexts>
 
 <context id ="default_cs_help">
@@ -8,7 +17,7 @@
 
 <context id ="registers_view_context">
    <description>The registers view displays the register values of a selected stack frame. </description>
-   <topic href="cdt_u_registersview.htm"
+   <topic href="reference/cdt_u_registersview.htm"
    	label="Registers view"/>
 </context>
 
@@ -18,19 +27,19 @@
 
 <context id ="memory_view_context">
    <description>The memory view displays process memory. </description>
-   <topic href="cdt_u_memoryview.htm"
+   <topic href="reference/cdt_u_memoryview.htm"
    	label="Memory view"/>
 </context>
 
 <context id ="memory_preference_page_context">
    <description>Click below to see help</description>
-   <topic href="cdt_u_mem_view_pref.htm"
+   <topic href="reference/cdt_u_mem_view_pref.htm"
    	label="Memory view preferences"/>
 </context>
 
 <context id ="shared_libraries_view_context">
    <description>Click below to see help</description>
-   <topic href="cdt_u_shared_lib_view.htm"
+   <topic href="reference/cdt_u_shared_lib_view.htm"
    	label="Shared Libraries view"/>
 </context>
 
@@ -40,13 +49,13 @@
 
 <context id ="signals_view_context">
    <description>Click below to see help</description>
-   <topic href="cdt_u_signals_view.htm"
+   <topic href="reference/cdt_u_signals_view.htm"
    	label="Signals view"/>
 </context>
 
 <context id ="c_debug_preference_page_context">
    <description>View information about your program as you debug. </description>
-   <topic href="cdt_u_dbg_pref.htm"
+   <topic href="reference/cdt_u_dbg_pref.htm"
    	label="Debug preferences"/>
 </context>
 

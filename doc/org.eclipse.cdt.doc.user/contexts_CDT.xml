@@ -1,5 +1,11 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.contexts"?>
+<!--
+******************************************************************
+**  (C) COPYRIGHT International Business Machines Corp. 2001,2003
+**  All Rights Reserved * Licensed Materials - Property of IBM
+******************************************************************
+-->
 
 <contexts>
 
@@ -11,55 +17,55 @@
 
 <context id ="cdt_error_parsers_page">
    <description>Control the build messages displayed in the Tasks view. </description>
-   <topic href="cdt_u_newproj_parser_error.htm"
+   <topic href="reference/cdt_u_newproj_parser_error.htm"
    	label="Error Parsers, C/C++ Properties window"/>
 </context>
 
 <context id ="cdt_binary_parser_page">
    <description>Select a binary parser for the target platform. </description>
-   <topic href="cdt_u_newproj_parser_binary.htm"
+   <topic href="reference/cdt_u_newproj_parser_binary.htm"
    	label="Binary Parser page, C/C++ Properties window"/>
 </context>
 
 <context id ="man_proj_platform_help">
    <description>Select a target deployment platform. </description>
-   <topic href="cdt_u_newproj_platf.htm"
+   <topic href="reference/cdt_u_newproj_platf.htm"
    	label="Target platform, C/C++ Properties window"/>
 </context>
 
 <context id ="new_c_editor_pref_page_context">
    <description>Customize the appearance of the C/C++ Editor. </description>
-   <topic href="cdt_u_c_editor_gen.htm"
+   <topic href="reference/cdt_u_c_editor_gen.htm"
    	label="General page, Preferences window"/>
 </context>
 
 <context id ="new_c_editor_annotations_pref_page_context">
    <description>Customize the appearance of the C/C++ Editor. </description>
-   <topic href="cdt_u_c_editor_anno.htm"
+   <topic href="reference/cdt_u_c_editor_anno.htm"
    	label="Annotations page, Preferences window"/>
 </context>
 
 <context id ="new_c_editor_colors_pref_page_context">
    <description>Customize the appearance of the C/C++ editor. </description>
-   <topic href="cdt_u_c_editor_color.htm"
+   <topic href="reference/cdt_u_c_editor_color.htm"
    	label="Colors page, Preferences window"/>
 </context>
 
 <context id ="new_c_editor_content_assist_pref_page_context">
    <description>Customize how the Content Assist feature works. </description>
-   <topic href="cdt_u_c_editor_con_assist.htm"
+   <topic href="reference/cdt_u_c_editor_con_assist.htm"
    	label="Content Assist page, Preferences window"/>
 </context>
 
 <context id ="new_c_templates_pref_page_context">
    <description>Create, edit, remove, import, or export code templates. </description>
-   <topic href="cdt_u_code_temp.htm"
+   <topic href="reference/cdt_u_code_temp.htm"
    	label="Code Templates page, Preferences window"/>
 </context>
 
 <context id ="c_search_page">
    <description>Search for C/C++ elements. </description>
-   <topic href="cdt_u_search.htm"
+   <topic href="reference/cdt_u_search.htm"
    	label="C/C++ Search page, Search dialog box"/>
 </context>
 

@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Content assist</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<h1>Content assist</h1>
+
+<p>In the C/C++ editor, when you enter a letter combination in the editor, 
+right-click and click <b>Content Assist</b>. A list of code elements and code 
+templates that start with the letter combination that you typed is displayed.</p>
+
+<h2>Code Completion</h2>
+
+<p>Content assist provides code completion assistance while you code from within 
+the body of a method or a function. For the current project 
+and any referenced projects, a list is displayed of the  elements that begin with the 
+letter combination you entered in the order shown below:</p>
+
+<ul>
+  <li>Global variables</li>
+  <li>Global functions</li>
+  <li>Global enumerations</li>
+  <li>Global structs</li>
+  <li>Global classes</li>
+  <li>Global unions</li>
+  <li>Global macros</li>
+</ul>
+
+<p>You can view the signature of each item on the list in a pop-up by pointing 
+to it. You can then select an 
+item in the list to  insert it directly into your code. Newly created 
+elements in your current or referenced project(s) must be saved before they will 
+appear in the Content Assist list.</p>
+
+<h2>Code Templates</h2>
+
+<p>Code templates are frequently used sections of code that you can create and 
+then save for reuse. The Content Assist feature also provides access to code 
+templates. Code Template names beginning 
+with the letter combination you entered are displayed in a list in alphabetical 
+order followed by code elements. You can then select a code template from the list and 
+it is inserted directly 
+into your code.</p>
+
+<p>
+<img border="0" src="../images/editor_c_codetemplates_use.gif" width="483" height="333"></p>
+
+<p>For example, the code template <samp>do - while statement</samp> contains the code:</p>
+
+<p><samp>do {<br>
+${cursor}<br>
+} while (${condition});</samp></p>
+
+<p> When you select the <samp>do</samp> code template from the list, the 
+following is inserted in your code:</p>
+
+<p> <samp>
+do {<br>
+} while (condition);</samp></p>
+
+<p>A selection of common code templates are already defined. These can be browsed in
+<b>Window &gt; Preferences &gt; C/C++ &gt; Code Templates</b>.</p>
+
+<p>You can create, import and, export code templates.</p>
+
+<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="cdt_o_code_entry.htm">Code entry</a></p>
+<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_contentassist.htm">Using Content Assist</a><br>
+<a href="../tasks/cdt_t_add_codetemp.htm">Creating and editing code templates</a><br>
+<a href="../tasks/cdt_t_imp_code_temp.htm">Importing and exporting code templates</a></p>
+<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_u_icons.htm">C/C++ perspective icons</a></p>
+
+<p>
+
+<img src="../images/ng2003.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14"></p>
+
+</body>
+
+</html>

@@ -128,10 +128,10 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 				fInitialized = false;
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 			}
+			fCreatePathContainer = true;
 		}
 		else {
 			fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
-			fCreatePathContainer = true;
 		}
 		retrieveSIConsoleParsers();
 		initialBuilderParserId = fBuildInfo.getMakeBuilderConsoleParserId();	//$NON-NLS-1$

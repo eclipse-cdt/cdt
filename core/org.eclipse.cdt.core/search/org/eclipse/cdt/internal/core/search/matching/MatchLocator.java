@@ -265,6 +265,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			if( i > 0 && pathString.equals( paths[ i - 1 ] ) ) continue;
 			
 			Reader reader = null;
+			
+			IPath realPath = null; 
 			if( workspaceRoot != null ){
 				IWorkingCopy workingCopy = (IWorkingCopy)wcPaths.get( pathString );
 				
@@ -283,6 +285,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 					if( currentResource != null && currentResource instanceof IFile ){
 						IFile file = (IFile) currentResource;
 						reader = new InputStreamReader( file.getContents() );
+						realPath = currentResource.getLocation();
 					} else continue;
 				} catch ( CoreException e ){
 					continue;
@@ -292,12 +295,13 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				try {
 					currentPath = path;
 					reader = new FileReader( path.toFile() );
+					realPath = currentPath; 
 				} catch (FileNotFoundException e) {
 					continue;
 				}
 			}
 			
-			IScanner scanner = ParserFactory.createScanner( reader, pathString, new ScannerInfo(), ParserMode.QUICK_PARSE, this );
+			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), new ScannerInfo(), ParserMode.COMPLETE_PARSE, this );
 			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE );
 			
 			parser.parse();

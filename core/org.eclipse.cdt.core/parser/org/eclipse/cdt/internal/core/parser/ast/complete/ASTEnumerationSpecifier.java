@@ -38,7 +38,7 @@ public class ASTEnumerationSpecifier
     {
         super(symbol);
         setStartingOffset(startingOffset);
-        setNameOffset( startingOffset );
+        setNameOffset( nameOffset );
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
     }
 

@@ -1,3 +1,6 @@
+2004-06-16 Bogdan Gheorghe
+	- Removed reporting index failed messages from log
+	
 2004-06-14 Andrew Niefer
 	- Bugs 66799, 66981 : don't process indexer jobs if the indexer for that project is disabled.
 	- also fix warnings about deprecated calls and unnecessary else statements

@@ -122,10 +122,7 @@ public class SourceIndexer extends AbstractIndexer {
 				requestor.startTimer();
 			}
 			boolean retVal = parser.parse();
-			
-			if (!retVal)
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT); //$NON-NLS-1$
-
+	
 			if (AbstractIndexer.VERBOSE){
 				if (!retVal)
 					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString()); //$NON-NLS-1$

@@ -32,7 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
@@ -1301,9 +1301,9 @@ public class CDebugTarget extends CDebugElement
 		{
 			handleBreakpointHit( (ICDIBreakpointHit)reason );
 		}
-		else if ( reason instanceof ICDISignal )
+		else if ( reason instanceof ICDISignalReceived )
 		{
-			handleSuspendedBySignal( (ICDISignal)reason );
+			handleSuspendedBySignal( (ICDISignalReceived)reason );
 		}
 		else if ( reason instanceof ICDIWatchpointTrigger )
 		{
@@ -1375,7 +1375,7 @@ public class CDebugTarget extends CDebugElement
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 	
-	private void handleSuspendedBySignal( ICDISignal signal )
+	private void handleSuspendedBySignal( ICDISignalReceived signal )
 	{
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}

@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
 
 /**
  * 
@@ -12,8 +12,8 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDISignal extends ICDISessionObject
-{
+public interface ICDISignal extends ICDIObject {
+
 	/**
 	 * Returns the name of this signal.
 	 * 
@@ -27,4 +27,5 @@ public interface ICDISignal extends ICDISessionObject
 	 * @return the meaning of this signal
 	 */
 	String getMeaning();
+
 }

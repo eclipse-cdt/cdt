@@ -1,3 +1,18 @@
+2003-01-21 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/event/ICDISuspendedEvent.java:
+	Use ICDISignalReceived instead.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISignal.java:
+	New file, element of the SignalManager.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISignalManager.java:
+	Return model/ICDISignal.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISignalReceived.java:
+	New file.
+	* src/org/eclipse/cdt/debug/core/internal/core/model/CDebugTarget.java:
+	Use ICDISignalReceived.
+	* src/org/eclipse/cdt/debug/core/internal/core/model/CThread.java:
+	Use ICDISignalReceived.
+
 2003-01-21 Mikhail Khodjaiants
 	Retry to set breakpoints if shared library's symbols are loaded.
 	* CDebugTarget.java

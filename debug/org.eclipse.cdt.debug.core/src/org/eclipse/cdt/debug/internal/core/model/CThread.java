@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
@@ -884,9 +884,9 @@ public class CThread extends CDebugElement
 				{
 					handleBreakpointHit( (ICDIBreakpoint)reason );
 				}
-				else if ( reason instanceof ICDISignal )
+				else if ( reason instanceof ICDISignalReceived )
 				{
-					handleSuspendedBySignal( (ICDISignal)reason );
+					handleSuspendedBySignal( (ICDISignalReceived)reason );
 				}
 				else
 				{
@@ -947,7 +947,7 @@ public class CThread extends CDebugElement
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 	
-	private void handleSuspendedBySignal( ICDISignal signal )
+	private void handleSuspendedBySignal( ICDISignalReceived signal )
 	{
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}

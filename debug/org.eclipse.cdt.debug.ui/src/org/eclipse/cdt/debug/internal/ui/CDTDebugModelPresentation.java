@@ -14,9 +14,10 @@ import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
@@ -362,11 +363,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 				case IState.SUSPENDED:
 				{
 					Object info = state.getCurrentStateInfo();
-					if ( info != null && info instanceof ICDISignal )
+					if ( info != null && info instanceof ICDISignalReceived )
 					{
+						ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 						String label = target.getName() + 
 									   MessageFormat.format( " (Signal ''{0}'' received. Meaning: {1})", 
-									   						 new String[] { ((ICDISignal)info).getName(), ((ICDISignal)info).getMeaning() } );
+									   						 new String[] { signal.getName(), signal.getMeaning() } );
 						return label;
 					}
 					if ( info != null && info instanceof ICDIWatchpointTrigger )

@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
  * objects:
  * <ul>
  * <li>breakpoint (ICDIBreakpoint)
- * <li>signal (ICDISignal)
+ * <li>signal (ICDISignalReceived)
  * <li>end of the stepping range (ICDIEndSteppingRange)
  * </ul>
  * 

@@ -12,7 +12,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.BreakpointHit;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.cdi.EndSteppingRange;
 import org.eclipse.cdt.debug.mi.core.cdi.ErrorInfo;
-import org.eclipse.cdt.debug.mi.core.cdi.Signal;
+import org.eclipse.cdt.debug.mi.core.cdi.SignalReceived;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointScope;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointTrigger;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
@@ -49,7 +49,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		} else if (event instanceof MISteppingRangeEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MISignalEvent) {
-			return new Signal(session, (MISignalEvent)event);
+			return new SignalReceived(session, (MISignalEvent)event);
 		} else if (event instanceof MILocationReachedEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MIFunctionFinishedEvent) {

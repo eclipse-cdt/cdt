@@ -1,5 +1,12 @@
 2003-01-20 Alain Magloire
 
+	* src/.../mi/core/cdi/SuspendedEvent.java: Use SignalReceived.
+	* src/.../mi/core/cdi/model/Signal.java: New file.
+	* src/.../mi/core/cdi/model/SignalManager.java: Use model/Signal.
+	* src/.../mi/core/cdi/SignalReceived.java: New file.
+
+2003-01-20 Alain Magloire
+
 	The problem was that no check was done for the existence of
 	the program/executable nor the working directory etc ...
 	By asking the arguements to be File, the check is done by

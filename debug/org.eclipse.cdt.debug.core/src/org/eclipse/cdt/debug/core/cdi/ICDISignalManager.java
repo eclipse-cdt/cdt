@@ -5,6 +5,8 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+
 /**
  * 
  * The signal manager manages the collection of signals defined 

@@ -1,3 +1,6 @@
+2003-04-01
+	Added testBug35906() to DOMTests.
+
 2003-03-31 John Camelon
 	Added testStruct() to DOMTests.  
 	Added test35892()to ScannerTest. 

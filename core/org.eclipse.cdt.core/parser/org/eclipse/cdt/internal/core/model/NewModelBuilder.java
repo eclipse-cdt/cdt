@@ -359,6 +359,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		}
 		else
 		{
+			elem.setTypeName( wrapper.getClassKind().getImage() );
 			elem.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());
 			elem.setPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
 		}

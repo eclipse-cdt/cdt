@@ -719,7 +719,7 @@ c, quick);
 						// this is an elaborated class specifier
 						Object elab = null; 
 						try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() );} catch( Exception e ) {} 
-						className(); 
+						name(); 
 						try{ callback.elaboratedTypeSpecifierName( elab ); } catch( Exception e ) {}
 						try{ callback.elaboratedTypeSpecifierEnd( elab );} catch( Exception e ) {}
 						encounteredTypename = true;
@@ -830,6 +830,25 @@ c, quick);
 		switch (LT(1)) {
 			case Token.tIDENTIFIER:
 				last = consume();
+				if( LT(1) == Token.tLT )
+				{
+					consume( Token.tLT );
+				
+					// until we get all the names sorted out
+					int depth = 1; 
+
+					while (depth > 0) {
+						last = consume();
+						switch ( last.getType()) {
+							case Token.tGT:
+								--depth;
+								break;
+							case Token.tLT:
+								++depth;
+							break;
+						}
+					}
+				}
 				break;
 			default:
 				throw backtrack;
@@ -844,6 +863,26 @@ c, quick);
 			switch (LT(1)) {
 				case Token.tIDENTIFIER:
 					last = consume();
+					if( LT(1) == Token.tLT )
+					{
+						consume( Token.tLT );
+				
+						// until we get all the names sorted out
+						int depth = 1; 
+
+						while (depth > 0) {
+							last = consume();
+							switch ( last.getType()) {
+								case Token.tGT:
+									--depth;
+									break;
+								case Token.tLT:
+									++depth;
+								break;
+							}
+						}
+					}
+				
 			}
 		}
 

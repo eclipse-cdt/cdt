@@ -347,7 +347,7 @@ public class Scanner implements IScanner {
 	private boolean throwExceptionOnUnboundedString = true;
 	private boolean throwExceptionOnEOFWithinMultilineComment = true;
 	private boolean throwExceptionOnEOFWithoutBalancedEndifs = true;
-	private boolean throwExceptionOnBadCharacterRead = true; 
+	private boolean throwExceptionOnBadCharacterRead = false; 
 
 	private boolean quickScan = false;
 	public void setQuickScan(boolean qs) {
@@ -1194,7 +1194,11 @@ public class Scanner implements IScanner {
 						// Bad character
 						if( throwExceptionOnBadCharacterRead )
 							throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
-						break;
+						else
+						{
+							c = getChar();
+							continue;
+						}
 				}
 
 				throw Parser.endOfFile;

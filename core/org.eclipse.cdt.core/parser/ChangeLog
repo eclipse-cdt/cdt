@@ -1,3 +1,7 @@
+2003-04-01 John Camelon
+	Fixed bug35906
+	Udated Scanner to not puke on certain control characters.
+
 2003-03-31 John Camelon
 	Fixed unsigned short SimpleDeclarations not showing up in the outline view.  
 	Fixed default visibilities for structs in outline view.  

@@ -968,6 +968,26 @@ public class DOMTests extends TestCase {
 		assertEquals( d.getPointerOperators().size(), 0 );
 		assertEquals( d.getName().toString(), "left" );
 	}
-	
+
+
+	public void testBug35906() throws Exception
+	{
+		StringWriter code = new StringWriter(); 
+		code.write( "void TTest::MTest() {}\n" ); 
+		code.write( "struct TTest::STest *TTest::FTest (int i) {}\n" ); 
+		TranslationUnit tu = parse( code.toString() );
+		assertEquals( tu.getDeclarations().size(), 2 );
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_void );
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		Declarator d = (Declarator)declaration.getDeclarators().get(0);
+		assertEquals( d.getName().toString(), "TTest::MTest");
+		
+		declaration = (SimpleDeclaration)tu.getDeclarations().get(1);
+		ElaboratedTypeSpecifier spec = (ElaboratedTypeSpecifier)declaration.getTypeSpecifier();
+		assertEquals( spec.getClassKey(), ClassKey.t_struct );
+		assertEquals( spec.getName().toString(), "TTest::STest" );
+	}
+
 }
 

@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Common Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/cpl-v10.html
+/***********************************************************************************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: QNX Software Systems - initial API and implementation
- ******************************************************************************/
+ **********************************************************************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
@@ -78,9 +77,9 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 		String[] buttonLabels;
 
-		buttonLabels = new String[] {
+		buttonLabels = new String[]{
 		/* 0 = IDX_ADDEXIST */CPathEntryMessages.getString("OutputPathEntryPage.folders.add.button"), //$NON-NLS-1$
-				/* 1 */ null, /* 2 = IDX_EDIT */CPathEntryMessages.getString("OutputPathEntryPage.folders.edit.button"), //$NON-NLS-1$
+				/* 1 */null, /* 2 = IDX_EDIT */CPathEntryMessages.getString("OutputPathEntryPage.folders.edit.button"), //$NON-NLS-1$
 				/* 3 = IDX_REMOVE */CPathEntryMessages.getString("OutputPathEntryPage.folders.remove.button") //$NON-NLS-1$
 		};
 
@@ -92,8 +91,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		fOutputList.enableButton(IDX_EDIT, false);
 		fOutputList.enableButton(IDX_REMOVE, false);
 	}
-	
-	
+
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
 	}
@@ -105,13 +103,13 @@ public class CPathOutputEntryPage extends CPathBasePage {
 	}
 
 	private void updateFoldersList() {
-		
+
 		List folders = filterList(fCPathList.getElements());
 		fOutputList.setElements(folders);
 
 		for (int i = 0; i < folders.size(); i++) {
-			CPElement cpe = (CPElement) folders.get(i);
-			IPath[] patterns = (IPath[]) cpe.getAttribute(CPElement.EXCLUSION);
+			CPElement cpe = (CPElement)folders.get(i);
+			IPath[] patterns = (IPath[])cpe.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fOutputList.expandElement(cpe, 3);
 			}
@@ -122,7 +120,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		PixelConverter converter = new PixelConverter(parent);
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fOutputList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fOutputList}, true);
 		LayoutUtil.setHorizontalGrabbing(fOutputList.getTreeControl(null));
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -131,8 +129,8 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		// expand
 		List elements = fOutputList.getElements();
 		for (int i = 0; i < elements.size(); i++) {
-			CPElement elem = (CPElement) elements.get(i);
-			IPath[] patterns = (IPath[]) elem.getAttribute(CPElement.EXCLUSION);
+			CPElement elem = (CPElement)elements.get(i);
+			IPath[] patterns = (IPath[])elem.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fOutputList.expandElement(elem, 3);
 			}
@@ -163,14 +161,14 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof CPElement) {
-				return ((CPElement) element).getChildren();
+				return ((CPElement)element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
 
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof CPElementAttribute) {
-				return ((CPElementAttribute) element).getParent();
+				return ((CPElementAttribute)element).getParent();
 			}
 			return null;
 		}
@@ -276,9 +274,9 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (fOutputList.getIndexOfElement(elem) != -1) {
-			editElementEntry((CPElement) elem);
+			editElementEntry((CPElement)elem);
 		} else if (elem instanceof CPElementAttribute) {
-			editAttributeEntry((CPElementAttribute) elem);
+			editAttributeEntry((CPElementAttribute)elem);
 		}
 	}
 
@@ -316,7 +314,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		for (int i = selElements.size() - 1; i >= 0; i--) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute) elem;
+				CPElementAttribute attrib = (CPElementAttribute)elem;
 				String key = attrib.getKey();
 				Object value = key.equals(CPElement.EXCLUSION) ? new Path[0] : null;
 				attrib.getParent().setAttribute(key, value);
@@ -338,16 +336,16 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
 			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute) elem;
+				CPElementAttribute attrib = (CPElementAttribute)elem;
 				if (attrib.getKey().equals(CPElement.EXCLUSION)) {
-					if (((IPath[]) attrib.getValue()).length == 0) {
+					if ( ((IPath[])attrib.getValue()).length == 0) {
 						return false;
 					}
 				} else if (attrib.getValue() == null) {
 					return false;
 				}
 			} else if (elem instanceof CPElement) {
-				CPElement curr = (CPElement) elem;
+				CPElement curr = (CPElement)elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
@@ -390,7 +388,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		int lastRemovePos = nEntries;
 		int afterLastSourcePos = 0;
 		for (int i = nEntries - 1; i >= 0; i--) {
-			CPElement cpe = (CPElement) cpelements.get(i);
+			CPElement cpe = (CPElement)cpelements.get(i);
 			int kind = cpe.getEntryKind();
 			if (isEntryKind(kind)) {
 				if (!srcelements.remove(cpe)) {
@@ -416,25 +414,22 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		if (includeLinked) {
 			NewFolderDialog dialog = new NewFolderDialog(getShell(), fCurrCProject.getProject());
 			if (dialog.open() == Window.OK) {
-				IResource createdFolder = (IResource) dialog.getResult()[0];
+				IResource createdFolder = (IResource)dialog.getResult()[0];
 				return newCPOutputElement(createdFolder);
 			}
 			return null;
-		} else {
-			String title = (existing == null) ? CPathEntryMessages.getString("SourcePathEntryPage.NewSourceFolderDialog.new.title") //$NON-NLS-1$
-					: CPathEntryMessages.getString("SourcePathEntryPage.NewSourceFolderDialog.edit.title"); //$NON-NLS-1$
-
-			IProject proj = fCurrCProject.getProject();
-			NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj, getExistingContainers(existing),
-					existing);
-			dialog.setMessage(CPathEntryMessages.getFormattedString("SourcePathEntryPage.NewSourceFolderDialog.description", //$NON-NLS-1$
-					fProjPath.toString()));
-			if (dialog.open() == Window.OK) {
-				IResource folder = dialog.getSourceFolder();
-				return newCPOutputElement(folder);
-			}
-			return null;
 		}
+		String title = (existing == null) ? CPathEntryMessages.getString("SourcePathEntryPage.NewSourceFolderDialog.new.title") //$NON-NLS-1$
+				: CPathEntryMessages.getString("SourcePathEntryPage.NewSourceFolderDialog.edit.title"); //$NON-NLS-1$
+		IProject proj = fCurrCProject.getProject();
+		NewSourceFolderDialog dialog = new NewSourceFolderDialog(getShell(), title, proj, getExistingContainers(existing), existing);
+		dialog.setMessage(CPathEntryMessages.getFormattedString("SourcePathEntryPage.NewSourceFolderDialog.description", //$NON-NLS-1$
+				fProjPath.toString()));
+		if (dialog.open() == Window.OK) {
+			IResource folder = dialog.getSourceFolder();
+			return newCPOutputElement(folder);
+		}
+		return null;
 	}
 
 	private void askForAddingExclusionPatternsDialog(List newEntries, Set modifiedEntries) {
@@ -448,7 +443,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 
 	private CPElement[] openOutputContainerDialog(CPElement existing) {
 
-		Class[] acceptedClasses = new Class[] { IProject.class, IFolder.class};
+		Class[] acceptedClasses = new Class[]{IProject.class, IFolder.class};
 		List existingContainers = getExistingContainers(null);
 
 		IProject[] allProjects = fWorkspaceRoot.getProjects();
@@ -465,9 +460,11 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		ILabelProvider lp = new WorkbenchLabelProvider();
 		ITreeContentProvider cp = new BaseWorkbenchContentProvider();
 
-		String title = (existing == null) ? CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.new.title") //$NON-NLS-1$
+		String title = (existing == null)
+				? CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.new.title") //$NON-NLS-1$
 				: CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.edit.title"); //$NON-NLS-1$
-		String message = (existing == null) ? CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.new.description") //$NON-NLS-1$
+		String message = (existing == null)
+				? CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.new.description") //$NON-NLS-1$
 				: CPathEntryMessages.getString("OutputPathEntryPage.ExistingOutputFolderDialog.edit.description"); //$NON-NLS-1$
 
 		MultipleFolderSelectionDialog dialog = new MultipleFolderSelectionDialog(getShell(), lp, cp);
@@ -485,7 +482,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 			Object[] elements = dialog.getResult();
 			CPElement[] res = new CPElement[elements.length];
 			for (int i = 0; i < res.length; i++) {
-				IResource elem = (IResource) elements[i];
+				IResource elem = (IResource)elements[i];
 				res[i] = newCPOutputElement(elem);
 			}
 			return res;
@@ -497,7 +494,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		List res = new ArrayList();
 		List cplist = fOutputList.getElements();
 		for (int i = 0; i < cplist.size(); i++) {
-			CPElement elem = (CPElement) cplist.get(i);
+			CPElement elem = (CPElement)cplist.get(i);
 			if (elem != existing) {
 				IResource resource = elem.getResource();
 				if (resource instanceof IContainer) { // defensive code

@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Label;
 
 public class CPathFilterPage extends WizardPage {
 
-	private final int fFilterType;
+	private final int[] fFilterType;
 
 	private CheckboxTableViewer viewer;
 	private IPathEntry fParentEntry;
@@ -46,7 +46,7 @@ public class CPathFilterPage extends WizardPage {
 	
 	protected ICElement fCElement;
 
-	protected CPathFilterPage(ICElement cElement, int filterType) {
+	protected CPathFilterPage(ICElement cElement, int[] filterType) {
 		super("CPathFilterPage"); //$NON-NLS-1$
 		setTitle(CPathEntryMessages.getString("CPathFilterPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("CPathFilterPage.description")); //$NON-NLS-1$
@@ -68,7 +68,7 @@ public class CPathFilterPage extends WizardPage {
 		label.setLayoutData(gd);
 		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		viewer.setContentProvider(new ListContentProvider());
-		viewer.setLabelProvider(new CPElementLabelProvider(false));
+		viewer.setLabelProvider(new CPElementLabelProvider(false, false));
 		viewer.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -110,16 +110,16 @@ public class CPathFilterPage extends WizardPage {
 			} catch (CModelException e) {
 			}
 		}
-		createExlusions();
+		createExlusions(fParentEntry.getEntryKind() == IPathEntry.CDT_PROJECT);
 	}
 
 	
-	private void createExlusions() {
+	private void createExlusions(boolean showExported) {
 		fExclusions = new ArrayList();
 		if (filter != null) {
 			viewer.removeFilter(filter);
 		}
-		filter = new CPElementFilter(fExclusions.toArray(), fFilterType, true);
+		filter = new CPElementFilter(fExclusions.toArray(), fFilterType, showExported, false);
 		viewer.addFilter(filter);
 	}
 

@@ -16,9 +16,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ide.IDE;
 
 public class ProjectContainerDescriptor implements IContainerDescriptor {
-	private int fFilterType;
+	private int[] fFilterType;
 	
-	public ProjectContainerDescriptor(int filterType) {
+	public ProjectContainerDescriptor(int[] filterType) {
 		fFilterType = filterType;
 	}
 

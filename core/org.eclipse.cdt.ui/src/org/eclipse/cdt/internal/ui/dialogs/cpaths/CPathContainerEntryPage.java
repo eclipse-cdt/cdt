@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -140,13 +139,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof CPElement) {
-				CPElement cpElem = (CPElement)element;
-				if (cpElem.getEntryKind() == IPathEntry.CDT_CONTAINER) {
-					return new Object[]{new CPElementGroup(cpElem, IPathEntry.CDT_MACRO),
-							new CPElementGroup(cpElem, IPathEntry.CDT_INCLUDE), new CPElementGroup(cpElem, IPathEntry.CDT_LIBRARY)};
-				} else {
-					return ((CPElement)element).getChildren();
-				}
+				return ((CPElement)element).getChildren();
 			} else if (element instanceof CPElementGroup) {
 				return ((CPElementGroup)element).getChildren();
 			}
@@ -157,7 +150,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			if (element instanceof CPElementAttribute) {
 				return ((CPElementAttribute)element).getParent();
 			} else if (element instanceof CPElementGroup) {
-				return ((CPElementGroup)element).getElement();
+				return ((CPElementGroup)element).getParent();
 			}
 			return null;
 		}
@@ -322,17 +315,17 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	private void editAttributeEntry(CPElementAttribute elem) {
-		String key = elem.getKey();
-		if (key.equals(CPElement.SOURCEATTACHMENT)) {
-			CPElement selElement = elem.getParent();
-
-			IPath containerPath = null;
-			boolean applyChanges = false;
-			Object parentContainer = selElement.getParentContainer();
-			if (parentContainer instanceof CPElement) {
-				containerPath = ((CPElement)parentContainer).getPath();
-				applyChanges = true;
-			}
+//		String key = elem.getKey();
+//		if (key.equals(CPElement.SOURCEATTACHMENT)) {
+//			CPElement selElement = elem.getParent();
+//
+//			IPath containerPath = null;
+//			boolean applyChanges = false;
+//			Object parentContainer = selElement.getParentContainer();
+//			if (parentContainer instanceof CPElement) {
+//				containerPath = ((CPElement)parentContainer).getPath();
+//				applyChanges = true;
+//			}
 //			SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), (ILibraryEntry)selElement.getPathEntry(), containerPath,
 //					fCurrCProject, applyChanges);
 //			if (dialog.open() == Window.OK) {
@@ -340,7 +333,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 //				fContainersList.refresh();
 //				fCPathList.refresh(); // images
 //			}
-		}
+//		}
 	}
 
 	private void editElementEntry(CPElement elem) {

@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Common Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/cpl-v10.html
+/***********************************************************************************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: QNX Software Systems - initial API and implementation
- ******************************************************************************/
+ **********************************************************************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
@@ -37,11 +36,11 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ProjectContainerPage extends WizardPage implements ICPathContainerPage {
 
-	private int fFilterType;
+	private int[] fFilterType;
 	private TableViewer viewer;
 	private ICProject fCProject;
 
-	protected ProjectContainerPage(int filterType) {
+	protected ProjectContainerPage(int[] filterType) {
 		super("projectContainerPage"); //$NON-NLS-1$
 		setTitle(CPathEntryMessages.getString("ProjectContainerPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("ProjectContainerPage.description")); //$NON-NLS-1$
@@ -121,9 +120,11 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 				if (!cProjects[i].equals(fCProject) && !current.contains(CoreModel.newProjectEntry(cProjects[i].getPath()))) {
 					IPathEntry[] projEntries = cProjects[i].getRawPathEntries();
 					for (int j = 0; j < projEntries.length; j++) {
-						if (projEntries[j].getEntryKind() == fFilterType && projEntries[j].isExported()) {
-							list.add(cProjects[i]);
-							break;
+						for (int k = 0; k < fFilterType.length; k++) {
+							if (projEntries[j].getEntryKind() == fFilterType[k] && projEntries[j].isExported()) {
+								list.add(cProjects[i]);
+								break;
+							}
 						}
 					}
 				}

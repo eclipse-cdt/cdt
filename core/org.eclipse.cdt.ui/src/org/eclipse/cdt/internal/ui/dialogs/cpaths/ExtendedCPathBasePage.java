@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -32,15 +31,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -73,84 +68,6 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	private class ModifiedCPListLabelProvider extends CPElementLabelProvider implements IColorProvider {
 
 		private final Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
-
-		private class CPListImageDescriptor extends CompositeImageDescriptor {
-
-			private Image fBaseImage;
-			private boolean showInherited;
-			private Point fSize;
-
-			public CPListImageDescriptor(Image baseImage, boolean inherited) {
-				fBaseImage = baseImage;
-				showInherited = inherited;
-			}
-
-			/**
-			 * @see CompositeImageDescriptor#getSize()
-			 */
-			protected Point getSize() {
-				if (fSize == null) {
-					ImageData data = fBaseImage.getImageData();
-					setSize(new Point(data.width, data.height));
-				}
-				return fSize;
-			}
-
-			/**
-			 * @see Object#equals(java.lang.Object)
-			 */
-			public boolean equals(Object object) {
-				if (!(object instanceof CPListImageDescriptor)) {
-					return false;
-				}
-
-				CPListImageDescriptor other = (CPListImageDescriptor) object;
-				return (fBaseImage.equals(other.fBaseImage) && showInherited == other.showInherited);
-			}
-
-			/**
-			 * @see Object#hashCode()
-			 */
-			public int hashCode() {
-				return fBaseImage.hashCode() & (showInherited ? ~0x1 : ~0);
-			}
-
-			/**
-			 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
-			 */
-			protected void drawCompositeImage(int width, int height) {
-				ImageData bg = fBaseImage.getImageData();
-				if (bg == null) {
-					bg = DEFAULT_IMAGE_DATA;
-				}
-				drawImage(bg, 0, 0);
-				drawOverlays();
-			}
-
-			/**
-			 * Add any overlays to the image as specified in the flags.
-			 */
-			protected void drawOverlays() {
-				ImageData data = null;
-				if (showInherited) {
-					data = CPluginImages.DESC_OVR_PATH_INHERIT.getImageData();
-					drawImage(data, 0, 0);
-				}
-			}
-
-			protected void setSize(Point size) {
-				fSize = size;
-			}
-
-		}
-
-		public Image getImage(Object element) {
-			Image image = super.getImage(element);
-			if (isPathInheritedFromSelected((CPElement) element)) {
-				image = new CPListImageDescriptor(image, true).createImage();
-			}
-			return image;
-		}
 
 		public Color getBackground(Object element) {
 			return null;

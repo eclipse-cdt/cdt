@@ -506,7 +506,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 			elem = existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(),
-				IPathEntry.CDT_LIBRARY);
+				new int[] {IPathEntry.CDT_LIBRARY});
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
 			IPathEntry parent = wizard.getEntriesParent();

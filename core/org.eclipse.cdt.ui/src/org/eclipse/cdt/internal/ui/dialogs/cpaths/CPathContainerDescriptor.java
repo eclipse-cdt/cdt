@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
 
 public class CPathContainerDescriptor implements IContainerDescriptor {
 
@@ -63,11 +63,10 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		Object elem = CoreUtility.createExtension(fConfigElement, ATT_PAGE_CLASS);
 		if (elem instanceof ICPathContainerPage) {
 			return (ICPathContainerPage) elem;
-		} else {
-			String id = fConfigElement.getAttribute(ATT_ID);
-			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0,
-					"Invalid extension (page not of type IClasspathContainerPage): " + id, null)); //$NON-NLS-1$
-		}
+		} 
+		String id = fConfigElement.getAttribute(ATT_ID);
+		throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0,
+				"Invalid extension (page not of type IClasspathContainerPage): " + id, null)); //$NON-NLS-1$
 	}
 
 	public String getName() {
@@ -79,17 +78,18 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 			String imageName = fConfigElement.getAttribute(ATT_ICON);
 			if (imageName != null) {
 				IExtension extension = fConfigElement.getDeclaringExtension();
-				IPluginDescriptor pd = extension.getDeclaringPluginDescriptor();
-				Image image = getImageFromPlugin(pd, imageName);
+				String plugin = extension.getNamespace();
+				Image image = getImageFromPlugin(plugin, imageName);
 				pageImage = image;
 			}
 		}
 		return pageImage;
 	}
 
-	public Image getImageFromPlugin(IPluginDescriptor pluginDescriptor, String subdirectoryAndFilename) {
-		URL installURL = pluginDescriptor.getInstallURL();
-		return getImageFromURL(installURL, subdirectoryAndFilename);
+	public Image getImageFromPlugin(String plugin, String subdirectoryAndFilename) {
+		Bundle bundle = Platform.getBundle(plugin);
+		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
+		return getImageFromURL(iconURL, subdirectoryAndFilename);
 	}
 
 	public Image getImageFromURL(URL installURL, String subdirectoryAndFilename) {
@@ -120,7 +120,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	public static IContainerDescriptor[] getDescriptors() {
 		ArrayList containers = new ArrayList();
 
-		IExtensionPoint extensionPoint = Platform.getPluginRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, ATT_EXTENSION);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, ATT_EXTENSION);
 		if (extensionPoint != null) {
 			IContainerDescriptor defaultPage = null;
 			String defaultPageName = CPathContainerDefaultPage.class.getName();

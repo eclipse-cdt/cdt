@@ -219,9 +219,8 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 			IPath path = res.getFullPath().removeFirstSegments(fCurrSourceFolder.getFullPath().segmentCount()).makeRelative();
 			if (res instanceof IContainer) {
 				return path.addTrailingSeparator();
-			} else {
-				return path;
 			}
+			return path;
 		}
 		return null;
 	}

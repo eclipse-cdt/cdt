@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
@@ -172,7 +171,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 		String title = (existing == null) ? CPathEntryMessages.getString("IncludeEntryPage.fromWorkspaceDialog.new.title") //$NON-NLS-1$
 				: CPathEntryMessages.getString("IncludeEntryPage.fromWorkspaceDialog.edit.title"); //$NON-NLS-1$
 		String message = (existing == null) ? CPathEntryMessages.getString("IncludeEntryPage.fromWorkspaceDialog.new.description") //$NON-NLS-1$
-				: NewWizardMessages.getString("IncludeEntryPage.fromWorkspaceDialog.edit.description"); //$NON-NLS-1$
+				: CPathEntryMessages.getString("IncludeEntryPage.fromWorkspaceDialog.edit.description"); //$NON-NLS-1$
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
 				new CElementContentProvider());
@@ -220,7 +219,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 			elem = existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, (ICElement)getSelection().get(0), getRawPathEntries(),
-				IPathEntry.CDT_INCLUDE);
+				new int[] {IPathEntry.CDT_INCLUDE});
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
 			IPathEntry parent = wizard.getEntriesParent();

@@ -40,7 +40,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	private static final String PAGE_SETTINGS = "IncludeSysmbolsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
 
-	IncludesSymbolsTabBlock fIncludesSymbolsBlock;
+	NewIncludesSymbolsTabBlock fIncludesSymbolsBlock;
 
 	/**
 	 * @see PropertyPage#createContents
@@ -56,6 +56,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 			result = createWithCProject(parent, project);
 		}
 		Dialog.applyDialogFont(result);
+		noDefaultAndApplyButton();
 		return result;
 	}
 
@@ -73,7 +74,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 * Content for valid projects.
 	 */
 	private Control createWithCProject(Composite parent, IProject project) {
-		fIncludesSymbolsBlock = new IncludesSymbolsTabBlock(this, getSettings().getInt(INDEX));
+		fIncludesSymbolsBlock = new NewIncludesSymbolsTabBlock(this, getSettings().getInt(INDEX));
 		fIncludesSymbolsBlock.init(getCElement(), null);
 		return fIncludesSymbolsBlock.createContents(parent);
 	}

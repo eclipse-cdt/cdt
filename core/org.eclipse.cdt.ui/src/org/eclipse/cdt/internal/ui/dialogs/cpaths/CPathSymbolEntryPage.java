@@ -157,7 +157,7 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 			elem = existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, (ICElement)getSelection().get(0), getRawPathEntries(),
-				IPathEntry.CDT_MACRO);
+				new int[] {IPathEntry.CDT_MACRO});
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
 			IPathEntry parent = wizard.getEntriesParent();

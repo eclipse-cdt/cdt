@@ -22,8 +22,9 @@ import org.eclipse.jface.viewers.ViewerFilter;
 public class CPElementFilter extends ViewerFilter {
 
 	protected List fExcludes;
-	protected int fKind;
+	protected int[] fKind;
 	protected boolean fExportedOnly;
+	protected boolean fShowInherited;
 
 	/**
 	 * @param excludedFiles
@@ -31,16 +32,17 @@ public class CPElementFilter extends ViewerFilter {
 	 * @param recusive
 	 *            Folders are only shown if, searched recursivly, contain an archive
 	 */
-	public CPElementFilter(Object[] excludedElements, int kind, boolean exportedOnly) {
+	public CPElementFilter(Object[] excludedElements, int[] kind, boolean exportedOnly, boolean showInherited) {
 		if (excludedElements != null) {
 			fExcludes = Arrays.asList(excludedElements);
 		}
 		fKind = kind;
 		fExportedOnly = exportedOnly;
+		fShowInherited = showInherited;
 	}
 
-	public CPElementFilter(int kind, boolean exportedOnly) {
-		this(null, kind, exportedOnly);
+	public CPElementFilter(int[] kind, boolean exportedOnly, boolean showInherited) {
+		this(null, kind, exportedOnly, showInherited);
 	}
 
 	/*
@@ -48,22 +50,41 @@ public class CPElementFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof CPElement) {
-			if ( ((CPElement)element).getEntryKind() == fKind) {
-				if (fExcludes == null || !fExcludes.contains(element)) {
-					if (fExportedOnly == true) {
-						return ((CPElement)element).isExported();
+			for (int i = 0; i < fKind.length; i++) {
+				if ( ((CPElement)element).getEntryKind() == fKind[i]) {
+					if (fExcludes == null || !fExcludes.contains(element)) {
+						if (fExportedOnly == true) {
+							if ( !fShowInherited ) {
+								return ((CPElement)element).getInherited() == null && ((CPElement)element).isExported();
+							}
+							return ((CPElement)element).isExported();
+						}
+						if ( !fShowInherited ) {
+							return ((CPElement)element).getInherited() == null;
+						}
+						return true;
 					}
-					return true;
 				}
 			}
 		} else if (element instanceof IPathEntry) {
-			if ( ((IPathEntry)element).getEntryKind() == fKind) {
-				if (fExcludes == null || !fExcludes.contains(element)) {
-					if (fExportedOnly == true) {
-						return ((IPathEntry)element).isExported();
+			for (int i = 0; i < fKind.length; i++) {
+				if ( ((IPathEntry)element).getEntryKind() == fKind[i]) {
+					if (fExcludes == null || !fExcludes.contains(element)) {
+						if (fExportedOnly == true) {
+							return ((IPathEntry)element).isExported();
+						}
+						return true;
 					}
 				}
 			}
+		} else if (element instanceof CPElementGroup) {
+			for (int i = 0; i < fKind.length; i++) {
+				if ( ((CPElementGroup)element).getEntryKind() == fKind[i]) {
+					return true;
+				}
+			}
+		} else {
+			return true;
 		}
 		return false;
 	}

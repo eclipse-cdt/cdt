@@ -38,24 +38,24 @@ public class CPathContainerWizard extends Wizard {
 	private CPathFilterPage fFilterPage;
 
 	private CPathContainerSelectionPage fSelectionWizardPage;
-	private int fFilterType;
+	private int[] fFilterType;
 
 	/**
 	 * Constructor for ClasspathContainerWizard.
 	 */
 	public CPathContainerWizard(IPathEntry entryToEdit, ICElement currElement, IPathEntry[] currEntries) {
-		this(entryToEdit, null, currElement, currEntries, -1);
+		this(entryToEdit, null, currElement, currEntries, null);
 	}
 
 	/**
 	 * Constructor for ClasspathContainerWizard.
 	 */
 	public CPathContainerWizard(IContainerDescriptor pageDesc, ICElement currElement, IPathEntry[] currEntries) {
-		this(null, pageDesc, currElement, currEntries, -1);
+		this(null, pageDesc, currElement, currEntries, null);
 	}
 
 	public CPathContainerWizard(IPathEntry entryToEdit, IContainerDescriptor pageDesc, ICElement currElement,
-			IPathEntry[] currEntries, int filterType) {
+			IPathEntry[] currEntries, int[] filterType) {
 		fEntryToEdit = entryToEdit;
 		fPageDesc = pageDesc;
 		fNewEntries = null;
@@ -108,7 +108,7 @@ public class CPathContainerWizard extends Wizard {
 			// first page
 			IContainerDescriptor[] containers = CPathContainerDescriptor.getDescriptors();
 			List allContainers = new ArrayList(Arrays.asList(containers));
-			if (fFilterType != -1) {
+			if (fFilterType != null) {
 				allContainers.add(0, new ProjectContainerDescriptor(fFilterType));
 			}
 			fSelectionWizardPage = new CPathContainerSelectionPage(
@@ -124,7 +124,7 @@ public class CPathContainerWizard extends Wizard {
 			fContainerPage = getContainerPage(descriptor);
 			addPage(fContainerPage);
 		}
-		if (fFilterType != -1) {
+		if (fFilterType != null) {
 			fFilterPage = new CPathFilterPage(fCurrElement, fFilterType);
 			addPage(fFilterPage);
 		}

@@ -1,5 +1,21 @@
 2002-11-22 Alain Magloire
 
+	* src/.../cdt/core/CommandLauncher.java (waitAndRead):
+	Make sure we drain the pipes.
+	(printCommandLine): Use the line.separator property.
+	* src/org/eclipse/cdt/ErrorParserManager.java
+	Check if outputStream is not null before using it.
+	(write): must be synchronized.
+	(checkLine): Break the buffer per line and pass it to processLine().
+	Takes an argument to flush when we are done(on close()).
+	* src/.../internal/core/CBuilder.java (invokeMake):
+	We have to call close() the same number of times we call
+	ErrorParserManager.getOutputStream().  Move the ErrorParerManager.reportProblem()
+	after the close.
+	* src/.../internal/CCorePluginResources.properties: Updated.
+
+2002-11-22 Alain Magloire
+
 	The C Builder on error would clear the build.
 	The side effect of that is on every BuildAll
 	or Rebuild on the workspace, it will try to

@@ -1,3 +1,18 @@
+2003-07-10 Alain Magloire
+
+	In the case of not having a PTY to unmixed inferior output from gdb commands
+	do the only sane thing and when a response comes in that is not a valid
+	MI format consider it as inferior output.
+
+	* src/org/eclipse/cdt/debug/mi/core/output/MIParser.java:
+	Put non valid lines in the TargetStream.
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java:
+	Pass output straight to the target.
+	* src/org/eclipse/cdt/debug/mi/core/TxThread.java:
+	Remove unused code.
+	* src/org/eclipse/cdt/debug/mi/core/command/Command.java:
+	Try to remove duplicate errors when throwing the MIException.
+
 2003-07-08 Alain Magloire
 
 	Unfortunately GDB/MI does not make the errors available via the advertise
@@ -15,7 +30,7 @@
 	
 		CDIException.getDetailedMesssage().
 
-	src/org/eclipse/cdt/debug/mi/core/command/*.java:  All the commands
+	* src/org/eclipse/cdt/debug/mi/core/command/*.java:  All the commands
 	changed to grab also the logstream messages if any for the exception.
 	
 2003-06-25 Alain Magloire

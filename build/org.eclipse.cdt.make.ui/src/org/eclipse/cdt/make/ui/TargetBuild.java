@@ -80,12 +80,13 @@ public class TargetBuild {
 		
 	static public void run(boolean fork, IRunnableContext context, final IMakeTarget[] targets) throws InvocationTargetException {
 		try {
+			saveAllResources(targets);
+
 			context.run(fork, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) throws CoreException {
-								saveAllResources(targets);
 								monitor.beginTask("Building Targets...", targets.length);
 								for( int i = 0; i < targets.length; i++) {
 									targets[i].build(new SubProgressMonitor(monitor, 1));

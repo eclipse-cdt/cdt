@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * 
@@ -142,8 +143,19 @@ public class MemoryText
 		if ( event.character == SWT.LF ||
 			 event.character == SWT.CR || 
 			 event.character == SWT.BS ||
-			 event.character == SWT.DEL ||
-			 !fPresentation.isAcceptable( event.character, fText.getCaretOffset() ) )
+			 event.character == SWT.DEL )
+		{
+			event.doit = false;
+			return;
+		}
+		if ( Character.isISOControl( event.character ) )
+			return;
+		if ( getSelectionCount() != 0 )
+		{
+			event.doit = false;
+			return;
+		}
+		if ( !fPresentation.isAcceptable( event.character, fText.getCaretOffset() ) )
 			event.doit = false;
 	}
 	
@@ -230,5 +242,20 @@ public class MemoryText
 									  getDirtyColor(),
 									  getBackgroundColor() ) );
 		fText.setStyleRanges( (StyleRange[])list.toArray( new StyleRange[list.size()] ) );
+	}
+	
+	protected void setEditable( boolean editable )
+	{
+		fText.setEditable( editable );
+	}
+	
+	protected int getSelectionCount()
+	{
+		return fText.getSelectionCount();
+	}
+	
+	protected Control getControl()
+	{
+		return fText;
 	}
 }

@@ -48,4 +48,15 @@ public interface ICDebugUIConstants
 	 * Identifier for a register group in a menu (value <code>"registerGroup"</code>).
 	 */
 	public static final String REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
+
+	/** 
+	 * Identifier for an empty group preceeding a
+	 * memory group in a menu (value <code>"emptyMemoryGroup"</code>).
+	 */
+	public static final String EMPTY_MEMORY_GROUP = "emptyMemoryGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a memory group in a menu (value <code>"memoryGroup"</code>).
+	 */
+	public static final String MEMORY_GROUP = "memoryGroup"; //$NON-NLS-1$
 }

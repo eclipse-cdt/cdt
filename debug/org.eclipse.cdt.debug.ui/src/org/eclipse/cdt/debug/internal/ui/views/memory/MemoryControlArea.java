@@ -170,7 +170,7 @@ public class MemoryControlArea extends Composite
 	{
 		setMemoryManager( ( input instanceof ICMemoryManager ) ? (ICMemoryManager)input : null );
 		getPresentation().setMemoryBlock( getMemoryBlock() );
-		setAddressTextState();
+		setState();
 		refresh();
 	}
 	
@@ -245,6 +245,7 @@ public class MemoryControlArea extends Composite
 																				   getPaddingChar() ) );
 			getPresentation().setMemoryBlock( getMemoryBlock() );
 		}
+		setMemoryTextState();
 	}
 	
 	private void removeBlock() throws DebugException
@@ -254,6 +255,7 @@ public class MemoryControlArea extends Composite
 			getMemoryManager().removeBlock( getIndex() );
 			getPresentation().setMemoryBlock( null );
 		}
+		setMemoryTextState();
 	}
 
 	public int getFormat()
@@ -311,8 +313,19 @@ public class MemoryControlArea extends Composite
 		fAddressText.setEnabled( enable );
 	}
 	
-	protected void setAddressTextState()
+	protected void setState()
 	{
 		enableAddressText( getMemoryManager() != null );
+		setMemoryTextState();
+	}
+	
+	private void setMemoryTextState()
+	{
+		fMemoryText.setEditable( getMemoryManager() != null && getMemoryBlock() != null );
+	}
+	
+	protected MemoryText getMemoryText()
+	{
+		return fMemoryText;
 	}
 }

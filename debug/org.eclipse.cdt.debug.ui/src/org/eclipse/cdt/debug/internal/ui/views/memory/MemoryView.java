@@ -7,14 +7,17 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -25,6 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -64,6 +68,10 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	protected void createActions()
 	{
+		IAction action = new RefreshMemoryAction( (MemoryViewer)getViewer() );
+		action.setEnabled( false );
+		setAction( "RefreshMemory", action ); //$NON-NLS-1$
+
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	}
@@ -81,6 +89,10 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	protected void fillContextMenu( IMenuManager menu )
 	{
+		menu.add( new Separator( ICDebugUIConstants.EMPTY_MEMORY_GROUP ) );
+		menu.add( new Separator( ICDebugUIConstants.MEMORY_GROUP ) );
+		menu.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
+
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 	}
 
@@ -89,6 +101,9 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	protected void configureToolBar( IToolBarManager tbm )
 	{
+		tbm.add( new Separator( this.getClass().getName() ) );
+		tbm.add( new Separator( ICDebugUIConstants.MEMORY_GROUP ) );
+		tbm.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -191,5 +206,13 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		{
 			setViewerInput( null );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createContextMenu(Control)
+	 */
+	protected void createContextMenu( Control menuControl )
+	{
+		super.createContextMenu( ((MemoryControlArea)((MemoryViewer)getViewer()).getTabFolder().getSelection().getControl()).getMemoryText().getControl() );
 	}
 }

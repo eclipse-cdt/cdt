@@ -1,3 +1,20 @@
+2002-10-18 Mikhail Khodjaiants
+	Implementing the memory view support:
+	Images for the view's actions:
+		autorefresh_mem.gif (clcl, dlcl, elcl),
+		refresh_mem.gif (clcl, dlcl, elcl),
+		memory_save.gif (clcl, dlcl, elcl),
+		memory_clear.gif (clcl, dlcl, elcl).
+	* RefreshMemoryAction.java
+	* MemoryControlArea.java
+	* MemoryPresentation.java
+	* MemoryText.java
+	* MemoryView.java
+	* MemoryViewer.java
+	* CDebugImages.java
+	* ICDebugHelpContextIds.java
+	* ICDebugUIConstants.java
+		
 2002-10-17 Mikhail Khodjaiants
 	Implementing the memory view support:
 	* MemoryControlArea.java

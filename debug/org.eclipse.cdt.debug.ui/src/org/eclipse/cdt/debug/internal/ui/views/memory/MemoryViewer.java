@@ -12,6 +12,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -63,6 +65,16 @@ public class MemoryViewer extends ContentViewer
 				fMemoryControlAreas[i] = new MemoryControlArea( fTabFolder, SWT.NONE, i );
 				tabItem.setControl( fMemoryControlAreas[i] );			
 			}
+			fTabFolder.addSelectionListener( new SelectionListener()
+			 									 {
+													public void widgetSelected( SelectionEvent e )
+													{
+													}
+													
+													public void widgetDefaultSelected( SelectionEvent e )
+													{
+													}
+			 									 } );
 			fTabFolder.setSelection( 0 );				
 		}
 		return fControl;
@@ -86,7 +98,7 @@ public class MemoryViewer extends ContentViewer
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(ISelection, boolean)
 	 */
-	public void setSelection(ISelection selection, boolean reveal)
+	public void setSelection( ISelection selection, boolean reveal )
 	{
 	}
 
@@ -102,5 +114,10 @@ public class MemoryViewer extends ContentViewer
 	{
 		for ( int i = 0; i < fMemoryControlAreas.length; ++i )
 			fMemoryControlAreas[i].setInput( (ICMemoryManager)input );
+	}
+	
+	protected CTabFolder getTabFolder()
+	{
+		return fTabFolder;
 	}
 }

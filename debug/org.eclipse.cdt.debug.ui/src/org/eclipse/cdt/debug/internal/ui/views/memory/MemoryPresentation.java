@@ -6,9 +6,11 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
@@ -64,14 +66,14 @@ public class MemoryPresentation
 	{
 		fAddressZones.clear();
 		IFormattedMemoryBlockRow[] rows = ( getMemoryBlock() != null ) ? getMemoryBlock().getRows() : new IFormattedMemoryBlockRow[0];
-		String text = new String();
+		StringBuffer sb = new StringBuffer();
 		for ( int i = 0; i < rows.length; ++i )
 		{
-			int offset = text.length();
-			text += getRowText( rows[i] );
+			int offset = sb.length();
+			sb.append( getRowText( rows[i] ) );
 			fAddressZones.add( new Point( offset, offset + getAddressLength() ) );
 		}
-		return text;
+		return sb.toString();
 	}
 
 	public int getItemSize( int offset )
@@ -90,7 +92,11 @@ public class MemoryPresentation
 	
 	public boolean isAcceptable( char ch, int offset )
 	{
-		return true;
+		if ( isInAsciiArea( offset ) )
+			return true;
+		if ( isInDataArea( offset ) )
+			return isValidValue( ch );
+		return false;
 	}
 	
 	public Point[] getAddressZones()
@@ -121,8 +127,7 @@ public class MemoryPresentation
 	private String getInterval( int length )
 	{
 		char[] chars = new char[length];
-		for ( int i = 0; i < chars.length; ++i )
-			chars[i] = ' ';
+		Arrays.fill( chars, ' ' );
 		return new String( chars );
 	}
 
@@ -133,13 +138,19 @@ public class MemoryPresentation
 
 	private String getRowText( IFormattedMemoryBlockRow row )
 	{
-		String result = getAddressString( row.getAddress() ) + 
-						getInterval( INTERVAL_BETWEEN_ADDRESS_AND_DATA );
+		StringBuffer result = new StringBuffer( getRowLength() ); 
+		result.append( getAddressString( row.getAddress() ) ); 
+		result.append( getInterval( INTERVAL_BETWEEN_ADDRESS_AND_DATA ) );
 		String[] items = row.getData();
 		for ( int i = 0; i < items.length; ++i )
-			result += items[i] + getInterval( INTERVAL_BETWEEN_DATA_ITEMS );
-		result += getInterval( INTERVAL_BETWEEN_DATA_AND_ASCII ) + row.getASCII() + '\n';
-		return result;
+		{
+			result.append( items[i] );
+			result.append( getInterval( INTERVAL_BETWEEN_DATA_ITEMS ) );
+		}
+		result.append( getInterval( INTERVAL_BETWEEN_DATA_AND_ASCII ) );
+		result.append( row.getASCII() );
+		result.append( '\n' );
+		return result.toString();
 	}
 
 /*	
@@ -228,39 +239,126 @@ public class MemoryPresentation
 			chars[i] = ch;
 		return String.valueOf( chars ).concat( item );
 	}
-/*	
+
 	private int getRowLength()
 	{
 		return getAddressLength() + 
 			   INTERVAL_BETWEEN_ADDRESS_AND_DATA +
-			   (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItems() + 
+			   (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) * getNumberOfDataItems() + 
 			   ( ( displayASCII() ) ? INTERVAL_BETWEEN_DATA_AND_ASCII +
-			   getBytesPerRow() : 0 ) + 1;
+			   getDataBytesPerRow() : 0 ) + 1;
 	}
-*/	
+
 	private int getAddressLength()
 	{
 		return 10;
 	}
-/*	
+	
+	private boolean isInAddressZone( int offset )
+	{
+		if ( getRowLength() != 0 )
+		{
+			int pos = offset % getRowLength();
+			return ( pos >= 0 && pos < getAddressLength() ); 
+		}
+		return false;
+	}
+
+	private boolean isInAsciiArea( int offset )
+	{
+		if ( displayASCII() && getRowLength() != 0 )
+		{
+			int pos = offset % getRowLength();
+			int asciiColumn = getAddressLength() + 
+			   				  INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+			   				  (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItems() + 
+			   				  INTERVAL_BETWEEN_DATA_AND_ASCII;
+			return ( pos >=  asciiColumn && pos < getRowLength() - 1 ); 
+		}
+		return false;
+	}
+
+	private boolean isInDataArea( int offset )
+	{
+		if ( getRowLength() != 0 )
+		{
+			int pos = offset % getRowLength();
+			int dataBegin = getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA;
+			int dataEnd = dataBegin + ((getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItems());
+			if ( pos >= dataBegin && pos < dataEnd )
+				return isInDataItem( pos - dataBegin );
+		}
+		return false;
+	}
+
+	private boolean isInDataItem( int pos )
+	{
+		for ( int i = 0; i < getNumberOfDataItems(); ++i )
+		{
+			if ( pos < i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) )
+				return false;
+			if ( pos >= i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) &&
+				 pos < (i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS)) + getDataItemLength() )
+				return true;
+		}
+		return false;
+	}
+
 	private int getDataItemLength()
 	{
-		int result = 0;
-		switch( getFormat() )
-		{
-			case ICDebugUIInternalConstants.MEMORY_FORMAT_HEX:
-				result = 2 * getSize();
-				break;
-			case ICDebugUIInternalConstants.MEMORY_FORMAT_BINARY:
-				result = 8 * getSize();
-				break;
-		}
-		return result;
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().getWordSize() * 2;
+		return 0;
 	}
 	
 	private int getNumberOfDataItems()
 	{
-		return getBytesPerRow() / getSize();
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().getNumberOfColumns();
+		return 0;
 	}
-*/
+	
+	private boolean displayASCII()
+	{
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().displayASCII();
+		return false;
+	}
+	
+	private int getDataBytesPerRow()
+	{
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().getNumberOfColumns() * getMemoryBlock().getWordSize();
+		return 0;
+	}
+
+	private boolean isValidValue( char ch )
+	{
+		switch( getDataFormat() )
+		{
+			case ICMemoryManager.MEMORY_FORMAT_HEX:
+				return isHexadecimal( ch );
+			case ICMemoryManager.MEMORY_FORMAT_BINARY:
+			case ICMemoryManager.MEMORY_FORMAT_OCTAL:
+			case ICMemoryManager.MEMORY_FORMAT_SIGNED_DECIMAL:
+			case ICMemoryManager.MEMORY_FORMAT_UNSIGNED_DECIMAL:
+			case -1:
+			default:
+				return false;
+		}
+	}
+
+	private boolean isHexadecimal( char ch )
+	{
+		return ( Character.isDigit( ch ) ||
+				 ( ch >= 'a' && ch <= 'f' ) ||
+				 ( ch >= 'A' && ch <= 'F' ) );
+	}
+	
+	private int getDataFormat()
+	{
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().getFormat();
+		return -1;
+	}
 }

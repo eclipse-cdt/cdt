@@ -1,3 +1,27 @@
+2003-11-26 Mikhail Khodjaiants
+	Cleanup.
+	* CDTDebugModelPresentation.java
+	* AddExpressionActionDelegate.java
+	* AddGlobalsActionDelegate.java
+	* AddWatchpointActionDelegate.java
+	* AddWatchpointDialog.java
+	* AutoRefreshAction.java
+	* CBreakpointPreferencePage.java
+	* ExpressionDialog.java
+	* ManageBreakpointRulerAction.java
+	* MemoryFormatAction.java
+	* MemoryNumberOfColumnAction.java
+	* MemorySizeAction.java
+	* RunToLineRulerAction.java
+	* ShowRegisterTypesAction.java
+	* ComboDialogField.java
+	* DisassemblyMarkerAnnotationModel.java
+	* MemoryViewer.java
+	* AddProjectSourceLocationBlock.java
+	* CDebugUIPlugin.java
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+
 2003-11-21 Mikhail Khodjaiants
 	Use "symbol not available" for empty function names when generating a stack frame label.
 	* CDTDebugModelPresentation.java 

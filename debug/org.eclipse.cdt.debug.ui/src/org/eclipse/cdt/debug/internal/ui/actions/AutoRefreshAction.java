@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -25,7 +26,7 @@ public class AutoRefreshAction extends Action implements IUpdate
 	 */
 	public AutoRefreshAction( Viewer viewer, String text )
 	{
-		super( text, Action.AS_CHECK_BOX );
+		super( text, IAction.AS_CHECK_BOX );
 		fViewer = viewer;
 	}
 

@@ -65,7 +65,7 @@ public class RunToLineRulerAction extends Action
 		IDocument doc = provider.getDocument( getTextEditor().getEditorInput() );
 		if ( file != null && lineNumber <= doc.getNumberOfLines() && lineNumber > 0 )
 		{
-			enabled = ( getTarget() != null && ((IRunToLine)getTarget()).canRunToLine( file, lineNumber ) );
+			enabled = ( getTarget() != null && getTarget().canRunToLine( file, lineNumber ) );
 		}
 		setEnabled( enabled );
 	}
@@ -156,14 +156,14 @@ public class RunToLineRulerAction extends Action
 
 	protected void runToLine( IFile file, int lineNumber )
 	{
-		if ( !((IRunToLine)getTarget()).canRunToLine( file, lineNumber ) )
+		if ( !getTarget().canRunToLine( file, lineNumber ) )
 		{
 			getTextEditor().getSite().getShell().getDisplay().beep();
 			return;
 		}
 		try
 		{
-			((IRunToLine)getTarget()).runToLine( file, lineNumber );
+			getTarget().runToLine( file, lineNumber );
 		}
 		catch( DebugException e )
 		{

@@ -218,7 +218,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 			try {
 				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch(CoreException ce) {			 
-				log(new Status(Status.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce));
+				log(new Status(IStatus.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce));
 			}
 		}
 		return tab;

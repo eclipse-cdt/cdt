@@ -11,11 +11,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -77,7 +77,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 														   true, 
 											  			   false,
 														   expression );
-		if ( dlg.open() != Dialog.OK )
+		if ( dlg.open() != Window.OK )
 			return;
 		if ( getTextEditor() != null )
 		{

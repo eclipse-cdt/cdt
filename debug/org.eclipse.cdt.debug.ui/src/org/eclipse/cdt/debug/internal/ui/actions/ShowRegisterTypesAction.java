@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -31,7 +32,7 @@ public class ShowRegisterTypesAction extends Action
 	 */
 	public ShowRegisterTypesAction( IDebugView view )
 	{
-		super( "Show &Type Names", Action.AS_CHECK_BOX );
+		super( "Show &Type Names", IAction.AS_CHECK_BOX );
 		setView( view );
 		setToolTipText( "Show Type Names" );
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_TYPE_NAMES );

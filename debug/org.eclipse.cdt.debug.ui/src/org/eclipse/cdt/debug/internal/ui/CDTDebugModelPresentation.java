@@ -689,7 +689,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			descriptor = DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED );
 		}
-		;
 		return fImageCache.getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( breakpoint ) ) );
 	}
 

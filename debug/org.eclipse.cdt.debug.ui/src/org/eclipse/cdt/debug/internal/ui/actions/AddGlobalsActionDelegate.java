@@ -21,13 +21,13 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPartListener;
@@ -320,14 +320,14 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 			IExecFileInfo info = (IExecFileInfo)((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class );
 			if ( info != null )
 			{
-				IGlobalVariable[] globalVars = (IGlobalVariable[])info.getGlobals();
+				IGlobalVariable[] globalVars = info.getGlobals();
 				fGlobals = new Global[globalVars.length];
 				for ( int i = 0; i < globalVars.length; ++i )
 				{
 					fGlobals[i] = new Global( globalVars[i].getName(), globalVars[i].getPath() );
 				}
 				ListSelectionDialog dlg = createDialog();
-				if ( dlg.open() == Dialog.OK )
+				if ( dlg.open() == Window.OK )
 				{
 					MultiStatus ms = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null ); 
 					Object[] selections = dlg.getResult();

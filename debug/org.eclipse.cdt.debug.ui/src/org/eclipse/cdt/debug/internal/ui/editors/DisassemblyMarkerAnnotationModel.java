@@ -63,7 +63,7 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 				doHandleCoreException( x, "Resource Changed" );
 			}
 		}
-	};
+	}
 
 	/**
 	 * Internal resource delta visitor.
@@ -82,7 +82,7 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 			}
 			return true;
 		}
-	};
+	}
 
 	/** The workspace */
 	private IWorkspace fWorkspace;

@@ -5,7 +5,6 @@
  */
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
-import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -154,7 +153,7 @@ public class MemoryViewer extends ContentViewer
 	protected void inputChanged( Object input, Object oldInput )
 	{
 		for ( int i = 0; i < fMemoryControlAreas.length; ++i )
-			fMemoryControlAreas[i].setInput( (ICMemoryManager)input );
+			fMemoryControlAreas[i].setInput( input );
 	}
 	
 	protected CTabFolder getTabFolder()

@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -29,7 +30,7 @@ public class MemoryNumberOfColumnAction extends Action implements IUpdate
 							 		   MemoryViewer viewer, 
 							 		   int numberOfColumns )
 	{
-		super( getLabel( numberOfColumns ), Action.AS_CHECK_BOX );
+		super( getLabel( numberOfColumns ), IAction.AS_CHECK_BOX );
 		fGroup = group;
 		fMemoryViewer = viewer;
 		fNumberOfColumns = numberOfColumns;

@@ -10,6 +10,7 @@ import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -30,7 +31,7 @@ public class MemorySizeAction extends Action implements IUpdate
 							 MemoryViewer viewer, 
 							 int id )
 	{
-		super( getLabel( id ), Action.AS_CHECK_BOX );
+		super( getLabel( id ), IAction.AS_CHECK_BOX );
 		fGroup = group;
 		fMemoryViewer = viewer;
 		fId = id;

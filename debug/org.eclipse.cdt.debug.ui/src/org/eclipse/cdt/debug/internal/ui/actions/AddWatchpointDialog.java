@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Text;
 public class AddWatchpointDialog extends Dialog
 {
 	private Button fBtnOk = null;
-	private Button fBtnCancel = null;
 	private Text fTextExpression;
 	private Button fChkBtnWrite;
 	private Button fChkBtnRead;
@@ -82,7 +81,7 @@ public class AddWatchpointDialog extends Dialog
 	protected void createButtonsForButtonBar( Composite parent ) 
 	{
 		fBtnOk = createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true );
-		fBtnCancel = createButton( parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false );
+		createButton( parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false );
 	}
 
 	private void createDataWidgets( Composite parent ) 

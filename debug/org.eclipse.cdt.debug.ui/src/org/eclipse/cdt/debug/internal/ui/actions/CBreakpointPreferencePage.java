@@ -231,7 +231,6 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 		}
 	}
 
-	private Text fConditionTextControl;
 	private BreakpointStringFieldEditor fCondition;
 
 	private Text fIgnoreCountTextControl;
@@ -389,7 +388,6 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 	protected void createConditionEditor( Composite parent )
 	{
 		fCondition = new BreakpointStringFieldEditor( CBreakpointPreferenceStore.CONDITION, "&Condition", parent );
-		fConditionTextControl = fCondition.getTextControl(parent);
 		fCondition.setEmptyStringAllowed( true );
 		fCondition.setErrorMessage( "Invalid_condition" );
 		addField( fCondition );

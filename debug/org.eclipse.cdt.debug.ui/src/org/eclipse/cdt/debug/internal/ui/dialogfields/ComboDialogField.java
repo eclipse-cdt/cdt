@@ -97,7 +97,8 @@ public class ComboDialogField extends DialogField {
 					doSelectionChanged(e);
 				}
 				
-				public void widgetDefaultSelected(SelectionEvent e) {	};
+				public void widgetDefaultSelected(SelectionEvent e) {	
+				}
 			};
 			
 			fComboControl= new Combo(parent, fFlags);

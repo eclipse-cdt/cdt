@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -33,7 +32,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class AddProjectSourceLocationBlock
 {
 	private Composite fControl = null;
-	private Shell fShell = null;
 	private TableViewer fViewer;
 
 	protected IProject[] fProjects = null;
@@ -48,7 +46,6 @@ public class AddProjectSourceLocationBlock
 
 	public void createControl( Composite parent )
 	{
-		fShell = parent.getShell();
 		fControl = new Composite( parent, SWT.NONE );
 		fControl.setLayout( new GridLayout() );
 		fControl.setLayoutData( new GridData( GridData.FILL_BOTH ) );

@@ -30,8 +30,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 public class SourcePropertyPage extends PropertyPage
 {
 	private SourceLookupBlock fBlock = null;
-	
-	private boolean fHasActiveContents = false;
 
 	/**
 	 * Constructor for SourcePropertyPage.
@@ -52,7 +50,6 @@ public class SourcePropertyPage extends PropertyPage
 		{
 			return createTerminatedContents( parent );
 		}
-		fHasActiveContents = true;
 		return createActiveContents( parent );
 	}
 

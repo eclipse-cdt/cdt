@@ -17,10 +17,10 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
@@ -50,7 +50,7 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 	{
 		String text = getSelectedText();
 		ExpressionDialog dlg = new ExpressionDialog( getShell(), text );
-		if ( dlg.open() != Dialog.OK )
+		if ( dlg.open() != Window.OK )
 			return;
 		createExpression( dlg.getExpression() );
 	}

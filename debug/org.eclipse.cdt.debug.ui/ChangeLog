@@ -1,3 +1,6 @@
+2003-10-14 Mikhail Khodjaiants
+	* DebugTextHover.java: check if the result of 'evaluateExpression' is not null before trim it.
+ 
 2003-10-06 Mikhail Khodjaiants
 	Mark the function arguments in the Variables View.
 	* icons\full\ovr16\argument_ovr.gif: new

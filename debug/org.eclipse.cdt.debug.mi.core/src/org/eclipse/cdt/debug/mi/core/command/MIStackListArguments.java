@@ -49,6 +49,10 @@ public class MIStackListArguments extends MICommand
 		setParameters(params);
 	}
 
+	public MIStackListArgumentsInfo getMIStackListArgumentsInfo() throws MIException {
+		return (MIStackListArgumentsInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

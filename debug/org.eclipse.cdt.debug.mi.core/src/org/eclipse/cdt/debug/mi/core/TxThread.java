@@ -30,7 +30,7 @@ public class TxThread extends Thread {
 		try {
 			while (true) {
 				Command cmd = null;
-				Queue txQueue = session.getTxQueue();
+				CommandQueue txQueue = session.getTxQueue();
 				// removeCommand() will block until a command is available.
 				try {
 					cmd = txQueue.removeCommand();
@@ -54,7 +54,7 @@ public class TxThread extends Thread {
 					// a valid token, this is to permit input(HACK!)
 					// or commands that do not want to wait for responses.
 					if (cmd.getToken() > 0) {
-						Queue rxQueue = session.getRxQueue();
+						CommandQueue rxQueue = session.getRxQueue();
 						rxQueue.addCommand(cmd);
 					}
 				}

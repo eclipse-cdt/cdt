@@ -18,7 +18,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
-import org.eclipse.cdt.debug.mi.core.event.EventThread;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
@@ -68,30 +67,12 @@ public class RxThread extends Thread {
 			while (true) {
 				String line;
 				while ((line = reader.readLine()) != null) {
-					// Testing on GNU/Linux where target stream output
-					// is entertwine with MI out,
-					// comment out the if/else below and just use:
-					//	processMIOutput(line);
-					// at least for testing.
-
-					// We accumulate until we see the gdb terminator.
 MIPlugin.getDefault().debugLog(line);
-					if (line.startsWith(MIOutput.terminator)) {
-						// discard termination
-						processMIOutput(buffer.toString());
-						buffer = new StringBuffer();
-					} else if (line.startsWith(MITargetStreamOutput.startTag)) {
-						// Process Target output immediately.
-						processMIOutput(line + "\n");
-					} else {
-						buffer.append(line).append('\n');
-					}
+					processMIOutput(line + "\n");
 				}
 			}
 		} catch (IOException e) {
-			MIEvent event = new MIExitEvent();
-			Thread eventTread = new EventThread(session, new MIEvent[]{event});
-			eventTread.start();
+			fireEvent(new MIExitEvent());
 			//e.printStackTrace();
 		}
 	}
@@ -106,7 +87,7 @@ MIPlugin.getDefault().debugLog(line);
 		MIOutput response = session.parse(buffer);
 		if (response != null) {
 			List list = new ArrayList();
-			Queue rxQueue = session.getRxQueue();
+			CommandQueue rxQueue = session.getRxQueue();
 
 			// Notify any command waiting for a ResultRecord.
 			MIResultRecord rr = response.getMIResultRecord();
@@ -135,11 +116,11 @@ MIPlugin.getDefault().debugLog(line);
 					} else {
 						type = MIRunningEvent.CONTINUE;
 					}
-					session.getMIProcess().setRunning();
+					session.getMIInferior().setRunning();
 					MIEvent event = new MIRunningEvent(type);
-					fireEvents(new MIEvent[]{event});
+					fireEvent(event);
 				} else if ("exit".equals(state)) {
-					session.getMIProcess().setTerminated();
+					session.getMIInferior().setTerminated();
 				}
 
 				// Notify the waiting command.
@@ -180,11 +161,12 @@ MIPlugin.getDefault().debugLog(line);
 	void processMIOOBRecord(MIAsyncRecord async, List list) {
 		if (async instanceof MIExecAsyncOutput) {
 			MIExecAsyncOutput exec = (MIExecAsyncOutput)async;
+			MIEvent e = null;
 
 			// Change of state.
 			String state = exec.getAsyncClass();
 			if ("stopped".equals(state)) {
-				session.getMIProcess().setSuspended();
+				session.getMIInferior().setSuspended();
 			}
 
 			MIResult[] results = exec.getMIResults();
@@ -194,11 +176,20 @@ MIPlugin.getDefault().debugLog(line);
 				if (var.equals("reason")) {
 					if (val instanceof MIConst) {
 						String reason = ((MIConst)val).getString();
-						MIEvent e = createEvent(reason, exec);
+						e = createEvent(reason, exec);
 						if (e != null) {
 							list.add(e);
 						}
 					}
+				}
+			}
+			
+			// HACK: GDB for temporary breakpoints will not send the
+			// "reason" ???  Fake this as breakpoint-hit 
+			if (e == null) {
+				e = createEvent("breakpoint-hit", exec);
+				if (e != null) {
+					list.add(e);
 				}
 			}
 		} else if (async instanceof MIStatusAsyncOutput) {
@@ -318,19 +309,25 @@ MIPlugin.getDefault().debugLog(line);
 				event = new MIFunctionFinishedEvent(rr);
 			}
 		} else if ("exited-normally".equals(reason)) {
-			session.getMIProcess().setTerminated();
+			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		} else if ("exited-signalled".equals(reason)) {
-			session.getMIProcess().setTerminated();
+			session.getMIInferior().setTerminated();
+			event = new MIInferiorExitEvent();
+		} else if ("exited".equals(reason)) {
+			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		}
 		return event;
 	}
 
 	public void fireEvents(MIEvent[] events) {
-		if (events.length > 0) {
-			Thread eventTread = new EventThread(session, events);
-			eventTread.start();
+		for (int i = 0; i < events.length; i++) {
+			fireEvent(events[i]);
 		}
+	}
+
+	public void fireEvent(MIEvent event) {
+		session.getEventQueue().addItem(event);
 	}
 }

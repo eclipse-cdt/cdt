@@ -23,7 +23,7 @@ public class MIStackListFramesInfo extends MIInfo {
 		if (frames == null) {
 			parse();
 		}
-		return null;
+		return frames;
 	}
 
 	void parse() {

@@ -30,8 +30,10 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
+import org.eclipse.cdt.debug.mi.core.command.MIThreadListIds;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
 
 /**
  */
@@ -55,6 +57,16 @@ public class CTarget  implements ICDITarget {
 
 	void removeCThread(CThread cthread) {
 		threadList.remove(cthread);
+	}
+
+	boolean containsCThread(int id) {
+		for (int i = 0; i < threadList.size(); i++) {
+			CThread cthread = (CThread)threadList.get(i);
+			if (cthread.getId() == id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	CThread[] getCThreads() {
@@ -109,7 +121,7 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getProcess()
 	 */
 	public Process getProcess() {
-		return session.getMISession().getMIProcess();
+		return session.getMISession().getMIInferior();
 	}
 
 	/**
@@ -144,7 +156,29 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThreads()
 	 */
 	public ICDIThread[] getThreads() throws CDIException {
-		return new ICDIThread[0];
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIThreadListIds tids = factory.createMIThreadListIds();
+		try {
+			mi.postCommand(tids);
+			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
+			int[] ids = info.getThreadIds();
+			if (ids != null && ids.length > 0) {
+				for (int i = 0; i < ids.length; i++) {
+					if (! containsCThread(ids[i])) {
+						addCThread(new CThread(this, ids[i]));
+					}
+				}
+			} else {
+				// HACK create a dummy thread
+				if (threadList.size() == 0) {
+					addCThread(new CThread(this, 1));
+				}
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+		return (ICDIThread[])getCThreads();
 	}
 
 	/**
@@ -158,21 +192,21 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isStepping()
 	 */
 	public boolean isStepping() {
-		return session.getMISession().getMIProcess().isRunning();
+		return session.getMISession().getMIInferior().isRunning();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isSuspended()
 	 */
 	public boolean isSuspended() {
-		return session.getMISession().getMIProcess().isSuspended();
+		return session.getMISession().getMIInferior().isSuspended();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return session.getMISession().getMIProcess().isTerminated();
+		return session.getMISession().getMIInferior().isTerminated();
 	}
 
 	/**
@@ -198,7 +232,9 @@ public class CTarget  implements ICDITarget {
 	 */
 	public void resume() throws CDIException {
 		MISession mi = session.getMISession();
-		if (mi.getMIProcess().isSuspended()) {
+		if (mi.getMIInferior().isRunning() || mi.getMIInferior().isStepping()) {
+			throw new CDIException("Inferior already running");
+		} else if (mi.getMIInferior().isSuspended()) {
 			CommandFactory factory = mi.getCommandFactory();
 			MIExecContinue cont = factory.createMIExecContinue();
 			try {
@@ -210,8 +246,11 @@ public class CTarget  implements ICDITarget {
 			} catch (MIException e) {
 				throw new CDIException(e.toString());
 			}
+		} else if (mi.getMIInferior().isTerminated()) {
+			restart();
 		} else {
 			restart();
+			//throw new CDIException("Unknow state");
 		}
 	}
 
@@ -309,7 +348,7 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#terminate()
 	 */
 	public void terminate() throws CDIException {
-		session.getMISession().getMIProcess().destroy();
+		session.getMISession().getMIInferior().destroy();
 	}
 
 	/**

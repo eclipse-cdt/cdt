@@ -48,7 +48,7 @@ public class MIPlugin extends Plugin {
 	}
 
 	public ICDISession createCSession(String program) throws IOException {
-		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
+		String[]args = new String[]{"gdb", "-q", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
 		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
 		/*

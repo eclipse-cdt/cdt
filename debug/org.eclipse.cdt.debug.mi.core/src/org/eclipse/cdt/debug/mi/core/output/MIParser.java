@@ -116,13 +116,13 @@ public class MIParser {
 				token.delete(0, i);
 			}
 
-			// Process ResultRecord | Out-Of-Band Records
+			// ResultRecord ||| Out-Of-Band Records
 			if (token.length() > 0) {
 				if (token.charAt(0) == '^') {
 					token.deleteCharAt(0);
 					rr = processMIResultRecord(token, id);
 				} else if(token.toString().startsWith(MIOutput.terminator)) {
-					break;
+					//break; // Do nothing.
 				} else {
 					MIOOBRecord band = processMIOOBRecord(token, id);
 					if (band != null) {
@@ -131,15 +131,14 @@ public class MIParser {
 				}
 			}
 		}
-		MIOOBRecord[] bands =
-			(MIOOBRecord[]) oobs.toArray(new MIOOBRecord[oobs.size()]);
+		MIOOBRecord[] bands = (MIOOBRecord[]) oobs.toArray(new MIOOBRecord[oobs.size()]);
 		mi.setMIOOBRecords(bands);
 		mi.setMIResultRecord(rr);
 		return mi;
 	}
 
 	/**
-	 * Assuming '^' was deleted.
+	 * Assuming '^' was deleted from the Result Record.
 	 */
 	private MIResultRecord processMIResultRecord(StringBuffer buffer, int id) {
 		MIResultRecord rr = new MIResultRecord();
@@ -174,6 +173,7 @@ public class MIParser {
 	}
 
 	/**
+	 * Find OutOfBand Records depending on the starting token.
 	 */
 	private MIOOBRecord processMIOOBRecord(StringBuffer buffer, int id) {
 		MIOOBRecord oob = null;
@@ -235,7 +235,8 @@ public class MIParser {
 	}
 
 	/**
-	 * Assuming that the usual leading comma was consume.
+	 * Assuming that the usual leading comma was consumed.
+	 * Extract the MI Result comma seperated responses.
 	 */
 	private MIResult[] processMIResults(StringBuffer buffer) {
 		List aList = new ArrayList();
@@ -255,7 +256,7 @@ public class MIParser {
 
 	/**
 	 * Construct the MIResult.  Characters will be consume/delete
-	 * has moving forward constructing the AST.
+	 * moving forward constructing the AST.
 	 */
 	private MIResult processMIResult(StringBuffer buffer) {
 		MIResult result = new MIResult();
@@ -353,6 +354,14 @@ public class MIParser {
 		return list;
 	}
 
+	/*
+	 * MI C-String rather MICOnst values are enclose in double quotes
+	 * and any double quotes or backslash in the string are escaped.
+	 * Assuming the starting double quote was removed.
+	 * This method will stop at the closing double quote remove the extra
+	 * backslach escaping and return the string __without__ the enclosing double quotes
+	 * The orignal StringBuffer will move forward.
+	 */
 	private String translateCString(StringBuffer buffer) {
 		boolean escape = false;
 		boolean closingQuotes = false;

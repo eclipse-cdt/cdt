@@ -14,19 +14,14 @@ public class MIThreadSelectInfo extends MIInfo {
 
 	public MIThreadSelectInfo(MIOutput out) {
 		super(out);
+		parse();
 	}
 
 	public int getNewThreadId() {
-		if (frame == null) {
-			parse();
-		}
 		return threadId;
 	}
 
 	public MIFrame getFrame() {
-		if (frame == null) {
-			parse();
-		}
 		return frame;
 	}
 

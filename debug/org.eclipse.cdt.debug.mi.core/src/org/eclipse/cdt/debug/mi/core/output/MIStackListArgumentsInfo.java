@@ -20,7 +20,7 @@ public class MIStackListArgumentsInfo extends MIInfo {
 		super(out);
 	}
 
-	public MIFrame[] getFrames() {
+	public MIFrame[] getMIFrames() {
 		if (frames == null) {
 			parse();
 		}

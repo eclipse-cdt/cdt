@@ -25,6 +25,10 @@ public class MIThreadListIds extends MICommand
 		super("-thread-list-ids");
 	}
 
+	public MIThreadListIdsInfo getMIThreadListIdsInfo() throws MIException {
+		return (MIThreadListIdsInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

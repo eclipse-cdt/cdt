@@ -34,12 +34,10 @@ public class EventManager extends SessionObject implements ICDIEventManager {
 		public CDIObserver(ICDIEventListener l) {
 			listener = l;
 		}
-		public void update(Observable o, Object args) {
-			MIEvent[] events = (MIEvent[])args;
-			for (int i = 0; i < events.length; i++) {
-				ICDIEvent cdiEvent = EventAdapter.getCDIEvent(getCSession(), events[i]);
-				listener.handleDebugEvent(cdiEvent);
-			}
+		public void update(Observable o, Object arg) {
+			MIEvent event = (MIEvent)arg;
+			ICDIEvent cdiEvent = EventAdapter.getCDIEvent(getCSession(), event);
+			listener.handleDebugEvent(cdiEvent);
 		}
 	}
 

@@ -8,6 +8,7 @@ import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
 
 /**
@@ -18,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class MIProcess extends Process {
+public class MIInferior extends Process {
 
 	public final static int SUSPENDED = 1;
 	public final static int RUNNING = 2;
@@ -29,7 +30,7 @@ public class MIProcess extends Process {
 	MISession session;
 	OutputStream out;
 
-	MIProcess(MISession mi) {
+	MIInferior(MISession mi) {
 		session = mi;
 		out = new OutputStream() {
 			StringBuffer buf = new StringBuffer();
@@ -39,6 +40,8 @@ public class MIProcess extends Process {
 					flush();
 				}
 			}
+			// Encapsulate the string sent to gdb in a fake command.
+			// and post it to the TxThread.
 			public void flush() throws IOException {
 				CLICommand cmd = new CLICommand(buf.toString()) {
 					public void setToken(int token) {
@@ -113,16 +116,13 @@ public class MIProcess extends Process {
 		if (!isTerminated()) {
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
-			CLICommand yes = new CLICommand("yes") {
-				public void setToken() { }
-			};
 			try {
 				session.postCommand(abort);
-				session.postCommand(yes);
+				setTerminated();
+				session.getRxThread().fireEvent(new MIInferiorExitEvent());
 			} catch (MIException e) {
 			}
 		}
-		// Do not wait for answer.
 	}
 
 	public synchronized boolean isSuspended() {

@@ -25,61 +25,38 @@ public class MIDataReadMemoryInfo extends MIInfo {
 	
 	public MIDataReadMemoryInfo(MIOutput rr) {
 		super(rr);
+		parse();
 	}
 
 	public long getAddress() {
-		if  (memories == null) {
-			parse();
-		}
 		return addr;
 	}
 
 	public long getNumberBytes() {
-		if  (memories == null) {
-			parse();
-		}
 		return numBytes;
 	}
 
 	public long getTotalBytes() {
-		if  (memories == null) {
-			parse();
-		}
 		return totalBytes;
 	}
 
 	public long getNextRow() {
-		if  (memories == null) {
-			parse();
-		}
 		return nextRow;
 	}
 
 	public long getPreviousRow() {
-		if  (memories == null) {
-			parse();
-		}
 		return prevRow;
 	}
 
 	public long getNextPage() {
-		if  (memories == null) {
-			parse();
-		}
 		return nextPage;
 	}
 
 	public long getPreviousPage() {
-		if  (memories == null) {
-			parse();
-		}
 		return prevPage;
 	}
 
 	public MIMemory[] getMemories() {
-		if (memories == null) {
-			parse();
-		}
 		return memories;
 	}
 /*

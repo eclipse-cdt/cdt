@@ -6,9 +6,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
+import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
-import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 
 /**
  * @author alain
@@ -32,7 +32,7 @@ public class CThread extends CObject implements ICDIThread {
 	}
 
 	public String toString() {
-		return "thread-" + Integer.toString(id);
+		return Integer.toString(id);
 	}
 
 	/**
@@ -48,10 +48,12 @@ public class CThread extends CObject implements ICDIThread {
 	public ICDIStackFrame[] getStackFrames() throws CDIException {
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIStackListFrames frames = factory.createMIStackListFrames();
+		//MIStackListFrames frames = factory.createMIStackListFrames();
+		MIStackListArguments frames = factory.createMIStackListArguments(true);
 		try {
 			mi.postCommand(frames);
-			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
+			//MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
+			MIStackListArgumentsInfo info = frames.getMIStackListArgumentsInfo();
 			if (info == null) {
 				throw new CDIException("Timedout");
 			}

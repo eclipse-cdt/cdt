@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class MIVarListChildrenInfo extends MIInfo {
 
-	MIChild[] children = new MIChild[0];
+	MIChild[] children;
 	int numchild;
 
 	public MIVarListChildrenInfo(MIOutput record) {

@@ -34,14 +34,14 @@ public class Variable extends CObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
-		return null;
+		return "";
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getValue()
 	 */
 	public ICDIValue getValue() throws CDIException {
-		return null;
+		return new Value(getCTarget(), arg.getValue());
 	}
 
 	/**

@@ -13,6 +13,8 @@ import java.util.Observable;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
 
@@ -27,11 +29,13 @@ public class MISession extends Observable {
 	InputStream inChannel;
 	OutputStream outChannel;
 
-	Thread txThread;
-	Thread rxThread;
+	TxThread txThread;
+	RxThread rxThread;
+	EventThread eventThread;
 
-	Queue txQueue;
-	Queue rxQueue;
+	CommandQueue txQueue;
+	CommandQueue rxQueue;
+	Queue eventQueue;
 
 	PipedInputStream miInPipe;
 	PipedOutputStream miOutPipe;
@@ -46,7 +50,7 @@ public class MISession extends Observable {
 
 	long cmdTimeout = 10000; // 10 * 1000 (~ 10 secs);
 
-	MIProcess process;
+	MIInferior inferior;
 
 	/**
 	 * Create the gdb session.
@@ -59,12 +63,15 @@ public class MISession extends Observable {
 		outChannel = o;
 		factory = new CommandFactory();
 		parser = new MIParser();
-		txQueue = new Queue();
-		rxQueue = new Queue();
+		txQueue = new CommandQueue();
+		rxQueue = new CommandQueue();
+		eventQueue = new Queue();
 		txThread = new TxThread(this);
 		rxThread = new RxThread(this);
+		eventThread = new EventThread(this);
 		txThread.start();
 		rxThread.start();
+		eventThread.start();
 
 		try {
 			miOutPipe = new PipedOutputStream();
@@ -76,7 +83,11 @@ public class MISession extends Observable {
 		} catch (IOException e) {
 		}
 
-		process = new MIProcess(this);
+		inferior = new MIInferior(this);
+		try {
+			postCommand(new MIGDBSet(new String[]{"confirm", "off"}));
+		} catch (MIException e) {
+		}
 	}
 
 	/**
@@ -157,25 +168,35 @@ public class MISession extends Observable {
 	public void postCommand(Command cmd, long timeout) throws MIException {
 
 		MIPlugin.getDefault().debugLog(cmd.toString());
+
+		// Test if we in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
 			throw new MIException("{R,T}xThread terminated");
 		}
+
 		txQueue.addCommand(cmd);
+
+		// Wait for the response or timedout
 		synchronized (cmd) {
-			// RxThread will set the MIOutput on the cmd
-			// when the response arrive.
-			while (cmd.getMIOutput() == null) {
-				try {
-					cmd.wait(timeout);
-					break; // Timeout or Notify
-				} catch (InterruptedException e) {
+			// Do not wait for command if time out is 0
+			if (timeout > 0) {
+				// RxThread will set the MIOutput on the cmd
+				// when the response arrive.
+				while (cmd.getMIOutput() == null) {
+					try {
+						cmd.wait(timeout);
+						if (cmd.getMIOutput() == null) {
+							throw new MIException("Timedout");
+						}
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 		}
 	}
 
-	public MIProcess getMIProcess() {
-		return process;
+	public MIInferior getMIInferior() {
+		return inferior;
 	}
 
 	public boolean isTerminated() {
@@ -187,9 +208,17 @@ public class MISession extends Observable {
 	 */
 	public void terminate() {
 
-		process.destroy();
+		// Destroy any MI Inferior
+		inferior.destroy();
 
-		// Closing the channel will kill the RxThread.
+		// send the exit.
+		try {
+			MIGDBExit exit = factory.createMIGDBExit();
+			postCommand(exit);
+		} catch (MIException e) {
+		}
+
+		// Explicitely close the channels
 		try {
 			inChannel.close();
 		} catch (IOException e) {
@@ -200,9 +229,10 @@ public class MISession extends Observable {
 			outChannel.close();
 		} catch (IOException e) {
 		}
-		// This is __needed__ to stop the txThread.
+		// This is __needed__ to stop the txThread and eventThread.
 		outChannel = null;
 		
+		// Make sure all threads are gone.
 		try {
 			if (txThread.isAlive()) {
 				txThread.interrupt();
@@ -216,6 +246,14 @@ public class MISession extends Observable {
 				rxThread.interrupt();
 			}
 			rxThread.join();
+		} catch (InterruptedException e) {
+		}
+
+		try {
+			if (eventThread.isAlive()) {
+				eventThread.interrupt();
+			}
+			eventThread.join();
 		} catch (InterruptedException e) {
 		}
 	}
@@ -241,12 +279,20 @@ public class MISession extends Observable {
 		return logOutPipe;
 	}
 
-	Queue getTxQueue() {
+	CommandQueue getTxQueue() {
 		return txQueue;
 	}
 
-	Queue getRxQueue() {
+	CommandQueue getRxQueue() {
 		return rxQueue;
+	}
+
+	Queue getEventQueue() {
+		return eventQueue;
+	}
+
+	RxThread getRxThread() {
+		return rxThread;
 	}
 
 	InputStream getChannelInputStream() {

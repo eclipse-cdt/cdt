@@ -1,3 +1,12 @@
+2004-04-15 Mikhail Khodjaiants
+	Implementing the Disassembly view. 
+	New annotation model is added to show breakpoint markers.
+	* DisassemblyDocumentProvider.java
+	* DisassemblyEditorInput.java
+	* DisassemblyInstructionPointerAnnotation.java
+	* DisassemblyMarkerAnnotationModel.java: new
+	* DisassemblyView.java
+
 2004-04-19 Mikhail Khodjaiants
 	Fix for bug 58711: Breakpoint race condition.
 	To avoid race condition all breakpoint marker updates (like increment/decrement the install count, 

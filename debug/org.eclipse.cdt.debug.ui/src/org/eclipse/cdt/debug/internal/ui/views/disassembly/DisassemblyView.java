@@ -32,7 +32,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -42,6 +41,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -217,7 +217,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * @return the vertical ruler
 	 */
 	private IVerticalRuler createVerticalRuler() {
-		return new VerticalRuler( VERTICAL_RULER_WIDTH, getAnnotationAccess() );
+		IVerticalRuler ruler = new VerticalRuler( VERTICAL_RULER_WIDTH, getAnnotationAccess() );
+		return ruler;
 	}
 
 	/**
@@ -283,12 +284,9 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		}
 
 		setInput( input );
-
 		showViewer();
-		IDocument document = viewer.getDocument();
-		String contents = ((DisassemblyEditorInput)input).getContents();
-		document.set( contents );
-
+		getSourceViewer().setDocument( getDocumentProvider().getDocument( input ), 
+									   getDocumentProvider().getAnnotationModel( input ) );
 		updateObjects();
 	}
 
@@ -395,7 +393,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 				getSourceViewer().setSelectedRange( start, 0 );
 			}
 			widget.setRedraw( true );
-			setInstructionPointer( frame, start, length );
+			setInstructionPointer( frame, start, length, getDocumentProvider().getAnnotationModel( input ) );
 		}
 	}
 
@@ -496,22 +494,15 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		return this.fDocumentProvider;
 	}
 
-	protected void setInstructionPointer( ICStackFrame frame, int start, int length ) {
+	protected void setInstructionPointer( ICStackFrame frame, int start, int length, IAnnotationModel model ) {
+		Assert.isNotNull( model );
 		boolean tos = isTopStackFrame( frame );
 		DisassemblyInstructionPointerAnnotation instPtrAnnotation = new DisassemblyInstructionPointerAnnotation( frame, tos );
-		
-		Position position = new Position( start, length );
-		
-		// Add the annotation at the position to the editor's annotation model.
-		// If there is no annotation model, there's nothing more to do
-		IAnnotationModel annModel = getDocumentProvider().getAnnotationModel( null );
-		if ( annModel == null ) {
-			return;
-		}
-		DisassemblyInstructionPointerAnnotation currentPointer = getCurrentInstructionPointer();
-		if ( currentPointer != null )
-			removeCurrentInstructionPointer();
-		annModel.addAnnotation( instPtrAnnotation, position );
+		Position position = new Position( start, length );		
+		DisassemblyInstructionPointerAnnotation oldPointer = getCurrentInstructionPointer();
+		if ( oldPointer != null )
+			model.removeAnnotation( oldPointer );
+		model.addAnnotation( instPtrAnnotation, position );
 		setCurrentInstructionPointer( instPtrAnnotation );
 	}
 
@@ -534,14 +525,12 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		fInstrPointerAnnotation = instrPointer;
 	}
 
-	protected void removeCurrentInstructionPointer() {
+	protected void removeCurrentInstructionPointer( IAnnotationModel model ) {
+		Assert.isNotNull( model );
 		DisassemblyInstructionPointerAnnotation instrPointer = getCurrentInstructionPointer();
 		if ( instrPointer != null ) {
-			IAnnotationModel annModel = getDocumentProvider().getAnnotationModel( null );
-			if ( annModel != null ) {
-				annModel.removeAnnotation( instrPointer );
+				model.removeAnnotation( instrPointer );
 				setCurrentInstructionPointer( null );
-			}
 		}
 	}
 
@@ -550,14 +539,12 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		if ( viewer == null )
 			return;
 
-		IEditorInput input = DisassemblyEditorInput.EMPTY_EDITOR_INPUT;
+		IEditorInput input = DisassemblyEditorInput.EMPTY_EDITOR_INPUT; 
 		setInput( input );
-
 		showViewer();
-		IDocument document = getSourceViewer().getDocument();
-		String contents = ((DisassemblyEditorInput)input).getContents();
-		document.set( contents );
-		removeCurrentInstructionPointer();
+		IAnnotationModel model = getDocumentProvider().getAnnotationModel( input );
+		getSourceViewer().setDocument( getDocumentProvider().getDocument( input ), model );
+		removeCurrentInstructionPointer( model );
 
 		updateObjects();
 	}

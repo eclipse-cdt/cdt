@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Document;
@@ -18,8 +17,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-
 
 /**
  * Document provider for disassembly view.
@@ -28,8 +25,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 
 	private IDocument fDocument;
 
-	private IAnnotationModel fAnnotationModel;
-
+	private DisassemblyMarkerAnnotationModel fAnnotationModel;
+	
 	/**
 	 * Constructor for DisassemblyDocumentProvider.
 	 */
@@ -40,17 +37,12 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	 * @see org.eclipse.ui.texteditor.IDocumentProvider#connect(java.lang.Object)
 	 */
 	public void connect( Object element ) throws CoreException {
-		if ( element instanceof IDocument ) {
-			IAnnotationModel model = getAnnotationModel( null );
-			model.connect( (IDocument)element );
-		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IDocumentProvider#disconnect(java.lang.Object)
 	 */
 	public void disconnect( Object element ) {
-		// TODO Auto-generated method stub
 	}
 
 	/* (non-Javadoc)
@@ -59,12 +51,13 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	public IDocument getDocument( Object element ) {
 		if ( fDocument == null ) {
 			fDocument = new Document();
-			try {
-				connect( fDocument );
-			}
-			catch( CoreException e ) {
-				fDocument = null;
-			}
+		}
+		if ( element instanceof DisassemblyEditorInput ) {
+			String contents = ((DisassemblyEditorInput)element).getContents();
+			fDocument.set( contents );
+		}
+		else {
+			fDocument.set( "" ); //$NON-NLS-1$
 		}
 		return fDocument;
 	}
@@ -128,8 +121,9 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	 */
 	public IAnnotationModel getAnnotationModel( Object element ) {
 		if ( fAnnotationModel == null ) {
-			fAnnotationModel = new ResourceMarkerAnnotationModel( ResourcesPlugin.getWorkspace().getRoot() );
+			fAnnotationModel = new DisassemblyMarkerAnnotationModel();
 		}
+		fAnnotationModel.setInput( ( element instanceof DisassemblyEditorInput ) ? (DisassemblyEditorInput)element : null );
 		return fAnnotationModel;
 	}
 

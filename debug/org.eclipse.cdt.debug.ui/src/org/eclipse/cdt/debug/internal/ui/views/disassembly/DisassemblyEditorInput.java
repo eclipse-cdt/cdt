@@ -15,7 +15,9 @@ import java.util.Arrays;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
+import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
@@ -56,6 +58,18 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 		public boolean containsAddress( long address ) {
 			return (address >= fStartAddress && address <= fEndAddress);
+		}
+
+		public IFile getModuleFile() {
+			IDisassembly d = getDisassembly();
+			IFile result = null;
+			if ( d != null ) {
+				IExecFileInfo info = (IExecFileInfo)d.getAdapter( IExecFileInfo.class );
+				if ( info != null ) {
+					result = info.getExecFile();
+				}
+			}
+			return result;
 		}
 
 		private void createContent() {
@@ -226,5 +240,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public long getAddress( int lineNumber ) throws IllegalArgumentException {
 		return ( fStorage != null ) ? fStorage.getAddress( lineNumber ) : 0;
+	}
+
+	public IFile getModuleFile() {
+		return ( fStorage != null ) ? fStorage.getModuleFile() : null;
 	}
 }

@@ -24,11 +24,7 @@ import org.eclipse.jface.text.source.Annotation;
  */
 public class DisassemblyInstructionPointerAnnotation extends Annotation {
 
-	/**
-	 * The frame for this instruction pointer annotation.  This is necessary only so that
-	 * instances of this class can be distinguished by equals().
-	 */
-	private ICStackFrame fStackFrame;
+	private int fHashCode = 0;
 
 	/**
 	 * Construct an instruction pointer annotation for the given stack frame.
@@ -40,16 +36,7 @@ public class DisassemblyInstructionPointerAnnotation extends Annotation {
 		super( isTopFrame ? IInternalCDebugUIConstants.ANN_DISASM_INSTR_POINTER_CURRENT : IInternalCDebugUIConstants.ANN_DISASM_INSTR_POINTER_SECONDARY, 
 			   false, 
 			   isTopFrame ? DisassemblyMessages.getString( "DisassemblyInstructionPointerAnnotation.Current_Pointer_1" ) : DisassemblyMessages.getString( "DisassemblyInstructionPointerAnnotation.Secondary_Pointer_1" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-		fStackFrame = stackFrame;
-	}
-
-	/**
-	 * Returns the stack frame associated with this annotation
-	 * 
-	 * @return the stack frame associated with this annotation
-	 */
-	public ICStackFrame getStackFrame() {
-		return fStackFrame;
+		fHashCode = getHashCode( stackFrame );
 	}
 
 	private IDisassembly getDisassembly( ICStackFrame frame ) {
@@ -64,28 +51,15 @@ public class DisassemblyInstructionPointerAnnotation extends Annotation {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals( Object other ) {
-		if ( other instanceof DisassemblyInstructionPointerAnnotation ) {
-			ICStackFrame otherFrame = ((DisassemblyInstructionPointerAnnotation)other).getStackFrame();
-			IDisassembly otherDisassembly = getDisassembly( otherFrame );
-			if ( otherDisassembly != null && otherDisassembly.equals( getDisassembly( getStackFrame() ) ) ) {
-				return ( otherFrame.getAddress() == getStackFrame().getAddress() );
-			}
-		}
-		return false;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
+		return fHashCode;
+	}
+
+	private int getHashCode( ICStackFrame frame ) {
 		int hashCode = 17;
-		ICStackFrame frame = getStackFrame();
 		IDisassembly disassembly = getDisassembly( frame );
 		hashCode = 37*hashCode + (( disassembly != null ) ? disassembly.hashCode() : 0);
 		if ( frame != null ) {
@@ -93,5 +67,12 @@ public class DisassemblyInstructionPointerAnnotation extends Annotation {
 			hashCode = 37*hashCode + (int)(address^(address>>>32));
 		}
 		return hashCode;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals( Object obj ) {
+		return ( obj != null ? obj.hashCode() == hashCode() : false );
 	}
 }

@@ -42,9 +42,11 @@ public class MIInferior extends Process {
 
 	PipedInputStream err;
 	PipedOutputStream errPiped;
+	PTY pty;
 
-	MIInferior(MISession mi, PTY pty) {
+	MIInferior(MISession mi, PTY p) {
 		session = mi;
+		pty = p;
 		if (pty != null) {
 			out = pty.getOutputStream();
 			in = pty.getInputStream();
@@ -59,7 +61,7 @@ public class MIInferior extends Process {
 			out = new OutputStream() {
 				StringBuffer buf = new StringBuffer();
 				public void write(int b) throws IOException {
-					buf.append(b);
+					buf.append((char)b);
 					if (b == '\n') {
 						flush();
 					}
@@ -229,6 +231,27 @@ public class MIInferior extends Process {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		// If pty is not null then we are using a master/slave terminal
+		// emulation close the master to notify the slave.
+		if (pty != null) {
+			if (in != null) {
+				try {
+						in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				in = null;
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				out = null;
+			}
 		}
 		session.fireEvent(new MIInferiorExitEvent());
 		notifyAll();

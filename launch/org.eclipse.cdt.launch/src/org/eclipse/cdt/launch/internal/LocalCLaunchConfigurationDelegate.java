@@ -27,9 +27,11 @@ import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -38,10 +40,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
  * Insert the type's description here.
@@ -151,12 +155,23 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider() {
+				ILabelProvider provider = new LabelProvider() {
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+					 */
+					public String getText(Object element) {
+						IProcessInfo info = (IProcessInfo)element;
+						IPath path = new Path(info.getName());
+						return path.lastSegment() + " - " + info.getPid();
+					}
+				};
+				ILabelProvider qprovider = new LabelProvider() {
 					public String getText(Object element) {
 						IProcessInfo info = (IProcessInfo) element;
-						return info.getPid() + " " + info.getName();
+						return info.getName();
 					}
-				});
+				};
+				TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
 				dialog.setTitle("Select Process");
 				dialog.setMessage("Select a Process to attach debugger to:");
 				IProcessList plist = CCorePlugin.getDefault().getProcessList();

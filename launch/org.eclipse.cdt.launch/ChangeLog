@@ -1,3 +1,9 @@
+2004-02-17 Alain Magloire
+
+	Use a TwoPanel dialog when we attach more user friendly.
+
+	* src/org/eclipse/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+
 2004-02-17 Thomas Fletcher
 
 	Fix to address PR 52085.  We allow the user to import a text file formatted

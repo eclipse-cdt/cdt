@@ -1940,7 +1940,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     */
    protected int figureEndOffset(IASTDeclSpecifier declSpecifier,
          IASTDeclarator declarator) {
-      if (declarator == null)
+      if (declarator == null || ((ASTNode)declarator).getLength() == 0 )
          return calculateEndOffset(declSpecifier);
       return calculateEndOffset(declarator);
    }

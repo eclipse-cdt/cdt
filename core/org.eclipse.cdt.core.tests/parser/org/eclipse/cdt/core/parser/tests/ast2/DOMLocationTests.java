@@ -27,11 +27,13 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -207,6 +209,19 @@ public class DOMLocationTests extends AST2BaseTest {
       
    }
    
+   
+   public void testBug84367() throws Exception {
+      String code = "void foo(   int   );"; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p);
+         IASTSimpleDeclaration definition = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+         IASTStandardFunctionDeclarator declarator = (IASTStandardFunctionDeclarator) definition.getDeclarators()[0];
+         IASTParameterDeclaration parameter = declarator.getParameters()[0];
+         assertSoleLocation( parameter, code.indexOf( "int" ), 3 ); //$NON-NLS-1$
+         
+      }      
+   }
    public void testElaboratedTypeSpecifier() throws ParserException {
       String code = "/* blah */ struct A anA; /* blah */"; //$NON-NLS-1$
       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP

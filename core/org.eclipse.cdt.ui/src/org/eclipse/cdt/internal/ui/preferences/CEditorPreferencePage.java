@@ -72,6 +72,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.keywords"), ICColorConstants.C_KEYWORD }, { //$NON-NLS-1$
 		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.builtInTypes"), ICColorConstants.C_TYPE }, { //$NON-NLS-1$
 		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.strings"), ICColorConstants.C_STRING }, { //$NON-NLS-1$
+        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.operators"), ICColorConstants.C_OPERATOR }, { //$NON-NLS-1$
+        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.braces"), ICColorConstants.C_BRACES }, { //$NON-NLS-1$            
+        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.numbers"), ICColorConstants.C_NUMBER }, { //$NON-NLS-1$            
 		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
         PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
@@ -169,7 +172,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_STRING));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_STRING + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_DEFAULT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_DEFAULT + "_bold")); //$NON-NLS-1$
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_DEFAULT + "_bold")); //$NON-NLS-1$        
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_BRACES));
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_BRACES + "_bold")); //$NON-NLS-1$
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_NUMBER));
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_NUMBER + "_bold")); //$NON-NLS-1$
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_OPERATOR));
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_OPERATOR + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
@@ -251,7 +260,16 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		PreferenceConverter.setDefault(store, ICColorConstants.C_DEFAULT, new RGB(0, 0, 0));
 		store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
 
-		PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
+        PreferenceConverter.setDefault(store, ICColorConstants.C_OPERATOR, new RGB(0, 0, 0));
+        store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
+
+        PreferenceConverter.setDefault(store, ICColorConstants.C_BRACES, new RGB(0, 0, 0));
+        store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
+
+        PreferenceConverter.setDefault(store, ICColorConstants.C_NUMBER, new RGB(0, 0, 0));
+        store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
+
+        PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
@@ -489,12 +507,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fOverlayStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				String p = event.getProperty();
-				if (p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
-					|| p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+//				if (p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
+//					|| p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
 					initializeViewerColors(fPreviewViewer);
-				}
+//				}
 
 				fPreviewViewer.getDocument().set(fPreviewViewer.getDocument().get());
+				fPreviewViewer.invalidateTextPresentation();
 				//fPreviewViewer.refresh();
 			}
 		});

@@ -1,3 +1,14 @@
+2004-12-12 Alain Magloire
+	PR 80631 Patch form Przemek Tomaszewski 
+	* src/org/eclipse/cdt/internal.ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal.ui/preferences/CEditorPreferencePage.properties
+	* src/org/eclipse/cdt/internal/ui/text/CBraceRule.java
+	* src/org/eclipse/cdt/internal/ui/text/CCodeScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/CppCodeScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/ICColorConstants.java
+	* src/org/eclipse/cdt/internal/ui/text/NumberRule.java
+	* src/org/eclipse/cdt/internal/ui/text/SingleCharRule.java
+
 2004-12-10 Alain Magloire
 	Fix for 77874.
 	In order to fix this we removed all of the Eclipse-1.0 classes

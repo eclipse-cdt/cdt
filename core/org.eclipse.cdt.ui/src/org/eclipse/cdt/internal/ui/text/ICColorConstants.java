@@ -30,6 +30,12 @@ public interface ICColorConstants {
 	String C_TYPE= "c_type"; //$NON-NLS-1$
 	/* The color key for string and character literals in C code. */
 	String C_STRING= "c_string"; //$NON-NLS-1$
+    /** The color key for operators. */
+    String C_OPERATOR = "c_operators";
+    /** The color key for braces. */
+    String C_BRACES = "c_braces";
+    /** The color key for numbers. */
+    String C_NUMBER = "c_numbers";
 	/* The color key for everthing in C code for which no other color is specified. */
 	String C_DEFAULT= "c_default"; //$NON-NLS-1$
     

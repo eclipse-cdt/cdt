@@ -34,6 +34,9 @@ public final class CppCodeScanner extends AbstractCScanner {
 		ICColorConstants.C_KEYWORD,
 		ICColorConstants.C_TYPE,
 		ICColorConstants.C_STRING,
+        ICColorConstants.C_OPERATOR,
+        ICColorConstants.C_BRACES,
+        ICColorConstants.C_NUMBER,
 		ICColorConstants.C_DEFAULT
 	};
 	
@@ -95,7 +98,19 @@ public final class CppCodeScanner extends AbstractCScanner {
 			preprocessorRule.addWord((String) iter.next(), token);
 		
 		rules.add(preprocessorRule);
-		
+
+        token = getToken(ICColorConstants.C_NUMBER);
+        NumberRule numberRule = new NumberRule(token);
+        rules.add(numberRule);
+        
+        token = getToken(ICColorConstants.C_OPERATOR);
+        COperatorRule opRule = new COperatorRule(token);
+        rules.add(opRule);
+
+        token = getToken(ICColorConstants.C_BRACES);
+        CBraceRule braceRule = new CBraceRule(token);
+        rules.add(braceRule);
+        
 		setDefaultReturnToken(getToken(ICColorConstants.C_DEFAULT));
 		return rules;
 	}

@@ -57,6 +57,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 	static String ATTRIBUTE_PREFIXMAPPING = "prefixmapping"; //$NON-NLS-1$
 	static String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
 	static String ATTRIBUTE_INCLUDE = "include"; //$NON-NLS-1$
+	static String ATTRIBUTE_LIBRARY = "library"; //$NON-NLS-1$
 	static String ATTRIBUTE_SYSTEM = "system"; //$NON-NLS-1$
 	static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
@@ -142,14 +143,6 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		// get the base ref
 		IPath baseRef = new Path(element.getAttribute(ATTRIBUTE_BASE_REF));
 
-		// source attachment info (optional)
-		IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
-				element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
-		IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH) ? new Path(
-				element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
-		IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
-				element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
-		
 		// exclusion patterns (optional)
 		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);
 		IPath[] exclusionPatterns = APathEntry.NO_EXCLUSION_PATTERNS;
@@ -168,61 +161,64 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		switch (kind) {
 			case IPathEntry.CDT_PROJECT :
 				return CoreModel.newProjectEntry(path, isExported);
-			case IPathEntry.CDT_LIBRARY :
+			case IPathEntry.CDT_LIBRARY : {
+				IPath libraryPath = new Path(element.getAttribute(ATTRIBUTE_LIBRARY));				
+				// source attachment info (optional)
+				IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
+						element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
+				IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH) ? new Path(
+						element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
+				IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
+						element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
+				
 				if (baseRef != null && !baseRef.isEmpty()) {
-					return CoreModel.newLibraryRefEntry(baseRef, path);
+					return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
 				}
-				return CoreModel.newLibraryEntry(basePath, path, sourceAttachmentPath, sourceAttachmentRootPath,
+				return CoreModel.newLibraryEntry(path, basePath, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath,
 					sourceAttachmentPrefixMapping, isExported);
-			case IPathEntry.CDT_SOURCE :
-				{
-					// must be an entry in this project or specify another
+			}
+			case IPathEntry.CDT_SOURCE : {
+				// must be an entry in this project or specify another
+				// project
+				String projSegment = path.segment(0);
+				if (projSegment != null && projSegment.equals(project.getName())) { // this
 					// project
-					String projSegment = path.segment(0);
-					if (projSegment != null && projSegment.equals(project.getName())) { // this
-						// project
-						return CoreModel.newSourceEntry(path, exclusionPatterns);
-					} else { // another project
-						return CoreModel.newProjectEntry(path, isExported);
-					}
+					return CoreModel.newSourceEntry(path, exclusionPatterns);
+				} else { // another project
+					return CoreModel.newProjectEntry(path, isExported);
 				}
+			}
 			case IPathEntry.CDT_OUTPUT :
-				{
-					return CoreModel.newOutputEntry(path, exclusionPatterns);
+				return CoreModel.newOutputEntry(path, exclusionPatterns);
+			case IPathEntry.CDT_INCLUDE : {
+				// include path info
+				IPath includePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE));
+				// isSysteminclude
+				boolean isSystemInclude = false;
+				if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
+					isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 				}
-			case IPathEntry.CDT_INCLUDE :
-				{
-					// include path info
-					IPath includePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE));
-					// isSysteminclude
-					boolean isSystemInclude = false;
-					if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
-						isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
-					}
-					if (baseRef != null && !baseRef.isEmpty()) {
-						return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
-					}
-					return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
+				if (baseRef != null && !baseRef.isEmpty()) {
+					return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
 				}
-			case IPathEntry.CDT_MACRO :
-				{
-					String macroName = element.getAttribute(ATTRIBUTE_NAME);
-					String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
-					if (baseRef != null && !baseRef.isEmpty()) {
-						return CoreModel.newMacroRefEntry(path, baseRef, macroName);
-					}
-					return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
+				return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
+			}
+			case IPathEntry.CDT_MACRO : {
+				String macroName = element.getAttribute(ATTRIBUTE_NAME);
+				String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
+				if (baseRef != null && !baseRef.isEmpty()) {
+					return CoreModel.newMacroRefEntry(path, baseRef, macroName);
 				}
-			case IPathEntry.CDT_CONTAINER :
-				{
-					IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
-					return CoreModel.newContainerEntry(id, isExported);
-				}
-			default :
-				{
-					ICModelStatus status = new CModelStatus(ICModelStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-					throw new CModelException(status);
-				}
+				return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
+			}
+			case IPathEntry.CDT_CONTAINER : {
+				IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
+				return CoreModel.newContainerEntry(id, isExported);
+			}
+			default : {
+				ICModelStatus status = new CModelStatus(ICModelStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new CModelException(status);
+			}
 		}
 	}
 
@@ -267,6 +263,8 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 					break;
 				case IPathEntry.CDT_LIBRARY: {
 					ILibraryEntry lib = (ILibraryEntry) entries[i];
+					IPath libraryPath = lib.getLibraryPath();
+					element.setAttribute(ATTRIBUTE_LIBRARY, libraryPath.toString());
 					IPath sourcePath = lib.getSourceAttachmentPath();
 					if (sourcePath != null) {
 						// translate to project relative from absolute 

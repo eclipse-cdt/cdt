@@ -34,9 +34,10 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 * @param sourceAttachmentPrefixMapping
 	 * @param isExported
 	 */
-	public LibraryEntry(IPath basePath, IPath baseRef, IPath libraryPath, IPath sourceAttachmentPath,
+	public LibraryEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath libraryPath, IPath sourceAttachmentPath,
 		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		super(ILibraryEntry.CDT_LIBRARY, basePath, baseRef, libraryPath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
+		super(ILibraryEntry.CDT_LIBRARY, basePath, baseRef, resourcePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
+		this.libraryPath = libraryPath;
 		this.sourceAttachmentPath = sourceAttachmentPath;
 		this.sourceAttachmentRootPath = sourceAttachmentRootPath;
 		this.sourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping;
@@ -96,7 +97,17 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 			if (!super.equals(obj)) {
 				return false;
 			}
-			IPath otherPath = otherEntry.getSourceAttachmentPath();
+			IPath otherPath = otherEntry.getLibraryPath();
+			if (libraryPath == null) {
+				if (otherPath != null) {
+					return false;
+				}
+			} else {
+				if (!libraryPath.equals(otherPath)) {
+					return false;
+				}
+			}
+			otherPath = otherEntry.getSourceAttachmentPath();
 			if (sourceAttachmentPath == null) {
 				if (otherPath != null) {
 					return false;
@@ -136,5 +147,12 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		}
 		return p;
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ILibraryEntry#getLibraryPath()
+	 */
+	public IPath getLibraryPath() {
+		return libraryPath;
 	}
 }

@@ -146,7 +146,7 @@ public class CPathEntryTest extends TestCase {
 		entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), null, new Path("/usr/include"), true);
-		entries[2] = CoreModel.newLibraryEntry(null, new Path("/usr/lib/libc.so.1"), null, null, null, false);
+		entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null, false);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
 		entries = testProject.getResolvedPathEntries();
 		// We always have at least two entries:
@@ -171,7 +171,7 @@ public class CPathEntryTest extends TestCase {
 		IPathEntry[] entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("foo"), null, new Path("/usr/include"), true);
-		entries[2] = CoreModel.newLibraryEntry(null, new Path("/usr/lib/libc.so.1"), null, null, null, false);
+		entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null, false);
 		CElementListener listener = new CElementListener();
 		CoreModel.getDefault().addElementChangedListener(listener);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
@@ -198,7 +198,7 @@ public class CPathEntryTest extends TestCase {
 				IPathEntry[] entries = new IPathEntry[3];
 				entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 				entries[1] = CoreModel.newIncludeEntry(new Path("foo.c"), null, new Path("/usr/include"), true);
-				entries[2] = CoreModel.newLibraryEntry(null, new Path("/usr/lib/libc.so.1"), null, null, null, true);
+				entries[2] = CoreModel.newLibraryEntry(new Path(""), null, new Path("/usr/lib/libc.so.1"), null, null, null, true);
 				return entries;
 			}
 

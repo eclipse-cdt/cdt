@@ -359,6 +359,8 @@ public class CoreModel {
 	 * Creates and returns a new entry of kind <code>CDT_LIBRARY</code>
 	 * for the archive or folder identified by the given absolute path.
 	 * 
+	 * @param resourcePath
+	 *            the affected project-relative resource path
 	 * @param baseRef
 	 *            the base reference path to find the library
 	 * @param libraryPath
@@ -366,8 +368,8 @@ public class CoreModel {
 	 * @return a new library entry
 	 *  
 	 */
-	public static ILibraryEntry newLibraryRefEntry(IPath baseRef, IPath libraryPath) {
-		return new LibraryEntry(null, baseRef, libraryPath, null, null, null, false);
+	public static ILibraryEntry newLibraryRefEntry(IPath resourcePath, IPath baseRef, IPath libraryPath) {
+		return new LibraryEntry(resourcePath, null, baseRef, libraryPath, null, null, null, false);
 	}
 
 
@@ -379,6 +381,8 @@ public class CoreModel {
 	 * resources at the given paths.
 	 * <p>
 	 * 
+	 * @param resourcePath
+	 *            the affected project-relative resource path
 	 * @param basePath
 	 *            the base path of the library
 	 * @param libraryPath
@@ -396,9 +400,9 @@ public class CoreModel {
 	 * @return a new library entry
 	 *  
 	 */
-	public static ILibraryEntry newLibraryEntry(IPath basePath, IPath libraryPath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
+	public static ILibraryEntry newLibraryEntry(IPath resourcePath, IPath basePath, IPath libraryPath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		return new LibraryEntry(basePath, null, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
+		return new LibraryEntry(resourcePath, basePath, null, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
 	}
 
 	/**

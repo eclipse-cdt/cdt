@@ -89,7 +89,6 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private void updateLibrariesList() {
-		//List cpelements= fLibrariesList.getElements();
 		List cpelements = filterList(fCPathList.getElements());
 		List libelements= new ArrayList(cpelements.size());
 		

@@ -32,6 +32,7 @@ public class CPElement {
 	public static final String SOURCEATTACHMENTROOT = "rootpath"; //$NON-NLS-1$
 	public static final String EXCLUSION = "exclusion"; //$NON-NLS-1$
 	public static final String INCLUDE = "includepath"; //$NON-NLS-1$
+	public static final String LIBRARY = "librarypath"; //$NON-NLS-1$
 	public static final String SYSTEM_INCLUDE = "systeminclude"; //$NON-NLS-1$
 	public static final String MACRO_NAME = "macroname"; //$NON-NLS-1$
 	public static final String MACRO_VALUE = "macrovalue"; //$NON-NLS-1$
@@ -70,6 +71,7 @@ public class CPElement {
 				createAttributeElement(EXCLUSION, new Path[0]);
 				break;
 			case IPathEntry.CDT_LIBRARY:
+				createAttributeElement(LIBRARY, new Path("")); //$NON-NLS-1$
 				createAttributeElement(SOURCEATTACHMENT, null);
 				createAttributeElement(BASE_REF, new Path("")); //$NON-NLS-1$
 				createAttributeElement(BASE, new Path("")); //$NON-NLS-1$
@@ -123,11 +125,12 @@ public class CPElement {
 			case IPathEntry.CDT_SOURCE:
 				return CoreModel.newSourceEntry(fPath, exclusionPattern);
 			case IPathEntry.CDT_LIBRARY:
+				IPath libraryPath = (IPath)getAttribute(LIBRARY);
 				IPath attach = (IPath) getAttribute(SOURCEATTACHMENT);
 				if (!baseRef.isEmpty()) {
-					return CoreModel.newLibraryRefEntry(baseRef, fPath);
+					return CoreModel.newLibraryRefEntry(fPath, baseRef, libraryPath);
 				} else {
-					return CoreModel.newLibraryEntry(base, fPath, attach, null, null, isExported());
+					return CoreModel.newLibraryEntry(fPath, base, libraryPath, attach, null, null, isExported());
 				}
 			case IPathEntry.CDT_PROJECT:
 				return CoreModel.newProjectEntry(fPath, isExported());
@@ -207,6 +210,8 @@ public class CPElement {
 				appendEncodePath(base, buf);
 				IPath sourceAttach = (IPath) getAttribute(SOURCEATTACHMENT);
 				appendEncodePath(sourceAttach, buf);
+				IPath library = (IPath) getAttribute(LIBRARY);
+				appendEncodePath(library, buf);
 				break;
 			default:
 		}
@@ -305,8 +310,9 @@ public class CPElement {
 			}
 			switch (fEntryKind) {
 				case IPathEntry.CDT_LIBRARY:
-					return getAttribute(BASE).equals(elem.getAttribute(BASE))
-							&& getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF));
+					return (getAttribute(LIBRARY).equals(elem.getAttribute(LIBRARY))
+							&& getAttribute(BASE).equals(elem.getAttribute(BASE))
+							&& getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF)));
 				case IPathEntry.CDT_INCLUDE:
 					return (getAttribute(INCLUDE).equals(elem.getAttribute(INCLUDE))
 							&& getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF)) && getAttribute(BASE).equals(
@@ -406,6 +412,7 @@ public class CPElement {
 		IPath sourceAttachment = null;
 		IPath[] exclusion = null;
 		IPath include = null;
+		IPath library = null;
 		String macroName = null;
 		String macroValue = null;
 		boolean sysInclude = false;
@@ -434,6 +441,7 @@ public class CPElement {
 					}
 					isMissing = !path.toFile().isFile(); // look for external
 				}
+				library = ((ILibraryEntry) curr).getLibraryPath();
 				sourceAttachment = ((ILibraryEntry) curr).getSourceAttachmentPath();
 				base = ((ILibraryEntry) curr).getBasePath();
 				baseRef = ((ILibraryEntry) curr).getBaseReference();
@@ -503,6 +511,7 @@ public class CPElement {
 		elem.setAttribute(SOURCEATTACHMENT, sourceAttachment);
 		elem.setAttribute(EXCLUSION, exclusion);
 		elem.setAttribute(INCLUDE, include);
+		elem.setAttribute(LIBRARY, library);
 		elem.setAttribute(MACRO_NAME, macroName);
 		elem.setAttribute(MACRO_VALUE, macroValue);
 		elem.setAttribute(SYSTEM_INCLUDE, Boolean.valueOf(sysInclude));

@@ -54,16 +54,16 @@ class CPElementLabelProvider extends LabelProvider {
 
 	public String getText(Object element) {
 		if (element instanceof CPElement) {
-			return getCPListElementText((CPElement)element);
+			return getCPElementText((CPElement)element);
 		} else if (element instanceof CPElementAttribute) {
-			return getCPListElementAttributeText((CPElementAttribute)element);
+			return getCPElementAttributeText((CPElementAttribute)element);
 		} else if (element instanceof IPathEntry) {
-			return getCPListElementText(CPElement.createFromExisting((IPathEntry)element, null));
+			return getCPElementText(CPElement.createFromExisting((IPathEntry)element, null));
 		}
 		return super.getText(element);
 	}
 
-	public String getCPListElementAttributeText(CPElementAttribute attrib) {
+	public String getCPElementAttributeText(CPElementAttribute attrib) {
 		String notAvailable = CPathEntryMessages.getString("CPListLabelProvider.none"); //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		String key = attrib.getKey();
@@ -101,7 +101,7 @@ class CPElementLabelProvider extends LabelProvider {
 		return buf.toString();
 	}
 
-	public String getCPListElementText(CPElement cpentry) {
+	public String getCPElementText(CPElement cpentry) {
 		IPath path = cpentry.getPath();
 		switch (cpentry.getEntryKind()) {
 			case IPathEntry.CDT_LIBRARY :
@@ -178,7 +178,7 @@ class CPElementLabelProvider extends LabelProvider {
 		//		}
 	}
 
-	private ImageDescriptor getCPListElementBaseImage(CPElement cpentry) {
+	private ImageDescriptor getCPElementBaseImage(CPElement cpentry) {
 		switch (cpentry.getEntryKind()) {
 			case IPathEntry.CDT_OUTPUT :
 				if (cpentry.getPath().segmentCount() == 1) {
@@ -228,7 +228,7 @@ class CPElementLabelProvider extends LabelProvider {
 	public Image getImage(Object element) {
 		if (element instanceof CPElement) {
 			CPElement cpentry = (CPElement)element;
-			ImageDescriptor imageDescriptor = getCPListElementBaseImage(cpentry);
+			ImageDescriptor imageDescriptor = getCPElementBaseImage(cpentry);
 			if (imageDescriptor != null) {
 				if (cpentry.isMissing()) {
 					imageDescriptor = new CElementImageDescriptor(imageDescriptor, CElementImageDescriptor.WARNING, SMALL_SIZE);

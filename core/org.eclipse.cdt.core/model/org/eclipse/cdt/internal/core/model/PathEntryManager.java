@@ -209,7 +209,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				ILibraryEntry libEntry = (ILibraryEntry)entry;
 				IPath refPath = libEntry.getBaseReference();
 				if (refPath != null && !refPath.isEmpty()) {
-					IPath libraryPath = libEntry.getPath();
+					IPath libraryPath = libEntry.getLibraryPath();
 					if (refPath.isAbsolute()) {
 						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
 						if (res != null && res.getType() == IResource.PROJECT) {
@@ -220,8 +220,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 									if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 										ILibraryEntry refEntry = (ILibraryEntry)entries[i];
 										if (refEntry.getPath().equals(libraryPath)) {
-											return CoreModel.newLibraryEntry(refEntry.getBasePath(),
-													refEntry.getPath(), refEntry.getSourceAttachmentPath(),
+											return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),
+													refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
 													refEntry.getSourceAttachmentRootPath(),
 													refEntry.getSourceAttachmentPrefixMapping(), false);											
 										}
@@ -237,8 +237,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
 									ILibraryEntry refEntry = (ILibraryEntry)entries[i];
 									if (refEntry.getPath().equals(libraryPath)) {
-										return CoreModel.newLibraryEntry(refEntry.getBasePath(),
-												refEntry.getPath(), refEntry.getSourceAttachmentPath(),
+										return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),
+												refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
 												refEntry.getSourceAttachmentRootPath(),
 												refEntry.getSourceAttachmentPrefixMapping(), false);											
 									}

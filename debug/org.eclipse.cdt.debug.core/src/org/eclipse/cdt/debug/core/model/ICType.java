@@ -79,4 +79,11 @@ public interface ICType {
 	 * @return whether this is an unsigned type
 	 */
 	boolean isUnsigned();
+
+	/**
+	 * Returns whether this is an integral type.
+	 * 
+	 * @return whether this is an integral type
+	 */
+	boolean isIntegralType();
 }

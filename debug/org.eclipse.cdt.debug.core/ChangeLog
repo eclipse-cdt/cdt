@@ -1,3 +1,10 @@
+2005-01-10 Mikhail Khodjaiants
+	Bug 73168: Use memory view provided by Eclipse platform in CDT.
+	* ICType.java
+	* CType.java
+	* CMemoryBlockExtension.java
+	* CMemoryBlockExtensionRetrieval.java
+
 2005-01-04 Mikhail Khodjaiants
 	Fix for bug 82184: arrayboundsexception on display of array variable.
 	* CIndexedValue.java

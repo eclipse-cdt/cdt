@@ -136,7 +136,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 				}
 				fBytes = new MemoryByte[bytes.length];
 				for ( int i = 0; i < bytes.length; ++i ) {
-					byte flags = MemoryByte.VALID;
+					byte flags = MemoryByte.VALID | MemoryByte.KNOWN;
 					if ( hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) )
 						flags |= MemoryByte.CHANGED;
 					fBytes[i] = new MemoryByte( bytes[i], flags );

@@ -114,8 +114,14 @@ public class CType implements ICType {
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isUnsigned()
 	 */
 	public boolean isUnsigned() {
-		ICDIType cdiType = getCDIType();
-		return ( cdiType instanceof ICDIIntegralType ) ? ((ICDIIntegralType)cdiType).isUnsigned() : false;
+		return ( isIntegralType() ) ? ((ICDIIntegralType)getCDIType()).isUnsigned() : false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isIntegralType()
+	 */
+	public boolean isIntegralType() {
+		return ( getCDIType() instanceof ICDIIntegralType );
 	}
 
 	protected ICDIType getCDIType() {

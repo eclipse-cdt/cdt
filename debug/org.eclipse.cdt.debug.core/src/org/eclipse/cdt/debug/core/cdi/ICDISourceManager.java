@@ -63,7 +63,7 @@ public interface ICDISourceManager extends ICDISessionObject
 	/**
 	 * @param filename is the name of the file to disassemble
 	 *  @param linenum is the line number to disassemble around
-	 *  @throws CDIException onf failure
+	 *  @throws CDIException on failure
 	 */
 	ICDIInstruction[] getInstructions(String filename,  int linenum)  throws CDIException;
 
@@ -71,7 +71,7 @@ public interface ICDISourceManager extends ICDISessionObject
 	 * @param filename is the name of the file to disassemble
 	 *  @param linenum is the line number to disassemble around
 	 *  @param lines is the number of disassembly to produced
-	 *  @throws CDIException onf failure
+	 *  @throws CDIException on failure
 	 */
 	ICDIInstruction[] getInstructions(String filename,  int linenum, int lines) throws CDIException;
 

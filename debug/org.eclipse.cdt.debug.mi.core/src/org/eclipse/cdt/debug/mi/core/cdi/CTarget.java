@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
+import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
@@ -421,6 +423,34 @@ public class CTarget  implements ICDITarget {
 			throw new CDIException(e.getMessage());
 		}
 		lastExecutionToken = finish.getToken();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#runUntil(ICDILocation)
+	 */
+	public void runUntil(ICDILocation location) throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		String loc = "";
+		if (location.getFile() != null) {
+			loc = location.getFile() + ":" + location.getLineNumber();
+		} else if (location.getFunction() != null) {
+			loc = location.getFunction();
+		} else if (location.getAddress() != 0) {
+			loc = "" + location.getAddress();
+		}
+		MIExecUntil until = factory.createMIExecUntil(loc);
+		try {
+			mi.postCommand(until);
+			MIInfo info = until.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+		lastExecutionToken = until.getToken();
+
 	}
 
 	/**

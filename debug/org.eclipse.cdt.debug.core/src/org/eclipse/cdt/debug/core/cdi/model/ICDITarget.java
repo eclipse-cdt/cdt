@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 
@@ -202,7 +203,15 @@ public interface ICDITarget extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void finish() throws CDIException;
-	
+
+	/**
+	 * Continues running until location is reached. Can only be called when the associated 
+	 * target is suspended.
+	 * 
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	void runUntil(ICDILocation location) throws CDIException;
+
 	/**
 	 * Returns the currently selected thread.
 	 * 

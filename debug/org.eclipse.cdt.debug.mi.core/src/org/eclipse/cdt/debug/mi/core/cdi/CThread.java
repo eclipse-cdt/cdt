@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -252,6 +253,14 @@ public class CThread extends CObject implements ICDIThread {
 	public void stepReturn() throws CDIException {
 		getCTarget().setCurrentThread(this);
 		getTarget().stepReturn();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#runUntil(ICDILocation)
+	 */
+	public void runUntil(ICDILocation location) throws CDIException {
+		getCTarget().setCurrentThread(this);
+		getTarget().runUntil(location);
 	}
 
 	/**

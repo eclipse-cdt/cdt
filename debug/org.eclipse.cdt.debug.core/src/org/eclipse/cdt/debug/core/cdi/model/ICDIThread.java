@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 
 /**
  * 
@@ -115,6 +116,14 @@ public interface ICDIThread extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepIntoInstruction() throws CDIException;
+
+	/**
+	 * Continues running until location is reached.
+	 * Can only be called when the associated thread is suspended.
+	 * 
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	void runUntil(ICDILocation location) throws CDIException;
 
 	/**
 	 * Continues running until just after function in the current 

@@ -1,3 +1,25 @@
+2003-04-01 Alain Magloire
+
+	Patch from Hoda Amer.
+	New icons for enumerations, enumerators and typedefs.
+	Small fix for CElementLabelProvider.getText().
+	
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java:
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java:
+	* src/org/eclipse/cdt/internal/ui/CPlugiImages.java
+	
+	* icons/full/obj16/enum_obj.gif:
+	* icons/full/obj16/enumerator_obj.gif:
+	* icons/full/obj16/typedef_obj.gif:
+
+2000-04-01 Alain Magloire
+
+	Patch from Chris Songer.
+	The IBinaryElement like IBinaryFunction and IBinaryVariable contains
+	only line number no the offset, deal with when doing the selectin.
+	
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java:
+
 2003-03-27 Alain Magloire
 
 	The selection in the CView to CEditor was not done.

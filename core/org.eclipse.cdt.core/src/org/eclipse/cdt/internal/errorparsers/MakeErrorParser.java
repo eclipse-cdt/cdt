@@ -57,7 +57,7 @@ public class MakeErrorParser implements IErrorParser {
 			    	}
 				}
 			} else if (msg.startsWith(" ***")) {
-				eoParser.generateMarker(null, 0, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+				eoParser.generateMarker(null, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
 			}
 		}
 		return false;

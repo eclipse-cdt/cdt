@@ -1,3 +1,11 @@
+2003-07-16 Alain Magloire
+
+	Patch from Thomas Fletcher.
+	Update the MakeView class to match UI standards and to contain a new action
+    to support editing of an existing make target.
+    
+	* src/org/eclipse/cdt/internal/ui/makeview/MakeView.java
+
 2003-07-14 Andrew Niefer
 	-modified plugin.xml entry for search's PathNameSorter
 	-added src/org/eclipse/cdt/internal/ui/search/Match.java which implements IMatch to store 

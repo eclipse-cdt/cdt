@@ -45,6 +45,7 @@ public class CTarget  implements ICDITarget {
 	CThread[] noThreads = new CThread[0];
 	CThread[] currentThreads;
 	int currentThreadId;
+	int lastExecutionToken;
 	
 	public CTarget(CSession s) {
 		session = s;
@@ -53,6 +54,10 @@ public class CTarget  implements ICDITarget {
 	
 	CSession getCSession() {
 		return session;
+	}
+
+	int getLastExecutionToken() {
+		return lastExecutionToken;
 	}
 
 	/**
@@ -236,6 +241,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = run.getToken();
 	}
 
 	/**
@@ -257,6 +263,7 @@ public class CTarget  implements ICDITarget {
 			} catch (MIException e) {
 				throw new CDIException(e.getMessage());
 			}
+			lastExecutionToken = cont.getToken();
 		} else if (mi.getMIInferior().isTerminated()) {
 			restart();
 		} else {
@@ -281,6 +288,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = step.getToken();
 	}
 
 	/**
@@ -299,6 +307,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = stepi.getToken();
 	}
 
 	/**
@@ -317,6 +326,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = next.getToken();
 	}
 
 	/**
@@ -335,6 +345,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = nexti.getToken();
 	}
 
 	/**
@@ -353,6 +364,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = finish.getToken();
 	}
 
 	/**
@@ -384,8 +396,10 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		// Unfortunately -target-detach does not generate an
+		// event so we do it here.
 		MISession miSession = session.getMISession();
-		miSession.fireEvent(new MIDetachedEvent());
+		miSession.fireEvent(new MIDetachedEvent(detach.getToken()));
 		session.getMISession().getMIInferior().setDisconnected();
 	}
 
@@ -405,6 +419,7 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		lastExecutionToken = finish.getToken();
 	}
 
 	/**

@@ -1,3 +1,7 @@
+2002-11-13 Mikhail Khodjaiants
+	Fix for the stepping problem if the selected stack frame is not the topmost one.
+	* CStackFrame.java: The 'stepToFrame' method is temporary replaced by corresponding step method.
+
 2002-11-13
 	* schema/CDebugger.exsd
 	* src/org/eclipse/cdt/debug/core/ICDebugConfiguration.java

@@ -331,7 +331,8 @@ public class CStackFrame extends CDebugElement
 		}
 		else
 		{
-			((CThread)getThread()).stepToFrame( this );
+//			((CThread)getThread()).stepToFrame( this );
+			getThread().stepOver(); // for now
 		}
 	}
 
@@ -350,6 +351,7 @@ public class CStackFrame extends CDebugElement
 		}
 		else
 		{
+/*
 			List frames = ((CThread)getThread()).computeStackFrames();
 			int index = frames.indexOf( this );
 			if ( index >= 0 && index < frames.size() - 1 )
@@ -357,6 +359,8 @@ public class CStackFrame extends CDebugElement
 				IStackFrame nextFrame = (IStackFrame)frames.get( index + 1 );
 				((CThread)getThread()).stepToFrame( nextFrame );
 			}
+*/
+			getThread().stepReturn(); // for now
 		}
 	}
 

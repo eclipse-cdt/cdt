@@ -576,7 +576,25 @@ public class BreakpointManager extends Manager {
 			if (file != null && file.length() > 0) {
 				line.append(file).append(':');
 				if (function != null && function.length() > 0) {
-					line.append(function);
+					// GDB does not seem to accept function arguments when
+					// we use file name:
+					// (gdb) break file.c:Test(int)
+					// Will fail, altought it can accept this
+					// (gdb) break file.c:main
+					// so fall back to the line number or
+					// just the name of the function if lineno is invalid.
+					int paren = function.indexOf('(');
+					if (paren != -1) {
+						int no = location.getLineNumber();
+						if (no <= 0) {
+							String func = function.substring(0, paren);
+							line.append(func);
+						} else {
+							line.append(no);
+						}
+					} else {
+						line.append(function);
+					}
 				} else {
 					line.append(location.getLineNumber());
 				}

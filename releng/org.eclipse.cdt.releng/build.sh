@@ -1,1 +1,13 @@
-java -classpath $JAVA_HOME/lib/tools.jar:jars/ant.jar:jars/optional.jar:jars/xalan.jar:jars/xml-apis.jar:jars/xercesImpl.jar:jars/NetComponents.jar:jars/activation.jar:jars/mail.jar org.apache.tools.ant.Main $* 2>&1 | tee build.log
+# Treat this is an example build script
+# Please adjust paths as necessary for your build machine
+
+export JAVA_HOME=/opt/java/j2sdk1.4.2_03
+export PATH=$JAVA_HOME/bin:$PATH
+
+cd `dirname $0`
+
+rm -fr results
+
+java -cp eclipse/startup.jar org.eclipse.core.launcher.Main -application org.eclipse.ant.core.antRunner $* \
+	-DbaseLocation=$PWD/eclipse \
+	-DbuildDirectory=$PWD/results

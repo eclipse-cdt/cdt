@@ -56,7 +56,7 @@
     <xsl:template mode="feature" match="url/update">
         <xsl:copy>
 	    <xsl:attribute name="url">
-	        <xsl:text>http://update.eclipse.org/tools/cdt/updates/builds/1.2</xsl:text>
+	        <xsl:text>http://update.eclipse.org/tools/cdt/updates/builds/2.0</xsl:text>
 	    </xsl:attribute>
 	    <xsl:copy-of select="*|@*[not(name()='url')]"/>
 	</xsl:copy>

@@ -1,36 +1,184 @@
-<?xml version="1.0"?>
-<project name="CDT Build Bootstrap" default="main">
+<project default="build">
 
-    <property name="build.branch" value="2.0"/>
-    <property name="build.tag" value="HEAD"/>
+	<target name="build" depends="zips,test"/>
 
-    <property name="build.server" value="update.eclipse.org"/>
-    <property name="build.remotedir" value="/home/www/tools/cdt/updates/builds/${build.branch}"/>
-    <!--property name="build.userid" value="userid on server"/-->
-    <!--property name="build.password" value="password on server"/-->
-
-    <target name="bootstrap">
-        <xslt in="manifest.xml" out="main.xml" style="main.xsl"/>
-    </target>
-
-    <target name="main" depends="bootstrap">
-        <ant antfile="main.xml"/>
-    </target>
-
-    <target name="build" depends="bootstrap">
-        <ant antfile="main.xml" target="build"/>
-    </target>
-
-	<target name="test" depends="bootstrap">
-		<ant antfile="main.xml" target="test"/>
+	<target name="fullbuild" depends="build,updateSite"/>
+	
+	<target name="init">
+		<tstamp/>
+		<touch file="${user.home}/.cvspass" />
+		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
+		<property name="pde.build.scripts" value="../../plugins/org.eclipse.pde.build_3.0.0/scripts" />
+		<property name="eclipseZip" value="../../eclipse-SDK.zip"/>
+		<property name="testZip" value="../org.eclipse.test/org.eclipse.test_2.1.0.zip"/>
+		<property name="buildDirectory" value="results" />
+		<property name="bootclasspath" value="${java.home}/lib/rt.jar" />
+		<property name="rt" value="${java.home}/lib/rt.jar" />
+		<property name="buildType" value="I" />
+		<property name="buildId" value="${buildType}${timestamp}"/>
 	</target>
 
-    <target name="upload" depends="bootstrap">
-        <ant antfile="main.xml" target="upload"/>
-    </target>
+	<target name="zips" depends="init">
+		<unzip src="${eclipseZip}" dest="${basedir}"/>
+		<ant antfile="build.xml" dir="${pde.build.scripts}">
+			<property name="builder" value="${basedir}/platform" />
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}">
+			<property name="builder" value="${basedir}/builders" />
+		</ant>
+	</target>
 
-    <target name="mail" depends="bootstrap">
-        <ant antfile="main.xml" target="mail"/>
-    </target>
+	<target name="test" depends="init">
+		<delete dir="${buildDirectory}/tests"/>
+	</target>
+
+	<target name="updateSite" depends="init">
+		<property name="siteurl" value="http://update.eclipse.org/tools/cdt/updates/builds/2.0"/>
+		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
+		<property name="sitedir" value="${zipsdir}/build.site"/>
+		<property name="siteversion" value="2.0.0"/>
+		<mkdir dir="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.make-${buildId}.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.managedbuilder-${buildId}.zip" dest="${sitedir}"/>
+		<antcall target="allElements">
+			<param name="target" value="updateVersions"/>
+		</antcall>
+		<antcall target="allElements">
+			<param name="target" value="updateJars"/>
+		</antcall>
+		<get src="${siteurl}/site.xml" dest="${sitedir}/site.xml"/>
+		<get src="${siteurl}/index.html" dest="${sitedir}/site.xml"/>
+		<xslt style="site.xsl" in="${siteurl}/site.xml" out="x">
+			<param name="version" expression="${siteversion}.${timestamp}"/>
+		</xslt>
+		<move file="x" tofile="${siteurl}/site.xml"/>
+	</target>
+
+	<target name="updateVersions">
+		<xslt style="plugin.xsl" in="${sitedir}/eclipse/${dir}/${id}_${siteversion}/${type}.xml" out="x">
+			<param name="version" expression="${siteversion}.${timestamp}"/>
+		</xslt>
+		<move file="x" tofile="${sitedir}/eclipse/${dir}/${id}_${siteversion}/${type}.xml"/>
+	</target>
+
+	<target name="updateJars">
+		<mkdir dir="${sitedir}/${dir}"/>
+		<jar basedir="${sitedir}/eclipse/${dir}/${id}_${siteversion}"
+		     destfile="${sitedir}/${dir}/${id}_${siteversion}.${timestamp}.jar"/>
+	</target>
+	
+ 	<target name="allElements">
+ 		<antcall target="${target}">
+ 			<param name="type" value="feature"/>
+ 			<param name="dir" value="features"/>
+ 			<param name="id" value="org.eclipse.cdt"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="feature"/>
+ 			<param name="dir" value="features"/>
+ 			<param name="id" value="org.eclipse.cdt.make"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="feature"/>
+ 			<param name="dir" value="features"/>
+ 			<param name="id" value="org.eclipse.cdt.managedbuilder"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.aix"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.linux"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.qnx"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.solaris"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.win32"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.debug.core"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.debug.mi.core"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.debug.mi.ui"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.debug.ui"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.doc.user"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.launch"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.make.core"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.make.ui"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.managedbuilder.core"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.managedbuilder.ui"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.ui"/>
+ 		</antcall>
+ 	</target>
 
 </project>

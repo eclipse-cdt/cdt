@@ -1,39 +1,50 @@
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
 
-public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction
-{
+public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction {
+
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
-	public EnableDisableBreakpointRulerAction( ITextEditor editor, IVerticalRulerInfo info )
-	{
+	public EnableDisableBreakpointRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
 		setInfo( info );
-		setTextEditor( editor );
-		setText( CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Enable_Breakpoint") ); //$NON-NLS-1$
+		setTargetPart( part );
+		setText( ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$
+		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION );
+		setId( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
 	}
 
 	/**
 	 * @see Action#run()
 	 */
-	public void run()
-	{
-		if (getBreakpoint() != null)
-		{
-			try
-			{
+	public void run() {
+		if ( getBreakpoint() != null ) {
+			try {
 				getBreakpoint().setEnabled( !getBreakpoint().isEnabled() );
 			}
-			catch (CoreException e)
-			{
-				ErrorDialog.openError( getTextEditor().getEditorSite().getShell(), 
-									   CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Enabling_disabling_breakpoints"),  //$NON-NLS-1$
-									   CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Exceptions_occured_enabling_disabling_breakpoint"),  //$NON-NLS-1$
+			catch( CoreException e ) {
+				ErrorDialog.openError( getTargetPart().getSite().getShell(), ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enabling_disabling_breakpoints_1" ), //$NON-NLS-1$
+									   ActionMessages.getString( "EnableDisableBreakpointRulerAction.Exceptions_occurred_enabling_or_disabling_breakpoint_1" ), //$NON-NLS-1$
 									   e.getStatus() );
 			}
 		}
@@ -42,24 +53,19 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	/**
 	 * @see IUpdate#update()
 	 */
-	public void update()
-	{
-		setBreakpoint(determineBreakpoint());
-		if ( getBreakpoint() == null )
-		{
+	public void update() {
+		setBreakpoint( determineBreakpoint() );
+		if ( getBreakpoint() == null ) {
 			setEnabled( false );
 			return;
 		}
 		setEnabled( true );
-		try
-		{
+		try {
 			boolean enabled = getBreakpoint().isEnabled();
-			setText( enabled ? CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Disable_breakpoint") : //$NON-NLS-1$
-				CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Enable_Breakpoint") ); //$NON-NLS-1$
+			setText( enabled ? ActionMessages.getString( "EnableDisableBreakpointRulerAction.Disable_Breakpoint_1" ) : ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		catch( CoreException ce )
-		{
-			CDebugUIPlugin.log( ce );
+		catch( CoreException e ) {
+			DebugPlugin.log( e );
 		}
 	}
 }

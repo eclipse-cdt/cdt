@@ -18,14 +18,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDelegate {
 
-	private ManageBreakpointRulerAction fTargetAction;
+	private ToggleBreakpointRulerAction fTargetAction;
 	private IEditorPart fActiveEditor;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	public IAction createAction( ITextEditor editor, IVerticalRulerInfo rulerInfo ) {
-		fTargetAction = new ManageBreakpointRulerAction( rulerInfo, editor );
+		fTargetAction = new ToggleBreakpointRulerAction( editor, rulerInfo );
 		return fTargetAction;
 	}
 

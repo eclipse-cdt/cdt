@@ -1,55 +1,56 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * 
- * Presents a custom properties dialog to configure the attibutes of 
- * a C/C++ breakpoint from the ruler popup menu of a text editor.
- * 
- * @since Aug 29, 2002
+ * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint 
+ * from the ruler popup menu.
  */
-public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction
-{
-	/**
-	 * Creates the action to enable/disable breakpoints
-	 */
-	public CBreakpointPropertiesRulerAction( ITextEditor editor, IVerticalRulerInfo info )
-	{
-		setInfo( info );
-		setTextEditor( editor );
-		setText( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPropertiesRulerAction.Breakpoint_Properties") ); //$NON-NLS-1$
-	}
+public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {
 
 	/**
+	 * Creates the action to modify the breakpoint properties.
+	 */
+	public CBreakpointPropertiesRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
+		setInfo( info );
+		setTargetPart( part );
+		setText( ActionMessages.getString( "CBreakpointPropertiesRulerAction.Breakpoint_Properties" ) ); //$NON-NLS-1$
+		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION );
+		setId( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
+	}
+
+	/* (non-Javadoc)
 	 * @see Action#run()
 	 */
-	public void run()
-	{
-		if ( getBreakpoint() != null )
-		{
-			Dialog d = new CBreakpointPropertiesDialog( getTextEditor().getEditorSite().getShell(), (ICBreakpoint)getBreakpoint() );
+	public void run() {
+		if ( getBreakpoint() != null ) {
+			Dialog d = new CBreakpointPropertiesDialog( getTargetPart().getSite().getShell(), (ICBreakpoint)getBreakpoint() );
 			d.open();
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see IUpdate#update()
 	 */
-	public void update()
-	{
+	public void update() {
 		setBreakpoint( determineBreakpoint() );
-		if ( getBreakpoint() == null || !( getBreakpoint() instanceof ICBreakpoint ) )
-		{
+		if ( getBreakpoint() == null || !(getBreakpoint() instanceof ICBreakpoint) ) {
 			setBreakpoint( null );
 			setEnabled( false );
 			return;

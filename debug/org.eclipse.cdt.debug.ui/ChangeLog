@@ -1,3 +1,21 @@
+2004-04-30 Mikhail Khodjaiants
+	Added ruler breakpoint actions to the Disassembly view.
+	* ICDebugHelpContextIds.java
+	* IInternalCDebugUIConstants.java
+	* ActionMessages.properties
+	* AbstractBreakpointRulerAction.java
+	* CBreakpointPropertiesRulerAction.java
+	* EnableDisableBreakpointRulerAction.java
+	* EnableDisableBreakpointRulerActionDelegate.java
+	* ManageBreakpointRulerActionDelegate.java
+	* ManageFunctionBreakpointActionDelegate.java
+	* ToggleBreakpointAdapter.java
+	* ManageBreakpointRulerAction.java: deleted
+	* ToggleBreakpointRulerAction.java: new
+	* DisassemblyAnnotationModel.java
+	* DisassemblyDocumentProvider.java
+	* DisassemblyView.java
+
 2004-04-28 Mikhail Khodjaiants
 	Added support of context menu to the Disassembly view.
 	* DisassemblyView.java

@@ -11,16 +11,23 @@
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
+import org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerAction;
+import org.eclipse.cdt.debug.internal.ui.actions.ToggleBreakpointRulerAction;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -43,6 +50,7 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
@@ -143,7 +151,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 				public void mouseDoubleClick( MouseEvent e ) {
 					if ( 1 == e.button ) {
 						fDoubleClicked = true;
-						triggerAction( ITextEditorActionConstants.RULER_DOUBLE_CLICK );
+						triggerAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
 					}
 				}
 
@@ -246,6 +254,11 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	private Menu fTextContextMenu;
 
+	/** 
+	 * The actions registered with the view. 
+	 */	
+	private Map fActions = new HashMap( 10 );
+
 	/**
 	 * Constructor for DisassemblyView.
 	 */
@@ -285,6 +298,17 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
+		IAction action;
+		IVerticalRuler ruler = getVerticalRuler();
+		if ( ruler instanceof IVerticalRulerInfo ) {
+			IVerticalRulerInfo info = (IVerticalRulerInfo)ruler;
+			action= new ToggleBreakpointRulerAction( this, info );
+			setAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT, action );
+			action= new EnableDisableBreakpointRulerAction( this, info );
+			setAction( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT, action );
+			action= new CBreakpointPropertiesRulerAction( this, info );
+			setAction( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES, action );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -420,6 +444,12 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 
 		setInput( input );
 		showViewer();
+		try {
+			getDocumentProvider().connect( input );
+		}
+		catch( CoreException e ) {
+			// never happens
+		}
 		getSourceViewer().setDocument( getDocumentProvider().getDocument( input ), 
 									   getDocumentProvider().getAnnotationModel( input ) );
 		updateObjects();
@@ -441,6 +471,11 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		if ( fDocumentProvider != null ) {
 			fDocumentProvider.dispose();
 			fDocumentProvider = null;
+		}
+
+		if ( fActions != null ) {
+			fActions.clear();
+			fActions = null;
 		}
 
 		super.dispose();
@@ -627,7 +662,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		return EditorsPlugin.getDefault().getPreferenceStore();
 	}
 
-	protected DisassemblyDocumentProvider getDocumentProvider() {
+	public DisassemblyDocumentProvider getDocumentProvider() {
 		if ( this.fDocumentProvider == null )
 			this.fDocumentProvider = new DisassemblyDocumentProvider();
 		return this.fDocumentProvider;
@@ -681,6 +716,12 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		IEditorInput input = DisassemblyEditorInput.EMPTY_EDITOR_INPUT; 
 		setInput( input );
 		showViewer();
+		try {
+			getDocumentProvider().connect( input );
+		}
+		catch( CoreException e ) {
+			// never happens
+		}
 		IAnnotationModel model = getDocumentProvider().getAnnotationModel( input );
 		getSourceViewer().setDocument( getDocumentProvider().getDocument( input ), model );
 		removeCurrentInstructionPointer( model );
@@ -745,6 +786,9 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	protected void rulerContextMenuAboutToShow( IMenuManager menu ) {
 		menu.add( new Separator( ITextEditorActionConstants.GROUP_REST ) );
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+		addAction( menu, IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
+		addAction( menu, IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
+		addAction( menu, IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
 	}
 
 	/**
@@ -773,6 +817,20 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 				subMenu.add( action );
 			else
 				menu.appendToGroup( group, action );
+		}
+	}
+
+	/**
+	 * Convenience method to add the action installed under the given action id to the given menu.
+	 * @param menu the menu to add the action to
+	 * @param actionId the id of the action to be added
+	 */
+	protected final void addAction( IMenuManager menu, String actionId ) {
+		IAction action = getAction( actionId );
+		if ( action != null ) {
+			if ( action instanceof IUpdate )
+				((IUpdate)action).update();
+			menu.add( action );
 		}
 	}
 
@@ -811,5 +869,24 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 
 	private void setTextContextMenu( Menu textContextMenu ) {
 		this.fTextContextMenu = textContextMenu;
+	}
+
+	public void setAction( String actionID, IAction action ) {
+		Assert.isNotNull( actionID );
+		if ( action == null ) {
+			action = (IAction)fActions.remove( actionID );
+		}
+		else {
+			fActions.put( actionID, action );
+		}
+	}
+
+	public IAction getAction( String actionID ) {
+		Assert.isNotNull( actionID );
+		return (IAction)fActions.get( actionID );
+	}
+
+	private IVerticalRuler getVerticalRuler() {
+		return this.fVerticalRuler;
 	}
 }

@@ -233,16 +233,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		}
 	}
 
-	protected static IResource getResource( IEditorPart editor ) {
-		IResource resource;
-		IEditorInput editorInput = editor.getEditorInput();
-		if ( editorInput instanceof IFileEditorInput ) {
-			resource = ((IFileEditorInput)editorInput).getFile();
+	protected static IResource getResource( IWorkbenchPart part ) {
+		if ( part instanceof IEditorPart ) {
+			IEditorInput editorInput = ((IEditorPart)part).getEditorInput();
+			if ( editorInput instanceof IFileEditorInput ) {
+				return ((IFileEditorInput)editorInput).getFile();
+			}
 		}
-		else {
-			resource = ResourcesPlugin.getWorkspace().getRoot();
-		}
-		return resource;
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	private String getSourceHandle( IEditorInput input ) throws CoreException {

@@ -1,15 +1,20 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
+
+import java.util.Iterator;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -17,146 +22,140 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Aug 26, 2002
+ * Abstract base implementation of the breakpoint ruler actions.
  */
-public abstract class AbstractBreakpointRulerAction extends Action implements IUpdate
-{
+public abstract class AbstractBreakpointRulerAction extends Action implements IUpdate {
+
 	private IVerticalRulerInfo fInfo;
 
-	private ITextEditor fTextEditor;
+	private IWorkbenchPart fTargetPart;
 
 	private IBreakpoint fBreakpoint;
 
-	protected IBreakpoint determineBreakpoint()
-	{
+	protected IBreakpoint determineBreakpoint() {
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints( CDebugCorePlugin.getUniqueIdentifier() );
-		for ( int i = 0; i < breakpoints.length; i++ )
-		{
+		for( int i = 0; i < breakpoints.length; i++ ) {
 			IBreakpoint breakpoint = breakpoints[i];
-			if ( breakpoint instanceof ICLineBreakpoint )
-			{
+			if ( breakpoint instanceof ICLineBreakpoint ) {
 				ICLineBreakpoint cBreakpoint = (ICLineBreakpoint)breakpoint;
-				try
-				{
-					if ( breakpointAtRulerLine( cBreakpoint ) )
-					{
-						return cBreakpoint;
-					}
-				}
-				catch( CoreException ce )
-				{
-					CDebugUIPlugin.log( ce );
-					continue;
+				if ( breakpointAtRulerLine( cBreakpoint ) ) {
+					return cBreakpoint;
 				}
 			}
 		}
 		return null;
 	}
 
-	protected IVerticalRulerInfo getInfo()
-	{
+	protected IVerticalRulerInfo getInfo() {
 		return fInfo;
 	}
 
-	protected void setInfo( IVerticalRulerInfo info )
-	{
+	protected void setInfo( IVerticalRulerInfo info ) {
 		fInfo = info;
 	}
 
-	protected ITextEditor getTextEditor()
-	{
-		return fTextEditor;
+	protected IWorkbenchPart getTargetPart() {
+		return this.fTargetPart;
+	}
+	protected void setTargetPart( IWorkbenchPart targetPart ) {
+		this.fTargetPart = targetPart;
 	}
 
-	protected void setTextEditor( ITextEditor textEditor )
-	{
-		fTextEditor = textEditor;
-	}
-
-	/** 
-	 * Returns the resource for which to create the marker, 
-	 * or <code>null</code> if there is no applicable resource.
-	 *
-	 * @return the resource for which to create the marker or <code>null</code>
-	 */
-	protected IResource getResource()
-	{
-		IEditorInput input = fTextEditor.getEditorInput();
-		IResource resource = (IResource)input.getAdapter( IFile.class );
-		if ( resource == null )
-		{
-			resource = (IResource)input.getAdapter( IResource.class );
-		}
-		return resource;
-	}
-
-	protected boolean breakpointAtRulerLine( ICLineBreakpoint cBreakpoint ) throws CoreException
-	{
-		AbstractMarkerAnnotationModel model = getAnnotationModel();
-		if ( model != null )
-		{
-			Position position = model.getMarkerPosition( cBreakpoint.getMarker() );
-			if ( position != null )
-			{
-				IDocumentProvider provider = getTextEditor().getDocumentProvider();
-				IDocument doc = provider.getDocument( getTextEditor().getEditorInput() );
-				try
-				{
-					int markerLineNumber = doc.getLineOfOffset( position.getOffset() );
-					int rulerLine = getInfo().getLineOfLastMouseButtonActivity();
-					if ( rulerLine == markerLineNumber )
-					{
-						if ( getTextEditor().isDirty() )
-						{
-							return cBreakpoint.getLineNumber() == markerLineNumber + 1;
-						}
-						return true;
-					}
-				}
-				catch ( BadLocationException x )
-				{
-					CDebugUIPlugin.log( x );
-				}
-			}
-		}
-
-		return false;
-	}
-
-	protected IBreakpoint getBreakpoint()
-	{
+	protected IBreakpoint getBreakpoint() {
 		return fBreakpoint;
 	}
 
-	protected void setBreakpoint( IBreakpoint breakpoint )
-	{
+	protected void setBreakpoint( IBreakpoint breakpoint ) {
 		fBreakpoint = breakpoint;
 	}
 
-	/**
-	 * Returns the <code>AbstractMarkerAnnotationModel</code> of the editor's input.
-	 *
-	 * @return the marker annotation model
-	 */
-	protected AbstractMarkerAnnotationModel getAnnotationModel()
-	{
-		IDocumentProvider provider = fTextEditor.getDocumentProvider();
-		IAnnotationModel model = provider.getAnnotationModel( getTextEditor().getEditorInput() );
-		if ( model instanceof AbstractMarkerAnnotationModel )
-		{
-			return (AbstractMarkerAnnotationModel)model;
+	protected boolean breakpointAtRulerLine( ICLineBreakpoint cBreakpoint ) {
+		int lineNumber = getBreakpointLine( cBreakpoint );
+		int rulerLine = getInfo().getLineOfLastMouseButtonActivity();
+		return ( rulerLine == lineNumber );
+	}
+
+	private int getBreakpointLine( ICLineBreakpoint breakpoint ) {
+		if ( getTargetPart() instanceof ISaveablePart && ((ISaveablePart)getTargetPart()).isDirty() ) {
+			try {
+				return breakpoint.getLineNumber();
+			}
+			catch( CoreException e ) {
+				DebugPlugin.log( e );
+			}
+		}
+		else {
+			Position position = getBreakpointPosition( breakpoint );
+			if ( position != null ) {
+				IDocument doc = getDocument();
+				if ( doc != null ) {
+					try {
+						return doc.getLineOfOffset( position.getOffset() );
+					}
+					catch ( BadLocationException x ) {
+						DebugPlugin.log( x );
+					}
+				}
+			}
+		}
+		return -1;
+	}
+
+	private Position getBreakpointPosition( ICLineBreakpoint breakpoint ) {
+		IAnnotationModel model = getAnnotationModel();
+		if ( model != null ) {
+			Iterator it = model.getAnnotationIterator();
+			while( it.hasNext() ) {
+				Annotation ann = (Annotation)it.next();
+				if ( ann instanceof MarkerAnnotation && ((MarkerAnnotation)ann).getMarker().equals( breakpoint.getMarker() ) ) {
+					return model.getPosition( ann );
+				}
+			}
+		}
+		return null;
+	}
+
+	private IDocument getDocument() {
+		IWorkbenchPart targetPart = getTargetPart();
+		if ( targetPart instanceof ITextEditor ) {
+			ITextEditor textEditor = (ITextEditor)targetPart; 
+			IDocumentProvider provider = textEditor.getDocumentProvider();
+			if ( provider != null )
+				return provider.getDocument( textEditor.getEditorInput() );
+		}
+		else if ( targetPart instanceof DisassemblyView ) {
+			DisassemblyView dv = (DisassemblyView)targetPart;
+			IDocumentProvider provider = dv.getDocumentProvider();
+			if ( provider != null )
+				return provider.getDocument( dv.getInput() );
+		}
+		return null;
+	}
+
+	private IAnnotationModel getAnnotationModel() {
+		IWorkbenchPart targetPart = getTargetPart();
+		if ( targetPart instanceof ITextEditor ) {
+			ITextEditor textEditor = (ITextEditor)targetPart; 
+			IDocumentProvider provider = textEditor.getDocumentProvider();
+			if ( provider != null )
+				return provider.getAnnotationModel( textEditor.getEditorInput() );
+		}
+		else if ( targetPart instanceof DisassemblyView ) {
+			DisassemblyView dv = (DisassemblyView)targetPart;
+			IDocumentProvider provider = dv.getDocumentProvider();
+			if ( provider != null )
+				return provider.getAnnotationModel( dv.getInput() );
 		}
 		return null;
 	}

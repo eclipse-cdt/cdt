@@ -6,7 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.ui;
 
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -20,7 +20,12 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
  */
 public interface ICDebugHelpContextIds
 {
-	public static final String PREFIX = ICDebugUIConstants.PLUGIN_ID + "."; //$NON-NLS-1$
+	/**
+	 * C/C++ Debug UI plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
+	 */
+	public static final String PLUGIN_ID = CDebugUIPlugin.getUniqueIdentifier();
+	
+	public static final String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
 	// Actions
 	public static final String CHANGE_REGISTER_VALUE_ACTION = PREFIX + "change_register_value_action_context"; //$NON-NLS-1$
@@ -35,6 +40,9 @@ public interface ICDebugHelpContextIds
 	public static final String LOAD_SYMBOLS_FOR_ALL = PREFIX + "load_symbols_for_all_action_context"; //$NON-NLS-1$
 	public static final String REFRESH_REGISTERS_ACTION = PREFIX + "refresh_registers_action_context"; //$NON-NLS-1$
 	public static final String AUTO_REFRESH_REGISTERS_ACTION = PREFIX + "auto_refresh_registers_action_context"; //$NON-NLS-1$
+	public static final String TOGGLE_BREAKPOINT_ACTION = PREFIX + "manage_breakpoint_action_context"; //$NON-NLS-1$
+	public static final String ENABLE_DISABLE_BREAKPOINT_ACTION = PREFIX + "enable_disable_breakpoint_action_context"; //$NON-NLS-1$
+	public static final String BREAKPOINT_PROPERTIES_ACTION = PREFIX + "breakpoint_properties_action_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String MEMORY_VIEW = PREFIX + "memory_view_context"; //$NON-NLS-1$

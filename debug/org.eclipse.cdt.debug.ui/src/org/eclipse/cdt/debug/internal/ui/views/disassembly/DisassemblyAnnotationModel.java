@@ -17,9 +17,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
@@ -33,77 +31,66 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 /**
  * Annotation model for Disassembly view.
  */
-public class DisassemblyAnnotationModel extends AnnotationModel implements IBreakpointsListener {
+public class DisassemblyAnnotationModel extends AnnotationModel {
 
 	private DisassemblyEditorInput fInput;
 
-	private IDocument fDisassemblyDocument;
+//	private IDocument fDisassemblyDocument;
 
 	/**
 	 * Constructor for DisassemblyAnnotationModel.
 	 */
-	public DisassemblyAnnotationModel( IDocument document ) {
+	public DisassemblyAnnotationModel() {
 		super();
-		fDisassemblyDocument = document;
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener( this );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
-	 */
-	public void breakpointsAdded( final IBreakpoint[] breakpoints ) {
+	protected void breakpointsAdded( final IBreakpoint[] breakpoints, final IDocument document ) {
 		if ( getInput().equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ||
 			 getInput().equals( DisassemblyEditorInput.PENDING_EDITOR_INPUT ) )
 			 return;
 		asyncExec( new Runnable() {		
 			public void run() {
-				breakpointsAdded0( breakpoints );
+				breakpointsAdded0( breakpoints, document );
 			}
 		} ); 			
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-	 */
-	public void breakpointsRemoved( final IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
+	protected void breakpointsRemoved( final IBreakpoint[] breakpoints, final IDocument document ) {
 		if ( getInput().equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ||
 			 getInput().equals( DisassemblyEditorInput.PENDING_EDITOR_INPUT ) )
 			 return;
 		asyncExec( new Runnable() {		
 			public void run() {
-				breakpointsRemoved0( breakpoints );
+				breakpointsRemoved0( breakpoints, document );
 			}
 		} );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-	 */
-	public void breakpointsChanged( final IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
+	protected void breakpointsChanged( final IBreakpoint[] breakpoints, final IDocument document ) {
 		if ( getInput().equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ||
 			 getInput().equals( DisassemblyEditorInput.PENDING_EDITOR_INPUT ) )
 			 return;
 		asyncExec( new Runnable() {		
 			public void run() {
-				breakpointsChanged0( breakpoints );
+				breakpointsChanged0( breakpoints, document );
 			}
 		} );
 	}
 
-	protected void breakpointsAdded0( IBreakpoint[] breakpoints ) {
+	protected void breakpointsAdded0( IBreakpoint[] breakpoints, IDocument document ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			if ( breakpoints[i] instanceof ICLineBreakpoint && isApplicable( breakpoints[i] ) ) {
-				addBreakpointAnnotation( (ICLineBreakpoint)breakpoints[i] );
+				addBreakpointAnnotation( (ICLineBreakpoint)breakpoints[i], document );
 			}
 		}
 		fireModelChanged();
 	}
 
-	protected void breakpointsRemoved0( IBreakpoint[] breakpoints ) {
+	protected void breakpointsRemoved0( IBreakpoint[] breakpoints, IDocument document ) {
 		removeAnnotations( findAnnotationsforBreakpoints( breakpoints ), true, false );
 	}
 
-	protected void breakpointsChanged0( IBreakpoint[] breakpoints ) {
+	protected void breakpointsChanged0( IBreakpoint[] breakpoints, IDocument document ) {
 		List annotations = findAnnotationsforBreakpoints( breakpoints );
 		List markers = new ArrayList( annotations.size() );
 		Iterator it = annotations.iterator();
@@ -114,7 +101,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel implements IBrea
 		}
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			if ( breakpoints[i] instanceof ICLineBreakpoint && !markers.contains( breakpoints[i].getMarker() ) ) {
-				addBreakpointAnnotation( (ICLineBreakpoint)breakpoints[i] );
+				addBreakpointAnnotation( (ICLineBreakpoint)breakpoints[i], document );
 			}
 		}
 		fireModelChanged();
@@ -124,19 +111,19 @@ public class DisassemblyAnnotationModel extends AnnotationModel implements IBrea
 		return this.fInput;
 	}
 
-	protected void setInput( DisassemblyEditorInput input ) {
+	protected void setInput( DisassemblyEditorInput input, IDocument document ) {
 		DisassemblyEditorInput oldInput = this.fInput;
 		this.fInput = input;
 		if ( this.fInput != null && !this.fInput.equals( oldInput ) )
-			updateAnnotations();
+			updateAnnotations( document );
 	}
 
 	private boolean isApplicable( IBreakpoint breakpoint ) {
 		return true;
 	}
 
-	private void addBreakpointAnnotation( ICLineBreakpoint breakpoint ) {
-		Position position = createBreakpointPosition( breakpoint );
+	private void addBreakpointAnnotation( ICLineBreakpoint breakpoint, IDocument document ) {
+		Position position = createBreakpointPosition( breakpoint, document );
 		if ( position != null ) {
 			try {
 				addAnnotation( createMarkerAnnotation( breakpoint ), position, false );
@@ -146,19 +133,19 @@ public class DisassemblyAnnotationModel extends AnnotationModel implements IBrea
 		}
 	}
 
-	private Position createBreakpointPosition( ICLineBreakpoint breakpoint ) {
+	private Position createBreakpointPosition( ICLineBreakpoint breakpoint, IDocument document ) {
 		Position position = null;
 		DisassemblyEditorInput input = getInput();
 		if ( input != null ) {
 			long address = input.getBreakpointAddress( breakpoint );
 			int start = -1;
-			if ( address > 0 && fDisassemblyDocument != null ) {
+			if ( address > 0 && document != null ) {
 				int instrNumber = input.getInstructionNumber( address );
 				if ( instrNumber > 0 ) {
 					try {
 						start = fDocument.getLineOffset( instrNumber - 1 );
 						if ( start > -1 ) {
-							return new Position( start, fDisassemblyDocument.getLineLength( instrNumber - 1 ) );
+							return new Position( start, document.getLineLength( instrNumber - 1 ) );
 						}
 					}
 					catch( BadLocationException e ) {
@@ -174,7 +161,6 @@ public class DisassemblyAnnotationModel extends AnnotationModel implements IBrea
 	}
 
 	protected void dispose() {
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 	}
 
 	private List findAnnotationsforBreakpoints( IBreakpoint[] breakpoints ) {
@@ -202,15 +188,15 @@ public class DisassemblyAnnotationModel extends AnnotationModel implements IBrea
 			display.asyncExec( r );
 	}
 
-	private void updateAnnotations() {
+	private void updateAnnotations( final IDocument document ) {
 		asyncExec( new Runnable() {		
 			public void run() {
-				doUpdateAnnotations();
+				doUpdateAnnotations( document );
 			}
 		} );
 	}
 
-	protected void doUpdateAnnotations() {
-		breakpointsAdded0( DebugPlugin.getDefault().getBreakpointManager().getBreakpoints() );
+	protected void doUpdateAnnotations( IDocument document ) {
+		breakpointsAdded0( DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(), document );
 	}
 }

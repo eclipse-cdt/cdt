@@ -104,7 +104,7 @@ public class BuildConsoleView extends ViewPart {
 		initializeContextMenu(parent);
 		initializeToolBar();
 		
-		WorkbenchHelp.setHelp(fTextViewer.getControl(), new ViewContextComputer(this, ICHelpContextIds.CLEAR_CONSOLE_VIEW));
+		WorkbenchHelp.setHelp(fTextViewer.getControl(), ICHelpContextIds.CLEAR_CONSOLE_VIEW);
 	}
 	
 	private void initializeWidgetFont(StyledText styledText) {

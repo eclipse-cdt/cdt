@@ -200,7 +200,7 @@ public abstract class CVariable extends CDebugElement
 				{
 					if ( getCDIVariableObject() instanceof ICDIArgumentObject )
 						fCDIVariable = getCDISession().getVariableManager().createArgument( (ICDIArgumentObject)getCDIVariableObject() );
-					else if ( getCDIVariableObject() != null )
+					else if ( getCDIVariableObject() instanceof ICDIVariableObject )
 						fCDIVariable = getCDISession().getVariableManager().createVariable( getCDIVariableObject() );
 				}
 				catch( CDIException e )
@@ -730,8 +730,12 @@ public abstract class CVariable extends CDebugElement
 
 	protected void reset() throws DebugException
 	{
-		((CValue)getValue()).reset();
-		fireChangeEvent( DebugEvent.STATE );
+		IValue value = getValue();
+		if ( value instanceof CValue )
+		{
+			((CValue)getValue()).reset();
+			fireChangeEvent( DebugEvent.STATE );
+		}
 	}
 
 	/* (non-Javadoc)

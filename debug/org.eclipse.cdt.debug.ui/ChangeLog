@@ -1,4 +1,8 @@
 2002-11-13 Mikhail Khodjaiants
+	Added tooltips to the Memory view's tabs.
+	* MemoryControlArea.java
+ 
+2002-11-13 Mikhail Khodjaiants
 	Added the 'Auto-Refresh by default' and 'Show ASCII by default' preferences 
 	to the 'Memory Views' preference page.
 	* ICDebugPreferenceConstants.java

@@ -69,6 +69,7 @@ public class MemoryControlArea extends Composite
 		fAddressText = createAddressText( this );
 		fMemoryText = createMemoryText( this, style, fPresentation );
 		setDefaultPreferences();
+		updateToolTipText();
 	}
 
 	private void setDefaultPreferences()
@@ -257,6 +258,7 @@ public class MemoryControlArea extends Composite
 			getPresentation().setMemoryBlock( getMemoryBlock() );
 		}
 		setMemoryTextState();
+		updateToolTipText();
 	}
 	
 	private void removeBlock() throws DebugException
@@ -267,6 +269,7 @@ public class MemoryControlArea extends Composite
 			getPresentation().setMemoryBlock( null );
 		}
 		setMemoryTextState();
+		updateToolTipText();
 	}
 
 	public int getFormat()
@@ -392,6 +395,16 @@ public class MemoryControlArea extends Composite
 		}
 	}
 
+	protected void setTabItemToolTipText( String text )
+	{
+		String newText = replaceMnemonicCharacters( text );
+		if ( getParent() instanceof CTabFolder )
+		{
+			CTabItem[] tabItems = ((CTabFolder)getParent()).getItems();
+			tabItems[fIndex].setToolTipText( "Memory View " + (fIndex + 1) + ": " + newText );
+		}
+	}
+
 	protected void refreshMemoryBlock()
 	{
 		if ( getMemoryBlock() != null )
@@ -425,5 +438,25 @@ public class MemoryControlArea extends Composite
 				CDebugUIPlugin.errorDialog( "Unable to save memory changes.", e.getStatus() );
 			}
 		}
+	}
+	
+	private void updateToolTipText()
+	{
+		setTabItemToolTipText( fAddressText.getText().trim() );
+	}
+	
+	private String replaceMnemonicCharacters( String text )
+	{
+		StringBuffer sb = new StringBuffer( text.length() );
+		for ( int i = 0; i < text.length(); ++i )
+		{
+			char ch = text.charAt( i );
+			sb.append( ch );
+			if ( ch == '&' )
+			{
+				sb.append( ch );
+			}
+		}
+		return sb.toString();
 	}
 }

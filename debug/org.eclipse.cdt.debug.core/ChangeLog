@@ -3,6 +3,31 @@
 	'setCurrentThread': check if the old current thread is not null.
 	* CDebugTarget.java
 
+2003-10-17 Mikhail Khodjaiants
+	Core support of the 'Search for duplicate source files' option.
+	* ICSourceLocation.java
+	* ICSourceLocator.java
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+	* CSourceManager.java
+
+2003-10-17 Mikhail Khodjaiants
+	If the target is suspended by a line breakpoint the source manager tries to retrieve 
+	the file resource from the breakpoint marker.
+	* CSourceManager.java
+	* CDebugTarget.java
+
+2003-10-15 Mikhail Khodjaiants
+	Improving the source search algorithms.
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+
+2003-10-14 Mikhail Khodjaiants
+	Improved the source search algorithm.
+	* CProjectSourceLocation.java
+	
 2003-10-13 Mikhail Khodjaiants
 	Fix for bug 43372: changed the source lookup procedures to avoid the usage of 'getCanonicalPath'.
 	* CDirectorySourceLocation.java

@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -39,7 +40,8 @@ public class CSourceManager implements ICSourceLocator,
 	private ISourceLocator fSourceLocator = null;
 	private int fMode = ISourceMode.MODE_SOURCE;
 	private int fRealMode = fMode;
-	private ILaunch fLaunch = null; 
+	private ILaunch fLaunch = null;
+	private CDebugTarget fDebugTarget = null; 
 	
 	/**
 	 * Constructor for CSourceManager.
@@ -132,6 +134,8 @@ public class CSourceManager implements ICSourceLocator,
 	 */
 	public Object getAdapter( Class adapter )
 	{
+		if ( adapter.equals( CSourceManager.class ) )
+			return this;
 		if ( adapter.equals( IResourceChangeListener.class ) &&
 			 fSourceLocator instanceof IResourceChangeListener )
 			return fSourceLocator;
@@ -148,7 +152,12 @@ public class CSourceManager implements ICSourceLocator,
 		
 		if ( getMode() == ISourceMode.MODE_SOURCE && getSourceLocator() != null )
 		{
-			result = getSourceLocator().getSourceElement( stackFrame );
+			// if the target is suspended by a line breakpoint the source manager 
+			// tries to retrieve the file resource from the breakpoint marker.
+			if ( getDebugTarget() != null )
+				result = getDebugTarget().getCurrentBreakpointFile();
+			if ( result == null )
+				result = getSourceLocator().getSourceElement( stackFrame );
 		}
 		if ( result == null && 
 			 ( autoDisassembly || getMode() == ISourceMode.MODE_DISASSEMBLY ) && 
@@ -163,7 +172,7 @@ public class CSourceManager implements ICSourceLocator,
 		}
 		return result;
 	}
-	
+
 	protected ICSourceLocator getCSourceLocator()
 	{
 		if ( getSourceLocator() instanceof ICSourceLocator )
@@ -256,4 +265,31 @@ public class CSourceManager implements ICSourceLocator,
 	{
 		return ( getCSourceLocator() != null ) ? getCSourceLocator().getProject() :  null;
 	}
+
+	public void setDebugTarget( CDebugTarget target )
+	{
+		fDebugTarget = target;
+	}
+
+	protected CDebugTarget getDebugTarget()
+	{
+		return fDebugTarget;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSearchForDuplicateFiles(boolean)
+	 */
+	public void setSearchForDuplicateFiles( boolean search )
+	{
+		if ( getCSourceLocator() != null )
+			getCSourceLocator().setSearchForDuplicateFiles( search );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
+	 */
+	public boolean searchForDuplicateFiles()
+	{
+		return ( getCSourceLocator() != null ) ? getCSourceLocator().searchForDuplicateFiles() : false;
+	}	
 }

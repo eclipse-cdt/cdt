@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.SelectionButtonDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.Separator;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.core.resources.IProject;
@@ -158,7 +159,7 @@ public class SourceLookupBlock
 	private Shell fShell = null;
 	private CheckedListDialogField fGeneratedSourceListField;
 	private SourceListDialogField fAddedSourceListField;
-//	private SelectionButtonDialogField fSearchForDuplicateFiles;
+	private SelectionButtonDialogField fSearchForDuplicateFiles;
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog = null;
 	private boolean fIsDirty = false;
 	private ICSourceLocator fLocator = null;
@@ -228,10 +229,17 @@ public class SourceLookupBlock
 		fAddedSourceListField.setUpButtonIndex( 2 );
 		fAddedSourceListField.setDownButtonIndex( 3 );
 		fAddedSourceListField.setRemoveButtonIndex( 5 );
-/*
 		fSearchForDuplicateFiles = new SelectionButtonDialogField( SWT.CHECK );
-		fSearchForDuplicateFiles.setLabelText( "Search for duplicate files" );
-*/
+		fSearchForDuplicateFiles.setLabelText( "Search for duplicate source files" );
+		fSearchForDuplicateFiles.setDialogFieldListener( 
+									new IDialogFieldListener()
+									{
+										public void dialogFieldChanged( DialogField field )
+										{
+											doCheckStateChanged();
+										}
+
+									} );
 	}
 
 	public void createControl( Composite parent )
@@ -277,9 +285,9 @@ public class SourceLookupBlock
 		viewer.setColumnProperties( new String[]{ CP_LOCATION, CP_ASSOCIATION } );
 		viewer.setCellModifier( createCellModifier() );
 		
-		new Separator().doFillIntoGrid( fControl, 3, converter.convertHeightInCharsToPixels( 1 ) );
+//		new Separator().doFillIntoGrid( fControl, 3, converter.convertHeightInCharsToPixels( 1 ) );
 
-//		fSearchForDuplicateFiles.doFillIntoGrid( fControl, 3 );
+		fSearchForDuplicateFiles.doFillIntoGrid( fControl, 3 );
 	}
 
 	private ICellModifier createCellModifier()
@@ -333,6 +341,7 @@ public class SourceLookupBlock
 			ICSourceLocation[] locations = fLocator.getSourceLocations();
 			initializeGeneratedLocations( fLocator.getProject(), locations );
 			resetAdditionalLocations( locations );
+			fSearchForDuplicateFiles.setSelection( fLocator.searchForDuplicateFiles() );
 		} 
 	}
 
@@ -491,6 +500,7 @@ public class SourceLookupBlock
 			locations = CSourceLocator.getDefaultSourceLocations( getProject() );
 		resetGeneratedLocations( locations );
 		resetAdditionalLocations( locations );
+		fSearchForDuplicateFiles.setSelection( false );
 	}
 
 	public IProject getProject()
@@ -520,5 +530,10 @@ public class SourceLookupBlock
 				 project.equals( ((IProjectSourceLocation)locations[i]).getProject() ) )
 				return locations[i];
 		return null;
+	}
+
+	public boolean searchForDuplicateFiles()
+	{
+		return ( fSearchForDuplicateFiles != null ) ? fSearchForDuplicateFiles.isSelected() : false;
 	}
 }

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.LinkedList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,6 +56,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	 * The associted path of this source location. 
 	 */
 	private IPath fAssociation = null;
+
+	private boolean fSearchForDuplicateFiles = false;
 
 	/**
 	 * Constructor for CDirectorySourceLocation.
@@ -177,11 +180,16 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		}
 
 		// Try for a file in another workspace project
-		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( filePath );
-		if ( f != null && f.exists() ) 
-		{
-			return f;
-		} 
+		IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( filePath );
+		LinkedList list = new LinkedList();
+		for ( int j = 0; j < wsFiles.length; ++j )
+			if ( wsFiles[j].exists() )
+				if ( !searchForDuplicateFiles() )
+					return wsFiles[j];
+				else
+					list.add( wsFiles[j] );
+		if ( list.size() > 0 ) 
+			return ( list.size() == 1 ) ? list.getFirst() : list;
 
 		file = filePath.toFile();
 		if ( file.exists() )
@@ -201,12 +209,18 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			if ( file.exists() )
 			{
 				path = new Path( file.getAbsolutePath() ); // can't use getCanonicalPath because of links
-				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-				if ( f != null && f.exists() ) 
-				{
-					return f;
-				} 
-				return createExternalFileStorage( path );
+				IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
+				LinkedList list = new LinkedList();
+				for ( int j = 0; j < wsFiles.length; ++j )
+					if ( wsFiles[j].exists() )
+						if ( !searchForDuplicateFiles() )
+							return wsFiles[j];
+						else
+							list.add( wsFiles[j] );
+				if ( list.size() > 0 ) 
+					return ( list.size() == 1 ) ? list.getFirst() : list;
+				else
+					return createExternalFileStorage( path );
 			}
 		}
 		return null;
@@ -354,5 +368,21 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		String prefixString = prefix.toOSString();
 		String pathString = path.removeLastSegments( path.segmentCount() - segCount ).toOSString();
 		return prefixString.equalsIgnoreCase( pathString );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#setSearchForDuplicateFiles(boolean)
+	 */
+	public void setSearchForDuplicateFiles( boolean search )
+	{
+		fSearchForDuplicateFiles = search;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#searchForDuplicateFiles()
+	 */
+	public boolean searchForDuplicateFiles()
+	{
+		return fSearchForDuplicateFiles;
 	}
 }

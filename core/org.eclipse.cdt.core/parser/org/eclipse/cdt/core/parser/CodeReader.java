@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  */
 public class CodeReader {
     public static final String SYSTEM_DEFAULT_ENCODING = System.getProperty( "file.encoding" ); //$NON-NLS-1$
-	//private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String NF = "<text>"; //$NON-NLS-1$
 	private static final char [] NOFILE = NF.toCharArray(); //$NON-NLS-1$
 	

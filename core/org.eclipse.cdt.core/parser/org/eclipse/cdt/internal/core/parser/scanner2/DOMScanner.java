@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -218,4 +219,22 @@ public class DOMScanner extends BaseScanner {
         return contextStart + offset; 
     }
 
+    
+    /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#postConstructorSetup(org.eclipse.cdt.core.parser.CodeReader, org.eclipse.cdt.core.parser.IScannerInfo)
+    */
+   protected void postConstructorSetup(CodeReader reader, IScannerInfo info) {
+      super.postConstructorSetup(reader, info);
+      locationMap.startTranslationUnit( getMainFilename() );
+   }
+   
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#throwEOF()
+    */
+   protected void throwEOF() throws EndOfFileException {
+      locationMap.endTranslationUnit( preprocessedOffset );
+      super.throwEOF();
+   }
+   
+   protected int preprocessedOffset = 0;
 }

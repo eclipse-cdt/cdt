@@ -17,7 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
  */
 public interface IScannerPreprocessorLog {
 
-    public void endTranslationUnit(int finalOffset);
+    public void startTranslationUnit( char [] filename );
+    public void endTranslationUnit(int offset);
 
     public void startInclusion(char[] includePath, int offset);
 

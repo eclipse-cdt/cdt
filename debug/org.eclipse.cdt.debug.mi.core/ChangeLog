@@ -1,3 +1,9 @@
+2002-10-21 Alain Magloire
+
+	* src/.../core/cdi/EventManager.java (update): Only
+	fire the event for MemoryChangedEvent if the block was
+	not frozen.
+
 2002-10-20 Alain Magloire
 
 	Eclipse provides plugins a way to trace by having an .options file,
@@ -13,8 +19,8 @@
 
 	* .options: Set debug to true.
 	* src/.../core/MIPlugin.java (debugLog): Break the log line in small chuncks of 100.
-	* src/.../MISession.java (postCommand): Print the gdb/mi command.
-	* src/.../RxThread.java (run): Print gdb/mi responses.
+	* src/.../core/MISession.java (postCommand): Print the gdb/mi command.
+	* src/.../core/RxThread.java (run): Print gdb/mi responses.
 
 2002-10-20 Alain Magloire
 

@@ -201,6 +201,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	 */
 	public void handleException( DebugException e )
 	{
+		showMessage( e.getMessage() );
 	}
 
 	/**

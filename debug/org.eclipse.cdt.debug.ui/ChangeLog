@@ -1,4 +1,8 @@
 2003-04-24 Mikhail Khodjaiants
+	Display error messages in the 'Registers' view.
+	* RegistersView.java
+
+2003-04-24 Mikhail Khodjaiants
 	Added shortcuts for the C/C++ Debug specific views.
 	* plugin.xml
 

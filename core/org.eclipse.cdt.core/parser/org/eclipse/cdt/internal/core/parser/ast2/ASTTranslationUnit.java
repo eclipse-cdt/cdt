@@ -10,9 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast2;
 
-import org.eclipse.cdt.core.parser.ast2.IASTDeclaration;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.cdt.core.parser.ast2.IASTBuiltinType;
+import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
 import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.ast2.IASTType;
 
 /**
  * This represents the global scope.
@@ -21,44 +25,21 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  */
 public class ASTTranslationUnit extends ASTScope implements IASTTranslationUnit {
 
-	private IASTDeclaration builtins;
-	
 	// builtin types
-	public static final char[] b_int = "int".toCharArray();
+	public static final IASTBuiltinType b_int = new ASTBuiltinType("int");
 	
-	public IASTDeclaration findDeclaration(char[] name) {
-		IASTDeclaration decl = getDeclaration(name);
-		if (decl != null)
-			return decl;
-		
+	private Map builtins = new HashMap();
+	{
+		builtins.put(b_int.getName(), b_int);
+	}
+	
+	public IASTType findType(IASTIdentifier name) {
+		IASTType type = super.findType(name);
+		if (type != null)
+			return type;
+
 		// See if it is a built in
-		for (decl = builtins; decl != null; decl = decl.getNextDeclaration())
-			if (CharArrayUtils.equals(name, decl.getName().getName().toCharArray()))
-				return decl;
-		
-		// See if we need to populate it
-		if (CharArrayUtils.equals(name, b_int))
-			return addBuiltinType(b_int);
-
-		// not found
-		return null;
+		return (IASTBuiltinType)builtins.get(name);
 	}
 
-	private IASTDeclaration addBuiltinType(char[] name) {
-		ASTBuiltinType type = new ASTBuiltinType();
-		type.setName(name);
-		
-		ASTIdentifier id = new ASTIdentifier();
-		id.setName(name);
-		
-		ASTTypeDeclaration decl = new ASTTypeDeclaration();
-		decl.setName(id);
-		decl.setType(type);
-		
-		// insert to head of list
-		decl.setNextDeclaration(builtins);
-		builtins = decl;
-		
-		return decl;
-	}
 }

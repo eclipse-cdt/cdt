@@ -10,38 +10,50 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast2.ASTFactory;
+import org.eclipse.cdt.core.parser.ast2.IASTBuiltinType;
+import org.eclipse.cdt.core.parser.ast2.IASTPointerType;
 import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ast2.IASTType;
 import org.eclipse.cdt.core.parser.ast2.IASTVariable;
 import org.eclipse.cdt.core.parser.ast2.IASTVariableDeclaration;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.ast2.ASTBuiltinType;
-import org.eclipse.cdt.internal.core.parser.ast2.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.parser.ast2.ASTIdentifier;
 
 
 /**
- * Test the new AST. Extends SpeedTest so we can get at its nice
- * scanner config stuff.
+ * Test the new AST.
  * 
  * @author Doug Schaefer
  */
-public class AST2Tests extends SpeedTest {
+public class AST2Tests extends TestCase {
 
     private IASTTranslationUnit parse(String code) {
-        return ASTFactory.parseString(code, getScannerInfo(false));
+        return ASTFactory.parseString(code, new ScannerInfo());
     }
 
     // Also overrides the 'test' up in SpeedTest
-    public void test() {
+    public void testVariable() {
     	String code = "int x;";
-    	ASTTranslationUnit tu = (ASTTranslationUnit)parse(code);
+    	IASTTranslationUnit tu = (IASTTranslationUnit)parse(code);
     	IASTVariableDeclaration varDecl = (IASTVariableDeclaration)tu.getFirstDeclaration();
     	IASTVariable var = varDecl.getVariable();
-    	assertEquals(varDecl.getName().getName(), "x");
+    	assertEquals(varDecl.getName(), new ASTIdentifier("x"));
     	IASTType type = var.getType();
     	assertNotNull(type);
-    	assertTrue(CharArrayUtils.equals(((ASTBuiltinType)type).getName(), "int".toCharArray()));
+    	assertEquals(((IASTBuiltinType)type).getName(), new ASTIdentifier("int"));
     }
 
+    public void testPointerVariable() {
+    	String code = "int * x;";
+    	IASTTranslationUnit tu = (IASTTranslationUnit)parse(code);
+    	IASTVariableDeclaration varDecl = (IASTVariableDeclaration)tu.getFirstDeclaration();
+    	IASTVariable var = varDecl.getVariable();
+    	assertEquals(varDecl.getName(), new ASTIdentifier("x"));
+    	IASTPointerType pointerType = (IASTPointerType)var.getType();
+    	IASTType type = pointerType.getType();
+    	assertEquals(((IASTBuiltinType)type).getName(), new ASTIdentifier("int"));
+    }
 }

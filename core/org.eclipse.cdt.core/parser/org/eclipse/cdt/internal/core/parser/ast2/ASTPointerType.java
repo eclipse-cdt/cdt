@@ -8,20 +8,24 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.parser.ast2;
+package org.eclipse.cdt.internal.core.parser.ast2;
+
+import org.eclipse.cdt.core.parser.ast2.IASTPointerType;
+import org.eclipse.cdt.core.parser.ast2.IASTType;
 
 /**
- * This class represents a name used to introduce declarations and to
- * refer back to them from references.
- * 
- * This is an opaque type to allow for various representation techniques
- * for the actual name.
- * 
- * the toString method should produce a string representation of the
- * identifier.
- * 
  * @author Doug Schaefer
  */
-public interface IASTIdentifier extends IASTNode {
+public class ASTPointerType extends ASTType implements IASTPointerType {
 
+	private IASTType type;
+	
+	public IASTType getType() {
+		return type;
+	}
+	
+	public void setType(IASTType type) {
+		this.type = type; 
+	}
+	
 }

@@ -11,8 +11,10 @@
 package org.eclipse.cdt.internal.core.parser.ast2;
 
 import org.eclipse.cdt.core.parser.ast2.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
 import org.eclipse.cdt.core.parser.ast2.IASTScope;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.ast2.IASTType;
+import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
 
 /**
  * @author Doug Schaefer
@@ -38,18 +40,18 @@ public class ASTScope implements IASTScope {
 		this.parentScope = parentScope;
 	}
 	
-	protected IASTDeclaration getDeclaration(char[] name) {
+	protected IASTDeclaration getDeclaration(IASTIdentifier name) {
 		for (IASTDeclaration decl = firstDeclaration;
 			 decl != null;
 			 decl = decl.getNextDeclaration()) {
-			if (CharArrayUtils.equals(name, decl.getName().getName().toCharArray()))
+			if (decl.getName().equals(name))
 				return decl;
 		}
 		
 		return null;
 	}
 	
-	public IASTDeclaration findDeclaration(char[] name) {
+	public IASTDeclaration findDeclaration(IASTIdentifier name) {
 		IASTDeclaration decl = getDeclaration(name);
 		if (decl != null)
 			return decl;
@@ -57,4 +59,13 @@ public class ASTScope implements IASTScope {
 			return parentScope.findDeclaration(name);
 		return null;
 	}
+
+	public IASTType findType(IASTIdentifier name) {
+		IASTDeclaration decl = findDeclaration(name);
+		if (decl instanceof IASTTypeDeclaration)
+			return ((IASTTypeDeclaration)decl).getType();
+		else
+			return null;
+	}
+	
 }

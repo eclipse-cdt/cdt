@@ -11,17 +11,16 @@
 package org.eclipse.cdt.core.parser.ast2;
 
 /**
- * This class represents a name used to introduce declarations and to
- * refer back to them from references.
- * 
- * This is an opaque type to allow for various representation techniques
- * for the actual name.
- * 
- * the toString method should produce a string representation of the
- * identifier.
+ * This class represents a built in type in the language. These types
+ * generally do not have declarations.
  * 
  * @author Doug Schaefer
  */
-public interface IASTIdentifier extends IASTNode {
+public interface IASTBuiltinType extends IASTType {
 
+	/**
+	 * @return the name of the built in type.
+	 */
+	public IASTIdentifier getName();
+	
 }

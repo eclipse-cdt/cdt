@@ -11,17 +11,16 @@
 package org.eclipse.cdt.core.parser.ast2;
 
 /**
- * This class represents a name used to introduce declarations and to
- * refer back to them from references.
- * 
- * This is an opaque type to allow for various representation techniques
- * for the actual name.
- * 
- * the toString method should produce a string representation of the
- * identifier.
+ * Represents a type that is a reference (or in C lingo, a pointer) to
+ * a value of a given type.
  * 
  * @author Doug Schaefer
  */
-public interface IASTIdentifier extends IASTNode {
+public interface IASTPointerType {
 
+	/**
+	 * @return the type of the value being referred to
+	 */
+	public IASTType getType();
+	
 }

@@ -10,19 +10,26 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast2;
 
+import org.eclipse.cdt.core.parser.ast2.IASTBuiltinType;
+import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
+
 /**
  * @author Doug Schaefer
  */
-public class ASTBuiltinType extends ASTType {
+public class ASTBuiltinType extends ASTType implements IASTBuiltinType {
 
-	private char[] name;
+	private IASTIdentifier name;
 	
-	public char[] getName() {
-		return name;
+	public ASTBuiltinType(String name) {
+		this.name = new ASTIdentifier(name);
 	}
-	
-	public void setName(char[] name) {
+
+	public ASTBuiltinType(IASTIdentifier name) {
 		this.name = name;
+	}
+
+	public IASTIdentifier getName() {
+		return name;
 	}
 	
 }

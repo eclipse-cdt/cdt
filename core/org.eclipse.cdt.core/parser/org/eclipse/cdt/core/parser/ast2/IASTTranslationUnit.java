@@ -14,5 +14,4 @@ package org.eclipse.cdt.core.parser.ast2;
  * @author Doug Schaefer
  */
 public interface IASTTranslationUnit extends IASTScope {
-
 }

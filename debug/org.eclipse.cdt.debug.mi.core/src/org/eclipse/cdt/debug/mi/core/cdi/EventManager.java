@@ -351,7 +351,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				}
 				// A new Libraries loaded, try to set the breakpoints.
 				if (eventList.size() > 0) {
-					boolean breakpointSet = false;
 					ICDIBreakpointManager manager = session.getBreakpointManager();
 					if (manager instanceof BreakpointManager) {
 						BreakpointManager bpMgr = (BreakpointManager)manager;
@@ -458,7 +457,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					} catch (MIException e) {
 					}
 				}
-				if (miLevel > 0) {
+				if (miLevel >= 0) {
 					MIStackSelectFrame selectFrame = factory.createMIStackSelectFrame(miLevel);
 					MIExecFinish finish = factory.createMIExecFinish();
 					try {

@@ -19,10 +19,8 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.makeview.MakeAction;
 import org.eclipse.cdt.internal.ui.makeview.MakeTarget;
@@ -40,7 +38,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -84,11 +81,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -1129,51 +1124,26 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		if (!CPluginPreferencePage.isLinkToEditor()) {
 			return;
 		}
+		// ignore selection changes if the package explorer is not the active part.
+		// In this case the selection change isn't triggered by a user.
+		if (!isActivePart())
+			return;
+		Object obj= selection.getFirstElement();
 
-		Object obj = selection.getFirstElement();
-		if (obj instanceof IFile && selection.size() == 1) {
-			IFile file = (IFile) obj;
-			IWorkbenchPage page = getSite().getPage();
-			IEditorReference[] editorReferences = page.getEditorReferences();
-			for (int i = 0; i < editorReferences.length; ++i) {
-				IEditorPart editor = editorReferences[i].getEditor(false);
-				if(null != editor) {
-					IEditorInput input = editor.getEditorInput();
-					if (input instanceof IFileEditorInput && file.equals(((IFileEditorInput)input).getFile())) {
-						page.bringToTop(editor);
-					}
-					return;
-				}
+		if (selection.size() == 1) {
+			IEditorPart part= EditorUtility.isOpenInEditor(obj);
+			if (part != null) {
+				IWorkbenchPage page= getSite().getPage();
+				page.bringToTop(part);
+				if (obj instanceof ICElement) 
+					EditorUtility.revealInEditor(part, (ICElement) obj);
 			}
-		} else if (obj instanceof ISourceReference) {
-			ISourceReference sourceRef = (ISourceReference) obj;
-			ITranslationUnit tu = sourceRef.getTranslationUnit();
-			if (tu == null) 
-				return;
-			IPath path = tu.getPath();
-			if (path == null)
-				return;
-			IWorkbenchPage page = getSite().getPage();
-			IEditorReference editorReferences[] = page.getEditorReferences();
-			for (int i = 0; i < editorReferences.length; ++i) {
-				IEditorPart editor = editorReferences[i].getEditor(false);
-				if (null != editor) {
-					IEditorInput input = editor.getEditorInput();
-					try {
-						if (input instanceof IStorageEditorInput && path.equals(((IStorageEditorInput)input).getStorage().getFullPath())) {
-							page.bringToTop(editor);
-							if (editor instanceof CEditor) {
-								CEditor e = (CEditor)editor;
-								e.selectionChanged (new SelectionChangedEvent (e.getOutlinePage (),selection));
-							}
-							return;
-						}
-					} catch (CoreException e) {
-					}
-				}
-			}
-			
 		}
+		
+	}
+
+	private boolean isActivePart() {
+		return this == getSite().getPage().getActivePart();
 	}
 
 	void restoreFilters() {

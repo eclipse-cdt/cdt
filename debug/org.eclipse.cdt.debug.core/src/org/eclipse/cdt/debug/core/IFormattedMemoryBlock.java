@@ -87,4 +87,10 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 				   int numberOfColumns,
 				   char paddingChar ) throws DebugException;
 	void dispose();
+
+	Long[] getChangedAddresses();
+	
+	boolean isFrozen();
+	
+	void setFrozen( boolean frozen );
 }

@@ -12,8 +12,15 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -21,7 +28,9 @@ import org.eclipse.debug.core.DebugException;
  * 
  * @since: Oct 15, 2002
  */
-public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMemoryBlock
+public class CFormattedMemoryBlock extends CDebugElement 
+								   implements IFormattedMemoryBlock,
+											  ICDIEventListener
 {
 	class CFormattedMemoryBlockRow implements IFormattedMemoryBlockRow
 	{
@@ -73,6 +82,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	private boolean fDisplayAscii = true;
 	private char fPaddingChar = '.';
 	private List fRows = null;
+	private Long[] fChangedAddresses = new Long[0];
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -95,6 +105,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 		fNumberOfColumns = numberOfColumns;
 		fDisplayAscii = false;
 		fPaddingChar = 0;
+		getCDISession().getEventManager().addEventListener( this );
 	}
 
 	/**
@@ -119,6 +130,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 		fNumberOfColumns = numberOfColumns;
 		fDisplayAscii = true;
 		fPaddingChar = paddingChar;		
+		getCDISession().getEventManager().addEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -188,6 +200,11 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 			}
 		}
 		return (IFormattedMemoryBlockRow[])fRows.toArray( new IFormattedMemoryBlockRow[fRows.size()] );
+	}
+	
+	private void resetRows()
+	{
+		fRows = null;
 	}
 
 	/* (non-Javadoc)
@@ -326,6 +343,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 			}
 			fCDIMemoryBlock = null;
 		}
+		getCDISession().getEventManager().removeEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -364,5 +382,87 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 			sb.append( ( Character.isISOControl( (char)bytes[i] ) || bytes[i] < 0 ) ? getPaddingCharacter() : (char)bytes[i] );
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 */
+	public void handleDebugEvent( ICDIEvent event )
+	{
+		ICDIObject source = event.getSource();
+		if (source == null)
+			return;
+
+		if ( source.getTarget().equals( getCDITarget() ) )
+		{
+			if ( event instanceof ICDIResumedEvent )
+			{
+				if ( source instanceof ICDITarget )
+				{
+					handleResumedEvent( (ICDIResumedEvent)event );
+				}
+			}
+			else if ( event instanceof ICDIMemoryChangedEvent )
+			{
+				if ( source instanceof ICDIMemoryBlock && source.equals( getCDIMemoryBlock() ) )
+				{
+					handleChangedEvent( (ICDIMemoryChangedEvent)event );
+				}
+			}
+		}
+	}
+
+	protected ICDIMemoryBlock getCDIMemoryBlock()
+	{
+		return fCDIMemoryBlock;
+	}
+
+	protected void setCDIMemoryBlock( ICDIMemoryBlock cdiMemoryBlock )
+	{
+		fCDIMemoryBlock = cdiMemoryBlock;
+	}
+	
+	private void handleResumedEvent( ICDIResumedEvent event )
+	{
+		resetChangedAddresses();
+		fireChangeEvent( DebugEvent.CONTENT );
+	}
+	
+	private void handleChangedEvent( ICDIMemoryChangedEvent event )
+	{
+		resetRows();		
+		setChangedAddresses( event.getAddresses() );
+		fireChangeEvent( DebugEvent.CONTENT );
+	}
+	
+	public Long[] getChangedAddresses()
+	{
+		return fChangedAddresses;
+	}
+
+	protected void setChangedAddresses( Long[] changedAddresses )
+	{
+		fChangedAddresses = changedAddresses;
+	}
+	
+	protected void resetChangedAddresses()
+	{
+		fChangedAddresses = new Long[0];
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#isFrozen()
+	 */
+	public boolean isFrozen()
+	{
+		return getCDIMemoryBlock().isFrozen();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#setFrozen(boolean)
+	 */
+	public void setFrozen( boolean frozen )
+	{
+		getCDIMemoryBlock().setFrozen( frozen );
 	}
 }

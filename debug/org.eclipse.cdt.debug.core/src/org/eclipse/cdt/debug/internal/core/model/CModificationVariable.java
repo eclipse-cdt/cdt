@@ -105,25 +105,6 @@ public class CModificationVariable extends CVariable
 	
 	private String processExpression( String oldExpression ) throws DebugException
 	{
-/*
-		CValue value = (CValue)getValue();
-		if ( value == null )
-		{
-			logError( "Error in IValueModification#setValue: no value." );
-			requestFailed( "Unable to set value.", null );
-			return null;
-		}
-		if ( value.getType() == ICValue.TYPE_CHAR && getFormat() == ICDIFormat.NATURAL )
-		{
-			char[] chars = oldExpression.toCharArray();
-			if ( chars.length != 1 )
-			{
-				requestFailed( MessageFormat.format( "Invalid value: ''{0}''.", new Object[] { oldExpression } ), null );
-				return null;
-			}
-			return Short.toString( (short)chars[0] );
-		}
-*/
 		return oldExpression;
 	}
 }

@@ -73,12 +73,19 @@ public interface ICDITarget extends ICDIObject {
 		throws CDIException;
 
 	/**
-	 * Returns the register associated with this target.
+	 * Returns the register Object associated with this target.
 	 * 
-	 * @return a collection of register groups 
+	 * @return a collection of register object.
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIRegisterObject[] getRegisterObjects() throws CDIException;
+
+	/**
+	 * Returns the register associated with this target.
+	 * @return a collection of register.
+	 * @throws CDIException if this method fails.
+	 */
+	ICDIRegister[] getRegisters(ICDIRegisterObject[] regObjects) throws CDIException;
 
 	/**
 	 * Returns a collection of global variables associated with 

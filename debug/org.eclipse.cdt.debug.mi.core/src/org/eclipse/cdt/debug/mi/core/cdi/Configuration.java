@@ -113,7 +113,7 @@ public class Configuration implements ICDIConfiguration {
 			os = System.getProperty("os.name", "");
 		} catch (SecurityException e) {
 		}
-		Process gdb = miSession.getMIProcess();
+		Process gdb = miSession.getGDBProcess();
 		if (gdb instanceof Spawner) {
 			// If we attached sending a control-c, seems to work.
 			if (fAttached) {

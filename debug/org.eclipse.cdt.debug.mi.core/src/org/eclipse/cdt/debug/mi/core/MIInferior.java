@@ -176,7 +176,7 @@ public class MIInferior extends Process {
 	}
 
 	public void interrupt() throws MIException {
-		Process gdb = session.getMIProcess();
+		Process gdb = session.getGDBProcess();
 		if (gdb instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner)gdb;
 			gdbSpawner.interrupt();

@@ -46,7 +46,9 @@ public class CodeFormatterBlock {
 	protected Combo fFormatterCombo;
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_ID="id"; //$NON-NLS-1$
-	private static final String NONE="(NONE)";
+	// This is a hack until we have a default Formatter.
+	// For now it is comment out in the plugin.xml
+	private static final String NONE="(NONE)"; //$NON-NLS-1$
 
 
 	public CodeFormatterBlock(Preferences prefs) {
@@ -64,6 +66,9 @@ public class CodeFormatterBlock {
 				options.put(CCorePreferenceConstants.CODE_FORMATTER, selection);
 				CCorePlugin.setOptions(options);
 			}
+		} else {
+			// simply reset to the default one.
+			performDefaults();
 		}
 	}
 

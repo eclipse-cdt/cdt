@@ -142,10 +142,10 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		catch (CoreException e) {
 			return;
 		}
+		fDCombo.removeAll();
 		if ( fDinfo != null ) {
 			fDinfo.clear();
 		}
-		fDCombo.removeAll();
 		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
 		fDinfo = new ArrayList(debugConfigs.length);
 		for( int i = 0; i < debugConfigs.length; i++ ) {

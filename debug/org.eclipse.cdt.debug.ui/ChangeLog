@@ -1,3 +1,7 @@
+2004-08-10 Mikhail Khodjaiants
+	Fix for bug 70902. TVT3.0: Customize Perspective C++ Debug has duplicated strings.
+	* plugin.xml
+
 2004-08-04 Mikhail Khodjaiants
 	Fix for bug 69085: Arrays in the Expressions view 
 	* CDTDebugModelPresentation.java

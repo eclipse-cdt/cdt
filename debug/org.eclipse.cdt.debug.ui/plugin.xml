@@ -147,17 +147,6 @@
                label="%RunMenu.label"
                path="additions"
                id="org.eclipse.ui.run">
-            <separator
-                  name="cBreakpointGroup">
-            </separator>
-         </menu>
-         <menu
-               label="%RunMenu.label"
-               path="additions"
-               id="org.eclipse.ui.run">
-            <separator
-                  name="cExpressionGroup">
-            </separator>
          </menu>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
@@ -177,23 +166,6 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
-               hoverIcon="icons/full/clcl16/restart.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               disabledIcon="icons/full/dlcl16/restart.gif"
-               enablesFor="1"
-               icon="icons/full/elcl16/restart.gif"
-               helpContextId="restart_action_context"
-               label="%RestartAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                hoverIcon="icons/full/clcl16/signal0_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
@@ -204,6 +176,23 @@
                label="%SignalZeroAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
                tooltip="%SignalZeroAction.tooltip">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
+               hoverIcon="icons/full/clcl16/restart.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
+               disabledIcon="icons/full/dlcl16/restart.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/restart.gif"
+               helpContextId="restart_action_context"
+               label="%RestartAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup">
             <enablement>
                <pluginState
                      value="activated"

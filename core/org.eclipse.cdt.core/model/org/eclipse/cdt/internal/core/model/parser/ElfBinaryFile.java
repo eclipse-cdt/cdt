@@ -274,9 +274,15 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 	}
 
 	protected void loadInformation() throws IOException {
-		ElfHelper helper = getElfHelper();
-		loadInformation(helper);
-		helper.dispose();
+		ElfHelper helper = null;
+		try {
+			helper = getElfHelper();
+			loadInformation(helper);
+		} finally {
+			if (helper != null) {
+				helper.dispose();
+			}
+		}
 	}
 
 	private void loadInformation(ElfHelper helper) throws IOException {

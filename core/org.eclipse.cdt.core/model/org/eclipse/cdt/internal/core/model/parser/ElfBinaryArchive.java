@@ -26,8 +26,9 @@ public class ElfBinaryArchive extends PlatformObject implements IBinaryArchive {
 	ArrayList children;
 	long timestamp;
 	
-	public ElfBinaryArchive(IPath p) {
+	public ElfBinaryArchive(IPath p) throws IOException {
 		path = p;
+		new AR(path.toOSString()).dispose(); // check file type
 		children = new ArrayList(5);
 	}
 

@@ -9,8 +9,6 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.elf.AR;
-import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -25,16 +23,13 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 		if (path == null ) {
 			path = new Path("");
 		}
+		IBinaryFile bFile;
 		try {
-			Elf e = new Elf(path.toOSString());
-			e.dispose();
-			return new ElfBinaryFile(path);
+			 bFile = new ElfBinaryFile(path);
 		} catch (IOException e) {
+			bFile = new ElfBinaryArchive(path);
 		}
-		// Is it an Archive.
-		AR ar = new AR(path.toOSString()); 
-		ar.dispose();
-		return new ElfBinaryArchive(path);
+		return bFile;
 	}
 
 	/**

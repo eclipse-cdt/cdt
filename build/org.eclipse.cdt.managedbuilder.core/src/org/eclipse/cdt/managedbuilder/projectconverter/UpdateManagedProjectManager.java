@@ -10,6 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -19,6 +23,9 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +34,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -63,8 +71,7 @@ public class UpdateManagedProjectManager {
 		if(IOverwriteQuery.ALL.equalsIgnoreCase(answer) ||
 				IOverwriteQuery.YES.equalsIgnoreCase(answer))
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	synchronized static private UpdateManagedProjectManager getUpdateManager(IProject project){
@@ -122,7 +129,7 @@ public class UpdateManagedProjectManager {
 		UpdateManagedProjectManager mngr = getExistingUpdateManager(project);
 		if(mngr == null || mngr.fIsInfoReadOnly)
 			return;
-		IContainer destFolder = (IContainer)project;
+		IContainer destFolder = project;
 		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix)); 
 		mngr.backupFile(settingsFile,  dstFile, monitor,  project, fBackupFileOverwriteQuery);
 	}
@@ -137,40 +144,69 @@ public class UpdateManagedProjectManager {
 	 * @param query
 	 */
 	private void backupFile(IFile srcFile, IFile dstFile, IProgressMonitor monitor, IProject project, IOverwriteQuery query){
-		try{
+		File src = srcFile.getLocation().toFile();
+		File dst = dstFile.getLocation().toFile();
+		backupFile(src, dst, monitor, project, query);
+	}
+
+	private void backupFile(File srcFile, File dstFile, IProgressMonitor monitor, IProject project, IOverwriteQuery query){
+		try {
 			if (dstFile.exists()) {
 				boolean shouldUpdate;
 				if(query != null)
-					shouldUpdate = getBooleanFromQueryAnswer(query.queryOverwrite(dstFile.getFullPath().toString()));
+					shouldUpdate = getBooleanFromQueryAnswer(query.queryOverwrite(dstFile.getName()));
 				else
 					shouldUpdate = openQuestion(ConverterMessages.getResourceString("UpdateManagedProjectManager.0"), //$NON-NLS-1$
 							ConverterMessages.getFormattedString("UpdateManagedProjectManager.1", new String[] {dstFile.getName(),project.getName()})); //$NON-NLS-1$
 
 				if (shouldUpdate) {
-					dstFile.delete(true, monitor);
+					dstFile.delete();
 				} else {
-//					monitor.setCanceled(true);
 					throw new OperationCanceledException(ConverterMessages.getFormattedString("UpdateManagedProjectManager.2", project.getName())); //$NON-NLS-1$
 				}
 			}
-			srcFile.copy(dstFile.getFullPath(), true, monitor);
-		}
-		catch(Exception e){
+			copyFile(srcFile, dstFile);
+		} catch(Exception e){
 			fIsInfoReadOnly = true;
 		}
 	}
-	
+
+	void copyFile(File src, File dst) throws IOException {
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		
+		try {
+			fis = new FileInputStream(src);
+			fos = new FileOutputStream(dst);
+			
+			final int BUFSIZ = 1024;
+			byte buf[] = new byte[BUFSIZ];
+			int len = 0;
+			
+			while ((len = fis.read(buf)) > 0) {
+				fos.write(buf, 0, len);
+			}
+		} finally {
+			if (fis != null) {
+				fis.close();
+			}
+			if (fos != null) {
+				fos.close();
+			}
+		}
+	}
+
 	private void restoreFile(String backupFileName, String restoreFileName, IProgressMonitor monitor, IProject project){
-		IContainer destFolder = (IContainer)project;
-		IFile restoreFile = destFolder.getFile(new Path(restoreFileName));
-		IFile backupFile = destFolder.getFile(new Path(backupFileName));
+		IContainer destFolder = project;
+		File restoreFile = destFolder.getFile(new Path(restoreFileName)).getLocation().toFile();
+		File backupFile = destFolder.getFile(new Path(backupFileName)).getLocation().toFile();
 		
 		try{
-			if (restoreFile.exists())
-				restoreFile.delete(true, monitor);
-			backupFile.copy(restoreFile.getFullPath(), true, monitor);
-		}
-		catch(Exception e){
+			if (restoreFile.exists()) {
+				restoreFile.delete();
+			}
+			copyFile(backupFile, restoreFile);
+		} catch(Exception e){
 			fIsInfoReadOnly = true;
 		}
 	}
@@ -223,7 +259,7 @@ public class UpdateManagedProjectManager {
 			return;
 
 		try {
-			if (!settingsFile.exists()) 
+			if (!settingsFile.getLocation().toFile().exists()) 
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getResourceString("UpdateManagedProjectManager.6"),null)); //$NON-NLS-1$
 
@@ -284,12 +320,23 @@ public class UpdateManagedProjectManager {
 	 * @param info the ManagedBuildInfo for the current project
 	 * @throws CoreException if conversion failed
 	 */
-	static public void updateProject(IProject project, ManagedBuildInfo info) 
+	static public void updateProject(final IProject project, ManagedBuildInfo info) 
 						throws CoreException{
 		try{
 			getUpdateManager(project).doProjectUpdate(info);
 		} finally {
 			removeUpdateManager(project);
+			// We have to this here since we use java.io.File to handle the update.
+			IWorkspace workspace = project.getWorkspace();
+			ISchedulingRule rule = workspace.getRuleFactory().refreshRule(project);
+			WorkspaceJob job = new WorkspaceJob("Refresh Project") { //$NON-NLS-1$
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					project.refreshLocal(IResource.DEPTH_ONE, null);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setRule(rule);
+			job.schedule();
 		}
 	}
 }

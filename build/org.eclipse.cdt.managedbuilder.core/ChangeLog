@@ -1,3 +1,11 @@
+2005-03-18 Alain Magloire
+	Fix for PR 88110: Importing project that need converting would
+	create NPE and ResouceException failures.
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java
+	* src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProject12.java
+	* src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProject20.java
+	* src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProject.java
+
 2005-01-24 Vladimir Hirsl
 	Updated managed build scanner info collector to use new interfaces introduced
 	for CDT 3.0.

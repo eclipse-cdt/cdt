@@ -12,6 +12,8 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -60,11 +62,9 @@ import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -355,9 +355,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (buildInfo != null) {
 			List targets = buildInfo.getTargets();
 			return (ITarget[])targets.toArray(new ITarget[targets.size()]);
-		} else {
-			return emptyTargets;
 		}
+		return emptyTargets;
 	}
 
 	/**
@@ -1187,44 +1186,27 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (version == null) {
 			// This is a 1.2 manifest and we are compatible for now
 			return true;
-		} else {
-			//  isCompatibleWith will return FALSE, if:
-			//   o  The major versions are not equal
-			//   o  The major versions are equal, but the remainder of the manifest version # is
-			//      greater than the MBS version #
-			return(buildInfoVersion.isCompatibleWith(version));
 		}
+		//  isCompatibleWith will return FALSE, if:
+		//   o  The major versions are not equal
+		//   o  The major versions are equal, but the remainder of the manifest version # is
+		//      greater than the MBS version #
+		return(buildInfoVersion.isCompatibleWith(version));
 	}
 	
 	/* (non-Javadoc)
 	 * Load the build information for the specified resource from its project
 	 * file. Pay attention to the version number too.
 	 */
-	private static ManagedBuildInfo loadBuildInfo(IProject project) throws Exception {
+	private static ManagedBuildInfo loadBuildInfo(final IProject project) throws Exception {
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(SETTINGS_FILE_NAME);
-		if (!file.exists())
+		File cdtbuild = file.getLocation().toFile();
+		if (!cdtbuild.exists())
 			return null;
 	
 		// So there is a project file, load the information there
-		InputStream stream = null;
-		try {
-			stream = file.getContents();
-		} catch (ResourceException e) {
-			// TODO:  Why couldn't the file be read?
-			if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-				// TODO:  Issue a warning?
-				// Read it anyway...
-				try {
-					stream = file.getContents(true);
-				} catch (Exception fe) {
-					throw fe;
-				}
-			}
-		} catch (Exception e) {
-			throw e;
-		}
-		
+		InputStream stream = new FileInputStream(cdtbuild);
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(stream);
@@ -1262,11 +1244,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					buildInfo.setVersion(fileVersion);
 				}
 				if(!UpdateManagedProjectManager.isCompatibleProject(buildInfo)){
-					try{
-						UpdateManagedProjectManager.updateProject(project,buildInfo);
-					} catch(CoreException e){
-						throw e;
-					}
+					UpdateManagedProjectManager.updateProject(project, buildInfo);
 				}
 				if (buildInfo.getManagedProject() == null ||
 					(!buildInfo.getManagedProject().isValid())) {
@@ -1832,7 +1810,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IManagedBuildInfo The build information object for the resource.
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
-		return (IManagedBuildInfo) findBuildInfo(resource.getProject());
+		return findBuildInfo(resource.getProject());
 	}
 
 	/**

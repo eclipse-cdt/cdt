@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.IInstructionStep;
+import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
@@ -47,6 +48,7 @@ import org.eclipse.debug.core.model.IThread;
 public class CThread extends CDebugElement 
 					 implements IThread,
 					 			IState,
+					 			IRestart,
 					 			IInstructionStep,
 					 			ICDIEventListener
 {
@@ -901,4 +903,22 @@ public class CThread extends CDebugElement
 	{
 		return fRefreshChildren;
 	} 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRestart#canRestart()
+	 */
+	public boolean canRestart()
+	{
+		return getDebugTarget() instanceof IRestart && ((IRestart)getDebugTarget()).canRestart();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRestart#restart()
+	 */
+	public void restart() throws DebugException
+	{
+		if ( canRestart() )
+		{
+			((IRestart)getDebugTarget()).restart();
+		}
+	}
 }

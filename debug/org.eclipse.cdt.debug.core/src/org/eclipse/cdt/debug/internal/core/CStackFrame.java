@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -35,7 +36,8 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public class CStackFrame extends CDebugElement
 						 implements IStackFrame,
-						 			IStackFrameInfo, 
+						 			IStackFrameInfo,
+						 			IRestart, 
 						 			ICDIEventListener
 {
 	/**
@@ -715,5 +717,23 @@ public class CStackFrame extends CDebugElement
 			}
 		}
 		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRestart#canRestart()
+	 */
+	public boolean canRestart()
+	{
+		return getDebugTarget() instanceof IRestart && ((IRestart)getDebugTarget()).canRestart();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRestart#restart()
+	 */
+	public void restart() throws DebugException
+	{
+		if ( canRestart() )
+		{
+			((IRestart)getDebugTarget()).restart();
+		}
 	}
 }

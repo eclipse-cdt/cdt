@@ -233,6 +233,11 @@ public class MIParser {
 			}
 			stream.setCString(translateCString(new FSB(buffer)));
 			oob = stream;
+		} else {
+			// Badly format MI line, just pass it to the user as target stream
+			MIStreamRecord stream = new MITargetStreamOutput();
+			stream.setCString(buffer.toString() + "\n");
+			oob = stream;
 		}
 		return oob;
 	}

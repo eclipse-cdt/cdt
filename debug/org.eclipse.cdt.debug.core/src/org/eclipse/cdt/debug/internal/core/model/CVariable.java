@@ -84,15 +84,6 @@ public abstract class CVariable extends CDebugElement
 	private int fFormat = ICDIFormat.NATURAL;
 
 	/**
-	 * @param target
-	 */
-	public CVariable(CDebugTarget target)
-	{
-		super(target);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
 	 * Constructor for CVariable.
 	 * @param target
 	 */

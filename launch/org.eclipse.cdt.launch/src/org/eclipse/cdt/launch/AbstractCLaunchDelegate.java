@@ -92,7 +92,11 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			}
 		} catch (CoreException e) {
 		}		
-		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
+		String[] array = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
+		if (array == null) {
+			return new String[0];
+		}
+		return array;
 	}
 
 	/**

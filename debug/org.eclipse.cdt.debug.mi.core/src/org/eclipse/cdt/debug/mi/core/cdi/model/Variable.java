@@ -16,11 +16,13 @@ import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
+import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
 import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
 import org.eclipse.cdt.debug.mi.core.command.MIVarShowAttributes;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 
 /**
@@ -30,6 +32,7 @@ public class Variable extends CObject implements ICDIVariable {
 	MIVar miVar;
 	Value value;
 	VariableObject varObj;
+	ICDIVariable[] children = new ICDIVariable[0];
 
 	public Variable(VariableObject obj, MIVar v) {
 		super(obj.getTarget());
@@ -43,6 +46,47 @@ public class Variable extends CObject implements ICDIVariable {
 
 	public VariableObject getVariableObject() {
 		return varObj;
+	}
+
+	public Variable getChild(String name) {
+		for (int i = 0; i < children.length; i++) {
+			Variable variable = (Variable)children[i];
+			if (name.equals(variable.getMIVar().getVarName())) {
+				return variable;
+			}
+		}
+		return null;
+	}
+
+	public ICDIVariable[] getChildren() throws CDIException {
+		Session session = (Session)(getTarget().getSession());
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarListChildren var =
+			factory.createMIVarListChildren(getMIVar().getVarName());
+		try {
+			mi.postCommand(var);
+			MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			MIVar[] vars = info.getMIVars();
+			children = new Variable[vars.length];
+			for (int i = 0; i < vars.length; i++) {
+				VariableObject varObj = new VariableObject(getTarget(),
+				 vars[i].getExp(), getStackFrame(),
+				 getVariableObject().getPosition(),
+				 getVariableObject().getStackDepth());
+				children[i] = new Variable(varObj, vars[i]);
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		return children;
+	}
+
+	public int getChildrenNumber() throws CDIException {
+		return miVar.getNumChild();
 	}
 
 	/**
@@ -94,7 +138,7 @@ public class Variable extends CObject implements ICDIVariable {
 		}
 		
 		// If the assign was succesfull fire a MIVarChangedEvent()
-		MIVarChangedEvent change = new MIVarChangedEvent(var.getToken(), miVar.getVarName(), true);
+		MIVarChangedEvent change = new MIVarChangedEvent(var.getToken(), miVar.getVarName());
 		mi.fireEvent(change);
 	}
 

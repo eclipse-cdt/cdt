@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IRunToLine;
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.cdt.debug.core.ISwitchToThread;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
@@ -88,6 +89,7 @@ public class CDebugTarget extends CDebugElement
 						  			 IFormattedMemoryRetrieval,
 						  			 IState,
 						  			 ILaunchListener,
+						  			 ISwitchToThread,
 						  			 IExpressionListener,
 						  			 ICExpressionEvaluator
 {
@@ -1813,5 +1815,16 @@ public class CDebugTarget extends CDebugElement
 		}
 		setInternalTemporaryBreakpoint( getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber ) );
 		resume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ISwitchToThread#setCurrentThread(IThread)
+	 */
+	public void setCurrentThread( IThread thread ) throws DebugException
+	{
+		if ( !isAvailable() )
+		{
+			return;
+		}
 	}
 }

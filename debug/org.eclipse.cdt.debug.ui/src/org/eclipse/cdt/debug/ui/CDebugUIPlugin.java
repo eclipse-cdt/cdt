@@ -7,8 +7,11 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
+import org.eclipse.cdt.debug.core.ISwitchToFrame;
+import org.eclipse.cdt.debug.core.ISwitchToThread;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
@@ -20,21 +23,31 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class CDebugUIPlugin extends AbstractUIPlugin
+public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener
 {
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
@@ -300,10 +313,70 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	 */
 	public void shutdown() throws CoreException
 	{
+		IWorkbenchWindow ww = getActiveWorkbenchWindow();
+		if ( ww != null )
+		{
+			ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		}
 		if ( fImageDescriptorRegistry != null )
 		{
 			fImageDescriptorRegistry.dispose();
 		}
 		super.shutdown();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException
+	{
+		super.startup();
+		IWorkbenchWindow ww = getActiveWorkbenchWindow();
+		if ( ww != null )
+		{
+			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+	 */
+	public void selectionChanged( IWorkbenchPart part, ISelection selection )
+	{
+		if ( selection != null && selection instanceof IStructuredSelection )
+		{
+			if ( ((IStructuredSelection)selection).size() == 1 )
+			{
+				Object element = ((IStructuredSelection)selection).getFirstElement();
+				if ( element != null && element instanceof IThread )
+				{
+					if ( ((IThread)element).getDebugTarget() instanceof ISwitchToThread )
+					{
+						try
+						{
+							((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );
+						}
+						catch( DebugException e )
+						{
+							errorDialog( e.getMessage(), e );
+						}
+					}
+				}
+				else if ( element != null && element instanceof IStackFrame )
+				{
+					if ( ((IStackFrame)element).getThread() instanceof ISwitchToFrame )
+					{
+						try
+						{
+							((ISwitchToFrame)((IStackFrame)element).getThread()).switchToFrame( (IStackFrame)element );
+						}
+						catch( DebugException e )
+						{
+							errorDialog( e.getMessage(), e );
+						}
+					}
+				}
+			}
+		}
 	}
 }

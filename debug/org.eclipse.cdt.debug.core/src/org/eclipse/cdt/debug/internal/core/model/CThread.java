@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.cdt.debug.core.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -51,6 +52,7 @@ public class CThread extends CDebugElement
 					 			IState,
 					 			IRestart,
 					 			IInstructionStep,
+					 			ISwitchToFrame,
 					 			ICDIEventListener
 {
 	/**
@@ -954,5 +956,12 @@ public class CThread extends CDebugElement
 	protected void setCurrent( boolean current )
 	{
 		fIsCurrent = current;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ISwitchToFrame#switchToFrame(IStackFrame)
+	 */
+	public void switchToFrame( IStackFrame frame ) throws DebugException
+	{
 	}
 }

@@ -1,3 +1,10 @@
+2003-05-13
+	Moved symbol table to org.eclipse.cdt.internal.core.pst
+	Created interface for symbol table: ISymbol, IContainerSymbol, IDerivableContainerSymbol, 
+	IParameterizedSymbol, and ISpecializedSymbol.  These are all implemented by Declaration
+	The symbol table itself uses this interface instead of using its Declaration directly
+	(with the exception of the undo command framework)
+
 2003-05-08 Andrew Niefer
 	Added a basic command structure to support rollbacks
 

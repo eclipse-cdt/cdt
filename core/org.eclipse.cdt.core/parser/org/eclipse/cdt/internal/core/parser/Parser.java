@@ -16,8 +16,9 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.Declaration;
-import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.TypeInfo;
+import org.eclipse.cdt.internal.core.pst.*;
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.Declaration;
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -169,7 +170,7 @@ c, quickParse);
 		while (true) {
 			try {
 				checkToken = LA(1);
-				declaration( pst.getCompilationUnit() );
+				declaration( (Declaration) pst.getCompilationUnit() );
 				if( LA(1) == checkToken )
 					errorHandling();
 			} catch (EndOfFile e) {
@@ -338,7 +339,7 @@ c, quickParse);
 		if( ! quickParse )
 		{
 			try {
-				scope.addDeclaration( linkageSymbol );
+				scope.addSymbol( linkageSymbol );
 			} catch (ParserSymbolTableException e1) {
 				// TODO Auto-generated catch block
 			}
@@ -443,7 +444,7 @@ c, quickParse);
 			if(!quickParse)
 			{
 				try {
-					scope.addDeclaration( templateSymbol );
+					scope.addSymbol( templateSymbol );
 				} catch (ParserSymbolTableException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -655,7 +656,7 @@ c, quickParse);
 			 
 			Declaration namespaceSymbol = null; 
 			try {
-				namespaceSymbol = scope.Lookup( identifier );
+				namespaceSymbol = (Declaration) scope.Lookup( identifier );
 			} catch (ParserSymbolTableException e1) {
 				// should not get ambiguity here 
 			}
@@ -669,7 +670,7 @@ c, quickParse);
 				if( ! quickParse )
 				{
 					try {
-						scope.addDeclaration( namespaceSymbol );
+						scope.addSymbol( namespaceSymbol );
 					} catch (ParserSymbolTableException e2) {
 						// TODO ambiguity?
 					}
@@ -1433,7 +1434,7 @@ c, quickParse);
 		if( ! quickParse )
 		{
 			try {
-				scope.addDeclaration( declaratorSymbol );
+				scope.addSymbol( declaratorSymbol );
 			} catch (ParserSymbolTableException e1) {
 				try{ callback.declaratorAbort( declaratorSymbol.getCallbackExtension()); } catch( Exception e ) {}
 				throw backtrack;
@@ -1945,7 +1946,7 @@ c, quickParse);
 			if( !quickParse )
 			{
 				try {
-					scope.addDeclaration( classSymbol );
+					scope.addSymbol( classSymbol );
 				} catch (ParserSymbolTableException e1) {
 				}
 			}

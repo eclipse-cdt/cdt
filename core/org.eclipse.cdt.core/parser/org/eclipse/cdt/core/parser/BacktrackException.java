@@ -16,4 +16,53 @@ package org.eclipse.cdt.core.parser;
  */
 public class BacktrackException extends Exception
 {
+
+	private IProblem problem;
+	private int startOffset;
+	private int endOffset;
+
+	/**
+	 * @param p
+	 */
+	public void initialize(IProblem p) {
+		reset();
+		problem = p;
+	}
+
+	/**
+	 * 
+	 */
+	private void reset() {
+		problem = null;
+		startOffset = 0;
+		endOffset = 0;
+	}
+	/**
+	 * @return Returns the problem.
+	 */
+	public final IProblem getProblem() {
+		return problem;
+	}
+
+	/**
+	 * @param startingOffset
+	 * @param endingOffset
+	 */
+	public void initialize(int startingOffset, int endingOffset) {
+		reset();
+		startOffset = startingOffset;
+		endOffset = endingOffset;
+	}
+	/**
+	 * @return Returns the offset.
+	 */
+	public final int getStartingOffset() {
+		return startOffset;
+	}
+	/**
+	 * @return Returns the endOffset.
+	 */
+	public final int getEndOffset() {
+		return endOffset;
+	}
 }

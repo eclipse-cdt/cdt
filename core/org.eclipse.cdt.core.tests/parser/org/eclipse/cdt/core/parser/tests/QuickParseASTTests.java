@@ -2244,4 +2244,10 @@ public class QuickParseASTTests extends BaseASTTest
 			assertFalse( iter.hasNext() );
     	}
 	}
+    
+    public void testBadIdentifier() throws Exception
+	{
+    	parse( "class 0302 { private: int stinks; };", true, false ); //$NON-NLS-1$
+    	
+	}
 }

@@ -210,8 +210,9 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		public GenerateReport(String name) {
 			super(name);
 		}
-		public GenerateReport(){}
-		
+		public GenerateReport()
+		{
+		}
 		public void testGenerateReport() {
 			// skip this one
 			AutomatedIntegrationSuite.this.skipTest = true;

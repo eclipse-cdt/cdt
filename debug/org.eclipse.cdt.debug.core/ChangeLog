@@ -1,3 +1,8 @@
+2004-10-17 Alain Magloire
+	Remove deprecated method in CDI
+	* cdi/org/eclipse/cdt/debug/core/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/ICDISession.java
+
 2004-10-15 Alain Magloire
 	Adjustment to changes in CDI interface concerning breakpoints.
 	Now the thread ids for a breakpoint is specified in the ICDICondition.

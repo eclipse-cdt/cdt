@@ -30,23 +30,6 @@ public interface ICDISession {
 	ICDITarget[] getTargets();
 
 	/**
-	 * Returns the current debug target associatd with this sesion, 
-	 * or null if no debug targets are associated with this session. 
-	 * 
-	 * @deprecated
-	 * @return ICDITarget the current debug target
-	 */
-	ICDITarget getCurrentTarget();
-
-	/**
-	 * Set the current debug target associatd with this sesion.
-	 * 
-	 * @deprecated
-	 * @return ICDITarget the current debug target
-	 */
-	void setCurrentTarget(ICDITarget target) throws CDIException;
-
-	/**
 	 * Sets the value of a debug session attribute.
 	 *
 	 * @param key the attribute key

@@ -36,14 +36,6 @@ public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 	Process getProcess();
 
 	/**
-	 * Set the current thread on the target.
-	 * 
-	 * @deprecated
-	 * @param - ICDThread
-	 */
-	void setCurrentThread(ICDIThread current) throws CDIException;
-
-	/**
 	 * Evaluates the expression specified by the given string.
 	 * Returns the evaluation result as a String.
 	 * 

@@ -3095,6 +3095,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_class:
             case IToken.t_struct:
             case IToken.t_union:
+               if (flags.haveEncounteredTypename())
+                  throwBacktrack(LA(1));
                try {
                   classSpec = classSpecifier();
                   flags.setEncounteredTypename(true);
@@ -3105,6 +3107,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   break;
                }
             case IToken.t_enum:
+               if (flags.haveEncounteredTypename())
+                  throwBacktrack(LA(1));
                try {
                   enumSpec = enumSpecifier();
                   flags.setEncounteredTypename(true);

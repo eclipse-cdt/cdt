@@ -1930,4 +1930,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       return calculateEndOffset(declarator);
    }
 
+   /**
+    * @param token
+    */
+   protected void throwBacktrack(IToken token) throws BacktrackException {
+      throwBacktrack( token.getOffset(), token.getLength() );
+   }
+
 }

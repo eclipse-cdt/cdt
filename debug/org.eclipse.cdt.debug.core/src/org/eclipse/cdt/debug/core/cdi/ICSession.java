@@ -90,6 +90,13 @@ public interface ICSession
 	ICDebugConfiguration getConfiguration();
 
 	/**
+	 * Returns the Runtime options for this debug session.
+	 * 
+	 * @return the configuration description
+	 */
+	ICRuntimeOptions getRuntimeOptions();
+
+	/**
 	 * Returns whether this element is terminated.
 	 *
 	 * @return whether this element is terminated

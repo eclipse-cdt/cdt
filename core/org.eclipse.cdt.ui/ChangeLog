@@ -1,3 +1,9 @@
+2004-03-17 Tanya Wolff
+	Syntax errors in property files
+	* CBrowsingMessages.properties
+	* TypeHierarchyMessages.properties
+	* refactoring.properties
+	
 2004-03-16 Tanya Wolff
 	Externalized strings and marked non-translatable ones.
 

@@ -1,3 +1,14 @@
+2002-12-13 Alain Magloire
+
+	Building will never write to the process.  having things like
+	all:
+		b='a'; read b; echo $$b
+	could hang the IDE, since the process is waiting for input.
+	to go around, the input of the process is explicitely close.
+
+	* src/.../internal/core/CBuilder.java (invokeMake): Close the
+	Output stream of the process, since we will never write to it.
+
 2002-12-13 David Inglis
 	Update cdt to be eclipse 2.1 ready.
 

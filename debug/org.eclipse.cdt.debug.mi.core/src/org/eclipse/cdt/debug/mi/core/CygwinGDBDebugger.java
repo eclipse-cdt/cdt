@@ -30,39 +30,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 	static final CygwinCommandFactory commandFactory = new CygwinCommandFactory();
 
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
-		try {
-			ICDISharedLibraryManager manager = session.getSharedLibraryManager();
-			if (manager instanceof SharedLibraryManager) {
-				SharedLibraryManager mgr = (SharedLibraryManager) manager;
-				boolean stopOnSolibEvents =
-					config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
-				try {
-					mgr.setStopOnSolibEvents(stopOnSolibEvents);
-					// By default, we provide with the capability of deferred breakpoints
-					// And we set setStopOnSolib events for them(but they should not see the dll events ).
-					//
-					// If the user explicitly set stopOnSolibEvents well it probably
-					// means that they wanted to see those events so do no do deferred breakpoints.
-					if (!stopOnSolibEvents) {
-						mgr.setStopOnSolibEvents(true);
-						mgr.setDeferredBreakpoint(true);
-					}
-				} catch (CDIException e) {
-					// Ignore this error
-					// it seems to be a real problem on many gdb platform
-				}
-			}
-			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
-			if (p.size() > 0) {
-				String[] oldPaths = manager.getSharedLibraryPaths();
-				String[] paths = new String[oldPaths.length + p.size()];
-				System.arraycopy(p.toArray(new String[p.size()]), 0, paths, 0, p.size());
-				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
-				manager.setSharedLibraryPaths(paths);
-			}
-		} catch (CoreException e) {
-			throw new CDIException(MIPlugin.getResourceString("src.CygwinGDBDebugger.Error_init_shared_lib_options") + e.getMessage()); //$NON-NLS-1$
-		}
+		// the "search-solib-path" and "stop-on-solib-events" options are not supported in CygWin
 	}
 
 	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException {

@@ -1,3 +1,9 @@
+2004-07-02 Mikhail Khodjaiants
+
+	Fix for bug 68934: Debug into dll doesn't work.
+	The "solib-search-path" and "stop-on-solib-events" options are not supported by gdb on CygWin.
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+
 2004-07-02 Alain Magloire
 
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ProcessManager.java

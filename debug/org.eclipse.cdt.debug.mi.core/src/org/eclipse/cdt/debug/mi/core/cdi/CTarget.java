@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
@@ -31,14 +30,14 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
+import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
-import org.eclipse.cdt.debug.mi.core.command.MIThreadListIds;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
@@ -92,7 +91,7 @@ public class CTarget  implements ICDITarget {
 				MIThreadSelectInfo info = select.getMIThreadSelectInfo();
 				currentThreadId = info.getNewThreadId();
 			} catch (MIException e) {
-				throw new CDIException(e.toString());
+				throw new CDIException(e.getMessage());
 			}
 		}
 
@@ -129,7 +128,13 @@ public class CTarget  implements ICDITarget {
 				}
 			}
 			if (!dList.isEmpty()) {
-				// FIXME: Fire destroyed events.
+				MIThreadExitEvent[] events = new MIThreadExitEvent[dList.size()];
+				for (int j = 0; j < events.length; j++) {
+					int id = ((Integer)dList.get(j)).intValue();
+					events[j] = new MIThreadExitEvent(id);
+				}
+				MISession miSession = session.getMISession();
+				miSession.fireEvents(events);
 			}
 		}
 		currentThreads = newThreads;
@@ -143,18 +148,15 @@ public class CTarget  implements ICDITarget {
 		CThread[] cthreads = noThreads;
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIThreadListIds tids = factory.createMIThreadListIds();
+		MIInfoThreads tids = factory.createMIInfoThreads();
 		try {
 			// HACK/FIXME: gdb/mi thread-list-ids does not
 			// show any newly create thread, we workaround by
-			// issuing "info threads" before to force it. 
-			//*
-			//if (currentThreads == null || currentThreads.length == 0) {
-				mi.postCommand(new CLICommand("info threads"));
-			//}
-			//*/
+			// issuing "info threads" instead.
+			//MIThreadListIds tids = factory.createMIThreadListIds();
+			//MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			mi.postCommand(tids);
-			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
+			MIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
 			int[] ids = info.getThreadIds();
 			if (ids != null && ids.length > 0) {
 				cthreads = new CThread[ids.length];
@@ -166,8 +168,10 @@ public class CTarget  implements ICDITarget {
 				// Provide a dummy.
 				cthreads = new CThread[]{new CThread(this, 0)};
 			}
+			currentThreadId = info.getCurrentThread();
 		} catch (MIException e) {
-			//throw new CDIException(e.toString());
+			// Do not throw anything in this case.
+			//throw new CDIException(e.getMessage());
 		}
 		return cthreads;
 	}
@@ -210,7 +214,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -231,7 +235,7 @@ public class CTarget  implements ICDITarget {
 					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.toString());
+				throw new CDIException(e.getMessage());
 			}
 		} else if (mi.getMIInferior().isTerminated()) {
 			restart();
@@ -255,7 +259,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -273,7 +277,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -291,7 +295,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -309,7 +313,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -327,7 +331,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -345,7 +349,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -363,7 +367,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -381,7 +385,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -403,7 +407,7 @@ public class CTarget  implements ICDITarget {
 			}
 			return info.getExpression();
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -464,7 +468,7 @@ public class CTarget  implements ICDITarget {
 			}
 			return regs;
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 

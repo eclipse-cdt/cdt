@@ -9,9 +9,11 @@
 package org.eclipse.cdt.make.ui.actions;
 
 import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -54,10 +56,22 @@ public abstract class AbstractTargetAction
 		boolean enabled = false;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
-			if (sel.getFirstElement() instanceof ICContainer) {
-				fContainer = (IContainer) ((ICContainer) sel.getFirstElement()).getUnderlyingResource();
-			} else if (sel.getFirstElement() instanceof IContainer) {
-				fContainer = (IContainer) sel.getFirstElement();
+			Object obj = sel.getFirstElement();
+			if (obj instanceof ICElement) {
+				if ( obj instanceof ICContainer) {
+					fContainer = (IContainer) ((ICContainer) obj).getUnderlyingResource();
+				} else {
+					obj = ((ICElement)obj).getResource();
+					if ( obj != null) {
+						fContainer = ((IResource)obj).getParent();
+					}
+				}
+			} else if (obj instanceof IResource) {
+				if (obj instanceof IContainer) {
+					fContainer = (IContainer) obj;
+				} else {
+					fContainer = ((IResource)obj).getParent();
+				}
 			} else {
 				fContainer = null;
 			}

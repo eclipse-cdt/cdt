@@ -304,11 +304,6 @@ public class CProjectWizardPage extends WizardPage {
 			return false;
 		}
 
-		if (projectFieldContents.indexOf(' ') != -1) {
-			setErrorMessage(CUIPlugin.getResourceString("CProjectWizardPage.projectContainsSpace")); //$NON-NLS-1$
-			return false;
-		}
-
 		IStatus nameStatus =
 			workspace.validateName(projectFieldContents, IResource.PROJECT);
 		if (!nameStatus.isOK()) {

@@ -1,3 +1,14 @@
+2003-03-17 Alain Magloire
+
+	Patch from Chris Songer.
+	
+	This is a first guess to find the corresponding source file
+	of a binary.  We search in the binary directory for the file.
+	
+	* model/org/eclipse/cdt/internal/core/model/BinaryInfo.java
+	Method addFunction() and addVariable() check for the file in
+	the current directory of the binary.
+
 2003-03-12 Alain Magloire
 
 	Patch from Chris Songer

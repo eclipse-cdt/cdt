@@ -79,7 +79,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 								if (wd != null) {
 									opt.setWorkingDirectory(wd.getAbsolutePath());
 								}
-								opt.setEnvironment(getEnvironmentProperty(config));
+								opt.setEnvironment(getEnvironmentAsProperty(config));
 							}
 						} catch (CDIException e) {
 							abort(
@@ -120,7 +120,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				command.addAll(Arrays.asList(arguments));
 				String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 				monitor.worked(5);
-				Process process = exec(commandArray, getEnvironmentArray(config), wd);
+				Process process = exec(commandArray, getEnvironment(config), wd);
 				monitor.worked(3);
 				DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 			}

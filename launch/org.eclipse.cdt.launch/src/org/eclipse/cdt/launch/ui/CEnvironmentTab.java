@@ -63,6 +63,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
+/**
+ * @deprecated
+ */
 public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	protected Properties fElements;

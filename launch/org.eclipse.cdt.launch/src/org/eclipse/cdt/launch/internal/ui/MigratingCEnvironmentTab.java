@@ -17,10 +17,7 @@ import org.eclipse.debug.ui.EnvironmentTab;
 
 
 /**
- * @author DInglis
  * @deprecated - temporary class for while configs are migrated to new EnvironmentTab
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class MigratingCEnvironmentTab extends EnvironmentTab {
 

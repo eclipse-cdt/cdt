@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -73,31 +74,6 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException;
-
-	/**
-	 * Return the save environment variables in the configuration. The array
-	 * does not include the default environment of the target. array[n] :
-	 * name=value
-	 * @throws CoreException
-	 */
-	protected String[] getEnvironmentArray(ILaunchConfiguration config) throws CoreException {
-		try {
-			// Migrate old env settings to new.
-			Map map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
-			if (map != null) {
-				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-				wc.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
-				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
-				wc.doSave();
-			}
-		} catch (CoreException e) {
-		}		
-		String[] array = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
-		if (array == null) {
-			return new String[0];
-		}
-		return array;
-	}
 
 	/**
 	 * Returns the working directory specified by the given launch
@@ -783,7 +759,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return
 	 * @throws CoreException
 	 */
-	protected Properties getEnvironmentProperty(ILaunchConfiguration config) throws CoreException {
+	protected Properties getEnvironmentAsProperty(ILaunchConfiguration config) throws CoreException {
 		String[] envp = getEnvironmentArray(config);
 		Properties p = new Properties( );
 		for( int i = 0; i < envp.length; i++ ) {
@@ -799,4 +775,78 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		return p;
 	}
 
+	/**
+	 * Return the save environment variables in the configuration. The array
+	 * does not include the default environment of the target. array[n] :
+	 * name=value
+	 * @throws CoreException
+	 */
+	protected String[] getEnvironment(ILaunchConfiguration config) throws CoreException {
+		try {
+			// Migrate old env settings to new.
+			Map map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+			if (map != null) {
+				wc.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+				config = wc.doSave();
+			}
+			boolean append = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
+			wc.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, append);
+		} catch (CoreException e) {
+		}		
+		String[] array = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
+		if (array == null) {
+			return new String[0];
+		}
+		return array;
+	}
+	
+	/**
+	 * Return the save environment variables in the configuration. The array
+	 * does not include the default environment of the target. array[n] :
+	 * name=value
+	 * @deprecated
+	 */
+	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
+		Map env = null;
+		try {
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+		} catch (CoreException e) {
+		}
+		if (env == null) {
+			return new String[0];
+		}
+		String[] array = new String[env.size()];
+		Iterator entries = env.entrySet().iterator();
+		Entry entry;
+		for (int i = 0; entries.hasNext() && i < array.length; i++) {
+			entry = (Entry)entries.next();
+			array[i] = ((String)entry.getKey()) + "=" + ((String)entry.getValue()); //$NON-NLS-1$
+		}
+		return array;
+	}
+
+	/**
+	 * Return the save environment variables of this configuration. The array
+	 * does not include the default environment of the target.
+	 * @deprecated
+	 */
+	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
+		Properties prop = new Properties();
+		Map env = null;
+		try {
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+		} catch (CoreException e) {
+		}
+		if (env == null)
+			return prop;
+		Iterator entries = env.entrySet().iterator();
+		Entry entry;
+		while (entries.hasNext()) {
+			entry = (Entry)entries.next();
+			prop.setProperty((String)entry.getKey(), (String)entry.getValue());
+		}
+		return prop;
+	}
 }

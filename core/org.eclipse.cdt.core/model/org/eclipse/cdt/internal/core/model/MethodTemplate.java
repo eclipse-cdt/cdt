@@ -66,7 +66,12 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 		else{
 			sig.append("<>");
 		}
-		sig.append(this.getSignature());
+		sig.append(this.getParameterClause());
+		if(isConst())
+			sig.append(" const");
+		if(isVolatile())
+			sig.append(" volatile");
+
 		if((this.getReturnType() != null) && (this.getReturnType().length() > 0)){ 
 			sig.append(" : ");
 			sig.append(this.getReturnType());

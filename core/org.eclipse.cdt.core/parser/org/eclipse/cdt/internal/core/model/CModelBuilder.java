@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
@@ -535,7 +536,6 @@ public class CModelBuilder {
 			if(decl instanceof TemplateParameter){
 				TemplateParameter parameter = (TemplateParameter) decl;
 				if(parameter.getName() != null){
-					paramType.append(" ");
 					paramType.append(parameter.getName().toString());
 				}else {
 					int kind = parameter.getKind();
@@ -577,6 +577,7 @@ public class CModelBuilder {
 		type.append(getDeclarationType(declaration));
 		// add pointerr or reference from declarator if any
 		type.append(getDeclaratorPointerOperation(declarator));
+		type.append(getDeclaratorArrayQualifiers(declarator));
 		return type.toString();		
 	}
 	
@@ -662,5 +663,18 @@ public class CModelBuilder {
 			}
 		}
 		return pointerString.toString();
+	}
+	
+	private String getDeclaratorArrayQualifiers(Declarator declarator){		
+		StringBuffer arrayString = new StringBuffer();
+		List arrayQualifiers = declarator.getArrayQualifiers(); 
+		if(arrayQualifiers != null){
+			Iterator i = arrayQualifiers.iterator();
+			while (i.hasNext()){
+				ArrayQualifier q = (ArrayQualifier) i.next();
+				arrayString.append("[]");				
+			}
+		}
+		return arrayString.toString();
 	}
 }

@@ -8,5 +8,5 @@ package org.eclipse.cdt.core.model;
 /**
  * An Enumeration type.
  */
-public interface IEnumeration extends IVariable {
+public interface IEnumeration extends IVariable, IParent {
 }

@@ -51,6 +51,17 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		
 	public String getSignature(){
 		StringBuffer sig = new StringBuffer(getElementName());
+		sig.append(getParameterClause());
+		if(isConst())
+			sig.append(" const");
+		if(isVolatile())
+			sig.append(" volatile");
+		return sig.toString();
+	}
+	
+	public String getParameterClause(){
+		StringBuffer sig = new StringBuffer();
+		
 		if(getNumberOfParameters() > 0){
 			sig.append("(");
 			String[] paramTypes = getParameterTypes();
@@ -65,13 +76,9 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		else{
 			sig.append("()");
 		}
-		if(isConst())
-			sig.append(" const");
-		if(isVolatile())
-			sig.append(" volatile");
-		return sig.toString();
+		return sig.toString();	
 	}
-		
+	
 	public String getParameterInitializer(int pos) {
 		return "";
 	}

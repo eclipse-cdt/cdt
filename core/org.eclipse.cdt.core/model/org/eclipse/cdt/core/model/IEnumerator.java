@@ -10,7 +10,7 @@ package org.eclipse.cdt.core.model;
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
-public interface IEnumerator extends ISourceManipulation{
+public interface IEnumerator extends ICElement, ISourceManipulation{
 
 	/**
 	 * Returns the enumerator constant expression if any.

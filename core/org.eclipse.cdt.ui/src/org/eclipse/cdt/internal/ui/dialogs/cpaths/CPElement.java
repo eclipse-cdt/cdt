@@ -287,6 +287,9 @@ public class CPElement {
 				return new Object[] { findAttributeElement(EXCLUSION)};
 			case IPathEntry.CDT_LIBRARY:
 				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
+			case IPathEntry.CDT_INCLUDE:
+			case IPathEntry.CDT_MACRO:
+				return new Object[0];
 		}
 		return fChildren.toArray();
 	}

@@ -59,15 +59,15 @@ public class PTYOutputStream extends OutputStream {
 			return;
 		int status = close0(fd);
 		if (status == -1)
-			throw new IOException("close error");
+			throw new IOException("close error"); //$NON-NLS-1$
 		fd = -1;
 	}
 
-	private native int write0(int fd, byte[] b, int len);
-	private native int close0(int fd);
+	private native int write0(int fd, byte[] b, int len) throws IOException;
+	private native int close0(int fd) throws IOException;
 
 	static {
-		System.loadLibrary("pty");
+		System.loadLibrary("pty"); //$NON-NLS-1$
 	}
 
 }

@@ -120,7 +120,6 @@ public class NewModelBuilder implements IParserCallback {
 		elem.setPos(offset, macroName.length());
 
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
-		
 	}
 
 	private int startPos;
@@ -150,7 +149,6 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
 		elem.setIdPos(offset, includeFile.length());
 		elem.setPos(offset, includeFile.length());
-
 	}
 
 	/**

@@ -78,6 +78,10 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements Declarati
 			List clause =currentDeclarator.getParameterDeclarationClause(); 
 			if( clause == null )
 			{
+				// TODO - this was to get rid of the NULL pointer we've been seeing
+				if (currentDeclarator.getName() == null)
+					return;
+
 				//	this is an attribute or a varaible
 				if( parentElement instanceof IStructure )
 				{
@@ -85,9 +89,6 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements Declarati
 				}
 				else if( parentElement instanceof ITranslationUnit )
 				{
-					// TODO - this was to get rid of the NULL pointer we've been seeing
-					if (currentDeclarator.getName() == null)
-						return;
 					declaration = new Variable( parentElement, currentDeclarator.getName().toString() );
 				}
 			}

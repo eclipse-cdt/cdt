@@ -78,10 +78,10 @@ c, quick);
 	public void translationUnit() throws Exception {
 		Object translationUnit = callback.translationUnitBegin();
 		Token lastBacktrack = null;
-		Token lastToken = null; 
+		Token lastToken = null;
 		while (LT(1) != Token.tEOF) {
 			try {
-				lastToken = currToken; 
+				lastToken = currToken;
 				declaration( translationUnit );
 				if( currToken == lastToken )
 					skipToNextSemi();
@@ -295,6 +295,8 @@ c, quick);
 				case Token.t_friend:
 				case Token.t_const:
 				case Token.t_volatile:
+					callback.simpleDeclSpecifier(decl, consume());
+					break;
 				case Token.t_char:
 				case Token.t_wchar_t:
 				case Token.t_bool:
@@ -317,7 +319,8 @@ c, quick);
 					consume();
 					// handle nested later:
 				case Token.tIDENTIFIER:
-					if( ! encounteredRawType )
+					// TODO - Kludgy way to handle constructors/destructors
+					if (!encounteredRawType && LT(2) != Token.tCOLONCOLON && LT(2) != Token.tLPAREN)
 					{
 						// handle nested later:
 						if( ! encounteredTypename )
@@ -367,9 +370,11 @@ c, quick);
 			last = consume();
 
 		// TODO - whacky way to deal with destructors, please revisit
+		if (LT(1) == Token.tCOMPL)
+			consume();
+				
 		switch (LT(1)) {
 			case Token.tIDENTIFIER:
-			case Token.tCOMPL:
 				last = consume();
 				break;
 			default:
@@ -379,9 +384,11 @@ c, quick);
 		while (LT(1) == Token.tCOLONCOLON) {
 			last = consume();
 			
+			if (LT(1) == Token.tCOMPL)
+				consume();
+				
 			switch (LT(1)) {
 				case Token.tIDENTIFIER:
-				case Token.tCOMPL:
 					last = consume();
 			}
 		}
@@ -430,6 +437,16 @@ c, quick);
 				// doNothing
 			}
 			
+			// assignmentExpression || { initializerList , } || { }
+			try
+			{
+				assignmentExpression();  
+			}
+			catch( Backtrack b )
+			{
+				// doNothing
+			}
+			
 			if (LT(1) == Token.tLBRACE) {
 				// for now, just consume to matching brace
 				consume();
@@ -447,6 +464,9 @@ c, quick);
 							throw backtrack;
 					}
 				}
+			}
+			else
+			{
 			}
 		}
 		
@@ -550,7 +570,7 @@ c, quick);
 		
 		Token mark = mark();
 		if (t == Token.tIDENTIFIER || t == Token.tCOLONCOLON)
-		name();
+			name();
 
 		if (t == Token.tSTAR) {
 			consume();
@@ -610,6 +630,8 @@ c, quick);
 			
 			memberDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
+				Token lastToken = currToken;
+			
 				switch (LT(1)) {
 					case Token.t_public:
 						consume();
@@ -629,6 +651,8 @@ c, quick);
 					default:
 						declaration(classSpec);
 				}
+				if (lastToken == currToken)
+					skipToNextSemi();
 			}
 			// consume the }
 			consume();

@@ -199,7 +199,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
+		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse1")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent evt) {

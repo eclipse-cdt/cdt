@@ -1,3 +1,12 @@
+2004-07-15 Tanya Wolff
+
+	Fix for 70124: unexternalized strings
+	* org.eclipse.cdt.ui.wizards.conversion/ConvertProjectWizardPage.java
+	* org.eclipse.cdt.internal.ui/CUIMessages.properties
+	Fix for 70143: duplicate mnemonics in binary parser options
+	* org.eclipse.cdt.ui.dialogs.CygwinPEBinaryParserPage.java
+	* org.eclipse.cdt.ui.dialogs.GnuElfBinaryParserPage.java
+	* org.eclipse.cdt.internal.ui/CUIMessages.properties
 2004-07-15 Chris Wiebe
 
 	Initial draft for the type hierarchy view.

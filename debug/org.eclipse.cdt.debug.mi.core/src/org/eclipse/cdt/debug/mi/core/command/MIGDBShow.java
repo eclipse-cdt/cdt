@@ -23,6 +23,10 @@ public class MIGDBShow extends MICommand {
 		super("-gdb-show", params);
 	}
 
+	public MIGDBShowInfo getMIGDBShowInfo() throws MIException {
+		return (MIGDBShowInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

@@ -11,6 +11,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -112,6 +113,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));  //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the active workbench window
 	 * 
@@ -128,8 +130,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
 	 * 
@@ -141,6 +142,23 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 			return window.getShell();
 		}
 		return null;
+	}
+	
+	public static void errorDialog( String message, IStatus status ) {
+		log(status);
+		Shell shell = getActiveWorkbenchShell();
+		if (shell != null) {
+			ErrorDialog.openError(shell, "Error", message, status);
+		}
+	}
+
+	public static void errorDialog(String message, Throwable t) {
+		log(t);
+		Shell shell = getActiveWorkbenchShell();
+		if (shell != null) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 1, t.getMessage(), null); //$NON-NLS-1$	
+			ErrorDialog.openError(shell, "Error", message, status);
+		}
 	}	
 	/**
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()

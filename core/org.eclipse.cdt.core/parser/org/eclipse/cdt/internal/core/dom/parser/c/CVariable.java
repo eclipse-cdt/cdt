@@ -12,12 +12,15 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -33,24 +36,30 @@ public class CVariable implements IVariable, ICBinding {
         public IType getType() throws DOMException {
             throw new DOMException( this );
         }
+        public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
         
     }
-	final IASTName name;
+	private IASTName [] declarations = null;
 	private IType type = null;
 	
 	public CVariable( IASTName name ){
-		this.name = name;
+		declarations = new IASTName [] { name };
 	}
     public IASTNode getPhysicalNode(){
-        return name;
+        return declarations[0];
     }	
 
+    public void addDeclaration( IASTName name ){
+        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
 		if (type == null)
-			type = CVisitor.createType(name);
+			type = CVisitor.createType(declarations[0]);
 		return type;
 	}
 	
@@ -58,17 +67,29 @@ public class CVariable implements IVariable, ICBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return name.toString();
+		return declarations[0].toString();
 	}
 	public char[]getNameCharArray(){
-	    return ((CASTName)name).toCharArray();
+	    return declarations[0].toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
+		IASTDeclarator declarator = (IASTDeclarator) declarations[0].getParent();
 		return CVisitor.getContainingScope( declarator.getParent() );
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
+     */
+    public boolean isStatic() {
+        IASTDeclarator dtor = (IASTDeclarator) declarations[0].getParent();
+        while( dtor.getParent() instanceof IASTDeclarator )
+            dtor = (IASTDeclarator) dtor.getParent();
+        
+        IASTSimpleDeclaration simple = (IASTSimpleDeclaration) dtor.getParent();
+        IASTDeclSpecifier declSpec = simple.getDeclSpecifier();
+        return ( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
+    }
 }

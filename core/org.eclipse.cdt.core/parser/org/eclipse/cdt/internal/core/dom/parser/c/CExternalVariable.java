@@ -62,4 +62,11 @@ public class CExternalVariable implements ICExternalBinding, IVariable {
     public IType getType() {
         return null;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
+     */
+    public boolean isStatic() {
+        return false;
+    }
 }

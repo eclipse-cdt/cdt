@@ -82,4 +82,11 @@ public class CKnRParameter implements IParameter {
 		return declaration;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
+     */
+    public boolean isStatic() {
+        return false;
+    }
+
 }

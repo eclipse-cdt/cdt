@@ -111,4 +111,11 @@ public class CPPParameter implements IParameter, ICPPBinding {
 		return type;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
+     */
+    public boolean isStatic() {
+        return false;
+    }
+
 }

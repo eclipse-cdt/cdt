@@ -736,6 +736,15 @@ public class CVisitor {
 		}
 		
 		ICScope scope = (ICScope) getContainingScope( parent );
+		
+		ASTNodeProperty prop = parent.getPropertyInParent();
+		if( prop == IASTDeclarationStatement.DECLARATION ){
+		    //implicit scope, see 6.8.4-3
+		    prop = parent.getParent().getPropertyInParent();
+		    if( prop != IASTCompoundStatement.NESTED_STATEMENT )
+		    	scope = null;
+		}
+		
 		IBinding binding = null;
 		try {
             binding = ( scope != null ) ? scope.getBinding( ICScope.NAMESPACE_TYPE_OTHER, declarator.getName().toCharArray() ) : null;
@@ -767,10 +776,22 @@ public class CVisitor {
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
 				binding = new CTypeDef( declarator.getName() );
-			} else if( simpleDecl.getParent() instanceof ICASTCompositeTypeSpecifier ){
-				binding = new CField( declarator.getName() );
 			} else {
-				binding = new CVariable( declarator.getName() );
+			    IType t1 = null, t2 = null;
+			    if( binding != null && binding instanceof IVariable ){
+			        t1 = createType( declarator.getName() );
+			        try {
+                        t2 = ((IVariable)binding).getType();
+                    } catch ( DOMException e1 ) {
+                    }
+			    }
+			    if( t1 != null && t2 != null && t1.equals( t2 ) ){
+			        ((CVariable)binding).addDeclaration( declarator.getName() );
+			    } else if( simpleDecl.getParent() instanceof ICASTCompositeTypeSpecifier ){
+					binding = new CField( declarator.getName() );
+				} else {
+					binding = new CVariable( declarator.getName() );
+				}
 			}
 		}  else if( parent instanceof IASTParameterDeclaration ){
 		    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent();

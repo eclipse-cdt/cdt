@@ -371,10 +371,9 @@ public class CPPVisitor {
 		if( parent instanceof IASTTypeId )
 		    return CPPSemantics.resolveBinding( declarator.getName() );
 		    
-		if( declarator.getNestedDeclarator() != null )
-			return createBinding( declarator.getNestedDeclarator() );
+		while( declarator.getNestedDeclarator() != null )
+			declarator = declarator.getNestedDeclarator();
 
-		
 		while( parent instanceof IASTDeclarator ){
 			parent = parent.getParent();
 		}
@@ -389,6 +388,15 @@ public class CPPVisitor {
                 }
 		    }
 		}
+		
+		ASTNodeProperty prop = parent.getPropertyInParent();
+		if( prop == IASTDeclarationStatement.DECLARATION ){
+		    //implicit scope, see 6.4-1
+		    prop = parent.getParent().getPropertyInParent();
+		    if( prop != IASTCompoundStatement.NESTED_STATEMENT )
+		    	scope = null;
+		}
+		
 		IBinding binding;
         try {
             binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;
@@ -433,13 +441,27 @@ public class CPPVisitor {
 				binding = function.resolveParameter( param );
 			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
+		    
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
 				binding = new CPPTypedef( declarator );
-			} else if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
-				binding = new CPPField( declarator );
 			} else {
-				binding = new CPPVariable( declarator );
+			    IType t1 = null, t2 = null;
+			    
+			    if( binding != null && binding instanceof IVariable ){
+			        t1 = createType( declarator );
+			        try {
+                        t2 = ((IVariable)binding).getType();
+                    } catch ( DOMException e1 ) {
+                    }
+			    }
+			    if( t1 != null && t2 != null && t1.equals( t2 ) ){
+			        ((CPPVariable)binding).addDeclaration( declarator.getName() );
+			    } else if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
+					binding = new CPPField( declarator.getName() ); 
+			    } else {
+			        binding = new CPPVariable( declarator.getName() );
+			    }
 			}
 		} 
 

@@ -14,11 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 
 /**
@@ -42,8 +38,8 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPBinding {
         }
     }
     
-	public CPPField( IASTDeclarator declarator ){
-		super( declarator );
+	public CPPField( IASTName name ){
+		super( name );
 	}
 
 	/* (non-Javadoc)
@@ -53,20 +49,4 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPBinding {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#isStatic()
-     */
-    public boolean isStatic() {
-        IASTDeclarator dtor = (IASTDeclarator) getPhysicalNode();
-        while( dtor.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
-            dtor = (IASTDeclarator) dtor.getParent();
-        
-        IASTNode node = dtor.getParent();
-        if( node instanceof IASTSimpleDeclaration ){
-            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
-            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
-        }
-        return false;
-    }
 }

@@ -1884,5 +1884,19 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, f1, 2 );
         assertInstances( col, f2, 1 );
     }
+    
+    public void testBug85824() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "extern int g;       \n "); //$NON-NLS-1$
+        buffer.append( "int g;              \n "); //$NON-NLS-1$
+        buffer.append( "void f() {  g = 1; }\n "); //$NON-NLS-1$
+        
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IVariable g = (IVariable) col.getName(3).resolveBinding();
+        assertInstances( col, g, 3 );
+    }
 }
 

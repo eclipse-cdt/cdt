@@ -36,6 +36,10 @@ public class CParameter implements IParameter {
         public IType getType() throws DOMException {
             throw new DOMException( this );
         }
+
+        public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
     }
     
 	private IASTName [] declarations;
@@ -98,6 +102,13 @@ public class CParameter implements IParameter {
 		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
 		tmp[ declarations.length ] = name;
 		declarations = tmp;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
+     */
+    public boolean isStatic(){
+        return false;
     }
 
 }

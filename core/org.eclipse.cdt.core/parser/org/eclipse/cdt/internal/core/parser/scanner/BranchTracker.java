@@ -166,7 +166,7 @@ public class BranchTracker {
 	}
 	
 	// taken only on an #endif 
-	public boolean poundEndif( )
+	public boolean poundEndif( ) throws EmptyStackException
 	{
 		if( ignore == branches.size() )
 			ignore = IGNORE_SENTINEL;

@@ -1696,4 +1696,78 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertAllReferences( 7, createTaskList( new Task( n ), new Task( i, 5 ), new Task( di ) ) );
 		
 	}
+	public void testTypedefedTemplate() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T > class _A{ int x; }; \n" );
+		writer.write( "typedef _A < char >  A;                  \n" );
+		writer.write( "void foo() {                             \n" );
+		writer.write( "   A a;                                  \n" );
+		writer.write( "   a.x;                                  \n" );
+		writer.write( "}                                        \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration _A = (IASTTemplateDeclaration) i.next();
+		IASTTypedefDeclaration A = (IASTTypedefDeclaration) i.next();
+		IASTFunction foo = (IASTFunction) i.next();
+		
+		IASTClassSpecifier classA = (IASTClassSpecifier) _A.getOwnedDeclaration();
+		IASTVariable x = (IASTVariable) getDeclarations( classA ).next();
+		IASTVariable a = (IASTVariable) getDeclarations( foo ).next();
+		
+		assertAllReferences( 4, createTaskList( new Task( classA ), new Task( A ), new Task( a ), new Task( x ) ) );
+	}
+	
+	public void testTypedefedTemplate_2() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T > struct A { T x; };      \n" );
+		writer.write( "template < class U > struct B {              \n" );
+		writer.write( "   typedef A< U > AU;                        \n" );
+		writer.write( "   void f( U );                              \n" );
+		writer.write( "   void f( char );                           \n" );
+		writer.write( "   void g(){                                 \n" );
+		writer.write( "      AU au;                                 \n" );
+		writer.write( "      f( au.x );                             \n" );
+		writer.write( "   }                                         \n" );
+		writer.write( "};                                           \n" );
+		writer.write( "void f2( int );                              \n" );
+		writer.write( "void f2( char );                             \n" );
+		writer.write( "void h(){                                    \n" );
+		writer.write( "   B< int >::AU b;                           \n" );
+		writer.write( "   f2( b.x );                                \n" );
+		writer.write( "}                                            \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration tA = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T = (IASTTemplateParameter) tA.getTemplateParameters().next();
+		IASTClassSpecifier A = (IASTClassSpecifier) tA.getOwnedDeclaration();
+		IASTField x = (IASTField) getDeclarations( A ).next();
+		IASTTemplateDeclaration tB = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier B = (IASTClassSpecifier) tB.getOwnedDeclaration();
+		IASTTemplateParameter U = (IASTTemplateParameter) tB.getTemplateParameters().next();
+		IASTFunction f21 = (IASTFunction) i.next();
+		IASTFunction f22 = (IASTFunction) i.next();
+		IASTFunction h = (IASTFunction) i.next();
+		
+		i = getDeclarations( B );
+		IASTTypedefDeclaration AU = (IASTTypedefDeclaration) i.next(); 
+		IASTMethod f11 = (IASTMethod) i.next();
+		IASTMethod f12 = (IASTMethod) i.next();
+		IASTMethod g = (IASTMethod) i.next();
+		
+		IASTVariable au = (IASTVariable) getDeclarations( g ).next();
+		IASTVariable b = (IASTVariable) getDeclarations( h ).next();
+		
+		assertAllReferences( 12, createTaskList( new Task( A ),
+												 new Task( T ),
+												 new Task( U ),
+				                                 new Task( AU, 2 ),
+								  			     new Task( au ),
+								  			     new Task( x, 2 ),
+											     new Task( f11, 1, false, false ),
+											     new Task( B ),
+											     new Task( b ),
+											     new Task( f21, 1, false, false ) ) );
+	}
 }

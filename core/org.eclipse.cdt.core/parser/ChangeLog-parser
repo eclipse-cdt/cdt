@@ -1,3 +1,11 @@
+2004-03-22 Andrew Niefer
+	-handling of Typedefs
+	-handle unbalanced preprocessor condition in scanner
+	-fix concurrent modification exception while processing unresolved references in a Class Specifier
+	-report correct owner class for templated methods
+	-some work on template explicit specializations
+	-handle templated class forward declarations
+
 2004-03-18 Andrew Niefer
 	parsing template-ids: enables clas template partial specializations and fixes 54778 indirectly
 	- add ITokenDuple.getTemplateIdArgLists

@@ -293,6 +293,9 @@ public class TypeInfo {
 		_templateParameterType = type;
 	}
 	
+	public TypeInfo getFinalType(){
+		return ParserSymbolTable.getFlatTypeInfo( this );
+	}
 	/**
 	 * 
 	 * @param type

@@ -469,7 +469,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     throw backtrack;
                 }
 				templateSpecialization.enterScope(requestor);
-                declaration(scope, templateSpecialization, null);
+                declaration(templateSpecialization, templateSpecialization, null);
                 templateSpecialization.setEndingOffsetAndLineNumber(
                     lastToken.getEndOffset(), lastToken.getLineNumber());
                 templateSpecialization.exitScope(requestor);

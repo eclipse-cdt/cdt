@@ -58,6 +58,8 @@ public final class TemplateEngine {
 				TypeInfo newInfo = new TypeInfo( info );
 				newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 				return newInfo;
+			} else if( info.checkBit( TypeInfo.isTypedef ) && info.getTypeSymbol() != null ){
+				return instantiateTypeInfo( info.getTypeSymbol().getTypeInfo(), template, argMap );
 			}
 			return info;
 		}
@@ -1224,8 +1226,8 @@ public final class TemplateEngine {
 			return false;
 		}
 		
-		ITemplateSymbol t1 = (ITemplateSymbol) p1.getContainingSymbol();
-		ITemplateSymbol t2 = (ITemplateSymbol) p2.getContainingSymbol();
+		ITemplateSymbol t1 = (ITemplateSymbol) getContainingTemplate( p1 );//.getContainingSymbol();
+		ITemplateSymbol t2 = (ITemplateSymbol) getContainingTemplate( p2 );//.getContainingSymbol();
 		
 		if( p1.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName )
 		{
@@ -1238,5 +1240,16 @@ public final class TemplateEngine {
 		} else {
 			return p1.getTypeInfo().equals( p2.getTypeInfo() );
 		}
+	}
+	
+	static protected ITemplateSymbol getContainingTemplate( ISymbol symbol ){
+		if( ! symbol.isTemplateMember() ){
+			return null;
+		}
+		
+		while( !( symbol.getContainingSymbol() instanceof ITemplateSymbol ) ){
+			symbol = symbol.getContainingSymbol();
+		}
+		return (ITemplateSymbol) symbol.getContainingSymbol();
 	}
 }

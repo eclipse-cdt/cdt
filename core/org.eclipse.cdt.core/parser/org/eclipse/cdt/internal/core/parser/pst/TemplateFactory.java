@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
@@ -67,7 +66,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		List params = template.getParameterList();
 		if( params.size() == 0 ){
 			//explicit specialization
-			
+			 addExplicitSpecialization( origTemplate, symbol, args );
 		} else {
 			//partial speciailization
 			ISpecializedSymbol spec = template.getSymbolTable().newSpecializedSymbol( symbol.getName() );
@@ -261,25 +260,25 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		}
 	}
 	
-	private void addExplicitSpecialization( ISymbol symbol ) throws ParserSymbolTableException {
-		Iterator templatesIter = getTemplatesList().iterator();
-		Iterator argsIter = getArgumentsList().iterator();
+	private void addExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ) throws ParserSymbolTableException {
+		Iterator templatesIter = templates.iterator();
+		Iterator argsIter = arguments.iterator();
 		
-		while( templatesIter.hasNext() ){
-			ITemplateSymbol template = (ITemplateSymbol)templatesIter.next();
+//		while( templatesIter.hasNext() ){
+//			ITemplateSymbol template = (ITemplateSymbol)templatesIter.next();
 			
-			template.addExplicitSpecialization( symbol, (List) argsIter.next() );
-		}
+			template.addExplicitSpecialization( symbol, arguments );
+		//}
 		
-		if( getTemplateFunctions() != null && argsIter.hasNext() ){
-			List args = (List) argsIter.next();
-			ITemplateSymbol template = TemplateEngine.resolveTemplateFunctions( getTemplateFunctions(), args, symbol );
-			if( template != null ){
-				template.addExplicitSpecialization( symbol, args );
-			} else {
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-			}
-		}
+//		if( getTemplateFunctions() != null && argsIter.hasNext() ){
+//			List args = (List) argsIter.next();
+//			ITemplateSymbol template = TemplateEngine.resolveTemplateFunctions( getTemplateFunctions(), args, symbol );
+//			if( template != null ){
+//				template.addExplicitSpecialization( symbol, args );
+//			} else {
+//				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+//			}
+//		}
 	}
 	
 	/* (non-Javadoc)
@@ -299,31 +298,6 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			return look;
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#getPrimaryTemplate()
-	 */
-	public ITemplateSymbol getPrimaryTemplate() {
-		return (ITemplateSymbol) templatesList.get( 0 );
-	}
-
-	protected List getTemplatesList() {
-		return templatesList;
-	}
-	protected List getParametersList() {
-		return parametersList;
-	}
-	protected List getArgumentsList(){
-		return argumentsList;
-	}
-	protected Set getTemplateFunctions(){
-		return templateFunctions;
-	}
-
-	private Set  templateFunctions;
-	private List templatesList;
-	private List parametersList;
-	private List argumentsList;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#removeSymbol(org.eclipse.cdt.internal.core.parser.pst.ISymbol)

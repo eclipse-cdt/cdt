@@ -17,8 +17,6 @@ import java.util.List;
  **/
 
 public interface ITemplateFactory extends IDerivableContainerSymbol {
-	public ITemplateSymbol getPrimaryTemplate();
-	
 	public void pushTemplate( ITemplateSymbol template );
 	public void pushSymbol( ISymbol symbol );
 	public void pushTemplateId( ISymbol symbol, List args );

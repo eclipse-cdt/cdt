@@ -1,3 +1,9 @@
+2003-03-22 Andrew Niefer
+	Typedefs & templates
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTypedefedTemplate()
+    - added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTypedefedTemplate_2()
+	- added parser/org/eclipse/cdt/core/parser/tests/CompletionParseTest.testCompletionInTypeDef()
+
 2003-03-18 Andrew Niefer
 	parsing template-ids
 	- added    parser/org/eclipse/cdt/core/parser/tests/ScannerTestCase.test54778()

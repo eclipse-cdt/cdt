@@ -1306,7 +1306,16 @@ public class Scanner implements IScanner {
 					buffer.append( restOfLine );
 					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
 				}
-				passOnToClient = scannerData.getBranchTracker().poundEndif(); 
+				try{
+					passOnToClient = scannerData.getBranchTracker().poundEndif();
+				}
+				catch( EmptyStackException ese )
+				{
+					handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
+						token, 
+						beginningOffset, 
+						false, true );  
+				}
 				return null;
 				
 			case PreprocessorDirectives.IFNDEF :

@@ -104,10 +104,12 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			
 			if( argIter.hasNext() ){
 				arg = (TypeInfo) argIter.next();
-				
 				//If the argument is a template parameter, we can't instantiate yet, defer for later
-				if( arg.isType( TypeInfo.t_type ) && arg.getTypeSymbol().isType( TypeInfo.t_templateParameter ) ){
-					return deferredInstance( arguments );
+				if( arg.isType( TypeInfo.t_type ) ){
+					if( arg.getTypeSymbol() == null ) 
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
+					else if( arg.getTypeSymbol().isType( TypeInfo.t_templateParameter ) )
+						return deferredInstance( arguments );
 				}
 			} else {
 				Object obj = param.getTypeInfo().getDefault();
@@ -233,8 +235,19 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		Map map = getExplicitSpecializations();
 		
 		Map specs = null;
-		if( map.containsKey( actualArgs ) ){
-			specs = (Map) map.get( actualArgs );
+		List key = null;
+		
+		Iterator iter = map.keySet().iterator();
+		while( iter.hasNext() ){
+			List list = (List) iter.next();
+			if( list.equals( args ) ){
+				key = list;
+				break;
+			}
+		}
+		
+		if( key != null ){
+			specs = (Map) map.get( key );
 		} else {
 			specs = new HashMap();
 			map.put( new LinkedList( actualArgs ), specs );
@@ -244,7 +257,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		try{
 			if( symbol.isType( TypeInfo.t_function ) || symbol.isType( TypeInfo.t_constructor ) ){
 				List fnArgs = new LinkedList();
-				Iterator iter = ((IParameterizedSymbol)symbol).getParameterList().iterator();
+				iter = ((IParameterizedSymbol)symbol).getParameterList().iterator();
 				while( iter.hasNext() ){
 					fnArgs.add( ((ISymbol)iter.next()).getTypeInfo() );
 				}

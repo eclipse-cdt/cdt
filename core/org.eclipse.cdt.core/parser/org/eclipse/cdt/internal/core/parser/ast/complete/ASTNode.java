@@ -17,6 +17,8 @@ import java.util.ListIterator;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author aniefer
@@ -48,7 +51,15 @@ public class ASTNode implements IASTNode {
 		}
 		
 		if( context != null ){
-			ISymbol sym = (IContainerSymbol) ((ISymbolOwner)context).getSymbol();
+			ISymbol sym = null;
+			if( context instanceof IASTTypedefDeclaration ){
+				ISymbol typedef = (ISymbol) ((ISymbolOwner)context).getSymbol();
+				TypeInfo info = typedef.getTypeInfo().getFinalType();
+				sym = info.getTypeSymbol();
+			} else {
+				sym = (IContainerSymbol) ((ISymbolOwner)context).getSymbol();	
+			}
+			
 			if( sym == null || !(sym instanceof IContainerSymbol) ){
 				throw new LookupError();
 			}

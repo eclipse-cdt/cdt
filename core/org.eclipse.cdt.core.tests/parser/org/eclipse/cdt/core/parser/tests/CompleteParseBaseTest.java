@@ -916,6 +916,13 @@ public class CompleteParseBaseTest extends TestCase
 		return result;
 	}
 
+	protected List createTaskList(Task task, Task task2, Task task3, Task task4, Task task5, Task task6, Task task7, Task task8, Task task9, Task task10 )
+	{
+		List result = createTaskList( task, task2, task3, task4, task5, task6, task7, task8, task9 );
+		result.add( task10 );
+		return result;
+	}
+	
 	public boolean qualifiedNamesEquals( String [] fromAST, String [] theTruth)
 	{
 		if( fromAST == null || theTruth == null ) return false;

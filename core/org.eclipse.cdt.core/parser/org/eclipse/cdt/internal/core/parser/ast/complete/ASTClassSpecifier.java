@@ -303,15 +303,22 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     }
     
     private List unresolvedCrossReferences = new ArrayList();
-    
+    private boolean processingUnresolvedReferences = false;
     public void addUnresolvedReference( UnresolvedReferenceDuple duple)
 	{
-    	unresolvedCrossReferences.add( duple );
+    	//avoid a ConcurrentModificationException by not adding more references when we are 
+    	//in the middle of processing them
+    	if( !processingUnresolvedReferences )
+    		unresolvedCrossReferences.add( duple );
     }
     
     public Iterator getUnresolvedReferences()
 	{
     	return unresolvedCrossReferences.iterator();
+    }
+    
+    public void setProcessingUnresolvedReferences( boolean processing ){
+    	processingUnresolvedReferences = processing;
     }
     
     private List resolvedCrossReferences = new ArrayList();

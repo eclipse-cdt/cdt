@@ -47,7 +47,7 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
      */
     public Iterator getTemplateParameters()
     {
-        return templateParameters.iterator();
+        return ( templateParameters != null ) ? templateParameters.iterator() : new LinkedList().iterator();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#getOwnedDeclaration()

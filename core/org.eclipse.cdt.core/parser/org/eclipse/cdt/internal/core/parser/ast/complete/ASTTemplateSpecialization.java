@@ -10,111 +10,22 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTTemplateSpecialization extends ASTNode implements IASTTemplateSpecialization
+public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements IASTTemplateSpecialization
 {
     /**
      * 
      */
-    public ASTTemplateSpecialization()
+    public ASTTemplateSpecialization( ITemplateSymbol template, IASTScope scope  )
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super(template, scope, null);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#getOwnedDeclaration()
-     */
-    public IASTDeclaration getOwnedDeclaration()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#setOwnedDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
-     */
-    public void setOwnedDeclaration(IASTDeclaration declaration)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
-     */
-    public int getStartingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
-     */
-    public int getEndingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
-     */
-    public IASTScope getOwnerScope()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void acceptElement(ISourceElementRequestor requestor)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void enterScope(ISourceElementRequestor requestor)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void exitScope(ISourceElementRequestor requestor)
-    {
-        // TODO Auto-generated method stub
-    }
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
-	 */
-	public int getStartingLine() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
-	 */
-	public int getEndingLine() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 }

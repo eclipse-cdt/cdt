@@ -437,7 +437,8 @@ public class ParserSymbolTable {
 			return true;
 		}
 		
-		return data.filter.shouldAccept( symbol );
+		TypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
+		return data.filter.shouldAccept( symbol, typeInfo ) || data.filter.shouldAccept( symbol );
 	}
 	
 	private static Object collectSymbol(LookupData data, Object object ) throws ParserSymbolTableException {
@@ -903,6 +904,8 @@ public class ParserSymbolTable {
 	 * provided in data.parameters.
 	 */
 	static protected ISymbol resolveAmbiguities( LookupData data ) throws ParserSymbolTableException{
+		ISymbol resolvedSymbol = null;
+		
 		if( data.foundItems == null || data.foundItems.isEmpty() || data.mode == LookupMode.PREFIX ){
 			return null;
 		}
@@ -921,23 +924,45 @@ public class ParserSymbolTable {
 				if( symbol.isTemplateMember() && !symbol.isTemplateInstance() && 
 					!symbol.isType( TypeInfo.t_templateParameter ) && symbol.getContainingSymbol().isType( TypeInfo.t_template ))
 				{
-					return symbol.getContainingSymbol();
+					resolvedSymbol = symbol.getContainingSymbol();
+				} else {
+					resolvedSymbol = symbol;
 				}
-				return symbol;
 			}
 		}
 		
-		if( data.parameters == null ){
-			//we have no parameter information, if we only have one function, return
-			//that, otherwise we can't decide between them
-			if( functionList.size() == 1){
-				return (ISymbol) functionList.getFirst();
+		if( resolvedSymbol == null ){
+			if( data.parameters == null ){
+				//we have no parameter information, if we only have one function, return
+				//that, otherwise we can't decide between them
+				if( functionList.size() == 1){
+					resolvedSymbol = (ISymbol) functionList.getFirst();
+				} else {
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_UnableToResolveFunction );
+				}
 			} else {
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_UnableToResolveFunction );
+				resolvedSymbol = resolveFunction( data, functionList );
 			}
-		} else {
-			return resolveFunction( data, functionList );
 		}
+		if( resolvedSymbol != null && resolvedSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
+			ISymbol symbol = resolvedSymbol.getTypeSymbol();
+			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
+			
+			symbol = info.getTypeSymbol();
+			ISymbol newSymbol = null;
+			if( symbol != null ){
+				newSymbol = (ISymbol) symbol.clone();
+				newSymbol.setName( resolvedSymbol.getName() );
+			} else {
+				newSymbol = resolvedSymbol.getSymbolTable().newSymbol( resolvedSymbol.getName() );
+				newSymbol.setTypeInfo( info );
+			}
+			newSymbol.setASTExtension( resolvedSymbol.getASTExtension() );
+			newSymbol.setContainingSymbol( resolvedSymbol.getContainingSymbol() );
+			resolvedSymbol = newSymbol;
+		}
+		
+		return resolvedSymbol;
 	}
 
 	static protected IParameterizedSymbol resolveFunction( LookupData data, List functions ) throws ParserSymbolTableException{
@@ -1796,6 +1821,9 @@ public class ParserSymbolTable {
 				data.parameters.add( source );
 				data.forUserDefinedConversion = true;
 				
+				if( targetDecl instanceof IDeferredTemplateInstance ){
+					targetDecl = ((IDeferredTemplateInstance)targetDecl).getTemplate().getTemplatedSymbol();
+				}
 				IDerivableContainerSymbol container = (IDerivableContainerSymbol) targetDecl;
 				
 				if( !container.getConstructors().isEmpty() ){

@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.parser.ast.Offsets;
  * @author jcamelon
  *
  */
-public class ASTTemplateSpecialization extends ASTDeclaration implements IASTTemplateSpecialization
+public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements IASTTemplateSpecialization
 {
 	private Offsets offsets = new Offsets(); 
 	private IASTDeclaration ownedDeclaration;
@@ -29,52 +29,8 @@ public class ASTTemplateSpecialization extends ASTDeclaration implements IASTTem
      */
     public ASTTemplateSpecialization(IASTScope scope, int startingOffset, int startingLine )
     {
-        super(scope);
+        super(scope, null, startingOffset, startingLine, false );
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#getOwnedDeclaration()
-     */
-    public IASTDeclaration getOwnedDeclaration()
-    {
-        return ownedDeclaration;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
-     */
-    public int getStartingOffset()
-    {
-        return offsets.getStartingOffset();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
-     */
-    public int getEndingOffset()
-    {
-        return offsets.getEndingOffset();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#setOwnedDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
-     */
-    public void setOwnedDeclaration(IASTDeclaration declaration)
-    {
-        ownedDeclaration = declaration;
     }
 
     /* (non-Javadoc)
@@ -112,20 +68,5 @@ public class ASTTemplateSpecialization extends ASTDeclaration implements IASTTem
         {
             /* do nothing */
         }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
-     */
-    public int getStartingLine() {
-    	return offsets.getStartingLine();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
-     */
-    public int getEndingLine() {
-    	return offsets.getEndingLine();
-    }
-    
+    }  
 }

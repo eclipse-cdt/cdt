@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
@@ -197,6 +198,9 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 	 * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getOwnerClassSpecifier()
 	 */
 	public IASTClassSpecifier getOwnerClassSpecifier() {
+		if( getOwnerScope() instanceof IASTTemplateDeclaration )
+			return (IASTClassSpecifier) ((IASTTemplateDeclaration)getOwnerScope()).getOwnerScope();
+		
 		return (IASTClassSpecifier) getOwnerScope();
 	}
 }

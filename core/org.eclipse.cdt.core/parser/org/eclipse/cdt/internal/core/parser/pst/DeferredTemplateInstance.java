@@ -29,6 +29,8 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		_arguments = new LinkedList( args );
 		
 		setContainingSymbol( template );
+		if( template.getTemplatedSymbol() != null )
+			setASTExtension( template.getTemplatedSymbol().getASTExtension() );
 	}
 	
 	
@@ -76,13 +78,13 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 	public TypeInfo.eType getType(){ 
 		return _template.getTemplatedSymbol().getType(); 
 	}
+	
+	public TypeInfo getTypeInfo(){
+		return _template.getTemplatedSymbol().getTypeInfo();
+	}
 
 	public boolean isType( TypeInfo.eType type ){
 		return _template.getTemplatedSymbol().isType( type ); 
-	}
-
-	public ISymbolASTExtension getASTExtension() {
-		return _template.getTemplatedSymbol().getASTExtension();
 	}
 	
 	private ITemplateSymbol _template;

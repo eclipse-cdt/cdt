@@ -553,8 +553,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		if( foundSymbol instanceof IContainerSymbol )
 			return (IContainerSymbol) foundSymbol;
-		else 
-			return null;
+ 
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -725,16 +725,17 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		ParserSymbolTable.lookup( data, this );
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		if( found != null ){
+			if( (found.isType( TypeInfo.t_templateParameter ) && found.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template) ||
+				     found.isType( TypeInfo.t_template ) )
+			{
+				found = ((ITemplateSymbol) found).instantiate( arguments );
+			} else if( found.getContainingSymbol().isType( TypeInfo.t_template ) ){
+				found = ((ITemplateSymbol) found.getContainingSymbol()).instantiate( arguments );
+			}	
+		}
 		
-		if( (found.isType( TypeInfo.t_templateParameter ) && found.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template) ||
-		     found.isType( TypeInfo.t_template ) )
-		{
-			return ((ITemplateSymbol) found).instantiate( arguments );
-		} else if( found.getContainingSymbol().isType( TypeInfo.t_template ) ){
-			return ((ITemplateSymbol) found.getContainingSymbol()).instantiate( arguments );
-		} 
-		
-		return null;
+		return found;
 	}
 
 	/* (non-Javadoc)
@@ -1067,8 +1068,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
 	 */
 	public void addTemplateId(ISymbol symbol, List args) throws ParserSymbolTableException {
-		// TODO Auto-generated method stub
-		
+		throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 	}
 
 	/* (non-Javadoc)

@@ -662,4 +662,30 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		assertFalse( iter.hasNext() );
 	}
 	
+	public void testCompletionInTypeDef() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "struct A {  int name;  };  \n" );
+		writer.write( "typedef struct A * PA;     \n" );
+		writer.write( "int main() {               \n" );
+		writer.write( "   PA a;                   \n" );
+		writer.write( "   a->SP                   \n" );
+		writer.write( "}                          \n" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "SP" );
+		
+		IASTCompletionNode node = parse( code, index );
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+				                                                 node.getCompletionContext() );
+		
+		assertEquals( result.getResultsSize(), 1 );
+		
+		Iterator iter = result.getNodes();
+		IASTField name = (IASTField) iter.next();
+		
+		assertEquals( name.getName(), "name" );
+		assertFalse( iter.hasNext() );
+	}
+	
 }

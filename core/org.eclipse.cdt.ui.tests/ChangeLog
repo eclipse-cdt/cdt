@@ -1,3 +1,11 @@
+2003-01-29 Peter Graves
+
+    Fixed the warnings when accessing static methods
+    * src/org/eclipse/cdt/testplugin/util/DialogCheck.java:
+    * src/org/eclipse/cdt/testplugin/CTestPlugin.java
+    * src/org/eclipse/cdt/testplugin/TestWorkbench.java
+    * ChangeLog: make all entries have the same formatting
+
 2002-12-17 Peter Graves
 
     * plugin.xml,test.xml: Some simple cleanups to remove refrences to the jdt and
@@ -16,6 +24,7 @@
 	CProjectNature and CCProjectNature, fix the test.
 
 2002-10-18 Peter Graves
+
 	src/org/eclipse/cdt/testplugin/CProjectHelper.jada
     Cleanup of the CProjectHelper file to remove unused imports, commeted out code etc.
     

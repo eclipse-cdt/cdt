@@ -55,13 +55,13 @@ public class DialogCheck {
 	 * executed on this object.
 	 */
 	public static void assertDialog(Dialog dialog, Assert assert) {
-		assert.assertNotNull(dialog);
+		Assert.assertNotNull(dialog);
 		if (_verifyDialog.getShell() == null) {
 			//force the creation of the verify dialog
 			getShell();
 		}
 		if (_verifyDialog.open(dialog) == IDialogConstants.NO_ID) {
-			assert.assertTrue(_verifyDialog.getFailureText(), false);
+			Assert.assertTrue(_verifyDialog.getFailureText(), false);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class DialogCheck {
 	 * executed on this object.
 	 */
 	public static void assertDialogTexts(Dialog dialog, Assert assert) {
-		assert.assertNotNull(dialog);
+		Assert.assertNotNull(dialog);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		Shell shell = dialog.getShell();
@@ -167,7 +167,7 @@ public class DialogCheck {
 		if (preferred.x > size.x) {
 			//close the dialog
 			button.getShell().dispose();
-			assert.assertTrue(message.toString(), false);
+			Assert.assertTrue(message.toString(), false);
 		}
 	}
 	
@@ -202,7 +202,7 @@ public class DialogCheck {
 		if (preferred.x > size.x) {
 			//close the dialog
 			label.getShell().dispose();
-			assert.assertTrue(message.toString(), false);
+			Assert.assertTrue(message.toString(), false);
 		}
 	}
 	

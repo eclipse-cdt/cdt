@@ -1501,7 +1501,10 @@ public class CDebugTarget extends CDebugElement
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		try
 		{
-			ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().toString(), null, breakpoint.getLineNumber() );
+			// FIXME: We should make sure that the parent folder where we
+			// want to set the breakpoint is added to the list of source directory.
+			// where the debugger looks for files.
+			ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
 			ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 			ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
 			if ( !getBreakpoints().containsKey( breakpoint ) )

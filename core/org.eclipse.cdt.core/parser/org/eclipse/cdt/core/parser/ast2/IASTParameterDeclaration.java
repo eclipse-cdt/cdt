@@ -11,16 +11,8 @@
 package org.eclipse.cdt.core.parser.ast2;
 
 /**
- * This class represents a built in type in the language. These types
- * generally do not have declarations.
- * 
  * @author Doug Schaefer
  */
-public interface IASTBuiltinType extends IASTType {
+public interface IASTParameterDeclaration extends IASTVariableDeclaration {
 
-	/**
-	 * @return the name of the built in type.
-	 */
-	public IASTIdentifier getName();
-	
 }

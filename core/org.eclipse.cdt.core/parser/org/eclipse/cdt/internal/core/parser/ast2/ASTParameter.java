@@ -8,27 +8,13 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.parser.ast2;
+package org.eclipse.cdt.internal.core.parser.ast2;
+
+import org.eclipse.cdt.core.parser.ast2.IASTParameter;
 
 /**
- * Introduces a variable into scope.
- * 
  * @author Doug Schaefer
  */
-public interface IASTVariableDeclaration extends IASTDeclaration {
+public class ASTParameter extends ASTVariable implements IASTParameter {
 
-	/**
-	 * @return the type of the variable
-	 */
-	public IASTType getType();
-	
-	public void setType(IASTType type);
-	
-	/**
-	 * @return the variable being introduced into scope
-	 */
-	public IASTVariable getVariable();
-	
-	public void setVariable(IASTVariable variable);
-	
 }

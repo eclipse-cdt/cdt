@@ -22,12 +22,13 @@ public class ASTDeclaration extends ASTNode implements IASTDeclaration {
 	private IASTIdentifier name;
 	private IASTDeclaration nextDeclaration;
 	private IASTScope scope;
+	private boolean isForward;
 
 	public IASTIdentifier getName() {
 		return name;
 	}
 
-	void setName(IASTIdentifier name) {
+	public void setName(IASTIdentifier name) {
 		this.name = name;
 	}
 	
@@ -35,7 +36,7 @@ public class ASTDeclaration extends ASTNode implements IASTDeclaration {
 		return nextDeclaration;
 	}
 	
-	void setNextDeclaration(IASTDeclaration nextDeclaration) {
+	public void setNextDeclaration(IASTDeclaration nextDeclaration) {
 		this.nextDeclaration = nextDeclaration;
 	}
 	
@@ -43,8 +44,16 @@ public class ASTDeclaration extends ASTNode implements IASTDeclaration {
 		return scope;
 	}
 
-	void setScope(IASTScope scope) {
+	public void setScope(IASTScope scope) {
 		this.scope = scope;
 	}
 
+	public boolean isForward() {
+		return isForward;
+	}
+	
+	public void setIsForward(boolean isForward) {
+		this.isForward = isForward;
+	}
+	
 }

@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast2;
 import org.eclipse.cdt.core.parser.ast2.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
 import org.eclipse.cdt.core.parser.ast2.IASTScope;
-import org.eclipse.cdt.core.parser.ast2.IASTType;
-import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
 
 /**
  * @author Doug Schaefer
@@ -22,7 +20,7 @@ import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
 public class ASTScope implements IASTScope {
 
 	IASTDeclaration firstDeclaration;
-	ASTScope parentScope; 
+	IASTScope parentScope; 
 	
 	public IASTDeclaration getFirstDeclaration() {
 		return firstDeclaration;
@@ -36,7 +34,7 @@ public class ASTScope implements IASTScope {
 		return parentScope;
 	}
 
-	public void setParentScope(ASTScope parentScope) {
+	public void setParentScope(IASTScope parentScope) {
 		this.parentScope = parentScope;
 	}
 	
@@ -58,14 +56,6 @@ public class ASTScope implements IASTScope {
 		if (parentScope != null)
 			return parentScope.findDeclaration(name);
 		return null;
-	}
-
-	public IASTType findType(IASTIdentifier name) {
-		IASTDeclaration decl = findDeclaration(name);
-		if (decl instanceof IASTTypeDeclaration)
-			return ((IASTTypeDeclaration)decl).getType();
-		else
-			return null;
 	}
 	
 }

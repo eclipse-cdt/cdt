@@ -14,7 +14,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast2.ASTFactory;
-import org.eclipse.cdt.core.parser.ast2.IASTBuiltinType;
+import org.eclipse.cdt.core.parser.ast2.IASTFunction;
+import org.eclipse.cdt.core.parser.ast2.IASTFunctionDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast2.IASTPointerType;
 import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ast2.IASTType;
@@ -40,35 +42,95 @@ public class AST2Tests extends TestCase {
     	IASTVariableDeclaration varDecl = (IASTVariableDeclaration)tu.getFirstDeclaration();
     	assertEquals(4, varDecl.getName().getOffset());
     	assertEquals(1, varDecl.getName().getLength());
-    	IASTVariable var = varDecl.getVariable();
-    	assertEquals(varDecl.getName(), new ASTIdentifier("x"));
-    	IASTType type = var.getType();
+    	IASTType type = varDecl.getType();
     	assertNotNull(type);
-    	assertEquals(((IASTBuiltinType)type).getName(), new ASTIdentifier("int"));
+    	assertEquals(type.getDeclaration().getName(), new ASTIdentifier("int"));
+    	IASTVariable var = varDecl.getVariable();
+    	assertEquals(var.getDeclaration(), varDecl);
     }
 
     public void testPointerVariable() {
     	String code = "int * x;";
     	IASTTranslationUnit tu = (IASTTranslationUnit)parse(code);
     	IASTVariableDeclaration varDecl = (IASTVariableDeclaration)tu.getFirstDeclaration();
-    	IASTVariable var = varDecl.getVariable();
     	assertEquals(varDecl.getName(), new ASTIdentifier("x"));
-    	IASTPointerType pointerType = (IASTPointerType)var.getType();
+    	IASTPointerType pointerType = (IASTPointerType)varDecl.getType();
     	IASTType type = pointerType.getType();
-    	assertEquals(((IASTBuiltinType)type).getName(), new ASTIdentifier("int"));
+    	assertEquals(type.getDeclaration().getName(), new ASTIdentifier("int"));
+    	IASTVariable var = varDecl.getVariable();
+    	assertEquals(var.getDeclaration(), varDecl);
     }
     
     public void testConstPointerVar() {
     	String code = "const int * x;";
     	IASTTranslationUnit tu = (IASTTranslationUnit)parse(code);
     	IASTVariableDeclaration varDecl = (IASTVariableDeclaration)tu.getFirstDeclaration();
-    	IASTVariable var = varDecl.getVariable();
     	assertEquals(varDecl.getName(), new ASTIdentifier("x"));
-    	IASTPointerType pointerType = (IASTPointerType)var.getType();
+    	IASTPointerType pointerType = (IASTPointerType)varDecl.getType();
     	ICASTModifiedType modType = (ICASTModifiedType)pointerType.getType();
     	assertTrue(modType.isConst());
     	IASTType type = modType.getType();
-    	assertEquals(((IASTBuiltinType)type).getName(), new ASTIdentifier("int"));
+    	assertEquals(type.getDeclaration().getName(), new ASTIdentifier("int"));
+    	IASTVariable var = varDecl.getVariable();
+    	assertEquals(var.getDeclaration(), varDecl);
+    }
+
+    public void testEmptyFunction() {
+    	String code = "void f() { }";
+    	IASTTranslationUnit tu = (IASTTranslationUnit)parse(code);
+    	IASTFunctionDeclaration funcDecl = (IASTFunctionDeclaration)tu.getFirstDeclaration();
+    	assertEquals(funcDecl.getName(), new ASTIdentifier("f"));
+    	IASTType returnType = funcDecl.getReturnType();
+    	assertEquals(returnType.getDeclaration().getName(), new ASTIdentifier("void"));
+    	IASTFunction function = funcDecl.getFunction();
+    	assertEquals(function.getDeclaration(), funcDecl);
+    	assertNull(function.getBody());
+    }
+
+    public void testFunctWithRefs() {
+    	String code
+			= "int x;\n" 
+    		+ "void f(int y) {\n"
+			+ "  int z = x + y\n"
+			+ "}";
+    	// <variableDeclaration name="x">
+    	//   <variable/>
+    	// </variableDeclaration>
+    	// <functionDeclaration name="f">
+    	//   <parameters>
+    	//     <parameterDeclaration name="y">
+    	//       <parameter/>
+    	//     </parameterDeclaration>
+    	//   </parameters>
+    	//   <body>
+    	//     <declarationStatement>
+    	//       <variableDeclaration name="z">
+    	//         <variable>
+    	//           <initExpression>
+    	//             <additiveExpression>
+    	//               <variableReference - link back to var x/>
+    	//               <variableReference - link back to var y/>
+    	//             </additiveExpression>
+    	//           </initExpression>
+    	//         </variable>
+    	//       </variableDeclaration>
+    	//     </declarationStatement>
+    	//   </body>
+    	// <functionDeclaration>
+    	IASTTranslationUnit tu = (IASTTranslationUnit)parse(code);
+    	// int x;
+    	IASTVariableDeclaration xDecl = (IASTVariableDeclaration)tu.getFirstDeclaration();
+    	assertEquals(new ASTIdentifier("x"), xDecl.getName());
+    	assertEquals(new ASTIdentifier("int"), xDecl.getType().getDeclaration().getName());
+    	assertEquals(xDecl, xDecl.getVariable().getDeclaration());
+    	// void f()
+    	IASTFunctionDeclaration fDecl = (IASTFunctionDeclaration)xDecl.getNextDeclaration();
+    	assertEquals(new ASTIdentifier("void"), fDecl.getReturnType().getDeclaration().getName());
+    	assertEquals(new ASTIdentifier("f"), fDecl.getName());
+    	// int y
+    	IASTParameterDeclaration yDecl = fDecl.getFirstParameterDeclaration();
+    	assertEquals(new ASTIdentifier("y"), yDecl.getName());
+    	assertEquals(new ASTIdentifier("int"), yDecl.getType().getDeclaration().getName());
     }
 
 }

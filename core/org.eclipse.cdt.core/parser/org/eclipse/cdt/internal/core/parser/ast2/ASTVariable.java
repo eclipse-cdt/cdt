@@ -11,22 +11,22 @@
 package org.eclipse.cdt.internal.core.parser.ast2;
 
 import org.eclipse.cdt.core.parser.ast2.IASTExpression;
-import org.eclipse.cdt.core.parser.ast2.IASTType;
 import org.eclipse.cdt.core.parser.ast2.IASTVariable;
+import org.eclipse.cdt.core.parser.ast2.IASTVariableDeclaration;
 
 /**
  * @author Doug Schaefer
  */
 public class ASTVariable implements IASTVariable {
 
-	private IASTType type;
+	private IASTVariableDeclaration declaration;
 	
-	public IASTType getType() {
-		return type;
+	public IASTVariableDeclaration getDeclaration() {
+		return declaration;
 	}
-
-	public void setType(IASTType type) {
-		this.type = type;
+	
+	public void setDeclaration(IASTVariableDeclaration declaration) {
+		this.declaration = declaration;
 	}
 	
 	public IASTExpression getInitialization() {

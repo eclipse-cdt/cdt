@@ -15,4 +15,11 @@ package org.eclipse.cdt.core.parser.ast2;
  */
 public interface IASTType {
 
+	/**
+	 * @return the declaration that defines this type
+	 */
+	public IASTTypeDeclaration getDeclaration();
+	
+	public void setDeclaration(IASTTypeDeclaration declaration);
+	
 }

@@ -18,9 +18,11 @@ package org.eclipse.cdt.core.parser.ast2;
 public interface IASTVariable {
 
 	/**
-	 * @return the type of the variable
+	 * @return the declaration that defines this variable
 	 */
-	public IASTType getType();
+	public IASTVariableDeclaration getDeclaration();
+	
+	public void setDeclaration(IASTVariableDeclaration declaration);
 	
 	/**
 	 * @return the expression that initializes the variable when it is

@@ -17,12 +17,21 @@ import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast2.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTFunctionDeclaration;
 import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
+import org.eclipse.cdt.core.parser.ast2.IASTParameter;
+import org.eclipse.cdt.core.parser.ast2.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTPointerType;
+import org.eclipse.cdt.core.parser.ast2.IASTScope;
 import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ast2.IASTType;
+import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTModifiedType;
 
 /**
@@ -30,9 +39,9 @@ import org.eclipse.cdt.core.parser.ast2.c.ICASTModifiedType;
  */
 public class AST2SourceElementRequestor extends NullSourceElementRequestor implements IParserLogService {
 
-    private ASTTranslationUnit translationUnit;
-    private ASTScope currentScope;
-    private ASTDeclaration currentDeclaration;
+    private IASTTranslationUnit translationUnit;
+    private IASTScope currentScope;
+    private IASTDeclaration currentDeclaration;
     
     // Log service functions
     public boolean isTracing() {
@@ -47,7 +56,7 @@ public class AST2SourceElementRequestor extends NullSourceElementRequestor imple
     }
 
     // Utilities
-    private void linkDeclaration(ASTDeclaration declaration) {
+    private void linkDeclaration(IASTDeclaration declaration) {
     	if (currentDeclaration != null)
     		currentDeclaration.setNextDeclaration(declaration);
     	else
@@ -68,38 +77,79 @@ public class AST2SourceElementRequestor extends NullSourceElementRequestor imple
 		name.setOffset(variable.getNameOffset());
 		name.setLength(variable.getNameEndOffset() - variable.getNameOffset());
 		
-		ASTVariableDeclaration varDecl = new ASTVariableDeclaration();
+		IASTVariableDeclaration varDecl = new ASTVariableDeclaration();
 		varDecl.setName(name);
-
-		ASTVariable var = new ASTVariable();
-		
-		varDecl.setVariable(var);
 		linkDeclaration(varDecl);
+
+		org.eclipse.cdt.core.parser.ast2.IASTVariable var = new ASTVariable();
+		varDecl.setVariable(var);
+		var.setDeclaration(varDecl);
 		
-		IASTType varType = null;
+		IASTType varType = buildType(variable.getAbstractDeclaration());
+		varDecl.setType(varType);
+	}
+
+	public void enterFunctionBody(IASTFunction function) {
+		IASTIdentifier name = new ASTIdentifier(function.getNameCharArray());
+
+		IASTFunctionDeclaration funcDecl = new ASTFunctionDeclaration();
+		funcDecl.setName(name);
+		linkDeclaration(funcDecl);
+
+		org.eclipse.cdt.core.parser.ast2.IASTFunction func = new ASTFunction();
+		funcDecl.setFunction(func);
+		func.setDeclaration(funcDecl);
 		
-		IASTAbstractDeclaration abstractDecl = variable.getAbstractDeclaration();
+		IASTType returnType = buildType(function.getReturnType());
+		funcDecl.setReturnType(returnType);
+
+		IASTParameterDeclaration currentParam = null;
+		for (Iterator i = function.getParameters(); i.hasNext(); ) {
+			org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration realparam
+				= (org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration)i.next();
+			IASTParameterDeclaration paramDecl = new ASTParameterDeclaration();
+			paramDecl.setName(new ASTIdentifier(realparam.getName()));
+			paramDecl.setType(buildType(realparam));
+			IASTParameter param = new ASTParameter();
+			paramDecl.setVariable(param);
+			param.setDeclaration(paramDecl);
+			
+			if (currentParam == null)
+				funcDecl.setFirstParameterDeclaration(paramDecl);
+			else
+				currentParam.setNextDeclaration(paramDecl);
+			
+			currentParam = paramDecl;
+		}
+	}
+
+	private IASTType buildType(IASTAbstractDeclaration abstractDecl) {
+		
+		IASTType type = null;
+		
 		IASTTypeSpecifier typeSpecifier = abstractDecl.getTypeSpecifier();
 		if (typeSpecifier instanceof IASTSimpleTypeSpecifier) {
 			IASTSimpleTypeSpecifier realtype = (IASTSimpleTypeSpecifier)typeSpecifier;
-			varType = currentScope.findType(new ASTIdentifier(realtype.getTypename()));
+			IASTTypeDeclaration typeDecl
+				= (IASTTypeDeclaration)currentScope.findDeclaration(
+						new ASTIdentifier(realtype.getTypename()));
+			type = typeDecl.getType();
 		}
 		
 		if (abstractDecl.isConst()) {
 			ICASTModifiedType modType = new CASTModifiedType();
-			modType.setType(varType);
+			modType.setType(type);
 			modType.setIsConst(true);
-			varType = modType;
+			type = modType;
 		}
 		
 		for (Iterator i = abstractDecl.getPointerOperators(); i.hasNext(); ) {
 			ASTPointerOperator pointer = (ASTPointerOperator)i.next();
-			ASTPointerType pointerType = new ASTPointerType();
-			pointerType.setType(varType);
-			varType = pointerType;
+			IASTPointerType pointerType = new ASTPointerType();
+			pointerType.setType(type);
+			type = pointerType;
 		}
 		
-		var.setType(varType);
+		return type;
 	}
-
 }

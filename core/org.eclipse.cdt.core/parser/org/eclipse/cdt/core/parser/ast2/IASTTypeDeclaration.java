@@ -13,11 +13,13 @@ package org.eclipse.cdt.core.parser.ast2;
 /**
  * @author Doug Schaefer
  */
-public interface IASTTypeDeclaration {
+public interface IASTTypeDeclaration extends IASTDeclaration {
 
 	/**
 	 * @return the type that is introduced by this declaration
 	 */
 	public IASTType getType();
+	
+	void setType(IASTType type);
 	
 }

@@ -22,15 +22,29 @@ public interface IASTDeclaration extends IASTNode {
 	 * @return the scope for the declaration
 	 */
 	public IASTScope getScope();
+	
+	public void setScope(IASTScope scope);
 
 	/**
 	 * @return the identifier being introduced into the scope
 	 */
 	public IASTIdentifier getName();
+	
+	public void setName(IASTIdentifier name);
 
 	/**
 	 * @return the next declaration in this scope
 	 */
 	public IASTDeclaration getNextDeclaration();
+	
+	public void setNextDeclaration(IASTDeclaration next);
+
+	/**
+	 * @return is this a forward declaration, i.e., the thing
+	 * it is declaring is not defined at the same point.
+	 */
+	public boolean isForward();
+	
+	public void setIsForward(boolean isForward);
 	
 }

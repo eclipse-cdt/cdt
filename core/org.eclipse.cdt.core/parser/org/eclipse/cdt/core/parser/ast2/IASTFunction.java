@@ -21,15 +21,12 @@ package org.eclipse.cdt.core.parser.ast2;
 public interface IASTFunction extends IASTNode {
 
 	/**
-	 * @return the type of the return value of the function
+	 * @return the declaration that defines this function
 	 */
-	public IASTType getReturnType();
-
-	/**
-	 * @return the first parameter to the function
-	 */
-	public IASTDeclaration getFirstParameter();
-
+	public IASTFunctionDeclaration getDeclaration();
+	
+	void setDeclaration(IASTFunctionDeclaration declaration);
+	
 	/**
 	 * @return the first statement of the function
 	 */

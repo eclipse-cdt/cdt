@@ -10,32 +10,28 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast2;
 
-import org.eclipse.cdt.core.parser.ast2.IASTType;
-import org.eclipse.cdt.core.parser.ast2.IASTVariable;
-import org.eclipse.cdt.core.parser.ast2.IASTVariableDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTFunction;
+import org.eclipse.cdt.core.parser.ast2.IASTFunctionDeclaration;
+import org.eclipse.cdt.core.parser.ast2.IASTStatement;
 
 /**
  * @author Doug Schaefer
  */
-public class ASTVariableDeclaration extends ASTDeclaration implements IASTVariableDeclaration{
+public class ASTFunction extends ASTNode implements IASTFunction {
 
-	private IASTVariable variable;
-	private IASTType type;
-	
-	public IASTType getType() {
-		return type;
-	}
+	private IASTFunctionDeclaration declaration;
+	private IASTStatement body;
 
-	public void setType(IASTType type) {
-		this.type = type;
+	public IASTFunctionDeclaration getDeclaration() {
+		return declaration;
 	}
 	
-	public IASTVariable getVariable() {
-		return variable;
+	public void setDeclaration(IASTFunctionDeclaration declaration) {
+		this.declaration = declaration;
 	}
-
-	public void setVariable(IASTVariable variable) {
-		this.variable = variable;
+	
+	public IASTStatement getBody() {
+		return body;
 	}
 	
 }

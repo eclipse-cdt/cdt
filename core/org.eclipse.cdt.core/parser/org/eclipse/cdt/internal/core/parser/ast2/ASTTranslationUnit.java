@@ -13,10 +13,11 @@ package org.eclipse.cdt.internal.core.parser.ast2;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.ast2.IASTBuiltinType;
+import org.eclipse.cdt.core.parser.ast2.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
 import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ast2.IASTType;
+import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
 
 /**
  * This represents the global scope.
@@ -26,20 +27,33 @@ import org.eclipse.cdt.core.parser.ast2.IASTType;
 public class ASTTranslationUnit extends ASTScope implements IASTTranslationUnit {
 
 	// builtin types
-	public static final IASTBuiltinType b_int = new ASTBuiltinType("int");
+	public static final IASTTypeDeclaration decl_int;
+	public static final IASTTypeDeclaration decl_void;
+
+	private static Map builtins = new HashMap();
 	
-	private Map builtins = new HashMap();
-	{
-		builtins.put(b_int.getName(), b_int);
+	private static IASTTypeDeclaration createBuiltinType(String name_str) {
+		IASTIdentifier name = new ASTIdentifier(name_str);
+		IASTType type = new ASTType();
+		IASTTypeDeclaration decl = new ASTTypeDeclaration();
+		decl.setName(name);
+		decl.setType(type);
+		type.setDeclaration(decl);
+		builtins.put(name, decl);
+		return decl;
 	}
 	
-	public IASTType findType(IASTIdentifier name) {
-		IASTType type = super.findType(name);
-		if (type != null)
-			return type;
-
-		// See if it is a built in
-		return (IASTBuiltinType)builtins.get(name);
+	static {
+		decl_int = createBuiltinType("int");
+		decl_void = createBuiltinType("void");
+	}
+	
+	public IASTDeclaration findDeclaration(IASTIdentifier name) {
+		IASTDeclaration decl = super.findDeclaration(name);
+		if (decl != null)
+			return decl;
+		
+		return (IASTDeclaration)builtins.get(name);
 	}
 
 }

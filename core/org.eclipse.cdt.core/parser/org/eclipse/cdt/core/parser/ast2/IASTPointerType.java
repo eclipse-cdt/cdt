@@ -16,11 +16,13 @@ package org.eclipse.cdt.core.parser.ast2;
  * 
  * @author Doug Schaefer
  */
-public interface IASTPointerType {
+public interface IASTPointerType extends IASTType {
 
 	/**
 	 * @return the type of the value being referred to
 	 */
 	public IASTType getType();
+	
+	public void setType(IASTType type);
 	
 }

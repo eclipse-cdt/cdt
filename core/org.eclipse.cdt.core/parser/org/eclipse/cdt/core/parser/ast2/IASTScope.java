@@ -19,19 +19,23 @@ public interface IASTScope {
 	 * @return the first declaration in the scope.
 	 */
 	public IASTDeclaration getFirstDeclaration();
+	
+	public void setFirstDeclaration(IASTDeclaration declaration);
 
 	/**
 	 * @return the container scope of this scope
 	 */
 	public IASTScope getParentScope();
+	
+	public void setParentScope(IASTScope parentScope);
 
 	/**
 	 * This method searches this scope and then it's parent scope
-	 * recursively to find the type with the given name.
+	 * recursively to find the declaration with the given name.
 	 * 
-	 * @param name the name of the type
-	 * @return the type for the given name
+	 * @param name the name of the declaration
+	 * @return the declaration for the given name
 	 */
-	public IASTType findType(IASTIdentifier name);
+	public IASTDeclaration findDeclaration(IASTIdentifier name);
 	
 }

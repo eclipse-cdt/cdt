@@ -11,11 +11,22 @@
 package org.eclipse.cdt.internal.core.parser.ast2;
 
 import org.eclipse.cdt.core.parser.ast2.IASTType;
+import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
 
 
 /**
  * @author Doug Schaefer
  */
 public class ASTType extends ASTNode implements IASTType {
+	
+	private IASTTypeDeclaration declaration;
+	
+	public IASTTypeDeclaration getDeclaration() {
+		return declaration;
+	}
+	
+	public void setDeclaration(IASTTypeDeclaration declaration) {
+		this.declaration = declaration;
+	}
 	
 }

@@ -90,7 +90,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 		// Fallback to the Project Location
 		// FIXME: if the build did not start in the Project ?
-		return fProject.getLocation();
+		return fBaseDirectory;
 	}
 
 	public void pushDirectory(IPath dir) {
@@ -99,8 +99,7 @@ public class ErrorParserManager extends OutputStream {
 			if (fBaseDirectory.isPrefixOf(dir)) {
 				int segments = fBaseDirectory.matchingFirstSegments(dir);
 				pwd = dir.removeFirstSegments(segments);
-			}
-			else {
+			} else {
 				pwd = dir;
 			}
 			fDirectoryStack.addElement(pwd);
@@ -109,11 +108,12 @@ public class ErrorParserManager extends OutputStream {
 
 	public IPath popDirectory() {
 		int i = fDirectoryStack.size();
-		IPath dir = (IPath) fDirectoryStack.lastElement();
-		if (i != 0) {
+		if (i != 0) {			
+			IPath dir = (IPath) fDirectoryStack.lastElement();
 			fDirectoryStack.removeElementAt(i - 1);
+			return dir;
 		}
-		return dir;
+		return new Path("");
 	}
 
 	public int getDirectoryLevel() {

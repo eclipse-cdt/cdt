@@ -1668,4 +1668,12 @@ public class Scanner2Test extends BaseScanner2Test
     	validateIdentifier("hithere");
     	validateEOF();
     }
+    
+    public void testSlashes() throws Exception {
+    	initializeScanner("__q / __n");
+    	validateIdentifier("__q");
+    	validateToken(IToken.tDIV);
+    	validateIdentifier("__n");
+    	validateEOF();
+    }
 }

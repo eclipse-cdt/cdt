@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -70,6 +73,14 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static String[] emptyStringArray = new String[0];
 	private static char[] emptyCharArray = new char[0];
 	private static EndOfFileException EOF = new EndOfFileException();
+	
+	PrintStream dlog;
+	{
+		try {
+			dlog = new PrintStream(new FileOutputStream("C:/dlog.txt"));
+		} catch (FileNotFoundException e) {
+		}
+	}
 
 	public Scanner2(CodeReader reader,
 					IScannerInfo info,
@@ -954,10 +965,10 @@ public class Scanner2 implements IScanner, IScannerData {
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
 						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
-							//System.out.println("#if <FALSE> " + new String(buffer,start+1,len-1));
+							dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1));
 							skipOverConditionalCode(true);
-						} //else
-							//System.out.println("#if <TRUE> " + new String(buffer,start+1,len-1));
+						} else
+							dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1));
 						return;
 					case ppElse:
 					case ppElif:
@@ -1027,7 +1038,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		CodeReader reader = null;
 		
 		if (local) {
-			
+			// TODO obviously...
 		}
 		
 		// iterate through the include paths
@@ -1044,14 +1055,14 @@ public class Scanner2 implements IScanner, IScannerData {
 					}
 				} else {
 					reader = (CodeReader)fileCache.get(finalPath);
-					if (reader == null) {
+					if (reader == null)
 						reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
-						if (reader != null) {
-							if (reader.filename != null)
-								fileCache.put(reader.filename, reader);
-							pushContext(reader.buffer, reader);
-							return;
-						}
+					if (reader != null) {
+						if (reader.filename != null)
+							fileCache.put(reader.filename, reader);
+						dlog.println("#include <" + finalPath + ">");
+						pushContext(reader.buffer, reader);
+						return;
 					}
 				}
 			}
@@ -1093,7 +1104,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
-		//System.out.println("#define " + new String(buffer, idstart, idlen));
+		dlog.println("#define " + new String(buffer, idstart, idlen));
 		
 		// Now check for function style macro to store the arguments
 		char[][] arglist = null;
@@ -1103,6 +1114,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			arglist = new char[4][];
 			int currarg = -1;
 			while (bufferPos[bufferStackPos] < limit) {
+				pos = bufferPos[bufferStackPos];
 				skipOverWhiteSpace();
 				if (++bufferPos[bufferStackPos] >= limit)
 					return;
@@ -1110,6 +1122,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				if (c == ')') {
 					break;
 				} else if (c == ',') {
+					continue;
+				} else if (c == '.'
+						&& pos + 1 < limit && buffer[pos + 1] == '.'
+						&& pos + 2 < limit && buffer[pos + 2] == '.') {
+					// varargs
+					// TODO - something better
+					bufferPos[bufferStackPos] += 2;
+					arglist[++currarg] = "...".toCharArray();
 					continue;
 				} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')) {
 					// yuck
@@ -1189,6 +1209,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 		
 		definitions.remove(buffer, idstart, idlen);
+		dlog.println("#undef " + new String(buffer, idstart, idlen));
 	}
 	
 	private void handlePPIfdef(boolean positive) {
@@ -1224,14 +1245,14 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 
 		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-			//System.out.println((positive ? "#ifdef" : "#ifndef")
-			//		+ " <TRUE> " + new String(buffer, idstart, idlen));
+			dlog.println((positive ? "#ifdef" : "#ifndef")
+					+ " <TRUE> " + new String(buffer, idstart, idlen));
 			// continue on
 			return;
 		}
 		
-		//System.out.println((positive ? "#ifdef" : "#ifndef")
-		//		+ " <FALSE> " + new String(buffer, idstart, idlen));
+		dlog.println((positive ? "#ifdef" : "#ifndef")
+				+ " <FALSE> " + new String(buffer, idstart, idlen));
 		// skip over this group
 		skipOverConditionalCode(true);
 	}
@@ -1344,15 +1365,17 @@ public class Scanner2 implements IScanner, IScannerData {
 									break;
 								}
 							}
+							continue;
 						}
 					}
-					continue;
+					break;
 				case '\\':
 					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
 						// \n is a whitespace
 						++bufferPos[bufferStackPos];
 						continue;
 					}
+					break;
 			}
 			
 			// fell out of switch without continuing, we're done
@@ -1418,6 +1441,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				case ',':
 				case ')':
 				case '(':
+				case '<':
+				case '>':
 					--bufferPos[bufferStackPos];
 					return;
 				case '\\':
@@ -1558,14 +1583,17 @@ public class Scanner2 implements IScanner, IScannerData {
 				if (++bufferPos[bufferStackPos] >= limit)
 					break;
 				c = buffer[bufferPos[bufferStackPos]];
-				if (c == '(')
+				if (c == '(' || c == '<')
 					++argparens;
+				else if (c == '>')
+					--argparens;
 				else if (c == ')') {
 					if (argparens == 0)
 						break;
 					--argparens;
 				} else if (c == ',')
-					break;
+					if (argparens == 0)
+						break;
 			}
 			
 			char[] arg = emptyCharArray;

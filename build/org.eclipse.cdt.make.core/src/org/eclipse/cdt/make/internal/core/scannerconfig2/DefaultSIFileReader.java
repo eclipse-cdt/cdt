@@ -123,7 +123,7 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
      */
     private boolean readFileToOutputStream(IProgressMonitor monitor, BufferedReader reader, OutputStream ostream) {
         final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-        monitor.beginTask("Reading build output ...", (int)((fileSize == 0) ? 10000 : fileSize));
+        monitor.beginTask("Reading build output ...", (int)((fileSize == 0) ? 10000 : fileSize)); //$NON-NLS-1$
         // check if build output file exists
         String line;
         try {

@@ -206,11 +206,10 @@ public class StandardBuildManager implements IScannerInfoProvider {
 		
 		// Clear out all current children
 		// Note: Probably would be a better idea to merge in the data
-		NodeList nodes = rootElement.getChildNodes();
-		for (int i = 0; i < nodes.getLength(); ++i) {
-			Node node = nodes.item(i);
-			if (node instanceof Element)
-				rootElement.removeChild(nodes.item(i));
+		Node child = rootElement.getFirstChild();
+		while (child != null) {
+			rootElement.removeChild(child);
+			child = rootElement.getFirstChild();
 		}
 		
 		// Save the build info

@@ -577,7 +577,7 @@ public class CDescriptor implements ICDescriptor {
 	
 	private void decodeProjectData(Element data) throws CoreException {
 		Document doc = getProjectDataDoc();
-		doc.getDocumentElement().appendChild(doc.importNode(data, true));
+		doc.replaceChild(doc.importNode(data, true), doc.getDocumentElement());
 	}
 
 	public Element getProjectData(String id) throws CoreException {

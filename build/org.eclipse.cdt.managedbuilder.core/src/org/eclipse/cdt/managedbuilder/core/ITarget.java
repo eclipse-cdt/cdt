@@ -67,6 +67,11 @@ public interface ITarget extends IBuildObject {
 	public String getArtifactName();
 	
 	/**
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
+
+	/**
 	 * Answers the unique ID of the binary parser associated with the target.
 	 * 
 	 * @return String
@@ -171,6 +176,14 @@ public interface ITarget extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isAbstract();
+
+	/**
+	 * Answers <code>true</code> the receiver has changes that need to be saved 
+	 * in the project file, else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean isDirty();
 	
 	/**
 	 * Answers <code>true</code> if the receiver is a target that is defined 
@@ -232,5 +245,4 @@ public interface ITarget extends IBuildObject {
 	 * @param resource
 	 */
 	public void updateOwner(IResource resource);
-
 }

@@ -45,8 +45,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public static final String MINOR_SEPERATOR = "::"; //$NON-NLS-1$
 	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultConfig");	//$NON-NLS-1$
 	private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultTarget");	//$NON-NLS-1$
+	private String defaultConfigIds;
 	private Map defaultConfigMap;
 	private ITarget defaultTarget;
+	private String defaultTargetId;
 	private boolean isDirty;
 	private IResource owner;
 	private Map targetMap;
@@ -58,8 +60,28 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param owner
 	 */
 	public ManagedBuildInfo(IResource owner) {
-		targetList = new ArrayList();
 		this.owner = owner;
+		isDirty = false;
+
+		// The id of the default target from the project persistent settings store
+		IProject project = (IProject)owner;
+		defaultTargetId = null;
+		try {
+			defaultTargetId = project.getPersistentProperty(defaultTargetProperty);
+		} catch (CoreException e) {
+			// We have all the build elements so we can stop if this occurs
+			return;
+		}
+
+		// Get the default configs for every target out of the same store
+		defaultConfigIds = null;
+		try {
+			defaultConfigIds = project.getPersistentProperty(defaultConfigProperty);
+		} catch (CoreException e) {
+			// Again, hitting this error just means the default config is not set
+			return;
+		}
+
 	}
 	
 	/**
@@ -70,7 +92,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param element
 	 */
 	public ManagedBuildInfo(IResource owner, Element element) {
-		// Store the IProject the info is for
 		this(owner);
 		
 		// Read in the top-level info objects
@@ -81,70 +102,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 			child = child.getNextSibling();
 		}
-
-		// The id of the default configuration from the persistent store
-		IProject project = (IProject)getOwner();
-		String defaultTargetId = null;
-		try {
-			defaultTargetId = project.getPersistentProperty(defaultTargetProperty);
-		} catch (CoreException e) {
-			// We have all the build elements so we can stop if this occurs
-			return;
-		}
-
-		// All targets have been read in so set the default from the persisted ID
-		if (defaultTargetId != null) {
-			defaultTarget = (ITarget) getTargetMap().get(defaultTargetId);
-		}
-		
-		// Get the string of all default config IDs from the store
-		String defaultIds = null;
-		try {
-			defaultIds = project.getPersistentProperty(defaultConfigProperty);
-		} catch (CoreException e1) {
-			// Again, hitting this error just means the default config is not set
-			return;
-		}
-		if (defaultIds != null) {
-			String[] majorTokens = defaultIds.split(MAJOR_SEPERATOR);
-			for (int index = majorTokens.length - 1; index >= 0; --index) {
-				// Now split each token into the target and config id component
-				String idToken = majorTokens[index];
-				if (idToken != null) {
-					String[] minorTokens = idToken.split(MINOR_SEPERATOR);
-					// The first token is the target ID
-					ITarget target = getTarget(minorTokens[0]);
-					// The second is the configuration ID
-					IConfiguration config = target.getConfiguration(minorTokens[1]);
-					if (config != null) {
-						getDefaultConfigMap().put(target.getId(), config);
-					}
-				}
-			}
-		}
-
-/*		// Now we have a miserable O(N^2) operation (oh well, the data sets are small)
-		ListIterator stringIter = configIds.listIterator();
-		while (stringIter.hasNext()){
-			String confId = (String) stringIter.next();
-			ListIterator targIter = targetList.listIterator();
-			while (targIter.hasNext()) {
-				Target targ = (Target) targIter.next();
-				IConfiguration conf = targ.getConfiguration(confId);
-				if (conf != null) {
-					defaultConfigMap.put(targ.getId(), conf);
-					break;
-				}				
-			}
-		}
-*/	}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#addTarget(org.eclipse.cdt.core.build.managed.ITarget)
 	 */
 	public void addTarget(ITarget target) {
 		getTargetMap().put(target.getId(), target);
-		targetList.add(target);
+		getTargets().add(target);
 	}
 
 	/* (non-Javadoc)
@@ -250,6 +215,25 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private Map getDefaultConfigMap() {
 		if (defaultConfigMap == null) {
 			defaultConfigMap = new HashMap();
+			// We read this as part of the constructor
+			if (defaultConfigIds != null) {
+				String[] majorTokens = defaultConfigIds.split(MAJOR_SEPERATOR);
+				for (int index = majorTokens.length - 1; index >= 0; --index) {
+					// Now split each token into the target and config id component
+					String idToken = majorTokens[index];
+					if (idToken != null) {
+						String[] minorTokens = idToken.split(MINOR_SEPERATOR);
+						// The first token is the target ID
+						ITarget target = getTarget(minorTokens[0]);
+						if (target == null) continue;
+						// The second is the configuration ID
+						IConfiguration config = target.getConfiguration(minorTokens[1]);
+						if (config != null) {
+							defaultConfigMap.put(target.getId(), config);
+						}
+					}
+				}
+			}
 		}
 		return defaultConfigMap;
 	}
@@ -276,7 +260,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public ITarget getDefaultTarget() {
 		if (defaultTarget == null) {
-			defaultTarget = (ITarget) targetList.get(0);
+			// See if there is a target that was persisted
+			if (defaultTargetId != null) {
+				defaultTarget = (ITarget) getTargetMap().get(defaultTargetId);
+			}
+			// If that failed, look for anything
+			if (defaultTarget == null) {
+				defaultTarget = (ITarget) getTargets().get(0);
+			}
 		}
 		return defaultTarget;
 	}
@@ -709,6 +700,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTargets(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public List getTargets() {
+		if (targetList == null) {
+			targetList = new ArrayList();
+		}
 		return targetList;	
 	}
 	
@@ -840,7 +834,20 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isDirty()
 	 */
 	public boolean isDirty() {
-		return isDirty;
+		// If the info has been flagged dirty, answer true
+		if (isDirty) {
+			return true;
+		}
+		
+		// Check if any of the defined targets are dirty
+		Iterator iter = getTargets().listIterator();
+		while (iter.hasNext()) {
+			if (((ITarget)iter.next()).isDirty()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -877,27 +884,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return false;
 	}
 
-	/**
-	 * Write the contents of the build model to the persistent store specified in the 
-	 * argument.
+	
+	/* (non-Javadoc)
 	 * 
-	 * @param doc
-	 * @param element
 	 */
-	public void serialize(Document doc, Element element) {
+	private void persistDefaultConfigurations() {
 		// Create a buffer of the default configuration IDs
 		StringBuffer defaultConfigs = new StringBuffer();
-		
-		// Write out each target and their default config
-		Iterator iter = targetList.listIterator();
+		Iterator iter = getTargets().listIterator();
 		while (iter.hasNext()) {
-			// Get the target
-			Target targ = (Target)iter.next();
-			// Create an XML element to hold the target settings
-			Element targetElement = doc.createElement(ITarget.TARGET_ELEMENT_NAME);
-			element.appendChild(targetElement);
-			targ.serialize(doc, targetElement);
 			// Persist the default target configuration pair as <targ_ID>::<conf_ID>
+			ITarget targ = (ITarget)iter.next();
 			IConfiguration config = getDefaultConfiguration((ITarget)targ);
 			if (config != null) {
 				defaultConfigs.append(targ.getId());
@@ -906,65 +903,105 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				defaultConfigs.append(MAJOR_SEPERATOR);
 			}
 		}
-		
-/*		for (int i = 0; i < targets.size(); ++i) {
-			Element targetElement = doc.createElement(ITarget.TARGET_ELEMENT_NAME);
-			element.appendChild(targetElement);
-			((Target)targets.get(i)).serialize(doc, targetElement);
-			IConfiguration config = getDefaultConfiguration((ITarget)targets.get(i));
-			if (config != null) {
-				Element configEl = doc.createElement(DEFAULT_CONFIGURATION);
-				element.appendChild(configEl);
-				configEl.setAttribute(IConfiguration.ID, config.getId());
-			}
+		// Persist the default configurations
+		IProject project = (IProject) getOwner();
+		try {
+			project.setPersistentProperty(defaultConfigProperty, defaultConfigs.toString().trim());
+		} catch (CoreException e) {
+			// Too bad
 		}
-*/		// Persist the default target as a project setting
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 */
+	private void persistDefaultTarget() {
+		// Persist the default target as a project setting
 		IProject project = (IProject) getOwner();
 		ITarget defTarget = getDefaultTarget();
 		if (defTarget != null){
 			try {
 				project.setPersistentProperty(defaultTargetProperty, defTarget.getId());
 			} catch (CoreException e) {
-				// There is no point in storing the default configurations
-				return;
+				// Tough
 			}
 		}
-		
-		try {
-			// Persist the default configurations
-			project.setPersistentProperty(defaultConfigProperty, defaultConfigs.toString().trim());
-		} catch (CoreException e) {
-			// Too bad
+	}
+
+	/**
+	 * Write the contents of the build model to the persistent store 
+	 * specified in the argument.
+	 * 
+	 * @param doc
+	 * @param element
+	 */
+	public void serialize(Document doc, Element element) {
+		// Write out each target
+		Iterator iter = getTargets().listIterator();
+		while (iter.hasNext()) {
+			// Get the target
+			Target targ = (Target)iter.next();
+			// Create an XML element to hold the target settings
+			Element targetElement = doc.createElement(ITarget.TARGET_ELEMENT_NAME);
+			element.appendChild(targetElement);
+			targ.serialize(doc, targetElement);
 		}
-		
+		// Remember the default target and configurations
+		persistDefaultTarget();
+		persistDefaultConfigurations();
+		// I'm clean now
+		setDirty(false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public void setDefaultConfiguration(IConfiguration configuration) {
+		// Sanity
+		if (configuration== null) return;
+		
 		// Get the target associated with the argument
 		ITarget target = configuration.getTarget();
-		// Make sure it is the default
-		setDefaultTarget(target);
-		getDefaultConfigMap().put(target.getId(), configuration);
+		
+		// See if there is anything to be done
+		IConfiguration oldDefault = getDefaultConfiguration(target);
+		if (!configuration.equals(oldDefault)) {
+			// Make sure it is the default
+			setDefaultTarget(target);
+			// Make the argument the 
+			getDefaultConfigMap().put(target.getId(), configuration);
+			// Save it
+			persistDefaultConfigurations();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultTarget(org.eclipse.cdt.core.build.managed.ITarget)
 	 */
 	public void setDefaultTarget(ITarget target) {
-		if (defaultTarget != null && defaultTarget.getId().equals(target.getId())) {
-			return;
+		// Sanity
+		if (target == null) return;
+		
+		// Make sure there is something to change 
+		if (!target.equals(defaultTarget)) {
+			defaultTarget = target;
+			defaultTargetId = target.getId();
+			persistDefaultTarget();
 		}
-		defaultTarget = target;		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setDirty(boolean)
 	 */
 	public void setDirty(boolean isDirty) {
+		// Reset the dirty status here
 		this.isDirty = isDirty;
+		// and in the contained targets
+		Iterator iter = getTargets().listIterator();
+		while (iter.hasNext()) {
+			ITarget target = (ITarget)iter.next();
+			target.setDirty(isDirty);
+		}
 	}
 
 	/**
@@ -979,7 +1016,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			if (!owner.equals(resource)) {
 				owner = resource;
 				// Do the same for the targets
-				Iterator iter = targetList.listIterator();
+				Iterator iter = getTargets().listIterator();
 				while(iter.hasNext()) {
 					ITarget target = (ITarget) iter.next();
 					target.updateOwner(resource);

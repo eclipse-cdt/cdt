@@ -148,7 +148,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		
 		// Save the build options
 		monitor.subTask(ManagedBuilderUIPlugin.getResourceString(MSG_SAVE));
-		ManagedBuildManager.saveBuildInfo(newProject);
+		ManagedBuildManager.saveBuildInfo(newProject, true);
 		monitor.done();
 	}
 

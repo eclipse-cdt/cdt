@@ -33,11 +33,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Configuration extends BuildObject implements IConfiguration {
-
-	private ITarget target;
+	private boolean isDirty = false;
 	private IConfiguration parent;
-	private List toolReferences;
 	private boolean resolved = true;
+	private ITarget target;
+	private List toolReferences;
 
 	/**
 	 * Build a configuration from the project manifest file.
@@ -308,6 +308,14 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isDirty()
+	 */
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
 	 */
 	public IConfiguration getParent() {
@@ -418,15 +426,27 @@ public class Configuration extends BuildObject implements IConfiguration {
 			element.appendChild(toolRefElement);
 			toolRef.serialize(doc, toolRefElement);
 		}
+		
+		// I am clean now
+		isDirty = false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setDirty(boolean)
+	 */
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, boolean)
 	 */
 	public void setOption(IOption option, boolean value) throws BuildException {
 		// Is there a delta
-		if (option.getBooleanValue() != value)
+		if (option.getBooleanValue() != value) {
 			createOptionReference(option).setValue(value);
+			isDirty = true;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -441,8 +461,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 		else {
 			oldValue = option.getStringValue(); 
 		}
-		if (oldValue != null && !oldValue.equals(value))
+		if (oldValue != null && !oldValue.equals(value)) {
 			createOptionReference(option).setValue(value);
+			isDirty = true;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -471,8 +493,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 				oldValue = new String[0];
 				break;
 		}
-		if(!Arrays.equals(value, oldValue))
+		if(!Arrays.equals(value, oldValue)) {
 			createOptionReference(option).setValue(value);
+			isDirty = true;
+		} 
 	}
 
 	/* (non-Javadoc)
@@ -489,8 +513,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 			}
 			// Set the ref's command
 			if (ref != null) {
-				ref.setToolCommand(command);
+				isDirty = ref.setToolCommand(command);
 			}
 		}
 	}
+
 }

@@ -37,11 +37,12 @@ public class Target extends BuildObject implements ITarget {
 	private String artifactName;
 	private String binaryParserId;
 	private String cleanCommand;
+	private List configList;
 	private Map configMap;
-	private List configurations;
 	private String defaultExtension;
 	private String extension;
 	private boolean isAbstract = false;
+	private boolean isDirty = false;
 	private boolean isTest = false;
 	private String makeArguments;
 	private String makeCommand;
@@ -252,12 +253,10 @@ public class Target extends BuildObject implements ITarget {
 				ToolReference current = (ToolReference)refIter.next();
 				current.resolveReferences();
 			}
-			if (configurations != null) {
-				Iterator configIter = configurations.iterator();
-				while (configIter.hasNext()) {
-					Configuration current = (Configuration)configIter.next();
-					current.resolveReferences();
-				}
+			Iterator configIter = getConfigurationList().iterator();
+			while (configIter.hasNext()) {
+				Configuration current = (Configuration)configIter.next();
+				current.resolveReferences();
 			}
 		}
 	}
@@ -267,12 +266,13 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public void removeConfiguration(String id) {
 		// Remove the specified configuration from the list and map
-		Iterator iter = configurations.listIterator();
+		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
 			 IConfiguration config = (IConfiguration)iter.next();
 			 if (config.getId().equals(id)) {
-			 	configurations.remove(config);
-				configMap.remove(id);
+			 	getConfigurationList().remove(config);
+				getConfigurationMap().remove(id);
+				isDirty = true;
 			 	break;
 			 }
 		}
@@ -310,14 +310,18 @@ public class Target extends BuildObject implements ITarget {
 		if (makeArguments != null) {
 			element.setAttribute(MAKE_ARGS, makeArguments);
 		}
-				
-		if (configurations != null)
-			for (int i = 0; i < configurations.size(); ++i) {
-				Configuration config = (Configuration)configurations.get(i);
-				Element configElement = doc.createElement(IConfiguration.CONFIGURATION_ELEMENT_NAME);
-				element.appendChild(configElement);
-				config.serialize(doc, configElement);
-			}
+
+		// Serialize the configuration settings
+		Iterator iter = getConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			Configuration config = (Configuration) iter.next();
+			Element configElement = doc.createElement(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+			element.appendChild(configElement);
+			config.serialize(doc, configElement);
+		}
+		
+		// I am clean now
+		isDirty = false;
 	}
 
 	/* (non-javadoc)
@@ -567,13 +571,34 @@ public class Target extends BuildObject implements ITarget {
 	}
 	
 	/* (non-Javadoc)
+	 * Safe accessor for the list of configurations.
+	 * 
+	 * @return List containing the configurations
+	 */
+	private List getConfigurationList() {
+		if (configList == null) {
+			configList = new ArrayList();
+		}
+		return configList;
+	}
+	
+	/* (non-Javadoc)
+	 * Safe accessor for the map of configuration ids to configurations
+	 * 
+	 * @return
+	 */
+	private Map getConfigurationMap() {
+		if (configMap == null) {
+			configMap = new HashMap();
+		}
+		return configMap;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getConfigurations()
 	 */
 	public IConfiguration[] getConfigurations() {
-		if (configurations != null)
-			return (IConfiguration[])configurations.toArray(new IConfiguration[configurations.size()]);
-		else
-			return emptyConfigs;
+		return (IConfiguration[])getConfigurationList().toArray(new IConfiguration[getConfigurationList().size()]);
 	}
 
 
@@ -665,19 +690,15 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
 	 */
 	public IConfiguration getConfiguration(String id) {
-		return (IConfiguration)configMap.get(id);
+		return (IConfiguration)getConfigurationMap().get(id);
 	}
 
 	/**
 	 * @param configuration
 	 */
 	public void addConfiguration(IConfiguration configuration) {
-		if (configurations == null) {
-			configurations = new ArrayList();
-			configMap = new HashMap();
-		}
-		configurations.add(configuration);
-		configMap.put(configuration.getId(), configuration);
+		getConfigurationList().add(configuration);
+		getConfigurationMap().put(configuration.getId(), configuration);
 	}
 
 	/* (non-Javadoc)
@@ -687,6 +708,25 @@ public class Target extends BuildObject implements ITarget {
 		return isAbstract;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#isDirty()
+	 */
+	public boolean isDirty() {
+		// If I need saving, just say yes
+		if (isDirty) {
+			return true;
+		}
+		
+		// Iterate over the configurations and ask them if they need saving
+		Iterator iter = getConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			if (((IConfiguration)iter.next()).isDirty()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#isTestTarget()
 	 */
@@ -705,6 +745,7 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id) {
+		isDirty = true;
 		return new Configuration(this, parent, id);
 	}
 
@@ -723,6 +764,7 @@ public class Target extends BuildObject implements ITarget {
 	public void setArtifactExtension(String extension) {
 		if (extension != null) {
 			this.extension = extension;
+			isDirty = true;
 		}
 	}
 
@@ -731,16 +773,32 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public void setArtifactName(String name) {
 		if (name != null) {
-			artifactName = name;		
+			artifactName = name;
+			isDirty = true;
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setDirty(boolean)
+	 */
+	public void setDirty(boolean isDirty) {
+		// Override the dirty flag here
+		this.isDirty = isDirty;
+		// and in the configurations
+		Iterator iter = getConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			IConfiguration config = (IConfiguration)iter.next();
+			config.setDirty(isDirty);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setMakeArguments(java.lang.String)
 	 */
 	public void setMakeArguments(String makeArgs) {
 		if (makeArgs != null && !getMakeArguments().equals(makeArgs)) {
 			makeArguments = makeArgs;
+			isDirty = true;
 		}
 	}
 
@@ -750,6 +808,7 @@ public class Target extends BuildObject implements ITarget {
 	public void setMakeCommand(String command) {
 		if (command != null && !getMakeCommand().equals(command)) {
 			makeCommand = command;
+			isDirty = true;
 		}
 	}
 

@@ -46,6 +46,19 @@ public interface IConfiguration extends IBuildObject {
 	public ITool[] getTools();
 
 	/**
+	 * Answers <code>true</code> the receiver has changes that need to be saved 
+	 * in the project file, else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean isDirty();
+
+	/**
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
+
+	/**
 	 * Sets the name of the receiver to the value specified in the argument
 	 * 
 	 * @param name
@@ -57,6 +70,7 @@ public interface IConfiguration extends IBuildObject {
 	 * 
 	 * @param option The option to change.
 	 * @param value The value to apply to the option.
+	 * 
 	 * @throws BuildException
 	 */
 	public void setOption(IOption option, boolean value) 
@@ -67,6 +81,8 @@ public interface IConfiguration extends IBuildObject {
 	 * 
 	 * @param option The option that will be effected by change.
 	 * @param value The value to apply to the option.
+	 * 
+	 * @throws BuildException
 	 */
 	public void setOption(IOption option, String value)
 		throws BuildException;
@@ -76,6 +92,8 @@ public interface IConfiguration extends IBuildObject {
 	 * 
 	 * @param option The option to change.
 	 * @param value The values to apply to the option.
+	 * 
+	 * @throws BuildException
 	 */
 	public void setOption(IOption option, String[] value)
 		throws BuildException;
@@ -83,8 +101,8 @@ public interface IConfiguration extends IBuildObject {
 	/**
 	 * Overrides the tool command for a tool defined in the receiver.
 	 * 
-	 * @param tool
-	 * @param command
+	 * @param tool The tool that will have its command modified
+	 * @param command The command
 	 */
 	public void setToolCommand(ITool tool, String command);
 

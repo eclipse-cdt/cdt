@@ -366,10 +366,14 @@ public class ToolReference extends AbstractToolReference {
 	 * Sets the command in the receiver to be the argument.
 	 * 
 	 * @param cmd
-	 */
-	public void setToolCommand(String cmd) {
+	 * @return <code>true</code> if the call results in a chnaged command, else <code>false</code>
+	 */	
+	public boolean setToolCommand(String cmd) {
 		if (cmd != null && !cmd.equals(command)) {
 			command = cmd;
+			return true;
+		} else {
+			return false;
 		}
 	}
 	

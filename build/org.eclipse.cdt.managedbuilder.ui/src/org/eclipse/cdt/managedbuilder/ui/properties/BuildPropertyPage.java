@@ -75,6 +75,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private static final String BUILD_TOOLS_LABEL = LABEL + ".BuildToolTree";	//$NON-NLS-1$
 	private static final String PLATFORM_LABEL = LABEL + ".Platform";	//$NON-NLS-1$
 	private static final String CONFIG_LABEL = LABEL + ".Configuration";	//$NON-NLS-1$
+	private static final String ALL_CONFS = PREFIX + ".selection.configuration.all";	//$NON-NLS-1$
 	private static final String ACTIVE_LABEL = LABEL + ".Active";	//$NON-NLS-1$
 	private static final String SETTINGS_LABEL = LABEL + ".Settings";	//$NON-NLS-1$
 	private static final String TREE_LABEL = LABEL + ".ToolTree";	//$NON-NLS-1$
@@ -453,8 +454,15 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// If there is nothing in config selection widget just bail
 		if (configSelector.getItemCount() == 0) return;
 		
-		// Cache the selected config 
-		selectedConfiguration = configurations[configSelector.getSelectionIndex()];
+		// Check if the user has selected the "all" configuration
+		int selectionIndex = configSelector.getSelectionIndex();
+		if (selectionIndex >= configurations.length) {
+			// This is the all config
+			return;
+		} else {
+			// Cache the selected config 
+			selectedConfiguration = configurations[selectionIndex];
+		}
 		
 		// Set the content provider for the list viewer
 		ToolListContentProvider provider = new ToolListContentProvider();
@@ -768,7 +776,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		
 		// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
-		ManagedBuildManager.saveBuildInfo(getProject());
+		ManagedBuildManager.saveBuildInfo(getProject(), false);
 		return true;
 	}
 	
@@ -782,6 +790,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();
 		configSelector.setItems(getConfigurationNames());
+		configSelector.add(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS));
 		
 		// Make sure the active configuration is selected
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());

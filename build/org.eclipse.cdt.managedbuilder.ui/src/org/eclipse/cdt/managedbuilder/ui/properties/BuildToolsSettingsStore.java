@@ -35,11 +35,20 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	private boolean dirtyFlag;
 	private IConfiguration owner;
 	
-	public BuildToolsSettingsStore (IConfiguration config) {	
+	/**
+	 * 
+	 */
+	public BuildToolsSettingsStore() {
 		listenerList = new ListenerList();
-		dirtyFlag = false;
+		dirtyFlag = false;		
+	}
+
+	/**
+	 * @param config
+	 */
+	public BuildToolsSettingsStore (IConfiguration config) {
+		this();
 		owner = config;
-			
 		// Now populate the options map
 		populateSettingsMap();
 	}

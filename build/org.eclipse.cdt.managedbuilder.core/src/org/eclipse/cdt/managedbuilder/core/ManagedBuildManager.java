@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
@@ -206,18 +207,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param config
 	 * @param option
 	 */
-	private static void setDirty(IConfiguration config, IOption option) {
-		// Set the build info dirty so builder will rebuild
-		IResource resource = config.getOwner();
-		IManagedBuildInfo info = getBuildInfo(resource);
-		info.setDirty(true);
-
+	private static void notifyListeners(IConfiguration config, IOption option) {
 		// Continue if change is something that effect the scanner
 		if (!(option.getValueType() == IOption.INCLUDE_PATH 
 			|| option.getValueType() == IOption.PREPROCESSOR_SYMBOLS)) {
 			return;
 		}
 		// Figure out if there is a listener for this change
+		IResource resource = config.getOwner();
 		List listeners = (List) getBuildModelListeners().get(resource);
 		if (listeners == null) {
 			return;
@@ -237,8 +234,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void setOption(IConfiguration config, IOption option, boolean value) {
 		try {
+			// Request a value change and set dirty if real change results
 			config.setOption(option, value);
-			setDirty(config, option);
+			notifyListeners(config, option);
 		} catch (BuildException e) {
 			return;
 		}
@@ -254,7 +252,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static void setOption(IConfiguration config, IOption option, String value) {
 		try {
 			config.setOption(option, value);
-			setDirty(config, option);
+			notifyListeners(config, option);
 		} catch (BuildException e) {
 			return;
 		}
@@ -270,19 +268,35 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static void setOption(IConfiguration config, IOption option, String[] value) {
 		try {
 			config.setOption(option, value);
-			setDirty(config, option);
+			notifyListeners(config, option);				
 		} catch (BuildException e) {
 			return;
 		}
 	}
 
 	/**
+	 * @param config
+	 * @param tool
+	 * @param command
+	 */
+	public static void setToolCommand(IConfiguration config, ITool tool, String command) {
+		// The tool may be a reference.
+		if (tool instanceof ToolReference) {
+			// If so, just set the command in the reference
+			((ToolReference)tool).setToolCommand(command);
+		} else {
+			config.setToolCommand(tool, command);
+		}
+	}
+	
+	/**
 	 * Saves the build information associated with a project and all resources
 	 * in the project to the build info file.
 	 * 
 	 * @param project
+	 * @param force 
 	 */
-	public static void saveBuildInfo(IProject project) {
+	public static void saveBuildInfo(IProject project, boolean force) {
 		// Create document
 		Document doc = new DocumentImpl();
 		Element rootElement = doc.createElement(ROOT_ELEM_NAME);
@@ -290,30 +304,31 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		// Save the build info
 		ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
-		if (buildInfo != null)
+		if (buildInfo != null && (force == true || buildInfo.isDirty())) {
 			buildInfo.serialize(doc, rootElement);
 		
-		// Save the document
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-		String xml = null;
-		try {
-			Serializer serializer
+			// Save the document
+			ByteArrayOutputStream s = new ByteArrayOutputStream();
+			OutputFormat format = new OutputFormat();
+			format.setIndenting(true);
+			format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
+			String xml = null;
+			try {
+				Serializer serializer
 				= SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format); //$NON-NLS-1$
-			serializer.asDOMSerializer().serialize(doc);
-			xml = s.toString("UTF8"); //$NON-NLS-1$		
-			IFile rscFile = project.getFile(FILE_NAME);
-			InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-			// update the resource content
-			if (rscFile.exists()) {
-				rscFile.setContents(inputStream, IResource.FORCE, null);
-			} else {
-				rscFile.create(inputStream, IResource.FORCE, null);
+				serializer.asDOMSerializer().serialize(doc);
+				xml = s.toString("UTF8"); //$NON-NLS-1$		
+				IFile rscFile = project.getFile(FILE_NAME);
+				InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+				// update the resource content
+				if (rscFile.exists()) {
+					rscFile.setContents(inputStream, IResource.FORCE, null);
+				} else {
+					rscFile.create(inputStream, IResource.FORCE, null);
+				}
+			} catch (Exception e) {
+				return;
 			}
-		} catch (Exception e) {
-			return;
 		}
 	}
 
@@ -542,7 +557,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		if (buildInfo == null && create) {
 			try {
+				// Create a new build info object for the project
 				buildInfo = new ManagedBuildInfo(resource);
+				// Associate the build info with the project for the duration of the session
 				resource.setSessionProperty(buildInfoProperty, buildInfo);
 			} catch (CoreException e) {
 				buildInfo = null;
@@ -668,5 +685,5 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IConfigurationElement getConfigElement(IBuildObject buildObj) {
 		return (IConfigurationElement)getConfigElementMap().get(buildObj);
 	}
-	
+
 }

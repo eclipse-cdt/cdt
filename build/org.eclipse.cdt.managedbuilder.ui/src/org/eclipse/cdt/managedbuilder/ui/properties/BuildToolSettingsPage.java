@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.graphics.Point;
@@ -77,13 +77,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			return result;
 		}
 		
-		// The tool may be a reference.
-		if (tool instanceof ToolReference) {
-			// If so, just set the command in the reference
-			((ToolReference)tool).setToolCommand(command);
-		} else {
-			configuration.setToolCommand(tool, command);
-		}
+		// Ask the build system manager to change the tool command
+		ManagedBuildManager.setToolCommand(configuration, tool, command);
+		
 		return result;
 	}
 }

@@ -1,3 +1,8 @@
+2004-04-26 Mikhail Khodjaiants
+	The notification of the Breakpoint Manager on breakpoint creation has been 
+	moved to CBreakpointUpdater.
+	* CDebugTarget.java
+
 2004-04-22 Mikhail Khodjaiants
 	Additional fix for bug 58711: Breakpoint race condition.
 	* CBreakpointManager.java

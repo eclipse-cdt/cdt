@@ -15,29 +15,38 @@ import org.eclipse.core.runtime.IPath;
 
 public interface IMakeBuilderInfo {
 	IPath getBuildLocation();
-	boolean isStopOnError();
-	boolean isDefaultBuildCmd();
-	IPath getBuildCommand();
-	String getBuildArguments();
-	
-	boolean isAutoBuildEnable();
-	String getAutoBuildTarget();
-	boolean isIncrementalBuildEnabled();
-	String getIncrementalBuildTarget();
-	boolean isFullBuildEnabled();
-	String getFullBuildTarget();
-    
 	void setBuildLocation(IPath location) throws CoreException;
-    void setStopOnError(boolean on) throws CoreException;
-	void setUseDefaultBuildCmd(boolean on) throws CoreException;
-    void setBuildCommand(IPath command) throws CoreException;
-	void setBuildArguments(String args) throws CoreException;
-    
-    void setAutoBuildEnable(boolean enabled) throws CoreException;
-	void setAutoBuildTarget(String target) throws CoreException;
-	void setIncrementalBuildEnable(boolean enabled) throws CoreException;
-	void setIncrementalBuildTarget(String target) throws CoreException;
-	void setFullBuildEnable(boolean enabled) throws CoreException;
-	void setFullBuildTarget(String target) throws CoreException;
-}
 
+	boolean isStopOnError();
+	void setStopOnError(boolean on) throws CoreException;
+
+	boolean isDefaultBuildCmd();
+	void setUseDefaultBuildCmd(boolean on) throws CoreException;
+
+	IPath getBuildCommand();
+	void setBuildCommand(IPath command) throws CoreException;
+
+	String getBuildArguments();
+	void setBuildArguments(String args) throws CoreException;
+
+	boolean isAutoBuildEnable();
+	void setAutoBuildEnable(boolean enabled) throws CoreException;
+
+	String getAutoBuildTarget();
+	void setAutoBuildTarget(String target) throws CoreException;
+
+	boolean isIncrementalBuildEnabled();
+	void setIncrementalBuildEnable(boolean enabled) throws CoreException;
+
+	String getIncrementalBuildTarget();
+	void setIncrementalBuildTarget(String target) throws CoreException;
+
+	boolean isFullBuildEnabled();
+	void setFullBuildEnable(boolean enabled) throws CoreException;
+
+	String getFullBuildTarget();
+	void setFullBuildTarget(String target) throws CoreException;
+
+	String[] getErrorParsers();
+	void setErrorParsers(String[] parsers) throws CoreException;
+}

@@ -10,7 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -43,6 +46,7 @@ public class BuildInfoFactory {
 	static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild"; //$NON-NLS-1$
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
+	static final String ERROR_PARSERS = PREFIX + ".buildErrorParsers"; //$NON-NLS-1$
 
 	private abstract static class Store implements IMakeBuilderInfo {
 
@@ -175,6 +179,27 @@ public class BuildInfoFactory {
 
 		public void setBuildArguments(String args) throws CoreException {
 			putValue(BUILD_ARGUMENTS, args);
+		}
+		
+		public String[] getErrorParsers() {
+			String parsers = getString(ERROR_PARSERS);
+			if (parsers != null && parsers.length() > 0) {
+				StringTokenizer tok = new StringTokenizer(parsers, ";");
+				List list = new ArrayList(tok.countTokens());
+				while (tok.hasMoreElements()) {
+					list.add(tok.nextToken());
+				}
+				return (String[]) list.toArray(new String[list.size()]);
+			}
+			return new String[0];
+		}
+		
+		public void setErrorParsers(String[] parsers) throws CoreException {
+			StringBuffer buf = new StringBuffer();
+			for (int i = 0; i < parsers.length; i++) {
+				buf.append(parsers[i]).append(';');
+			}
+			putValue(ERROR_PARSERS, buf.toString());
 		}
 	}
 

@@ -139,7 +139,7 @@ public class MakeBuilder extends ACBuilder {
 					}
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}
-				ErrorParserManager epm = new ErrorParserManager(this);
+				ErrorParserManager epm = new ErrorParserManager(getProject(), this, info.getErrorParsers());
 				epm.setOutputStream(cos);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();

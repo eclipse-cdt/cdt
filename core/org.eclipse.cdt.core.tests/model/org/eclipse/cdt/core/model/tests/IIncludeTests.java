@@ -7,10 +7,10 @@ package org.eclipse.cdt.core.model.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.model.tests.IntegratedCModelTest;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CElement;
 
 /**
  * @author bnicolle
@@ -80,7 +80,7 @@ public class IIncludeTests extends IntegratedCModelTest {
 			new String("resync_after_bad_parse_3"),
 			new String("invalid.h"),  // C-spec does not allow this, but that's OK for our present purposes
 			new String("myInclude1.h"),
-			new String("vers2.h")						
+//			new String("vers2.h")						
 		};
 		assertEquals( getIncludeNameList.length, theIncludes.length );
 		for( int i=0; i<getIncludeNameList.length; i++ )
@@ -88,7 +88,7 @@ public class IIncludeTests extends IntegratedCModelTest {
 			IInclude inc1 = theIncludes[i];
 			assertEquals( getIncludeNameList[i], inc1.getIncludeName() );
 		}
-//		checkLineNumbers((CElement)inc1, 2, 2);
+		
 	}
 	
 	public void testIsStandard()
@@ -111,5 +111,6 @@ public class IIncludeTests extends IntegratedCModelTest {
 			assertEquals( isStandardList[i], inc1.isStandard() );
 		}
 	}
+	
 }
 

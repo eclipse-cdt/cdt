@@ -172,24 +172,6 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertFalse(j.hasNext());
 	}
 	
-	public void testThisInTemplatedMemberFunction_bug71331() throws Exception {
-		// dereferencing 'this' in a templated member function
-		try {
-			parse("class A { \n int f() {return 0;} \n template<typename T> int g(T*) { return this->f(); } \n }; \n");//$NON-NLS-1$
-			fail();
-		} catch (ParserException e) {
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("class A { \n int f() {return 0;} \n template<typename T> int g(T*) { return this->f(); } \n }; \n").getDeclarations();//$NON-NLS-1$
-//		IASTAbstractTypeSpecifierDeclaration cd = (IASTAbstractTypeSpecifierDeclaration) i.next();
-//		assertFalse(i.hasNext());
-//		IASTClassSpecifier cs = (IASTClassSpecifier) cd.getTypeSpecifier();
-//		Iterator j = cs.getDeclarations();
-//		IASTMethod md = (IASTMethod) j.next();
-//		IASTTemplateDeclaration tmd = (IASTTemplateDeclaration) j.next();
-//		assertFalse(j.hasNext());
-	}
-	
 	public void testParametrizedTypeDefinition_bug69751() throws Exception {
 		try {
 			// a typedef refers to an unknown type in a template parameter

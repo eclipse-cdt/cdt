@@ -85,14 +85,14 @@ public class CFormattedMemoryBlock extends CDebugElement
 			Arrays.fill( fDirtyBytes, false );
 		}
 		
-		public void set( int start, int end, boolean value )
+		public void set( int start, int length, boolean value )
 		{
-			Arrays.fill( fDirtyBytes, start, end, value );
+			Arrays.fill( fDirtyBytes, start, start + length, value );
 		}
 
 		public void set( ByteRange range, boolean value )
 		{
-			Arrays.fill( fDirtyBytes, range.getStart(), range.getLength(), value );
+			Arrays.fill( fDirtyBytes, range.getStart(), range.getStart() + range.getLength(), value );
 		}
 		
 		public ByteRange[] getDirtyRanges( byte[] bytes )
@@ -599,7 +599,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	{
 		byte[] bytes = itemToBytes( newValue.toCharArray() );
 		setBytes( index * getWordSize(), bytes );
-		fDirtyBytes.set( index * getWordSize(), index * getWordSize() + bytes.length, true );
+		fDirtyBytes.set( index * getWordSize(), bytes.length, true );
 		resetRows();
 	}
 	

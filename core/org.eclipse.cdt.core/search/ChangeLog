@@ -5,6 +5,9 @@
 	   - adding a project to scope, include referenced projects
 	   - adding individual CElements to scope
 	
+2003-08-08 Andrew Niefer
+	- add function parameter information to search results
+
 2003-08-06 Andrew Niefer
 	- Create OrPattern which matches for search if any of its constituent patterns matches
 	- modified MatchLocator to support the OrPattern

@@ -13,10 +13,8 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -55,18 +53,10 @@ public class PathNameSorter extends ViewerSorter {
 			
 		if( name2 == null )
 			name2 = ""; //$NON-NLS-1$
-			
-		IResource resource = null;
-		if( entry1 != null)
-			resource = entry1.getResource();
-			
-		if( resource != null && entry2 != null && resource == entry2.getResource() ) {
-
-			if( resource instanceof IProject || resource.getFileExtension().equalsIgnoreCase("jar") || resource.getFileExtension().equalsIgnoreCase("zip") ) //$NON-NLS-2$ //$NON-NLS-1$
-				// binary archives
-				return getCollator().compare(name1, name2);
-
-			// Sort by marker start position if resource is equal.			
+		
+		int compare = getCollator().compare( name1, name2 );
+		
+		if( compare == 0 ){
 			int startPos1 = -1;
 			int startPos2 = -1;
 			IMarker marker1 = entry1.getSelectedMarker();
@@ -76,11 +66,11 @@ public class PathNameSorter extends ViewerSorter {
 				startPos1 = marker1.getAttribute( IMarker.CHAR_START, -1 );
 			if (marker2 != null)
 				startPos2 = marker2.getAttribute( IMarker.CHAR_START, -1 );
-				
-			return startPos1 - startPos2;
+			
+			compare = startPos1 - startPos2;
 		}
 		
-		return getCollator().compare(name1, name2);
+		return compare;
 	}
 
 	/*

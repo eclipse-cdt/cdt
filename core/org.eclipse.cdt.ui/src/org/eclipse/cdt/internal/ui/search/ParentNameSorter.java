@@ -13,7 +13,8 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CSearchResultLabelProvider;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -33,11 +34,18 @@ public class ParentNameSorter extends ViewerSorter {
 		String name1= null;
 		String name2= null;
 		
-		if (e1 instanceof ISearchResultViewEntry)
-			name1= _labelProvider.getText(e1);
+		ISearchResultViewEntry entry1 = null;
+		ISearchResultViewEntry entry2 = null;
+		
+		if (e1 instanceof ISearchResultViewEntry){
+			name1 = _labelProvider.getText(e1);
+			entry1 = (ISearchResultViewEntry)e1;
+		}
 			
-		if (e2 instanceof ISearchResultViewEntry)
-			name2= _labelProvider.getText(e2);
+		if (e2 instanceof ISearchResultViewEntry){
+			name2 = _labelProvider.getText(e2);
+			entry2 = (ISearchResultViewEntry)e2;
+		}
 			
 		if (name1 == null)
 			name1= ""; //$NON-NLS-1$
@@ -45,7 +53,23 @@ public class ParentNameSorter extends ViewerSorter {
 		if (name2 == null)
 			name2= ""; //$NON-NLS-1$
 			
-		return getCollator().compare(name1, name2);
+		int compare = getCollator().compare( name1, name2 );
+		
+		if( compare == 0 ){
+			int startPos1 = -1;
+			int startPos2 = -1;
+			IMarker marker1 = entry1.getSelectedMarker();
+			IMarker marker2 = entry2.getSelectedMarker();
+
+			if (marker1 != null)
+				startPos1 = marker1.getAttribute( IMarker.CHAR_START, -1 );
+			if (marker2 != null)
+				startPos2 = marker2.getAttribute( IMarker.CHAR_START, -1 );
+			
+			compare = startPos1 - startPos2;
+		}
+		
+		return compare;
 	}
 
 	/*

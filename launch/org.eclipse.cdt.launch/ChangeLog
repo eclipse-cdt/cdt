@@ -1,3 +1,11 @@
+2002-12-03 Alain Magloire
+
+	* src/.../internal/LocalCLaunchConfigurationDelegate.java(exec):
+	Change the signature to take Properties for the environment get
+	the default environment and add it to new environment to it.
+	Use ProcessFactory to run the Application, with the new environment
+	array.
+
 2002-11-23 Alain Magloire
 
 	* src/.../internal/ui/CApplicationLaunchShortcut.java (searchAndLaunch):

@@ -1,5 +1,17 @@
 2003-01-16 Alain Magloire
 
+	Process gdbinit configuration file.
+
+	* src/.../mi/core/MIPlugin.java (createCSession): Takes now two new
+	arguments for working directory and configuration file gdbinit.
+	* src/.../mi/core/GDBDebugger.java (createAttachSession):
+	(createCoreSession): pass the working directory and gdbinit file
+	(createLaunchSession): pass the working directory and gdbinit file
+	* src/.../mi/core/IMILaunchConfigurationConstants.java:
+	New constant ATTR_GDB_INIT.
+
+2003-01-16 Alain Magloire
+
 	* src/.../mi/core/cdi/EventManager.java (processSuspended):
 	Also process the Shared lib by calling update on the manager.
 

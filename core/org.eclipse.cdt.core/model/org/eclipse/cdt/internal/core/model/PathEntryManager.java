@@ -1193,59 +1193,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		markerTask.schedule();
 	}
 
-	public void updateMarkers(final ICProject[] cProjects) {
-		Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
-						
-						/* (non-Javadoc)
-						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-						public void run(IProgressMonitor monitor) throws CoreException {
-							for(int i = 0; i < cProjects.length; i++) {
-								IPathEntry[] entries = getCachedResolvedPathEntries(cProjects[i]);
-								if (entries != null) {
-									IProject project = cProjects[i].getProject();
-									ArrayList problemList = new ArrayList();
-									ICModelStatus status = validatePathEntry(cProjects[i], entries);
-									if (!status.isOK()) {
-										problemList.add(status);
-									}
-									for (int j = 0; j < entries.length; j++) {
-										status = validatePathEntry(cProjects[i], entries[j], true, false);
-										if (!status.isOK()) {
-											problemList.add(status);
-										}
-									}
-									ICModelStatus[] problems = new ICModelStatus[problemList.size()];
-									problemList.toArray(problems);
-									if (hasPathEntryProblemMarkersChange(project, problems)) {
-										flushPathEntryProblemMarkers(project);
-										for (int j = 0; j < problems.length; ++j) {
-											createPathEntryProblemMarker(project, problems[j]);
-										}
-									}
-								}
-							}
-						}
-					}, null);
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		markerTask.setRule(CCorePlugin.getWorkspace().getRoot());
-		markerTask.schedule();
-	}
-
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
 		ArrayList list = new ArrayList();
 

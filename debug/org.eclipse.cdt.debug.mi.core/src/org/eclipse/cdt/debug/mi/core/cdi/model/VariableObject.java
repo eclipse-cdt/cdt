@@ -148,19 +148,19 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			ICDITarget target = getTarget();
 			Session session = (Session) (target.getSession());
 			SourceManager sourceMgr = (SourceManager) session.getSourceManager();
-			String typename = getTypeName();
+			String nametype = getTypeName();
 			try {
-				type = sourceMgr.getType(target, typename);
+				type = sourceMgr.getType(target, nametype);
 			} catch (CDIException e) {
 				// Try with ptype.
 				try {
-					String ptype = sourceMgr.getDetailTypeName(typename);
+					String ptype = sourceMgr.getDetailTypeName(nametype);
 					type = sourceMgr.getType(target, ptype);
 				} catch (CDIException ex) {
 				}
 			}
 			if (type == null) {
-				type = new IncompleteType(target, typename);
+				type = new IncompleteType(target, nametype);
 			}
 		}
 		return type;

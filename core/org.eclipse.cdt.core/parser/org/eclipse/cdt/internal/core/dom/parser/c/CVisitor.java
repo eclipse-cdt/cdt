@@ -898,9 +898,31 @@ public class CVisitor {
 				blockItem = parent;
 			else 
 				blockItem = null;
+			
+			if( blockItem instanceof IASTTranslationUnit )
+			    break;
 		}
 		
+		if( blockItem != null)
+		    return externalBinding( (IASTTranslationUnit) blockItem, name );
+		
 		return null;
+	}
+	
+	private static IBinding externalBinding( IASTTranslationUnit tu, IASTName name ){
+	    IASTNode parent = name.getParent();
+	    IBinding external = null;
+	    if( parent instanceof IASTIdExpression ){
+	        if( parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME ){
+	            //external function
+	            external = new CExternalFunction( tu, name );
+	        } else {
+	            //external variable
+	            external = new CExternalVariable( tu, name );
+	        }
+	        ((CScope)tu.getScope()).addBinding( external );
+	    }
+	    return external;
 	}
 	
 	private static IBinding checkForBinding( IASTDeclaration declaration, IASTName name ){

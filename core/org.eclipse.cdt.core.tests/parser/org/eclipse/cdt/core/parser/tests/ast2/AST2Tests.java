@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -39,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
+import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
@@ -2129,4 +2130,49 @@ public class AST2Tests extends AST2BaseTest {
         assertFalse( mod.isVolatile() );
     }
     
+    public void testExternalVariable() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f() {               \n" ); //$NON-NLS-1$
+        buffer.append( "   if( a == 0 )          \n" ); //$NON-NLS-1$
+        buffer.append( "      a = a + 3;         \n" ); //$NON-NLS-1$
+        buffer.append( "}                        \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        CNameCollector col = new CNameCollector();
+        CVisitor.visitTranslationUnit( tu, col );
+        
+        IVariable a = (IVariable) col.getName( 1 ).resolveBinding();
+        assertNotNull( a );
+        assertTrue( a instanceof ICExternalBinding );
+        assertInstances( col, a, 3 );
+    }
+    
+    public void testExternalDefs() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f() {               \n" ); //$NON-NLS-1$
+        buffer.append( "   if( a == 0 )          \n" ); //$NON-NLS-1$
+        buffer.append( "      g( a );            \n" ); //$NON-NLS-1$
+        buffer.append( "   if( a < 0 )           \n" ); //$NON-NLS-1$
+        buffer.append( "      g( a >> 1 );       \n" ); //$NON-NLS-1$
+        buffer.append( "   if( a > 0 )           \n" ); //$NON-NLS-1$
+        buffer.append( "      g( *(&a + 2) );    \n" ); //$NON-NLS-1$
+        buffer.append( "}                        \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        CNameCollector col = new CNameCollector();
+        CVisitor.visitTranslationUnit( tu, col );
+        
+        IVariable a = (IVariable) col.getName( 1 ).resolveBinding();
+        IFunction g = (IFunction) col.getName( 2 ).resolveBinding();
+        assertNotNull( a );
+        assertNotNull( g );
+        assertTrue( a instanceof ICExternalBinding );
+        assertTrue( g instanceof ICExternalBinding );
+        
+        assertEquals( col.size(), 10 );
+        assertInstances( col, a, 6 );
+        assertInstances( col, g, 3 );
+    }
 }

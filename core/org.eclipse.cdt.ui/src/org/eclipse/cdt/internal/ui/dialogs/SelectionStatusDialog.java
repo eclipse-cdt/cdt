@@ -86,7 +86,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * @return the first element of the initial selection.
 	 */
 	protected Object getPrimaryInitialSelection() {
-		List result= getInitialSelections();
+		List result= getInitialElementSelections();
 		if (result == null || result.size() == 0)
 			return null;
 		return result.get(0);	
@@ -124,7 +124,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		fImage= image;
 	}
 	protected void setInitialSelection(int position, Object element) {
-		List l= getInitialSelections();
+		List l= getInitialElementSelections();
 		l.set(position, element);
 		fInitialSelectionSet= true;
 	}

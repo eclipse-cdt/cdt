@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -15,6 +15,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.internal.ui.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
+import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.ui.*;
 
 /**

@@ -11,7 +11,7 @@ import org.eclipse.cdt.core.index.TagFlags;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
-import org.eclipse.cdt.internal.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;

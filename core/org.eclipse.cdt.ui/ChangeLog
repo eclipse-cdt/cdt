@@ -1,3 +1,29 @@
+2003-02-06 David Inglis
+	* src/org/eclipse/cdt/internal/core/DocumentInputStream.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/DocumentInputStream.java (Added)
+	cleanup - moved to ui package
+
+	* src/org/eclipse/cdt/internal/ui/CContentProvider.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/CElementImageDescriptor.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/CElementLabelProvider.java (Removed)
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java (Added)
+	* src/org/eclipse/cdt/ui/CElementImageDescriptor.java (Added)
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java (Added)
+	* src/org/eclipse/cdt/internal/ui/CFileElementWorkingCopy.java
+	* src/org/eclipse/cdt/internal/ui/CWorkbenchAdapter.java
+	* src/org/eclipse/cdt/internal/ui/compare/CStructureCreator.java
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/SelectionStatusDialog.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorErrorTickUpdater.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	cleanup - moved CElementContentProvider/LableProvider/ImageDescrptor out of internal package
+	to ui so it can be cleanly used by others.
+	
+	* src/org/eclipse/cdt/internal/ui/text/eclipse2/CRuleBasedDamagerRepairer.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/text/eclipse2/CRuleBasedPartitioner.java (Removed)
+	cleanup - No longer needed.
+	
 2003-02-04 Alain Magloire
 
 	Cleanup of the annoying error generate by the JDT 2.1 compiler

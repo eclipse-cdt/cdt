@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.ui;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;

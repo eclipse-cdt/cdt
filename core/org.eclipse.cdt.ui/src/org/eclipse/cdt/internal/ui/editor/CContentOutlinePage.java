@@ -41,8 +41,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.CContentProvider;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
@@ -132,7 +132,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer.addSelectionChangedListener(this);
 		
 		//treeViewer.setContentProvider(new CModelContentProvider());
-		treeViewer.setContentProvider(new CContentProvider(true, true));
+		treeViewer.setContentProvider(new CElementContentProvider(true, true));
 		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);

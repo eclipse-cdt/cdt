@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.ui.CContentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.internal.ui.makeview.MakeTargetAction;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -368,7 +368,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		viewer= new ProblemTreeViewer (parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
 		viewer.setUseHashlookup (true);
-		viewer.setContentProvider(new CContentProvider (showCUChildren, true));
+		viewer.setContentProvider(new CElementContentProvider (showCUChildren, true));
 		viewer.setLabelProvider (new DecoratingLabelProvider(
 				new StandardCElementLabelProvider (),
 				PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
@@ -583,8 +583,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		propertyDialogAction.selectionChanged(selection);
 		renameResourceAction.selectionChanged(selection);
 		//sortByTypeAction.selectionChanged(selection);
-		//sortByNameAction.selectionChanged(selection);
-		updateGlobalActions(selection);
+		//sortByNameAction.selectionChanged(selection); 
 	}
  
 	/**
@@ -983,7 +982,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 		if (event.getProperty() == CPluginPreferencePage.PREF_SHOW_CU_CHILDREN) {
 			boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
-			((CContentProvider)viewer.getContentProvider()).setProvideMembers(showCUChildren);
+			((CElementContentProvider)viewer.getContentProvider()).setProvideMembers(showCUChildren);
 			refreshViewer= true;
 		}
 

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core;
+package org.eclipse.cdt.internal.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

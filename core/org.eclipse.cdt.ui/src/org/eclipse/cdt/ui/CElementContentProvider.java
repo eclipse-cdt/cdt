@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.ui;
 
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
@@ -26,9 +26,10 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.cdt.ui.*;
 
-public class CContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener {
+public class CElementContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener {
 
 	protected StructuredViewer fViewer;
 	protected Object fInput;
@@ -62,13 +63,13 @@ public class CContentProvider extends BaseCElementContentProvider implements ITr
 	/**
 	 * Creates a new content provider for C elements.
 	 */
-	public CContentProvider() {
+	public CElementContentProvider() {
 	}
 
 	/**
 	 * Creates a new content provider for C elements.
 	 */
-	public CContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
+	public CElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
 		super(provideMembers, provideWorkingCopy);
 	}
 

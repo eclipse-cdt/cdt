@@ -1,3 +1,9 @@
+2003-02-24 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIRegisterObject.java:
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIArgumentObject.java:
+	Reorganized imports.
+
 2003-02-20 Mikhail Khodjaiants
 	No need to set the source search path to the debugger.
 	* ICSourceLocation.java

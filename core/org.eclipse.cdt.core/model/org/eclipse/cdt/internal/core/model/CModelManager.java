@@ -266,14 +266,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (cproject == null) {
 			cproject = create(file.getProject());
 		}
-		/////////////////////////////////////////////////
-		// FIXME-alain: Quick hack 'til we fix the CDescriptor
-		// This should/must be remove
-		// ".cdtproject" is a special file for CProjects.
-		/////////////////////////////////////////////////
-		if (file.getName().equals(".cdtproject")) { // $NON-NLS-1$
-			return null;
-		}
 		boolean checkIfBinary = false;
 		ICElement celement = null;
 		try {

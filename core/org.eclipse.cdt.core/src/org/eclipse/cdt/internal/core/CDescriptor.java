@@ -101,14 +101,16 @@ public class CDescriptor implements ICDescriptor {
 		if (descriptionPath.toFile().exists()) {
 			IStatus status;
 			String ownerID = readCDTProjectFile(descriptionPath);
-			if (ownerID.equals(id)) {
-				status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
-						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), (Throwable)null); //$NON-NLS-1$
-			} else {
-				status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_MISMATCH,
-						CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId"), (Throwable)null); //$NON-NLS-1$
+			if (!ownerID.equals("")) { //$NON-NLS-1$
+				if (ownerID.equals(id)) {
+					status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
+							CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), (Throwable)null); //$NON-NLS-1$
+				} else {
+					status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_MISMATCH,
+							CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId") + "<requested:" +id +"/ In file:" +ownerID+">", (Throwable)null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+				}
+				throw new CoreException(status);
 			}
-			throw new CoreException(status);
 		}
 		fOwner = new COwner(manager.getOwnerConfiguration(id));
 		fOwner.configure(project, this);

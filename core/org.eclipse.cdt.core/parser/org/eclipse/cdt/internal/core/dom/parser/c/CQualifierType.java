@@ -10,9 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 
 /**
@@ -60,6 +63,17 @@ public class CQualifierType implements ICQualifierType {
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
 	 */
 	public IType getType() {
+		if( declSpec instanceof ICASTTypedefNameSpecifier ){
+			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
+			return (IType) nameSpec.getName().resolveBinding();			
+		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
+			return (IType) elabTypeSpec.getName().resolveBinding();
+		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
+			return (IType) compTypeSpec.getName().resolveBinding();
+		} 
+		
 		return new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
 	}
 }

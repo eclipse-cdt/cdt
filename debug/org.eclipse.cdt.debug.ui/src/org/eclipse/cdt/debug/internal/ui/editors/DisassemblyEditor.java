@@ -15,6 +15,8 @@ import org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor;
  */
 public class DisassemblyEditor extends AsmTextEditor
 {
+	static final public String DISASSEMBLY_EDITOR_ID = "org.eclipse.cdt.debug.ui.DisassemblyEditor"; //$NON-NLS-1$
+
 	/**
 	 * Constructor for DisassemblyEditor.
 	 */

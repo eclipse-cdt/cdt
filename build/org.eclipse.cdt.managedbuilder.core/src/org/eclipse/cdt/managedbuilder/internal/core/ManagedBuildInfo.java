@@ -27,6 +27,8 @@ import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -278,6 +280,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Return the include paths for the default configuration
 		ArrayList paths = new ArrayList();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		IPath root = owner.getLocation().addTrailingSeparator().append(config.getName());
 		ITool[] tools = config.getTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
@@ -288,8 +291,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					try {
 						// Get all the built-in paths from the option
 						paths.addAll(Arrays.asList(option.getBuiltIns()));
-						// Get all the user-defined paths from the option
-						paths.addAll(Arrays.asList(option.getIncludePaths()));
+						// Get all the user-defined paths from the option as absolute paths
+						String[] userPaths = option.getIncludePaths();
+						for (int index = 0; index < userPaths.length; ++index) {
+							IPath userPath = new Path(userPaths[index]);
+							if (userPath.isAbsolute()) {
+								paths.add(userPath.toOSString());
+							} else {
+								IPath absPath = root.addTrailingSeparator().append(userPath);
+								paths.add(absPath.makeAbsolute().toOSString());
+							}
+ 						}
 					} catch (BuildException e) {
 						// we should never get here, but continue anyway
 						continue;

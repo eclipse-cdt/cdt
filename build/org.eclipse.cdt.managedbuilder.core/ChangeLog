@@ -1,3 +1,12 @@
+2003-09-24 Sean Evoy
+	Changed the implementor of IScannerInfo to answer only absolute paths when asked for 
+	includes paths. Users will specify the includes paths in the managed build UI in such a way
+	that the compiler will not complain. Either they will use absolute paths, or they will specify 
+	them relative to the build directory. In the second case, it is easier for the managed builder 
+	to convert the paths relative to this directory into absolute paths before replying tha it is for 
+	the client to figure this out. 
+	* 	src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	
 2003-09-23 Sean Evoy
 	All the work in this patch is for critical bug 43292. In order to manage 
 	configurations, there had to be a method through ITarget to remove 

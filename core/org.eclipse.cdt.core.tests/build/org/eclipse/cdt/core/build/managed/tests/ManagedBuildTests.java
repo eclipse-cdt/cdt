@@ -42,6 +42,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class ManagedBuildTests extends TestCase {
 	private static final boolean boolVal = true;
@@ -153,7 +154,11 @@ public class ManagedBuildTests extends TestCase {
 	 */
 	public void testScannerInfoInterface(){
 		// These are the expected path settings
-		final String[] expectedPaths = {"/usr/gnu/include", "/usr/include", "/opt/gnome/include", "C:\\home\\tester/include"};
+		final String[] expectedPaths = new String[4];
+		expectedPaths[0] = (new Path("/usr/gnu/include")).toOSString();
+		expectedPaths[1] = (new Path("/usr/include")).toOSString();
+		expectedPaths[2] = (new Path("/opt/gnome/include")).toOSString();
+		expectedPaths[3] = (new Path("C:\\home\\tester/include")).toOSString();
 		
 		// Open the test project
 		IProject project = null;

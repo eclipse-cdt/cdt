@@ -1,3 +1,13 @@
+2003-07-04 Andrew Niefer
+	Added new source Folder search
+	Added search/ClassDeclarationPatternTests::testMatchSimpleDeclaration
+	Added search/ClassDeclarationPatternTests::testMatchNamespaceNestedDeclaration
+	Added new resource folder search & containing file classDecl.cpp
+	Added new failures package ord.eclipse.cdt.core.search.failedTests
+	Added new failing test PatternsFailedTests::testBug39652
+	
+	* Note that ClassDeclarationPatternTests and PatternsFailedTests both must be run as plugin tests
+
 2003-07-03 Bogdan Gheorghe
 	Added IndexManagerTest::testAddNewFileToIndex()
 	Added IndexManagerTest::testRemoveProjectFromIndex()

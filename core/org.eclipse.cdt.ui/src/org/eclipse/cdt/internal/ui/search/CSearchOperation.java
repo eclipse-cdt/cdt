@@ -33,21 +33,21 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class CSearchOperation extends WorkspaceModifyOperation {
+public class CSearchOperation extends WorkspaceModifyOperation implements ICSearchConstants{
 
-	public CSearchOperation(IWorkspace workspace, ICElement element, int limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
+	public CSearchOperation(IWorkspace workspace, ICElement element, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_elementPattern = element;
 	}
 
-	public CSearchOperation(IWorkspace workspace, String pattern, boolean caseSensitive, int searchFor, int limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
+	public CSearchOperation(IWorkspace workspace, String pattern, boolean caseSensitive, SearchFor searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_stringPattern = pattern;
 		_caseSensitive = caseSensitive;
 		_searchFor = searchFor;
 	}
 
-	public CSearchOperation(IWorkspace workspace, int limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector ){
+	public CSearchOperation(IWorkspace workspace, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector ){
 		_workspace = workspace;
 		_limitTo = limitTo;
 		_scope = scope;
@@ -87,13 +87,13 @@ public class CSearchOperation extends WorkspaceModifyOperation {
 		}
 		
 		String [] args = new String [] { desc, _scopeDescription };
-		switch( _limitTo ){
-			case ICSearchConstants.DECLARATIONS :
-				return CSearchMessages.getFormattedString( "CSearchOperation.singularDeclarationsPostfix", args ); //$NON_NLS-1$
-			case ICSearchConstants.REFERENCES :
-				return CSearchMessages.getFormattedString( "CSearchOperation.singularReferencesPostfix", args ); //$NON_NLS-1$
-			default:
-				return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurencesPostfix", args ); //$NON_NLS-1$
+
+		if( _limitTo == DECLARATIONS ){
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularDeclarationsPostfix", args ); //$NON_NLS-1$
+		} else if( _limitTo == REFERENCES ){
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularReferencesPostfix", args ); //$NON_NLS-1$
+		} else {
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurencesPostfix", args ); //$NON_NLS-1$
 		}
 	}
 
@@ -110,13 +110,12 @@ public class CSearchOperation extends WorkspaceModifyOperation {
 		}
 		
 		String [] args = new String [] { desc, "{0}", _scopeDescription };
-		switch( _limitTo ){
-			case ICSearchConstants.DECLARATIONS :
-				return CSearchMessages.getFormattedString( "CSearchOperation.pluralDeclarationsPostfix", args ); //$NON_NLS-1$
-			case ICSearchConstants.REFERENCES :
-				return CSearchMessages.getFormattedString( "CSearchOperation.pluralReferencesPostfix", args ); //$NON_NLS-1$
-			default:
-				return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurencesPostfix", args ); //$NON_NLS-1$
+		if( _limitTo == DECLARATIONS ){
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralDeclarationsPostfix", args ); //$NON_NLS-1$
+		} else if ( _limitTo == REFERENCES ){
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralReferencesPostfix", args ); //$NON_NLS-1$
+		} else {
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurencesPostfix", args ); //$NON_NLS-1$
 		}
 	}
 
@@ -138,8 +137,8 @@ public class CSearchOperation extends WorkspaceModifyOperation {
 	private String					_stringPattern;
 	private String					_scopeDescription;
 	private boolean					_caseSensitive;
-	private int						_limitTo;
-	private int						_searchFor;
+	private LimitTo					_limitTo;
+	private SearchFor				_searchFor;
 
 		
 }

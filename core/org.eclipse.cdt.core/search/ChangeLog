@@ -1,3 +1,8 @@
+2003-07-04 Andrew Niefer
+	* Modified ICSearchConstants to use new nested classes SearchFor and LimitTo instead of int
+	  for stronger type safety
+	* Updated MatchLocator to invoke parser to do actual search.
+
 2003-06-27 Andrew Niefer
 Modified:
 	search/org.eclipse.cdt.core.search.matching/MatchLocator.java

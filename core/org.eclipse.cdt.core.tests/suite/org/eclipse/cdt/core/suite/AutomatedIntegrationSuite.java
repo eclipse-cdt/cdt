@@ -6,27 +6,30 @@
  */
 package org.eclipse.cdt.core.suite;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.framework.TestResult;
-import junit.framework.TestListener;
-import junit.framework.AssertionFailedError;
-import junit.textui.TestRunner;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import org.eclipse.core.boot.IPlatformRunnable;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestListener;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 import org.eclipse.cdt.core.build.managed.tests.AllBuildTests;
+import org.eclipse.cdt.core.model.failedTests.CModelElementsFailedTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
-import org.eclipse.cdt.core.parser.failedTests.*;
+import org.eclipse.cdt.core.parser.failedTests.DOMFailedTest;
+import org.eclipse.cdt.core.parser.failedTests.LokiFailures;
+import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.core.model.failedTests.*;
+import org.eclipse.cdt.core.search.failedTests.PatternsFailedTests;
+import org.eclipse.cdt.core.search.tests.ClassDeclarationPatternTests;
+import org.eclipse.core.boot.IPlatformRunnable;
 
 /**
  * @author vhirsl
@@ -77,6 +80,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTest(BinaryTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
+		suite.addTestSuite(ClassDeclarationPatternTests.class );
 		
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("startFailedTests"));
@@ -86,6 +90,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTestSuite(LokiFailures.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);
+		suite.addTestSuite(PatternsFailedTests.class);
 
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("generateReport"));

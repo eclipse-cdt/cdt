@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.ast.ClassKind;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.internal.core.search.CharOperation;
@@ -56,26 +57,23 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		// TODO Auto-generated constructor stub
 	}
 
-	public static CSearchPattern createPattern( String patternString, int searchFor, int limitTo, int matchMode, boolean caseSensitive ){
+	public static CSearchPattern createPattern( String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive ){
 		if( patternString == null || patternString.length() == 0 ){
 			return null;
 		}
 		
 		CSearchPattern pattern = null;
-		switch( searchFor ){
-			case ICSearchConstants.TYPE:
-				pattern = createClassPattern( patternString, limitTo, matchMode, caseSensitive );
-				break;
-			//case ICSearchConstants.METHOD:
+		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || searchFor == ENUM || searchFor == UNION ){
+			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == MEMBER ){
 			//	pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
-			//	break;
-			case ICSearchConstants.CONSTRUCTOR:
-				pattern = createConstructorPattern( patternString, limitTo, matchMode, caseSensitive );
-				break;
+		} else if ( searchFor == CONSTRUCTOR ){
+			pattern = createConstructorPattern( patternString, limitTo, matchMode, caseSensitive );
+		}
 			//case ICSearchConstants.FIELD:
 			//	pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
 			//	break;
-		}
+		
 		
 		return pattern;
 	}
@@ -87,7 +85,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createFieldPattern(String patternString, int limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createFieldPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -99,7 +97,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createMethodPattern(String patternString, int limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createMethodPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -111,7 +109,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createConstructorPattern(String patternString, int limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createConstructorPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -123,7 +121,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createClassPattern(String patternString, int limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createClassPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", null, null, ParserMode.QUICK_PARSE );
 		
 		LinkedList list  = new LinkedList();
@@ -147,9 +145,20 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		} catch (EndOfFile e) {	
 		} catch (ScannerException e) {
 		}
-		 
-		char [][] qualifications = new char[1][];
-		return new ClassDeclarationPattern( name.toCharArray(), (char[][])list.toArray( qualifications ), null, matchMode, caseSensitive );
+		
+		ClassKind kind = null;
+		if( searchFor == CLASS ){
+			kind = ClassKind.CLASS;
+		} else if( searchFor == STRUCT ) {
+			kind = ClassKind.STRUCT;
+		} else if ( searchFor == ENUM ) {
+			kind = ClassKind.ENUM;
+		} else if ( searchFor == UNION ) {
+			kind = ClassKind.UNION;
+		}
+		
+		char [][] qualifications = new char[0][];
+		return new ClassDeclarationPattern( name.toCharArray(), (char[][])list.toArray( qualifications ), kind, matchMode, caseSensitive );
 	}
 	
 	protected boolean matchesName( char[] pattern, char[] name ){

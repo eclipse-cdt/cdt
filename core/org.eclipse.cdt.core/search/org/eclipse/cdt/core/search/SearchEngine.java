@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class SearchEngine {
+public class SearchEngine implements ICSearchConstants{
 
 	private boolean VERBOSE = false;
 
@@ -60,7 +60,7 @@ public class SearchEngine {
 		return null;
 	}
 
-	public static ICSearchPattern createSearchPattern( String stringPattern, int searchFor, int limitTo, boolean isCaseSensitive){
+	public static ICSearchPattern createSearchPattern( String stringPattern, SearchFor searchFor, LimitTo limitTo, boolean isCaseSensitive){
 		int mode;
 		
 		if( stringPattern.indexOf( '*' ) != -1  || stringPattern.indexOf( '?' ) != -1 ){
@@ -127,7 +127,7 @@ public class SearchEngine {
 	 * @param _scope
 	 * @param _collector
 	 */
-	public void search(IWorkspace workspace, ICElement elementPattern, int limitTo, ICSearchScope scope, ICSearchResultCollector collector) {
+	public void search(IWorkspace workspace, ICElement elementPattern, LimitTo limitTo, ICSearchScope scope, ICSearchResultCollector collector) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -15,12 +15,15 @@ package org.eclipse.cdt.internal.ui.search;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.ISearchResultView;
@@ -34,7 +37,6 @@ import org.eclipse.ui.actions.ActionGroup;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CSearchResultCollector implements ICSearchResultCollector {
-
 	/**
 	 * 
 	 */
@@ -94,6 +96,21 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		_matchCount++;
 	}
 
+	public void accept(
+		IPath path,
+		int start,
+		int end,
+		ICElement enclosingElement,
+		int accuracy)
+		throws CoreException 
+	{
+		if( _matches == null ){
+			_matches = new HashSet();
+		}
+		
+		_matches.add( new Match( path.toString(), start, end ) );
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchResultCollector#done()
 	 */
@@ -132,20 +149,38 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		_operation = operation;
 	}
 	
+	public Set getMatches(){
+		return _matches;
+	}
+	
 	private class ActionGroupFactory implements IActionGroupFactory {
 		public ActionGroup createActionGroup( ISearchResultView part ){
 			return new CSearchViewActionGroup( part );
 		}
 	}
 	
+	public static class Match {
+		public Match( String path, int start, int end ){
+			this.path = path;
+			this.start = start;
+			this.end = end;
+		}
+	
+		public String path;
+		public int start;
+		public int end;
+	}
+		
 	private static final String SEARCHING = CSearchMessages.getString("CSearchResultCollector.searching"); //$NON-NLS-1$
 	private static final String MATCH     = CSearchMessages.getString("CSearchResultCollector.match"); //$NON-NLS-1$
 	private static final String MATCHES   = CSearchMessages.getString("CSearchResultCollector.matches"); //$NON-NLS-1$
 	private static final String DONE      = CSearchMessages.getString("CSearchResultCollector.done"); //$NON-NLS-1$
-	
+
+		
 	
 	private IProgressMonitor 	_monitor;
 	private CSearchOperation 	_operation;
 	private ISearchResultView 	_view;
 	private int					_matchCount;
+	private Set					_matches;
 }

@@ -58,22 +58,34 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		
 		//check containing scopes
 		String [] qualifications = clsSpec.getFullyQualifiedName();
-		int size = containingTypes.length;
-		if( qualifications.length < size )
-			return IMPOSSIBLE_MATCH;
+		if( qualifications != null ){
 			
-		for( int i = 0; i < containingTypes.length; i++ ){
-			if( !matchesName( containingTypes[i], qualifications[i].toCharArray() ) ){
+			int size = containingTypes.length;
+			if( qualifications.length < size )
 				return IMPOSSIBLE_MATCH;
+				
+			for( int i = 0; i < containingTypes.length; i++ ){
+				if( !matchesName( containingTypes[i], qualifications[i].toCharArray() ) ){
+					return IMPOSSIBLE_MATCH;
+				}
 			}
+		} else if( containingTypes.length > 0 ) {
+			return IMPOSSIBLE_MATCH;
 		}
 		
 		//check type
-		if( classKind != clsSpec.getClassKind() ){
+		if( classKind != null && classKind != clsSpec.getClassKind() ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
 		return ACCURATE_MATCH;
+	}
+	
+	public char [] getName() {
+		return simpleName;
+	}
+	public char[] [] getContainingTypes () {
+		return containingTypes;
 	}
 	
 	private char[] 	  simpleName;

@@ -13,21 +13,33 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.*;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 
 
@@ -88,15 +100,36 @@ public class MatchLocator implements ISourceElementRequestor {
 		String includePath = inclusion.getFullFileName();
 
 		IPath path = new Path( includePath );
-		IResource resource = workspaceRoot.findMember( path, true );
-		if( resource != null ){
-			resourceStack.addFirst( currentResource );
-			currentResource = resource;
+		IResource resource = null;
+		
+		if( workspaceRoot != null ){
+			resource = workspaceRoot.findMember( path, true );
+			if( resource == null ){
+				IFile file = workspaceRoot.getFile( path );
+				try{
+					file.createLink( path, 0, null );
+				} catch ( CoreException e ){
+					file = null;
+				}
+				resource = file;
+			}
 		}
+		
+		resourceStack.addFirst( ( currentResource != null ) ? (Object)currentResource : (Object)currentPath );
+		
+		currentResource = resource;
+		currentPath = ( resource == null ) ? path : null;
 	}
 
 	public void exitInclusion(IASTInclusion inclusion) {
-		currentResource = (IResource) resourceStack.removeFirst();
+		Object obj = resourceStack.removeFirst();
+		if( obj instanceof IResource ){
+			currentResource = (IResource)obj;
+			currentPath = null;
+		} else {
+			currentPath = (IPath) obj;
+			currentResource = null;
+		}
 	}
 		
 	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
@@ -109,16 +142,100 @@ public class MatchLocator implements ISourceElementRequestor {
 	}
 
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ){
-		workspaceRoot = workspace.getRoot();
+		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
+		
+		HashMap wcPaths = new HashMap();
+		int wcLength = (workingCopies == null) ? 0 : workingCopies.length;
+		if( wcLength > 0 ){
+			String [] newPaths = new String[ wcLength ];
+			
+			for( int i = 0; i < wcLength; i++ ){
+				IWorkingCopy workingCopy = workingCopies[ i ];
+				String path = workingCopy.getOriginalElement().getPath().toString();
+				wcPaths.put( path, workingCopy );
+				newPaths[ i ] = path;
+			}
+			
+			int len = paths.length;
+			String [] tempArray = new String[ len + wcLength ];
+			System.arraycopy( paths, 0, tempArray, 0, len );
+			System.arraycopy( newPaths, 0, tempArray, len, wcLength );
+			paths = tempArray;
+		}
+		
+		Arrays.sort( paths );
+		
+		int length = paths.length;
+		if( progressMonitor != null ){
+			progressMonitor.beginTask( "", length );
+		}
+		
+		for( int i = 0; i < length; i++ ){
+			if( progressMonitor != null &&  progressMonitor.isCanceled() ){
+				throw new OperationCanceledException();
+			}
+			
+			String pathString = paths[ i ];
+			
+			//skip duplicates
+			if( i > 0 && pathString.equals( paths[ i - 1 ] ) ) continue;
+			
+			Reader reader = null;
+			if( workspaceRoot != null ){
+				IWorkingCopy workingCopy = (IWorkingCopy)wcPaths.get( pathString );
+				
+				if( workingCopy != null ){
+					currentResource = workingCopy.getOriginalElement().getResource();
+				} else {
+					currentResource = workspaceRoot.findMember( pathString, true );
+				}
+			
+				try{
+					if( currentResource == null ){
+						IPath path = new Path( pathString );
+						IFile file = workspaceRoot.getFile( path );
+						file.createLink( path, 0, null );
+					}
+					if( currentResource != null && currentResource instanceof IFile ){
+						IFile file = (IFile) currentResource;
+						reader = new InputStreamReader( file.getContents() );
+					} else continue;
+				} catch ( CoreException e ){
+					continue;
+				}
+			} else {
+				IPath path = new Path( pathString );
+				try {
+					currentPath = path;
+					reader = new FileReader( path.toFile() );
+				} catch (FileNotFoundException e) {
+					continue;
+				}
+			}
+			
+			IScanner scanner = ParserFactory.createScanner( reader, pathString, null, null, ParserMode.QUICK_PARSE );
+			IParser  parser  = ParserFactory.createParser( scanner, null, ParserMode.QUICK_PARSE );
+			parser.setRequestor( this );
+			
+			parser.parse();
+		}
 	}
 	
-	protected void report( IASTOffsetableElement node, int accuracyLevel ){
+	protected void report( IASTOffsetableNamedElement node, int accuracyLevel ){
 		try {
-			resultCollector.accept( currentResource, 
-							  node.getElementStartingOffset(), 
-							  node.getElementEndingOffset(), 
-							  null, 
-							  accuracyLevel );
+			if( currentResource != null ){
+				resultCollector.accept( currentResource, 
+								  node.getElementNameOffset(), 
+								  node.getElementNameOffset() + node.getName().length(), 
+								  null, 
+								  accuracyLevel );
+			} else if( currentPath != null ){
+				resultCollector.accept( currentPath, 
+										node.getElementStartingOffset(), 
+										node.getElementEndingOffset(), 
+										null, 
+										accuracyLevel );				
+			}
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -128,8 +245,9 @@ public class MatchLocator implements ISourceElementRequestor {
 	private ICSearchPattern 		searchPattern;
 	private ICSearchResultCollector resultCollector;
 	private IProgressMonitor 		progressMonitor;
-	private IResource 				currentResource;
+	private IResource 				currentResource = null;
+	private IPath					currentPath 	= null;
 	private ICSearchScope 			searchScope;		
-	private LinkedList 				resourceStack;
+	private LinkedList 				resourceStack = new LinkedList();
 	private IWorkspaceRoot 			workspaceRoot;
 }

@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.search;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -74,5 +75,17 @@ public interface ICSearchResultCollector {
 	 * @return a progress monitor or null if no progress monitor is provided
 	 */
 	public IProgressMonitor getProgressMonitor();
+	/**
+	 * @param currentPath
+	 * @param start
+	 * @param end
+	 * @param object
+	 * @param accuracyLevel
+	 */
+	public void accept(IPath currentPath, 
+					   int start, 
+					   int end, 
+					   ICElement enclosingElement, 
+					   int accuracyLevel) throws CoreException;
 
 }

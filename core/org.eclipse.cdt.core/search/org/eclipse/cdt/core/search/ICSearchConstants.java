@@ -33,64 +33,65 @@ public interface ICSearchConstants {
 	 * The nature of searched element or the nature
 	 * of match in unknown.
 	 */
-	int UNKNOWN = -1;
+	public static final SearchFor UNKNOWN_SEARCH_FOR = new SearchFor( -1 );
+	public static final LimitTo UNKNOWN_LIMIT_TO = new LimitTo( -1 );
 	
 	/* Nature of searched element */
 	
 	/**
 	 * The searched element is a type.
 	 */
-	int TYPE= 0;
+	public static final SearchFor TYPE = new SearchFor( 0 );
 
 	/**
 	 * The searched element is a function.
 	 */
-	int FUNCTION= 1;
+	public static final SearchFor FUNCTION = new SearchFor( 1 );
 
 	/**
 	* The searched element is a namespace.
     */
-	int NAMESPACE= 2;
+	public static final SearchFor NAMESPACE = new SearchFor( 2 );
 	
 	/**
 	 * The searched element is a constructor.
 	 */
-	int CONSTRUCTOR= 3;
+	public static final SearchFor CONSTRUCTOR = new SearchFor( 3 );
 
 	/**
 	 * The searched element is a member.
      */
-	int MEMBER= 4;
+	public static final SearchFor MEMBER = new SearchFor( 4 );
 	
 	/**
 	 * The searched element is a variable.
 	 * More selective than using TYPE
 	 */
-	int VAR= 5;
+	public static final SearchFor VAR = new SearchFor( 5 );
 
 	/**
 	 * The searched element is a class. 
 	 * More selective than using TYPE
 	 */
-	int CLASS= 6;
+	public static final SearchFor CLASS = new SearchFor( 6 );
 
 	/**
 	 * The searched element is a struct.
 	 * More selective than using TYPE
 	 */
-	int STRUCT= 7;
+	public static final SearchFor STRUCT = new SearchFor( 7 );
 
 	/**
 	 * The searched element is a enum.
 	 * More selective than using TYPE
 	 */
-	int ENUM= 8;
+	public static final SearchFor ENUM = new SearchFor( 8 );
 	
 	/**
 	 * The searched element is a union.
 	 * More selective than using TYPE
 	 */
-	int UNION= 9;
+	public static final SearchFor UNION = new SearchFor( 9 );
 	
 	
 	/* Nature of match */
@@ -100,7 +101,7 @@ public interface ICSearchConstants {
 	 * Can be used in conjunction with any of the nature of searched elements
 	 * so as to better narrow down the search.
 	 */
-	int DECLARATIONS= 0;
+	public static final LimitTo DECLARATIONS = new LimitTo( 0 ); 
 
 	/**
 	 * The search result is a type that implements an interface. 
@@ -109,7 +110,7 @@ public interface ICSearchConstants {
 	 * rather exclusively search for classes implementing an interface, or interfaces 
 	 * extending an interface.
 	 */
-	int DEFINITIONS= 1;
+	public static final LimitTo DEFINITIONS = new LimitTo( 1 );
 
 	/**
 	 * The search result is a reference.
@@ -118,7 +119,7 @@ public interface ICSearchConstants {
 	 * References can contain implementers since they are more generic kind
 	 * of matches.
 	 */
-	int REFERENCES= 2;
+	public static final LimitTo REFERENCES = new LimitTo( 2 );
 
 	/**
 	 * The search result is a declaration, a reference, or an implementer 
@@ -126,7 +127,7 @@ public interface ICSearchConstants {
 	 * Can be used in conjunction with any of the nature of searched elements
 	 * so as to better narrow down the search.
 	 */
-	int ALL_OCCURRENCES= 3;
+	public static final LimitTo ALL_OCCURRENCES = new LimitTo( 3 );
 
 	
 	/* Syntactic match modes */
@@ -180,4 +181,19 @@ public interface ICSearchConstants {
 	int WAIT_UNTIL_READY_TO_SEARCH = IJob.WaitUntilReady;
 	
 
+	public class SearchFor{
+		private SearchFor( int value )
+		{
+			this.value = value;
+		}
+		private final int value;
+	}
+	
+	public class LimitTo {
+		private LimitTo( int value )
+		{
+			this.value = value;
+		}
+		private final int value;
+	}
 }

@@ -18,12 +18,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+//import org.eclipse.cdt.core.search.SearchFor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
@@ -229,21 +231,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		int index = fgPreviousSearchPatterns.size() - 1 - fPattern.getSelectionIndex();
 		fInitialData = (SearchPatternData) fgPreviousSearchPatterns.get( index );
 		
-		for (int i = 0; i < fSearchFor.length; i++)
-			fSearchFor[i].setSelection(false);
-			
-		for (int i = 0; i < fLimitTo.length; i++)
-			fLimitTo[i].setSelection(false);
-			
-		fSearchFor[ fInitialData.searchFor ].setSelection( true );
-		setLimitTo( fInitialData.searchFor );
-		fLimitTo[ fInitialData.limitTo ].setSelection( true );
-
-		fPattern.setText( fInitialData.pattern );
-		fIsCaseSensitive = fInitialData.isCaseSensitive;
-		fCElement = fInitialData.cElement;
-		fCaseSensitive.setEnabled( fCElement == null );
-		fCaseSensitive.setSelection( fInitialData.isCaseSensitive );
+		updateSelections();
 
 		if( fInitialData.workingSets != null )
 			getContainer().setSelectedWorkingSets( fInitialData.workingSets );
@@ -272,43 +260,35 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		return result;		
 	}
 	
-	private int getLimitTo() {
+	private LimitTo getLimitTo() {
 		for (int i= 0; i < fLimitTo.length; i++) {
 			if (fLimitTo[i].getSelection())
-				return i;
+				return fLimitToValues[ i ];
 		}
-		return -1;
+		return null;
 	}
-	private void setLimitTo(int searchFor) {
-		fLimitTo[ DECLARATIONS    ].setEnabled( true );
-		//fLimitTo[ IMPLEMENTORS    ].setEnabled( false);
-		fLimitTo[ REFERENCES      ].setEnabled( true );			
-		fLimitTo[ ALL_OCCURRENCES ].setEnabled( true );
-		//fLimitTo[ READ_ACCESSES   ].setEnabled( false);
-		//fLimitTo[ WRITE_ACCESSES  ].setEnabled( false);
+	
+	private void setLimitTo( SearchFor searchFor ) {
+		HashSet set = new HashSet();
 		
-//		if (!(searchFor == TYPE || searchFor == INTERFACE) && fLimitTo[IMPLEMENTORS].getSelection()) {
-//			fLimitTo[ IMPLEMENTORS ].setSelection(false);
-//			fLimitTo[ REFERENCES   ].setSelection(true);
-//		}
-//
-//		if (!(searchFor == FIELD) && (getLimitTo() == READ_ACCESSES || getLimitTo() == WRITE_ACCESSES)) {
-//			fLimitTo[ getLimitTo()].setSelection(false);
-//			fLimitTo[ REFERENCES  ].setSelection(true);
-//		}
-//
-//		switch (searchFor) {
-//			case TYPE:
-//			case INTERFACE:
-//				fLimitTo[ IMPLEMENTORS ].setEnabled(true);
-//				break;
-//			case FIELD:
-//				fLimitTo[ READ_ACCESSES  ].setEnabled(true);
-//				fLimitTo[ WRITE_ACCESSES ].setEnabled(true);
-//				break;
-//			default :
-//				break;
-//		}
+		if( searchFor == TYPE ){
+			set.add( DECLARATIONS );
+			set.add( REFERENCES );
+		} else if ( searchFor == FUNCTION || searchFor == CONSTRUCTOR ) {
+			set.add( DECLARATIONS );
+			set.add( DEFINITIONS );
+			//set.add( REFERENCES );
+		} else if( searchFor == NAMESPACE ) {
+			set.add( DECLARATIONS );
+			set.add( REFERENCES );
+		} else if( searchFor == MEMBER ) {
+			set.add( DECLARATIONS );
+			set.add( REFERENCES );
+		}
+		set.add( ALL_OCCURRENCES );
+		
+		for( int i = 0; i < fLimitTo.length; i++ )
+			fLimitTo[ i ].setEnabled( set.contains( fLimitToValues[ i ] ) );
 	}
 	
 	private Control createSearchFor(Composite parent) {
@@ -334,13 +314,13 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		return result;		
 	}
 	
-	private int getSearchFor() {
+	private SearchFor getSearchFor() {
 		for (int i= 0; i < fSearchFor.length; i++) {
-			if (fSearchFor[i].getSelection())
-				return i;
+			if( fSearchFor[i].getSelection() )
+				return fSearchForValues[ i ];
 		}
 		Assert.isTrue(false, "shouldNeverHappen"); //$NON-NLS-1$
-		return -1;
+		return null;
 	}
 	
 	public void setContainer(ISearchPageContainer container) {
@@ -399,17 +379,28 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private void initSelections() {
 		fStructuredSelection = asStructuredSelection();
 		fInitialData = tryStructuredSelection( fStructuredSelection );
+		updateSelections();
+	}
+	
+	private void updateSelections(){
 		if (fInitialData == null)
 			fInitialData = trySimpleTextSelection( getContainer().getSelection() );
 		if (fInitialData == null)
 			fInitialData = getDefaultInitValues();
 
 		fCElement = fInitialData.cElement;
+		fIsCaseSensitive = fInitialData.isCaseSensitive;
 		fCaseSensitive.setSelection( fInitialData.isCaseSensitive );
 		fCaseSensitive.setEnabled( fInitialData.cElement == null );
-		fSearchFor[ fInitialData.searchFor ].setSelection( true );
+		
+		for (int i = 0; i < fSearchFor.length; i++)
+			fSearchFor[i].setSelection( fSearchForValues[i] == fInitialData.searchFor );
+
 		setLimitTo( fInitialData.searchFor );
-		fLimitTo[ fInitialData.limitTo ].setSelection( true );		
+			
+		for (int i = 0; i < fLimitTo.length; i++)
+			fLimitTo[i].setSelection( fLimitToValues[i] == fInitialData.limitTo );
+
 		fPattern.setText( fInitialData.pattern );
 	}
 	
@@ -456,13 +447,13 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			} catch (IOException ex) {
 				text= ""; //$NON-NLS-1$
 			}
-			result= new SearchPatternData(TYPE, REFERENCES, fIsCaseSensitive, text, null);
+			result= new SearchPatternData( TYPE, REFERENCES, fIsCaseSensitive, text, null);
 		}
 		return result;
 	}
 	
 	private SearchPatternData getDefaultInitValues() {
-		return new SearchPatternData(TYPE, REFERENCES, fIsCaseSensitive, "", null); //$NON-NLS-1$
+		return new SearchPatternData( TYPE, REFERENCES, fIsCaseSensitive, "", null); //$NON-NLS-1$
 	}
 		
 	private String[] getPreviousSearchPatterns() {
@@ -494,8 +485,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		if( element == null )
 			return null;
 			
-		int searchFor = UNKNOWN;
-		int limitTo   = UNKNOWN;
+		SearchFor searchFor = UNKNOWN_SEARCH_FOR;
+		LimitTo limitTo   	= UNKNOWN_LIMIT_TO;
 		
 		String pattern = null; 
 		switch( element.getElementType() ) {
@@ -506,7 +497,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				break;*/
 		}
 		
-		if( searchFor != UNKNOWN && limitTo != UNKNOWN && pattern != null )
+		if( searchFor != UNKNOWN_SEARCH_FOR && limitTo != UNKNOWN_LIMIT_TO && pattern != null )
 			return new SearchPatternData( searchFor, limitTo, true, pattern, element );
 		
 		return null;	
@@ -546,19 +537,19 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	}
 	
 	private static class SearchPatternData {
-		int			searchFor;
-		int			limitTo;
+		SearchFor	searchFor;
+		LimitTo		limitTo;
 		String		pattern;
 		boolean		isCaseSensitive;
 		ICElement	cElement;
 		int			scope;
 		IWorkingSet[]	 	workingSets;
 	
-		public SearchPatternData(int s, int l, boolean i, String p, ICElement element) {
+		public SearchPatternData(SearchFor s, LimitTo l, boolean i, String p, ICElement element) {
 			this(s, l, p, i, element, ISearchPageContainer.WORKSPACE_SCOPE, null);
 		}
 	
-		public SearchPatternData(int s, int l, String p, boolean i, ICElement element, int scope, IWorkingSet[] workingSets) {
+		public SearchPatternData(SearchFor s, LimitTo l, String p, boolean i, ICElement element, int scope, IWorkingSet[] workingSets) {
 			searchFor= s;
 			limitTo= l;
 			pattern= p;
@@ -573,9 +564,10 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private final static String PAGE_NAME= "CSearchPage"; //$NON-NLS-1$
 	private final static String STORE_CASE_SENSITIVE= PAGE_NAME + "CASE_SENSITIVE"; //$NON-NLS-1$
 
-	private static List fgPreviousSearchPatterns= new ArrayList(20);
+	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;
+	private SearchFor[] fSearchForValues = { TYPE, FUNCTION, NAMESPACE, CONSTRUCTOR, MEMBER };
 	private String[] fSearchForText= {
 		CSearchMessages.getString("CSearchPage.searchFor.type"), //$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.method"), //$NON-NLS-1$
@@ -584,13 +576,14 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		CSearchMessages.getString("CSearchPage.searchFor.field")}; //$NON-NLS-1$
 		
 	private Button[] fLimitTo;
+	private LimitTo[] fLimitToValues = { DECLARATIONS, DEFINITIONS, REFERENCES, ALL_OCCURRENCES };
 	private String[] fLimitToText= {
 		CSearchMessages.getString("CSearchPage.limitTo.declarations"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.limitTo.implementors"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.definitions"), //$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.limitTo.references"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.limitTo.allOccurrences"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.limitTo.readReferences"), //$NON-NLS-1$		
-		CSearchMessages.getString("CSearchPage.limitTo.writeReferences")}; //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.allOccurrences") }; //$NON-NLS-1$
+		//CSearchMessages.getString("CSearchPage.limitTo.readReferences"), //$NON-NLS-1$		
+		//CSearchMessages.getString("CSearchPage.limitTo.writeReferences")}; //$NON-NLS-1$
 
 	private SearchPatternData fInitialData;
 	private IStructuredSelection fStructuredSelection;

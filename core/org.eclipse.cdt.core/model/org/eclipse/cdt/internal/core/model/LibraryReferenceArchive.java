@@ -6,6 +6,7 @@
  */
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.ILibraryReference;
@@ -15,13 +16,16 @@ import org.eclipse.core.runtime.IPath;
 /**
  * @author alain
  */
-public class LibraryReference extends Parent implements ILibraryReference {
+public class LibraryReferenceArchive extends Archive implements ILibraryReference {
 
 	ILibraryEntry entry;
+	IBinaryArchive archive;
 
-	public LibraryReference(ICElement parent, ILibraryEntry e) {
-		super(parent, e.getLibraryPath().lastSegment(), ICElement.C_VCONTAINER);
+	public LibraryReferenceArchive(ICElement parent, ILibraryEntry e, IBinaryArchive ar) {
+		super(parent, e.getLibraryPath());
+		setElementType(ICElement.C_VCONTAINER);
 		entry = e;
+		archive = ar;
 	}
 
 	/* (non-Javadoc)
@@ -31,18 +35,19 @@ public class LibraryReference extends Parent implements ILibraryReference {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
-	 */
-	protected CElementInfo createElementInfo() {
-		return new CElementInfo(this);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
 	public IPath getPath() {
 		return entry.getLibraryPath();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.Archive#getBinaryArchive(org.eclipse.core.resources.IResource)
+	 */
+	IBinaryArchive getBinaryArchive(IResource res) {
+		return archive;
 	}
 
 }

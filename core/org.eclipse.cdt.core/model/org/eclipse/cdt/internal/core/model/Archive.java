@@ -69,7 +69,7 @@ public class Archive extends Openable implements IArchive {
 			IBinaryObject[] objects = ar.getObjects();
 			for (int i = 0; i < objects.length; i++) {
 				final IBinaryObject obj = objects[i];
-				Binary binary = new Binary(this, res.getLocation().append(obj.getName()), obj);
+				Binary binary = new Binary(this, ar.getPath().append(obj.getName()), obj);
 				info.addChild(binary);
 			}
 		} else {

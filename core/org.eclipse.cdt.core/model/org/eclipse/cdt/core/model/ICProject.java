@@ -5,10 +5,11 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-
-import java.util.Map;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A C project represents a view of a project resource in terms of C 
@@ -49,11 +50,23 @@ public interface ICProject extends ICContainer {
 	ILibraryReference[] getLibraryReferences() throws CModelException;
 
 	/**
+	 * Returns the names of the projects that are directly required by this
+	 * project. A project is required if it is in its cpath entries.
+	 * <p>
+	 * The project names are returned in the order they appear on the cpathentries.
+	 *
+	 * @return the names of the projects that are directly required by this project
+	 * @exception CModelException if this element does not exist or if an
+	 *              exception occurs while accessing its corresponding resource
+	 */
+	String[] getRequiredProjectNames() throws CModelException;
+
+	/**
 	 * 
 	 * @return IProject
 	 */
 	IProject getProject();
-	
+
 	/**
 	 * Helper method for returning one option value only. Equivalent to <code>(String)this.getOptions(inheritCCoreOptions).get(optionName)</code>
 	 * Note that it may answer <code>null</code> if this option does not exist, or if there is no custom value for it.
@@ -82,7 +95,7 @@ public interface ICProject extends ICContainer {
 	 * @see CCorePlugin#getDefaultOptions
 	 */
 	Map getOptions(boolean inheritCCoreOptions);
-    
+
 	/**
 	 * Helper method for setting one option value only. Equivalent to <code>Map options = this.getOptions(false); map.put(optionName, optionValue); this.setOptions(map)</code>
 	 * <p>
@@ -107,5 +120,30 @@ public interface ICProject extends ICContainer {
 	 *   or <code>null</code> to flush all custom options (clients will automatically get the global CCorePlugin options).
 	 * @see CCorePlugin#getDefaultOptions
 	 */
-	void setOptions(Map newOptions);  
+	void setOptions(Map newOptions);
+
+	/**
+	 * Returns the list of entries for the project. This corresponds to the exact set
+	 * of entries which were assigned using <code>setCPathEntries</code>.
+	 * <p>
+	 *
+	 * @return the list of entries for the project.
+	 * @exception CModelException if this element does not exist or if an
+	 *              exception occurs while accessing its corresponding resource
+	 */
+	ICPathEntry[] getCPathEntries() throws CModelException;
+
+	/**
+	 * Sets the entries for this project.
+	 *
+	 * @param entries a list of ICPathEntry[] entries
+	 * @param monitor the given progress monitor
+	 * @exception CModelException if the entries could not be set. Reasons include:
+	 * <ul>
+	 * <li> This C/C++ element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 * <li> The entries are being modified during resource change event notification (CORE_EXCEPTION)
+	 * </ul>
+	 */
+	void setCPathEntries(ICPathEntry[] entries, IProgressMonitor monitor) throws CModelException;
+
 }

@@ -40,6 +40,10 @@ public class Binary extends Openable implements IBinary {
 		binaryFile = bin;
 	}
 
+	protected IBinaryFile getBinaryFile() {
+		return binaryFile;
+	}
+
 	public boolean isSharedLib() {
 		return getType() == IBinaryObject.SHARED;
 	}
@@ -58,65 +62,71 @@ public class Binary extends Openable implements IBinary {
 
 	public boolean hasDebug() {
 		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)binaryFile).hasDebug();
+			return ((IBinaryObject)getBinaryFile()).hasDebug();
 		}
 		return false;
 	}
 
 	public String getCPU() {
 		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
-			return ((IBinaryObject)binaryFile).getCPU();
+			return ((IBinaryObject)getBinaryFile()).getCPU();
 		}
 		return "";
 	}
 
 	public String[] getNeededSharedLibs() {
 		if (isExecutable() || isSharedLib()) {
-			return ((IBinaryExecutable)binaryFile).getNeededSharedLibs();
+			return ((IBinaryExecutable)getBinaryFile()).getNeededSharedLibs();
 		}
 		return new String[0];
 	}
 	
 	protected int getType() {
-		IResource res = getResource();
-		if (binaryFile != null && (fBinType == 0 || res.getModificationStamp() != fLastModification )) {
-			fLastModification = res.getModificationStamp();
-			fBinType = binaryFile.getType();
+		if (getBinaryFile() != null && (fBinType == 0 || getModificationStamp() != fLastModification )) {
+			fLastModification = getModificationStamp();
+			fBinType = getBinaryFile().getType();
 		}
 		return fBinType;
 	}
 
+	protected long getModificationStamp() {
+		IResource res = getResource();
+		if (res != null)
+			return res.getModificationStamp();
+		return 0;
+	}
+
 	public long getText() {
 		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)binaryFile).getText();
+			return ((IBinaryObject)getBinaryFile()).getText();
 		}
 		return 0;
 	}
 
 	public long getData() {
 		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)binaryFile).getData();
+			return ((IBinaryObject)getBinaryFile()).getData();
 		}
 		return 0;
 	}
 
 	public long getBSS() {
 		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)binaryFile).getBSS();
+			return ((IBinaryObject)getBinaryFile()).getBSS();
 		}
 		return 0;
 	}
 
 	public String getSoname() {
 		if (isSharedLib()) {
-			return ((IBinaryShared)binaryFile).getSoName();
+			return ((IBinaryShared)getBinaryFile()).getSoName();
 		}
 		return "";
 	}
 
 	public boolean isLittleEndian() {
 		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
-			return ((IBinaryObject)binaryFile).isLittleEndian();
+			return ((IBinaryObject)getBinaryFile()).isLittleEndian();
 		}
 		return false;
 	}
@@ -145,7 +155,7 @@ public class Binary extends Openable implements IBinary {
 	boolean computeChildren(OpenableInfo info, IResource res) {
 		if (isObject() || isExecutable() || isSharedLib()) {
 			Map hash = new HashMap();
-			ISymbol[] symbols = ((IBinaryObject)binaryFile).getSymbols();
+			ISymbol[] symbols = ((IBinaryObject)getBinaryFile()).getSymbols();
 			for (int i = 0; i < symbols.length; i++) {
 				switch (symbols[i].getType()) {
 					case ISymbol.FUNCTION :

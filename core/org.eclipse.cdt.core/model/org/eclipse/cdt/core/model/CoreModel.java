@@ -10,6 +10,7 @@ import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.ContainerEntry;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
+import org.eclipse.cdt.internal.core.model.LibraryEntry;
 import org.eclipse.cdt.internal.core.model.MacroEntry;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
@@ -283,7 +284,7 @@ public class CoreModel {
 		IPath sourceAttachmentRootPath,
 		IPath sourceAttachmentPrefixMapping,
 		boolean isExported) {
-		return newLibraryEntry(path, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
+		return new LibraryEntry(path, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
 	}
 
 	/**
@@ -358,7 +359,31 @@ public class CoreModel {
 	 * @return a new source entry with the given exclusion patterns
 	 */
 	public static ISourceEntry newSourceEntry(IPath path, IPath outputLocation, IPath[] exclusionPatterns) {
-		return new SourceEntry(path, outputLocation, true, exclusionPatterns);
+		return newSourceEntry(path, outputLocation, true, exclusionPatterns);
+	}
+
+	/**
+	 * Creates and returns a new entry of kind <code>CDT_SOURCE</code>
+	 * for the project's source folder identified by the given absolute
+	 * workspace-relative path but excluding all source files with paths
+	 * matching any of the given patterns. This specifies that all package
+	 * fragments within the root will have children of type
+	 * <code>ICompilationUnit</code>.
+	 * <p>
+	 * The source folder is referred to using an absolute path relative to the
+	 * workspace root, e.g. <code>/Project/src</code>. A project's source
+	 * folders are located with that project. That is, a source
+	 * entry specifying the path <code>/P1/src</code> is only usable for
+	 * project <code>P1</code>.
+	 * </p>
+	* @param path the absolute workspace-relative path of a source folder
+	 * @param exclusionPatterns the possibly empty list of exclusion patterns
+	 *    represented as relative paths
+	 * @param specificOutputLocation the specific output location for this source entry (<code>null</code> if using project default ouput location)
+	 * @return a new source entry with the given exclusion patterns
+	 */
+	public static ISourceEntry newSourceEntry(IPath path, IPath outputLocation, boolean isRecursive, IPath[] exclusionPatterns) {
+		return new SourceEntry(path, outputLocation, isRecursive, exclusionPatterns);
 	}
 
 	/**
@@ -499,4 +524,5 @@ public class CoreModel {
 	public IndexManager getIndexManager() {
 		return manager.getIndexManager();
 	}
+
 }

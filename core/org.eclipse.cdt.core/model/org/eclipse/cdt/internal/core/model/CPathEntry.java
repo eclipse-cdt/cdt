@@ -45,8 +45,8 @@ public class CPathEntry implements ICPathEntry {
 
 	public boolean equals(Object object) {
 		if (object instanceof ICPathEntry) {
-			return equals((ICPathEntry)object);
-		} 
+			return equals((ICPathEntry) object);
+		}
 		return super.equals(object);
 	}
 

@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -69,6 +70,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private String defaultTargetId;
 	private ITarget selectedTarget;
 	private boolean isDirty;
+	private boolean rebuildNeeded;
 	private IResource owner;
 	private Map targetMap;
 	private List targetList;
@@ -100,15 +102,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			if (entries.length > 0 && entries[0].equals(containerEntry)) {
 				
 			} else {
-				Job initJob = new Job("Initializing path container") {
+				Job initJob = new Job("Initializing path container") {	//$NON-NLS-1$
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							// Set the raw path entries
 							cModelElement.setRawPathEntries(new IPathEntry[]{containerEntry}, new NullProgressMonitor());
 						} catch (CModelException e) {
-							ManagedBuilderCorePlugin.log(e);
+							return new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1, e.getLocalizedMessage(), e);
 						}
-						return null;
+						return new Status(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.OK, null, null);
+						
 					}
 
 				};
@@ -118,7 +121,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			ManagedBuilderCorePlugin.log(e);
 		}
 
+		// Does not need a save but should be rebuilt
 		isDirty = false;
+		rebuildNeeded = true;
 
 		// The id of the default target from the project persistent settings store
 		IProject project = (IProject)owner;
@@ -161,6 +166,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		
 		initializePathEntries();
+		
+		// Switch the rebuild off since this is an existing project
+		rebuildNeeded = false;
 	}
 
 	/* (non-Javadoc)
@@ -191,6 +199,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		Iterator iter = getTargets().listIterator();
+		while (iter.hasNext()) {
+			((ITarget)iter.next()).setRebuildState(rebuild);
+		}
+		rebuildNeeded = rebuild;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getBuildArtifactExtension()
 	 */
@@ -775,6 +794,21 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		if (rebuildNeeded) return true;
+
+		Iterator iter = getTargets().listIterator();
+		while (iter.hasNext()) {
+			if (((ITarget)iter.next()).needsRebuild()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 	
 	/* (non-Javadoc)
 	 * 
@@ -941,6 +975,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			this.version = version;
 			setDirty(true);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		// Just print out the name of the project
+		return "Managed build information for " + owner.getName();	//$NON-NLS-1$
 	}
 	
 	/**

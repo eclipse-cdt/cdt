@@ -59,111 +59,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 1.2
  */
 public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
-	
-	// this is used to draw a "comment line"
-	private static final int COLS_PER_LINE = 80;
-	
-	// String constants for messages
-	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
-	protected static final String MESSAGE_FINISH_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.build");	//$NON-NLS-1$
-	protected static final String MESSAGE_START_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.start.build");	//$NON-NLS-1$
-	protected static final String MESSAGE_FINISH_FILE = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.file");	//$NON-NLS-1$
-	protected static final String MESSAGE_START_FILE = ManagedMakeMessages.getResourceString("MakefileGenerator.message.start.file");	//$NON-NLS-1$
-	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
-	private static final String COMMENT = "MakefileGenerator.comment";	//$NON-NLS-1$
-	private static final String HEADER = COMMENT + ".header"; //$NON-NLS-1$
-	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
-	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$	
-	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
-	private static final String MOD_INCL = COMMENT + ".module.make.includes";	//$NON-NLS-1$	
-	private static final String DEP_INCL = COMMENT + ".module.dep.includes";	//$NON-NLS-1$
-	private static final String AUTO_DEP = COMMENT + ".autodeps";	//$NON-NLS-1$
-
-	// String constants for makefile contents
-	protected static final String AT = "@";	//$NON-NLS-1$
-	protected static final String COLON = ":";	//$NON-NLS-1$
-	protected static final String DEP_EXT = "d";	//$NON-NLS-1$
-	protected static final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
-	protected static final String DOT = ".";	//$NON-NLS-1$
-	protected static final String ECHO = "echo";	//$NON-NLS-1$
-	protected static final String IN_MACRO = "$<";	//$NON-NLS-1$
-	protected static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
-	protected static final String LINEBREAK = "\\" + NEWLINE;	//$NON-NLS-1$
-	protected static final String LOGICAL_AND = "&&";	//$NON-NLS-1$
-	protected static final String MAKEFILE_NAME = "makefile";	//$NON-NLS-1$
-	protected static final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
-	protected static final String OUT_MACRO = "$@";	//$NON-NLS-1$
-	protected static final String ROOT = "$(ROOT)";	//$NON-NLS-1$
-	protected static final String SRCSFILE_NAME = "sources.mk"; //$NON-NLS-1$	protected static final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$
-	protected static final String SEPARATOR = "/";	//$NON-NLS-1$
-	protected static final String SINGLE_QUOTE = "'";	//$NON-NLS-1$
-	protected static final String TAB = "\t";	//$NON-NLS-1$
-	protected static final String WHITESPACE = " ";	//$NON-NLS-1$
-	protected static final String WILDCARD = "%";	//$NON-NLS-1$
-	protected static final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
-	protected static final String MAKEFILE_INIT = "makefile.init"; //$NON-NLS-1$
-	protected static final String MAKEFILE_DEFS = "makefile.defs"; //$NON-NLS-1$
-	protected static final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$	protected static final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$
-
-	// Local variables needed by generator
-	private String buildTargetName;
-	private Vector deletedFileList;
-	private Vector dependencyMakefiles;
-	private String extension;
-	protected IManagedBuildInfo info;
-	protected Vector modifiedList;
-	protected IProgressMonitor monitor;
-	protected IProject project;
-	protected Vector ruleList;
-	protected Vector subdirList;
-	protected IPath topBuildDir;
-
-
-	
-	/**
-	 * This class is used to recursively walk the project and determine which
-	 * modules contribute buildable source files. 
-	 */
-	protected class ResourceProxyVisitor implements IResourceProxyVisitor {
-		private GnuMakefileGenerator generator;
-		private IManagedBuildInfo info;
-
-		/**
-		 * Constructs a new resource proxy visitor to quickly visit project
-		 * resources.
-		 */
-		public ResourceProxyVisitor(GnuMakefileGenerator generator, IManagedBuildInfo info) {
-			this.generator = generator;
-			this.info = info;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
-		 */
-		public boolean visit(IResourceProxy proxy) throws CoreException {
-			// No point in proceeding, is there 
-			if (generator == null) {
-				return false;
-			}
-			
-			// Is this a resource we should even consider
-			if (proxy.getType() == IResource.FILE) {
-				// Check extension to see if build model should build this file
-				IResource resource = proxy.requestResource();
-				String ext = resource.getFileExtension();
-				if (info.buildsFileType(ext)) {
-					if (!generator.isGeneratedResource(resource)) {
-						generator.appendBuildSubdirectory(resource);
-					}
-				}
-				return false;
-			}
-
-			// Recurse into subdirectories
-			return true;
-		}
-
-	}
 
 	/**
 	 * This class walks the delta supplied by the build system to determine
@@ -243,85 +138,112 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 	}	
 
-	public GnuMakefileGenerator() {
-		super();
-	}
+
 	
 	/**
-	 * @param project
-	 * @param info
-	 * @param monitor
+	 * This class is used to recursively walk the project and determine which
+	 * modules contribute buildable source files. 
 	 */
-	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
-		// Save the project so we can get path and member information
-		this.project = project;
-		// Save the monitor reference for reporting back to the user
-		this.monitor = monitor;
-		// Get the build info for the project
-		this.info = info;
-		// Get the name of the build target
-		buildTargetName = info.getBuildArtifactName();
-		// Get its extension
-		extension = info.getBuildArtifactExtension();
-		if (extension == null) {
-			extension = new String();
-		}
-	}
+	protected class ResourceProxyVisitor implements IResourceProxyVisitor {
+		private GnuMakefileGenerator generator;
+		private IManagedBuildInfo info;
 
-	/* (non-Javadoc)
-	 * Answers the argument with all whitespaces replaced with an escape sequence.
-	 * 
-	 * @param path
-	 */
-	protected String escapeWhitespaces(String path) {
-		// Escape the spaces in the path/filename if it has any
-		String[] segments = path.split("\\s"); //$NON-NLS-1$
-		if (segments.length > 1) {
-			StringBuffer escapedPath = new StringBuffer();
-			for (int index = 0; index < segments.length; ++index) {
-				escapedPath.append(segments[index]);
-				if (index + 1 < segments.length) {
-					escapedPath.append("\\ "); //$NON-NLS-1$
-				}
+		/**
+		 * Constructs a new resource proxy visitor to quickly visit project
+		 * resources.
+		 */
+		public ResourceProxyVisitor(GnuMakefileGenerator generator, IManagedBuildInfo info) {
+			this.generator = generator;
+			this.info = info;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+		 */
+		public boolean visit(IResourceProxy proxy) throws CoreException {
+			// No point in proceeding, is there 
+			if (generator == null) {
+				return false;
 			}
-			return escapedPath.toString().trim();
-		} else {
-			return path;
+			
+			// Is this a resource we should even consider
+			if (proxy.getType() == IResource.FILE) {
+				// Check extension to see if build model should build this file
+				IResource resource = proxy.requestResource();
+				String ext = resource.getFileExtension();
+				if (info.buildsFileType(ext)) {
+					if (!generator.isGeneratedResource(resource)) {
+						generator.appendBuildSubdirectory(resource);
+					}
+				}
+				return false;
+			}
+
+			// Recurse into subdirectories
+			return true;
 		}
+
 	}
 
-	/* (non-Javadoc)
-	 * Answers a <code>StringBuffer</code> containing the comment(s) 
-	 * for the top-level makefile.
-	 */
-	protected StringBuffer addTopHeader() {
-		return addDefaultHeader();
-	}
+	// String constants for makefile contents and messages
+	protected static final String AT = "@";	//$NON-NLS-1$
+	private static final String COMMENT = "MakefileGenerator.comment";	//$NON-NLS-1$
+	private static final String AUTO_DEP = COMMENT + ".autodeps";	//$NON-NLS-1$
+	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
+	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
+	protected static final String COLON = ":";	//$NON-NLS-1$
 	
-	/* (non-Javadoc)
-	 * Answers a <code>StringBuffer</code> containing the comment(s) 
-	 * for a fragment makefile.
-	 */
-	protected StringBuffer addFragmentMakefileHeader() {
-		return addDefaultHeader();
-	}
+	private static final int COLS_PER_LINE = 80;
+	protected static final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
+	protected static final String DEP_EXT = "d";	//$NON-NLS-1$
+	private static final String DEP_INCL = COMMENT + ".module.dep.includes";	//$NON-NLS-1$
+	protected static final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
+	protected static final String DOT = ".";	//$NON-NLS-1$
+	protected static final String ECHO = "echo";	//$NON-NLS-1$
+	private static final String HEADER = COMMENT + ".header"; //$NON-NLS-1$
+	protected static final String IN_MACRO = "$<";	//$NON-NLS-1$
+	protected static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
+	protected static final String LINEBREAK = "\\" + NEWLINE;	//$NON-NLS-1$
+	protected static final String LOGICAL_AND = "&&";	//$NON-NLS-1$
+	protected static final String MAKEFILE_DEFS = "makefile.defs"; //$NON-NLS-1$
+	protected static final String MAKEFILE_INIT = "makefile.init"; //$NON-NLS-1$
+	protected static final String MAKEFILE_NAME = "makefile";	//$NON-NLS-1$
+	protected static final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$
+	
+	protected static final String MESSAGE_FINISH_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.build");	//$NON-NLS-1$
+	protected static final String MESSAGE_FINISH_FILE = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.file");	//$NON-NLS-1$
+	protected static final String MESSAGE_START_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.start.build");	//$NON-NLS-1$
+	protected static final String MESSAGE_START_FILE = ManagedMakeMessages.getResourceString("MakefileGenerator.message.start.file");	//$NON-NLS-1$
+	private static final String MOD_INCL = COMMENT + ".module.make.includes";	//$NON-NLS-1$	
+	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
+	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
+	protected static final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
+	protected static final String OBJECTS_MAKFILE = "objects.mk"; //$NON-NLS-1$
+	protected static final String OUT_MACRO = "$@";	//$NON-NLS-1$
+	protected static final String ROOT = "$(ROOT)";	//$NON-NLS-1$
+	protected static final String SEPARATOR = "/";	//$NON-NLS-1$
+	protected static final String SINGLE_QUOTE = "'";	//$NON-NLS-1$
+	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$	
+	protected static final String SRCSFILE_NAME = "sources.mk"; //$NON-NLS-1$	
+	protected static final String TAB = "\t";	//$NON-NLS-1$
+	protected static final String WHITESPACE = " ";	//$NON-NLS-1$
+	protected static final String WILDCARD = "%";	//$NON-NLS-1$
+	
+	// Local variables needed by generator
+	private String buildTargetName;
+	private Vector deletedFileList;
+	private Vector dependencyMakefiles;
+	private String extension;
+	protected IManagedBuildInfo info;
+	protected Vector modifiedList;
+	protected IProgressMonitor monitor;
+	protected IProject project;
+	protected Vector ruleList;
+	protected Vector subdirList;
+	protected IPath topBuildDir;
 
-	/* (non-Javadoc)
-	 * Answers a <code>StringBuffer</code> containing the comment(s) 
-	 * for a dependency makefile.
-	 */
-	protected StringBuffer addFragmentDependenciesHeader() {
-		return addDefaultHeader();
-	}
-
-	/* (non-Javadoc)
-	 * Put COLS_PER_LINE comment charaters in the argument.
-	 */
-	protected void outputCommentLine(StringBuffer buffer) {
-		for (int i = 0; i < COLS_PER_LINE; i++) {
-			buffer.append(COMMENT_SYMBOL);
-		}
-		buffer.append(NEWLINE);		
+	public GnuMakefileGenerator() {
+		super();
 	}
 	
 	/* (non-Javadoc)
@@ -337,6 +259,22 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		outputCommentLine(buffer);
 		buffer.append(NEWLINE);
 		return buffer;
+	}
+
+	/* (non-Javadoc)
+	 * Answers a <code>StringBuffer</code> containing the comment(s) 
+	 * for a dependency makefile.
+	 */
+	protected StringBuffer addFragmentDependenciesHeader() {
+		return addDefaultHeader();
+	}
+	
+	/* (non-Javadoc)
+	 * Answers a <code>StringBuffer</code> containing the comment(s) 
+	 * for a fragment makefile.
+	 */
+	protected StringBuffer addFragmentMakefileHeader() {
+		return addDefaultHeader();
 	}
 	
 	/* (non-javadoc)
@@ -371,30 +309,65 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	/* (non-javadoc)
-	 * @return
+	 * Create the pattern rule in the format:
+	 * <relative_path>/<name>.<outputExtension>: $(ROOT)/<relative_path>/<name>.<inputExtension>
+	 * 		@echo 'Building file: $<'
+	 * 		@<tool> <flags> <output_flag> $@ $< && \
+	 * 		echo -n '<relative_path>/<name>.d <relative_path>/' >> <relative_path>/<name>.d && \
+	 * 		<tool> -P -MM -MG <flags> $< >> <relative_path>/<name>.d
+	 * 		@echo 'Finished building: $<'
+	 * 		@echo
+	 * 
+	 * Note that the macros all come from the build model and are 
+	 * resolved to a real command before writing to the module
+	 * makefile, so a real command might look something like:
+	 * source1/foo.o: $(ROOT)/source1/foo.cpp
+	 * 		@echo 'Building file: $<'
+	 * 		@ g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o $@ $< && \
+	 * 		echo -n 'source1/foo.d source1/' >> source1/foo.d && \
+	 * 		g++ -P -MM -MG -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers $< >> source1/foo.d
+	 * 		@echo 'Finished building: $<'
+	 * 		@echo
+	 * 
+	 * @param relativePath
+	 * @param buffer
+	 * @param resource
 	 */
-	private StringBuffer addSubdirectories() {
-		StringBuffer buffer = new StringBuffer();
-		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_LIST) + NEWLINE);
+	private void addRule(String relativePath, StringBuffer buffer, IResource resource) {
+		String buildFlags = null;
+		String resourceName = getFileName(resource);
+		String inputExtension = resource.getFileExtension();
+		String cmd = info.getToolForSource(inputExtension);
+		String outputExtension = info.getOutputExtension(inputExtension);
+		String outflag = null;
+		String outputPrefix = null;
 		
-		buffer.append("SUBDIRS := " + LINEBREAK); //$NON-NLS-1$
+		// Add the rule and command to the makefile
+		String buildRule = relativePath + resourceName + DOT + outputExtension + COLON + WHITESPACE + ROOT + SEPARATOR + relativePath + resourceName + DOT + inputExtension; 
+		buffer.append(buildRule + NEWLINE);
+		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
+		buildFlags = info.getFlagsForSource(inputExtension);
+		outflag = info.getOutputFlag(outputExtension);
+		outputPrefix = info.getOutputPrefix(outputExtension);
 		
-		// Get all the module names
-		Iterator iter = getSubdirList().listIterator();
-		while (iter.hasNext()) {
-			IContainer container = (IContainer) iter.next();
-			// Check the special case where the module is the project root
-			if (container.getFullPath() == project.getFullPath()) {
-				buffer.append(DOT + WHITESPACE + LINEBREAK);
-			} else {
-				IPath path = container.getProjectRelativePath();
-				buffer.append(path.toString() +  WHITESPACE + LINEBREAK);
-			}
+		// The command to build
+		buffer.append(TAB + AT + ECHO + WHITESPACE + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO + NEWLINE);
+		buffer.append(TAB + AT + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO);
+		
+		// TODO determine if there are any deps to calculate
+		if (true) {
+			buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
+			// TODO get the dep rule out of the tool
+			String depRule =  relativePath + resourceName + DOT + DEP_EXT;
+			getDependencyMakefiles().add(depRule);
+			buffer.append(TAB + ECHO + WHITESPACE + "-n" + WHITESPACE + SINGLE_QUOTE + depRule + WHITESPACE + relativePath + SINGLE_QUOTE + WHITESPACE + ">" + WHITESPACE + depRule + WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(TAB + cmd + WHITESPACE + "-MM -MG -P -w" + WHITESPACE + buildFlags + WHITESPACE + IN_MACRO + WHITESPACE + ">>" + WHITESPACE + depRule); //$NON-NLS-1$ //$NON-NLS-2$
+			
 		}
-
+		
+		// Say goodbye to the nice user
 		buffer.append(NEWLINE);
-		return buffer;
+		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE + TAB + AT + ECHO + NEWLINE + NEWLINE);
 	}
 
 
@@ -440,8 +413,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
   					
   					// there is no entry in the map, so create a buffer for this extension
  					StringBuffer tempBuffer = new StringBuffer();
- 					tempBuffer.append(macroName + WHITESPACE + "+=" + WHITESPACE + LINEBREAK);	//$NON-NLS$-1
- 					tempBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK);	//$NON-NLS$-1 //$NON-NLS$-2
+ 					tempBuffer.append(macroName + WHITESPACE + "+=" + WHITESPACE + LINEBREAK);	//$NON-NLS-1$
+ 					tempBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK);	//$NON-NLS-1$ //$NON-NLS-2$
  					
  					// have to store the buffer in String form as StringBuffer is not a sublcass of Object
  					extensionToRuleStringMap.put(extensionName, tempBuffer.toString());
@@ -495,6 +468,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	/* (non-javadoc)
+	 * @return
+	 */
+	private StringBuffer addSubdirectories() {
+		StringBuffer buffer = new StringBuffer();
+		// Add the comment
+		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_LIST) + NEWLINE);
+		
+		buffer.append("SUBDIRS := " + LINEBREAK); //$NON-NLS-1$
+		
+		// Get all the module names
+		Iterator iter = getSubdirList().listIterator();
+		while (iter.hasNext()) {
+			IContainer container = (IContainer) iter.next();
+			// Check the special case where the module is the project root
+			if (container.getFullPath() == project.getFullPath()) {
+				buffer.append(DOT + WHITESPACE + LINEBREAK);
+			} else {
+				IPath path = container.getProjectRelativePath();
+				buffer.append(path.toString() +  WHITESPACE + LINEBREAK);
+			}
+		}
+
+		buffer.append(NEWLINE);
+		return buffer;
+	}
+
+	/* (non-javadoc)
 	 * Answers a <code>StrinBuffer</code> containing all of the required targets to
 	 * properly build the project.
 	 * 
@@ -511,20 +511,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String targets = rebuild ? "clean all" : "all"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Get all the projects the build target depends on
-		IProject[] deps = null;
+		IProject[] refdProjects = null;
 		try {
-			deps = project.getReferencedProjects();
+			refdProjects = project.getReferencedProjects();
 		} catch (CoreException e) {
 			// There are 2 exceptions; the project does not exist or it is not open
 			// and neither conditions apply if we are building for it ....
 		}
 
 		// Write out the all target first in case someone just runs make
-		// 	all: targ_<target_name> [deps] 
+		// 	all: targ_<target_name> 
 		String defaultTarget = "all:"; //$NON-NLS-1$
-		if (deps.length > 0) {
-			defaultTarget += WHITESPACE + "deps"; //$NON-NLS-1$
-		}
 		buffer.append(defaultTarget + WHITESPACE + outputPrefix + buildTargetName);
 		if (extension.length() > 0) {
 			buffer.append(DOT + extension);
@@ -538,11 +535,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) [clean all | all]> 
 		 */
 		Vector managedProjectOutputs = new Vector();
-		if (deps.length > 0) { 
-			buffer.append("deps:" + NEWLINE); //$NON-NLS-1$
-			if (deps != null) {
-				for (int i = 0; i < deps.length; i++) {
-					IProject dep = deps[i];
+		if (refdProjects.length > 0) { 
+			buffer.append("dependents:" + NEWLINE); //$NON-NLS-1$
+			if (refdProjects != null) {
+				for (int i = 0; i < refdProjects.length; i++) {
+					IProject dep = refdProjects[i];
 					String buildDir = dep.getLocation().toString();
 					String depTargets = targets;
 					if (ManagedBuildManager.manages(dep)) {
@@ -554,7 +551,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						String depTarget = depInfo.getBuildArtifactName();
 						String depExt = depInfo.getBuildArtifactExtension();
 						String depPrefix = depInfo.getOutputPrefix(depExt);
-						if (depInfo.isDirty()) {
+						if (depInfo.needsRebuild()) {
 							depTargets = "clean all"; //$NON-NLS-1$
 						}
 						String dependency = buildDir + SEPARATOR + depPrefix + depTarget;
@@ -571,7 +568,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		/*
 		 * Write out the target rule as:
-		 * targ_<prefix><target>.<extension>: $(OBJS) [<dep_proj_1_output> ... <dep_proj_n_output>]
+		 * targ_<prefix><target>.<extension>: $(OBJS)
 		 * 		@echo 'Building target: $@'
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 * 		@echo 'Finished building: $@'
@@ -582,10 +579,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(DOT + extension);
 		}
 		buffer.append(COLON + WHITESPACE + "$(OBJS)"); //$NON-NLS-1$
-		Iterator iter = managedProjectOutputs.listIterator();
-		while (iter.hasNext()) {
-			buffer.append(WHITESPACE + (String)iter.next());
-		}
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
@@ -593,13 +586,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + "$(OBJS:%.o=%.d)" + WHITESPACE + outputPrefix + buildTargetName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS$-3
+		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + "$(OBJS:%.o=%.d)" + WHITESPACE + outputPrefix + buildTargetName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (extension.length() > 0) {
 			buffer.append(DOT + extension);
 		}
 		buffer.append(NEWLINE + NEWLINE); 
 		
-		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE); //$NON-NLS-1$
+		buffer.append(".PHONY: all clean dependents" + NEWLINE + NEWLINE); //$NON-NLS-1$
 		
 		// Include makefile.targets supplemental makefile
 		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_TARGETS + NEWLINE); //$NON-NLS-1$
@@ -607,66 +600,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return buffer;
 	}
 
-	/* (non-javadoc)
-	 * Create the pattern rule in the format:
-	 * <relative_path>/<name>.<outputExtension>: $(ROOT)/<relative_path>/<name>.<inputExtension>
-	 * 		@echo 'Building file: $<'
-	 * 		@<tool> <flags> <output_flag> $@ $< && \
-	 * 		echo -n '<relative_path>/<name>.d <relative_path>/' >> <relative_path>/<name>.d && \
-	 * 		<tool> -P -M -MG <flags> $< >> <relative_path>/<name>.d
-	 * 		@echo 'Finished building: $<'
-	 * 		@echo
-	 * 
-	 * Note that the macros all come from the build model and are 
-	 * resolved to a real command before writing to the module
-	 * makefile, so a real command might look something like:
-	 * source1/foo.o: $(ROOT)/source1/foo.cpp
-	 * 		@echo 'Building file: $<'
-	 * 		@ g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o $@ $< && \
-	 * 		echo -n 'source1/foo.d source1/' >> source1/foo.d && \
-	 * 		g++ -P -M -MG -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers $< >> source1/foo.d
-	 * 		@echo 'Finished building: $<'
-	 * 		@echo
-	 * 
-	 * @param relativePath
-	 * @param buffer
-	 * @param resource
+	/* (non-Javadoc)
+	 * Answers a <code>StringBuffer</code> containing the comment(s) 
+	 * for the top-level makefile.
 	 */
-	private void addRule(String relativePath, StringBuffer buffer, IResource resource) {
-		String buildFlags = null;
-		String resourceName = getFileName(resource);
-		String inputExtension = resource.getFileExtension();
-		String cmd = info.getToolForSource(inputExtension);
-		String outputExtension = info.getOutputExtension(inputExtension);
-		String outflag = null;
-		String outputPrefix = null;
-		
-		// Add the rule and command to the makefile
-		String buildRule = relativePath + resourceName + DOT + outputExtension + COLON + WHITESPACE + ROOT + SEPARATOR + relativePath + resourceName + DOT + inputExtension; 
-		buffer.append(buildRule + NEWLINE);
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
-		buildFlags = info.getFlagsForSource(inputExtension);
-		outflag = info.getOutputFlag(outputExtension);
-		outputPrefix = info.getOutputPrefix(outputExtension);
-		
-		// The command to build
-		buffer.append(TAB + AT + ECHO + WHITESPACE + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO + NEWLINE);
-		buffer.append(TAB + AT + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO);
-		
-		// TODO determine if there are any deps to calculate
-		if (true) {
-			buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
-			// TODO get the dep rule out of the tool
-			String depRule =  relativePath + resourceName + DOT + DEP_EXT;
-			getDependencyMakefiles().add(depRule);
-			buffer.append(TAB + ECHO + WHITESPACE + "-n" + WHITESPACE + SINGLE_QUOTE + depRule + WHITESPACE + relativePath + SINGLE_QUOTE + WHITESPACE + ">" + WHITESPACE + depRule + WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append(TAB + cmd + WHITESPACE + "-MM -MG -P -w" + WHITESPACE + buildFlags + WHITESPACE + IN_MACRO + WHITESPACE + ">>" + WHITESPACE + depRule); //$NON-NLS-1$ //$NON-NLS-2$
-			
-		}
-		
-		// Say goodbye to the nice user
-		buffer.append(NEWLINE);
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE + TAB + AT + ECHO + NEWLINE + NEWLINE);
+	protected StringBuffer addTopHeader() {
+		return addDefaultHeader();
 	}
 	
 	/**
@@ -683,6 +622,18 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			getSubdirList().add(container);		
 		}
 	}
+
+	/**
+	 * If a file is removed from a source folder (either because of a delete 
+	 * or move action on the part of the user), the makefilegenerator has to
+	 * remove the dependency makefile along with the old build goal 
+	 *  
+	 * @param resource
+	 */
+	protected void appendDeletedFile(IResource resource) {
+		// Cache this for now
+		getDeletedFileList().add(resource);
+	}
 	
 	/**
 	 * Adds the container of the argument to a list of subdirectories that are part 
@@ -696,39 +647,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (!getModifiedList().contains(container)) {
 			getModifiedList().add(container);		
 		}
-	}
-
-	/**
-	 * If a file is removed from a source folder (either because of a delete 
-	 * or move action on the part of the user), the makefilegenerator has to
-	 * remove the dependency makefile along with the old build goal 
-	 *  
-	 * @param resource
-	 */
-	protected void appendDeletedFile(IResource resource) {
-		// Cache this for now
-		getDeletedFileList().add(resource);
-	}
-
-
-	/**
-	 * @return
-	 */
-	private Vector getDeletedFileList() {
-		if (deletedFileList == null) {
-			deletedFileList = new Vector();
-		}
-		return deletedFileList;
-	}
-
-	/**
-	 * @return
-	 */
-	private Vector getDependencyMakefiles() {
-		if (dependencyMakefiles == null) {
-			dependencyMakefiles = new Vector();
-		}
-		return dependencyMakefiles;
 	}
 	
 	/* (non-Javadoc)
@@ -749,6 +667,150 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	protected void checkCancel() {
 		if (monitor != null && monitor.isCanceled()) {
 			throw new OperationCanceledException();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * Return or create the folder needed for the build output. If we are
+	 * creating the folder, set the derived bit to true so the CM system 
+	 * ignores the contents. If the resource exists, respect the existing 
+	 * derived setting. 
+	 * 
+	 * @param string
+	 * @return IPath
+	 */
+	private IPath createDirectory(String dirName) throws CoreException {
+		// Create or get the handle for the build directory 
+		IFolder folder = project.getFolder(dirName);
+		if (!folder.exists()) {
+			// Make sure that parent folders exist
+			IPath parentPath = (new Path(dirName)).removeLastSegments(1);
+			// Assume that the parent exists if the path is empty
+			if (!parentPath.isEmpty()) {
+				IFolder parent = project.getFolder(parentPath);
+				if (!parent.exists()) {
+					createDirectory(parentPath.toString());
+				}
+			}
+			
+			// Now make the requested folder
+			try {
+				folder.create(true, true, null);
+			}
+			catch (CoreException e) {
+				if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
+					folder.refreshLocal(IResource.DEPTH_ZERO, null);
+				else
+					throw e;
+			}
+
+			// Make sure the folder is marked as derived so it is not added to CM
+			if (!folder.isDerived()) {
+				folder.setDerived(true);
+			}
+		}
+	
+		return folder.getFullPath();
+	}
+
+	/* (non-Javadoc)
+	 * Return or create the makefile needed for the build. If we are creating 
+	 * the resource, set the derived bit to true so the CM system ignores 
+	 * the contents. If the resource exists, respect the existing derived 
+	 * setting.
+	 *  
+	 * @param makefilePath
+	 * @return IFile
+	 */
+	private IFile createFile(IPath makefilePath) throws CoreException {
+		// Create or get the handle for the makefile
+		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+		IFile newFile = root.getFileForLocation(makefilePath);
+		if (newFile == null) {
+			newFile = root.getFile(makefilePath);
+		}
+		// Create the file if it does not exist
+		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
+		try {
+			newFile.create(contents, false, new SubProgressMonitor(monitor, 1));
+			// Make sure the new file is marked as derived
+			if (!newFile.isDerived()) {
+				newFile.setDerived(true);
+			}
+
+		}
+		catch (CoreException e) {
+			// If the file already existed locally, just refresh to get contents
+			if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
+				newFile.refreshLocal(IResource.DEPTH_ZERO, null);
+			else
+				throw e;
+		}
+		
+		return newFile;
+	}
+
+	/**
+	 * @param deletedFile
+	 */
+	private void deleteBuildTarget(IResource deletedFile) {
+		// Get the project relative path of the file
+		String fileName = getFileName(deletedFile);
+		String srcExtension = deletedFile.getFileExtension();
+		String targetExtension = info.getOutputExtension(srcExtension);
+		fileName += DOT + targetExtension;
+		IPath projectRelativePath = deletedFile.getProjectRelativePath().removeLastSegments(1);
+		IPath targetFilePath = getBuildWorkingDir().append(projectRelativePath).append(fileName);
+		IResource depFile = project.findMember(targetFilePath);
+		if (depFile != null && depFile.exists()) {
+			try {
+				depFile.delete(true, new SubProgressMonitor(monitor, 1));
+			} catch (CoreException e) {
+				// This had better be allowed during a build
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}		
+	}
+	
+	/**
+	 * @param deletedFile
+	 */
+	private void deleteDepFile(IResource deletedFile) {
+		// Get the project relative path of the file
+		String fileName = getFileName(deletedFile);
+		fileName += DOT + DEP_EXT;
+		IPath projectRelativePath = deletedFile.getProjectRelativePath().removeLastSegments(1);
+		IPath depFilePath = getBuildWorkingDir().append(projectRelativePath).append(fileName);
+		IResource depFile = project.findMember(depFilePath);
+		if (depFile != null && depFile.exists()) {
+			try {
+				depFile.delete(true, new SubProgressMonitor(monitor, 1));
+			} catch (CoreException e) {
+				// This had better be allowed during a build
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * Answers the argument with all whitespaces replaced with an escape sequence.
+	 * 
+	 * @param path
+	 */
+	protected String escapeWhitespaces(String path) {
+		// Escape the spaces in the path/filename if it has any
+		String[] segments = path.split("\\s"); //$NON-NLS-1$
+		if (segments.length > 1) {
+			StringBuffer escapedPath = new StringBuffer();
+			for (int index = 0; index < segments.length; ++index) {
+				escapedPath.append(segments[index]);
+				if (index + 1 < segments.length) {
+					escapedPath.append("\\ "); //$NON-NLS-1$
+				}
+			}
+			return escapedPath.toString().trim();
+		} else {
+			return path;
 		}
 	}
 
@@ -858,6 +920,37 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			checkCancel();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#getTopBuildDir()
+	 */
+	public IPath getBuildWorkingDir() {
+		if (topBuildDir != null) {
+			return topBuildDir.removeFirstSegments(1);
+		}
+		return null;
+	}
+
+
+	/**
+	 * @return
+	 */
+	private Vector getDeletedFileList() {
+		if (deletedFileList == null) {
+			deletedFileList = new Vector();
+		}
+		return deletedFileList;
+	}
+
+	/**
+	 * @return
+	 */
+	private Vector getDependencyMakefiles() {
+		if (dependencyMakefiles == null) {
+			dependencyMakefiles = new Vector();
+		}
+		return dependencyMakefiles;
+	}
 	
 	/**
 	 * Strips off the file extension from the argument and returns 
@@ -886,12 +979,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// practically nil so it doesn't seem worth the hassle of generating a truly
 		// unique name.
 		if(extensionName.equals(extensionName.toUpperCase())) {
-			macroName.append(extensionName.toUpperCase() + "_UPPER");	//$NON-NLS$-1
+			macroName.append(extensionName.toUpperCase() + "_UPPER");	//$NON-NLS-1$
 		} else {
 			// lower case... no need for "UPPER_"
 			macroName.append(extensionName.toUpperCase());
 		}
-		macroName.append("_SRCS");	//$NON-NLS$-1
+		macroName.append("_SRCS");	//$NON-NLS-1$
 		return macroName;
 	}
 	
@@ -959,137 +1052,26 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		return subdirList;
 	}
-
-	/* (non-Javadoc)
-	 * Return or create the folder needed for the build output. If we are
-	 * creating the folder, set the derived bit to true so the CM system 
-	 * ignores the contents. If the resource exists, respect the existing 
-	 * derived setting. 
-	 * 
-	 * @param string
-	 * @return IPath
-	 */
-	private IPath createDirectory(String dirName) throws CoreException {
-		// Create or get the handle for the build directory 
-		IFolder folder = project.getFolder(dirName);
-		if (!folder.exists()) {
-			// Make sure that parent folders exist
-			IPath parentPath = (new Path(dirName)).removeLastSegments(1);
-			// Assume that the parent exists if the path is empty
-			if (!parentPath.isEmpty()) {
-				IFolder parent = project.getFolder(parentPath);
-				if (!parent.exists()) {
-					createDirectory(parentPath.toString());
-				}
-			}
-			
-			// Now make the requested folder
-			try {
-				folder.create(true, true, null);
-			}
-			catch (CoreException e) {
-				if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
-					folder.refreshLocal(IResource.DEPTH_ZERO, null);
-				else
-					throw e;
-			}
-
-			// Make sure the folder is marked as derived so it is not added to CM
-			if (!folder.isDerived()) {
-				folder.setDerived(true);
-			}
-		}
-	
-		return folder.getFullPath();
-	}
-
-	/**
-	 * @param deletedFile
-	 */
-	private void deleteBuildTarget(IResource deletedFile) {
-		// Get the project relative path of the file
-		String fileName = getFileName(deletedFile);
-		String srcExtension = deletedFile.getFileExtension();
-		String targetExtension = info.getOutputExtension(srcExtension);
-		fileName += DOT + targetExtension;
-		IPath projectRelativePath = deletedFile.getProjectRelativePath().removeLastSegments(1);
-		IPath targetFilePath = getBuildWorkingDir().append(projectRelativePath).append(fileName);
-		IResource depFile = project.findMember(targetFilePath);
-		if (depFile != null && depFile.exists()) {
-			try {
-				depFile.delete(true, new SubProgressMonitor(monitor, 1));
-			} catch (CoreException e) {
-				// This had better be allowed during a build
-				ManagedBuilderCorePlugin.log(e);
-			}
-		}		
-	}
 	
 	/**
-	 * @param deletedFile
+	 * @param project
+	 * @param info
+	 * @param monitor
 	 */
-	private void deleteDepFile(IResource deletedFile) {
-		// Get the project relative path of the file
-		String fileName = getFileName(deletedFile);
-		fileName += DOT + DEP_EXT;
-		IPath projectRelativePath = deletedFile.getProjectRelativePath().removeLastSegments(1);
-		IPath depFilePath = getBuildWorkingDir().append(projectRelativePath).append(fileName);
-		IResource depFile = project.findMember(depFilePath);
-		if (depFile != null && depFile.exists()) {
-			try {
-				depFile.delete(true, new SubProgressMonitor(monitor, 1));
-			} catch (CoreException e) {
-				// This had better be allowed during a build
-				ManagedBuilderCorePlugin.log(e);
-			}
+	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
+		// Save the project so we can get path and member information
+		this.project = project;
+		// Save the monitor reference for reporting back to the user
+		this.monitor = monitor;
+		// Get the build info for the project
+		this.info = info;
+		// Get the name of the build target
+		buildTargetName = info.getBuildArtifactName();
+		// Get its extension
+		extension = info.getBuildArtifactExtension();
+		if (extension == null) {
+			extension = new String();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * Return or create the makefile needed for the build. If we are creating 
-	 * the resource, set the derived bit to true so the CM system ignores 
-	 * the contents. If the resource exists, respect the existing derived 
-	 * setting.
-	 *  
-	 * @param makefilePath
-	 * @return IFile
-	 */
-	private IFile createFile(IPath makefilePath) throws CoreException {
-		// Create or get the handle for the makefile
-		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
-		IFile newFile = root.getFileForLocation(makefilePath);
-		if (newFile == null) {
-			newFile = root.getFile(makefilePath);
-		}
-		// Create the file if it does not exist
-		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
-		try {
-			newFile.create(contents, false, new SubProgressMonitor(monitor, 1));
-			// Make sure the new file is marked as derived
-			if (!newFile.isDerived()) {
-				newFile.setDerived(true);
-			}
-
-		}
-		catch (CoreException e) {
-			// If the file already existed locally, just refresh to get contents
-			if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
-				newFile.refreshLocal(IResource.DEPTH_ZERO, null);
-			else
-				throw e;
-		}
-		
-		return newFile;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#getTopBuildDir()
-	 */
-	public IPath getBuildWorkingDir() {
-		if (topBuildDir != null) {
-			return topBuildDir.removeFirstSegments(1);
-		}
-		return null;
 	}
 	
 	/**
@@ -1111,27 +1093,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return false;
 	}
 
-	/* (non-javadoc)
-	 * Create the entire contents of the makefile.
-	 * 
-	 * @param fileHandle The file to place the contents in.
-	 * @param rebuild FLag signalling that the user is doing a full rebuild
-	 * @throws CoreException
+	/* (non-Javadoc)
+	 * Put COLS_PER_LINE comment charaters in the argument.
 	 */
-	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) throws CoreException {
-		StringBuffer buffer = new StringBuffer();
-		
-		// Add the header
-		buffer.append(addTopHeader());
-		
-		// Add the macro definitions
-		buffer.append(addMacros());
-
-		// Add targets
-		buffer.append(addTargets(rebuild));
-
-		// Save the file
-		Util.save(buffer, fileHandle);
+	protected void outputCommentLine(StringBuffer buffer) {
+		for (int i = 0; i < COLS_PER_LINE; i++) {
+			buffer.append(COMMENT_SYMBOL);
+		}
+		buffer.append(NEWLINE);		
 	}
 
 	protected void populateDummyTargets(IFile makefile, boolean force) throws CoreException, IOException {
@@ -1156,7 +1125,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		StringBuffer outBuffer = null;
 		if (inBuffer != null) {
 			// Here are the tokens in the file
-			String[] dependencies = inBuffer.toString().split("\\s");
+			String[] dependencies = inBuffer.toString().split("\\s");	//$NON-NLS-1$
 			
 			// If we are doing an incremental build, only update the files that do not have a comment
 			if (dependencies.length > 0 && !force) {
@@ -1291,9 +1260,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  					
  					// create dependency rule of the form
  					// OBJS = $(macroName1: $(ROOT)/%.input1=%.output1) ... $(macroNameN: $(ROOT)/%.inputN=%.outputN)
- 					objectsBuffer.append(WHITESPACE + "$(" + macroName + COLON + "$(ROOT)" + SEPARATOR + WILDCARD
- 							+ DOT + extensionName + "=" + WILDCARD + DOT +
- 							toolArray[k].getOutputExtension(extensionName) + ")" );
+ 					objectsBuffer.append(WHITESPACE + "$(" + macroName + COLON + "$(ROOT)" + SEPARATOR + WILDCARD	//$NON-NLS-1$ //$NON-NLS-2$
+ 							+ DOT + extensionName + "=" + WILDCARD + DOT +	//$NON-NLS-1$
+ 							toolArray[k].getOutputExtension(extensionName) + ")" );	//$NON-NLS-1$
  				}
  			}
  		}		
@@ -1326,7 +1295,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  				if(!outputExtensionsSet.contains(extensionName) && !handledInputExtensionsSet.contains(extensionName)) {
  					handledInputExtensionsSet.add(extensionName);
  					StringBuffer macroName = getMacroName(extensionName);
- 					buffer.append(macroName + WHITESPACE + ":=" + WHITESPACE + NEWLINE);
+ 					buffer.append(macroName + WHITESPACE + ":=" + WHITESPACE + NEWLINE);	//$NON-NLS-1$
  				}
  			}
  		}
@@ -1334,6 +1303,29 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Add a list of subdirectories
 		buffer.append(NEWLINE + addSubdirectories());
 		
+		// Save the file
+		Util.save(buffer, fileHandle);
+	}
+
+	/* (non-javadoc)
+	 * Create the entire contents of the makefile.
+	 * 
+	 * @param fileHandle The file to place the contents in.
+	 * @param rebuild FLag signalling that the user is doing a full rebuild
+	 * @throws CoreException
+	 */
+	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		
+		// Add the header
+		buffer.append(addTopHeader());
+		
+		// Add the macro definitions
+		buffer.append(addMacros());
+
+		// Add targets
+		buffer.append(addTargets(rebuild));
+
 		// Save the file
 		Util.save(buffer, fileHandle);
 	}
@@ -1410,7 +1402,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		checkCancel();
 		
 		// Now finish up by adding all the object files
-		IPath objFilePath = topBuildDir.addTrailingSeparator().append("objects.mk");
+		IPath objFilePath = topBuildDir.addTrailingSeparator().append(OBJECTS_MAKFILE);
 		IFile objsFileHandle = createFile(objFilePath);
 		populateObjectsMakefile(objsFileHandle);
 		checkCancel();

@@ -218,6 +218,15 @@ public interface ITarget extends IBuildObject {
 	public boolean isTestTarget();
 
 	/**
+	 * Answers whether the receiver has been changed and requires the 
+	 * project to be rebuilt.
+	 * 
+	 * @return <code>true</code> if the receiver contains a change 
+	 * that needs the project to be rebuilt
+	 */
+	public boolean needsRebuild();
+
+	/**
 	 * Removes the configuration with the ID specified in the argument.
 	 * 
 	 * @param id
@@ -271,9 +280,18 @@ public interface ITarget extends IBuildObject {
 	public void setErrorParserIds(String ids);
 	
 	/**
+	 * Set the rebuild state of the receiver.
+	 * 
+	 * @param <code>true</code> will force a rebuild the next time the project builds 
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild);
+
+	/**
 	 * Sets the resource that owns the receiver.
 	 * 
 	 * @param resource
 	 */
 	public void updateOwner(IResource resource);
+
 }

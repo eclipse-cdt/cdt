@@ -40,7 +40,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -53,6 +52,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+/**
+ * This is the incremental builder associated with a managed build project. It dynamically 
+ * decides the makefile generator it wants to use for a specific target.
+ * 
+ * @since 1.2 
+ */
 public class GeneratedMakefileBuilder extends ACBuilder {
 	// String constants
 	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
@@ -64,6 +69,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
 	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
 	private static final String CONSOLE_HEADER = MESSAGE + ".console.header";	//$NON-NLS-1$
+	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
 	private static final String TYPE_FULL = "ManagedMakeBuilder.type.full";	//$NON-NLS-1$
 	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
 
@@ -73,13 +79,66 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected IManagedBuilderMakefileGenerator generator;
 	
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
-		private boolean buildNeeded = false;
+		private boolean buildNeeded = true;
+		private IManagedBuildInfo buildInfo;
+		private List reservedNames;
+		
+		/**
+		 * 
+		 */
+		public ResourceDeltaVisitor(IManagedBuildInfo info) {
+			buildInfo = info;
+			reservedNames = Arrays.asList(new String[]{".cdtbuild", ".cdtproject", ".project"});	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
+		/**
+		 * @param changedResource
+		 * @return
+		 */
+		private boolean isGeneratedResource(IResource resource) {
+			// Is this a generated directory ...
+			IPath path = resource.getProjectRelativePath();
+			String[] configNames = buildInfo.getConfigurationNames();
+			for (int i = 0; i < configNames.length; i++) {
+				String name = configNames[i];
+				IPath root = new Path(name);
+				// It is if it is a root of the resource pathname
+				if (root.isPrefixOf(path)) return true;
+			}
+			return false;
+		}
+
+		/**
+		 * @param resource
+		 * @return
+		 */
+		private boolean isProjectFile(IResource resource) {
+			return reservedNames.contains(resource.getName()); 
+		}
+		
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			// If the project has changed, then a build is needed and we can stop
 			if (resource != null && resource.getProject() == getProject()) {
-				buildNeeded = true;
+				IResourceDelta[] kids = delta.getAffectedChildren();
+				for (int index = kids.length - 1; index >= 0; --index) {
+					IResource changedResource = kids[index].getResource();
+					String ext = changedResource.getFileExtension();
+					// There are some things we don't care about
+					if (resource.isDerived()) {
+						buildNeeded = false;
+					} else if (isGeneratedResource(changedResource)) {
+						buildNeeded = false;
+					} else if (buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext)) {
+						// We do care and there is no point checking anythings else
+						buildNeeded = true;
+						break;
+					} else if (isProjectFile(changedResource)) {
+						buildNeeded = false;
+					} else {
+						buildNeeded = true;
+					}
+				}
 				return false;
 			}
 
@@ -92,7 +151,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 	/**
-	 * 
+	 * Zero-argument constructor needed to fulfill the contract of an
+	 * incremental builder.
 	 */
 	public GeneratedMakefileBuilder() {
 	}
@@ -101,23 +161,28 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		IProject[] deps = getProject().getReferencedProjects();
+		// We should always tell the build system what projects we reference
+		IProject[] refdProjects = getProject().getReferencedProjects();
 		
 		// Get the build information
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info == null) {
-			return deps;
+			return refdProjects;
 		}
 
-		if (kind == IncrementalProjectBuilder.FULL_BUILD || info.isDirty()) {
+		// So let's figure out why we got called
+		if (kind == CLEAN_BUILD) {
+			cleanBuild(monitor, info);
+		}
+		else if (kind == FULL_BUILD || info.needsRebuild()) {
 			fullBuild(monitor, info);
 		}
-		else if (kind == IncrementalProjectBuilder.AUTO_BUILD && info.isDirty()) {
+		else if (kind == AUTO_BUILD && info.needsRebuild()) {
 			fullBuild(monitor, info);
 		}
 		else {
 			// Create a delta visitor to make sure we should be rebuilding
-			ResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
+			ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
 			IResourceDelta delta = getDelta(getProject());
 			if (delta == null) {
 				fullBuild(monitor, info);
@@ -131,19 +196,32 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 		
 		// Scrub the build info of all the projects participating in the build
-		info.setDirty(false);
-		for (int i = 0; i < deps.length; i++) {
-			IProject project = deps[i];
+		info.setRebuildState(false);
+		for (int i = 0; i < refdProjects.length; i++) {
+			IProject project = refdProjects[i];
 			IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(project);
 			// May not be a managed project 
 			if (depInfo != null) {
-				depInfo.setDirty(false);
+				depInfo.setRebuildState(false);
 			}
 		} 
 		
 		// Ask build mechanism to compute deltas for project dependencies next time
-		return deps;
+		return refdProjects;
 	}
+
+	/**
+	 * @param monitor
+	 * @param info
+	 */
+	protected void cleanBuild(IProgressMonitor monitor, IManagedBuildInfo info) {
+		// Make sure that there is a top level directory and a set of makefiles
+		
+		
+		// invoke make with the clean argument
+		
+	}
+
 
 	/**
 	 * Check whether the build has been canceled. Cancellation requests 
@@ -203,7 +281,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.subTask(statusMsg);
 		IPath topBuildDir = generator.getBuildWorkingDir();
 		if (topBuildDir != null) {
-			invokeMake(true, topBuildDir, info, monitor);
+			invokeMake(FULL_BUILD, topBuildDir, info, monitor);
 		} else {
 			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
@@ -263,12 +341,18 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @param fullBuild
 	 * @return
 	 */
-	protected String[] getMakeTargets(boolean fullBuild) {
+	protected String[] getMakeTargets(int buildType) {
 		List args = new ArrayList();
-		if (fullBuild) {
-			args.add("clean"); //$NON-NLS-1$
+		switch (buildType) {
+			case CLEAN_BUILD:
+				args.add("clean");	//$NON-NLS-1$
+				break;
+			case FULL_BUILD:
+				args.add("clean");	//$NON-NLS-1$
+			case INCREMENTAL_BUILD:
+				args.add("all");	//$NON-NLS-1$
+				break;
 		}
-		args.add("all"); //$NON-NLS-1$
 		return (String[])args.toArray(new String[args.size()]);
 	}
 	
@@ -349,11 +433,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.worked(1);
 
 		// Run the build
-		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());
+		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
 		IPath buildDir = new Path(info.getConfigurationName());
 		if (buildDir != null) {
-			invokeMake(false, buildDir, info, monitor);
+			invokeMake(INCREMENTAL_BUILD, buildDir, info, monitor);
 		} else {
 			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
@@ -383,7 +467,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @param info
 	 * @param monitor
 	 */
-	protected void invokeMake(boolean fullBuild, IPath buildDir, IManagedBuildInfo info, IProgressMonitor monitor) {
+	protected void invokeMake(int buildType, IPath buildDir, IManagedBuildInfo info, IProgressMonitor monitor) {
 		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = getProject();
 		if (monitor == null) {
@@ -420,9 +504,18 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				console.start(currentProject);
 				ConsoleOutputStream consoleOutStream = console.getOutputStream();
 				String[] consoleHeader = new String[3];
-				consoleHeader[0] = fullBuild ? 
-						ManagedMakeMessages.getResourceString(TYPE_FULL) : 
-						ManagedMakeMessages.getResourceString(TYPE_INC);
+				switch (buildType) {
+					case FULL_BUILD:
+						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_FULL);
+						break;
+					case INCREMENTAL_BUILD:
+						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
+						break;
+					case CLEAN_BUILD:
+						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
+						break;
+				}
+						
 				consoleHeader[1] = info.getConfigurationName();
 				consoleHeader[2] = currentProject.getName();
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
@@ -449,7 +542,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						makeArgs.add(args[i]);
 					}
 				}
-				makeArgs.addAll(Arrays.asList(getMakeTargets(fullBuild)));
+				makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
 				String[] makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);
 			
 				// Get a launcher for the make command

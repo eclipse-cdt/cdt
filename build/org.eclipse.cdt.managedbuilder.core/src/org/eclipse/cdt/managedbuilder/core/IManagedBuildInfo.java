@@ -208,6 +208,23 @@ public interface IManagedBuildInfo {
 	 */
 	public String getVersion();
 
+	
+	/**
+	 * Answers whether the receiver has been changed and requires the 
+	 * project to be rebuilt. When a project is first created, it is 
+	 * assumed that the user will need it to be fully rebuilt. However 
+	 * only option and tool command changes will trigger the build 
+	 * information for an existing project to require a rebuild.
+	 * <p>
+	 * Clients can reset the state to force or clear the rebuild status 
+	 * using <code>setRebuildState()</code>
+	 * @see ManagedBuildInfo#setRebuildState(boolean)
+	 * 
+	 * @return <code>true</code> if the resource managed by the 
+	 * receiver needs to be rebuilt
+	 */
+	public boolean needsRebuild();
+	
 	/**
 	 * Answers true if the build model has been changed by the user.
 	 * 
@@ -247,6 +264,16 @@ public interface IManagedBuildInfo {
 	 * @param target
 	 */
 	public void setDefaultTarget(ITarget target);
+	
+	/**
+	 * Sets the rebuild state in the receiver to the value of the argument. 
+	 * This is a potentially expensive option, so setting it to true should 
+	 * only be done if a project resource or setting has been modified in a 
+	 * way that would invalidate the previous build.  
+	 *  
+	 * @param <code>true</code> will force a rebuild the next time the project builds
+	 */
+	public void setRebuildState(boolean rebuild);
 	
 	/**
 	 * Set the currently selected target.  This is used while the project

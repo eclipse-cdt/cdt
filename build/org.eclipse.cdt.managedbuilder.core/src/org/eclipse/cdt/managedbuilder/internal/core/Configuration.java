@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 public class Configuration extends BuildObject implements IConfiguration {
 	private boolean isDirty = false;
 	private IConfiguration parent;
+	private boolean rebuildNeeded = false;
 	private boolean resolved = true;
 	private ITarget target;
 	private List toolReferences;
@@ -374,6 +375,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 		return isDirty;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		return rebuildNeeded;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
@@ -549,6 +556,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (option.getBooleanValue() != value) {
 			createOptionReference(option).setValue(value);
 			isDirty = true;
+			rebuildNeeded = true;
 		}
 	}
 
@@ -567,6 +575,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (oldValue != null && !oldValue.equals(value)) {
 			createOptionReference(option).setValue(value);
 			isDirty = true;
+			rebuildNeeded = true;
 		}
 	}
 
@@ -599,7 +608,15 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(!Arrays.equals(value, oldValue)) {
 			createOptionReference(option).setValue(value);
 			isDirty = true;
+			rebuildNeeded = true;
 		} 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		rebuildNeeded = rebuild;
 	}
 
 	/* (non-Javadoc)
@@ -617,6 +634,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			// Set the ref's command
 			if (ref != null) {
 				isDirty = ref.setToolCommand(command);
+				rebuildNeeded = isDirty;
 			}
 		}
 	}

@@ -853,6 +853,17 @@ public class Target extends BuildObject implements ITarget {
 		getLocalToolReferences().add(toolRef);
 	}
 	
+	public boolean needsRebuild(){
+		// Iterate over the configurations and ask them if they need saving
+		Iterator iter = getConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			if (((IConfiguration)iter.next()).needsRebuild()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setArtifactExtension(java.lang.String)
 	 */
@@ -918,6 +929,17 @@ public class Target extends BuildObject implements ITarget {
 			isDirty = true;
 		}
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		Iterator iter = getConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			((IConfiguration)iter.next()).setRebuildState(rebuild);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#updateOwner(org.eclipse.core.resources.IResource)
@@ -928,6 +950,5 @@ public class Target extends BuildObject implements ITarget {
 			owner = resource;
 		}
 	}
-
 
 }

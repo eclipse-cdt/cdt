@@ -288,7 +288,8 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Method getInputStream.
+	 * Method getOutputStream. It has a reference count
+	 * the stream must be close the same number of time this method was call.
 	 * @return OutputStream
 	 */
 	public OutputStream getOutputStream() {
@@ -303,7 +304,9 @@ public class ErrorParserManager extends OutputStream {
 		if (nOpens > 0 && --nOpens == 0) {
 			fDirectoryStack.removeAllElements();
 			fBaseDirectory = null;
-			outputStream.close();
+			if (outputStream != null)
+				outputStream.close();
+			checkLine(true);
 		}
 	}
 
@@ -311,16 +314,18 @@ public class ErrorParserManager extends OutputStream {
 	 * @see java.io.OutputStream#flush()
 	 */
 	public void flush() throws IOException {
-		outputStream.flush();
+		if (outputStream != null)
+			outputStream.flush();
 	}
 
 	/**
 	 * @see java.io.OutputStream#write(int)
 	 */
-	public void write(int b) throws IOException {
+	public synchronized void write(int b) throws IOException {
 		currentLine.append((char) b);
-		checkLine();
-		outputStream.write(b);
+		checkLine(false);
+		if (outputStream != null)
+			outputStream.write(b);
 	}
 
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
@@ -334,24 +339,34 @@ public class ErrorParserManager extends OutputStream {
 			return;
 		}
 		currentLine.append(new String(b, 0, len));
-		checkLine();
-		outputStream.write(b, off, len);
+		checkLine(false);
+		if (outputStream != null)
+			outputStream.write(b, off, len);
 	}
 
-	private void checkLine() {
-		String line = currentLine.toString();
-		if (line.endsWith("\n")) {
-			// Remove the training new lines.
-			line = line.trim();
+	private void checkLine(boolean flush) {
+		String buffer = currentLine.toString();
+		int i = 0;
+		while ((i = buffer.indexOf('\n')) != -1) {
+			String line = buffer.substring(0, i).trim();  // get rid of any trailing \r
 			processLine(line);
 			previousLine = line;
-			currentLine.setLength(0);
+			buffer = buffer.substring(i + 1); // skip the \n and advance
+		}
+		currentLine.setLength(0);
+		if (flush) {
+			if (buffer.length() > 0) {
+				processLine(buffer);
+				previousLine = buffer;
+			}
+		} else {
+			currentLine.append(buffer);
 		}
 	}
 
 	public boolean reportProblems() {
-		boolean reset = false;	
-		if (nOpens == 0) {
+		boolean reset = false;
+		if (nOpens == 0) {	
 			Iterator iter = fErrors.iterator();
 			while (iter.hasNext()) {
 				Problem problem = (Problem) iter.next();
@@ -365,8 +380,7 @@ public class ErrorParserManager extends OutputStream {
 						problem.description,
 						problem.severity,
 						problem.variableName);
-				}
-				else {
+				} else {
 					fMarkerGenerator.addMarker(
 						problem.file,
 						problem.lineNumber,

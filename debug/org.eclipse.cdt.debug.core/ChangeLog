@@ -1,3 +1,7 @@
+2004-04-16 Mikhail Khodjaiants
+	Stack frame should provide an adapter for IRunToAddress.
+	* CStackFrame.java
+
 2004-04-15 Mikhail Khodjaiants
 	Implementing core support of disassembly.
 	* AsmInstruction.java

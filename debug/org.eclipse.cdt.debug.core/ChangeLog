@@ -1,3 +1,16 @@
+2003-05-05 Mikhail Khodjaiants
+	Added a status functionality to the CDebugElement class. 
+	This allows to reflect the problems occured in the element in UI.
+	* ICDebugElementErrorStatus.java: new
+	* CDebugElement.java: implementation
+	* CThread.java
+	* CDebugTarget.java
+
+2003-05-05 Mikhail Khodjaiants
+	New method in ICBreakpoint - "isConditional".
+	* ICBreakpoint.java
+	* CBreakpoint.java
+
 2003-05-02 Mikhail Khodjaiants
 	Notify the Launch view about stack changes when handling the 'Resumed' event.
 	* CThread.java

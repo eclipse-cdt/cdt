@@ -38,8 +38,18 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	// Listeners interested in build model changes
 	private static Map listeners;
 
+	private static ScannerProvider fProvider;
+	
 	// Map of the cache scannerInfos
 	
+	public static synchronized IScannerInfoProvider getInstance() {
+		if ( fProvider == null) {
+			fProvider = new ScannerProvider();
+			CoreModel.getDefault().addElementChangedListener(fProvider);
+		}
+		return fProvider;
+	}
+
 	/*
 	 * @return
 	 */
@@ -119,7 +129,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 								if (refCProject != null) {
 									IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
 									for (int j = 0; j < projEntries.length; j++) {
-										if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+										if (entries[i].isExported()) {
 											addInfoFromEntry(projEntries[j], resPath, includeList, symbolMap);
 										}
 									}

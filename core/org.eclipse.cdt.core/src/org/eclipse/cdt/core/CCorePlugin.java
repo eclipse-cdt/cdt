@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
@@ -915,6 +916,9 @@ public class CCorePlugin extends Plugin {
 					provider = (IScannerInfoProvider) extensions[0].createExtension();
 			} catch (CoreException e) {
 				// log(e);
+			}
+			if ( provider == null) {
+				return ScannerProvider.getInstance();
 			}
 		}
 		return provider;

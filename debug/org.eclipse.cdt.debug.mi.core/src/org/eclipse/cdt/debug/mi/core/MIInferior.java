@@ -203,19 +203,19 @@ public class MIInferior extends Process {
 		}
 	}
 
-	public synchronized boolean isSuspended() {
+	public boolean isSuspended() {
 		return state == SUSPENDED;
 	}
 
-	public synchronized boolean isRunning() {
+	public boolean isRunning() {
 		return state == RUNNING;
 	}
 
-	public synchronized boolean isTerminated() {
+	public boolean isTerminated() {
 		return state == TERMINATED;
 	}
 
-	public synchronized boolean isConnected() {
+	public boolean isConnected() {
 		return connected;
 	}
 

@@ -1,3 +1,8 @@
+2004-04-07 Mikhail Khodjaiants
+	Removed the support of debugger process.
+	* ICDebugTarget.java
+	* CDebugTarget.java
+
 2004-04-02 Mikhail Khodjaiants
 	Removed dependency to xerces.
 	* CDebugUtils.java

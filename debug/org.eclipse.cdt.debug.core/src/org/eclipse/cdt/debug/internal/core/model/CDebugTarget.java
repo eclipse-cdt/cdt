@@ -162,7 +162,7 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * Associated debugger process, or <code>null</code> if not available.
 	 */
-	private IProcess fDebuggerProcess = null;
+//	private IProcess fDebuggerProcess = null;
 
 	/**
 	 * The underlying CDI target.
@@ -252,7 +252,7 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * Whether the debugger process is default.
 	 */
-	private boolean fIsDebuggerProcessDefault = false;
+//	private boolean fIsDebuggerProcessDefault = false;
 
 	/**
 	 * The suspension thread.
@@ -290,7 +290,7 @@ public class CDebugTarget extends CDebugElement
 		setTargetType( targetType );
 		setDebugTarget( this );
 		setName( name );
-		setProcesses( debuggeeProcess, debuggerProcess );
+		setProcess( debuggeeProcess );
 		setCDITarget( cdiTarget );
 		setExecFile( file );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
@@ -420,7 +420,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public IProcess getProcess()
 	{
-		return ( fIsDebuggerProcessDefault ) ? fDebuggerProcess : fDebuggeeProcess;
+		return fDebuggeeProcess;
 	}
 
 	/**
@@ -431,10 +431,9 @@ public class CDebugTarget extends CDebugElement
 	 * 	underlying CDI target, or <code>null</code> if no process is
 	 * 	associated with this debug target (for example, a core dump debugging).
 	 */
-	protected void setProcesses( IProcess debuggeeProcess, IProcess debuggerProcess )
+	protected void setProcess( IProcess debuggeeProcess )
 	{
 		fDebuggeeProcess = debuggeeProcess;
-		fDebuggerProcess = debuggerProcess;
 	}
 
 	/* (non-Javadoc)
@@ -1967,30 +1966,6 @@ public class CDebugTarget extends CDebugElement
 	protected void disposeMemoryManager()
 	{
 		getMemoryManager().dispose();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IDebuggerProcessSupport#isDefault()
-	 */
-	public boolean isDebuggerProcessDefault()
-	{
-		return fIsDebuggerProcessDefault;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IDebuggerProcessSupport#setDefault(boolean)
-	 */
-	public void setDebuggerProcessDefault( boolean value )
-	{
-		fIsDebuggerProcessDefault = value;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IDebuggerProcessSupport#supportsDebuggerProcess()
-	 */
-	public boolean supportsDebuggerProcess()
-	{
-		return ( fDebuggerProcess != null );
 	}
 
 	/* (non-Javadoc)

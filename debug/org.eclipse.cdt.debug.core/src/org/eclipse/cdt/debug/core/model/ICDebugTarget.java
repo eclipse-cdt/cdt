@@ -19,7 +19,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 public interface ICDebugTarget extends IDebugTarget,
 									   ICDebugTargetType,
 									   ICExpressionEvaluator,
-									   IDebuggerProcessSupport,
 									   IExecFileInfo,
 									   IRestart,
 									   IRunToLine,

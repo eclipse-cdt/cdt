@@ -20,11 +20,11 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MICommand;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
-import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNext;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
@@ -339,12 +339,13 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#suspend()
 	 */
 	public void suspend() throws CDIException {
+		session.getMISession().getMIInferior().interrupt();
+		// send a noop to see if we get an aswer.
 		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIExecInterrupt interrupt = factory.createMIExecInterrupt();
+		MICommand noop = new MICommand("");
 		try {
-			mi.postCommand(interrupt);
-			MIInfo info = interrupt.getMIInfo();
+			mi.postCommand(noop);
+			MIInfo info = noop.getMIInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
@@ -439,6 +440,10 @@ public class CTarget  implements ICDITarget {
 		return session.getMISession().getMIInferior().isSuspended();
 	}
 
+	public boolean isRunning() {
+		return session.getMISession().getMIInferior().isRunning();
+	}
+	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariables()
 	 */

@@ -692,7 +692,7 @@ public class Parser implements IParser
                         scope,
                         (identifier == null ? "" : identifier.getImage()),
                         first.getOffset(),
-                        (identifier == null ? 0 : identifier.getOffset()));
+                        (identifier == null ? first.getOffset() : identifier.getOffset()));
             }
             catch (ASTSemanticException e)
             {
@@ -2120,7 +2120,8 @@ public class Parser implements IParser
                 astFactory.createEnumerationSpecifier(
                     sdw.getScope(),
                     ((identifier == null) ? "" : identifier.getImage()),
-                    mark.getOffset(), ((identifier == null)
+                    mark.getOffset(), 
+                    ((identifier == null)
                         ? mark.getOffset()
                         : identifier.getOffset()));
             consume(IToken.tLBRACE);

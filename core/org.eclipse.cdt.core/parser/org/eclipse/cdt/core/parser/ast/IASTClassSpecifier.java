@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTScopedTypeSpecifier, ISourceElementCallbackDelegate {
+public interface IASTClassSpecifier extends IASTScope, IASTOffsetableNamedElement, IASTScopedTypeSpecifier, ISourceElementCallbackDelegate {
 
 	public class ClassNameType extends Enum {
 

@@ -1,3 +1,6 @@
+2003-04-28 John Camelon
+	Added DOMTests::testOrder().  
+
 2003-04-27 John Camelon
 	Added testBug36932() to DOMTests. 
 	Moved testBugFunctor758() from LokiFailures to DOMTests.

@@ -16,6 +16,7 @@ import org.eclipse.cdt.internal.core.dom.ConstructorChain;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
 import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.Declaration;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
@@ -1753,6 +1754,29 @@ public class DOMTests extends BaseDOMTest {
 			"typename H::template Rebind<T>::Result& Field(H& obj)\n");
 		code.write("{	return obj;	}\n");
 		parse(code.toString());
+	}
+
+	public void testOrder() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "#define __SGI_STL_INTERNAL_ALGOBASE_H\n" ); 
+		code.write( "#include <string.h>\n" ); 
+		code.write( "template <class _Tp>\n" ); 
+		code.write( "inline void swap(_Tp& __a, _Tp& __b) {\n" ); 
+		code.write( "__STL_REQUIRES(_Tp, _Assignable);\n" ); 
+		code.write( "_Tp __tmp = __a;\n" ); 
+		code.write( "__a = __b;\n" ); 
+		code.write( "__b = __tmp;\n" ); 
+		code.write( "}\n" ); 
+		
+		Iterator i = parse( code.toString(), true, true ).iterateOffsetableElements();
+		assertTrue( i.hasNext() );
+		assertTrue( i.next() instanceof Macro );  
+		assertTrue( i.hasNext() );
+		assertTrue( i.next() instanceof Inclusion );
+		assertTrue( i.hasNext() );
+		assertTrue( i.next() instanceof Declaration );
+		assertFalse( i.hasNext() );
 	}
 
 }

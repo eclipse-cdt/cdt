@@ -1,3 +1,6 @@
+2003-04-28 John Camelon
+	Partial fix for Bug37002 - Order of Offsetables is wrong 
+
 2003-04-27 John Camelon
 	Partial fix for Bug 36932 - RTS: Parser fails on "new" in ctor initializer
 	Fixed Bug 36704 - Problem parsing Loki's Reference Typelist.h 

@@ -1,3 +1,9 @@
+2003-09-09 Mikhail Khodjaiants
+
+	CoreFileConfiguration supports shared libraries.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/CoreFileConfiguration.java
+
 2003-08-30 Alain Magloire
 
 	Unnecessary synchronization making deadlocks.  Should revisit this code.

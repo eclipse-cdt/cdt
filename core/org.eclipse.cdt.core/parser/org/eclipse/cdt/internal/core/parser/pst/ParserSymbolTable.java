@@ -1583,14 +1583,9 @@ public class ParserSymbolTable {
 		if( source.isType( TypeInfo.t_type ) ){
 			source = getFlatTypeInfo( source, null );
 		}
-		
+
 		if( target.isType( TypeInfo.t_type ) ){
-			ISymbol symbol = target.getTypeSymbol();
-			if( symbol != null && symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null ){
-				target = new TypeInfo( target );
-				target.setType( TypeInfo.t_type );
-				target.setTypeSymbol( symbol.getTypeSymbol() );
-			}
+			target = getFlatTypeInfo( target, null );
 		}
 		
 		Cost cost = new Cost( provider, source, target );

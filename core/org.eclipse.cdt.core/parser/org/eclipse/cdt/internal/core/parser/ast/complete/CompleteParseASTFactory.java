@@ -3541,7 +3541,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( reference instanceof ASTExpression )
 			{
 				ASTExpression expression = (ASTExpression) reference;
-				if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION )
+				final String dupleAsString = duple.toString();
+				if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION &&
+						expression.getLHSExpression().equals( dupleAsString ))
 				{
 					try {
 						s = lookupQualifiedName( scopeToSymbol( scope ), duple, null, false );
@@ -3583,7 +3585,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					}
 
 				}
-				else if( expression.getExpressionKind() == Kind.POSTFIX_FUNCTIONCALL )
+				else if( expression.getExpressionKind() == Kind.POSTFIX_FUNCTIONCALL && 
+						expression.getLHSExpression().getIdExpression().equals( dupleAsString ))
 				{
 					try {
 						ISymbol symbol = getExpressionSymbol( scope, expression.getExpressionKind(), expression.getLHSExpression(), expression.getRHSExpression(), null, null );

@@ -185,6 +185,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 			}
 
 			private String findProjectName(IFile resourceFile) {
+				if( resourceFile == null ) return ""; //$NON-NLS-1$
 				IProject [] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				for( int i = 0; i < projects.length; ++i )
 				{

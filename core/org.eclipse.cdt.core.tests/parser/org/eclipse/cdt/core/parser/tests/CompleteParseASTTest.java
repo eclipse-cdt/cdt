@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -2021,5 +2020,20 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertEquals( simple.getTypeSpecifier(), xType );
     	simple = (IASTSimpleTypeSpecifier) y.getAbstractDeclaration().getTypeSpecifier();
     	assertEquals( simple.getTypeSpecifier(), yType );
+    }
+    
+    public void testBug60407() throws Exception
+    {
+    	Writer writer = new StringWriter();
+    	writer.write( "struct ZZZ { int x, y, z; };\n" );
+    	writer.write( "typedef struct ZZZ _FILE;\n" );
+    	writer.write( "typedef _FILE FILE;\n" );
+    	writer.write( "static void static_function(FILE * lcd){}\n" );
+    	writer.write( "int	main(int argc, char **argv) {\n" );
+    	writer.write( "FILE * file = 0;\n" );
+    	writer.write( "static_function( file );\n" );
+    	writer.write( "return 0;\n" );	
+    	writer.write( "}\n" );
+    	parse( writer.toString() );
     }
 }

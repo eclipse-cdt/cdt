@@ -314,4 +314,21 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		int startIndex = code.indexOf( "X anA"); //$NON-NLS-1$
 		parse( code, startIndex, startIndex + 1 );
 	}
+
+	public void testBug60407() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct ZZZ { int x, y, z; };\n" ); //$NON-NLS-1$
+		writer.write( "typedef struct ZZZ _FILE;\n" ); //$NON-NLS-1$
+		writer.write( "typedef _FILE FILE;\n" ); //$NON-NLS-1$
+		writer.write( "static void static_function(FILE * lcd){}\n" ); //$NON-NLS-1$
+		writer.write( "int	main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( "FILE * file = 0;\n" ); //$NON-NLS-1$
+		writer.write( "static_function( file );\n" ); //$NON-NLS-1$
+		writer.write( "return 0;\n" );	 //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "static_function( file )"); //$NON-NLS-1$
+		parse( code, startIndex, startIndex + "static_function".length() ); //$NON-NLS-1$
+	}
 }

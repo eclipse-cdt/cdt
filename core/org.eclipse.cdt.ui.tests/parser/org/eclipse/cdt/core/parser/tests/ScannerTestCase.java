@@ -1433,4 +1433,31 @@ public class ScannerTestCase extends TestCase
 		validateEOF();
 	}
 		
+	public void testBug36816() throws Exception
+	{
+		initializeScanner( "#include \"foo.h" );
+		validateEOF();
+		
+		initializeScanner( "#include <foo.h" );
+		validateEOF();
+		
+		initializeScanner( "#define FOO(A" );
+		validateEOF();
+		
+		initializeScanner( "#define FOO(A) 1\n FOO(foo" );
+		validateInteger("1");
+	}
+	
+	public void testBug36255() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "#if defined ( A ) \n" );
+		writer.write( "   #if defined ( B ) && ( B != 0 ) \n" );
+		writer.write( "      boo\n" );
+		writer.write( "   #endif /*B*/\n" );
+		writer.write( "#endif /*A*/" );
+		
+		initializeScanner( writer.toString() );
+		validateEOF();
+	}
 }

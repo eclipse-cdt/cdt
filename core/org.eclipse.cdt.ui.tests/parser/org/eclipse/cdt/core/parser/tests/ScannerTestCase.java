@@ -1044,6 +1044,17 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 	
+	public void validateChar( char expected )throws ScannerException
+	{
+		try {
+			Token t= scanner.nextToken();
+			assertTrue(t.getType() == Token.tCHAR );
+			Character c = new Character( expected ); 
+			assertEquals( t.getImage(), c.toString() ); 
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}		
+	}
 
 	public void validateString( String expectedImage ) throws ScannerException
 	{
@@ -1126,6 +1137,33 @@ public class ScannerTestCase extends TestCase
 				validateAsUndefined(row.symbolName(i));
 		}
 	}
+
+	public void test35892()
+	{
+		try
+		{
+			initializeScanner( "'c'" ); 
+			validateChar( 'c' );
+			validateEOF(); 
+		}
+		catch( ScannerException se )
+		{
+			fail( EXCEPTION_THROWN  + se.getMessage() );
+		}
+	}
+
+//	public void testStringConcatenation()
+//	{
+//		try
+//		{
+//			initializeScanner("# define MAD_VERSION_STRINGIZE(str)	#str" ); 
+//			validateEOF(); 
+//		}
+//		catch( ScannerException se )
+//		{
+//			fail( EXCEPTION_THROWN + se.toString() );
+//		}
+//	}
 
 	public void testConditionalWithBraces()
 	{

@@ -920,5 +920,54 @@ public class DOMTests extends TestCase {
 		assertEquals( classSpec.getName().toString(), "myarray");
 		assertEquals( 0, classSpec.getDeclarations().size() );
 	}
+	
+	public void testStruct() throws Exception
+	{
+		StringWriter writer = new StringWriter(); 
+		writer.write( "struct mad_bitptr { unsigned char const *byte;\n" );		writer.write( "unsigned short cache;\n unsigned short left;};" );
+		TranslationUnit tu = parse( writer.toString() );
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get( 0 );
+		ClassSpecifier classSpec = (ClassSpecifier)declaration.getTypeSpecifier(); 
+		DeclSpecifier declSpec = declaration.getDeclSpecifier();
+		assertEquals( classSpec.getClassKey(), ClassKey.t_struct );
+		assertEquals( classSpec.getName().toString(), "mad_bitptr" );
+		assertEquals( declaration.getDeclarators().size(), 0 );
+		List subDeclarations = classSpec.getDeclarations();
+		assertEquals( 3, subDeclarations.size() );
+		declaration = (SimpleDeclaration)subDeclarations.get(0);
+		declSpec = declaration.getDeclSpecifier();
+		assertTrue( declSpec.isUnsigned() );
+		assertTrue( declSpec.isConst() );
+		assertEquals( declSpec.getType(), DeclSpecifier.t_char );
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		Declarator d = (Declarator)declaration.getDeclarators().get(0);
+		assertEquals( d.getPointerOperators().size(), 1 );
+		PointerOperator po = (PointerOperator)d.getPointerOperators().get(0);
+		assertEquals( po.getType(), PointerOperator.t_pointer );
+		assertFalse( po.isConst() );
+		assertFalse(po.isVolatile() );
+		assertEquals( d.getName().toString(), "byte" );
+		
+		declaration = (SimpleDeclaration)subDeclarations.get(1);
+		declSpec = declaration.getDeclSpecifier();
+		assertTrue( declSpec.isUnsigned());
+		assertTrue( declSpec.isShort());
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		d = (Declarator)declaration.getDeclarators().get(0);
+		assertEquals( d.getPointerOperators().size(), 0 );
+		assertEquals( d.getName().toString(), "cache" );
+		
+		
+		declaration = (SimpleDeclaration)subDeclarations.get(2);
+		declSpec = declaration.getDeclSpecifier();
+		assertTrue( declSpec.isUnsigned());
+		assertTrue( declSpec.isShort());
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		d = (Declarator)declaration.getDeclarators().get(0);
+		assertEquals( d.getPointerOperators().size(), 0 );
+		assertEquals( d.getName().toString(), "left" );
+	}
+	
 }
 

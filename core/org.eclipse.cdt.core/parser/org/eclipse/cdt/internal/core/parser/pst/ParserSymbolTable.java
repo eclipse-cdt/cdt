@@ -876,9 +876,8 @@ public class ParserSymbolTable {
 		if( origList.size() == 1 ){
 			return isValidOverload( (ISymbol)origList.get(0), newSymbol );
 		} else if ( origList.size() > 1 ){
-			if( newSymbol.isType( ITypeInfo.t_template ) ){
-				ITemplateSymbol template = (ITemplateSymbol) newSymbol;
-				newSymbol = (ISymbol) template.getContainedSymbols().get( template.getName() );	
+			if( newSymbol.isType( ITypeInfo.t_template ) && newSymbol instanceof ITemplateSymbol ){
+				newSymbol = ((ITemplateSymbol) newSymbol).getTemplatedSymbol();	
 			}
 			
 			//the first thing can be a class-name or enumeration name, but the rest
@@ -891,9 +890,8 @@ public class ParserSymbolTable {
 			//Iterator iter = origList.iterator();
 			ISymbol symbol = (ISymbol) origList.get(0);
 			int numSymbols = origList.size();
-			if( symbol.isType( ITypeInfo.t_template ) ){
-				IParameterizedSymbol template = (IParameterizedSymbol) symbol;
-				symbol = (ISymbol) template.getContainedSymbols().get( template.getName() );	
+			if( symbol.isType( ITypeInfo.t_template ) && symbol instanceof ITemplateSymbol ){
+				symbol = ((ITemplateSymbol) symbol).getTemplatedSymbol();	
 			}
 			
 			boolean valid = isValidOverload( symbol, newSymbol );

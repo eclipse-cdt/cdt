@@ -28,8 +28,9 @@ public class MIInferior extends Process {
 	final static int SUSPENDED = 1;
 	final static int RUNNING = 2;
 	final static int TERMINATED = 4;
+	final static int ATTACHED = 8;
 
-	boolean connected = false;
+	boolean attached = false;
 
 	int state = 0;
 
@@ -152,7 +153,7 @@ public class MIInferior extends Process {
 	 * @see java.lang.Process#destroy()
 	 */
 	public void destroy() {
-		if (!isTerminated()) {
+		if (isAttached() || (((state & ATTACHED) != ATTACHED) && !isTerminated())) {
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
 			try {
@@ -196,16 +197,17 @@ public class MIInferior extends Process {
 		return state == TERMINATED;
 	}
 
-	public boolean isConnected() {
-		return connected;
+	public boolean isAttached() {
+		return attached;
 	}
 
-	public synchronized void setConnected() {
-		connected = true;
+	public synchronized void setAttached() {
+		attached = true;
+		state |= ATTACHED;
 	}
 
-	public synchronized void setDisConnected() {
-		connected = false;
+	public synchronized void setDetached() {
+		attached = false;
 	}
 
 	public synchronized void setSuspended() {

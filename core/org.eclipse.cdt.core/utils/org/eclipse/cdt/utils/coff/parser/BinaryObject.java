@@ -32,6 +32,13 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		hasChanged();
 	}
 
+	public BinaryObject(IPath p, PE pe) throws IOException {
+		super(p);
+		loadInformation(pe);
+		pe.dispose();
+		hasChanged();
+	}
+
 	public void setType(int t) {
 		type = t;
 	}

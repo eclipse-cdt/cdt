@@ -40,6 +40,13 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		hasChanged();
 	}
 
+	public BinaryObject(IPath path, ElfHelper helper) throws IOException {
+		super(path);
+		loadInformation(helper);
+		helper.dispose();
+		hasChanged();
+	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getBSS()
 	 */

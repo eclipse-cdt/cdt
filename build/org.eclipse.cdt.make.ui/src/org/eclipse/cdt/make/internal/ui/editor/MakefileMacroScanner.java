@@ -24,7 +24,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
-public class MakeMacroScanner extends RuleBasedScanner {
+public class MakefileMacroScanner extends RuleBasedScanner {
 	private String buffer;
 	private final static String[] DELIMITERS = { "\r", "\n", "\r\n" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -33,9 +33,9 @@ public class MakeMacroScanner extends RuleBasedScanner {
 	public final static String tokenOther = "other"; //$NON-NLS-1$
 
 	/**
-	 * Constructor for MakeMacroScanner
+	 * Constructor for MakefileMacroScanner
 	 */
-	public MakeMacroScanner(String buffer) {
+	public MakefileMacroScanner(String buffer) {
 		super();
 		this.buffer = buffer;
 		fOffset = 0;
@@ -49,7 +49,7 @@ public class MakeMacroScanner extends RuleBasedScanner {
 		rules.add(new PatternRule("\"", "\"", tText, '\\', true)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new PatternRule("\'", "\'", tText, '\\', true)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		rules.add(new MakeSimpleMacroRule(tMacro));
+		rules.add(new MakefileSimpleMacroRule(tMacro));
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {

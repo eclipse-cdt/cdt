@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-public interface IMakeColorManager {
+public interface IMakefileColorManager {
 	public static final RGB MAKE_COMMENT = new RGB(128, 0, 0);
 	public static final RGB MAKE_KEYWORD = new RGB(128, 128, 0);
 	public static final RGB MAKE_FUNCTION = new RGB(128, 0, 128);

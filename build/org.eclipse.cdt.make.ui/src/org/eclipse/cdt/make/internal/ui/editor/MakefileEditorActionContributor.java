@@ -18,16 +18,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  */
-public class MakeEditorActionContributor extends BasicTextEditorActionContributor {
-	private MakeEditorTogglePresentationAction togglePresentationAction;
-	private static final String TOGGLE_PRESENTATION = "make_toggle_presentation"; //$NON-NLS-1$
+public class MakefileEditorActionContributor extends BasicTextEditorActionContributor {
+	private MakefileEditorTogglePresentationAction togglePresentationAction;
+	private static final String TOGGLE_PRESENTATION = "makefile_toggle_presentation"; //$NON-NLS-1$
 
 	/**
-	 * Constructor for MakeEditorActionContributor.
+	 * Constructor for MakefileEditorActionContributor.
 	 */
-	public MakeEditorActionContributor() {
+	public MakefileEditorActionContributor() {
 		super();
-		togglePresentationAction = new MakeEditorTogglePresentationAction();
+		togglePresentationAction = new MakefileEditorTogglePresentationAction();
 	}
 
 	/**

@@ -20,10 +20,10 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
-public class MakeEditorConfiguration extends SourceViewerConfiguration {
+public class MakefileEditorConfiguration extends SourceViewerConfiguration {
 
-	private IMakeColorManager colorManager = null;
-	private MakeCodeScanner codeScanner = null;
+	private IMakefileColorManager colorManager = null;
+	private MakefileCodeScanner codeScanner = null;
 
 	/**
 	 * Single token scanner.
@@ -37,7 +37,7 @@ public class MakeEditorConfiguration extends SourceViewerConfiguration {
 	/**
 	 * Constructor for MakeConfiguration
 	 */
-	public MakeEditorConfiguration(IMakeColorManager colorManager) {
+	public MakefileEditorConfiguration(IMakefileColorManager colorManager) {
 		super();
 		this.colorManager = colorManager;
 	}
@@ -48,22 +48,22 @@ public class MakeEditorConfiguration extends SourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
-			MakeTextEditor.MAKE_COMMENT,
-			MakeTextEditor.MAKE_KEYWORD,
-			MakeTextEditor.MAKE_MACRO_VAR,
-			MakeTextEditor.MAKE_META_DATA };
+			MakefileEditor.MAKE_COMMENT,
+			MakefileEditor.MAKE_KEYWORD,
+			MakefileEditor.MAKE_MACRO_VAR,
+			MakefileEditor.MAKE_META_DATA };
 
 	}
 
-	protected IMakeColorManager getColorManager() {
+	protected IMakefileColorManager getColorManager() {
 		if (null == colorManager)
-			colorManager = new MakeColorManager();
+			colorManager = new MakefileColorManager();
 		return colorManager;
 	}
 
-	protected MakeCodeScanner getCodeScanner() {
+	protected MakefileCodeScanner getCodeScanner() {
 		if (null == codeScanner)
-			codeScanner = new MakeCodeScanner(getColorManager());
+			codeScanner = new MakefileCodeScanner(getColorManager());
 		return codeScanner;
 
 	}
@@ -77,32 +77,29 @@ public class MakeEditorConfiguration extends SourceViewerConfiguration {
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_INTERNAL);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_INTERNAL);
+		dr = new DefaultDamagerRepairer(getCodeScanner());
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_COMMENT);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_COMMENT);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_COMMENT);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_COMMENT);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_MACRO_ASSIGNEMENT);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_MACRO_ASSIGNEMENT);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_MACRO_ASSIGNEMENT);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_MACRO_ASSIGNEMENT);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_INCLUDE_BLOCK);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_INCLUDE_BLOCK);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_INCLUDE_BLOCK);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_INCLUDE_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_IF_BLOCK);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_IF_BLOCK);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_IF_BLOCK);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_IF_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_DEF_BLOCK);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_DEF_BLOCK);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_DEF_BLOCK);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_DEF_BLOCK);
-
-		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakePartitionScanner.MAKE_OTHER);
-		reconciler.setRepairer(dr, MakePartitionScanner.MAKE_OTHER);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKE_OTHER);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKE_OTHER);
 		return reconciler;
 	}
 

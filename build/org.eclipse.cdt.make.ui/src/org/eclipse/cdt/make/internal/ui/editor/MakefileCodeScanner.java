@@ -25,7 +25,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
-public class MakeCodeScanner extends RuleBasedScanner {
+public class MakefileCodeScanner extends RuleBasedScanner {
 
 	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -38,16 +38,16 @@ public class MakeCodeScanner extends RuleBasedScanner {
 		"firstword", "wildcard", "error", "warning", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"shell", "origin", "foreach", "call" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	/**
-	 * Constructor for MakeCodeScanner
+	 * Constructor for MakefileCodeScanner
 	 */
-	public MakeCodeScanner(IMakeColorManager provider) {
+	public MakefileCodeScanner(IMakefileColorManager provider) {
 		super();
 
-		IToken keyword = new Token(new TextAttribute(provider.getColor(IMakeColorManager.MAKE_KEYWORD)));
-		IToken function = new Token(new TextAttribute(provider.getColor(IMakeColorManager.MAKE_FUNCTION)));
-		IToken comment = new Token(new TextAttribute(provider.getColor(IMakeColorManager.MAKE_COMMENT)));
-		IToken macro = new Token(new TextAttribute(provider.getColor(IMakeColorManager.MAKE_MACRO_VAR)));
-		IToken other = new Token(new TextAttribute(provider.getColor(IMakeColorManager.MAKE_DEFAULT)));
+		IToken keyword = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_KEYWORD)));
+		IToken function = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_FUNCTION)));
+		IToken comment = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_COMMENT)));
+		IToken macro = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_MACRO_VAR)));
+		IToken other = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_DEFAULT)));
 
 		List rules = new ArrayList();
 
@@ -62,7 +62,7 @@ public class MakeCodeScanner extends RuleBasedScanner {
 		}));
 
 		// Add word rule for keywords, types, and constants.
-		WordRule wordRule = new WordRule(new MakeWordDetector(), Token.UNDEFINED);
+		WordRule wordRule = new WordRule(new MakefileWordDetector(), Token.UNDEFINED);
 		for (int i = 0; i < keywords.length; i++)
 			wordRule.addWord(keywords[i], keyword);
 		for (int i = 0; i < functions.length; i++)

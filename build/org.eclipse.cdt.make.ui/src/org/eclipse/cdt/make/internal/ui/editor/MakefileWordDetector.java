@@ -12,7 +12,7 @@ package org.eclipse.cdt.make.internal.ui.editor;
 
 import org.eclipse.jface.text.rules.IWordDetector;
 
-public class MakeWordDetector implements IWordDetector {
+public class MakefileWordDetector implements IWordDetector {
 
 	private static final String correctStartSpecChars = "%*().><"; //$NON-NLS-1$
 	private static final String correctSpecChars = "@$/\\"; //$NON-NLS-1$

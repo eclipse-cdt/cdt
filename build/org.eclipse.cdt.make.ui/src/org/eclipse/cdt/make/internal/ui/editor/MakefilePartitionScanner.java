@@ -21,19 +21,17 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
-public class MakePartitionScanner extends RuleBasedPartitionScanner {
+public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 	// Partition types
-	public final static String MAKE_INTERNAL = "make_internal"; //$NON-NLS-1$
-	public final static String MAKE_COMMENT = "make_comment"; //$NON-NLS-1$
-	public final static String MAKE_MACRO_ASSIGNEMENT = "make_macro_assig"; //$NON-NLS-1$
-	public final static String MAKE_INCLUDE_BLOCK = "make_include_block"; //$NON-NLS-1$
-	public final static String MAKE_IF_BLOCK = "make_if_block"; //$NON-NLS-1$
-	public final static String MAKE_DEF_BLOCK = "make_def_block"; //$NON-NLS-1$
-	public final static String MAKE_OTHER = "make_other"; //$NON-NLS-1$
+	public final static String MAKE_COMMENT = "makefile_comment"; //$NON-NLS-1$
+	public final static String MAKE_MACRO_ASSIGNEMENT = "makefile_macro_assignement"; //$NON-NLS-1$
+	public final static String MAKE_INCLUDE_BLOCK = "makefile_include_block"; //$NON-NLS-1$
+	public final static String MAKE_IF_BLOCK = "makefile_if_block"; //$NON-NLS-1$
+	public final static String MAKE_DEF_BLOCK = "makefile_def_block"; //$NON-NLS-1$
+	public final static String MAKE_OTHER = "makefile_other"; //$NON-NLS-1$
 
 	public final static String[] TYPES =
 		new String[] {
-			MAKE_INTERNAL,
 			MAKE_COMMENT,
 			MAKE_MACRO_ASSIGNEMENT,
 			MAKE_INCLUDE_BLOCK,
@@ -50,12 +48,11 @@ public class MakePartitionScanner extends RuleBasedPartitionScanner {
 	};
 
 	/**
-	 * Constructor for MakePartitionScanner
+	 * Constructor for MakefilePartitionScanner
 	 */
-	public MakePartitionScanner() {
+	public MakefilePartitionScanner() {
 		super();
 
-//		IToken tInternal = new Token(MAKE_INTERNAL);
 		IToken tComment = new Token(MAKE_COMMENT);
 		IToken tMacro = new Token(MAKE_MACRO_ASSIGNEMENT);
 		IToken tInclude = new Token(MAKE_INCLUDE_BLOCK);
@@ -66,19 +63,18 @@ public class MakePartitionScanner extends RuleBasedPartitionScanner {
 		List rules = new ArrayList();
 
 		// Add rule for single line comments.
-		//rules.add(new MultiLineRule("#QNX internal start", "#QNX internal end", tInternal)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		rules.add(new EndOfLineRule("#", tComment)); //$NON-NLS-1$
 
 		rules.add(new EndOfLineRule("include", tInclude)); //$NON-NLS-1$
 
 		// Add rules for multi-line comments and javadoc.
-		rules.add(new MultiLineRule("ifdef", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
-		rules.add(new MultiLineRule("ifndef", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
-		rules.add(new MultiLineRule("ifeq", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
-		rules.add(new MultiLineRule("ifnneq", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("ifdef", "endif", tIf)); //$NON-NLS-1$
+		rules.add(new MultiLineRule("ifndef", "endif", tIf)); //$NON-NLS-1$
+		rules.add(new MultiLineRule("ifeq", "endif", tIf)); //$NON-NLS-1$
+		rules.add(new MultiLineRule("ifnneq", "endif", tIf)); //$NON-NLS-1$
 
-		rules.add(new MultiLineRule("define", "endef", tDef)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("define", "endef", tDef)); //$NON-NLS-1$
 
 		// Last rule must be supplied with default token!
 		rules.add(new MacroRule(tMacro, tOther)); //$NON-NLS-1$

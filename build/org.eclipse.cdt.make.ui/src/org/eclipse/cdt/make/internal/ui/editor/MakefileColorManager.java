@@ -18,12 +18,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-public class MakeColorManager implements IMakeColorManager {
+public class MakefileColorManager implements IMakefileColorManager {
 
 	protected Map fColorTable = new HashMap(10);
 
 	/**
-	 * @see IMakeColorManager#dispose()
+	 * @see IMakefileColorManager#dispose()
 	 */
 	public void dispose() {
 		Iterator e = fColorTable.values().iterator();
@@ -32,7 +32,7 @@ public class MakeColorManager implements IMakeColorManager {
 	}
 
 	/**
-	 * @see IMakeColorManager#getColor(RGB)
+	 * @see IMakefileColorManager#getColor(RGB)
 	 */
 	public Color getColor(RGB rgb) {
 		Color color = (Color) fColorTable.get(rgb);

@@ -10,42 +10,40 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  */
-public class MakeEditorTogglePresentationAction extends TextEditorAction {
+public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 
-	private final static String ACTION_ID = "org.eclipse.cdt.make.ui.MakeEditorTogglePresentationAction"; //$NON-NLS-1$
+	private final static String ACTION_ID = "org.eclipse.cdt.make.ui.MakefileEditorTogglePresentationAction"; //$NON-NLS-1$
 	/**
-	 * Constructor for MakeEditorTogglePresentationAction.
+	 * Constructor for MakefileEditorTogglePresentationAction.
 	 * @param bundle
 	 * @param prefix
 	 * @param editor
 	 */
-	public MakeEditorTogglePresentationAction() {
-		super(MakeUIPlugin.getDefault().getResourceBundle(), "MakeEditorTogglePresentationAction.", null); //$NON-NLS-1$
+	public MakefileEditorTogglePresentationAction() {
+		super(MakeUIPlugin.getDefault().getResourceBundle(), "MakefileEditorTogglePresentationAction.", null); //$NON-NLS-1$
 
-		setToolTipText("MakeEditorTogglePresentationAction.tooltip"); //$NON-NLS-1$
+		setToolTipText("MakefileEditorTogglePresentationAction.tooltip"); //$NON-NLS-1$
 		setActionDefinitionId(ACTION_ID);
+		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_TOOL, MakeUIImages.IMG_TOOLS_MAKEFILE_SEGMENT_EDIT);
 		update();
-
 	}
 
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		super.run();
-		ITextEditor editor = getTextEditor();
-		if (editor == null)
-			return;
-		if (!(editor instanceof MakeTextEditor))
-			return;
-		((MakeTextEditor) editor).setPresentationState(!((MakeTextEditor) editor).getPresentationState());
-		// update();
+		ITextEditor editor= getTextEditor();
+		editor.resetHighlightRange();
+		boolean show = editor.showsHighlightRangeOnly();
+		setChecked(!show);
+		editor.showHighlightRangeOnly(!show);
 	}
 
 	/**
@@ -61,9 +59,6 @@ public class MakeEditorTogglePresentationAction extends TextEditorAction {
 	 */
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
-		if (editor instanceof MakeTextEditor) {
-			((MakeTextEditor) editor).setPresentationState(isChecked());
-		}
 		update();
 	}
 

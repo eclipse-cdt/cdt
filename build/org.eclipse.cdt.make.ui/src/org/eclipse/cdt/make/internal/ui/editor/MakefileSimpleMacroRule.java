@@ -14,11 +14,11 @@ import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.PatternRule;
 
-public class MakeSimpleMacroRule extends PatternRule {
+public class MakefileSimpleMacroRule extends PatternRule {
 
 	private int nOfBrackets;
 
-	public MakeSimpleMacroRule(IToken token) {
+	public MakefileSimpleMacroRule(IToken token) {
 		super("$(", ")", token, (char) 0, true); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

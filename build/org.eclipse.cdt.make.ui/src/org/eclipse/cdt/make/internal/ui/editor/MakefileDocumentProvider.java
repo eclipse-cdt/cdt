@@ -18,14 +18,14 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 /**
  */
-public class MakeDocumentProvider extends FileDocumentProvider {
+public class MakefileDocumentProvider extends FileDocumentProvider {
 
-	private static MakePartitionScanner scanner = null;
+	private static MakefilePartitionScanner scanner = null;
 
 	/**
-	 * Constructor for MakeDocumentProvider.
+	 * Constructor for MakefileDocumentProvider.
 	 */
-	public MakeDocumentProvider() {
+	public MakefileDocumentProvider() {
 		super();
 	}
 
@@ -36,19 +36,19 @@ public class MakeDocumentProvider extends FileDocumentProvider {
 		IDocument document = super.createDocument(element);
 		if (document != null) {
 			IDocumentPartitioner partitioner = createPartitioner();
-			document.setDocumentPartitioner(partitioner);
 			partitioner.connect(document);
+			document.setDocumentPartitioner(partitioner);
 		}
 		return document;
 	}
 
 	private IDocumentPartitioner createPartitioner() {
-		return new DefaultPartitioner(getPartitionScanner(), MakePartitionScanner.TYPES);
+		return new DefaultPartitioner(getPartitionScanner(), MakefilePartitionScanner.TYPES);
 	}
 
-	private MakePartitionScanner getPartitionScanner() {
+	private MakefilePartitionScanner getPartitionScanner() {
 		if (scanner == null)
-			scanner = new MakePartitionScanner();
+			scanner = new MakefilePartitionScanner();
 		return scanner;
 	}
 

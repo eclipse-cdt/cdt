@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
@@ -314,6 +315,12 @@ public class CElementLabels {
 			buf.append(CONCAT_STRING);
 			getSourceRootLabel(root, ROOT_QUALIFIED, buf);
 		}
+		
+		if (element instanceof IBinary) {
+			IBinary bin = (IBinary)element;
+			buf.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
+
 	}
 	
 	public static void getMethodLabel( IMethod method, int flags, StringBuffer buf ) {
@@ -419,10 +426,7 @@ public class CElementLabels {
 		if (rootQualified) {
 			buf.append(container.getPath().makeRelative().toString());
 		} else {
-//			if (resource != null)
-//				buf.append(resource.getProjectRelativePath().toString());
-//			else
-				buf.append(container.getElementName());
+			buf.append(container.getElementName());
 			if (referencedQualified) {
 				buf.append(CONCAT_STRING);
 				buf.append(resource.getProject().getName());

@@ -1,3 +1,15 @@
+2005-01-11 David Inglis
+	Further fix to 36837
+	
+	* src/org/eclipse/cdt/internal/ui/util/ResourceToItemsMapper.java
+	
+2005-01-11 David Inglis
+
+	Fix for 82516
+	
+	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
+	
+
 2005-01-07 Alain Magloire
 	Part of Fix 82323.
 	The "New" action was not shown when workspace was empty

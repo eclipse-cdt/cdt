@@ -12,6 +12,10 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
  * **********************************************************************/
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -104,6 +108,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	// Local variables needed by generator
 	private String buildTargetName;
 	private Vector deletedFileList;
+	private Vector dependencyMakefiles;
 	private String extension;
 	protected IManagedBuildInfo info;
 	protected Vector modifiedList;
@@ -653,16 +658,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
 			// TODO get the dep rule out of the tool
 			String depRule =  relativePath + resourceName + DOT + DEP_EXT;
+			getDependencyMakefiles().add(depRule);
 			buffer.append(TAB + ECHO + WHITESPACE + "-n" + WHITESPACE + SINGLE_QUOTE + depRule + WHITESPACE + relativePath + SINGLE_QUOTE + WHITESPACE + ">" + WHITESPACE + depRule + WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append(TAB + cmd + WHITESPACE + "-MM -MG -MP -P -w" + WHITESPACE + buildFlags + WHITESPACE + IN_MACRO + WHITESPACE + ">>" + WHITESPACE + depRule); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(TAB + cmd + WHITESPACE + "-MM -MG -P -w" + WHITESPACE + buildFlags + WHITESPACE + IN_MACRO + WHITESPACE + ">>" + WHITESPACE + depRule); //$NON-NLS-1$ //$NON-NLS-2$
+			
 		}
 		
 		// Say goodbye to the nice user
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE + TAB + AT + ECHO + NEWLINE + NEWLINE);
-		
-		// Make sure we add the resource to the list of objects created during the build
-		
 	}
 	
 	/**
@@ -717,6 +721,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return deletedFileList;
 	}
 
+	/**
+	 * @return
+	 */
+	private Vector getDependencyMakefiles() {
+		if (dependencyMakefiles == null) {
+			dependencyMakefiles = new Vector();
+		}
+		return dependencyMakefiles;
+	}
+	
 	/* (non-Javadoc)
 	 * @param message
 	 */
@@ -742,7 +756,36 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#generateDependencies()
 	 */
 	public void generateDependencies() throws CoreException {
-		// A NOP for this generator
+		// This is a hack for the pre-3.x GCC compilers
+		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+		Iterator subDirs = getSubdirList().listIterator();
+		while(subDirs.hasNext()) {
+			// The builder creates a subdir with same name as source in the build location
+			IContainer subDir = (IContainer)subDirs.next();
+			IPath projectRelativePath = subDir.getProjectRelativePath();
+			IPath buildRelativePath = topBuildDir.append(projectRelativePath);
+			IFolder buildFolder = root.getFolder(buildRelativePath);
+			if (buildFolder == null) continue;
+
+			// Find all of the dep files in the generated subdirectories
+			IResource[] files = buildFolder.members();
+			for (int index = 0; index < files.length; ++index){
+				IResource file = files[index];
+				if (DEP_EXT.equals(file.getFileExtension())) {
+					IFile depFile = root.getFile(file.getFullPath());
+					if (depFile == null) continue;
+					try {
+						populateDummyTargets(depFile, false);
+					} catch (CoreException e) {
+						throw e;
+					} catch (IOException e) {
+						// Keep trying
+						ManagedBuilderCorePlugin.log(e);
+						continue;
+					}
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -777,9 +820,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		IFile srcsFileHandle = createFile(srcsFilePath);
 		populateSourcesMakefile(srcsFileHandle);
 		checkCancel();
-		
-		// If any header files have been moved we have to regenerate all the dep files
-		
 		
 		// Regenerate any fragments that are missing for the exisiting directories NOT modified
 		Iterator iter = getSubdirList().listIterator();
@@ -1091,6 +1131,63 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		Util.save(buffer, fileHandle);
 	}
 
+	protected void populateDummyTargets(IFile makefile, boolean force) throws CoreException, IOException {
+		if (makefile == null || !makefile.exists()) return;
+		
+		// Found that bad boy, so let's get its contents
+		InputStream contentStream = makefile.getContents(false);
+		Reader in = new InputStreamReader(contentStream);
+		StringBuffer inBuffer = null;
+		int chunkSize = contentStream.available();
+		inBuffer = new StringBuffer(chunkSize);
+		char[] readBuffer = new char[chunkSize];
+		int n = in.read(readBuffer);
+		while (n > 0) {
+			inBuffer.append(readBuffer);
+			n = in.read(readBuffer);
+		}
+		contentStream.close();  
+		
+		// Now find the header file dependencies and make dummy targets for them
+		boolean save = false;
+		StringBuffer outBuffer = null;
+		if (inBuffer != null) {
+			// Here are the tokens in the file
+			String[] dependencies = inBuffer.toString().split("\\s");
+			
+			// If we are doing an incremental build, only update the files that do not have a comment
+			if (dependencies.length > 0 && !force) {
+				String firstLine = dependencies[0];
+				if (firstLine.startsWith(COMMENT_SYMBOL)) {
+					return;
+				}
+			}
+
+			// Dummy targets to add to the makefile
+			outBuffer = addDefaultHeader();
+			outBuffer.append(inBuffer);
+			outBuffer.append(NEWLINE);
+			save = true;
+			
+			for (int i = 0; i < dependencies.length; ++i) {
+				IPath dep = new Path(dependencies[i]);
+				String extension = dep.getFileExtension();
+				if (info.isHeaderFile(extension)) {
+					/*
+					 * The formatting here is 
+					 * <dummy_target>:
+					 */
+					outBuffer.append(dependencies[i] + COLON + NEWLINE + NEWLINE);
+				}
+			}
+		}
+		
+		// Write them out to the makefile
+		if (save) {
+			Util.save(outBuffer, makefile);
+		}		
+	}
+	
 	/* (non-javadoc)
 	 * @param module
 	 * @throws CoreException
@@ -1243,7 +1340,24 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	public void regenerateDependencies(boolean force) throws CoreException {
 		// A hack for the pre-3.x GCC compilers is to put dummy targets for deps
-		
+		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+
+		Iterator iter = getDependencyMakefiles().listIterator();
+		while (iter.hasNext()) {
+			// The path to search for the dependency makefile
+			IPath relDepFilePath = topBuildDir.append(new Path((String)iter.next()));
+			IFile depFile = root.getFile(relDepFilePath);
+			if (depFile == null || !depFile.exists()) continue;
+			try {
+				populateDummyTargets(depFile, true);
+			} catch (CoreException e) {
+				throw e;
+			} catch (IOException e) {
+				// This looks like a problem reading or writing the file
+				ManagedBuilderCorePlugin.log(e);
+				continue;
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

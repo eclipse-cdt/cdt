@@ -211,6 +211,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			invokeMake(true, topBuildDir, info, monitor);
 		} else {
 			monitor.done();
+			return;
 		}
 		
 		// Now regenerate the dependencies
@@ -328,6 +329,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					generator.regenerateMakefiles();		
 				} catch (CoreException e) {
 					// Throw the exception back to the builder
+					ManagedBuilderCorePlugin.log(e);
 					throw e;
 				}
 			}
@@ -341,12 +343,26 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			generator.generateMakefiles(delta);
 		} catch (CoreException e) {
 			// Throw the exception back to the builder
+			ManagedBuilderCorePlugin.log(e);
 			throw e;
 		}	
 
 		// Run the build
 		IPath buildDir = new Path(info.getConfigurationName());
-		invokeMake(false, buildDir, info, monitor);
+		if (buildDir != null) {
+			invokeMake(false, buildDir, info, monitor);
+		} else {
+			monitor.done();
+			return;
+		}
+		
+		// Generate the dependencies for all changes
+		try {
+			generator.generateDependencies();
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+			throw e;
+		}
 	}
 
 	/* (non-Javadoc)

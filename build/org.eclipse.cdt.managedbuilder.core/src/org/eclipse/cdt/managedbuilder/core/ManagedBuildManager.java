@@ -765,10 +765,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				InputStream stream = file.getContents();
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document document = parser.parse(stream);
-				Node rootElement = document.getFirstChild();
-				if (rootElement.getNodeName().equals(ROOT_NODE_NAME)) {
-					return true;
-				} 
+				NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
+				return (nodes.getLength() > 0);
 			} catch (Exception e) {
 				return false;
 			}

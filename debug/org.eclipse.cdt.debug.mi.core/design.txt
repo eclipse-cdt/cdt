@@ -88,6 +88,20 @@ MICommands will do there own parsing:
 	MIBreakInsertInfo info = cmd.getBreakInsertInfo(); // Parsing of the Result Record.
 
 ****
+MI Process
+
+For convienience, to java.lang.Process is provided.
+
+		MISession.getSessionProcess();
+
+This Process talks directly to gdb and is smart enough to wrap any command
+in CLICommand etc ..
+
+	MISession.getMIInferior()
+	
+MIInferior implements Process for the Inferiror.
+
+*****
 MI <==> CDI Adapters
 
  To do.

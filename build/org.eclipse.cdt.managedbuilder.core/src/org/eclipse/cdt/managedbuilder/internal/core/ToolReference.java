@@ -183,15 +183,15 @@ public class ToolReference implements IToolReference {
 		if (equals(target)) {
 			// we are the target
 			return true;
-		}
-		else if (parent instanceof IToolReference) {
+		} else if (parent == null) {
+			// basic sanity before proceeding
+			return false;
+		} else if (parent instanceof IToolReference) {
 			// check the reference we are overriding
 			return ((IToolReference)parent).references(target);
-		}
-		else if (target instanceof IToolReference) {
+		} else if (target instanceof IToolReference) {
 			return parent.equals(((IToolReference)target).getTool()); 
-		}
-		else {
+		} else {
 			// the real reference
 			return parent.equals(target);
 		}
@@ -237,6 +237,10 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#buildsFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String extension) {
+		if (parent == null) {
+			// bad reference
+			return false;
+		}
 		return parent.buildsFileType(extension);
 	}
 
@@ -271,6 +275,10 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getId()
 	 */
 	public String getId() {
+		if (parent == null) {
+			// bad reference
+			return new String();
+		}
 		return parent.getId();
 	}
 	
@@ -285,6 +293,10 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
 	public String getName() {
+		if (parent == null) {
+			// bad reference
+			return new String();
+		}
 		return parent.getName();
 	}
 
@@ -292,6 +304,10 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
 	 */
 	public int getNatureFilter() {
+		if (parent == null) {
+			// bad reference
+			return ITool.FILTER_BOTH;
+		}
 		return parent.getNatureFilter();
 	}
 
@@ -352,7 +368,14 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
 	 */
 	public String getToolCommand() {
-		return (command == null) ? parent.getToolCommand() : command;
+		if (command == null) {
+			// see if the parent has one
+			if (parent != null) {
+				return parent.getToolCommand();
+			}
+			return new String();	// bad reference
+		}
+		return command;
 	}
 
 	/* (non-Javadoc)
@@ -434,7 +457,11 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getTopOptionCategory()
 	 */
 	public IOptionCategory getTopOptionCategory() {
-		return parent.getTopOptionCategory();
+		try {
+			return parent.getTopOptionCategory();
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -512,6 +539,10 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String inputExtension) {
+		if (parent == null) {
+			// bad reference
+			return new String();
+		}
 		return parent.getOutputExtension(inputExtension);
 	}
 	
@@ -526,16 +557,21 @@ public class ToolReference implements IToolReference {
 				// We never should be here
 				return new String();
 			}
-		} else {
-			return outputFlag;
 		}
+		return outputFlag;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputPrefix()
 	 */
 	public String getOutputPrefix() {
-		return (outputPrefix == null) ? parent.getOutputPrefix() : outputPrefix;
+		if (outputPrefix == null) {
+			if (parent != null) {
+				return parent.getOutputPrefix();
+			}
+			return new String();	// bad reference
+		}
+		return outputPrefix;
 	}
 
 	/* (non-Javadoc)
@@ -549,6 +585,10 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
 	 */
 	public boolean isHeaderFile(String ext) {
+		if (parent == null) {
+			// bad reference
+			return false;
+		}
 		return parent.isHeaderFile(ext);
 	}
 
@@ -574,6 +614,7 @@ public class ToolReference implements IToolReference {
 	 * to persist settings.
 	 */
 	public void serialize(Document doc, Element element) {
+		if (parent == null) return;	// This is a bad reference
 		element.setAttribute(ITool.ID, parent.getId());
 
 		// Output the command 

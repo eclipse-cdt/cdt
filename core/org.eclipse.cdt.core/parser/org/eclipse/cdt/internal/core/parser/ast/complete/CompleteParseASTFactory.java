@@ -2181,7 +2181,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IParameterizedSymbol functionDeclaration = null; 
 		
 		functionDeclaration = 
-			(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getFirstToken().getCharImage(), ITypeInfo.t_function, functionParameters, 0, null, false, LookupType.FORDEFINITION );                
+			(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.extractNameFromTemplateId(), ITypeInfo.t_function, functionParameters, 0, null, false, LookupType.FORDEFINITION );                
 
 		if( functionDeclaration != null && symbol.isType( ITypeInfo.t_function )){
 			previouslyDeclared = true;

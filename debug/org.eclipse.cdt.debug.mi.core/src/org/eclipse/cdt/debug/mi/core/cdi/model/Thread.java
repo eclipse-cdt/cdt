@@ -224,7 +224,7 @@ public class Thread extends CObject implements ICDIThread {
 				}
 			}
 		}
-		List list = currentFrames.subList(low, high);
+		List list = ((high - low + 1) <= currentFrames.size()) ? currentFrames.subList(low, high + 1) : currentFrames;
 		return (ICDIStackFrame[])list.toArray(noStack);
 	}
 

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 
@@ -83,4 +84,14 @@ public class CBasicType implements ICBasicType {
 				&& cObj.isUnsigned() == this.isUnsigned()
 				&& cObj.isLongLong() == this.isLongLong());
 	}
+	
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

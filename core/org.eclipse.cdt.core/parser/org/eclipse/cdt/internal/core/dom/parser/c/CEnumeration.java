@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 
 /**
@@ -54,4 +55,13 @@ public class CEnumeration implements IEnumeration {
         return CVisitor.getContainingScope( enumSpec );
     }
 
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

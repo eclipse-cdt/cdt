@@ -21,4 +21,5 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public interface ITypeContainer extends IType{
     IType getType();
+    void setType( IType type );
 }

@@ -40,7 +40,11 @@ public class CPPFunctionType implements IFunctionType {
             
             if( fps.length != parameters.length )
                 return false;
-            if( ! returnType.equals( ft.getReturnType() ) )
+            
+            //constructors & destructors have null return type
+            if( ( returnType == null ) ^ ( ft.getReturnType() == null ) )
+                return false;
+            else if( returnType != null && ! returnType.equals( ft.getReturnType() ) )
                 return false;
             for( int i = 0; i < parameters.length; i++ )
                 if( ! parameters[i].equals( fps[i] ) )
@@ -63,4 +67,13 @@ public class CPPFunctionType implements IFunctionType {
         return parameters;
     }
 
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

@@ -34,6 +34,10 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 		return type;
 	}
 	
+	public void setType( IType t ){
+	    this.type = t;
+	}
+	
 	public void setModifiedArrayModifier(ICASTArrayModifier mod) {
 		this.mod = mod;
 	}
@@ -78,4 +82,13 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 		return false;
 	}
 
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

@@ -43,6 +43,10 @@ public class CTypeDef implements ITypedef, ITypeContainer {
 			type = CVisitor.createType(name);
 		return type;
 	}
+	
+	public void setType( IType t ){
+	    type = t;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
@@ -62,4 +66,13 @@ public class CTypeDef implements ITypedef, ITypeContainer {
 		return CVisitor.getContainingScope( (IASTDeclaration) declarator.getParent() );
 	}
 
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

@@ -62,4 +62,14 @@ public class CQualifiedPointerType implements ICPointerType, ITypeContainer {
 		if (mod == null || !(mod instanceof ICASTArrayModifier)) return false;
 		return ((ICASTArrayModifier)mod).isVolatile();
 	}
+	
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

@@ -16,11 +16,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author aniefer
  */
-public class CPPReferenceType implements ICPPReferenceType {
+public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
     IType type = null;
     
     /**
@@ -36,11 +37,25 @@ public class CPPReferenceType implements ICPPReferenceType {
     public IType getType() {
         return type;
     }
+    
+    public void setType( IType t ){
+        type = t;
+    }
 
     public boolean equals(Object obj) {
         if( obj instanceof ICPPReferenceType ){
             return ((ICPPReferenceType) obj).getType().equals( type );
         }
     	return false;
+    }
+    
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
     }
 }

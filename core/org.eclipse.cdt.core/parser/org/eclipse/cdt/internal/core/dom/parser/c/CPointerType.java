@@ -64,4 +64,14 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 	public void setPointer(ICASTPointer pointer) {
 		this.pointer = pointer;
 	}
+	
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author aniefer
@@ -57,6 +58,16 @@ public class CPPEnumeration implements IEnumeration {
      */
     public IASTNode getPhysicalNode() {
         return enumSpecifier;
+    }
+    
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
     }
 
 }

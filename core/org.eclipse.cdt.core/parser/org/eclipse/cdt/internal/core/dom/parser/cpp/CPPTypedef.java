@@ -25,6 +25,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  */
 public class CPPTypedef implements ITypedef, ITypeContainer {
 	private IASTDeclarator declarator = null;
+	private IType type = null;
+	
 	/**
 	 * @param declarator
 	 */
@@ -48,7 +50,13 @@ public class CPPTypedef implements ITypedef, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
 	public IType getType() {
-		return CPPVisitor.createType( declarator );
+	    if( type == null )
+	        type = CPPVisitor.createType( declarator );
+		return type;
+	}
+	
+	public void setType( IType t ){
+	    type = t;
 	}
 
 	/* (non-Javadoc)
@@ -78,4 +86,14 @@ public class CPPTypedef implements ITypedef, ITypeContainer {
 	public IASTNode getPhysicalNode() {
 		return declarator;
 	}
+	
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

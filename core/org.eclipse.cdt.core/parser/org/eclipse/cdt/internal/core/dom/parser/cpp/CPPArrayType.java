@@ -32,10 +32,24 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
         return type;
     }
     
+    public void setType( IType t ){
+        this.type = t;
+    }
+    
     public boolean equals(Object obj) {
         if( obj instanceof IArrayType ){
             return ((IArrayType) obj).getType().equals( type );
         }
     	return false;
+    }
+    
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
     }
 }

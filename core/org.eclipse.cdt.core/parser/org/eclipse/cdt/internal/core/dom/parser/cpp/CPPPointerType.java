@@ -59,6 +59,10 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	public IType getType() {
 		return type;
 	}
+	
+	public void setType( IType t ){
+	    type = t;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isConst()
@@ -73,4 +77,14 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	public boolean isVolatile() {
 		return ( operator != null ) ? operator.isVolatile() : false;
 	}
+	
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

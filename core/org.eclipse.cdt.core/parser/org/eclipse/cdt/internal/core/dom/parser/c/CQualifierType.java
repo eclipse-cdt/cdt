@@ -82,4 +82,18 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 		
 		return type;
 	}
+	
+	public void setType( IType t ){
+	    type = t;
+	}
+	
+    public Object clone(){
+        IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
+    }
 }

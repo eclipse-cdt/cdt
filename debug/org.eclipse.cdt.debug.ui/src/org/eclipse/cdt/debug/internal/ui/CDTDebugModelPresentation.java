@@ -479,7 +479,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected String getVariableText( IVariable var ) throws DebugException
 	{
-		// temporary
 		String label = new String();
 		if ( var != null )
 		{
@@ -503,14 +502,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 		IPath path = new Path( library.getFileName() );
 		if ( !path.isEmpty() )
 			label += ( qualified ? path.toOSString() : path.lastSegment() );
-/*
-		String startAddress = ( library.getStartAddress() > 0 ) ? 
-								CDebugUtils.toHexAddressString( library.getStartAddress() ) : "Not available";
-		String endAddress = ( library.getEndAddress() > 0 ) ? 
-								CDebugUtils.toHexAddressString( library.getEndAddress() ) : "Not available";
-		return label + MessageFormat.format( " (Start address: ''{0}''  End address: ''{1}'')", 
-									 		 new String[] { startAddress, endAddress } );
-*/
 		return label;
 	}
 

@@ -379,6 +379,11 @@
             class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CFileTypesPreferences">
       </page>
+      <page
+            class="org.eclipse.cdt.internal.ui.preferences.CSearchPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            name="%CDTSearch.name"
+            id="org.eclipse.cdt.ui.preferences.CSearchPreferencePage"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"

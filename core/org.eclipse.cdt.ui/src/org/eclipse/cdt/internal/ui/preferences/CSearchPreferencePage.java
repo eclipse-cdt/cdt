@@ -1,15 +1,19 @@
-/*
- * Created on Mar 30, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/**********************************************************************
+Copyright (c) 2002, 2004 IBM Rational Software and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+ 
+Contributors:
+    IBM Rational Software - Initial Contribution
+**********************************************************************/
+
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.ui.search.CSearchPage;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -33,20 +37,19 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-/**
- * @author bgheorgh
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-public class WorkInProgressPreferencePage extends PreferencePage
+public class CSearchPreferencePage extends PreferencePage
 		implements
 			IWorkbenchPreferencePage {
 	
-	private Button fBackgroundTypeCacheEnabled;
+	private Combo fExternLinks;
+	private Button fExternEnabled;
+	
 	protected OverlayPreferenceStore fOverlayStore;
-
-	public WorkInProgressPreferencePage(){
+	private Text fTextControl;
+	
+	private static final String TIMEOUT_VALUE = "20000"; //$NON-NLS-1$
+	
+	public CSearchPreferencePage(){
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		fOverlayStore  = createOverlayStore();
 	}
@@ -56,8 +59,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CSearchPage.EXTERNALMATCH_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSearchPage.EXTERNALMATCH_VISIBLE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, SourceIndexer.CDT_INDEXER_TIMEOUT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
-		
+	
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
@@ -81,26 +83,45 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		result.setLayout(layout);
 		
-		Group backgroundTypeCacheGroup= new Group(result, SWT.NONE);
-		backgroundTypeCacheGroup.setLayout(new GridLayout());
-		backgroundTypeCacheGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		backgroundTypeCacheGroup.setText("Open Type"); //$NON-NLS-1$
+		Group group= new Group(result, SWT.NONE);
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText(PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.ExternalSearchLinksGroup")); //$NON-NLS-1$
 
-		fBackgroundTypeCacheEnabled = createCheckButton(backgroundTypeCacheGroup, "Cache types in background"); //$NON-NLS-1$
-		fBackgroundTypeCacheEnabled.addSelectionListener(new SelectionListener() {
+		fExternEnabled = createCheckButton(group, PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.EnableMessage")); //$NON-NLS-1$
+		fExternEnabled.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 			public void widgetSelected(SelectionEvent e) {
 				Button button = (Button) e.widget;
-				fOverlayStore.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, button.getSelection());
+				boolean externLinkEnabled = false;
+				fExternLinks.setEnabled(false);
+				if (button.getSelection()){
+					fExternLinks.setEnabled(true);
+					externLinkEnabled = true;
+				}
+				
+				fOverlayStore.setValue(CSearchPage.EXTERNALMATCH_ENABLED, externLinkEnabled);
+			}
+		});
+	
+		fExternLinks = createComboBox(group,PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.EnableMarkerLinkType"),new String[]{PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Visible"),PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")},PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		fExternLinks.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			public void widgetSelected(SelectionEvent e) {
+				Combo combo = (Combo) e.widget;
+				fOverlayStore.setValue(CSearchPage.EXTERNALMATCH_VISIBLE, combo.getSelectionIndex());
 			}
 		});
 		
-		Group editorCorrectionGroup= new Group(result, SWT.NONE);
-		editorCorrectionGroup.setLayout(new GridLayout());
-		editorCorrectionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		editorCorrectionGroup.setText("Editor"); //$NON-NLS-1$
-
+		Group indexerTimeoutGroup= new Group(result, SWT.NONE);
+		indexerTimeoutGroup.setLayout(new GridLayout());
+		indexerTimeoutGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		indexerTimeoutGroup.setText(PreferencesMessages.getString("CSearchPreferences.IndexerTimeout.IndexerTimeoutGroup")); //$NON-NLS-1$
+		
+		fTextControl = (Text) addTextField( indexerTimeoutGroup, PreferencesMessages.getString("CSearchPreferences.IndexerTimeout.Timeout"),"TimeOut",6,0,true); //$NON-NLS-1$ //$NON-NLS-2$
+	
 		initialize(); 
 		
 		return result;
@@ -108,8 +129,13 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	}
 	
 	private void initialize(){
-		fBackgroundTypeCacheEnabled.setSelection(fOverlayStore.getBoolean(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
+		boolean extEnabled = fOverlayStore.getBoolean(CSearchPage.EXTERNALMATCH_ENABLED);
+		fExternEnabled.setSelection(extEnabled);
 		
+		fExternLinks.select(fOverlayStore.getInt(CSearchPage.EXTERNALMATCH_VISIBLE));
+		fExternLinks.setEnabled(extEnabled);
+		
+		fTextControl.setText(fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
 	}
 	
 	/* (non-Javadoc)
@@ -157,20 +183,30 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
-		
+
 		return textControl;
 	}
+	
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		
+		String timeOut = fTextControl.getText();
+		try {
+			// Check the string number
+			Integer.parseInt(timeOut);
+		} catch (NumberFormatException ex){
+			timeOut = TIMEOUT_VALUE;
+		}
+		
+		fOverlayStore.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT, timeOut);
 		fOverlayStore.propagate();
 		
 //		Store IProblem Marker value in CCorePlugin Preferences 
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 		
-		prefs.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, fOverlayStore.getString(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
+		prefs.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT,timeOut);
 		CCorePlugin.getDefault().savePluginPreferences();
 		
 		return true;
@@ -180,7 +216,9 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	 * @param store
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, false);
+		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, true);
+		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 1);
+		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT,TIMEOUT_VALUE);
 	}
 	
 	/*
@@ -191,4 +229,5 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		initialize();
 		super.performDefaults();
 	}
+
 }

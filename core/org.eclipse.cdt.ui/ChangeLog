@@ -1,3 +1,6 @@
+2004-06-11 Bogdan Gheorghe
+	Fix for Bug 66016: Moved search related items from work in progress to search page
+	
 2004-06-10 Bogdan Gheorghe
 	Fix for Bug 65132: moving folder onto itself deletes entire project
 	

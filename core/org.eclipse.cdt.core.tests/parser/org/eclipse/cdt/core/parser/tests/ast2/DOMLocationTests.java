@@ -10,15 +10,20 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -144,6 +149,21 @@ public class DOMLocationTests extends AST2BaseTest {
       IASTNodeLocation nodeLocation = locations[0];
       assertEquals( nodeLocation.getNodeOffset(), offset );
       assertEquals( nodeLocation.getNodeLength(), length );
+   }
+   
+   public void testBug83664() throws Exception {
+       String code = "int foo(x) int x; {\n 	return x;\n   }\n"; //$NON-NLS-1$
+       IASTTranslationUnit tu = parse( code, ParserLanguage.C );
+       IASTDeclaration [] declarations = tu.getDeclarations();
+       assertEquals( declarations.length, 1 );
+       IASTFunctionDefinition definition = (IASTFunctionDefinition) declarations[0];
+       IASTFunctionDeclarator declarator = definition.getDeclarator();
+       assertSoleLocation( declarator, code.indexOf( "foo" ), code.indexOf( "int x;") + 6 - code.indexOf( "foo")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+       IASTCompoundStatement body = (IASTCompoundStatement) definition.getBody();
+       assertEquals( body.getStatements().length,  1 );
+       IASTReturnStatement returnStatement= (IASTReturnStatement) body.getStatements()[0];
+       IASTIdExpression expression = (IASTIdExpression) returnStatement.getReturnValue();
+       assertSoleLocation( expression, code.indexOf( "return ") + "return ".length(), 1 ); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 }

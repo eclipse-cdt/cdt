@@ -1135,6 +1135,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			idExpression.setName(name);
 			name.setParent(idExpression);
 			name.setPropertyInParent(IASTIdExpression.ID_NAME);
+			((ASTNode)idExpression).setOffsetAndLength( (ASTNode) name );
 			return idExpression;
 		default:
 			IToken la = LA(1);
@@ -1897,6 +1898,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 					parmDeclarations[i].setParent(functionDecltor);
 					parmDeclarations[i]
 							.setPropertyInParent(ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER);
+					finalOffset = calculateEndOffset( parmDeclarations[i] );
 				}
 			}
 			functionDecltor.setParameterDeclarations(parmDeclarations);

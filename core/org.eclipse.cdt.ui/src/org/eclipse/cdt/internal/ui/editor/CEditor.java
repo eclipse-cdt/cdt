@@ -44,9 +44,13 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
+import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -56,6 +60,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -67,10 +72,13 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
@@ -102,6 +110,7 @@ import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.ui.ICDTConstants;
 import org.eclipse.cdt.ui.ICEditorContextMenuAction;
 import org.eclipse.cdt.ui.ICEditorRulerAction;
@@ -147,6 +156,9 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	
 	/** Listener to annotation model changes that updates the error tick in the tab image */
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
+	
+	/** The line number ruler column */
+	private LineNumberRulerColumn fLineNumberRulerColumn;
 
 
 	/* Preference key line color shading */
@@ -181,6 +193,14 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	public final static String SPACES_FOR_TABS= "spacesForTabs";
 	/** Preference key for linked position color */
 	public final static String LINKED_POSITION_COLOR= "linkedPositionColor"; //$NON-NLS-1$
+	/** Preference key for shwoing the overview ruler */
+	public final static String OVERVIEW_RULER= "overviewRuler"; //$NON-NLS-1$
+	
+	/** Preference key for showing the line number ruler */
+	public final static String LINE_NUMBER_RULER= "lineNumberRuler"; //$NON-NLS-1$
+	/** Preference key for the foreground color of the line numbers */
+	public final static String LINE_NUMBER_COLOR= "lineNumberColor"; //$NON-NLS-1$
+	
 
 	/**
 	 * Default constructor.
@@ -457,6 +477,29 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 				if (MATCHING_BRACKETS_NOBOX.equals(property)) {
 					if (isBracketHighlightingEnabled())
 						setBracketHighlightingStyle();
+					return;
+				}
+				if (LINE_NUMBER_RULER.equals(property)) {
+					if (isLineNumberRulerVisible())
+						showLineNumberRuler();
+					else
+						hideLineNumberRuler();
+					return;
+				}
+			
+				if (fLineNumberRulerColumn != null &&
+						(LINE_NUMBER_COLOR.equals(property) || 
+						PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)  ||
+						PREFERENCE_COLOR_BACKGROUND.equals(property))) {
+					
+					initializeLineNumberRulerColumn(fLineNumberRulerColumn);
+				}
+				
+				if (OVERVIEW_RULER.equals(property))  {
+					if (isOverviewRulerVisible())
+						showOverviewRuler();
+					else
+						hideOverviewRuler();
 					return;
 				}
 			}
@@ -1170,6 +1213,54 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	public final static String LANGUAGE_CPP=  "CEditor.language.cpp";	
 	public final static String LANGUAGE_C=  "CEditor.language.c";	
 	
+	
+	class AdaptedRulerLayout extends Layout {
+		
+		protected int fGap;
+		protected AdaptedSourceViewer fAdaptedSourceViewer;
+		
+		
+		protected AdaptedRulerLayout(int gap, AdaptedSourceViewer asv) {
+			fGap= gap;
+			fAdaptedSourceViewer= asv;
+		}
+		
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+			Control[] children= composite.getChildren();
+			Point s= children[children.length - 1].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			if (fAdaptedSourceViewer.isVerticalRulerVisible())
+				s.x += fAdaptedSourceViewer.getVerticalRuler().getWidth() + fGap;
+			return s;
+		}
+		
+		protected void layout(Composite composite, boolean flushCache) {
+			Rectangle clArea= composite.getClientArea();
+			if (fAdaptedSourceViewer.isVerticalRulerVisible()) {
+				
+				StyledText textWidget= fAdaptedSourceViewer.getTextWidget();
+				Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
+				int scrollbarHeight= trim.height;
+				
+				IVerticalRuler vr= fAdaptedSourceViewer.getVerticalRuler();
+				int vrWidth=vr.getWidth();
+				
+				int orWidth= 0;
+				if (fAdaptedSourceViewer.isOverviewRulerVisible()) {
+					OverviewRuler or= fAdaptedSourceViewer.getOverviewRuler();
+					orWidth= or.getWidth();
+					or.getControl().setBounds(clArea.width - orWidth, scrollbarHeight, orWidth, clArea.height - 3*scrollbarHeight);
+				}
+				
+				textWidget.setBounds(vrWidth + fGap, 0, clArea.width - vrWidth - orWidth - 2*fGap, clArea.height);
+				vr.getControl().setBounds(0, 0, vrWidth, clArea.height - scrollbarHeight);
+				
+			} else {
+				StyledText textWidget= fAdaptedSourceViewer.getTextWidget();
+				textWidget.setBounds(0, 0, clArea.width, clArea.height);
+			}
+		}
+	};
+	
 	/**
 	 * Adapted source viewer for CEditor
 	 */
@@ -1178,31 +1269,31 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		
 		private List fTextConverters;
 		private String fDisplayLanguage;
-		//private OverviewRuler fOverviewRuler;
-		//private boolean fIsOverviewRulerVisible;
+		private OverviewRuler fOverviewRuler;
+		private boolean fIsOverviewRulerVisible;
 		
-		//private IVerticalRuler fCachedVerticalRuler;
-		//private boolean fCachedIsVerticalRulerVisible;
+		private IVerticalRuler fCachedVerticalRuler;
+		private boolean fCachedIsVerticalRulerVisible;
 		
 		
 		public AdaptedSourceViewer(Composite parent, IVerticalRuler ruler, int styles, String language) {
 			super(parent, ruler, styles);
 			
 			fDisplayLanguage = language;
-			//fCachedVerticalRuler= ruler;
-			//fCachedIsVerticalRulerVisible= (ruler != null);
-			//fOverviewRuler= new OverviewRuler(VERTICAL_RULER_WIDTH);
+			fCachedVerticalRuler= ruler;
+			fCachedIsVerticalRulerVisible= (ruler != null);
+			fOverviewRuler= new OverviewRuler(VERTICAL_RULER_WIDTH);
 			
-			//delayedCreateControl(parent, styles);
+			delayedCreateControl(parent, styles);
 		}
 
 		/*
 		 * @see ISourceViewer#showAnnotations(boolean)
-		 *
+		 */
 		public void showAnnotations(boolean show) {
 			fCachedIsVerticalRulerVisible= (show && fCachedVerticalRuler != null);
 			super.showAnnotations(show);
-		} */
+		}
 		/*
 		public IContentAssistant getContentAssistant() {
 			return fContentAssistant;
@@ -1268,7 +1359,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 			}
 		}
 		
-		/*
 		public IVerticalRuler getVerticalRuler() {
 			return fCachedVerticalRuler;
 		}
@@ -1283,7 +1373,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		
 		/*
 		 * @see TextViewer#createControl(Composite, int)
-		 *
+		 */
 		protected void createControl(Composite parent, int styles) {
 			// do nothing here
 		}
@@ -1320,15 +1410,15 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		
 		public boolean isOverviewRulerVisible() {
 			return fIsOverviewRulerVisible;
-		} */
+		}
 		
 		/*
 		 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
-		 *
+		 */
 		public void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength) {
 			super.setDocument(document, annotationModel, visibleRegionOffset, visibleRegionLength);
 			fOverviewRuler.setModel(annotationModel);
-		} */
+		}
 		
  		/**
 		 * Invalidates the current presentation by sending an initialization
@@ -1638,5 +1728,108 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 			}
 		}
 		return (ICEditorRulerAction[])rulerActions.toArray( new ICEditorRulerAction[0] );
+	}
+	
+	/**
+	 * Creates a new line number ruler column that is appropriately initialized.
+	 */
+	protected IVerticalRulerColumn createLineNumberRulerColumn() {
+		fLineNumberRulerColumn= new LineNumberRulerColumn();
+		initializeLineNumberRulerColumn(fLineNumberRulerColumn);
+		return fLineNumberRulerColumn;
+	}
+	
+	/*
+	 * @see AbstractTextEditor#createVerticalRuler()
+	 */
+	protected IVerticalRuler createVerticalRuler() {
+		CompositeRuler ruler= new CompositeRuler();
+		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH));
+		if (isLineNumberRulerVisible())
+			ruler.addDecorator(1, createLineNumberRulerColumn());
+		return ruler;
+	}
+	
+	/**
+	 * Initializes the given line number ruler column from the preference store.
+	 * @param rulerColumn the ruler column to be initialized
+	 */
+	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
+		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		IColorManager manager= textTools.getColorManager();	
+		
+		IPreferenceStore store= getPreferenceStore();
+		if (store != null) {	
+		
+			RGB rgb=  null;
+			// foreground color
+			if (store.contains(LINE_NUMBER_COLOR)) {
+				if (store.isDefault(LINE_NUMBER_COLOR))
+					rgb= PreferenceConverter.getDefaultColor(store, LINE_NUMBER_COLOR);
+				else
+					rgb= PreferenceConverter.getColor(store, LINE_NUMBER_COLOR);
+			}
+			rulerColumn.setForeground(manager.getColor(rgb));
+			
+			
+			rgb= null;
+			// background color
+			if (!store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+				if (store.contains(PREFERENCE_COLOR_BACKGROUND)) {
+					if (store.isDefault(PREFERENCE_COLOR_BACKGROUND))
+						rgb= PreferenceConverter.getDefaultColor(store, PREFERENCE_COLOR_BACKGROUND);
+					else
+						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
+				}
+			}
+			rulerColumn.setBackground(manager.getColor(rgb));
+		}
+	}
+	
+	/**
+	 * Shows the line number ruler column.
+	 */
+	private void showLineNumberRuler() {
+		IVerticalRuler v= getVerticalRuler();
+		if (v instanceof CompositeRuler) {
+			CompositeRuler c= (CompositeRuler) v;
+			c.addDecorator(1, createLineNumberRulerColumn());
+		}
+	}
+	
+	/**
+	 * Hides the line number ruler column.
+	 */
+	private void hideLineNumberRuler() {
+		IVerticalRuler v= getVerticalRuler();
+		if (v instanceof CompositeRuler) {
+			CompositeRuler c= (CompositeRuler) v;
+			c.removeDecorator(1);
+		}
+	}
+	
+	/**
+	 * Return whether the line number ruler column should be 
+	 * visible according to the preference store settings.
+	 * @return <code>true</code> if the line numbers should be visible
+	 */
+	private boolean isLineNumberRulerVisible() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(LINE_NUMBER_RULER);
+	}
+	
+		private void showOverviewRuler() {
+		AdaptedSourceViewer asv= (AdaptedSourceViewer) getSourceViewer();
+		asv.showOverviewRuler();
+	}
+	
+	private void hideOverviewRuler() {
+		AdaptedSourceViewer asv= (AdaptedSourceViewer) getSourceViewer();
+		asv.hideOverviewRuler();
+	}
+	
+	private boolean isOverviewRulerVisible() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(OVERVIEW_RULER);
 	}
 }

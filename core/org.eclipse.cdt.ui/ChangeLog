@@ -4,6 +4,13 @@
 
 2004-06-08 Alain Magloire
 
+	Fix for 66188
+	The callback acceptProblem() should do nothing.
+
+	* src/org/eclipse/cdt/internal/ui/compare/CParseTreeBuilder.java
+
+2004-06-08 Alain Magloire
+
 	Fix for PR 66186.
 	Remove the log() print not necessary
 	and users thinks something went wrong.

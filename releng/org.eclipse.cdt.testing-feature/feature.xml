@@ -23,25 +23,19 @@
 
    <requires>
       <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.apache.xerces"/>
-      <import plugin="org.eclipse.core.boot"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.swt"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.mi.core"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.cdt.managedbuilder.core"/>
       <import plugin="org.eclipse.cdt.make.core"/>
-      <import plugin="org.eclipse.test"/>
    </requires>
 
    <plugin

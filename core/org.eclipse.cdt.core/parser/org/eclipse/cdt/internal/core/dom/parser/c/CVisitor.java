@@ -212,6 +212,20 @@ public class CVisitor {
 			return true;
 		}
 	}
+
+	public static class ClearBindingFromScopeAction extends CBaseVisitorAction {
+		{
+			processNames = true;
+		}
+		public boolean processName(IASTName name) {
+			if ( ((CASTName)name).hasBinding() ) {
+				 ICScope scope = (ICScope)name.resolveBinding().getScope();
+				 if ( scope != null )
+				 	scope.removeBinding(name.resolveBinding()); 
+			}
+			return true;
+		}
+	}
 	
 	//lookup bits
 	private static final int COMPLETE = 0;		
@@ -348,6 +362,18 @@ public class CVisitor {
 			binding = createBinding( (IASTSimpleDeclaration) parent, name );
 		} else if( parent instanceof IASTParameterDeclaration ){
 			binding = createBinding( (IASTParameterDeclaration ) parent );
+			
+			// C99 6.2.1-4: within the list of parameter declarations in a function definition, the 
+			// identifier has block scope, which terminates at the end of the associated block.
+			parent = parent.getParent();
+			if ( parent instanceof IASTFunctionDeclarator ) {
+				parent = parent.getParent();
+				if ( parent instanceof IASTFunctionDefinition ) {
+					ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+					if ( scope != null && binding != null )
+						scope.addBinding(binding);
+				}
+			}
 		} else if ( parent instanceof IASTFunctionDeclarator ) {
 			binding = createBinding(declarator);
 		}
@@ -565,10 +591,10 @@ public class CVisitor {
 	public static IScope getContainingScope(IASTParameterDeclaration parameterDeclaration) {
 		IASTNode parent = parameterDeclaration.getParent();
 		if( parent instanceof IASTFunctionDeclarator ){
-			IASTFunctionDeclarator functionDeclarator = (IASTFunctionDeclarator) parent;
-			IASTName fnName = functionDeclarator.getName();
-			IFunction function = (IFunction) fnName.resolveBinding();
-			return function.getFunctionScope();
+			parent = ((IASTDeclarator)parent).getParent();
+			if ( parent instanceof IASTFunctionDefinition ) {
+				return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+			}
 		}
 		
 		return null;
@@ -806,7 +832,8 @@ public class CVisitor {
 	}
 	
 	public static void clearBindings( IASTTranslationUnit tu ){
-		visitTranslationUnit( tu, new ClearBindingAction() ); 
+		visitTranslationUnit( tu, new ClearBindingFromScopeAction() );
+		visitTranslationUnit( tu, new ClearBindingAction() );
 	}
 	
 	public static void visitTranslationUnit( IASTTranslationUnit tu, CBaseVisitorAction action ){

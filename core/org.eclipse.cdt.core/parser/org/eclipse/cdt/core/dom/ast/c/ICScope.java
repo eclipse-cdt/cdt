@@ -25,5 +25,6 @@ public interface ICScope extends IScope {
     public static final int NAMESPACE_TYPE_OTHER = 1;
     
     void addBinding( IBinding binding );
+    void removeBinding( IBinding binding );
     public IBinding getBinding( int namespaceType, char [] name );
 }

@@ -63,4 +63,16 @@ public class CScope implements ICScope {
     public IBinding getBinding( int namespaceType, char [] name ){
         return (IBinding) bindings[namespaceType].get( name );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+	 */
+	public void removeBinding(IBinding binding) {
+        int type = ( binding instanceof ICompositeType || binding instanceof IEnumeration ) ? 
+				NAMESPACE_TYPE_TAG : NAMESPACE_TYPE_OTHER;
+
+		if( bindings[type] != CharArrayObjectMap.EMPTY_MAP ) {
+			bindings[type].remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
+		}
+	}
 }

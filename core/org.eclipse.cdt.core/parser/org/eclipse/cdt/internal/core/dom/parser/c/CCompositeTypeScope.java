@@ -72,4 +72,13 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
         // TODO Auto-generated method stub
         return null;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+	 */
+	public void removeBinding(IBinding binding) {
+		if( bindings != CharArrayObjectMap.EMPTY_MAP ) {
+			bindings.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
+		}
+	}
 }

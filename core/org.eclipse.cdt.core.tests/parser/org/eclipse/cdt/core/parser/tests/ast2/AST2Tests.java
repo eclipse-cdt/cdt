@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
@@ -153,7 +154,7 @@ public class AST2Tests extends AST2BaseTest {
 		IFunction func_f = (IFunction) name_f.resolveBinding();
 		assertEquals(globalScope, func_f.getScope());
 		IParameter var_y = (IParameter) name_y.resolveBinding();
-		assertEquals(func_f.getFunctionScope(), var_y.getScope());
+		assertEquals(((IASTCompoundStatement)funcdef_f.getBody()).getScope(), var_y.getScope());
 
 		IVariable var_z = (IVariable) name_z.resolveBinding();
 		assertEquals(((ICFunctionScope)func_f.getFunctionScope()).getBodyScope(), var_z.getScope());
@@ -162,6 +163,15 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals(var_x, name_ref_x.resolveBinding());
 		assertEquals(var_y, name_ref_y.resolveBinding());
 
+		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
+		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
+		assertNotNull( ((ICScope)body_f.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()) ); //$NON-NLS-1$
+		assertNotNull( ((ICScope)body_f.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()) ); //$NON-NLS-1$
+		CVisitor.clearBindings(tu);
+		assertNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
+		assertNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
+		assertNull( ((ICScope)body_f.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()) ); //$NON-NLS-1$
+		assertNull( ((ICScope)body_f.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()) ); //$NON-NLS-1$
 	}
 
     public void testSimpleStruct() throws ParserException {
@@ -500,7 +510,19 @@ public class AST2Tests extends AST2BaseTest {
         assertNotNull( x2 );
         assertSame( x1, x3 );
         assertNotSame( x2, x3 );
+
+        IASTDeclarator decl_i = declaration.getDeclarators()[0];
+        decl_i.getName().resolveBinding(); // add i's binding to the scope
         
+		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()) ); //$NON-NLS-1$
+		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
+		assertNotNull( ((ICScope)compound.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
+		assertNotNull( ((ICScope)compound.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()) ); //$NON-NLS-1$
+		CVisitor.clearBindings(tu);
+		assertNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()) ); //$NON-NLS-1$
+		assertNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
+		assertNull( ((ICScope)compound.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
+		assertNull( ((ICScope)compound.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()) ); //$NON-NLS-1$
     }
     public void testFunctionParameters() throws Exception {
     	StringBuffer buffer  = new StringBuffer();

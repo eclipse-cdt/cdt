@@ -45,6 +45,10 @@ public class CASTName extends CASTNode implements IASTName {
         return binding;
     }
     
+    protected boolean hasBinding(){
+        return ( binding != null );
+    }
+    
     protected void setBinding( IBinding binding ){
     	this.binding = binding;
     }

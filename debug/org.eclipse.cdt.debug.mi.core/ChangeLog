@@ -1,3 +1,21 @@
+2003-08-18 Alain Magloire
+
+	From the manual:
+	By default GDB will automatically keep track of objects as they are
+	loaded and unloaded by the dynamic linker.  By using the command `set
+	stop-on-solib-events 1' you can arrange for GDB to stop the inferior
+	when shared library events occur, thus allowing you to set breakpoints
+	in shared libraries which are explicitly loaded by the inferior.
+
+	* src/org/eclipse/cdt/debug/mi/core/event/MISharedLibEvent.java:
+	New file, StoppedEvent du to shared lib events.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/SuspendedEvent.java:
+	Catch MISharedLibEvent.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryevent.java:
+	New file implements ICDISharedLibaryEvent.
+	* src/org/eclipse/cdt/debug/mi/core/RxThread.java:
+	Hack to catch suspend/stop on shared library.
+
 2003-08-11 Mikhail Khodjaiants
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java:
 	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:

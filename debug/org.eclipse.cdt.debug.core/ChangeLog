@@ -1,3 +1,8 @@
+2003-08-18 Alain Magloire
+
+	ICDISharedLibraryEvent.java:
+	New file, to notify a breakpoint from a shared lib event.
+
 2003-08-13 Mikhail Khodjaiants
 	* ICDIVariableManager.java: removed the 'type' parameter from the 'getVariableObjectAsArray' method
 	* ICastToArray.java: removed the 'type' parameter from the 'castToArray' method

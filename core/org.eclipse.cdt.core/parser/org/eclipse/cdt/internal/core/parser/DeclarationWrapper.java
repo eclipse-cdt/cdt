@@ -336,7 +336,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     private IASTFactory astFactory = null;
 	private int endLine;
 
-	private char[] fn;
+	private final char[] fn;
     /**
      * @param requestor
      */

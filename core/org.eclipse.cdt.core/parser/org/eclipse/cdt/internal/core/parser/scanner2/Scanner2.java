@@ -2515,14 +2515,13 @@ public class Scanner2 implements IScanner, IScannerData {
 
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFilename()
-	 */
-	public final char[] getCurrentFilename() {
+	private final char[] getCurrentFilename() {
 		for( int i = bufferStackPos; i >= 0; --i )
 		{
 			if( bufferData[i] instanceof InclusionData )
 				return ((InclusionData)bufferData[i]).reader.filename;
+			if( bufferData[i] instanceof CodeReader )
+				return ((CodeReader)bufferData[i]).filename;
 		}
 		return emptyCharArray;
 

@@ -250,14 +250,18 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 	 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
 	 		progressMonitor.run(true, true, runnable);
 	 		
-	 		if( storage.getResource() != null )
+	 		IASTOffsetableNamedElement namedElement = storage.getNamedElement();
+	 		if( namedElement == null )
+	 			MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ //$NON-NLS-2$
+	 		
+			if( storage.getResource() != null )
 	 		{
-	 			open( storage.getResource(), storage.getNamedElement().getNameOffset(), storage.getNamedElement().getNameEndOffset() - storage.getNamedElement().getNameOffset() );
+	 			open( storage.getResource(), namedElement.getNameOffset(), namedElement.getNameEndOffset() - namedElement.getNameOffset() );
 	 			return;
 	 		}
 	 		else
 	 		{
-	 			if( open( storage.getFileName(), storage.getNamedElement().getNameOffset(), storage.getNamedElement().getNameEndOffset() - storage.getNamedElement().getNameOffset()) );
+	 			if( open( storage.getFileName(), namedElement.getNameOffset(), namedElement.getNameEndOffset() - namedElement.getNameOffset()) );
 	 				return;
 	 		}
 

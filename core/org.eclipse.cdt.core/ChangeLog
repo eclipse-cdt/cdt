@@ -1,8 +1,12 @@
 2004-07-19 Vladimir Hirsl
 
-	Support for SOM/XCoff
-	* utils/org/eclipse/cdt/utils/som/*
-	* utils/org/eclipse/cdt/utils/xcoff/*
+	Implementation of HP-UX SOM binary parser.
+	* utils/org/eclipse/cdt/utils/som/AR.java
+	* utils/org/eclipse/cdt/utils/som/SOM.java
+	* utils/org/eclipse/cdt/utils/som/parser/ARMember.java
+	* utils/org/eclipse/cdt/utils/som/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/som/parser/SOMParser.java
+	* utils/org/eclipse/cdt/utils/som/parser/SOMBinaryObject.java
 
 2004-07-17 Brad Jarvinen.
 

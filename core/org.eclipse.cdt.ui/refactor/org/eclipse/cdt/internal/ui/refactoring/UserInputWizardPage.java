@@ -11,12 +11,11 @@
 
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import org.eclipse.jface.wizard.IWizardPage;
-
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.corext.refactoring.base.RefactoringStatus;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.wizard.IWizardPage;
 
 /**
  * An abstract wizard page that can be used to implement user input pages for 
@@ -52,14 +51,17 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		if (severity == RefactoringStatus.FATAL){
 			setPageComplete(false);
 			setErrorMessage(status.getFirstMessage(severity));	
+			setImageDescriptor(CPluginImages.DESC_OBJS_DEFAULT_CHANGE);
 		} else {
 			setPageComplete(true);
 			setErrorMessage(null);
 			//setErrorMessage(RefactoringMessages.getString("RenameInputWizardPage.no_undo")); //$NON-NLS-1$
 			if (severity == RefactoringStatus.OK)
 				setMessage(null, NONE);
-			else	
-				setMessage(status.getFirstMessage(severity), getCorrespondingIStatusSeverity(severity));	
+			else {	
+				setMessage(status.getFirstMessage(severity), getCorrespondingIStatusSeverity(severity));
+				setImageDescriptor(CPluginImages.DESC_OBJS_DEFAULT_CHANGE);
+			}
 		}
 	}
 	

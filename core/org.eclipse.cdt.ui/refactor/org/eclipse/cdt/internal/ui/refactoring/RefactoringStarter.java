@@ -50,10 +50,12 @@ public class RefactoringStarter {
 		} else {
 			wizard.setActivationStatus(activationStatus);
 			Dialog dialog;
-			if (wizard.hasMultiPageUserInput())
+			if (wizard.hasMultiPageUserInput()){
 				dialog= new RefactoringWizardDialog(parent, wizard);
-			else 
+			}
+			else { 
 				dialog= new RefactoringWizardDialog2(parent, wizard);
+			}
 			if (dialog.open() == Window.CANCEL)
 				fSaveHelper.triggerBuild();
 			return null;	

@@ -295,14 +295,11 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				return result;
 						
 			fReferences= null;
-			if (fUpdateReferences){
-				pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.searching"));	 //$NON-NLS-1$
-				fReferences= getReferences(getElementQualifiedName(fCElement), new SubProgressMonitor(pm, 35));
-			}
+			pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.searching"));	 //$NON-NLS-1$
+			fReferences= getReferences(getElementQualifiedName(fCElement), new SubProgressMonitor(pm, 35), fUpdateReferences);
 			pm.worked(6);
 			
-			if (fUpdateReferences)
-				result.merge(analyzeAffectedTranslationUnits());
+			result.merge(analyzeAffectedTranslationUnits());
 
 			pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.checking")); //$NON-NLS-1$
 			if (pm.isCanceled())
@@ -343,12 +340,12 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			pm.beginTask("", 7); //$NON-NLS-1$
 			TextChangeManager manager= new TextChangeManager();
 			
-			if (fUpdateReferences)
-				addReferenceUpdates(manager, new SubProgressMonitor(pm, 3));
+			addReferenceUpdates(manager, new SubProgressMonitor(pm, 3));
 			
 			pm.worked(1);
 			
-			addTypeDeclarationUpdate(manager);
+			// now both declarations and references are searched for in references
+			//addTypeDeclarationUpdate(manager);
 			pm.worked(1);
 						
 			return manager;
@@ -394,8 +391,8 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		}
 	}
 	
-	private SearchResultGroup[] getReferences(String searchPrefix, IProgressMonitor pm) throws CoreException {
-		return RefactoringSearchEngine.search(pm, createRefactoringScope(), createSearchPattern(searchPrefix));
+	private SearchResultGroup[] getReferences(String searchPrefix, IProgressMonitor pm, boolean updateReferences) throws CoreException {
+		return RefactoringSearchEngine.search(pm, createRefactoringScope(), createSearchPattern(searchPrefix, updateReferences));
 	}
 	
 	private ICSearchScope createRefactoringScope() throws CoreException {
@@ -405,11 +402,16 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return scope;	
 	}
 	
-	private OrPattern createSearchPattern(String searchPrefix) throws CoreException {
+	private OrPattern createSearchPattern(String searchPrefix, boolean updateReferences) throws CoreException {
 		OrPattern orPattern = new OrPattern();
 		if(fCElement instanceof IStructure){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-				ICSearchConstants.TYPE,	ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.TYPE,	ICSearchConstants.ALL_OCCURRENCES, false ));				
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+					ICSearchConstants.TYPE,	ICSearchConstants.DECLARATIONS, false ));
+			}
 			IStructure structure = (IStructure) fCElement;
 			if(structure.getElementType() == ICElement.C_CLASS){
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + structure.getElementName(),
@@ -419,57 +421,100 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			}
 		}
 		else if(fCElement instanceof IMethod){
-			// The inline declaration is the same as the definition
-			// we don't need to  search for the declaration if it is inline
-			ICElement parent = fCElement.getParent();
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.METHOD, ICSearchConstants.DEFINITIONS, false ));
+
+				// The inline declaration is the same as the definition
+			// we don't need to  search for the definition if it is inline
+/*			ICElement parent = fCElement.getParent();
 			if( (!(((IMethod)fCElement).isInline())) && (!(parent instanceof IStructure )) ) {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 						ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, false ));
 			}
 			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 					ICSearchConstants.METHOD, ICSearchConstants.REFERENCES, false ));
+*/			}
+			
 		} 		
 		else if(fCElement instanceof IMethodDeclaration){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.METHOD, ICSearchConstants.DEFINITIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.METHOD, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, false ));
+			}
 		} 
 		else if(fCElement instanceof IFunction){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.FUNCTION, ICSearchConstants.REFERENCES, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.METHOD, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.FUNCTION, ICSearchConstants.ALL_OCCURRENCES, false ));
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.METHOD, ICSearchConstants.DEFINITIONS, false ));								
+			}
 		} 
 		else if(fCElement instanceof IFunctionDeclaration){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.FUNCTION, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.FUNCTION, ICSearchConstants.ALL_OCCURRENCES, false ));				
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
+			}
 		} 
 		else if(fCElement instanceof IEnumeration){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.ENUM, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.ENUM, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));				
+			}
 		} 		
 		else if(fCElement instanceof IField){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.FIELD, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.FIELD, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, false ));				
+			}
 		} 
 		else if(fCElement instanceof IVariable){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.VAR, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.VAR, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));				
+			}
 		} 
 		else if(fCElement instanceof INamespace){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.NAMESPACE, ICSearchConstants.REFERENCES, false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.NAMESPACE, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, false ));				
+			}
 		} 
 		else {
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, 
-					ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.REFERENCES,	false ));
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, 
+						ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, 
+						ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.DECLARATIONS, false ));				
+			}
 		} 
 		return orPattern;
 	}

@@ -1,3 +1,7 @@
+2004-05-04 Hoda Amer
+	Fix for bug#60331 : [Refactoring] All namespace declarations not renamed
+	Fix for bug#59270 : [Refactoring] missing warning/error icons
+	
 2004-05-03 Alain Magloire
 
 	Refactor the indexer block to be in the same

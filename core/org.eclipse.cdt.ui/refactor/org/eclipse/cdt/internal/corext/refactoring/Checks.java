@@ -93,8 +93,29 @@ public class Checks {
 		//fix for: 1GF5Z0Z: ITPJUI:WINNT - assertion failed after renameType refactoring
 		if (name.indexOf(".") != -1) //$NON-NLS-1$
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("Checks.no_dot"));//$NON-NLS-1$
-		else	
-			return checkName(name, CConventions.validateClassName(name));
+		else {	
+			RefactoringStatus status =  checkName(name, CConventions.validateClassName(name));
+			if (status.hasFatalError()){
+				String msg = RefactoringCoreMessages.getFormattedString(
+						"Checks.error.InvalidClassName",//$NON-NLS-1$
+						status.getFirstMessage(RefactoringStatus.FATAL));
+				return RefactoringStatus.createFatalErrorStatus(msg);
+			}
+			else if (status.hasError()){
+				String msg = RefactoringCoreMessages.getFormattedString(
+						"Checks.error.InvalidClassName",//$NON-NLS-1$
+						status.getFirstMessage(RefactoringStatus.ERROR)); 
+				return RefactoringStatus.createErrorStatus(msg);
+			}
+			else if (status.hasWarning()){
+				String msg = RefactoringCoreMessages.getFormattedString(
+						"Checks.warning.ClassNameDiscouraged",//$NON-NLS-1$
+						status.getFirstMessage(RefactoringStatus.INFO));
+				return RefactoringStatus.createWarningStatus(msg);
+			}else{
+				return status;
+			}
+		}
 	}
 		
 		

@@ -198,6 +198,12 @@ public class CPluginImages {
 	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_WARNING= NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_INFO= NAME_PREFIX + "info_obj.gif"; 	//$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_REFACTORING_FATAL= createManaged( T_OBJ, IMG_OBJS_REFACTORING_FATAL); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFACTORING_ERROR= createManaged( T_OBJ, IMG_OBJS_REFACTORING_ERROR); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFACTORING_WARNING= createManaged( T_OBJ, IMG_OBJS_REFACTORING_WARNING); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFACTORING_INFO= createManaged ( T_OBJ, IMG_OBJS_REFACTORING_INFO); 	//$NON-NLS-1$
+		
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_FIELD= create(T_WIZBAN, "fieldrefact_wiz.gif");	//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_METHOD= create(T_WIZBAN, "methrefact_wiz.gif");	//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_TYPE= create(T_WIZBAN, "typerefact_wiz.gif"); 	//$NON-NLS-1$

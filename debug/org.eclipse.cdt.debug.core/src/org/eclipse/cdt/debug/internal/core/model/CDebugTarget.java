@@ -1992,7 +1992,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean isLittleEndian()
 	{
-		if ( getExecFile() != null && CoreModel.isBinary( getExecFile() ) )
+		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
 		{
 			ICFile cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
 			if ( cFile instanceof IBinary )
@@ -2019,7 +2019,7 @@ public class CDebugTarget extends CDebugElement
 	public IGlobalVariable[] getGlobals()
 	{
 		ArrayList list = new ArrayList();
-		if ( getExecFile() != null && CoreModel.isBinary( getExecFile() ) )
+		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
 		{
 			ICFile cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
 			if ( cFile instanceof IBinary )

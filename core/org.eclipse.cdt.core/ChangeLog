@@ -1,3 +1,9 @@
+2003-01-29 Alain Magloire
+
+	* model/org/eclipse/cdt/core/model/CoreModel.java (addElementChangedListeners):
+	remove static qualifier.
+	(removeElementChangedListeners): remove static qualifier.
+
 2003-01-23 Alain Magloire
 
 	Cleanups proposed by Amer Hoda.

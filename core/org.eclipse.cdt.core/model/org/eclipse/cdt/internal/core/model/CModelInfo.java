@@ -24,20 +24,23 @@ public class CModelInfo extends CContainerInfo {
 	 * Compute the non-C resources contained in this C project.
 	 */
 	private Object[] computeNonCResources() {
+		CModelManager mgr = CModelManager.getDefault();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		int length = projects.length;
 		Object[] nonCProjects = null;
 		int index = 0;
 		for (int i = 0; i < length; i++) {
 			IProject project = projects[i];
-			if (!CProject.hasCNature(project)) {
+			if (!(mgr.hasCNature(project) || mgr.hasCCNature(project))) {
 				if (nonCProjects == null) {
 					nonCProjects = new Object[length];
 				}
 				nonCProjects[index++] = project;
 			}
 		}
-		if (index == 0) return NO_NON_C_RESOURCES;
+		if (index == 0) {
+			return NO_NON_C_RESOURCES;
+		}
 		if (index < length) {
 			System.arraycopy(nonCProjects, 0, nonCProjects = new Object[index], 0, index);
 		}

@@ -17,20 +17,8 @@ import org.eclipse.core.runtime.IPath;
 
 public class SourceEntry extends APathEntry implements ISourceEntry {
 
-	IPath outputLocation;
-
-	public SourceEntry(IPath path, IPath outputLocation, boolean isRecursive, IPath[] exclusionPatterns) {
-		super(ISourceEntry.CDT_SOURCE, path, isRecursive, exclusionPatterns, false);
-		this.outputLocation = outputLocation;
-	}
-
-	/**
-	 * Binary output location for this source folder.
-	 * @return IPath, <code>null</code> means to use the
-	 * default output location of the project.
-	 */
-	public IPath getOutputLocation() {
-		return outputLocation;
+	public SourceEntry(IPath path, IPath[] exclusionPatterns) {
+		super(ISourceEntry.CDT_SOURCE, path, exclusionPatterns, false);
 	}
 
 	public boolean equals (Object obj) {
@@ -45,15 +33,6 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 				}
 			} else {
 				if (!path.toString().equals(otherEntry.getPath().toString())) {
-					return false;
-				}
-			}
-			if (outputLocation == null) {
-				if (otherEntry.getOutputLocation() != null) {
-					return false;
-				}
-			} else {
-				if (!outputLocation.toString().equals(otherEntry.getOutputLocation().toString())) {
 					return false;
 				}
 			}

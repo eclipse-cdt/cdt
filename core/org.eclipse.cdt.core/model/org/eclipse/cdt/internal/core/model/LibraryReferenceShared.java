@@ -6,7 +6,7 @@
  */
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.ILibraryReference;
@@ -20,7 +20,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 
 	ILibraryEntry entry;
 
-	public LibraryReferenceShared(ICElement parent, ILibraryEntry e, IBinaryFile bin) {
+	public LibraryReferenceShared(ICElement parent, ILibraryEntry e, IBinaryObject bin) {
 		super(parent, e.getPath(), bin);
 		setElementType(ICElement.C_VCONTAINER);
 		entry = e;

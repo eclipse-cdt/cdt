@@ -1,3 +1,21 @@
+2004-03-18 Alain Magloire
+	Change in the hierarchy of the core Model:
+	ICModel
+	   ICProject
+	      ISourceRoot
+	         IBinary
+	         IArchive
+	         ITranslatioUnit
+	         ICContainer
+	The ISourceRoot been added to better separate
+	the files.  By default the entire project is the
+	SourceRoot.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+	
 2004-03-17 Tanya Wolff
 	Syntax errors in property files
 	* CBrowsingMessages.properties

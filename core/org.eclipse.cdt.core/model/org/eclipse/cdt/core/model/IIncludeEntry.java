@@ -29,13 +29,6 @@ public interface IIncludeEntry extends IPathEntry {
 	boolean isSystemInclude();
 
 	/**
-	 * Whether or not the include affects the resource(if it is a folder)
-	 * recursively
-	 * @return boolean
-	 */
-	boolean isRecursive();
-
-	/**
 	 * If isRecursive() is true, specify an exclude file patterns.
 	 * @return IPath
 	 */

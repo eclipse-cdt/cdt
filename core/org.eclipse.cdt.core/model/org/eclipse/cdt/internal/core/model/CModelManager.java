@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
@@ -34,8 +35,10 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -50,6 +53,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class CModelManager implements IResourceChangeListener, ICDescriptorListener {
 
@@ -150,7 +154,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		//return create(root);
 	}
 
-	public ICModel getCModel() {
+	public CModel getCModel() {
 		return cModel;
 	}
 
@@ -160,30 +164,37 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		IResource res = root.findMember(path);
 		if (res == null) {
 			IPath rootPath = root.getLocation();
-			if (path.equals(rootPath))
+			if (path.equals(rootPath)) {
 				return getCModel(root);
+			}
 			res = root.getContainerForLocation(path);
-			if (res == null || !res.exists())
+			if (res == null || !res.exists()) {
 				res = root.getFileForLocation(path);
-			if (res != null && !res.exists())
+			}
+			if (res != null && !res.exists()) {
 				res = null;
+			}
 		}
 		// TODO: for extenal resources ??
-		return create(res);
+		return create(res, null);
 	}
 
-	public ICElement create (IResource resource) {
+	public ICElement create (IResource resource, ICProject cproject) {
 		if (resource == null) {
 			return null;
+		}
+
+		if (cproject == null) {
+			cproject = create(resource.getProject());
 		}
 		int type = resource.getType();
 		switch (type) {
 			case IResource.PROJECT :
 				return create((IProject)resource);
 			case IResource.FILE :
-				return create((IFile)resource);
+				return create((IFile)resource, cproject);
 			case IResource.FOLDER :
-				return create((IFolder)resource);
+				return create((IFolder)resource, cproject);
 			case IResource.ROOT :
 				return create((IWorkspaceRoot)resource);
 			default :
@@ -191,39 +202,137 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
-	public ICElement create(ICElement parent, IResource resource) {
-		int type = resource.getType();
-		switch (type) {
-			case IResource.PROJECT :
-				return create(parent, (IProject)resource);
-			case IResource.FILE :
-				return create(parent, (IFile)resource);
-			case IResource.FOLDER :
-				return create(parent, (IFolder)resource);
-			case IResource.ROOT :
-				return create((IWorkspaceRoot)resource);
-			default :
-				return null;
+	public ICProject create(IProject project) {
+		if (project == null) {
+			return null;
 		}
+		return cModel.getCProject(project);
 	}
 
-	public ICElement create(IFile file) {
-		IResource parent = file.getParent();
-		ICElement cparent = null;
-		if (parent instanceof IFolder) {
-			cparent = create((IFolder)parent);
-		} else if (parent instanceof IProject) {
-			cparent = create((IProject)parent);
+	public ICModel create(IWorkspaceRoot root) {
+		return getCModel();
+	}
+
+	public ICContainer create(IFolder folder, ICProject cproject) {
+		if (folder == null) {
+			return null;
 		}
-		if (cparent != null)
-			return create(cparent, file);
-		return null;
+		if (cproject == null) {
+			cproject = create(folder.getProject());
+		}
+		ICContainer celement = null;
+		IPath resourcePath = folder.getFullPath();
+		try {
+			ISourceRoot[] roots = cproject.getSourceRoots();
+			for (int i = 0; i < roots.length; ++i) {
+				ISourceRoot root = roots[i];
+				IPath rootPath = root.getPath();
+				if (rootPath.equals(resourcePath)) {
+					celement = root;
+					break; // We are done.
+				} else if (root.isOnSourceEntry(folder)) {
+					IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
+					String[] segments = path.segments();
+					ICContainer cfolder = root;
+					for (int j = 0; j < segments.length; j++) {
+						IResource res = cfolder.getResource();
+						if (res instanceof IContainer) {
+							IContainer container = (IContainer)res;
+							res = container.findMember(new Path(segments[j]));
+							if (res instanceof IFolder) {
+								cfolder = cfolder.getCContainer(segments[j]);
+							} else {
+								cfolder = null;
+								break;
+							}
+						}	
+					}
+					if (cfolder != null) {
+						celement = cfolder;
+					}
+				}
+			}
+		} catch (CModelException e) {
+			//
+		}
+		return celement;
 	}
 
-	public ICElement create(ICElement parent, IFile file) {
-		return create(parent, file, null);
-	}
+	public ICElement create(IFile file, ICProject cproject) {
+		if (file == null) {
+			return null;
+		}
+		if (cproject == null) {
+			cproject = create(file.getProject());
+		}
+		ICElement celement = null;
+		try {
+			ISourceRoot[] roots = cproject.getSourceRoots();
+			for (int i = 0; i < roots.length; ++i) {
+				ISourceRoot root = roots[i];
+				IPath rootPath = root.getPath();
+				if (root.isOnSourceEntry(file)) {
+					IPath resourcePath = file.getFullPath();
+					IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
+					String[] segments = path.segments();
+					ICContainer cfolder = root;
+					for (int j = 0; j < segments.length; j++) {
+						IResource res = cfolder.getResource();
+						if (res instanceof IContainer) {
+							IContainer container = (IContainer)res;
+							res = container.findMember(new Path(segments[j]));
+							if (res instanceof IFolder) {
+								cfolder = cfolder.getCContainer(segments[j]);
+							} else if (res instanceof IFile) {
+								IFile f = (IFile)res;
+								if (isTranslationUnit(f)) {
+									celement = new TranslationUnit(cfolder, f);
+								} else if (cproject.isOnOutputEntry(f)) {
+									IBinaryFile bin = createBinaryFile(f);
+									if (bin != null) {
+										if (bin.getType() == IBinaryFile.ARCHIVE) {
+											celement = new Archive(cfolder, f, (IBinaryArchive)bin);
+											ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+											vlib.addChild(celement);
+										} else {
+											celement = new Binary(cfolder, f, (IBinaryObject)bin);
+											if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+												BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+												vbin.addChild(celement);
+											}
+										}
+									}
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
 
+			// try in the outputEntry
+			if (celement == null && cproject.isOnOutputEntry(file)) {
+				IBinaryFile bin = createBinaryFile(file);
+				if (bin != null) {
+					if (bin.getType() == IBinaryFile.ARCHIVE) {
+						ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+						celement = new Archive(vlib, file, (IBinaryArchive)bin);
+						vlib.addChild(celement);
+					} else {
+						BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+						celement = new Binary(vbin, file, (IBinaryObject)bin);
+						if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+							vbin.addChild(celement);
+						}
+					}
+				}
+			}
+		} catch (CModelException e) {
+			//
+		}
+		return celement;	
+	}
+	/*
 	public synchronized ICElement create(ICElement parent, IFile file, IBinaryFile bin) {
 		ICElement cfile = null;
 		
@@ -261,45 +370,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 		return cfile;
 	}
-
-	public ICContainer create(IFolder folder) {
-		IResource parent = folder.getParent();
-		ICElement cparent = null;
-		if (parent instanceof IFolder) {
-			cparent = create ((IFolder)parent);
-		} else if (parent instanceof IProject) {
-			cparent = create ((IProject)parent);
-		}
-		if (cparent != null)
-			return (ICContainer) create (cparent, folder);
-		return null;
-	}
-
-	public ICContainer create(ICElement parent, IFolder folder) {
-		return new CContainer(parent, folder);
-	}
-		
-	public ICProject create(IProject project) {
-		IResource parent = project.getParent();
-		ICElement celement = null;
-		if (parent instanceof IWorkspaceRoot) {
-			celement = create ((IWorkspaceRoot)parent);
-		}
-		return create(celement, project);
-	}
-
-	public ICProject create(ICElement parent, IProject project) {
-		if (hasCNature(project)){
-			return new CProject(parent, project);
-		}
-		return null;
-	}
-
-	public ICModel create(IWorkspaceRoot root) {
-		return getCModel();
-		//return new CModel(root);
-	}
-
+*/
 	public void releaseCElement(ICElement celement) {
 
 		// Guard.
@@ -391,7 +462,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 		// Remove the child from the parent list.
 		Parent parent = (Parent)celement.getParent();
-		if (parent != null) {
+		if (parent != null && peekAtInfo(parent) != null) {
 			parent.removeChild(celement);
 		}
 
@@ -486,7 +557,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 	
 	public boolean isSharedLib(IFile file) {
-		ICElement celement = create(file);
+		ICElement celement = create(file, null);
 		if (celement instanceof IBinary) {
 			return ((IBinary)celement).isSharedLib();
 		}
@@ -494,7 +565,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public boolean isObject(IFile file) {
-		ICElement celement = create(file);
+		ICElement celement = create(file, null);
 		if (celement instanceof IBinary) {
 			return ((IBinary)celement).isObject();
 		}
@@ -502,7 +573,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public boolean isExecutable(IFile file) {
-		ICElement celement = create(file);
+		ICElement celement = create(file, null);
 		if (celement instanceof IBinary) {
 			return ((IBinary)celement).isExecutable();
 		}
@@ -510,12 +581,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public boolean isBinary(IFile file) {
-		ICElement celement = create(file);
+		ICElement celement = create(file, null);
 		return (celement instanceof IBinary);
 	}
 
 	public boolean isArchive(IFile file) {
-		ICElement celement = create(file);
+		ICElement celement = create(file, null);
 		return(celement instanceof IArchive);
 	}
 

@@ -1,3 +1,13 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
@@ -6,11 +16,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  */
@@ -42,18 +47,9 @@ public class CContainerInfo extends OpenableInfo {
 		ICElement parent = getElement();
 		try {
 			IResource[] resources = null;
-			if (res != null) {
-				switch(res.getType()) {
-					case IResource.ROOT:
-					case IResource.PROJECT:
-					case IResource.FOLDER:
-						IContainer container = (IContainer)res;
-						resources = container.members(false);
-						break;
-
-					case IResource.FILE:
-						break;
-				}
+			if (res instanceof IContainer) {
+				IContainer container = (IContainer)res;
+				resources = container.members(false);
 			}
 
 			if (resources != null) {
@@ -63,7 +59,7 @@ public class CContainerInfo extends OpenableInfo {
 					boolean found = false;
 					for (int j = 0; j < children.length; j++) {
 						IResource r = children[j].getResource();
-						if (r.equals(resources[i])){
+						if (r != null && r.equals(resources[i])){
 							found = true;
 							break;
 						}
@@ -71,11 +67,6 @@ public class CContainerInfo extends OpenableInfo {
 					if (!found) {
 						notChildren.add(resources[i]);
 					}
-					// Check for Valid C projects only.
-					//ICElement celement = factory.create(parent, resources[i]);
-					//if (celement == null) {
-					//	notChildren.add(resources[i]);
-					//}
 				}
 			}
 		} catch (CoreException e) {

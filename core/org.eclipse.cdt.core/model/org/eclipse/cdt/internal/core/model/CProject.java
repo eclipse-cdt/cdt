@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -26,8 +27,13 @@ import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.ISourceEntry;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,6 +41,8 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 
 public class CProject extends CContainer implements ICProject {
+
+	private static final String CUSTOM_DEFAULT_OPTION_VALUE = "#\r\n\r#custom-non-empty-default-value#\r\n\r#"; //$NON-NLS-1$
 
 	public CProject(ICElement parent, IProject project) {
 		super(parent, project, CElement.C_PROJECT);
@@ -51,8 +59,6 @@ public class CProject extends CContainer implements ICProject {
 	public IProject getProject() {
 		return getUnderlyingResource().getProject();
 	}
-
-	private static final String CUSTOM_DEFAULT_OPTION_VALUE = "#\r\n\r#custom-non-empty-default-value#\r\n\r#"; //$NON-NLS-1$
 
 	public ICElement findElement(IPath path) throws CModelException {
 		ICElement celem = null;
@@ -126,8 +132,8 @@ public class CProject extends CContainer implements ICProject {
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
 							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);
-						} else {
-							lib = new LibraryReferenceShared(cproject, entry, bin);
+						} else if (bin instanceof IBinaryObject){
+							lib = new LibraryReferenceShared(cproject, entry, (IBinaryObject)bin);
 						}
 						break;
 					}
@@ -321,6 +327,161 @@ public class CProject extends CContainer implements ICProject {
 	 */
 	public void setRawPathEntries(IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		CoreModel.getDefault().setRawPathEntries(this, newEntries, monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoot(org.eclipse.cdt.core.model.ISourceEntry)
+	 */
+	public ISourceRoot getSourceRoot(ISourceEntry entry) throws CModelException {
+		IPath p = getPath();
+		IPath sp = entry.getPath();
+		if (p.isPrefixOf(sp)) {
+			int count = sp.matchingFirstSegments(p);
+			sp = sp.removeFirstSegments(count);
+			IResource res = null;
+			if (sp.isEmpty()) {
+				res = getProject();
+			} else {
+				res = getProject().findMember(sp);
+			}
+			if (res != null) {
+				return new SourceRoot(this, res, entry);
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoots()
+	 */
+	public ISourceRoot[] getSourceRoots() throws CModelException {
+		return computeSourceRoots();
+	}
+
+	public IOutputEntry[] getOutputEntries() throws CModelException {
+		IPathEntry[] entries = getResolvedPathEntries();
+		ArrayList list = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getEntryKind() == IPathEntry .CDT_OUTPUT) {
+				list.add(entries[i]);
+			}
+		}
+		IOutputEntry[] outputs = new IOutputEntry[list.size()];
+		list.toArray(outputs);
+		return outputs;
+	}
+
+	public boolean isOnOutputEntry(IResource resource) {
+		IPath path = resource.getFullPath();
+		
+		// ensure that folders are only excluded if all of their children are excluded
+		if (resource.getType() == IResource.FOLDER) {
+			path = path.append("*"); //$NON-NLS-1$
+		}
+
+		try {
+			IOutputEntry[] entries = getOutputEntries();
+			for (int i = 0; i < entries.length; i++) {
+				boolean on = isOnOutputEntry(entries[i], path);
+				if (on) {
+					return on;
+				}
+			}
+		} catch (CModelException e) {
+			//
+		}
+		return false;
+	}
+
+	private boolean isOnOutputEntry(IOutputEntry entry, IPath path) {
+		if (entry.getPath().isPrefixOf(path) 
+				&& !Util.isExcluded(path, entry.fullExclusionPatternChars())) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
+	 */
+	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm,
+			Map newElements, IResource underlyingResource)
+			throws CModelException {
+		boolean validInfo = false;
+		try {
+			IResource res = getResource();
+			if (res != null && (res instanceof IWorkspaceRoot || res.getProject().isOpen())) {
+				// put the info now, because computing the roots requires it
+				CModelManager.getDefault().putInfo(this, info);
+				validInfo = computeSourceRoots(info, res);
+			}
+		} finally {
+			if (!validInfo) {
+				CModelManager.getDefault().removeInfo(this);
+			}
+		}
+		return validInfo;
+	}
+
+	protected ISourceRoot[] computeSourceRoots() throws CModelException {
+		IPathEntry[] entries = getResolvedPathEntries();
+		ArrayList list = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
+				ISourceEntry sourceEntry = (ISourceEntry)entries[i];
+				ISourceRoot root = getSourceRoot(sourceEntry);
+				if (root != null) {
+					list.add(root);
+				}
+			}
+		}
+		ISourceRoot[] roots = new ISourceRoot[list.size()];
+		list.toArray(roots);
+		return roots;
+	}
+
+	protected boolean computeSourceRoots(OpenableInfo info, IResource res) throws CModelException {
+		info.setChildren(computeSourceRoots());
+		if (info instanceof CProjectInfo) {
+			CProjectInfo pinfo = (CProjectInfo)info;
+			pinfo.setNonCResources(null);
+		}
+
+		return true;
+	}
+
+	/*
+	 * @see ICProject
+	 */
+	public boolean isOnClasspath(ICElement element) {
+		try {
+			ISourceRoot[] roots = getSourceRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].isOnSourceEntry(element)) {
+					return true;
+				}
+			}
+		} catch (CModelException e) {
+			// ..
+		}
+		return false;
+	}
+
+	/*
+	 * @see ICProject
+	 */
+	public boolean isOnClasspath(IResource resource) {
+		try {
+			ISourceRoot[] roots = getSourceRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].isOnSourceEntry(resource)) {
+					return true;
+				}
+			}
+		} catch (CModelException e) {
+			//
+		}
+		return false;
 	}
 
 }

@@ -16,13 +16,11 @@ import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.core.runtime.IPath;
 
 public class IncludeEntry extends APathEntry implements IIncludeEntry {
-
 	IPath includePath;
 	boolean isSystemInclude;
 
-	public IncludeEntry(IPath path, IPath includePath, boolean isSystemInclude, boolean isRecursive,
-			IPath[] exclusionPatterns) {
-		super(IIncludeEntry.CDT_INCLUDE, path, isRecursive, exclusionPatterns, path == null);
+	public IncludeEntry(IPath path, IPath includePath, boolean isSystemInclude, IPath[] exclusionPatterns) {
+		super(IIncludeEntry.CDT_INCLUDE, path, exclusionPatterns, path == null);
 		this.includePath = includePath;
 		this.isSystemInclude = isSystemInclude;
 	}
@@ -76,5 +74,4 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		}
 		return super.equals(obj);
 	}
-
 }

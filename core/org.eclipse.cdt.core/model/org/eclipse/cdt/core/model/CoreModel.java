@@ -3,16 +3,17 @@ package org.eclipse.cdt.core.model;
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
+import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.ContainerEntry;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
 import org.eclipse.cdt.internal.core.model.LibraryEntry;
 import org.eclipse.cdt.internal.core.model.MacroEntry;
+import org.eclipse.cdt.internal.core.model.OutputEntry;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -29,11 +31,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CoreModel implements ICDescriptorListener {
-
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = null;
 	private static PathEntryManager pathEntryManager = null;
-
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
 	/**
@@ -47,30 +47,47 @@ public class CoreModel implements ICDescriptorListener {
 	 * Creates an ICElement form and IFile. Returns null if not found.
 	 */
 	public ICElement create(IFile file) {
-		return manager.create(file);
+		return manager.create(file, null);
+
 	}
 
 	/**
 	 * Creates an ICElement form and IFolder. Returns null if not found.
 	 */
 	public ICContainer create(IFolder folder) {
-		return manager.create(folder);
+		return manager.create(folder, null);
 	}
 
 	/**
 	 * Creates an ICElement form and IProject. Returns null if not found.
 	 */
 	public ICProject create(IProject project) {
-		return manager.create(project);
+		if (project == null) {
+			return null;
+		}
+		CModel cModel = manager.getCModel();
+		return cModel.getCProject(project);
 	}
 
 	/**
 	 * Creates an ICElement form and IResource. Returns null if not found.
 	 */
 	public ICElement create(IResource resource) {
-		return manager.create(resource);
+		return manager.create(resource, null);
 	}
 
+	/**
+	 * Returns the C model.
+	 * 
+	 * @param root the given root
+	 * @return the C model, or <code>null</code> if the root is null
+	 */
+	public static ICModel create(IWorkspaceRoot root) {
+		if (root == null) {
+			return null;
+		}
+		return manager.getCModel();
+	}
 	/**
 	 * Returns the default ICModel.
 	 */
@@ -296,6 +313,35 @@ public class CoreModel implements ICDescriptorListener {
 	}
 
 	/**
+	 * Creates and returns a new entry of kind <code>CDT_OUTPUT</code> for
+	 * the project's output folder
+	 * <p>
+	 * 
+	 * @param path
+	 *            the project-relative path of a binary folder
+	 * @return a new source entry with not exclusion patterns
+	 *  
+	 */
+	public static IOutputEntry newOutputEntry(IPath path) {
+		return newOutputEntry(path, OutputEntry.NO_EXCLUSION_PATTERNS);
+	}
+
+	/**
+	 * Creates and returns a new entry of kind <code>CDT_OUPUT</code> for
+	 * the project
+	 * 
+	 * @param path
+	 *            the absolute project-relative path of a binary folder
+	 * @param exclusionPatterns
+	 *            the possibly empty list of exclusion patterns represented as
+	 *            relative paths
+	 * @return a new source entry with the given exclusion patterns
+	 */
+	public static IOutputEntry newOutputEntry(IPath path, IPath[] exclusionPatterns) {
+		return new OutputEntry(path, exclusionPatterns, false);
+	}
+
+	/**
 	 * Creates and returns a new entry of kind <code>CDT_SOURCE</code> for
 	 * the project's source folder identified by the given absolute
 	 * workspace-relative path.
@@ -337,71 +383,14 @@ public class CoreModel implements ICDescriptorListener {
 	 * </p>
 	 * 
 	 * @param path
-	 *            the project-relative path of a source folder
-	 * @param exclusionPatterns
-	 *            the possibly empty list of exclusion patterns represented as
-	 *            relative paths
-	 * @return a new source entry with the given exclusion patterns
-	 *  
-	 */
-	public static ISourceEntry newSourceEntry(IPath path, IPath[] exclusionPatterns) {
-		return newSourceEntry(path, null, exclusionPatterns);
-	}
-
-	/**
-	 * Creates and returns a new entry of kind <code>CDT_SOURCE</code> for
-	 * the project's source folder identified by the given absolute
-	 * workspace-relative path but excluding all source files with paths
-	 * matching any of the given patterns. This specifies that all package
-	 * fragments within the root will have children of type <code>ICompilationUnit</code>.
-	 * <p>
-	 * The source folder is referred to using an absolute path relative to the
-	 * workspace root, e.g. <code>/Project/src</code>. A project's source
-	 * folders are located with that project. That is, a source entry
-	 * specifying the path <code>/P1/src</code> is only usable for project
-	 * <code>P1</code>.
-	 * </p>
-	 * 
-	 * @param path
-	 *            the project-relative path of a source folder
-	 * @param exclusionPatterns
-	 *            the possibly empty list of exclusion patterns represented as
-	 *            relative paths
-	 * @param specificOutputLocation
-	 *            the specific output location for this source entry (<code>null</code>
-	 *            if using project default ouput location)
-	 * @return a new source entry with the given exclusion patterns
-	 */
-	public static ISourceEntry newSourceEntry(IPath path, IPath outputLocation, IPath[] exclusionPatterns) {
-		return newSourceEntry(path, outputLocation, true, exclusionPatterns);
-	}
-
-	/**
-	 * Creates and returns a new entry of kind <code>CDT_SOURCE</code> for
-	 * the project's source folder identified by the given absolute
-	 * workspace-relative path but excluding all source files with paths
-	 * matching any of the given patterns. This specifies that all package
-	 * fragments within the root will have children of type <code>ICompilationUnit</code>.
-	 * <p>
-	 * The source folder is referred to using an absolute path relative to the
-	 * workspace root, e.g. <code>/Project/src</code>. A project's source
-	 * folders are located with that project. That is, a source entry
-	 * specifying the path <code>/P1/src</code> is only usable for project
-	 * <code>P1</code>.
-	 * </p>
-	 * 
-	 * @param path
 	 *            the absolute workspace-relative path of a source folder
 	 * @param exclusionPatterns
 	 *            the possibly empty list of exclusion patterns represented as
 	 *            relative paths
-	 * @param specificOutputLocation
-	 *            the specific output location for this source entry (<code>null</code>
-	 *            if using project default ouput location)
 	 * @return a new source entry with the given exclusion patterns
 	 */
-	public static ISourceEntry newSourceEntry(IPath path, IPath outputLocation, boolean isRecursive, IPath[] exclusionPatterns) {
-		return new SourceEntry(path, outputLocation, isRecursive, exclusionPatterns);
+	public static ISourceEntry newSourceEntry(IPath path, IPath[] exclusionPatterns) {
+		return new SourceEntry(path, exclusionPatterns);
 	}
 
 	/**
@@ -429,11 +418,10 @@ public class CoreModel implements ICDescriptorListener {
 	}
 
 	/**
-	/**
-	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
+	 * * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
 	 * @param path
-	 *            the affected project-relative resource path 
+	 *            the affected project-relative resource path
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
@@ -442,7 +430,7 @@ public class CoreModel implements ICDescriptorListener {
 	 * @return IIncludeEntry
 	 */
 	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude) {
-		return newIncludeEntry(resourcePath, includePath, isSystemInclude, true, IncludeEntry.NO_EXCLUSION_PATTERNS);
+		return newIncludeEntry(resourcePath, includePath, isSystemInclude, IncludeEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -462,9 +450,24 @@ public class CoreModel implements ICDescriptorListener {
 	 *            exclusion patterns in the resource if a container
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude, boolean isRecursive,
-			IPath[] exclusionPatterns) {
-		return new IncludeEntry(resourcePath, includePath, isSystemInclude, isRecursive, exclusionPatterns);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude,
+			 IPath[] exclusionPatterns) {
+		return new IncludeEntry(resourcePath, includePath, isSystemInclude, exclusionPatterns);
+	}
+
+	/**
+	 * Creates and returns an entry kind <code>CDT_MACRO</code>
+	 * 
+	 * @param path
+	 *            the affected workspace-relative resource path
+	 * @param macroName
+	 *            the name of the macro
+	 * @param macroValue
+	 *            the value of the macro
+	 * @return
+	 */
+	public static IMacroEntry newMacroEntry(String macroName, String macroValue) {
+		return newMacroEntry(null, macroName, macroValue, MacroEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -479,7 +482,7 @@ public class CoreModel implements ICDescriptorListener {
 	 * @return
 	 */
 	public static IMacroEntry newMacroEntry(IPath path, String macroName, String macroValue) {
-		return newMacroEntry(path, macroName, macroValue, true, MacroEntry.NO_EXCLUSION_PATTERNS, true);
+		return newMacroEntry(path, macroName, macroValue, MacroEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -491,18 +494,12 @@ public class CoreModel implements ICDescriptorListener {
 	 *            the name of the macro
 	 * @param macroValue
 	 *            the value of the macro
-	 * @param isRecursive
-	 *            if the resource is a folder the include applied to all
-	 *            recursively
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
-	 * @param isExported
-	 *            whether this cpath is exported.
 	 * @return
 	 */
-	public static IMacroEntry newMacroEntry(IPath path, String macroName, String macroValue, boolean isRecursive,
-			IPath[] exclusionPatterns, boolean isExported) {
-		return new MacroEntry(path, macroName, macroValue, isRecursive, exclusionPatterns, isExported);
+	public static IMacroEntry newMacroEntry(IPath path, String macroName, String macroValue, IPath[] exclusionPatterns) {
+		return new MacroEntry(path, macroName, macroValue, exclusionPatterns);
 	}
 
 	/**
@@ -731,5 +728,4 @@ public class CoreModel implements ICDescriptorListener {
 	public IndexManager getIndexManager() {
 		return manager.getIndexManager();
 	}
-
 }

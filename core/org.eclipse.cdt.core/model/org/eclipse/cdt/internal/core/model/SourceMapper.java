@@ -4,11 +4,12 @@
  */
 package org.eclipse.cdt.internal.core.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
@@ -24,8 +25,8 @@ public class SourceMapper {
 		return findTranslationUnit(cproject, filename);
 	}
 	
-	public ITranslationUnit findTranslationUnit(ICContainer container, String filename) {
-		ArrayList list = container.getChildrenOfType(ICElement.C_UNIT);
+	public ITranslationUnit findTranslationUnit(IParent container, String filename) {
+		List list = container.getChildrenOfType(ICElement.C_UNIT);
 		for (int i = 0; i < list.size(); i++) {
 			Object o = list.get(i);
 			if (o instanceof ITranslationUnit) {

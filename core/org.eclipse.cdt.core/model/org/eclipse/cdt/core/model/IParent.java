@@ -1,6 +1,6 @@
 package org.eclipse.cdt.core.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
@@ -24,7 +24,7 @@ public interface IParent {
 	/**
 	 * returns the children of a certain type
 	 */
-	public ArrayList getChildrenOfType(int type);
+	public List getChildrenOfType(int type);
 	/**
 	 * Returns whether this element has one or more immediate children.
 	 * This is a convenience method, and may be more efficient than

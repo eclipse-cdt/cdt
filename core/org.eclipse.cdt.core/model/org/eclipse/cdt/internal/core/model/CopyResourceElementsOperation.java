@@ -155,7 +155,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 			// update new resource content
         
 			// register the correct change deltas
-			ICElement cdest = CModelManager.getDefault().create(destFile);
+			ICElement cdest = CModelManager.getDefault().create(destFile, null);
 			prepareDeltas(source, cdest);
 			fCreatedElements.add(cdest);
 			//if (newName != null) {

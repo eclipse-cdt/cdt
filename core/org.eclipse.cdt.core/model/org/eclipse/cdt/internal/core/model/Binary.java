@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
@@ -39,16 +38,16 @@ public class Binary extends Openable implements IBinary {
 	
 	private long fLastModification;
 
-	IBinaryFile binaryFile;
+	IBinaryObject binaryObject;
 
-	public Binary(ICElement parent, IFile file, IBinaryFile bin) {
+	public Binary(ICElement parent, IFile file, IBinaryObject bin) {
 		super(parent, file, ICElement.C_BINARY);
-		binaryFile = bin;
+		binaryObject = bin;
 	}
 
-	public Binary(ICElement parent, IPath path, IBinaryFile bin) {
+	public Binary(ICElement parent, IPath path, IBinaryObject bin) {
 		super (parent, path, ICElement.C_BINARY);
-		binaryFile = bin;
+		binaryObject = bin;
 	}
 
 	public boolean isSharedLib() {
@@ -70,7 +69,10 @@ public class Binary extends Openable implements IBinary {
 	public boolean hasDebug() {
 		if (isObject() || isExecutable() || isSharedLib()) {
 			if (hasDebug == null || hasChanged()) {
-				hasDebug = new Boolean(((IBinaryObject)getBinaryFile()).hasDebug()).toString();
+				IBinaryObject obj = getBinaryObject();
+				if (obj != null) {
+					hasDebug = new Boolean(obj.hasDebug()).toString();
+				}
 			}
 		}
 		return Boolean.valueOf(hasDebug).booleanValue();
@@ -79,7 +81,8 @@ public class Binary extends Openable implements IBinary {
 	public String getCPU() {
 		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
 			if (cpu == null || hasChanged()) {
-				cpu = ((IBinaryObject)getBinaryFile()).getCPU();
+				IBinaryObject obj = getBinaryObject();
+				cpu = obj.getCPU();
 			}
 		}
 		return (cpu == null ? "" : cpu); //$NON-NLS-1$
@@ -88,7 +91,10 @@ public class Binary extends Openable implements IBinary {
 	public String[] getNeededSharedLibs() {
 		if (isExecutable() || isSharedLib()) {
 			if (needed == null || hasChanged()) {
-				needed = ((IBinaryExecutable)getBinaryFile()).getNeededSharedLibs();
+				IBinaryObject obj = getBinaryObject();
+				if (obj instanceof IBinaryExecutable) {
+					needed = ((IBinaryExecutable)obj).getNeededSharedLibs();
+				}
 			}
 		}
 		return (needed == null ? new String[0] : needed);
@@ -97,7 +103,10 @@ public class Binary extends Openable implements IBinary {
 	public long getText() {
 		if (isObject() || isExecutable() || isSharedLib()) {
 			if (longText == -1 || hasChanged()) {
-				longText = ((IBinaryObject)getBinaryFile()).getText();
+				IBinaryObject obj = getBinaryObject();
+				if (obj != null) {
+					longText = obj.getText();
+				}
 			}
 		}
 		return longText;
@@ -106,7 +115,10 @@ public class Binary extends Openable implements IBinary {
 	public long getData() {
 		if (isObject() || isExecutable() || isSharedLib()) {
 			if (longData == -1 || hasChanged()) {
-				longData = ((IBinaryObject)getBinaryFile()).getData();
+				IBinaryObject obj = getBinaryObject();
+				if (obj != null) {
+					longData = obj.getData();
+				}
 			}
 		}
 		return longData;
@@ -115,7 +127,10 @@ public class Binary extends Openable implements IBinary {
 	public long getBSS() {
 		if (isObject() || isExecutable() || isSharedLib()) {
 			if (longBSS == -1 || hasChanged()) {
-				longBSS = ((IBinaryObject)getBinaryFile()).getBSS();
+				IBinaryObject obj = getBinaryObject();
+				if (obj != null) {
+					longBSS = obj.getBSS();
+				}
 			}
 		}
 		return longBSS;
@@ -124,7 +139,10 @@ public class Binary extends Openable implements IBinary {
 	public String getSoname() {
 		if (isSharedLib()) {
 			if (soname == null || hasChanged()) {
-				soname = ((IBinaryShared)getBinaryFile()).getSoName();
+				IBinaryObject obj = getBinaryObject();
+				if (obj instanceof IBinaryShared) {
+					soname = ((IBinaryShared)obj).getSoName();
+				}
 			}
 		}
 		return (soname == null ? "" : soname); //$NON-NLS-1$
@@ -133,19 +151,23 @@ public class Binary extends Openable implements IBinary {
 	public boolean isLittleEndian() {
 		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
 			if (endian == null || hasChanged()) {
-				endian = new Boolean(((IBinaryObject)getBinaryFile()).isLittleEndian()).toString();
+				IBinaryObject obj = getBinaryObject();
+				if (obj != null) {
+					endian = new Boolean(obj.isLittleEndian()).toString();
+				}
 			}
 		}
 		return Boolean.valueOf(endian).booleanValue();
 	}
 
-	protected IBinaryFile getBinaryFile() {
-		return binaryFile;
+	protected IBinaryObject getBinaryObject() {
+		return binaryObject;
 	}
 	
 	protected int getType() {
-		if (getBinaryFile() != null && (fBinType == 0 || hasChanged())) {
-			fBinType = getBinaryFile().getType();
+		IBinaryObject obj = getBinaryObject();
+		if (obj != null && (fBinType == 0 || hasChanged())) {
+			fBinType = obj.getType();
 		}
 		return fBinType;
 	}
@@ -197,24 +219,27 @@ public class Binary extends Openable implements IBinary {
 
 
 	boolean computeChildren(OpenableInfo info, IResource res) {
+		boolean ok = false;
 		if (isObject() || isExecutable() || isSharedLib()) {
 			Map hash = new HashMap();
-			ISymbol[] symbols = ((IBinaryObject)getBinaryFile()).getSymbols();
-			for (int i = 0; i < symbols.length; i++) {
-				switch (symbols[i].getType()) {
-					case ISymbol.FUNCTION :
-						addFunction(info, symbols[i], hash);
-					break;
+			IBinaryObject obj = getBinaryObject();
+			if (obj != null) {
+				ISymbol[] symbols = obj.getSymbols();
+				for (int i = 0; i < symbols.length; i++) {
+					switch (symbols[i].getType()) {
+						case ISymbol.FUNCTION :
+							addFunction(info, symbols[i], hash);
+						break;
 
-					case ISymbol.VARIABLE :
-						addVariable(info, symbols[i], hash);
-					break;
+						case ISymbol.VARIABLE :
+							addVariable(info, symbols[i], hash);
+						break;
+					}
 				}
+				ok = true;
 			}
-		} else {
-			return false;
 		}
-		return true;
+		return ok;
 	}
 
 	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) {
@@ -288,7 +313,7 @@ public class Binary extends Openable implements IBinary {
 		
 		// set the buffer source
 		if (buffer.getCharacters() == null){
-			IBinaryFile bin = getBinaryFile();
+			IBinaryObject bin = getBinaryObject();
 			if (bin != null) {
 				StringBuffer sb = new StringBuffer();
 				try {

@@ -20,10 +20,13 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -38,13 +41,14 @@ import org.eclipse.jface.viewers.Viewer;
  * The following C element hierarchy is surfaced by this content provider:
  * <p>
  * <pre>
-C model (<code>ICModel</code>)
-   C project (<code>ICProject</code>)
-      C Container(folders) (<code>ICContainer</code>)
-      Translation unit (<code>ITranslationUnit</code>)
-      Binary file (<code>IBinary</code>)
-      Archive file (<code>IArchive</code>)
-      Non C Resource file (<code>Object</code>)
+C model (<code>ICModel</code>)<br>
+   C project (<code>ICProject</code>)<br>
+      Source root (<code>ISourceRoot</code>)<br>
+      C Container(folders) (<code>ICContainer</code>)<br>
+      Translation unit (<code>ITranslationUnit</code>)<br>
+      Binary file (<code>IBinary</code>)<br>
+      Archive file (<code>IArchive</code>)<br>
+      Non C Resource file (<code>Object</code>)<br>
 
  * </pre>
  */
@@ -118,36 +122,38 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * Method declared on ITreeContentProvider.
 	 */
 	public Object[] getChildren(Object element) {
-		if (element instanceof ICElement) {
-			ICElement celement = (ICElement)element;		
-			if (celement instanceof ICModel) {
-				return  getCProjects((ICModel)celement);
-			} else if  (celement instanceof ICProject ) {
-				return getCProjectResources((ICProject)celement);
-			} else if (celement instanceof ICContainer) {
-				return getCResources((ICContainer)celement);
-			} else if (celement instanceof ITranslationUnit) {
-				// if we want to get the chidren of a translation unit
-				if (fProvideMembers) {
-					// if we want to use the working copy of it
-					if(fProvideWorkingCopy){
-						// if it is not already a working copy
-						if(!(celement instanceof IWorkingCopy)){
-							// if it has a valid working copy
-							ITranslationUnit tu = (ITranslationUnit)celement;
-							IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getBufferFactory());
-							if(copy != null) {
-									return ((IParent)copy).getChildren();
-							}
+		if (!exists(element))
+			return NO_CHILDREN;
+			
+		if (element instanceof ICModel) {
+			return  getCProjects((ICModel)element);
+		} else if  (element instanceof ICProject ) {
+			return getSourceRoots((ICProject)element);
+		} else if (element instanceof ICContainer) {
+			return getCResources((ICContainer)element);
+		} else if (element instanceof ITranslationUnit) {
+			// if we want to get the chidren of a translation unit
+			if (fProvideMembers) {
+				// if we want to use the working copy of it
+				if(fProvideWorkingCopy){
+					// if it is not already a working copy
+					if(!(element instanceof IWorkingCopy)){
+						// if it has a valid working copy
+						ITranslationUnit tu = (ITranslationUnit)element;
+						IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getBufferFactory());
+						if(copy != null) {
+							return ((IParent)copy).getChildren();
 						}
 					}
-					return ((IParent)celement).getChildren();
 				}
-			} else if (celement instanceof IParent) {
-				return (Object[])((IParent)celement).getChildren();
+				return ((IParent)element).getChildren();
 			}
+		} else if (element instanceof IParent) {
+			return (Object[])((IParent)element).getChildren();
+		} else if (element instanceof IFolder) {
+			return getResources((IFolder)element);
 		}
-		return getResources(element);
+		return NO_CHILDREN;
 	}
 
 	/* (non-Cdoc)
@@ -162,11 +168,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 		} else {
 			// don't allow to drill down into a compilation unit or class file
-			if (element instanceof ITranslationUnit || element instanceof IBinary || element instanceof IArchive) {
+			if (element instanceof ITranslationUnit || element instanceof IBinary || element instanceof IArchive
+					|| element instanceof IFile) {
 				return false;
 			}
 		}
-			
+
 		if (element instanceof ICProject) {
 			ICProject cp= (ICProject)element;
 			if (!cp.getProject().isOpen()) {
@@ -176,13 +183,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 		}
  
-		if (element instanceof ICContainer) {
-			return true;
-		}
-		
 		if (element instanceof IParent) {
 			// when we have C children return true, else we fetch all the children
-			return ((IParent)element).hasChildren();
+			if (((IParent)element).hasChildren()) {
+				return true;
+			}
 		}
 		Object[] children= getChildren(element);
 		return (children != null) && children.length > 0;
@@ -199,9 +204,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 
 	public Object internalGetParent(Object element) {
-		if (element instanceof ICElement) {
-			return ((ICElement)element).getParent();			
-		}
 		if (element instanceof IResource) {
 			IResource parent= ((IResource)element).getParent();
 			ICElement cParent= CoreModel.getDefault().create(parent);
@@ -210,15 +212,64 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 			return parent;
 		}
-		return null;
+		Object parent = null;
+		if (element instanceof ICElement) {
+			parent = ((ICElement)element).getParent();			
+		}
+		// if the parent is the default ISourceRoot == ICProject  return the project
+		if (parent instanceof ISourceRoot) {
+			if (isProjectSourceRoot((ISourceRoot)parent)) {
+				parent = ((ISourceRoot)parent).getCProject();
+			}
+		} else if (parent instanceof IBinaryContainer || parent instanceof IArchiveContainer) {
+			// If the virtual container is the parent we must find the legitimate parent.
+			if (element instanceof ICElement) {
+				IResource res = ((ICElement)element).getResource();
+				if (res != null) {
+					parent = internalGetParent(res.getParent());
+				}
+			}
+		}
+		return parent;
 	}
 	
 	protected Object[] getCProjects(ICModel cModel) {
 		return cModel.getCProjects();
 	}
 
-	protected Object[] getCProjectResources(ICProject cproject) {
-		Object[] objects = getCResources((ICContainer)cproject);
+	protected Object[] getSourceRoots(ICProject cproject) {
+		if (!cproject.getProject().isOpen())
+			return NO_CHILDREN;
+			
+		List list= new ArrayList();
+		try {
+			ISourceRoot[] roots = cproject.getSourceRoots();
+			// filter out source roots that correspond to projects and
+			// replace them with the package fragments directly
+			for (int i= 0; i < roots.length; i++) {
+				ISourceRoot root= roots[i];
+				if (isProjectSourceRoot(root)) {
+					Object[] children= root.getChildren();
+					for (int k= 0; k < children.length; k++) { 
+						list.add(children[k]);
+					}
+				} else if (hasChildren(root)) {
+					list.add(root);
+				} 
+			}
+		} catch (CModelException e1) {
+		}
+
+		Object[] objects = list.toArray();
+		try {
+			Object[] nonC = cproject.getNonCResources();
+			if (nonC != null && nonC.length > 0) {
+				objects = concatenate(objects, cproject.getNonCResources());
+			}
+		} catch (CModelException e) {
+			//
+		}
+		//Object[] objects = getCResources((ICContainer)cproject);
 		IArchiveContainer archives = cproject.getArchiveContainer(); 
 		if (archives.hasChildren()) {
 			objects = concatenate(objects, new Object[] {archives});
@@ -248,32 +299,41 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return concatenate(children, objects);
 	}
 
-	private Object[] getResources(Object resource) {
+	private Object[] getResources(IFolder folder) {
 		try {
-			if (resource instanceof IContainer) {
-				Object[] members= ((IContainer)resource).members();
-				List nonCResources= new ArrayList();
-				for (int i= 0; i < members.length; i++) {
-					Object o= members[i];
-					nonCResources.add(o);
+			Object[] members= folder.members();
+			List nonCResources= new ArrayList();
+			for (int i= 0; i < members.length; i++) {
+				Object o= members[i];
+				// A folder can also be a source root in the following case
+				// Project
+				//  + src <- source folder
+				//    + excluded <- excluded from class path
+				//      + included  <- a new source folder.
+				// Included is a member of excluded, but since it is rendered as a source
+				// folder we have to exclude it as a normal child.
+				if (o instanceof IFolder) {
+					ICElement element= CoreModel.getDefault().create((IFolder)o);
+					if (element instanceof ISourceRoot && element.exists()) {
+						continue;
+					}
 				}
-				return nonCResources.toArray();
+				nonCResources.add(o);
 			}
+			return nonCResources.toArray();
 		} catch(CoreException e) {
 		}
 		return NO_CHILDREN;
 	}
-/*	
-	protected boolean isBuildPathChange(ICElementDelta delta) {
-		int flags= delta.getFlags();
-		return (delta.getKind() == ICElementDelta.CHANGED && 
-			((flags & ICElementDelta.F_ADDED_TO_CLASSPATH) != 0) ||
-			 ((flags & ICElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) ||
-			 ((flags & ICElementDelta.F_CLASSPATH_REORDER) != 0));
+
+	/**
+	 * Note: This method is for internal use only. Clients should not call this method.
+	 */
+	protected boolean isProjectSourceRoot(ISourceRoot root) {
+		IResource resource= root.getResource();
+		return (resource instanceof IProject);
 	}
-*/
-	
-	
+
 	protected boolean exists(Object element) {
 		if (element == null) {
 			return false;

@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
@@ -56,7 +57,7 @@ public abstract class Parent extends CElement implements IParent {
 	 * @param type
 	 * @return ArrayList
 	 */
-	public ArrayList getChildrenOfType(int type){
+	public List getChildrenOfType(int type){
 		ICElement[] children = getChildren();
 		int size = children.length;
 		ArrayList list = new ArrayList(size);

@@ -8,6 +8,7 @@ package org.eclipse.cdt.core.model;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see CCore#create(org.eclipse.core.resources.IProject)
  * @see IBuildEntry
  */
-public interface ICProject extends ICContainer {
+public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Returns the <code>ICElement</code> corresponding to the given
@@ -41,6 +42,36 @@ public interface ICProject extends ICContainer {
 	 * Return the BinaryContainer of this Project.
 	 */
 	IBinaryContainer getBinaryContainer();
+
+	/**
+	 * Returns the source root folders of the project.
+	 * @return ISourceRoot - root folders
+	 * @exception CModelException
+	 */
+	ISourceRoot[] getSourceRoots() throws CModelException;
+
+	/**
+	 * 
+	 * @param entry
+	 * @return ISourceRoot
+	 * @throws CModelException
+	 */
+	ISourceRoot getSourceRoot(ISourceEntry entry) throws CModelException;
+
+	/**
+	 * Return the output entries.
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public IOutputEntry[] getOutputEntries() throws CModelException;
+
+	/**
+	 * @param resource
+	 * @return
+	 */
+	boolean isOnOutputEntry(IResource resource);
+
 
 	/**
 	 * Return the library references for this project.
@@ -156,5 +187,19 @@ public interface ICProject extends ICContainer {
 	 * </ul>
 	 */
 	void setRawPathEntries(IPathEntry[] entries, IProgressMonitor monitor) throws CModelException;
+
+	/**
+	 * Returns an array of non-C resources directly contained in this project.
+	 * It does not transitively answer non-C resources contained in folders;
+	 * these would have to be explicitly iterated over.
+	 * <p>
+	 * Non-C resources includes files, folders, projects  not accounted for.
+	 * </p>
+	 * 
+	 * @return an array of non-C resources directly contained in this project
+	 * @exception JavaModelException if this element does not exist or if an
+	 *              exception occurs while accessing its corresponding resource
+	 */
+	Object[] getNonCResources() throws CModelException;
 
 }

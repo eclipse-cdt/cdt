@@ -107,7 +107,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 			if (path != null && path.isAbsolute()) {
 				IResource res = mgr.getCModel().getWorkspace().getRoot().getFileForLocation(path);
 				if (res != null && res.exists() && res.getType() == IResource.FILE) {
-					ICElement e = CModelManager.getDefault().create(res);
+					ICElement e = CModelManager.getDefault().create(res, null);
 					if (e instanceof ITranslationUnit) {
 						tu = (ITranslationUnit)e;
 					}

@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
@@ -14,8 +15,8 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -123,38 +124,41 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Adds a source container to a ICProject.
+	 * Adds a folder container to a ICProject.
 	 */
-	public static ICContainer addSourceContainer(ICProject cproject, String containerName) throws CoreException {
+	public static ICContainer addCContainer(ICProject cproject, String containerName) throws CoreException {
 		IProject project = cproject.getProject();
 		ICContainer container = null;
 		if (containerName == null || containerName.length() == 0) {
-			container = CModelManager.getDefault().create(project);
+			ICContainer[] conts = cproject.getSourceRoots();
+			if (conts.length > 0) {
+				container = conts[0];
+			}
 		} else {
 			IFolder folder = project.getFolder(containerName);
 			if (!folder.exists()) {
 				folder.create(false, true, null);
 			}
-			container = CModelManager.getDefault().create(folder);
+			container = CoreModel.getDefault().create(folder);
 		}
 		return container;
 	}
 
 	/**
-	 * Adds a source container to a ICProject and imports all files contained
+	 * Adds a folder container to a ICProject and imports all files contained
 	 * in the given Zip file.
 	 */
-	public static ICContainer addSourceContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile)
+	public static ICContainer addCContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile)
 		throws InvocationTargetException, CoreException {
-		ICContainer root = addSourceContainer(cproject, containerName);
+		ICContainer root = addCContainer(cproject, containerName);
 		importFilesFromZip(zipFile, root.getPath(), null);
 		return root;
 	}
 
 	/**
-	 * Removes a source folder from a ICProject.
+	 * Removes a folder from a ICProject.
 	 */
-	public static void removeSourceContainer(ICProject cproject, String containerName) throws CoreException {
+	public static void removeCContainer(ICProject cproject, String containerName) throws CoreException {
 		IFolder folder = cproject.getProject().getFolder(containerName);
 		folder.delete(true, null);
 	}
@@ -205,52 +209,55 @@ public class CProjectHelper {
 	 * Attempts to find an object with the given name in the workspace
 	 */
 	public static IBinary findObject(ICProject testProject, String name) {
-		int x;
-		ICElement[] myElements;
-		myElements = testProject.getChildren();
-		if (myElements.length < 1)
-			return (null);
-		for (x = 0; x < myElements.length; x++) {
-			if (myElements[x].getElementName().equals(name))
-				if (myElements[x] instanceof IBinary) {
-					return ((IBinary)myElements[x]);
+		ICElement[] sourceRoots = testProject.getChildren();
+		for (int i = 0; i < sourceRoots.length; i++) {
+			ISourceRoot root = (ISourceRoot)sourceRoots[i];
+			ICElement[] myElements = root.getChildren();
+			for (int x = 0; x < myElements.length; x++) {
+				if (myElements[x].getElementName().equals(name)) {
+					if (myElements[x] instanceof IBinary) {
+						return ((IBinary)myElements[x]);
+					}
 				}
+			}
 		}
-		return (null);
+		return null;
 	}
 
 	/**
 	 * Attempts to find a TranslationUnit with the given name in the workspace
 	 */
 	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) {
-		int x;
-		ICElement[] myElements;
-		myElements = testProject.getChildren();
-		if (myElements.length < 1)
-			return (null);
-		for (x = 0; x < myElements.length; x++) {
-			if (myElements[x].getElementName().equals(name))
-				if (myElements[x] instanceof ITranslationUnit) {
-					return ((ITranslationUnit)myElements[x]);
+		ICElement[] sourceRoots = testProject.getChildren();
+		for (int i = 0; i < sourceRoots.length; i++) {
+			ISourceRoot root = (ISourceRoot)sourceRoots[i];
+			ICElement[] myElements = root.getChildren();
+			for (int x = 0; x < myElements.length; x++) {
+				if (myElements[x].getElementName().equals(name)) {
+					if (myElements[x] instanceof ITranslationUnit) {
+						return ((ITranslationUnit)myElements[x]);
+					}
 				}
+			}
 		}
-		return (null);
+		return null;
 	}
 
 	/**
 	 * Attempts to find an element with the given name in the workspace
 	 */
 	public static ICElement findElement(ICProject testProject, String name) {
-		int x;
-		ICElement[] myElements;
-		myElements = testProject.getChildren();
-		if (myElements.length < 1)
-			return (null);
-		for (x = 0; x < myElements.length; x++) {
-			if (myElements[x].getElementName().equals(name))
-				return myElements[x];
+		ICElement[] sourceRoots = testProject.getChildren();
+		for (int i = 0; i < sourceRoots.length; i++) {
+			ISourceRoot root = (ISourceRoot)sourceRoots[i];
+			ICElement[] myElements = root.getChildren();
+			for (int x = 0; x < myElements.length; x++) {
+				if (myElements[x].getElementName().equals(name)) {
+					return myElements[x];
+				}
+			}
 		}
-		return (null);
+		return null;
 	}
 
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {

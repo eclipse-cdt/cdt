@@ -364,7 +364,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	/**
-	 * @see IJavaElement
+	 * @see ICElement
 	 */
 	public ICElement getAncestor(int ancestorType) {
 		ICElement element = this;

@@ -139,14 +139,20 @@ public class CPathEntryTest extends TestCase {
 			fail("Unable to create project");
 		}
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
-		assertTrue("No cpathentries", entries.length == 0);
+		// We always have at least two entries:
+		//  1) the default sourceEntry becomes the project
+		//  2) the default outputEntry becomes the project
+		assertTrue("No cpathentries", entries.length == 2);
 		entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), new Path("/usr/include"), true);
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
 		entries = testProject.getResolvedPathEntries();
-		assertTrue("Expecting 3 pathentries", entries.length == 3);
+		// We always have at least two entries:
+		//  1) the default sourceEntry becomes the project
+		//  2) the default outputEntry becomes the project
+		assertTrue("Expecting 3 pathentries", entries.length == (3 + 2));
 		testProject.setRawPathEntries(null, null);
 	}
 
@@ -161,7 +167,7 @@ public class CPathEntryTest extends TestCase {
 		if (testProject == null) {
 			fail("Unable to create project");
 		}
-		CProjectHelper.addSourceContainer(testProject, "foo");
+		CProjectHelper.addCContainer(testProject, "foo");
 		IPathEntry[] entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("foo"), new Path("/usr/include"), true);
@@ -208,6 +214,9 @@ public class CPathEntryTest extends TestCase {
 		CoreModel.getDefault().setRawPathEntries(testProject, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
 		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{testProject}, container, new NullProgressMonitor());
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
-		assertTrue("Expecting 3 pathentries from container", entries.length == 3);
+		// We always have at least two entries:
+		//  1) the default sourceEntry becomes the project
+		//  2) the default outputEntry becomes the project
+		assertTrue("Expecting 3 pathentries from container", entries.length == (3 + 2));
 	}
 }

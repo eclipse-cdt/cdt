@@ -9,13 +9,16 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -53,16 +56,38 @@ public class DeltaProcessor {
 	 * Returns null if none was found.
 	 */
 	protected ICElement createElement(IResource resource) {
-		CModelManager manager = CModelManager.getDefault();
-		if (resource == null)
+		if (resource == null) {
 			return null;
-		ICElement celement = manager.create(resource);
+		}
+		CModelManager manager = CModelManager.getDefault();
+		ICElement celement = manager.create(resource, null);
 		if (celement == null) {
-			ICElement parent = manager.create(resource.getParent());
 			// Probably it was deleted, find it
+			IResource resParent = resource.getParent();
+			ICElement parent = null;
+			// the sourceRoot == Project
+			if (resParent instanceof IProject) {
+				ICProject cpj = manager.create((IProject)resParent);
+				if (cpj != null) {
+					try {
+						ISourceRoot[] roots = cpj.getSourceRoots();
+						for (int i = 0; i < roots.length; i++) {
+							if (roots[i].isOnSourceEntry(resource)) {
+								parent = roots[i];
+								break;
+							}
+						}
+					} catch (CModelException e) {
+						//
+					}
+				}
+			}
+			if (parent == null) {
+				parent = manager.create(resParent, null);
+			}
 			if (parent instanceof IParent) {
 				ICElement[] children;
-				if ( CModelManager.getDefault().peekAtInfo(parent) != null ) {
+				if (manager.peekAtInfo(parent) != null ) {
 					children = ((CElement)parent).getElementInfo().getChildren();
 					for (int i = 0; i < children.length; i++) {
 						IResource res = children[i].getResource();
@@ -72,40 +97,64 @@ public class DeltaProcessor {
 						}
 					}
 				}
-				// BUG 36424:
-				// The Binary may only be visible in the BinaryContainers
-				if (celement == null) {
-					ICProject cproj = parent.getCProject();
-					if (cproj != null) {
-						IBinaryContainer bin = cproj.getBinaryContainer();
-						children = ((CElement)bin).getElementInfo().getChildren();
-						for (int i = 0; i < children.length; i++) {
-							IResource res = children[i].getResource();
-							if (res != null && res.equals(resource)) {
-								celement = children[i];
-								break;
-							}
+			}
+		}
+
+		// BUG 36424:
+		// The Binary may only be visible in the BinaryContainers
+		if (celement == null) {
+			ICElement[] children;
+			ICProject cproj = manager.create(resource.getProject());
+			if (cproj != null && manager.peekAtInfo(cproj) != null) {
+				IBinaryContainer bin = cproj.getBinaryContainer();
+				if (manager.peekAtInfo(bin) != null) {
+					children = ((CElement)bin).getElementInfo().getChildren();
+					for (int i = 0; i < children.length; i++) {
+						IResource res = children[i].getResource();
+						if (res != null && res.equals(resource)) {
+							celement = children[i];
+							break;
 						}
 					}
 				}
-				// BUG 36424:
-				// The Archive may only be visible in the ArchiveContainers
-				if (celement == null) {
-					ICProject cproj = parent.getCProject();
-					if (cproj != null) {
-						IArchiveContainer bin = cproj.getArchiveContainer();
-						children = ((CElement)bin).getElementInfo().getChildren();
-						for (int i = 0; i < children.length; i++) {
-							IResource res = children[i].getResource();
-							if (res != null && res.equals(resource)) {
-								celement = children[i];
-								break;
-							}
+			}
+		}
+		// BUG 36424:
+		// The Archive may only be visible in the ArchiveContainers
+		if (celement == null) {
+			ICElement[] children;
+			ICProject cproj = manager.create(resource.getProject());
+			if (cproj != null && manager.peekAtInfo(cproj) != null) {
+				IArchiveContainer ar = cproj.getArchiveContainer();
+				if (manager.peekAtInfo(ar) != null) {
+					children = ((CElement)ar).getElementInfo().getChildren();
+					for (int i = 0; i < children.length; i++) {
+						IResource res = children[i].getResource();
+						if (res != null && res.equals(resource)) {
+							celement = children[i];
+							break;
 						}
-					}				
+					}
+				}
+			}				
+		}
+
+		// return an handler
+		if (celement == null) {
+			IResource resParent = resource.getParent();
+			ICElement parent = manager.create(resParent, null);
+			if (parent instanceof ICContainer) {
+				String name = resource.getName();
+				if (resource instanceof IFile) {
+					if (manager.isValidTranslationUnitName(name)) {
+						celement = ((ICContainer)parent).getTranslationUnit(name);
+					}
+				} else if (resource instanceof IFolder) {
+					celement = ((ICContainer)parent).getCContainer(name);
 				}
 			}
 		}
+	
 		return celement;
 	}
 
@@ -490,7 +539,7 @@ public class DeltaProcessor {
 
 		switch (element.getElementType()) {
 			case ICElement.C_PROJECT :
-						this.indexManager.removeIndexFamily(element.getCProject().getProject().getFullPath());
+						indexManager.removeIndexFamily(element.getCProject().getProject().getFullPath());
 						// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
 						break;
 						// NB: Update of index if project is opened, closed, or its c nature is added or removed
@@ -498,7 +547,7 @@ public class DeltaProcessor {
 						
 			case ICElement.C_UNIT:
 						IFile file = (IFile) delta.getResource();
-						indexManager.remove(file.getFullPath().toString(), file.getProject().getProject().getFullPath());
+						indexManager.remove(file.getFullPath().toString(), file.getProject().getFullPath());
 						break;				
 		}
 	

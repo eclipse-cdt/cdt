@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import junit.framework.TestCase;
 
@@ -27,7 +26,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon

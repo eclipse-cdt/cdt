@@ -8,7 +8,7 @@ import org.eclipse.cdt.core.model.IMacro;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.tests.IntegratedCModelTest;
@@ -55,7 +55,7 @@ public class IMacroTests extends IntegratedCModelTest {
 
 	public void testGetElementName() {
 		ITranslationUnit tu = getTU();
-		ArrayList arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
+		List arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
 
 		String expectedList[] =  new String[] {
 			"SINGLETON",
@@ -72,7 +72,7 @@ public class IMacroTests extends IntegratedCModelTest {
 		
 	public void testGetIdentifierList() {
 		ITranslationUnit tu = getTU();
-		ArrayList arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
+		List arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
 
 		String expectedList[] =  new String[] {
 			"",
@@ -89,7 +89,7 @@ public class IMacroTests extends IntegratedCModelTest {
 
 	public void testGetTokenSequence() {
 		ITranslationUnit tu = getTU();
-		ArrayList arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
+		List arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
 
 		String expectedList[] =  new String[] {
 			"",

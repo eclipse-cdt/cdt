@@ -6,20 +6,27 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 public class BinaryRunner {
 	IProject project;
 	Thread runner;
+	ArchiveContainer vlib;
+	BinaryContainer vbin;
 	
 	public BinaryRunner(IProject prj) {
 		project = prj;
@@ -32,23 +39,48 @@ public class BinaryRunner {
 				if (cproject == null || Thread.currentThread().isInterrupted()) {
 					return;
 				}
-				ArchiveContainer clib;
-				BinaryContainer cbin;
-				cbin = (BinaryContainer)cproject.getBinaryContainer();
-				clib = (ArchiveContainer)cproject.getArchiveContainer();
-				clib.removeChildren();
-				cbin.removeChildren();
+				IOutputEntry[] outs = null;
 				try {
-					cproject.getProject().accept(new Visitor(BinaryRunner.this));
-				} catch (CoreException e) {
-					//e.printStackTrace();
-				} catch (Exception e) {
-					// What is wrong ?
-					e.printStackTrace();
+					outs = cproject.getOutputEntries();
+				} catch (CModelException e) {
+					outs = new IOutputEntry[0];
+				}
+				
+				vbin = (BinaryContainer)cproject.getBinaryContainer();
+				vlib = (ArchiveContainer)cproject.getArchiveContainer();
+				vlib.removeChildren();
+				vbin.removeChildren();
+				IPath projectPath = project.getFullPath();
+				for (int i = 0; i < outs.length; i++) {
+					IPath path = outs[i].getPath();
+					if (projectPath.equals(path)) {
+						try {
+							project.accept(new Visitor(BinaryRunner.this));
+						} catch (CoreException e) {
+							//e.printStackTrace();
+						} catch (Exception e) {
+							// What is wrong ?
+							e.printStackTrace();
+						}
+						break; // We are done.
+					} else if (projectPath.isPrefixOf(path)) {
+						path = path.removeFirstSegments(projectPath.segmentCount());
+						IResource res =project.findMember(path);
+						if (res != null) {
+							try {
+								res.accept(new Visitor(BinaryRunner.this));
+							} catch (CoreException e) {
+								//e.printStackTrace();
+							} catch (Exception e) {
+								// What is wrong ?
+								e.printStackTrace();
+							}
+						}
+					}
 				}
 				if (!Thread.currentThread().isInterrupted()) {
-					fireEvents(cproject, cbin);
-					fireEvents(cproject, clib);
+					fireEvents(cproject, vbin);
+					fireEvents(cproject, vlib);
 				}
 				// Tell the listeners we are done.
 				synchronized(BinaryRunner.this) {
@@ -104,10 +136,20 @@ public class BinaryRunner {
 		if (!factory.isTranslationUnit(file)) {
 			IBinaryFile bin = factory.createBinaryFile(file);
 			if (bin != null) {
-				IResource res = file.getParent();
-				ICElement parent = factory.create(res);
-				// By creating the element, it will be added to the correct (bin/archive)container.
-				factory.create(parent, file, bin);
+				ICElement parent = factory.create(file.getParent(), null);
+				if (bin.getType() == IBinaryFile.ARCHIVE) {
+					if (parent == null) {
+						parent = vlib;
+					}
+					Archive ar = new Archive(parent, file, (IBinaryArchive)bin);
+					vlib.addChild(ar);
+				} else if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+					if (parent == null) {
+						parent = vbin;
+					}
+					Binary binary = new Binary(parent, file, (IBinaryObject)bin);
+					vbin.addChild(binary);
+				}
 			}
 		}
 	}

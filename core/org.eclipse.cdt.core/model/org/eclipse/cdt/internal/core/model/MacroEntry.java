@@ -20,9 +20,8 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	String macroName;
 	String macroValue;
 
-	public MacroEntry (IPath path, String macroName, String macroValue,
-		boolean isRecursive, IPath[] exclusionPatterns, boolean isExported) {
-		super(IMacroEntry.CDT_MACRO, path, isRecursive, exclusionPatterns, isExported);
+	public MacroEntry (IPath path, String macroName, String macroValue, IPath[] exclusionPatterns) {
+		super(IMacroEntry.CDT_MACRO, path, exclusionPatterns, path == null);
 		this.macroName = macroName;
 		this.macroValue = macroValue;
 	}

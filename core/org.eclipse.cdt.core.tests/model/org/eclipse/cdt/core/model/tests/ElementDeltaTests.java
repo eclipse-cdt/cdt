@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -31,7 +32,6 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.testplugin.TestPluginLauncher;
@@ -96,7 +96,12 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		
 		
 	public void testElementDeltas() throws Exception {
-		ITranslationUnit tu = new TranslationUnit(fCProject, headerFile);		
+		//ITranslationUnit tu = new TranslationUnit(fCProject, headerFile);
+		ICElement celement = CoreModel.getDefault().create(headerFile);
+		ITranslationUnit tu = null;
+		if (celement instanceof ITranslationUnit) {
+			tu = (ITranslationUnit)celement;
+		}
 		assertNotNull (tu);
 		IWorkingCopy wc = tu.getWorkingCopy();
 		assertNotNull (wc);
@@ -110,6 +115,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertAddedElement(ICElement.C_CLASS, "Hello");
 		assertRemovedElement(ICElement.C_INCLUDE, "stdio.h");
@@ -121,6 +127,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_FIELD, "x");
@@ -132,6 +139,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_METHOD_DECLARATION, "setValue");
@@ -144,6 +152,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_FIELD, "y");
@@ -156,6 +165,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertChangedElement(ICElement.C_FIELD, "y");
@@ -168,6 +178,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertRemovedElement(ICElement.C_FIELD, "y");
@@ -179,6 +190,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wc.commit(true, monitor);
 		assertChangedElement(ICElement.C_MODEL, "");
 		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_CCONTAINER, "TestProject1");
 		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertRemovedElement(ICElement.C_CLASS, "Hello");
 		assertEmptyDelta();

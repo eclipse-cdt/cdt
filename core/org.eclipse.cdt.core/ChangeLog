@@ -1,3 +1,30 @@
+2004-03-18 Alain Magloire
+
+	Change in the hierarchy of the core Model:
+	ICModel
+	   ICProject
+	      ISourceRoot
+	         IBinary
+	         IArchive
+	         ITranslatioUnit
+	         ICContainer
+	The ISourceRoot been added to better separate
+	the files.  By default the entire project is the
+	SourceRoot.
+
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/ICContainer.java
+	* model/org/eclipse/cdt/core/model/ICElement.java
+	* model/org/eclipse/cdt/core/model/ICProject.java
+	* model/org/eclipse/cdt/core/model/IIncludeEnty.java
+	* model/org/eclipse/cdt/core/model/IOutputEntry.java
+	* model/org/eclipse/cdt/core/model/IMacroEntry.java
+	* model/org/eclipse/cdt/core/model/IParent.java
+	* model/org/eclipse/cdt/core/model/ISourceEntry.java
+	* model/org/eclipse/cdt/core/model/ISourceRoot.java
+
+	* model/org/eclipse/cdt/internal/core/model/*
+
 2004-03-17 Alain Magloire
 
 	Put the framework in to take advantage of being a

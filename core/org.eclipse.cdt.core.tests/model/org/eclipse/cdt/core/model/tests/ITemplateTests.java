@@ -7,6 +7,7 @@ package org.eclipse.cdt.core.model.tests;
 import org.eclipse.cdt.core.model.*;
 import junit.framework.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -55,7 +56,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		return suite;
 	}
 
-	public ArrayList getTemplateMethods(ITranslationUnit tu)
+	public List getTemplateMethods(ITranslationUnit tu)
 	{
 		IStructure myElem = null;
 		try {
@@ -71,7 +72,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 	public void testGetChildrenOfTypeTemplate() {
 		ITranslationUnit tu = getTU();
 		{
-			ArrayList arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
+			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
 			String[] myExpectedValues = {
 				"Map"
 			};
@@ -83,7 +84,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 		{
-			ArrayList arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
+			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
 			String[] myExpectedValues = {
 				"nonVector"
 			};
@@ -95,7 +96,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 		{
-			ArrayList arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION);
+			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION);
 			String[] myExpectedValues = {
 				"ArrayOverlay"
 			};
@@ -107,7 +108,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 		{
-			ArrayList arrayElements = getTemplateMethods(tu);
+			List arrayElements = getTemplateMethods(tu);
 			String[] myExpectedValues = {
 				"fum",
 				"scrum"
@@ -120,7 +121,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 		{
-			ArrayList arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION);
+			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION);
 			String[] myExpectedValues = {
 				"nonVector<T>::first",
 				"IsGreaterThan",				"Foo::fum"

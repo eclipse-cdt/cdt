@@ -81,6 +81,8 @@ public class PathEntry implements IPathEntry {
 			return IPathEntry.CDT_MACRO;
 		if (kindStr.equalsIgnoreCase("con")) //$NON-NLS-1$
 			return IPathEntry.CDT_CONTAINER;
+		if (kindStr.equalsIgnoreCase("out")) //$NON-NLS-1$
+			return IPathEntry.CDT_OUTPUT;
 		return -1;
 	}
 
@@ -104,6 +106,8 @@ public class PathEntry implements IPathEntry {
 				return "mac"; //$NON-NLS-1$
 			case IPathEntry.CDT_CONTAINER :
 				return "con"; //$NON-NLS-1$
+			case IPathEntry.CDT_OUTPUT:
+				return "out"; //$NON-NLS-1$
 			default :
 				return "unknown"; //$NON-NLS-1$
 		}
@@ -125,9 +129,9 @@ public class PathEntry implements IPathEntry {
 			case IPathEntry.CDT_SOURCE :
 				buffer.append("CDT_SOURCE"); //$NON-NLS-1$
 				break;
-			//case IPathEntry.CDT_VARIABLE :
-			//	buffer.append("CDT_VARIABLE"); //$NON-NLS-1$
-			//	break;
+			case IPathEntry.CDT_OUTPUT :
+				buffer.append("CDT_OUTPUT"); //$NON-NLS-1$
+				break;
 			case IPathEntry.CDT_INCLUDE :
 				buffer.append("CDT_INCLUDE"); //$NON-NLS-1$
 				break;

@@ -283,17 +283,17 @@ public class CElementImageProvider {
 			case ICElement.C_PROJECT:
 				ICProject cp= (ICProject)celement;
 				if (cp.getProject().isOpen()) {
-						IProject project= cp.getProject();
-						IWorkbenchAdapter adapter= (IWorkbenchAdapter)project.getAdapter(IWorkbenchAdapter.class);
-						if (adapter != null) {
-							ImageDescriptor result= adapter.getImageDescriptor(project);
-							if (result != null)
-								return result;
-						}
-						return DESC_OBJ_PROJECT;
+					IProject project= cp.getProject();
+					IWorkbenchAdapter adapter= (IWorkbenchAdapter)project.getAdapter(IWorkbenchAdapter.class);
+					if (adapter != null) {
+						ImageDescriptor result= adapter.getImageDescriptor(project);
+						if (result != null)
+							return result;
 					}
-					return DESC_OBJ_PROJECT_CLOSED;
-					
+					return DESC_OBJ_PROJECT;
+				}
+				return DESC_OBJ_PROJECT_CLOSED;
+
 			case ICElement.C_STRUCT:
 			case ICElement.C_TEMPLATE_STRUCT:
 				return getStructImageDescriptor();

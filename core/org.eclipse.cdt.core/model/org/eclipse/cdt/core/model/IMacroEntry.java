@@ -29,12 +29,6 @@ public interface IMacroEntry extends IPathEntry {
 	String getMacroValue();
 
 	/**
-	 * Whether or not the macro is applied recursively.
-	 * @return boolean
-	 */
-	boolean isRecursive();
-
-	/**
 	 * Returns an array of inclusion paths affecting the
 	 * resource when looking for files recursively.
 	 * @return IPath

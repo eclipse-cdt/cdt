@@ -9,7 +9,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 import junit.framework.*;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author bnicolle
@@ -71,7 +71,7 @@ public class IStructureTests extends IntegratedCModelTest {
 
 	public void testGetChildrenOfTypeStruct() {
 		ITranslationUnit tu = getTU();
-		ArrayList arrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List arrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		String[] myExpectedStructs = {
 			"testStruct1", "testStruct2", "testStruct3",
 			 /* 2 anonymous structs */ "", "", "testStruct7",
@@ -86,7 +86,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 	public void testGetChildrenOfTypeClass() {
 		ITranslationUnit tu = getTU();
-		ArrayList arrayClasses = tu.getChildrenOfType(ICElement.C_CLASS);
+		List arrayClasses = tu.getChildrenOfType(ICElement.C_CLASS);
 		String[] myExpectedClasses = {
 			"testClass1", "testClass3", "testClass4Abstract",
 			"testClass5", "testClass6" };
@@ -100,7 +100,7 @@ public class IStructureTests extends IntegratedCModelTest {
 
 	public void testGetFields() {
 		ITranslationUnit tu = getTU();
-		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
 		IField[] myArrayIField = myIStruct.getFields();
 		String[] myExpectedFields = {
@@ -118,13 +118,13 @@ public class IStructureTests extends IntegratedCModelTest {
 	// TODO Bug# 38985: remove testGetFieldsHack()
 	public void testGetFieldsHack() {
 		ITranslationUnit tu = getTU();
-		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
 		String[] myExpectedFields = {
 			"m_field1","m_field2","m_field3",
 			"m_field4","m_field5","m_field6",
 		};
-		ArrayList myArrayIField = myIStruct.getChildrenOfType(ICElement.C_FIELD);
+		List myArrayIField = myIStruct.getChildrenOfType(ICElement.C_FIELD);
 		assertEquals(myExpectedFields.length, myArrayIField.size());
 		for(int i=0; i<myArrayIField.size(); i++) {
 			IField myIField = (IField) myArrayIField.get(i);
@@ -135,7 +135,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 	public void testGetField() {
 		ITranslationUnit tu = getTU();
-		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
 		String[] myExpectedFields = {
 			"m_field1","m_field2","m_field3",
@@ -156,7 +156,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 	public void testGetMethods() {
 		ITranslationUnit tu = getTU();
-		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
 		IMethodDeclaration[] myArrayIMethod = myIStruct.getMethods();
 		String[] myExpectedMethods = {
@@ -172,9 +172,9 @@ public class IStructureTests extends IntegratedCModelTest {
 	// TODO Bug# 38985: remove testGetMethodsHack()
 	public void testGetMethodsHack() {
 		ITranslationUnit tu = getTU();
-		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
-		ArrayList myArrayIMethod = myIStruct.getChildrenOfType(ICElement.C_METHOD_DECLARATION);
+		List myArrayIMethod = myIStruct.getChildrenOfType(ICElement.C_METHOD_DECLARATION);
 		myArrayIMethod.addAll( myIStruct.getChildrenOfType(ICElement.C_METHOD) );
 		String[] myExpectedMethods = {
 			"method1","method2","testStruct1","~testStruct1"
@@ -189,7 +189,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 	public void testGetMethod() {
 		ITranslationUnit tu = getTU();
-		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
+		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
 		String[] myExpectedMethods = {
 			"method1","method2","testStruct1","~testStruct1"
@@ -411,7 +411,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		String[] myExpectedInnerStructs = {
 			"testStruct9Inner", "testStruct10Inner"
 		};
-		ArrayList myInnerStructs = myIStruct.getChildrenOfType(ICElement.C_STRUCT);
+		List myInnerStructs = myIStruct.getChildrenOfType(ICElement.C_STRUCT);
 		assertEquals( myExpectedInnerStructs.length, myInnerStructs.size() );
 		for(int i=0; i<myExpectedInnerStructs.length; i++) {
 			IStructure myInnerStruct = (IStructure) myInnerStructs.get(i);

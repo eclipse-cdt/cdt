@@ -1,3 +1,27 @@
+2004-03-18 Alain Magloire
+
+	Change in the hierarchy of the core Model:
+	ICModel
+	   ICProject
+	      ISourceRoot
+	         IBinary
+	         IArchive
+	         ITranslatioUnit
+	         ICContainer
+	The ISourceRoot been added to better separate
+	the files.  By default the entire project is the
+	SourceRoot.
+
+	* model/org/eclipse/cdt/core/model/tests/CModelElementsTests.java
+	* model/org/eclipse/cdt/core/model/tests/CPathEntryTest.java
+	* model/org/eclipse/cdt/core/model/tests/ElementDeltaTests.java
+	* model/org/eclipse/cdt/core/model/tests/IMacroTests.java
+	* model/org/eclipse/cdt/core/model/tests/IStructureTests.java
+	* model/org/eclipse/cdt/core/model/tests/ITemplateTests.java
+	* model/org/eclipse/cdt/core/model/tests/TranslationUnitBaseTests.java
+
+	* suite/org/eclipse/cdt/testplugin/CProjectHelper.java
+
 2003-03-16 Andrew Niefer
 	added CompleteParseASTTest.testBug55163
 

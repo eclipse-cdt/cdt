@@ -1,3 +1,9 @@
+2004-03-04 David Inglis
+
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=53674
+	
+	* src/org/eclipse/cdt/ui/dialogs/CygwinPEBinaryParserPage.java
+	
 2004-03-03 Alain Magloire
 
 	Fix to the CView.  It was opening the file twice.

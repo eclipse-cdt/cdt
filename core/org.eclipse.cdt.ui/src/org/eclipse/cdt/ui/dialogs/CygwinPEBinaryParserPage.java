@@ -140,7 +140,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		}
 		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
 		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
-		fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cppfilt); //$NON-NLS-1$;
+		fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
 	}
 
 	/* (non-Javadoc)

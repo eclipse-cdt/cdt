@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -556,7 +557,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     pd.setProblem(p);
                     ((CASTNode) pd).setOffset(((CASTNode) p).getOffset());
                     p.setParent(pd);
-                    p.setPropertyInParent(IASTProblemDeclaration.PROBLEM);
+                    p.setPropertyInParent(IASTProblemHolder.PROBLEM);
                     pd.setParent(translationUnit);
                     pd
                             .setPropertyInParent(IASTTranslationUnit.OWNED_DECLARATION);
@@ -1940,7 +1941,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 ((CASTNode) pe).setOffset(((CASTNode) p).getOffset());
                 pe.setProblem(p);
                 p.setParent(pe);
-                p.setPropertyInParent(IASTProblemExpression.PROBLEM);
+                p.setPropertyInParent(IASTProblemHolder.PROBLEM);
                 return pe;
             }
         }

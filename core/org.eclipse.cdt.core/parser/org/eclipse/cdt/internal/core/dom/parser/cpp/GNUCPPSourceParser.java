@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -1845,7 +1846,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         p.setParent( pd );
                         pd.setProblem( p );
                         ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
-                        p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                        p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                         linkage.addDeclaration( pd );
                         pd.setParent( linkage );
                         pd.setPropertyInParent( ICPPASTLinkageSpecification.OWNED_DECLARATION );                    
@@ -2293,7 +2294,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         p.setParent( pd );
                         pd.setProblem( p );
                         ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
-                        p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                        p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                         namespaceDefinition.addDeclaration( pd );
                         pd.setParent( namespaceDefinition );
                         pd.setPropertyInParent( ICPPASTNamespaceDefinition.OWNED_DECLARATION );                    
@@ -3485,7 +3486,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                     typeIdProblem.setProblem( p );
                                     ((CPPASTNode)typeIdProblem).setOffset( ((CPPASTNode)p).getOffset() );
                                     p.setParent( typeIdProblem );
-                                    p.setPropertyInParent( IASTProblemTypeId.PROBLEM );
+                                    p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                                     exceptionSpecIds.add( typeIdProblem );
                                 }
                                 break;
@@ -3804,7 +3805,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         pd.setProblem( p );
                         ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
                         p.setParent( pd );
-                        p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                        p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                         astClassSpecifier.addMemberDeclaration( pd );
                         pd.setParent( astClassSpecifier );
                         pd.setPropertyInParent( IASTCompositeTypeSpecifier.MEMBER_DECLARATION );
@@ -3993,7 +3994,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 pd.setProblem( p );
                 ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
                 p.setParent( pd );
-                p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                 decl = pd;
             }
 
@@ -4103,7 +4104,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     p.setParent( pd );
                     pd.setProblem( p );
                     ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
-                    p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                    p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                     translationUnit.addDeclaration( pd );
                     pd.setParent( translationUnit );
                     pd.setPropertyInParent( IASTTranslationUnit.OWNED_DECLARATION );                    

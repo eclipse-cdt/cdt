@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -476,7 +477,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 ps.setProblem( p );
                 ((ASTNode)ps).setOffset( ((ASTNode)p).getOffset() );
                 p.setParent( ps );
-                p.setPropertyInParent( IASTProblemStatement.PROBLEM );
+                p.setPropertyInParent( IASTProblemHolder.PROBLEM );
                 statements.add( ps );
                 if (LA(1).hashCode() == checkToken)
                     failParseWithErrorHandling();
@@ -1693,7 +1694,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		ps.setProblem( p );
         		((ASTNode)ps).setOffset( ((ASTNode)p).getOffset() );
         		p.setParent( ps );
-        		p.setPropertyInParent( IASTProblemExpression.PROBLEM );
+        		p.setPropertyInParent( IASTProblemHolder.PROBLEM );
         		condition = ps;
         		failParseWithErrorHandling();
         		passedCondition = false;

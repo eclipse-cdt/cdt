@@ -14,10 +14,6 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author jcamelon
  */
-public interface IASTProblemExpression extends IASTExpression {
-
-    public static final ASTNodeProperty PROBLEM = new ASTNodeProperty( "Problem"); //$NON-NLS-1$
-    public IASTProblem getProblem();
-    public void setProblem(IASTProblem p);    
+public interface IASTProblemExpression extends IASTExpression, IASTProblemHolder {
 
 }

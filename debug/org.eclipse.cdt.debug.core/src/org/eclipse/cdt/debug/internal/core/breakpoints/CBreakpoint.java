@@ -208,4 +208,20 @@ public abstract class CBreakpoint extends Breakpoint
 			setAttribute( INSTALL_COUNT, count - 1 );
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.Breakpoint#ensureMarker()
+	 */
+	protected IMarker ensureMarker() throws DebugException
+	{
+		return super.ensureMarker();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.Breakpoint#setAttribute(String, Object)
+	 */
+	protected void setAttribute( String attributeName, Object value ) throws CoreException
+	{
+		super.setAttribute( attributeName, value );
+	}
 }

@@ -5,10 +5,12 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
@@ -97,10 +99,35 @@ public class CopyElementsOperation extends MultiOperation {
 	 */
 	private String getSourceFor(ICElement element)  {
 		if (element instanceof ISourceReference) {
-			ISourceReference source = (ISourceReference)element;
+			// TODO: remove this hack when we have ASTRewrite and doit properly
 			try {
+				ISourceReference source = (ISourceReference)element;
+				ISourceRange range = source.getSourceRange();
 				String contents = source.getSource();
-				// TODO: remove this hack when we have ASTRewrite and doit properly
+				StringBuffer sb = new StringBuffer(contents);
+				// Copy the extra spaces and newLines like it is part of
+				// the element.  Note: the DeleteElementAction is doing the same.
+				IBuffer buffer = getSourceTranslationUnit(element).getBuffer();
+				boolean newLineFound = false;
+				for (int offset = range.getStartPos() + range.getLength();;++offset) {
+					try {
+						char c = buffer.getChar(offset);
+						// TODO:Bug in the Parser, it does not give the semicolon
+						if (c == ';') {
+							sb.append(c) ;
+						} else if (c == '\r' || c == '\n') {
+							newLineFound = true;
+							sb.append(c) ;
+						} else if (!newLineFound && c == ' ') { // Do not include the spaces after the newline
+							sb.append(c) ;
+						} else {
+							break;
+						}
+					} catch (Exception e) {
+						break;
+					}
+				}
+				contents = sb.toString();
 				if (! contents.endsWith(Util.LINE_SEPARATOR)) {
 					contents += Util.LINE_SEPARATOR;
 				}

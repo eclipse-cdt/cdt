@@ -1,3 +1,8 @@
+2005-01-29 Alain Magloire
+	Copy the spaces and Newlines.
+	* model/org/eclipse/cdt/internal/core/model/CopylementsOperation.java
+	* model/org/eclipse/cdt/internal/core/model/DeleteElementsOperation.java
+
 2005-01-28 Alain Magloire
 	Operation on translationUnit
 	* model/org/eclipse/cdt/core/model/ITranslationUnit.java

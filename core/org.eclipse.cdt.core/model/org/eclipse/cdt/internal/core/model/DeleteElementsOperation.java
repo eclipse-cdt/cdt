@@ -114,13 +114,34 @@ public class DeleteElementsOperation extends MultiOperation {
 	}
 
 	/**
-	 * @deprecated marked deprecated to suppress JDOM-related deprecation warnings
+	 * @deprecated marked deprecated, future to use ASTRewrite
 	 */
 	private void replaceElementInBuffer(IBuffer buffer, ICElement elementToRemove, String cuName) throws CModelException {
 		if (elementToRemove instanceof ISourceReference) {
 			ISourceRange range = ((ISourceReference)elementToRemove).getSourceRange();
 			int startPosition = range.getStartPos();
 			int length = range.getLength();
+			// Copy the extra spaces and newLines like it is part of
+			// the element.  Note: the CopyElementAction is doing the same.
+			boolean newLineFound = false;
+			for (int offset = range.getStartPos() + range.getLength();;++offset) {
+				try {
+					char c = buffer.getChar(offset);
+					// TODO:Bug in the Parser, it does not give the semicolon
+					if (c == ';') {
+						length++;
+					} else if (c == '\r' || c == '\n') {
+						newLineFound = true;
+						length++;
+					} else if (!newLineFound && c == ' ') { // Do not include the spaces after the newline
+						length++ ;
+					} else {
+						break;
+					}
+				} catch (Exception e) {
+					break;
+				}
+			}
 			buffer.replace(startPosition, length, CharOperation.NO_CHAR);
 		}
 	}

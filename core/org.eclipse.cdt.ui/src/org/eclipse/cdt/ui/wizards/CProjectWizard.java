@@ -9,6 +9,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.swt.IValidation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -23,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,11 +42,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.swt.IValidation;
 
 
 /**
@@ -92,7 +92,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	 * @see Wizard#createPages
 	 */		
 	public void addPages() {
-		fMainPage= new CProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
+		fMainPage= new CProjectWizardPage(this, CUIPlugin.getResourceString(PREFIX));
 		fMainPage.setTitle(wz_title);
 		fMainPage.setDescription(wz_desc);
 		addPage(fMainPage);
@@ -114,6 +114,10 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	protected abstract void doRunPrologue(IProgressMonitor monitor);
 
 	protected abstract void doRunEpilogue(IProgressMonitor monitor);
+
+	protected IStatus isValidName(String name) {
+		return new Status(IStatus.OK, CUIPlugin.PLUGIN_ID, 0, "", null);
+	}
 
 	/**
 	 * Gets the project location path from the main page

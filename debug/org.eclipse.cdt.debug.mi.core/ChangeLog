@@ -1,5 +1,13 @@
 2004-07-09 Alain Magloire
 
+	Patch from gwatson to deal with Mac
+	version of gdb, there gdb as a different
+	syntax but still valid.
+
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIArg.java
+
+2004-07-09 Alain Magloire
+
 	Patch from Stefan Bylund for PR 69711
 	Added support for thread name.
 

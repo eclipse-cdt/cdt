@@ -1,4 +1,51 @@
 2002-10-16 Alain Magloire
+	By Boosting the level warning of the java compiler,
+	we catch unused imports or variables.  For example
+	by changing the scope, the compiler no longer has
+	to provide synthetic methos.
+
+	* src/../internal/corext/textmanipulation/MoveTextEdit.java:
+	* src/org/eclipse/cdt/internal/corext/textmanipulation/TextBufferFactory.java :
+	* src/../internal/corext/textmanipulation/TextEditNode.java:
+	* src/../internal/ui/BuildConsoleView.java:
+	* src/../internal/ui/CContentProvider.java:
+	* src/../internal/ui/CPlugin.java:
+	* src/../internal/ui/cview/CView.java:
+	* src/../internal/ui/dialogs/AbstractElementListSelectionDialog.java:
+	* src/../internal/ui/dialogs/MessageLine.java:
+	* src/../internal/ui/dialogs/SelectionList.java:
+	* src/../internal/ui/editor/CContentOutlinePage.java:
+	* src/../internal/ui/editor/CDocumentProvider.java:
+	* src/../internal/ui/editor/CEditorActionContributor.java:
+	* src/../internal/ui/editor/CEditorErrorTickUpdater.java
+	* src/../internal/ui/editor/OverviewRuler.java:
+	* src/../internal/ui/editor/PaintManager.java:
+	* src/../internal/ui/editor/ProblemPainter.java:
+	* src/../internal/ui/editor/asm/AsmCodeScanner.java:
+	* src/../internal/ui/editor/asm/AsmSourceViewerConfiguration.java:
+	* src/../internal/ui/editor/asm/AsmTextEditor.java:
+	* src/../internal/ui/editor/asm/AsmTextTools.java:
+	* src/../internal/ui/makeview/MakeView.java:
+	* src/../internal/ui/preferences/CEditorPreferencePage.java:
+	* src/../internal/ui/preferences/CLaunchingPropertyPage.java:
+	* src/../internal/ui/preferences/CPluginPreferencePage.java:
+	* src/../internal/ui/preferences/CProjectPropertyPage.java:
+	* src/../internal/ui/preferences/ColorEditor.java:
+	* src/../internal/ui/preferences/EditTemplateDialog.java:
+	* src/../internal/ui/preferences/OverlayPreferenceStore.java:
+	* src/../internal/ui/preferences/TemplatePreferencePage.java:
+	* src/../internal/ui/text/CCodeScanner.java:
+	* src/../internal/ui/text/CSourceViewerConfiguration.java:
+	* src/../internal/ui/text/util/CColorManager.java:
+	* src/../internal/ui/util/ProblemTreeViewer.java:
+	* src/../internal/ui/wizards/dialogfields/StringDialogField.java:
+	* src/../ui/wizards/CProjectWizardPage.java:
+	* src/../ui/wizards/SettingsBlock.java:
+	* src/../ui/wizards/conversion/ConvertProjectWizardPage.java:
+	* utils.ui/../utils/ui/controls/RadioButtonsArea.java:
+	Remove unused imports and change the scope when necessary.
+
+2002-10-16 Alain Magloire
 
 	By Boosting the level warning of the java compiler,
 	we catch unused imports or variables.

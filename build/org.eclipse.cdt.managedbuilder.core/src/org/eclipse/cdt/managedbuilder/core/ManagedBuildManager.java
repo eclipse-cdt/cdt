@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -1160,9 +1159,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					new String(), 
 					null));
 		}
+					
+		if (info.isContainerInited()) return;
 		// Now associate the path entry container with the project
 		ICProject cProject = info.getCProject();
-		// This does not block the workspace or trigger delta events
+
+		synchronized (cProject) {
+
+			// This does not block the workspace or trigger delta events
 		IPathEntry[] entries = cProject.getRawPathEntries();
 		// Make sure the container for this project is in the path entries
 		List newEntries = new ArrayList(Arrays.asList(entries));
@@ -1171,6 +1175,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			newEntries.add(ManagedBuildInfo.containerEntry);
 			cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), new NullProgressMonitor());
 		}
+		info.setContainerInited(true);
+		
+		}  //  end synchronized
 	}
 	
 	private static boolean isVersionCompatible(IExtension extension) {
@@ -1301,7 +1308,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (projectTypesLoaded)
 			return;
 		
+		loadExtensionsSynchronized();
+	}
+	
+	private synchronized static void loadExtensionsSynchronized() throws BuildException {
 		// Do this once
+		if (projectTypesLoaded)
+				return;
 		projectTypesLoaded = true;
 		
 		// Get the extensions that use the current CDT managed build model
@@ -1326,7 +1339,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 						final Shell shell = window.getShell();
 						final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR, extension.getUniqueIdentifier());
-						shell.getDisplay().syncExec( new Runnable() {
+						shell.getDisplay().asyncExec( new Runnable() {
 							public void run() {
 								MessageDialog.openError(shell, 
 										ManagedMakeMessages.getResourceString("ManagedBuildManager.error.manifest_load_failed_title"),	//$NON-NLS-1$
@@ -1733,7 +1746,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 	/* (non-Javadoc)
 	 * this method is called if managed build info session property
-	 * was not set. The caller will use the workspace root rool 
+	 * was not set. The caller will use the project rule 
 	 * to synchronize with other callers
 	 * findBuildInfoSynchronized could also be called from project converter
 	 * in this case the ManagedBuildInfo saved in the converter would be returned
@@ -1743,12 +1756,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	private static ManagedBuildInfo findBuildInfoSynchronized(IProject project/*, boolean create*/) {
 		ManagedBuildInfo buildInfo = null;
-		final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot(); 
+		final ISchedulingRule rule = project; 
 		IJobManager jobManager = Platform.getJobManager();
 
 		// Check if there is any build info associated with this project for this session
 		try{
-			jobManager.beginRule(rule, null);
+			try {
+				jobManager.beginRule(rule, null);
+			} catch (IllegalArgumentException e) {
+				//  An IllegalArgumentException means that this thread job currently has a scheduling
+				//  rule active, and it doesn't match the rule that we are requesting.  
+				//  So, we ignore the exception and assume the outer scheduling rule
+				//  is protecting us from concurrent access
+			}
+			
 			try {
 				buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
 				// Make sure that if a project has build info, that the info is not corrupted
@@ -1760,8 +1781,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 			
 			// Check weather getBuildInfo is called from converter
-			if(buildInfo == null)
-				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project); 
+			if(buildInfo == null) {
+				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
+				if (buildInfo != null) return buildInfo;
+			}
 			
 			// Nothing in session store, so see if we can load it from cdtbuild
 			if (buildInfo == null) {
@@ -1791,18 +1814,24 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						}
 					} );
 				}
-				
-				try {
-					// Check if the project needs its container initialized
-					initBuildInfoContainer(buildInfo);
-				} catch (CoreException e) {
-					// We can live without a path entry container if the build information is valid
-				}
 			}
 		}
 		finally{
 			jobManager.endRule(rule);
 		}
+
+		if (!buildInfo.isContainerInited()) {
+			//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
+			//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
+			//         
+			try {
+				// Check if the project needs its container initialized
+				initBuildInfoContainer(buildInfo);
+			} catch (CoreException e) {
+				// We can live without a path entry container if the build information is valid
+			}
+		}
+
 		return buildInfo;
 	}
 	

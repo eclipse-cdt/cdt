@@ -810,7 +810,10 @@ public class Scanner2 implements IScanner, IScannerData {
 				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1) );
 			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		}
-		return new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+		if( buffer != null && buffer.length == 0 )
+			bufferPos[bufferStackPos] += 1; //ensure we don't hit infinite loops
+		return i;
 	}
 	
 	private IToken scanIdentifier() {
@@ -936,6 +939,16 @@ public class Scanner2 implements IScanner, IScannerData {
 			    //unescaped end of line before end of string
 			    if( !escaped )
 			        break;
+			}
+			else if ( c == '\r')
+			{
+				if( bufferPos[bufferStackPos] + 1 < bufferLimit[bufferStackPos] && 
+				    buffer[bufferPos[bufferStackPos] + 1 ] == '\n' )
+				{
+					++bufferPos[bufferStackPos];
+					if( !escaped)
+						break;
+				}
 			}
 			escaped = false;
 		}

@@ -28,6 +28,7 @@
                <topic label="Content assist" href="cdt_c_content_assist.htm"/>
                <topic label="Function information" href="cdt_c_hov_help.htm"/>
                <topic label="Search" href="cdt_c_search.htm"/>
+               <topic label="Open Declarations" href="cdt_c_open_declarations.htm"/>
           </topic>
           <topic label="Build" href="cdt_o_build_conc.htm">
                <topic label="Build overview" href="cdt_c_build_over.htm"/>
@@ -39,11 +40,24 @@
      </topic>
      <topic label="Tasks" href="cdt_o_tasks.htm">
           <topic label="Updating the CDT" href="cdt_t_update_man.htm"/>
+          <topic label="Creating a project" href="cdt_o_new_projects.htm">
+               <topic label="Creating a Standard Make C or C++ Project" href="cdt_o_new_stand_projects.htm">
+                    <topic label="Naming a new project" href="cdt_t_new_proj_1.htm"/>
+                    <topic label="Selecting referenced projects" href="cdt_t_new_proj_2.htm"/>
+                    <topic label="Defining build settings" href="cdt_t_new_proj_3.htm"/>
+                    <topic label="Selecting a binary parser" href="cdt_t_new_proj_4.htm"/>
+                    <topic label="Including paths and symbols" href="cdt_t_new_proj_5.htm"/>
+               </topic>
+               <topic label="Creating a Managed Make C or C++ Project" href="cdt_o_new_man_projects.htm">
+                    <topic label="Creating a managed make C++ Project/Naming a project" href="cdt_t_man_proj_1.htm"/>
+                    <topic label="Select a platform" href="cdt_t_man_proj_2.htm"/>
+                    <topic label="Referencing projects" href="cdt_t_man_proj_3.htm"/>
+                    <topic label="Selecting a parser" href="cdt_t_man_proj_4.htm"/>
+               </topic>
+          </topic>
           <topic label="Working with C/C++ project files" href="cdt_o_proj_files.htm">
                <topic label="Displaying C/C++ file components in the C/C++ Projects view" href="cdt_t_show_proj_files.htm"/>
-               <topic label="Creating a project file" href="cdt_t_new_proj.htm"/>
                <topic label="Converting to a C or C++ Project" href="cdt_t_conv_proj.htm"/>
-               <topic label="Creating a managed make C++ Project" href="cdt_t_man_proj.htm"/>
                <topic label="Creating a .cpp file" href="cdt_t_new_cpp.htm"/>
                <topic label="Creating a makefile" href="cdt_t_new_make.htm"/>
                <topic label="Hiding files by type" href="cdt_t_prvw_hide_files.htm"/>
@@ -56,7 +70,7 @@
                <topic label="Working with content assist" href="cdt_o_con_assist.htm">
                     <topic label="Using Content Assist" href="cdt_t_contentassist.htm"/>
                     <topic label="Creating code templates" href="cdt_t_add_codetemp.htm"/>
-                    <topic label="Importing and exporting code templates" href="topic_under_dev.htm"/>
+                    <topic label="Importing and exporting code templates" href="cdt_t_imp_code_temp.htm"/>
                </topic>
                <topic label="Shifting lines of code to the right or left" href="cdt_t_shift_code.htm"/>
           </topic>

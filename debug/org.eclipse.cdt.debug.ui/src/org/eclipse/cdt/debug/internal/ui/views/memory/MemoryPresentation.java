@@ -305,7 +305,7 @@ public class MemoryPresentation
 				if ( address.longValue() >= rows[i].getAddress() && 
 					 address.longValue() < rows[i].getAddress() + (wordSize * numberOfColumns) )
 				{
-					for ( int j = 1; j < numberOfColumns; ++j )
+					for ( int j = 1; j <= numberOfColumns; ++j )
 					{
 						if ( address.longValue() >= rows[i].getAddress() + ((j - 1) * wordSize) &&
 							 address.longValue() < rows[i].getAddress() + (j * wordSize) )

@@ -1,3 +1,6 @@
+2004-06-07 Hoda Amer
+	Fix for bug 63395 : [Refactoring] a template class does not refactor its constructor
+	
 2004-06-07 Bogdan Gheorghe
 	Fix for Bug 60772
 	

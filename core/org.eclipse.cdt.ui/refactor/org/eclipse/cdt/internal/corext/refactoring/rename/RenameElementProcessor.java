@@ -413,12 +413,10 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 					ICSearchConstants.TYPE,	ICSearchConstants.DECLARATIONS, false ));
 			}
 			IStructure structure = (IStructure) fCElement;
-			if(structure.getElementType() == ICElement.C_CLASS){
-				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + structure.getElementName(),
-						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + TELTA + structure.getElementName(),
-						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
-			}
+			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + structure.getElementName(),
+					ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + TELTA + structure.getElementName(),
+					ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
 		}
 		else if(fCElement instanceof IMethod){
 			if(updateReferences){

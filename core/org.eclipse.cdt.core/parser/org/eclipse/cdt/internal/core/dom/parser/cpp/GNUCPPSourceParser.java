@@ -4549,21 +4549,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     */
    protected IASTExpression buildTypeIdExpression(int op, IASTTypeId typeId,
          int startingOffset, int endingOffset) {
-      IASTTypeIdExpression typeIdExpression = createTypeIdExpression();
+      ICPPASTTypeIdExpression typeIdExpression = createTypeIdExpression();
       ((ASTNode) typeIdExpression).setOffsetAndLength(startingOffset,
             endingOffset - startingOffset);
       ((ASTNode) typeIdExpression).setLength(endingOffset - startingOffset);
       typeIdExpression.setOperator(op);
       typeIdExpression.setTypeId(typeId);
       typeId.setParent(typeIdExpression);
-      typeId.setPropertyInParent(IASTTypeIdExpression.TYPE_ID);
+      typeId.setPropertyInParent(ICPPASTTypeIdExpression.TYPE_ID);
       return typeIdExpression;
    }
 
    /**
     * @return
     */
-   protected IASTTypeIdExpression createTypeIdExpression() {
+   protected ICPPASTTypeIdExpression createTypeIdExpression() {
       return new CPPASTTypeIdExpression();
    }
 

@@ -288,7 +288,8 @@ public class AST2BaseTest extends TestCase {
 
 
 	protected void isExpressionStringEqual(IASTExpression exp, String str) {
-		assertEquals(str, ASTSignatureUtil.getExpressionString(exp));
+		String expressionString = ASTSignatureUtil.getExpressionString(exp);
+		assertEquals(str, expressionString);
 	}
 	
 	protected void isParameterSignatureEqual(IASTDeclarator decltor, String str) {

@@ -12,13 +12,13 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 
 /**
  * @author jcamelon
  */
 public class CPPASTTypeIdExpression extends CPPASTNode implements
-        IASTTypeIdExpression {
+        ICPPASTTypeIdExpression {
 
     private int op;
     private IASTTypeId typeId;

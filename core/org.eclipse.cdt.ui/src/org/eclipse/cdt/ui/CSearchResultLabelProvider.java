@@ -93,7 +93,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		}
 		
 		
-			
+		int flags = 0;	
 		ImageDescriptor imageDescriptor = null;
 		
 		switch( elementType ){
@@ -128,9 +128,15 @@ public class CSearchResultLabelProvider extends LabelProvider {
 				}
 				break;
 			}
+			
+			case ICElement.C_TEMPLATE_CLASS:{
+				imageDescriptor = CPluginImages.DESC_OBJS_CLASS;	
+				flags |= CElementImageDescriptor.TEMPLATE;
+				break;
+			}
 		}
 		
-		int flags = 0;
+		
 		
 		if (match != null){
 			if( match.isStatic()   ) flags |= CElementImageDescriptor.STATIC;

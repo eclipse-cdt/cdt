@@ -1,3 +1,10 @@
+2003-05-24 Alain Magloire
+
+	Continuing the implementation of types.
+	ICDIType is ICDIObject.
+	* src/org/eclispe/cdt/mi/core/cdi/model/type/Type.java:
+	Extends CObject
+
 2003-05-23 Alain Magloire
 
 	Draft implementation of org.eclipse.cdt.debug.core.cdi.model.type/*

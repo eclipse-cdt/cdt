@@ -337,7 +337,6 @@ public class Target  implements ICDITarget {
 			restart();
 		} else {
 			restart();
-			//throw new CDIException("Unknow state");
 		}
 	}
 

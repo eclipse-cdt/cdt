@@ -1280,9 +1280,7 @@
             class="org.eclipse.cdt.debug.internal.ui.CBreakpointWorkbenchAdapterFactory"
             adaptableType="org.eclipse.cdt.debug.core.model.ICBreakpoint">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-      </factory>dt.debug.core.model.ICSignal"/>
-         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-   </extension>
+      </factory>   </extension>
    <extension
          point="org.eclipse.ui.themes">
       <fontDefinition

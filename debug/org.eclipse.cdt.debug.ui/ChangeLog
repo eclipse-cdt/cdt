@@ -1,3 +1,7 @@
+2004-10-18 Mikhail Khodjaiants
+	Corrupted plugin.xml.
+	* plugin.xml
+
 2004-10-15 Mikhail Khodjaiants
 	Replaced the "Signal Properties" dialog by the standard property page.
 	* plugin.xml

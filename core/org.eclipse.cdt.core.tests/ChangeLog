@@ -1,3 +1,13 @@
+2003-09-18 Andrew Niefer
+	- removed testConditionalExpression_Bug43159 from FailedCompleteParseASTExpressionTest
+	  and uncommented it (testConditionalExpression) in CompleteParseASTExpressionTest
+	- uncommented the following tests in CompleteParseASTExpressionTest :
+	    testPostfixSubscript, testPostfixSubscriptA, testPostfixSubscriptB,
+	    testPostfixSubscriptWithReferences
+	- updated ParserSymbolTableTests to use new addOperatorExpression function
+	- added testDerivedReference, testAddCopyConstructor to ParserSymbolTableTests
+	- fixed warning in ClassDeclarationPatternTests
+
 2003-09-17 Hoda Amer
 	Added more success test cases to CompleteParseASTExpressionTest
 	and more failure test cases to FailedCompleteParseASTExpressionTest

@@ -16,8 +16,8 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -33,12 +33,12 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	public void addParameter( ISymbol typeSymbol, TypeInfo.PtrOp ptrOp, boolean hasDefault );
 	
 	public void addArgument( ISymbol arg );
-	public LinkedList getArgumentList();
-	public void setArgumentList( LinkedList list );
+	public List getArgumentList();
+	public void setArgumentList( List list );
 	
-	public HashMap getParameterMap();
-	public LinkedList getParameterList();
-	public void setParameterList( LinkedList list );
+	public Map getParameterMap();
+	public List getParameterList();
+	public void setParameterList( List list );
 
 	public boolean hasSameParameters(IParameterizedSymbol newDecl);
 	
@@ -47,5 +47,5 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public boolean	hasSpecializations();
 	public void 	addSpecialization( IParameterizedSymbol spec );
-	public LinkedList getSpecializations();	
+	public List 	getSpecializations();	
 }

@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
+import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 
 
@@ -130,6 +132,26 @@ public class TypeInfo {
 		private int _val;
 	}
 	
+	public static class OperatorExpression extends Enum{
+		
+		//5.3.1-1 : The unary * operator, the expression to which it is applied shall be
+		//a pointer to an object type or a pointer to a function type and the result
+		//is an lvalue refering to the object or function to which the expression points
+		public static final OperatorExpression indirection = new OperatorExpression( 1 );
+		
+		//5.3.1-2 : The result of the unary & operator is a pointer to its operand
+		public static final OperatorExpression addressof = new OperatorExpression( 0 );
+		
+		//5.2.1 A postfix expression followed by an expression in square brackets is a postfix
+		//expression.  one of the expressions shall have the type "pointer to T" and the other
+		//shall have a enumeration or integral type.  The result is an lvalue of type "T"
+		public static final OperatorExpression subscript = new OperatorExpression( 2 );
+		
+		protected OperatorExpression(int enumValue) {
+			super(enumValue);
+		}
+	}
+	
 	public static class PtrOp {
 		public PtrOp( TypeInfo.eType type ){
 			this.type = type;
@@ -190,23 +212,27 @@ public class TypeInfo {
 		private ISymbol memberOf = null;
 	}
 
-	private static final String _image[] = {	"", 
-												"", 
-												"namespace", 
-												"template",
-												"class", 
-												"struct", 
-												"union", 
-												"enum",
-												"",
-												"bool",
-												"char",
-												"wchar_t",
-												"int",
-												"float",
-												"double",
-												"void",
-												""
+	private static final String _image[] = {	"", 		//$NON-NLS-1$	t_undef
+												"", 		//$NON-NLS-1$	t_type
+												"namespace", //$NON-NLS-1$	t_namespace
+												"class", 	//$NON-NLS-1$	t_class
+												"struct", 	//$NON-NLS-1$	t_struct
+												"union", 	//$NON-NLS-1$	t_union
+												"enum",		//$NON-NLS-1$	t_enumeration
+												"",			//$NON-NLS-1$	t_constructor
+												"",			//$NON-NLS-1$	t_function
+												"bool",		//$NON-NLS-1$	t_bool
+												"char",		//$NON-NLS-1$	t_char
+												"wchar_t",	//$NON-NLS-1$	t_wchar_t
+												"int",		//$NON-NLS-1$	t_int
+												"float",	//$NON-NLS-1$	t_float
+												"double",	//$NON-NLS-1$	t_double
+												"void",		//$NON-NLS-1$	t_void
+												"",			//$NON-NLS-1$	t_enumerator
+												"",			//$NON-NLS-1$	t_block	
+												"template",	//$NON-NLS-1$	t_template
+												"",			//$NON-NLS-1$	t_asm			
+												""			//$NON-NLS-1$	t_linkage
 											 };
 	//Partial ordering :
 	// none		< const
@@ -286,7 +312,7 @@ public class TypeInfo {
 		return ( _ptrOperators != null && _ptrOperators.size() > 0 );	
 	}
 	
-	public LinkedList getPtrOperators(){
+	public List getPtrOperators(){
 		return _ptrOperators;
 	}
 	
@@ -311,40 +337,38 @@ public class TypeInfo {
 		return false;
 	}
 
-	public void applyPtrsAsUnaryOperators( LinkedList ptrs ){
-		if( ptrs == null || ptrs.isEmpty() )
+	public List getOperatorExpressions(){
+		return _operatorExpressions;
+	}
+	
+
+	public void applyOperatorExpressions( List ops ){
+		if( ops == null || ops.isEmpty() )
 			return;
 			
-		int size = ptrs.size();
-		Iterator iter = ptrs.iterator();
-		TypeInfo.PtrOp op = null;
+		int size = ops.size();
+		Iterator iter = ops.iterator();
+		OperatorExpression op = null;
 		for( int i = size; i > 0; i-- ){
-			op = (TypeInfo.PtrOp)iter.next();
-			if( op.getType() == PtrOp.t_pointer  ){
+			op = (OperatorExpression)iter.next();
+			if( op == OperatorExpression.indirection ||
+				op == OperatorExpression.subscript )
+			{
 				//indirection operator, can only be applied to a pointer
+				//subscript should be applied to something that is "pointer to T", the result is a lvalue of type "T"
 				if( hasPtrOperators() ){
-					TypeInfo.PtrOp first = (TypeInfo.PtrOp)getPtrOperators().getFirst();
-					if( first.getType() == TypeInfo.PtrOp.t_pointer )
+					ListIterator iterator = getPtrOperators().listIterator( getPtrOperators().size() );
+					TypeInfo.PtrOp last = (TypeInfo.PtrOp)iterator.previous();
+					if( last.getType() == TypeInfo.PtrOp.t_pointer ||
+						last.getType() == TypeInfo.PtrOp.t_array  )
 					{
-						getPtrOperators().removeFirst();
-						if( op.isConst() || op.isVolatile() ){
-							
-							if( hasPtrOperators() ){
-								((TypeInfo.PtrOp)getPtrOperators().getFirst()).setConst( op.isConst() );
-								((TypeInfo.PtrOp)getPtrOperators().getFirst()).setVolatile( op.isVolatile() );
-							} else {
-								TypeInfo.PtrOp newOp = new TypeInfo.PtrOp( TypeInfo.PtrOp.t_undef, op.isConst(), op.isVolatile() );
-								addPtrOperator( newOp );
-							}
-						}
+						iterator.remove();
 					}
-				} else {
-					//???
 				}
-			} else if( op.getType() == PtrOp.t_reference ){
+			} else if( op == OperatorExpression.addressof ){
 				//Address-of unary operator, results in pointer to T
 				//TODO or pointer to member
-				TypeInfo.PtrOp newOp = new TypeInfo.PtrOp( PtrOp.t_pointer , op.isConst(), op.isVolatile() );
+				TypeInfo.PtrOp newOp = new TypeInfo.PtrOp( PtrOp.t_pointer );
 				addPtrOperator( newOp );
 			}
 		}
@@ -364,6 +388,13 @@ public class TypeInfo {
 		}
 		if( ptrs != null )
 			_ptrOperators.addAll( ptrs );
+	}
+	
+	public void addOperatorExpression( OperatorExpression exp ){
+		if( _operatorExpressions == null ){
+			_operatorExpressions = new LinkedList();
+		}
+		_operatorExpressions.add( exp );
 	}
 	
 	public boolean getHasDefault(){
@@ -414,10 +445,18 @@ public class TypeInfo {
 		if( _typeDeclaration instanceof TemplateInstance ){
 			result &= _typeDeclaration.equals( type._typeDeclaration );
 		} else {
-			result &= ( _typeDeclaration == type._typeDeclaration );
+			if( _typeDeclaration != null && type._typeDeclaration != null   &&
+				_typeDeclaration.isType( TypeInfo.t_bool, TypeInfo.t_void ) &&
+				type._typeDeclaration.isType( TypeInfo.t_bool, TypeInfo.t_void ) )
+			{
+				//if typeDeclaration is a basic type, then only need the types the same
+				result &= ( _typeDeclaration.getType() == type._typeDeclaration.getType() );		
+			} else {
+				//otherwise, its a user defined type, need the decls the same
+				result &= ( _typeDeclaration == type._typeDeclaration );
+			}
 		}
-		
-	
+			
 		int size1 = (_ptrOperators == null) ? 0 : _ptrOperators.size();
 		int size2 = (type._ptrOperators == null) ? 0 : type._ptrOperators.size();
 		if( size1 == size2 ){
@@ -457,4 +496,5 @@ public class TypeInfo {
 	private boolean	_hasDefaultValue = false;
 	private Object _defaultValue = null;
 	private LinkedList _ptrOperators;	
+	private LinkedList _operatorExpressions;
 }

@@ -79,23 +79,23 @@ public class FailedCompleteParseASTExpressionTest extends CompleteParseBaseTest
 //		assertEquals( ((IASTReference)references.next()).getReferencedElement(), pa );
 //		assertEquals( ((IASTReference)references.next()).getReferencedElement(), f1 );
 //	}	
-	public void testConditionalExpression_Bug43159() throws Exception { 
-		Iterator i = parse( "int foo(bool); int foo(int); int a = 10, b = 4, c = 2; int x = foo( a > 5 ? b : c );").getDeclarations();
-		IASTFunction foo1 = (IASTFunction)i.next();
-		IASTFunction foo2 = (IASTFunction)i.next(); 
-		IASTVariable a = (IASTVariable)i.next();
-		IASTVariable b = (IASTVariable)i.next();
-		IASTVariable c = (IASTVariable)i.next();
-		IASTVariable x = (IASTVariable)i.next();
-		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 ); // should be 4
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), c ); 
-		//assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
-	}
+//	public void testConditionalExpression_Bug43159() throws Exception { 
+//		Iterator i = parse( "int foo(bool); int foo(int); int a = 10, b = 4, c = 2; int x = foo( a > 5 ? b : c );").getDeclarations();
+//		IASTFunction foo1 = (IASTFunction)i.next();
+//		IASTFunction foo2 = (IASTFunction)i.next(); 
+//		IASTVariable a = (IASTVariable)i.next();
+//		IASTVariable b = (IASTVariable)i.next();
+//		IASTVariable c = (IASTVariable)i.next();
+//		IASTVariable x = (IASTVariable)i.next();
+//		assertFalse( i.hasNext() );
+//		assertEquals( callback.getReferences().size(), 3 ); // should be 4
+//		Iterator references =callback.getReferences().iterator();
+//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
+//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
+//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), c ); 
+//		//assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
+//		assertFalse( references.hasNext() );	
+//	}
 	
 	public void testConditionalExpressionWithReferencesB_Bug43106() throws Exception { 
 		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A&); A a ; B b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations();

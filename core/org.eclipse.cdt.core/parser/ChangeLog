@@ -1,3 +1,11 @@
+2003-09-18 Andrew Niefer
+	- modified Symbol table interfaces to use Lists & Maps instead of LinkedList and HashMap
+	- fixed warnings in ParserSymbolTable
+	- fixed bug43106 - Symbol Table support needed to resolve types
+	- fixed bug43156 - require ability to add implicit inheritance copy constructor
+	- fixed bug43159 - TypeInfo.equals() not working properly
+	- fixed bug43238 - Postfix_Subscript expressions confuse function resolution
+
 2003-09-16 Andrew Niefer
 	- added setThrowExceptionOnBadCharacterRead to IScanner to help with wildcard bug43063
 

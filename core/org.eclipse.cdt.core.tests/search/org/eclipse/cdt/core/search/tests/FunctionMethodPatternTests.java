@@ -138,6 +138,6 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 5 ); //3 in classDecl.cpp, 2 in mail.cpp 
+		assertEquals( matches.size(), 3 ); //3 in classDecl.cpp
 	}
 }

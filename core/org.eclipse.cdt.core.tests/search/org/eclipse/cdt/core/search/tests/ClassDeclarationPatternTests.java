@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
-import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 
 
@@ -34,10 +33,6 @@ import org.eclipse.cdt.internal.core.search.matching.OrPattern;
  */
 public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSearchConstants {
 
-	private MatchLocator matchLocator;
-	
-	private String cppPath;
-	
 	public ClassDeclarationPatternTests(String name) {
 		super(name);
 	}

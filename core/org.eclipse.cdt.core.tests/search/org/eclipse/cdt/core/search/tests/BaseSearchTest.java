@@ -80,7 +80,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		fileManager = new FileManager();
 		
 		//Add a file to the project
-		importFile("mail.cpp", "resources/indexer/mail.cpp");
+		//importFile("mail.cpp", "resources/indexer/mail.cpp");
 		importFile("classDecl.cpp", "resources/search/classDecl.cpp");
 		importFile("include.h", "resources/search/include.h");
 		

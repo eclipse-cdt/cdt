@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.OperatorExpression;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 
@@ -1187,8 +1188,8 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertEquals( look.getType(), TypeInfo.t_type );
 		assertEquals( look.getTypeSymbol(), cls );
-		assertEquals( ((PtrOp)look.getPtrOperators().getFirst()).getType(), TypeInfo.PtrOp.t_pointer );
-		assertTrue( ((PtrOp)look.getPtrOperators().getFirst()).isConst() );
+		assertEquals( ((PtrOp)look.getPtrOperators().iterator().next()).getType(), TypeInfo.PtrOp.t_pointer );
+		assertTrue( ((PtrOp)look.getPtrOperators().iterator().next()).isConst() );
 		assertEquals( look.getContainingSymbol(), fn );
 	}
 	
@@ -1364,7 +1365,9 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList paramList = new LinkedList();
 		look = compUnit.lookup( "a" );
 		assertEquals( look, a );
-		TypeInfo param = new TypeInfo( look.getType(), 0, look, new PtrOp( PtrOp.t_reference ), false );
+		TypeInfo param = new TypeInfo( look.getType(), 0, look, null, false );
+		//new PtrOp( PtrOp.t_reference )
+		param.addOperatorExpression( OperatorExpression.addressof );
 		paramList.add( param );
 		
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
@@ -1640,21 +1643,21 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 		
-		p.addPtrOperator( new PtrOp( PtrOp.t_reference, false, false ) );
+		p.addOperatorExpression( OperatorExpression.addressof );
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 		p.setTypeSymbol( b );
-		p.getPtrOperators().clear();
+		p.getOperatorExpressions().clear();
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
-		p.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
+		p.addOperatorExpression( OperatorExpression.indirection );
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 		
 		p.setTypeSymbol( array );
-		p.getPtrOperators().clear();
+		p.getOperatorExpressions().clear();
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
@@ -1765,7 +1768,8 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( main );
 		
 		LinkedList params = new LinkedList();
-		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, i, new PtrOp( PtrOp.t_reference ), false );
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, i );
+		p1.addOperatorExpression( OperatorExpression.addressof );
 		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, 0, s );
 		params.add( p1 );
 		params.add( p2 );
@@ -1794,7 +1798,8 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, f2 );
 		
 		params.clear();
-		((PtrOp)p1.getPtrOperators().getFirst()).setConst( true );
+		p1.addPtrOperator( new PtrOp( PtrOp.t_undef, true, false ) );
+		//((PtrOp)p1.getPtrOperators().iterator().next()).setConst( true );
 		params.add( p1 );
 		params.add( p3 );
 		look = main.unqualifiedFunctionLookup( "f", params );
@@ -2660,8 +2665,10 @@ public class ParserSymbolTableTest extends TestCase {
 		table.getCompilationUnit().addSymbol( a );
 		table.getCompilationUnit().addSymbol( b );
 		
-		TypeInfo secondOp = new TypeInfo( TypeInfo.t_type, 0, a, new PtrOp( PtrOp.t_reference ), false );
-		TypeInfo thirdOp = new TypeInfo( TypeInfo.t_type, 0, b, new PtrOp( PtrOp.t_reference ), false );
+		TypeInfo secondOp = new TypeInfo( TypeInfo.t_type, 0, a );
+		secondOp.addOperatorExpression( OperatorExpression.addressof );
+		TypeInfo thirdOp = new TypeInfo( TypeInfo.t_type, 0, b );
+		thirdOp.addOperatorExpression( OperatorExpression.addressof );
 		
 		TypeInfo returned = ParserSymbolTable.getConditionalOperand( secondOp, thirdOp );
 		assertEquals( returned, secondOp );
@@ -2672,7 +2679,8 @@ public class ParserSymbolTableTest extends TestCase {
 		c.setTypeSymbol( clsC );
 		table.getCompilationUnit().addSymbol( c );
 		
-		TypeInfo anotherOp = new TypeInfo( TypeInfo.t_type, 0, c, new PtrOp( PtrOp.t_reference ), false );
+		TypeInfo anotherOp = new TypeInfo( TypeInfo.t_type, 0, c );
+		anotherOp.addOperatorExpression( OperatorExpression.addressof );
 		
 		returned = ParserSymbolTable.getConditionalOperand( secondOp, anotherOp );
 		assertEquals( returned, null );
@@ -2685,8 +2693,8 @@ public class ParserSymbolTableTest extends TestCase {
 		constructorC.addParameter( clsA, null, false );
 		clsC.addConstructor( constructorC );
 		
-		secondOp.getPtrOperators().clear();
-		anotherOp.getPtrOperators().clear();
+		secondOp.getOperatorExpressions().clear();
+		anotherOp.getOperatorExpressions().clear();
 		try{
 			
 			returned = ParserSymbolTable.getConditionalOperand( secondOp, anotherOp );
@@ -2696,5 +2704,123 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws Exception
+	 * class A {};
+	 * class B : public A {} b;
+	 * class C : private A {} c;
+	 * int f ( A & );
+	 * 
+	 * int i = f ( b );  //calls f( A & );
+	 * 
+	 * int f ( B & );
+	 * i = f( b );   	//now calls f( B& );
+	 * 
+	 * i = f( c );	//exception, A is not an accessible base class
+	 */
+	public void testDerivedReference() throws Exception{
+		newTable();
+		
+		IDerivableContainerSymbol clsA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol clsB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		IDerivableContainerSymbol clsC = table.newDerivableContainerSymbol( "C", TypeInfo.t_class );
+		
+		clsB.addParent( clsA );
+		clsC.addParent( clsA, false, ASTAccessVisibility.PRIVATE, 0, null );
+		
+		ISymbol b = table.newSymbol("b", TypeInfo.t_type );
+		b.setTypeSymbol( clsB );
+		
+		ISymbol c = table.newSymbol("c", TypeInfo.t_type );
+		c.setTypeSymbol( clsC );
+		
+		table.getCompilationUnit().addSymbol( clsA );
+		table.getCompilationUnit().addSymbol( clsB );
+		table.getCompilationUnit().addSymbol( clsC );
+		table.getCompilationUnit().addSymbol( b );
+		table.getCompilationUnit().addSymbol( c );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( clsA, new PtrOp( PtrOp.t_reference ), false );
+		table.getCompilationUnit().addSymbol( f1 );
+		
+		LinkedList parameters = new LinkedList();
+		TypeInfo param = new TypeInfo( TypeInfo.t_type, 0, b );
+		parameters.add( param );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
+		assertEquals( look, f1 );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( clsB, new PtrOp( PtrOp.t_reference ), false );
+		table.getCompilationUnit().addSymbol( f2 );
+		
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
+		assertEquals( look, f2 );
+		
+		parameters.clear();
+		param = new TypeInfo( TypeInfo.t_type, 0, c );
+		parameters.add( param );
+		try{
+			look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
+			assertTrue( false );
+		} catch ( ParserSymbolTableException e ){
+			//good
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 * 
+	 * class A {
+	 * private : 
+	 *    A ( const A & ) {}
+	 * } a;
+	 * 
+	 * class B : public A {
+	 * } b;
+	 * 
+	 * 1 > 2 ? a : b;	//fails, b can't be converted to a without the A( const A & ) copy constructor
+	 * -----------------------
+	 * class A {
+	 *    A ( const A & ) {}
+	 * } a;
+	 * class B : public A {} b;
+	 * 
+	 * 1 > 2 ? a : b;  //succeeds, b can be converted to a using copy constructor
+	 * 
+	 */
+	public void testAddCopyConstructor() throws Exception {
+		newTable();
+		
+		IDerivableContainerSymbol clsA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( clsA );
+		
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		a.setTypeSymbol( clsA );
+		table.getCompilationUnit().addSymbol( a );
+		
+		IDerivableContainerSymbol clsB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		clsB.addParent( clsA );
+		table.getCompilationUnit().addSymbol( clsB );
+		
+		ISymbol b = table.newSymbol( "b", TypeInfo.t_type );
+		b.setTypeSymbol( clsB );
+		table.getCompilationUnit().addSymbol( b );
+		
+		TypeInfo secondOp = new TypeInfo( TypeInfo.t_type, 0, a, null, false );
+		TypeInfo thirdOp = new TypeInfo( TypeInfo.t_type, 0, b, null, false );
+		
+		TypeInfo returned = ParserSymbolTable.getConditionalOperand( secondOp, thirdOp );
+		assertEquals( returned, null );
+		
+		clsA.addCopyConstructor();
+		clsB.addCopyConstructor();
+		
+		returned = ParserSymbolTable.getConditionalOperand( secondOp, thirdOp );
+		assertEquals( returned, secondOp );	
+	}
 }
 

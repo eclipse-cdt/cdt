@@ -1058,7 +1058,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( lhsResult.iterator().hasNext())
 				info = (TypeInfo)lhsResult.iterator().next();
 			if ((info != null) && (info.getTypeSymbol() != null)){
-				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_reference));				
+				info.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
 			}
 			result.add(info);
 			return result;
@@ -1069,22 +1069,22 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( lhsResult.iterator().hasNext())
 				info = (TypeInfo)lhsResult.iterator().next();
 			if ((info != null)&& (info.getTypeSymbol() != null)){
-				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));				
+				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 			}
 			result.add(info);
 			return result;
 		}
 		// subscript
-//		if (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_SUBSCRIPT){
-//			List lhsResult = ((ASTExpression)expression.getLHSExpression()).getResultType();
-//			if( lhsResult.iterator().hasNext())
-//				info = (TypeInfo)lhsResult.iterator().next();
-//			if ((info != null) && (info.getTypeSymbol() != null)){
-//				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));				
-//			}
-//			result.add(info);
-//			return result;
-//		}
+		if (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_SUBSCRIPT){
+			List lhsResult = ((ASTExpression)expression.getLHSExpression()).getResultType();
+			if( lhsResult.iterator().hasNext())
+				info = (TypeInfo)lhsResult.iterator().next();
+			if ((info != null) && (info.getTypeSymbol() != null)){
+				info.addOperatorExpression( TypeInfo.OperatorExpression.subscript );
+			}
+			result.add(info);
+			return result;
+		}
 		// the dot and the arrow resolves to the type of the member
 		if ((expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION)
 		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
@@ -1105,7 +1105,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( rhsResult.iterator().hasNext())
 				info = (TypeInfo)rhsResult.iterator().next();
 			if (info != null){
-				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));				
+				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 			}
 			if(symbol != null){
 				info.setTypeSymbol(symbol);
@@ -1119,7 +1119,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			{
 				info.setType(TypeInfo.t_type);
 				info.setTypeSymbol(symbol);	
-				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_reference));		
+				info.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
 				result.add(info);
 				return result;
 			}

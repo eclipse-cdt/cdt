@@ -10,8 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Map;
+import java.util.List;
 
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 /**
@@ -45,40 +45,15 @@ public interface ISymbol extends Cloneable {
 	public void setIsForwardDeclaration( boolean forward );
 	
 	public int compareCVQualifiersTo( ISymbol symbol );
-	public LinkedList getPtrOperators();
+	public List getPtrOperators();
 	public void addPtrOperator( TypeInfo.PtrOp ptrOp );
 	
 	public boolean isTemplateMember();
 	public void setIsTemplateMember( boolean isMember );
 	public ISymbol getTemplateInstance();
-	public HashMap getArgumentMap();
+	public Map getArgumentMap();
 	public void setTemplateInstance( TemplateInstance instance );
-	
-	/*public interface ITypeInfo {
-		public boolean checkBit(int mask);
-		public void setBit(boolean b, int mask);
-		public boolean isType( int type );
-		public boolean isType( int type, int upperType );	
-		public int getType();
-		public ISymbol getTypeSymbol();
-		
-		public int getCVQualifier();
-		public void addCVQualifier( int cvQual ); 
-		public String getPtrOperator();
-		public void addPtrOperator( String ptrOp );
-		public void setType(int i);
-		public void setTypeSymbol(ISymbol typeSymbol);
-	
-		public int getTypeInfo();
-		public void setTypeInfo( int typeInfo );
-		public void setPtrOperator(String string);
-		public boolean canHold(ITypeInfo src);
-		public String getInvertedPtrOperator();
-		public void setCVQualifier(int i);
-		public boolean getHasDefault();
-		public void setHasDefault(boolean hasDefault);				
-	}
-	*/
+
 	public int getDepth();
 
     /**

@@ -1,3 +1,13 @@
+2003-01-29 Mikhail Khodjaiants
+	Managing breakpoints from the gdb console (fixes).
+	* CDebugModel.java
+	* CAddressBreakpoint.java
+	* CBreakpoint.java
+	* CFunctionBreakpoint.java
+	* CLineBreakpoint.java
+	* CWatchpoint.java
+	* CDebugTarget.java
+	
 2003-01-29 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISharedLibraryManger.java (getSharedLibraryPaths):

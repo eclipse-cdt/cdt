@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -37,14 +36,6 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 	public CAddressBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
 		super( resource, getMarkerType(), attributes, add );
-	}
-
-	/**
-	 * Constructor for CAddressBreakpoint.
-	 */
-	public CAddressBreakpoint( IResource resource, Map attributes, ICDIBreakpoint cdiBreakpoint, boolean add ) throws DebugException
-	{
-		super( resource, getMarkerType(), attributes, cdiBreakpoint, add );
 	}
 
 	/* (non-Javadoc)

@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -36,14 +35,6 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint
 	public CWatchpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
 		super( resource, getMarkerType(), attributes, add );
-	}
-
-	/**
-	 * Constructor for CWatchpoint.
-	 */
-	public CWatchpoint( IResource resource, Map attributes, ICDIWatchpoint watchpoint, boolean add ) throws DebugException
-	{
-		super( resource, getMarkerType(), attributes, watchpoint, add );
 	}
 
 	/* (non-Javadoc)

@@ -260,6 +260,11 @@ public class CDebugTarget extends CDebugElement
 	private boolean fIsDebuggerProcessDefault = false;
 
 	/**
+	 * The suspension thread.
+	 */
+	private ICDIThread fSuspensionThread;
+
+	/**
 	 * The executable file.
 	 */
 	private IFile fExecFile;
@@ -1239,6 +1244,7 @@ public class CDebugTarget extends CDebugElement
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
 		setRunningInfo( null );
+		setSuspensionThread();
 		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDITarget )
 		{
@@ -2243,5 +2249,41 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( getBreakpointManager() != null )
 			getBreakpointManager().dispose();
+	}
+
+	protected ICDIThread getSuspensionThread()
+	{
+		return fSuspensionThread;
+	}
+
+	private void setSuspensionThread()
+	{
+		fSuspensionThread = null;
+		try
+		{
+			fSuspensionThread = getCDITarget().getCurrentThread();
+		}
+		catch( CDIException e )
+		{
+			// ignore
+		}
+	}
+
+	protected IBreakpoint[] getThreadBreakpoints( CThread thread )
+	{
+		List list = new ArrayList( 1 );
+		if ( isSuspended() && thread != null && 
+			 getSuspensionThread() != null && 
+			 getSuspensionThread().equals( thread.getCDIThread() ) )
+		{
+			IBreakpoint bkpt = null;
+			if ( getCurrentStateInfo() instanceof ICDIBreakpointHit )
+				bkpt = getBreakpointManager().getBreakpoint( ((ICDIBreakpointHit)getCurrentStateInfo()).getBreakpoint() );
+			else if ( getCurrentStateInfo() instanceof ICDIWatchpointTrigger )
+				bkpt = getBreakpointManager().getBreakpoint( ((ICDIWatchpointTrigger)getCurrentStateInfo()).getWatchpoint() );
+			if ( bkpt != null )
+				list.add( bkpt );
+		}
+		return (IBreakpoint[])list.toArray( new IBreakpoint[list.size()]);
 	}
 }

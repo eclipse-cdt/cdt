@@ -11,6 +11,8 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,11 +23,10 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -52,7 +53,9 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	 * The project associated with this source location
 	 */
 	private IProject fProject;
-	
+
+	private IResource[] fFolders;
+
 	private HashMap fCache = new HashMap( 20 );
 	
 	private HashSet fNotFoundCache = new HashSet( 20 );
@@ -73,6 +76,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	{
 		setProject( project );
 		fGenerated = true;
+		initializeFolders();
 	}
 
 	/**
@@ -82,6 +86,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	{
 		setProject( project );
 		fGenerated = generated;
+		initializeFolders();
 	}
 
 	/* (non-Javadoc)
@@ -147,87 +152,86 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	{
 		File file = new File( name );
 		return ( file.isAbsolute() ) ? findFileByAbsolutePath( name ) : 
-									   findFileByRelativePath( getProject(), name );
+									   findFileByRelativePath( name );
 	}
 
 	private Object findFileByAbsolutePath( String name )
 	{
 		File file = new File( name );
 		Object result = null;
-		try
-		{
-			if ( file.isAbsolute() ) 
-				result = findFile( getProject(), file.getCanonicalPath() );
-		}
-		catch( IOException e )
-		{
-		}
+		if ( file.isAbsolute() && file.exists() ) 
+			result = findFile( file );
 		return result;
 	}
 
-	private Object findFileByRelativePath( IContainer container, String fileName )
+	private Object findFileByRelativePath( String fileName )
 	{
-		IPath rootPath = container.getLocation();
-		if ( rootPath == null )
-			return null;
-		IPath path = rootPath.append( fileName );
-		Object result = findFileByAbsolutePath( path.toOSString() );
-		if ( result == null )
+		IResource[] folders = getFolders();
+		LinkedList list = new LinkedList();
+		for ( int i = 0; i < folders.length; ++i )
 		{
-			try
-			{
-				IResource[] members = container.members();
-				for ( int i = 0; i < members.length; ++i )
-				{
-					if ( members[i] instanceof IFolder )
-					{
-						path = members[i].getLocation().append( fileName );
-						result = findFileByAbsolutePath( path.toOSString() );
-						if ( result == null )
-						{
-							result = findFileByRelativePath( (IFolder)members[i], fileName );
-						}
-						if ( result != null )
-							break;
-					}
-				}
-			}
-			catch( CoreException e )
-			{
-				// do nothing
-			}
+			if ( list.size() > 0 && !searchForDuplicateFileNames() )
+				break;
+			IPath path = folders[i].getLocation().append( fileName );
+			Object result = findFile( new File( path.toOSString() ) );
+			if ( result instanceof List )
+				list.addAll( (List)result );
+			else if ( result != null )
+				list.add( result );
 		}
-		return result;
-	}
-
-	private Object findFile( IContainer container, String fileName )
-	{
-		try
-		{
-			IResource[] members = container.members();
-			for ( int i = 0; i < members.length; ++i )
-			{
-				if ( members[i] instanceof IFile )
-				{
-					if ( members[i].getLocation().toOSString().equals( fileName ) )
-						return members[i];
-				}
-				else if ( members[i] instanceof IFolder && fileName.startsWith( members[i].getLocation().toOSString() ) )
-				{
-					Object result = findFile( (IContainer)members[i], fileName );
-					if ( result != null )
-						return result;
-				}
-			}
-		}
-		catch( CoreException e )
-		{
-			// do nothing
-		}
-		
+		if ( list.size() == 1 || (list.size() > 0 && !searchForDuplicateFileNames()) )
+			return list.getFirst();
+		if ( list.size() > 0 )
+			return list;
 		return null;
 	}
-	
+
+	private Object findFile( final File file )
+	{
+		if ( file != null )
+		{
+			final String name = file.getName();
+			IResource[] folders = getFolders();
+			final LinkedList list = new LinkedList();
+			for ( int i = 0; i < folders.length; ++i )
+			{
+				// The workspace resources are case-sensitive, so we can not just 
+				// append the file name to the folder name and check if the result exists.
+				if ( list.size() > 0 && !searchForDuplicateFileNames() )
+					break;
+				try
+				{
+					folders[i].accept( 
+								new IResourceProxyVisitor()
+									{
+										public boolean visit( IResourceProxy proxy ) throws CoreException
+										{
+											// use equalsIgnoreCase to make it work for Wondows
+											if ( proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase( name ) )
+											{
+												IResource resource = proxy.requestResource();
+												File file1 = new File( resource.getLocation().toOSString() );
+												if ( file1.exists() && file1.equals( file ) )
+													list.addLast( resource );
+												return false;
+											}
+											return true;
+										}
+									},
+								IResource.NONE );
+				}
+				catch( CoreException e )
+				{
+				}
+			}
+			if ( list.size() == 1 || (list.size() > 0 && !searchForDuplicateFileNames()) )
+				return list.getFirst();
+			if ( list.size() > 0 )
+				return list;
+		}
+		return null;
+	}
+
 	private Object cacheLookup( String name )
 	{
 		return fCache.get( name );
@@ -304,6 +308,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			if ( isGeneric == null || isGeneric.trim().length() == 0 )
 				isGeneric = Boolean.FALSE.toString();
 			setGenerated( isGeneric.equals( Boolean.TRUE.toString() ) );
+			initializeFolders();
 			return;
 		}
 		catch( ParserConfigurationException e )
@@ -357,8 +362,53 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	 */
 	public boolean equals( Object obj )
 	{
-		if ( obj instanceof IProjectSourceLocation )
-			return getProject().getName().equals( ((IProjectSourceLocation)obj).getProject().getName() );
+		if ( obj instanceof IProjectSourceLocation && getProject() != null )
+			return getProject().equals( ((IProjectSourceLocation)obj).getProject() );
+		return false;
+	}
+
+	private void initializeFolders()
+	{
+		final LinkedList list = new LinkedList();
+		if ( getProject() != null )
+		{
+			list.add( getProject() );
+			try
+			{
+				getProject().accept( 
+						new IResourceProxyVisitor()
+							{
+								public boolean visit( IResourceProxy proxy ) throws CoreException
+								{
+									switch( proxy.getType() )
+									{
+										case IResource.FILE:
+											return false;
+										case IResource.FOLDER:
+											list.addLast( proxy.requestResource() );
+											return true;
+									}
+									return true;
+								}
+	
+							}, 
+						IResource.NONE );
+			}
+			catch( CoreException e )
+			{
+			}
+		}
+		fFolders = (IResource[])list.toArray( new IResource[list.size()] );
+	}
+
+	protected IResource[] getFolders()
+	{
+		return fFolders;
+	}
+
+	protected boolean searchForDuplicateFileNames()
+	{
+		// for now
 		return false;
 	}
 }

@@ -999,9 +999,10 @@ public class CVisitor {
 				scope = (ICScope) translation.getScope();
 			}
 			
+			boolean typesOnly = (bits & TAGS) != 0;
+			
 			if( scope != null ){
-			    int namespaceType = (bits & TAGS) != 0 ? ICScope.NAMESPACE_TYPE_TAG 
-			            							   : ICScope.NAMESPACE_TYPE_OTHER;
+			    int namespaceType = typesOnly ? ICScope.NAMESPACE_TYPE_TAG : ICScope.NAMESPACE_TYPE_OTHER;
 			    try {
                     binding = scope.getBinding( namespaceType, name.toCharArray() );
                 } catch ( DOMException e ) {
@@ -1010,7 +1011,7 @@ public class CVisitor {
 			    if( binding != null )
 			        return binding;
 			}
-			boolean typesOnly = (bits & TAGS) != 0;
+			
 			if( nodes != null ){
 				for( int i = 0; i < nodes.length; i++ ){
 					IASTNode node = nodes[i];
@@ -1034,13 +1035,7 @@ public class CVisitor {
 					binding = checkForBinding( (IASTStatement) parent, name, typesOnly );
 				}
 				if( binding != null ){
-				    if( (bits & TAGS) != 0 && !(binding instanceof ICompositeType) ||
-				        (bits & TAGS) == 0 &&  (binding instanceof ICompositeType) )
-				    {
-				        binding = null;
-				    } else {
-				        return binding;
-				    }
+				    return binding;
 				}
 			}
 			if( (bits & CURRENT_SCOPE) == 0 )

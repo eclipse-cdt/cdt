@@ -1,8 +1,7 @@
 package org.eclipse.cdt.make.ui;
 
 /*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+ * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,13 +10,17 @@ import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.dialogs.GoToBackProgressMonitorDialog;
+import org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
@@ -33,8 +36,7 @@ import org.eclipse.ui.actions.BuildAction;
 public class TargetBuild {
 
 	/**
-	 * Causes all editors to save any modified resources depending on the user's
-	 * preference.
+	 * Causes all editors to save any modified resources depending on the user's preference.
 	 */
 	static void saveAllResources(IMakeTarget[] targets) {
 
@@ -68,36 +70,74 @@ public class TargetBuild {
 			}
 		}
 	}
-	
+
 	static public void runWithProgressDialog(Shell shell, IMakeTarget[] targets) {
-		ProgressMonitorDialog pd = new ProgressMonitorDialog(shell);
+		GoToBackProgressMonitorDialog pd = new GoToBackProgressMonitorDialog(shell,
+				MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")); //$NON-NLS-1$
 		try {
 			TargetBuild.run(true, pd, targets);
 		} catch (InvocationTargetException e) {
-			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("TargetBuild.execption.message"), e.getTargetException().toString(), e.getTargetException()); //$NON-NLS-1$
+			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("TargetBuild.execption.message"), //$NON-NLS-1$
+					e.getTargetException().toString(), e.getTargetException());
 		}
 	}
-		
+
+	static public void buildTargets(Shell shell, final IMakeTarget[] targets) {
+		if (MakeTargetsPreferencePage.isBuildTargetInBackground()) {
+			new Job(MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")) { //$NON-NLS-1$
+
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask(MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), targets.length); //$NON-NLS-1$
+					try {
+						for (int i = 0; i < targets.length; i++) {
+							final IMakeTarget target = targets[i];
+							IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+
+								public void run(IProgressMonitor monitor) throws CoreException {
+									target.build(new SubProgressMonitor(monitor, 1));
+								}
+							};
+							MakeUIPlugin.getWorkspace().run(runnable, monitor);
+						}
+					} catch (CoreException e) {
+						return e.getStatus();
+					} catch (OperationCanceledException e) {
+					} finally {
+						monitor.done();
+					}
+					return Status.OK_STATUS;
+				}
+			}.schedule();
+		} else {
+			runWithProgressDialog(shell, targets);
+		}
+	}
+
 	static public void run(boolean fork, IRunnableContext context, final IMakeTarget[] targets) throws InvocationTargetException {
 		try {
 			saveAllResources(targets);
 
 			context.run(fork, true, new IRunnableWithProgress() {
+
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					monitor.beginTask(MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), targets.length); //$NON-NLS-1$
 					try {
-						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-							public void run(IProgressMonitor monitor) throws CoreException {
-								monitor.beginTask(MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), targets.length); //$NON-NLS-1$
-								for( int i = 0; i < targets.length; i++) {
-									targets[i].build(new SubProgressMonitor(monitor, 1));
+						for (int i = 0; i < targets.length; i++) {
+							final IMakeTarget target = targets[i];
+							IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+
+								public void run(IProgressMonitor monitor) throws CoreException {
+									target.build(new SubProgressMonitor(monitor, 1));
 								}
-							}
-						};
-						MakeUIPlugin.getWorkspace().run(runnable, monitor);
+							};
+							MakeUIPlugin.getWorkspace().run(runnable, monitor);
+						}
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					} catch (OperationCanceledException e) {
 						throw new InterruptedException(e.getMessage());
+					} finally {
+						monitor.done();
 					}
 				}
 			});

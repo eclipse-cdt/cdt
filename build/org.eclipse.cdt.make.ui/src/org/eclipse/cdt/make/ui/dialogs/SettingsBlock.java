@@ -55,6 +55,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_WORKBENCH_BUILD_AUTO = PREFIX + ".makeWorkbench.auto"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_INCR = PREFIX + ".makeWorkbench.incremental"; //$NON-NLS-1$
 	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
+	private static final String MAKE_WORKBENCH_BUILD_CLEAN = PREFIX + ".makeWorkbench.clean"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeDir.group_label"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$
@@ -70,9 +71,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 	Text targetFull;
 	Text targetIncr;
 	Text targetAuto;
+	Text targetClean;
 	Button fullButton;
 	Button incrButton;
 	Button autoButton;
+	Button cleanButton;
 
 	IMakeBuilderInfo fBuildInfo;
 	Preferences fPrefs;
@@ -154,6 +157,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 				targetAuto.setEnabled(autoButton.getSelection());
 				targetFull.setEnabled(fullButton.getSelection());
 				targetIncr.setEnabled(incrButton.getSelection());
+				targetClean.setEnabled(cleanButton.getSelection());
 				getContainer().updateContainer();
 			}
 
@@ -189,6 +193,14 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetFull.setText(fBuildInfo.getFullBuildTarget());
 		((GridData) (targetFull.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetFull.getLayoutData())).grabExcessHorizontalSpace = true;
+
+		cleanButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_CLEAN));
+		cleanButton.addSelectionListener(selectionAdapter);
+		cleanButton.setSelection(fBuildInfo.isCleanBuildEnabled());
+		targetClean = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
+		targetClean.setText(fBuildInfo.getCleanBuildTarget());
+		((GridData) (targetClean.getLayoutData())).horizontalAlignment = GridData.FILL;
+		((GridData) (targetClean.getLayoutData())).grabExcessHorizontalSpace = true;
 		selectionAdapter.widgetSelected(null);
 	}
 
@@ -308,6 +320,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 				info.setIncrementalBuildTarget(targetIncr.getText().trim());
 				info.setFullBuildEnable(fullButton.getSelection());
 				info.setFullBuildTarget(targetFull.getText().trim());
+				info.setCleanBuildEnable(cleanButton.getSelection());
+				info.setCleanBuildTarget(targetClean.getText().trim());
 				if (buildLocation != null) {
 					info.setBuildLocation(new Path(buildLocation.getText().trim()));
 				}
@@ -352,6 +366,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetIncr.setText(info.getIncrementalBuildTarget());
 		fullButton.setSelection(info.isFullBuildEnabled());
 		targetFull.setText(info.getFullBuildTarget());
+		cleanButton.setSelection(info.isCleanBuildEnabled());
+		targetClean.setText(info.getCleanBuildTarget());
 	}
 
 	boolean isStopOnError() {

@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.make.internal.ui.editor.IMakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.WorkingCopyManager;
+import org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction;
 import org.eclipse.core.resources.IProject;
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IStartup;
@@ -266,4 +268,7 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 		}
         }
 
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		MakeTargetsPreferencePage.initDefaults(store);
+	}
 }

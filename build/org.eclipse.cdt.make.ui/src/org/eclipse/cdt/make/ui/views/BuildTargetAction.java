@@ -33,7 +33,7 @@ public class BuildTargetAction extends SelectionListenerAction {
 	public void run() {
 		if (canBuild()) {
 			IMakeTarget[] targets = (IMakeTarget[]) getSelectedElements().toArray(new IMakeTarget[0]);
-			TargetBuild.runWithProgressDialog(shell, targets);
+			TargetBuild.buildTargets(shell, targets);
 		}
 	}
 

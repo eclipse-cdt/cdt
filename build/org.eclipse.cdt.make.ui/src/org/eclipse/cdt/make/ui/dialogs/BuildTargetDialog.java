@@ -80,7 +80,7 @@ public class BuildTargetDialog extends Dialog {
 		IMakeTarget selected = targetPart.getSelectedTarget();
 		super.okPressed();
 		if (selected != null) {
-			TargetBuild.runWithProgressDialog(getParentShell(), new IMakeTarget[] { selected });
+			TargetBuild.buildTargets(getParentShell(), new IMakeTarget[] { selected });
 		}
 	}
 

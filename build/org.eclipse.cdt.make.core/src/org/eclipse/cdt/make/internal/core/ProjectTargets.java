@@ -62,7 +62,7 @@ public class ProjectTargets {
 			document = parser.parse(input);
 		} catch (Exception e) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Error reading project targets.", e));
+				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("ProjectTargets.error_reading_project_targets"), e)); //$NON-NLS-1$
 		}
 		Node node = document.getFirstChild();
 		if (node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {

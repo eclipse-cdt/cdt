@@ -26,7 +26,8 @@ public class MIPlugin extends Plugin {
 	private static MIPlugin plugin;
 
 	/**
-	 * The constructor.
+	 * The constructor
+	 * @see org.eclipse.core.runtime.Plugin#Plugin(IPluginDescriptor)
 	 */
 	public MIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -41,12 +42,21 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
-	 * Create a MI Session.
+	 * Method createMISession.
+	 * @param in
+	 * @param out
+	 * @return MISession
 	 */
 	public MISession createMISession(InputStream in, OutputStream out) {
 		return new MISession(in, out);
 	}
 
+	/**
+	 * Method createCSession.
+	 * @param program
+	 * @return ICDISession
+	 * @throws IOException
+	 */
 	public ICDISession createCSession(String program) throws IOException {
 		String[]args = new String[]{"gdb", "-q", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
@@ -58,7 +68,7 @@ public class MIPlugin extends Plugin {
 			session.postCommand(bkpt);
 			MIInfo info = bkpt.getMIInfo();
 			if (info == null) {
-				throw new IOException("Timedout");
+				throw new IOException("No answer");
 			}
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
@@ -67,6 +77,13 @@ public class MIPlugin extends Plugin {
 		return new CSession(session);
 	}
 
+	/**
+	 * Method createCSession.
+	 * @param program
+	 * @param core
+	 * @return ICDISession
+	 * @throws IOException
+	 */
 	public ICDISession createCSession(String program, String core) throws IOException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program, core};
 		Process gdb = Runtime.getRuntime().exec(args);
@@ -74,6 +91,13 @@ public class MIPlugin extends Plugin {
 		return new CSession(session);
 	}
 
+	/**
+	 * Method createCSession.
+	 * @param program
+	 * @param pid
+	 * @return ICDISession
+	 * @throws IOException
+	 */
 	public ICDISession createCSession(String program, int pid) throws IOException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
@@ -84,13 +108,14 @@ public class MIPlugin extends Plugin {
 			session.postCommand(attach);
 			MIInfo info = attach.getMIInfo();
 			if (info == null) {
-				throw new IOException("Timedout");
+				throw new IOException("No answer");
 			}
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
 		}
 		return new CSession(session);
 	}
+	
 	
 	public static void debugLog(String message) {
 	//	if ( getDefault().isDebugging() ) {

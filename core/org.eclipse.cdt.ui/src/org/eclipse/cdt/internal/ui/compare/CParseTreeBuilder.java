@@ -105,7 +105,7 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterNamespaceDefinition(org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition)
 	 */
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
-		push(ICElement.C_NAMESPACE, namespaceDefinition.getName(), namespaceDefinition.getStartingOffset());;
+		push(ICElement.C_NAMESPACE, namespaceDefinition.getName(), namespaceDefinition.getStartingOffset());
 	}
 
 	/* (non-Javadoc)

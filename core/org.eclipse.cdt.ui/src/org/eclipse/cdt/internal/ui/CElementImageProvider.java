@@ -152,7 +152,7 @@ public class CElementImageProvider {
 			case ICElement.C_CLASS:
 			case ICElement.C_TEMPLATE_CLASS:
 				return CPluginImages.DESC_OBJS_CLASS;
-				
+
 			case ICElement.C_UNION:
 			case ICElement.C_TEMPLATE_UNION:
 				return CPluginImages.DESC_OBJS_UNION;
@@ -195,7 +195,7 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_MACRO;
 				
 			case ICElement.C_NAMESPACE:
-				return CPluginImages.DESC_OBJS_CONTAINER;
+				return CPluginImages.DESC_OBJS_NAMESPACE;
 		}
 		return null;
 	}
@@ -461,7 +461,7 @@ public class CElementImageProvider {
 	}
 		
 	public static ImageDescriptor getVariableImageDescriptor(){
-		return CPluginImages.DESC_OBJS_VARIABLE;	
+		return getImageDescriptor(ICElement.C_VARIABLE);
 	}
 
 	public static ImageDescriptor getLocalVariableImageDescriptor(){
@@ -469,27 +469,27 @@ public class CElementImageProvider {
 	}
 	
 	public static ImageDescriptor getFunctionImageDescriptor(){
-		return CPluginImages.DESC_OBJS_FUNCTION;
+		return getImageDescriptor(ICElement.C_FUNCTION);
 	}
 	
 	public static ImageDescriptor getVariableDeclarationImageDescriptor(){
-		return CPluginImages.DESC_OBJS_VAR_DECLARARION;	
+		return getImageDescriptor(ICElement.C_VARIABLE_DECLARATION);
 	}
 	
 	public static ImageDescriptor getFunctionDeclarationImageDescriptor(){
-		return CPluginImages.DESC_OBJS_DECLARARION;	
+		return getImageDescriptor(ICElement.C_FUNCTION_DECLARATION);
 	}
 	
 	public static ImageDescriptor getIncludeImageDescriptor(){
-		return CPluginImages.DESC_OBJS_INCLUDE;	
+		return getImageDescriptor(ICElement.C_INCLUDE);
 	}
 	
 	public static ImageDescriptor getMacroImageDescriptor(){
-		return CPluginImages.DESC_OBJS_MACRO;	
+		return getImageDescriptor(ICElement.C_MACRO);
 	}
 	
 	public static ImageDescriptor getNamespaceImageDescriptor(){
-		return CPluginImages.DESC_OBJS_CONTAINER;	
+		return getImageDescriptor(ICElement.C_NAMESPACE);
 	}
 
 }

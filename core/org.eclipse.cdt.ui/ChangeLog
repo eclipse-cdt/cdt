@@ -1,5 +1,16 @@
 2004-03-30 Alain Magloire
 
+	Change the icons of the Namespace, folks found it
+	confusing to reuse the same icons as the Java package.
+
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/compare/CParserTreeBuilder.java
+
+	* icons/full/obj16/namesapce_obj.gif
+
+2004-03-30 Alain Magloire
+
 	Fix PR 56734
 
 	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePage.java

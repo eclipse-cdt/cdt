@@ -48,12 +48,12 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 	}
 
 
-	public int matchLevel(ISourceElementCallbackDelegate node) {
+	public int matchLevel(ISourceElementCallbackDelegate node, LimitTo limit ) {
 		if( !(node instanceof IASTField) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
-		if( super.matchLevel( node ) == IMPOSSIBLE_MATCH ){
+		if( super.matchLevel( node, limit ) == IMPOSSIBLE_MATCH ){
 			return IMPOSSIBLE_MATCH;
 		}
 		

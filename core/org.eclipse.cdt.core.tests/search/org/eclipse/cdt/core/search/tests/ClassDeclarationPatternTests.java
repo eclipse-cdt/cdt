@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
+import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 
 
 /**
@@ -246,4 +247,14 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		assertEquals( matches.size(), 2 );
 	}
 	
+	public void testAllOccurences(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", TYPE, ALL_OCCURRENCES, true );
+		assertTrue( pattern instanceof OrPattern );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		
+		assertEquals( matches.size(), 6 );
+	}
 }

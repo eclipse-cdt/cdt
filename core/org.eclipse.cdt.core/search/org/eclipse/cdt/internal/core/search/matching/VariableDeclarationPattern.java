@@ -49,8 +49,8 @@ public class VariableDeclarationPattern extends CSearchPattern {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchPattern#matchLevel(org.eclipse.cdt.core.parser.ast.IASTOffsetableElement)
 	 */
-	public int matchLevel(ISourceElementCallbackDelegate node) {
-		if( !(node instanceof IASTVariable) ){
+	public int matchLevel(ISourceElementCallbackDelegate node, LimitTo limit ) {
+		if( !(node instanceof IASTVariable) || !canAccept( limit ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		

@@ -32,7 +32,8 @@ public interface ICSearchPattern extends ICSearchConstants{
 	 * @param node
 	 * @return
 	 */
-	int matchLevel( ISourceElementCallbackDelegate node );
+	int matchLevel( ISourceElementCallbackDelegate node, LimitTo limit );
 	
-	LimitTo   getLimitTo();
+	LimitTo getLimitTo();
+	boolean	canAccept( LimitTo limit );
 }

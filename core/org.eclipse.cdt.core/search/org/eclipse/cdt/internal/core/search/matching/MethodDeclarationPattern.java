@@ -45,12 +45,12 @@ public class MethodDeclarationPattern extends FunctionDeclarationPattern {
 	}
 
 
-	public int matchLevel(ISourceElementCallbackDelegate node) {
-		if( !(node instanceof IASTMethod) ){
+	public int matchLevel(ISourceElementCallbackDelegate node, LimitTo limit ) {
+		if( !(node instanceof IASTMethod) || !canAccept( limit ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
-		if( super.matchLevel( node ) == IMPOSSIBLE_MATCH ){
+		if( super.matchLevel( node, limit ) == IMPOSSIBLE_MATCH ){
 			return IMPOSSIBLE_MATCH;
 		}
 		

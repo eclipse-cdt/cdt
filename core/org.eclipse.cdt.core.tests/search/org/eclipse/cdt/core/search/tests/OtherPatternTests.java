@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
+import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.core.search.matching.VariableDeclarationPattern;
 
 /**
@@ -144,6 +145,28 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		IMatch match = (IMatch) matches.iterator().next();
 		assertTrue( match.getParentName().equals( "" ) );		
+	}
+	
+	public void testOrPattern(){
+		OrPattern orPattern = new OrPattern();
+		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::B::e", ENUM, REFERENCES, true ) );
+		orPattern.addPattern( SearchEngine.createSearchPattern( "Hea*", CLASS, DECLARATIONS, true ) );
+		
+		search( workspace, orPattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		
+		assertEquals( matches.size(), 3 );
+		
+		orPattern = new OrPattern();
+		orPattern.addPattern( SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true ) );
+		orPattern.addPattern( SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true ) );
+		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::NS2", NAMESPACE, REFERENCES, true ) );
+		orPattern.addPattern( SearchEngine.createSearchPattern( "A::B::f( A )", METHOD, DECLARATIONS, true ) );
+		
+		search( workspace, orPattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 6 );
 	}
 
 }

@@ -57,13 +57,17 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		_caseSensitive = caseSensitive;
 		_limitTo = limitTo;
 	}
-	
+
+	public CSearchPattern() {
+		super();
+	}
+
 	public LimitTo getLimitTo(){
 		return _limitTo;
 	}
 
-	public CSearchPattern() {
-		super();
+	public boolean canAccept(LimitTo limit) {
+		return ( limit == getLimitTo() );
 	}
 
 	public static CSearchPattern createPattern( String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive ){
@@ -97,6 +101,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createNamespacePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		if( limitTo == ALL_OCCURRENCES ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createNamespacePattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createNamespacePattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		LinkedList list = scanForNames( scanner, null );
 		
@@ -114,6 +125,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createFunctionPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		if( limitTo == ALL_OCCURRENCES ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createFunctionPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFunctionPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFunctionPattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+		
 		int index = patternString.indexOf( '(' );
 		
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
@@ -139,6 +158,12 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createVariablePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		if( limitTo == ALL_OCCURRENCES ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createVariablePattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createVariablePattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+			return orPattern;
+		}
 		return new VariableDeclarationPattern( patternString.toCharArray(), matchMode, limitTo, caseSensitive );
 	}
 
@@ -150,6 +175,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createFieldPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		if( limitTo == ALL_OCCURRENCES ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createFieldPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFieldPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		LinkedList list = scanForNames( scanner, null );
 		
@@ -167,7 +199,15 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createMethodPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		
+
+		if( limitTo == ALL_OCCURRENCES ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createMethodPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createMethodPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+			orPattern.addPattern( createMethodPattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+				
 		int index = patternString.indexOf( '(' );
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
@@ -197,6 +237,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createClassPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		
+		if( limitTo == ALL_OCCURRENCES ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createClassPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createClassPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
 		
 		IToken token = null;

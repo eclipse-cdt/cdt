@@ -57,9 +57,12 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		classKind = kind;
 	}
 	
-	public int matchLevel( ISourceElementCallbackDelegate node ){
+	public int matchLevel( ISourceElementCallbackDelegate node, LimitTo limit ){
 		
 		if( !( node instanceof IASTClassSpecifier ) && !( node instanceof IASTEnumerationSpecifier ) )
+			return IMPOSSIBLE_MATCH;
+			
+		if( ! canAccept( limit ) )
 			return IMPOSSIBLE_MATCH;
 		
 		String nodeName = ((IASTOffsetableNamedElement)node).getName();
@@ -205,5 +208,4 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		
 		return true;
 	}
-	
 }

@@ -97,7 +97,6 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 
 	public void acceptProblem(IProblem problem) 								{	}
-	public void acceptMacro(IASTMacro macro) 									{	}
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
@@ -116,65 +115,69 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) 	{	}
 	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) 	{	}
 	
+	public void acceptMacro(IASTMacro macro){
+		check( DECLARATIONS, macro );	
+	}
+	
 	public void acceptVariable(IASTVariable variable){
-		check( DECLARATIONS, VariableDeclarationPattern.class, variable );   
+		check( DECLARATIONS, variable );   
 	}
 	
 	public void acceptField(IASTField field){ 
-		check( DECLARATIONS, FieldDeclarationPattern.class, field ); 	   
+		check( DECLARATIONS, field ); 	   
 	}
 	
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){ 
-		check( DECLARATIONS, ClassDeclarationPattern.class, enumeration );
+		check( DECLARATIONS, enumeration );
 		Iterator iter = enumeration.getEnumerators();
 		while( iter.hasNext() ){
-			check ( DECLARATIONS, FieldDeclarationPattern.class, (ISourceElementCallbackDelegate) iter.next() );
+			check ( DECLARATIONS, (ISourceElementCallbackDelegate) iter.next() );
 		}  
 	}
 		
 	public void acceptFunctionDeclaration(IASTFunction function){
-		check( DECLARATIONS, FunctionDeclarationPattern.class, function );
+		check( DECLARATIONS, function );
 	}
 	
 	public void acceptMethodDeclaration(IASTMethod method){
-		check( DECLARATIONS, MethodDeclarationPattern.class, method );
+		check( DECLARATIONS, method );
 	}
 		
 	public void acceptClassReference(IASTClassReference reference) {
-		check( REFERENCES, ClassDeclarationPattern.class, reference );
+		check( REFERENCES, reference );
 	}
 	
 	public void acceptNamespaceReference( IASTNamespaceReference reference ){
-		check( REFERENCES, NamespaceDeclarationPattern.class, reference );
+		check( REFERENCES, reference );
 	}
 	
 	public void acceptVariableReference( IASTVariableReference reference ){
-		check( REFERENCES, VariableDeclarationPattern.class, reference );		
+		check( REFERENCES, reference );		
 	}
 	
 	public void acceptFieldReference( IASTFieldReference reference ){
-		check( REFERENCES, FieldDeclarationPattern.class, reference );
+		check( REFERENCES, reference );
 	}
 	
 	public void acceptEnumerationReference( IASTEnumerationReference reference ){
-		check( REFERENCES, ClassDeclarationPattern.class, reference );
+		check( REFERENCES, reference );
 	}
 	
 	public void acceptFunctionReference( IASTFunctionReference reference ){
-		check( REFERENCES, FunctionDeclarationPattern.class,  reference );
+		check( REFERENCES, reference );
 	}
 	
 	public void acceptMethodReference( IASTMethodReference reference ){
-		check( REFERENCES, MethodDeclarationPattern.class, reference );	
+		check( REFERENCES, reference );	
 	}
 	
 	public void enterFunctionBody(IASTFunction function){
-		check( DEFINITIONS, FunctionDeclarationPattern.class, function );
+		check( DEFINITIONS, function );
 		pushScope( function );
 	}
 	
 	public void enterMethodBody(IASTMethod method) {
-		check( DEFINITIONS, MethodDeclarationPattern.class, method );
+		check( DEFINITIONS, method );
 		pushScope( method );
 	}
 	
@@ -183,12 +186,12 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 	
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
-		check( DECLARATIONS, NamespaceDeclarationPattern.class, namespaceDefinition );			
+		check( DECLARATIONS, namespaceDefinition );			
 		pushScope( namespaceDefinition );
 	}
 
 	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
-		check( DECLARATIONS, ClassDeclarationPattern.class, classSpecification );		
+		check( DECLARATIONS, classSpecification );		
 		pushScope( classSpecification );
 	}
 	
@@ -366,23 +369,21 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		}
 	}
 
-	private void check( LimitTo limit, Class patternClass, ISourceElementCallbackDelegate node ){
-		if( searchPattern.getLimitTo() != limit && searchPattern.getLimitTo() != ALL_OCCURRENCES )
+	private void check( LimitTo limit, ISourceElementCallbackDelegate node ){
+		if( !searchPattern.canAccept( limit ) )
 			return;
 			
-		if( searchPattern.getClass() == patternClass ){
-			int level = ICSearchPattern.IMPOSSIBLE_MATCH;
-			
-			if( node instanceof IASTReference ){
-				level = searchPattern.matchLevel( ((IASTReference)node).getReferencedElement() );
-			} else  {
-				level = searchPattern.matchLevel(  node );
-			} 
-			
-			if( level != ICSearchPattern.IMPOSSIBLE_MATCH )
-			{
-				report( node, level );
-			}
+		int level = ICSearchPattern.IMPOSSIBLE_MATCH;
+		
+		if( node instanceof IASTReference ){
+			level = searchPattern.matchLevel( ((IASTReference)node).getReferencedElement(), limit );
+		} else  {
+			level = searchPattern.matchLevel(  node, limit );
+		} 
+		
+		if( level != ICSearchPattern.IMPOSSIBLE_MATCH )
+		{
+			report( node, level );
 		}
 	}
 	

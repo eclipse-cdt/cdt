@@ -1,3 +1,8 @@
+2003-08-06 Andrew Niefer
+	- Create OrPattern which matches for search if any of its constituent patterns matches
+	- modified MatchLocator to support the OrPattern
+	- searching for All occurences now uses the OrPattern
+
 2003-08-01 Andrew Niefer
 	- Modified BasicSearchResultCollector to only accept matches it has not already seen
 	- fixed bug in finding a resource when entering includes

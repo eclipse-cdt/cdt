@@ -425,6 +425,9 @@ public class CModelManager implements IResourceChangeListener {
 			}
 		} catch (CoreException e) {
 		}
+		if (null == format) {
+			format = getDefaultBinaryParserFormat();
+		}
 		return format;
 	}
 

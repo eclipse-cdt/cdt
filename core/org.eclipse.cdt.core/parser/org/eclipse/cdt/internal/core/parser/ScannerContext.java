@@ -15,7 +15,6 @@ import java.io.Reader;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.IScannerContext.ContextKind;
 
 public class ScannerContext implements IScannerContext
 {

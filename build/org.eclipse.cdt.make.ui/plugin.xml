@@ -255,7 +255,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="MakeFile Editor"
-            icon="icons/full/ctool16/makefile.gif"
+            icon="icons/ctool16/makefile.gif"
             filenames="Makefile"
             class="org.eclipse.cdt.make.internal.ui.editor.MakeTextEditor"
             id="org.eclipse.cdt.make.editor">

@@ -55,7 +55,7 @@ public class MakePartitionScanner extends RuleBasedPartitionScanner {
 	public MakePartitionScanner() {
 		super();
 
-		IToken tInternal = new Token(MAKE_INTERNAL);
+//		IToken tInternal = new Token(MAKE_INTERNAL);
 		IToken tComment = new Token(MAKE_COMMENT);
 		IToken tMacro = new Token(MAKE_MACRO_ASSIGNEMENT);
 		IToken tInclude = new Token(MAKE_INCLUDE_BLOCK);

@@ -6,9 +6,9 @@ package org.eclipse.cdt.make.ui.wizards;
  */
 
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
-import org.eclipse.cdt.ui.ICOptionContainer;
-import org.eclipse.cdt.ui.ReferenceBlock;
-import org.eclipse.cdt.ui.TabFolderOptionBlock;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;

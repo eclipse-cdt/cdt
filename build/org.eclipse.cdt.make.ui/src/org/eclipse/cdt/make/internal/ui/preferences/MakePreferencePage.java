@@ -12,7 +12,7 @@ package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.ui.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Composite;

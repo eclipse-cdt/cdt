@@ -29,29 +29,32 @@ public class BuildTargetAction extends ActionDelegate implements IObjectActionDe
 
 	IWorkbenchPart fPart;
 	IContainer fContainer;
-	
+
 	public void run(IAction action) {
-		if ( fContainer != null ) {
+		if (fContainer != null) {
 			BuildTargetDialog dialog = new BuildTargetDialog(fPart.getSite().getShell(), fContainer);
 			String name;
 			try {
 				name = (String) fContainer.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"));
 				IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(fContainer, name);
-				dialog.setTarget(target);	
+				if (target != null)
+					dialog.setTarget(new IMakeTarget[] { target });
 			} catch (CoreException e) {
 			}
 			dialog.open();
 			IMakeTarget target = dialog.getTarget();
-			if ( target != null ) {
+			if (target != null) {
 				try {
-					fContainer.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), target.getName());
+					fContainer.setSessionProperty(
+						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"),
+						target.getName());
 				} catch (CoreException e1) {
 				}
 			}
 		}
 	}
 
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {		
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fPart = targetPart;
 	}
 
@@ -59,12 +62,12 @@ public class BuildTargetAction extends ActionDelegate implements IObjectActionDe
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		if ( selection instanceof IStructuredSelection ) {
-			IStructuredSelection sel = (IStructuredSelection)selection;
-			if ( sel.getFirstElement() instanceof ICContainer ) {
-				fContainer = (IContainer) ((ICContainer)sel.getFirstElement()).getUnderlyingResource();
-			} else if (sel.getFirstElement() instanceof IContainer ) {
-				fContainer = (IContainer)sel.getFirstElement();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection sel = (IStructuredSelection) selection;
+			if (sel.getFirstElement() instanceof ICContainer) {
+				fContainer = (IContainer) ((ICContainer) sel.getFirstElement()).getUnderlyingResource();
+			} else if (sel.getFirstElement() instanceof IContainer) {
+				fContainer = (IContainer) sel.getFirstElement();
 			} else {
 				fContainer = null;
 			}

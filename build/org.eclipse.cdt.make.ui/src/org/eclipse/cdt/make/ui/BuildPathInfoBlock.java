@@ -18,8 +18,8 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
-import org.eclipse.cdt.ui.AbstractCOptionPage;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -276,16 +276,15 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	}
 
 	private String[] parseStringToList(String syms) {
-		String[] empty = new String[0];
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";");
 			ArrayList list = new ArrayList(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
-			return (String[]) list.toArray(empty);
+			return (String[]) list.toArray(new String[list.size()]);
 		}
-		return empty;
+		return new String[0];
 	}
 
 	/*

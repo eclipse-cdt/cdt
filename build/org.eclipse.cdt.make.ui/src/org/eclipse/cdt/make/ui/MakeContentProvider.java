@@ -1,4 +1,4 @@
-package org.eclipse.cdt.make.ui.views;
+package org.eclipse.cdt.make.ui;
 
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
@@ -23,12 +23,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
 public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener {
-	protected TreeViewer viewer;
+	protected StructuredViewer viewer;
 
 	/**
 	 * Constructor for MakeContentProvider
@@ -86,7 +85,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		if (this.viewer == null) {
 			MakeCorePlugin.getDefault().getTargetManager().addListener(this);
 		}
-		this.viewer = (TreeViewer) viewer;
+		this.viewer = (StructuredViewer) viewer;
 		IWorkspace oldWorkspace = null;
 		IWorkspace newWorkspace = null;
 		if (oldInput instanceof IWorkspace) {

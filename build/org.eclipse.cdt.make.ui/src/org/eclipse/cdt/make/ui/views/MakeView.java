@@ -5,6 +5,7 @@ package org.eclipse.cdt.make.ui.views;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.make.ui.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;

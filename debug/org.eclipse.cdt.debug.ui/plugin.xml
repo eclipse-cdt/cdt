@@ -109,7 +109,7 @@
          </action>
       </viewerContribution>
       <viewerContribution
-            targetID="#RulerContext"
+            targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
          <action
                label="%EnableBreakpoint.label"

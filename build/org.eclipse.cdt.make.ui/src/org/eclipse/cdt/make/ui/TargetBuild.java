@@ -98,10 +98,9 @@ public class TargetBuild {
 				return Status.OK_STATUS;
 			}
 		};
+		targetJob.schedule();
 
-		if (MakeTargetsPreferencePage.isBuildTargetInBackground()) {
-			targetJob.schedule();
-		} else {
+		if (!MakeTargetsPreferencePage.isBuildTargetInBackground()) {
 			runWithProgressDialog(shell, targetJob);
 		}
 	}

@@ -22,6 +22,10 @@ public class CygwinGDBDebugger extends GDBDebugger {
 	static final CygwinCommandFactory commandFactory =
 		new CygwinCommandFactory();
 
+	/* Cygwin does not have any special initialization like solib paths etc.. */
+	protected void initializeLibraries(ILaunchConfiguration config, CSession session) throws CDIException {
+	}
+
 	public ICDISession createLaunchSession(
 		ILaunchConfiguration config,
 		IFile exe)

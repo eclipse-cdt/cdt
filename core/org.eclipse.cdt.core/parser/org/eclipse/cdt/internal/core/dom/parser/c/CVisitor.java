@@ -250,7 +250,6 @@ public class CVisitor {
 		private IASTName[] declsFound = null;
 		int numFound = 0;
 		IBinding binding = null;
-		boolean functionDeclared = false;
 		boolean compositeTypeDeclared = false;
 		
 		private void addName(IASTName name) {
@@ -304,9 +303,8 @@ public class CVisitor {
 				parent = parent.getParent();
 
 			if ( parent instanceof IASTDeclaration ) {
-				if ( !functionDeclared && parent != null && parent instanceof IASTFunctionDefinition ) {
+				if ( parent != null && parent instanceof IASTFunctionDefinition ) {
 					if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
-						functionDeclared = true;
 						addName(declarator.getName());
 					}
 				} else if ( parent instanceof IASTSimpleDeclaration ) {
@@ -315,11 +313,6 @@ public class CVisitor {
 						return PROCESS_CONTINUE;
 					
 					if ( (declarator.getName() != null && declarator.getName().resolveBinding() == binding) ) {
-						if ( declarator instanceof IASTStandardFunctionDeclarator ||
-								declarator instanceof ICASTKnRFunctionDeclarator ) {
-							functionDeclared = true;
-						}
-						
 						addName(declarator.getName());
 					}
 				} 

@@ -832,8 +832,9 @@ public class AST2Tests extends AST2BaseTest {
 
       // test tu.getDeclarations(IBinding)
       IASTName[] decls = tu.getDeclarations(f_name1.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], f_name1);
+      assertEquals(decls[1], f_name2);
 
       decls = tu.getDeclarations(name_param1.resolveBinding());
       assertEquals(decls.length, 2);
@@ -841,8 +842,9 @@ public class AST2Tests extends AST2BaseTest {
       assertEquals(decls[1], name_param2);
 
       decls = tu.getDeclarations(f_name2.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], f_name1);
+      assertEquals(decls[1], f_name2);
 
       decls = tu.getDeclarations(name_param2.resolveBinding());
       assertEquals(decls.length, 2);
@@ -944,8 +946,9 @@ public class AST2Tests extends AST2BaseTest {
 
       // test tu.getDeclarations(IBinding)
       IASTName[] decls = tu.getDeclarations(name_f.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], name_f);
+      assertEquals(decls[1], name_fdef);
 
       decls = tu.getDeclarations(gdef.getDeclarator().getName()
             .resolveBinding());
@@ -953,12 +956,14 @@ public class AST2Tests extends AST2BaseTest {
       assertEquals(decls[0], gdef.getDeclarator().getName());
 
       decls = tu.getDeclarations(name_fcall.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], name_f);
+      assertEquals(decls[1], name_fdef);
 
       decls = tu.getDeclarations(name_fdef.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], name_f);
+      assertEquals(decls[1], name_fdef);
    }
 
    public void testForLoop() throws Exception {

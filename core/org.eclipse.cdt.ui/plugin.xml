@@ -30,7 +30,7 @@
    </requires>
 
 
-   <extension-point id="CCompletionContributor" name="%completionContributorName"/>
+   <extension-point id="CCompletionContributor" name="%completionContributorName" schema="schema/CCompletionContributor.exsd"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>

@@ -19,6 +19,7 @@ import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
+import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -66,6 +67,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	private ActionGroup fSelectionSearchGroup;
+	private ActionGroup fRefactoringActionGroup;
 	
 	public CContentOutlinePage(CEditor editor) {
 		this("#TranslationUnitOutlinerContext", editor); //$NON-NLS-1$
@@ -130,7 +132,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	/**
 	 * called to create the context menu of the outline
 	 */
-	protected void contextMenuAboutToShow(IMenuManager menu) {		
+	protected void contextMenuAboutToShow(IMenuManager menu) {
+		CUIPlugin.createStandardGroups(menu);
+		
 		if (OpenIncludeAction.canActionBeAdded(getSelection())) {
 			menu.add(fOpenIncludeAction);
 		}
@@ -149,6 +153,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 		
 		fSelectionSearchGroup.fillContextMenu(menu);
+		fRefactoringActionGroup.fillContextMenu(menu);
 	}
 	
 	/**
@@ -176,7 +181,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		Menu menu= manager.createContextMenu(control);
 		control.setMenu(menu);
 
-		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		
 		// register global actions
 		IPageSite site= getSite();
@@ -186,6 +190,10 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION, fTogglePresentation);
 		
 		registerToolbarActions();
+
+		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		fRefactoringActionGroup = new RefactoringActionGroup(this);
+		
 		
 		IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
 		IDocumentProvider provider= fEditor.getDocumentProvider();

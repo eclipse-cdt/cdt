@@ -64,5 +64,19 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.opencview"</code>).
 	 */
 	public static final String OPEN_CVIEW= "org.eclipse.cdt.ui.edit.opencview"; //$NON-NLS-1$
- 
+	/**
+	 * Action definition ID of the refactor -> rename element action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.rename.element"</code>).
+	 */
+	public static final String RENAME_ELEMENT= "org.eclipse.cdt.ui.edit.text.rename.element"; //$NON-NLS-1$
+	/**
+	 * Action definition ID of the refactor -> undo action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.undo.action"</code>).
+	 */
+	public static final String UNDO_ACTION= "org.eclipse.cdt.ui.edit.text.undo.action"; //$NON-NLS-1$
+	/**
+	 * Action definition ID of the refactor -> redo action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.redo.action"</code>).
+	 */
+	public static final String REDO_ACTION= "org.eclipse.cdt.ui.edit.text.redo.action"; //$NON-NLS-1$	
 }

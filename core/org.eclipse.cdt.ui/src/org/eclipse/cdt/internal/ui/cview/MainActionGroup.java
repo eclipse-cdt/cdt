@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -82,6 +83,7 @@ public class MainActionGroup extends CViewActionGroup {
 	WorkingSetFilterActionGroup workingSetGroup;
 
 	SelectionSearchGroup selectionSearchGroup;
+	RefactoringActionGroup refactoringActionGroup;
 	
 	public MainActionGroup(CView cview) {
 		super(cview);
@@ -164,7 +166,7 @@ public class MainActionGroup extends CViewActionGroup {
 		fSearchDialogAction = new SearchDialogAction(viewer, getCView().getViewSite().getWorkbenchWindow());
 		
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
-		
+		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite());	
 		
 	}
 
@@ -178,6 +180,8 @@ public class MainActionGroup extends CViewActionGroup {
 
 		if (resources.isEmpty()) {
 			new NewWizardMenu(menu, getCView().getSite().getWorkbenchWindow(), false);
+			menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+			refactoringActionGroup.fillContextMenu(menu);						
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 			menu.add(new Separator());
@@ -207,6 +211,7 @@ public class MainActionGroup extends CViewActionGroup {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 		addPropertyMenu(menu, resources);
+		
 	}
 	/**
 	 * Extends the superclass implementation to set the context in the

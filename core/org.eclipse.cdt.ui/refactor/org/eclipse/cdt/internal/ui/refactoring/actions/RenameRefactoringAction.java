@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.refactoring.actions;
 
 
 import org.eclipse.cdt.internal.corext.refactoring.RenameRefactoring;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.UserInterfaceStarter;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -26,6 +27,13 @@ import org.eclipse.ui.IWorkbenchSite;
 
 
 public class RenameRefactoringAction extends SelectionDispatchAction {
+
+	private CEditor fEditor;
+
+	public RenameRefactoringAction(CEditor editor) {
+		this(editor.getEditorSite());
+		fEditor= editor;
+	}
 
 	public RenameRefactoringAction(IWorkbenchSite site) {
 		super(site);

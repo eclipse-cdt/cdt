@@ -16,36 +16,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.cdt.internal.corext.refactoring.base.ChangeContext;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.corext.refactoring.base.RefactoringStatus;
 import org.eclipse.cdt.internal.corext.refactoring.base.RefactoringStatusEntry;
 import org.eclipse.cdt.internal.corext.refactoring.base.UndoManagerAdapter;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.AbortChangeExceptionHandler;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
-abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
+abstract class UndoManagerAction extends SelectionDispatchAction {
 
 	private static final int MAX_LENGTH= 30;
 
@@ -54,7 +52,8 @@ abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow fWorkbenchWindow;
 	private UndoManagerAdapter fUndoManagerListener;
 
-	public UndoManagerAction() {
+	public UndoManagerAction(IWorkbenchSite site) {
+		super(site);
 	}
 	
 	protected abstract IRunnableWithProgress createOperation(ChangeContext context);
@@ -108,16 +107,19 @@ abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
 	 */
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
-	 */
+	public void run(IStructuredSelection selection) {
+		run();
+	}	
 	public void run(IAction action) {
+		run();
+	}	
+	/* (non-Javadoc)
+	 */
+	public void run() {
 		Shell parent= fWorkbenchWindow.getShell();
 		ChangeContext context= new ChangeContext(new AbortChangeExceptionHandler(), getUnsavedFiles());
 		IRunnableWithProgress op= createOperation(context);

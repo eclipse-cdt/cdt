@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.cview.CView;
@@ -52,6 +53,9 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -469,4 +473,26 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		return display;		
 	}	
+
+	/**
+	 * Creates the CUIplugin standard groups in a context menu.
+	 */
+	public static void createStandardGroups(IMenuManager menu) {
+		if (!menu.isEmpty())
+			return;
+			
+		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
+		menu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_SHOW));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
+		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
+		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
+	}
+
+	
 }

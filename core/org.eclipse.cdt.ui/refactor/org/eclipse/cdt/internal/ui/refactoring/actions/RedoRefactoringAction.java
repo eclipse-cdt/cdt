@@ -13,26 +13,33 @@ package org.eclipse.cdt.internal.ui.refactoring.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-
 import org.eclipse.cdt.core.model.CModelException;
-
 import org.eclipse.cdt.internal.corext.refactoring.base.ChangeAbortException;
 import org.eclipse.cdt.internal.corext.refactoring.base.ChangeContext;
 import org.eclipse.cdt.internal.corext.refactoring.base.IUndoManager;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.corext.refactoring.base.UndoManagerAdapter;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchSite;
 
 public class RedoRefactoringAction extends UndoManagerAction {
 
 	private int fPatternLength;
+	private CEditor fEditor;
 
-	public RedoRefactoringAction() {
+	public RedoRefactoringAction(CEditor editor) {
+		this(editor.getEditorSite());
+		fEditor= editor;
+	}
+	
+	public RedoRefactoringAction(IWorkbenchSite site) {
+		super(site);
+		init(site.getWorkbenchWindow());
 	}
 
 	/* (non-Javadoc)
@@ -86,21 +93,26 @@ public class RedoRefactoringAction extends UndoManagerAction {
 	}
 		
 	/* (non-Javadoc)
-	 * Method declared in IActionDelegate
+	 */
+	public void selectionChanged(ISelection s) {
+		selectionChanged(this, s);
+	}	
+	
+	/* (non-Javadoc)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
-//		if (!isHooked()) {
+		if (!isHooked()) {
 			hookListener(action);
-			fPatternLength= RefactoringMessages.getString("RedoRefactoringAction.extendedLabel").length(); //$NON-NLS-1$
-			IUndoManager undoManager = Refactoring.getUndoManager();
-			if (undoManager.anythingToRedo()) {
-				if (undoManager.peekRedoName() != null)
-					action.setText(getActionText());
-				action.setEnabled(true);
-			} else {
-				action.setEnabled(false);
-			}
-//		}
+		}
+		fPatternLength= RefactoringMessages.getString("RedoRefactoringAction.extendedLabel").length(); //$NON-NLS-1$
+		IUndoManager undoManager = Refactoring.getUndoManager();
+		if (undoManager.anythingToRedo()) {
+			if (undoManager.peekRedoName() != null)
+				action.setText(getActionText());
+			action.setEnabled(true);
+		} else {
+			action.setEnabled(false);
+		}
 	}	
 	
 	private String getActionText() {

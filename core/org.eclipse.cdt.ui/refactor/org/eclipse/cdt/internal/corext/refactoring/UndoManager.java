@@ -70,7 +70,7 @@ public class UndoManager implements IUndoManager {
 				case ICElement.C_CCONTAINER:
 					// If we did something different than changing a child we flush the the undo / redo stack.
 					if (kind != ICElementDelta.CHANGED 
-						|| ((details & ICElementDelta.F_CHILDREN) == 0))  {
+						&& ((details & ICElementDelta.F_CHILDREN) == 0))  {
 						flush();
 						return false;
 					}

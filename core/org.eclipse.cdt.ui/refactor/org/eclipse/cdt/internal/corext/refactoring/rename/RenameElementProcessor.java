@@ -383,6 +383,10 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 					ICSearchConstants.FUNCTION, ICSearchConstants.REFERENCES, false ));
 		} 
+		else if(fCElement instanceof IEnumeration){
+			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+					ICSearchConstants.ENUM, ICSearchConstants.REFERENCES, false ));
+		} 		
 		else if(fCElement instanceof IField){
 			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 					ICSearchConstants.FIELD, ICSearchConstants.REFERENCES, false ));
@@ -395,10 +399,6 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 					ICSearchConstants.NAMESPACE, ICSearchConstants.REFERENCES, false ));
 		} 
-		else if(fCElement instanceof IEnumeration){
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-					ICSearchConstants.ENUM, ICSearchConstants.REFERENCES, false ));
-		} 		
 		else {
 			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, 
 					ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.REFERENCES,	false ));

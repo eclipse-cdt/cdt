@@ -289,8 +289,9 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
             if (change) {
                 sid.fileToCommandIdMap.put(file, commandId);
                 // TODO generate change event for this resource
-                if (!siChangedForFileList.contains(file)) {
-                    siChangedForFileList.add(file);
+                IPath path = file.getFullPath();
+                if (!siChangedForFileList.contains(path)) {
+                    siChangedForFileList.add(path);
                 }
             }
         }
@@ -341,17 +342,21 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
         removeUnusedCommands();
         monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-        MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
+        if (!siChangedForFileList.isEmpty()) {
+//        MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
 //        DiscoveredScannerInfoStore.getInstance().loadDiscoveredScannerInfoFromState(project, this);
-        monitor.worked(50);
-        monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
-        try {
-            // update scanner configuration
-            MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(createPathInfoObject());
-//            DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, this);
             monitor.worked(50);
-        } catch (CoreException e) {
-            MakeCorePlugin.log(e);
+            monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
+            try {
+                // update scanner configuration
+                MakeCorePlugin.getDefault().getDiscoveryManager().
+                        updateDiscoveredInfo(createPathInfoObject(), siChangedForFileList);
+    //            DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, this);
+                monitor.worked(50);
+            } catch (CoreException e) {
+                MakeCorePlugin.log(e);
+            }
+            siChangedForFileList.clear();
         }
         monitor.done();
     }

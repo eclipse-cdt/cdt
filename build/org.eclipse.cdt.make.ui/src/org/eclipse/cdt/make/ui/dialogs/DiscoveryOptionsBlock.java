@@ -22,8 +22,8 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -331,7 +331,10 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         String profileId = getBuildInfo().getSelectedProfileId();
         ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
                 getSCProfileConfiguration(profileId).getProfileScope();
-        MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(project, profileScope);
+        List changedResources = new ArrayList();
+        changedResources.add(project.getFullPath());
+        MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(
+                project, profileScope, changedResources);
     }
 
     private void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {

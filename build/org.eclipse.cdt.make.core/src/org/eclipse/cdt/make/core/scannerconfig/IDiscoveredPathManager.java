@@ -9,9 +9,9 @@
 package org.eclipse.cdt.make.core.scannerconfig;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -84,14 +84,8 @@ public interface IDiscoveredPathManager {
 
 	IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException;
 	void removeDiscoveredInfo(IProject project);
-	void updateDiscoveredInfo(IDiscoveredPathInfo info) throws CoreException;
-    /**
-     * @param project
-     * @param profileScope
-     * @throws CModelException 
-     * @throws CoreException 
-     */
-    void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope);
+	void updateDiscoveredInfo(IDiscoveredPathInfo info, List changedResources) throws CoreException;
+    void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope, List changedResources);
 
 	void addDiscoveredInfoListener(IDiscoveredInfoListener listener);
 	void removeDiscoveredInfoListener(IDiscoveredInfoListener listener);

@@ -11,6 +11,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.PathEntryContainerChanged;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -34,6 +36,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -116,7 +119,10 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 		}
 	}
 
-	public void updateDiscoveredInfo(IDiscoveredPathInfo info) throws CoreException {
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
+     */
+    public void updateDiscoveredInfo(IDiscoveredPathInfo info, List changedResources) throws CoreException {
 		if (fDiscoveredMap.get(info.getProject()) != null) {
             IDiscoveredScannerInfoSerializable serializable = info.getSerializable();
 			if (serializable != null) {
@@ -133,7 +139,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
                 String profileId = buildInfo.getSelectedProfileId();
                 ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
                         getSCProfileConfiguration(profileId).getProfileScope();
-                changeDiscoveredContainer(project, profileScope);
+                changeDiscoveredContainer(project, profileScope, changedResources);
 			}
 			else {
 		        throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
@@ -145,7 +151,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#changeDiscoveredContainer(org.eclipse.core.resources.IProject, java.lang.String)
      */
-    public void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope) {
+    public void changeDiscoveredContainer(IProject project, ScannerConfigScope profileScope, List changedResources) {
         // order here is of essence
         // 1. clear DiscoveredPathManager's path info cache
         IDiscoveredPathInfo oldInfo = (IDiscoveredPathInfo) fDiscoveredMap.remove(project);
@@ -158,8 +164,19 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
                             new DiscoveredPathContainer(project), null);
             }
             else if (ScannerConfigScope.FILE_SCOPE.equals(profileScope)) {
+                PerFileDiscoveredPathContainer container = new PerFileDiscoveredPathContainer(project);
                 CoreModel.setPathEntryContainer(new ICProject[]{cProject},
-                        new PerFileDiscoveredPathContainer(project), null);
+                        container, null);
+                if (changedResources != null) {
+                    List changeDelta = new ArrayList(changedResources.size());
+                    for (Iterator i = changedResources.iterator(); i.hasNext(); ) {
+                        IPath path = (IPath) i.next();
+                        changeDelta.add(new PathEntryContainerChanged(path, 3)); // both include paths and symbols changed
+                    }
+                    CoreModel.pathEntryContainerUpdates(container, 
+                            (PathEntryContainerChanged[]) changeDelta.toArray(new PathEntryContainerChanged[changeDelta.size()]), 
+                            null);
+                }
             }
             else {
                 MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), 1,

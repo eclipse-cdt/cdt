@@ -116,8 +116,6 @@ public class Target  implements ICDITarget {
 	/**
 	 */
 	public void setCurrentThread(Thread cthread, boolean doUpdate) throws CDIException {
-		// set us as the current target.
-		session.setCurrentTarget(this);
 
 		int id = cthread.getId();
 		// No need to set thread id 0, it is a dummy thread.
@@ -629,11 +627,9 @@ public class Target  implements ICDITarget {
 
 	public String evaluateExpressionToString(ICDIStackFrame frame, String expressionText) throws CDIException {
 		Session session = (Session)getSession();
-		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		Target target = (Target)frame.getTarget();
-		session.setCurrentTarget(target);
+		ICDIThread currentThread = target.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
@@ -650,7 +646,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			session.setCurrentTarget(currentTarget);
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}

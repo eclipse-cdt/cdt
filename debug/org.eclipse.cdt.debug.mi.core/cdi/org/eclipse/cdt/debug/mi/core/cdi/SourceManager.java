@@ -457,11 +457,9 @@ public class SourceManager extends Manager implements ICDISourceManager {
 
 	public String getDetailTypeName(ICDIStackFrame frame, String typename) throws CDIException {
 		Session session = (Session)getSession();
-		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		Target target = (Target)frame.getTarget();
-		session.setCurrentTarget(target);
+		ICDIThread currentThread = target.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
@@ -477,7 +475,6 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			session.setCurrentTarget(currentTarget);
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
@@ -487,13 +484,11 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		Session session = (Session)getSession();
 		ICDIStackFrame frame = vo.getStackFrame();
 		Target target = (Target)vo.getTarget();
-		Target currentTarget = session.getCurrentTarget();
 		ICDIThread currentThread = null;
 		ICDIStackFrame currentFrame = null;
 		if (frame != null) {
-			currentThread = currentTarget.getCurrentThread();
+			currentThread = target.getCurrentThread();
 			currentFrame = currentThread.getCurrentStackFrame();
-			session.setCurrentTarget(target);
 			target.setCurrentThread(frame.getThread(), false);
 			frame.getThread().setCurrentStackFrame(frame, false);
 		}
@@ -510,7 +505,6 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			session.setCurrentTarget(currentTarget);
 			if (currentThread != null) {
 				target.setCurrentThread(currentThread, false);
 			}

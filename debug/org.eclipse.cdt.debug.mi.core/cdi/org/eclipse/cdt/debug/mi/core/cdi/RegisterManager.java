@@ -69,8 +69,6 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 	}
 	public ICDIRegisterObject[] getRegisterObjects(Target target) throws CDIException {
 		Session session = (Session)getSession();
-		Target currentTarget = session.getCurrentTarget();
-		session.setCurrentTarget(target);
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListRegisterNames registers = factory.createMIDataListRegisterNames();
@@ -92,7 +90,6 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			session.setCurrentTarget(currentTarget);
 		}
 	}
 

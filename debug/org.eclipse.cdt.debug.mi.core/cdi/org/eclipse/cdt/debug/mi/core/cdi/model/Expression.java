@@ -79,11 +79,9 @@ public class Expression extends CObject implements ICDIExpression {
 
 	protected Variable createVariable(ICDIStackFrame frame) throws CDIException {
 		Session session = (Session)getTarget().getSession();
-		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		Target target = (Target)frame.getTarget();
-		session.setCurrentTarget(target);
+		ICDIThread currentThread = target.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
@@ -100,7 +98,6 @@ public class Expression extends CObject implements ICDIExpression {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			session.setCurrentTarget(currentTarget);
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}

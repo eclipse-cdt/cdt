@@ -196,7 +196,6 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 						//eventList.add(new MIVarDeletedEvent(varName));
 					}
 					for (int j = 0 ; j < changes.length; j++) {
-						String n = changes[j].getVarName();
 						if (changes[j].isInScope()) {
 							eventList.add(new MIRegisterChangedEvent(update.getToken(), reg.getName(), regnos[i]));
 						}

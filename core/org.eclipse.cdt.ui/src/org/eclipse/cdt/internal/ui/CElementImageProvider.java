@@ -257,7 +257,7 @@ public class CElementImageProvider {
 				if (celement instanceof IBinaryModule) {
 					return CPluginImages.DESC_OBJS_BINARY;
 				} else if (celement instanceof ILibraryReference) {
-					return CPluginImages.DESC_OBJS_LIBRARY;
+					return CPluginImages.DESC_OBJS_UNKNOWN;
 				} else if (celement instanceof IIncludeReference) {
 					return CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
 				}

@@ -1,5 +1,5 @@
 // include
-#include <stdio.h>
+#include "included.h"
 
 // macro
 #define PRINT(string,msg)  printf(string, msg)
@@ -43,7 +43,7 @@ namespace MyPackage
 			        
 					public:
 					// constructor chain
-					X(int x) : yy(x) {
+					X(int x) : Y(x) {
 							cout << "In consturctor\n";
 					}
 			        // method declaration 

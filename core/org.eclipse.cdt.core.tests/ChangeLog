@@ -1,3 +1,8 @@
+2004-04-27 Hoda Amer
+	Partial fix for bug#57526 : [CModel] CModelElementsTest needs to test STRUCTURAL_PARSE mode as well
+	Added StructuralCModelElementsTest to the suit with the same input as CModelElementsTest,
+	but commented some of it as still failing parts.
+	
 2004-04-23 Hoda Amer
 	Patch for Sean Evoy : Removing Managed Build Tests from core tests.
 	

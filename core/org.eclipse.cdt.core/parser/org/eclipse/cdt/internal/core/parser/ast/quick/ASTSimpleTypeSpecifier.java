@@ -119,7 +119,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 		}
 		else
 			type.append( typeName.toString() );
-		this.typeName = type.toString();
+		this.typeName = type.toString().trim();
     }
 
     /* (non-Javadoc)

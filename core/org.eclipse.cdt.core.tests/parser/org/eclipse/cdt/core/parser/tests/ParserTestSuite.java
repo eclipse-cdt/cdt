@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
+import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 
 /**
  * @author jcamelon
@@ -32,6 +33,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(ParserSymbolTableTest.class);
 		suite.addTestSuite(ParserSymbolTableTemplateTests.class );
 		suite.addTestSuite(CModelElementsTests.class);
+		suite.addTestSuite(StructuralCModelElementsTests.class);
 		suite.addTestSuite(CompletionParseTest.class);
 //		suite.addTestSuite(MacroTests.class);
 		suite.addTestSuite( PreprocessorTest.class );

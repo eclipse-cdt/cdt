@@ -1,5 +1,8 @@
 package org.eclipse.cdt.core.model.tests;
 
+
+
+
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -18,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -49,19 +53,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-public class CModelElementsTests extends TestCase {	
+public class StructuralCModelElementsTests extends TestCase {	
 	private ICProject fCProject;
 	private IFile headerFile;
 	private IFile includedFile;
 	private NullProgressMonitor monitor;
 		
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CModelElementsTests.class.getName());
-		suite.addTest(new CModelElementsTests("testCModelElements"));
+		TestSuite suite= new TestSuite(StructuralCModelElementsTests.class.getName());
+		suite.addTest(new StructuralCModelElementsTests("testCModelElements"));
 		return suite;
 	}		
 		
-	public CModelElementsTests(String name) {
+	public StructuralCModelElementsTests(String name) {
 		super(name);
 	}
 		
@@ -94,7 +98,9 @@ public class CModelElementsTests extends TestCase {
 	public void testCModelElements() throws CModelException{
 		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		TranslationUnit included = new TranslationUnit(fCProject, includedFile);
-
+		// turn on the structural parse mode
+		CCorePlugin.getDefault().setStructuralParseMode(true);
+		
 		// parse the translation unit to get the elements tree		
 		tu.parse(); 
 		
@@ -122,9 +128,13 @@ public class CModelElementsTests extends TestCase {
 		
 		checkStructs(namespace);
 		
-		checkTemplates(namespace);
+//		checkTemplates(namespace);
 		
 		checkArrays(tu);
+
+		// turn off the structural parse mode
+		CCorePlugin.getDefault().setStructuralParseMode(false);
+
 	}
 
 	private void checkInclude(IParent tu) throws CModelException{
@@ -312,22 +322,23 @@ public class CModelElementsTests extends TestCase {
 		IVariable var2 = (IVariable) nsVars.get(1);
 		assertEquals(var2.getElementName(), new String("vuLong"));
 		checkElementOffset((CElement)var2);
-		assertEquals(var2.getTypeName(), new String("unsigned long int"));
+		assertEquals(var2.getTypeName(), new String("unsigned long"));
 		checkLineNumbers((CElement)var2, 73, 73);
 
 		// MyPackage ---> unsigned short vuShort
 		IVariable var3 = (IVariable) nsVars.get(2);
 		assertEquals(var3.getElementName(), new String("vuShort"));
 		checkElementOffset((CElement)var3);
-		assertEquals(var3.getTypeName(), new String("unsigned short int"));
+		assertEquals(var3.getTypeName(), new String("unsigned short"));
 		checkLineNumbers((CElement)var3, 75, 75);
 		
 		// MyPackage ---> function pointer: orig_malloc_hook
-		IVariable vDecl2 = (IVariable) nsVars.get(3);
+/*		IVariable vDecl2 = (IVariable) nsVars.get(3);
 		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
 		checkElementOffset((CElement)vDecl2);
 		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
 		checkLineNumbers((CElement)vDecl2, 81, 81);
+*/		
 	}
 
 	private void checkVariableDeclarations(IParent namespace) throws CModelException{

@@ -6,6 +6,7 @@ package org.eclipse.cdt.core.model;
  */
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 /**
@@ -320,4 +321,11 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * returns a map of all new elements and their element info
 	 */
 	Map parse();
+
+	/**
+	 * Returns the root object of a DOM Abstract syntax tree.
+	 * 
+	 * @return 
+	 */
+	IASTTranslationUnit getASTTranslationUnit();
 }

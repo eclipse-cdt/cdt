@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
@@ -566,6 +567,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (res != null)
 			return res.exists();
 		return super.exists();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getASTTranslationUnit()
+	 */
+	public IASTTranslationUnit getASTTranslationUnit() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

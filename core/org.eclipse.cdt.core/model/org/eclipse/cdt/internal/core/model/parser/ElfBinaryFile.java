@@ -362,15 +362,18 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 
 	private void addSymbols(Elf.Symbol[] array, int type) {
 		for (int i = 0; i < array.length; i++) {
+			Symbol sym = new Symbol();
+			sym.type = type;
+			sym.name = array[i].toString();
 			try {
-				Symbol sym = new Symbol();
+				// This can fail if we use addr2line
+				// but we can safely ignore the error.
 				sym.filename = array[i].getFilename();
-				sym.name = array[i].toString();
 				sym.lineno = array[i].getFuncLineNumber();
-				sym.type = type;
-				symbols.add(sym);
 			} catch (IOException e) {
+				//e.printStackTrace();
 			}
+			symbols.add(sym);
 		}
 	}
 

@@ -90,6 +90,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     {
     	super( scanner, language, log );
     	requestor = callback;
+    	assert true: this;
     }
     
     // counter that keeps track of the number of times Parser.parse() is called

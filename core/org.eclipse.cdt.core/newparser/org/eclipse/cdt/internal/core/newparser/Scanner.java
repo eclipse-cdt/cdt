@@ -1184,7 +1184,7 @@ public class Scanner {
 			Scanner trial=
 				new Scanner(new StringReader(expression), EXPRESSION, definitions);
 			Parser parser= new Parser(trial, evaluator);
-			parser.rExpression();
+			parser.expression();
 			expressionEvalResult= evaluator.getResult();
 		}
 		catch (Exception e)

@@ -138,7 +138,7 @@
 			<filelist dir="${basedir}" files="message.txt,compile.log"/>
 		</concat>
 		<mail subject="CDT Build ${siteversion}.${timestamp} completed"
-			tolist="dschaefe@ca.ibm.com" from="dschaefe@ca.ibm.com">
+			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
 			<message src="mail.txt"/>
 		</mail>
 	</target>

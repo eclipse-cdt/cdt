@@ -472,6 +472,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
+		WorkbenchHelp.setHelp(composite, ICHelpContextIds.C_EDITOR_ANNOTATIONS_PREF_PAGE);	
 		return composite;
 	}
 
@@ -654,6 +655,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
+		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE);	
 		return colorComposite;
 	}
 

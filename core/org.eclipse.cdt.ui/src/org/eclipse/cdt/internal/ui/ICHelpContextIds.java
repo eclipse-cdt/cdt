@@ -1,6 +1,6 @@
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -32,6 +32,8 @@ public interface ICHelpContextIds {
 	// Preference/property pages
 	public static final String C_PREF_PAGE= PREFIX + "new_c_pref_page_context";
 	public static final String C_EDITOR_PREF_PAGE= PREFIX + "new_c_editor_pref_page_context";
+	public static final String C_EDITOR_ANNOTATIONS_PREF_PAGE= PREFIX + "new_c_editor_annotations_pref_page_context";
+	public static final String C_EDITOR_COLORS_PREF_PAGE= PREFIX + "new_c_editor_colors_pref_page_context";
 	public static final String TEMPLATE_PREFERENCE_PAGE= PREFIX + "new_c_templates_pref_page_context";
 	public static final String LAUNCH_PROPERTY_PAGE= PREFIX + "new_launch_property_page_context";
 	public static final String PROJECT_PROPERTY_PAGE= PREFIX + "new_project_property_page_context";

@@ -940,10 +940,10 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierType(java.lang.Object, java.lang.Object)
 	 */
 	public void simpleDeclSpecifierType(Object declaration, Object type) {
-		if( type instanceof TypeSpecifier )
-		{
-			System.out.println( "Told you so!");
-		}
+//		if( type instanceof TypeSpecifier )
+//		{
+//			System.out.println( "Told you so!");
+//		}
 	}
  
 }

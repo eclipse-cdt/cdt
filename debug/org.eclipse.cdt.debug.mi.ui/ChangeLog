@@ -1,3 +1,7 @@
+2004-10-29 Alain Magloire
+	Changes to the CDI interface
+	* SeAutoSolibActionDelegate.java
+
 2004-08-23 Mikhail Khodjaiants
 	Added API to allow the access to the internal MI UI components by client plugins.
 	Changed the "Solib search path" component.

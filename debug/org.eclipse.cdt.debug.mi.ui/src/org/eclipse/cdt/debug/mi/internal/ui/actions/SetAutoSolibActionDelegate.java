@@ -12,10 +12,12 @@ package org.eclipse.cdt.debug.mi.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -193,11 +195,11 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 
 	protected boolean getCheckStateForSelection( IAdaptable element ) {
 		SharedLibraryManager slm = getSharedLibraryManager( element );
-		if ( slm != null ) {
+		Target target = getTarget(element);
+		if ( slm != null  && target != null) {
 			try {
-				return slm.isAutoLoadSymbols();
-			}
-			catch( CDIException e ) {
+				return slm.isAutoLoadSymbols(target);
+			} catch( CDIException e ) {
 			}
 		}
 		return false;
@@ -230,9 +232,10 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 		if ( getView() == null )
 			return;
 		SharedLibraryManager slm = getSharedLibraryManager( element );
-		if ( slm != null && getAction() != null ) {
+		Target target = getTarget(element);
+		if ( slm != null && target != null && getAction() != null ) {
 			try {
-				slm.setAutoLoadSymbols( getAction().isChecked() );
+				slm.setAutoLoadSymbols( target, getAction().isChecked() );
 			}
 			catch( CDIException e ) {
 				getAction().setChecked( !getAction().isChecked() );
@@ -244,8 +247,18 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	private SharedLibraryManager getSharedLibraryManager( IAdaptable element ) {
 		if ( element != null ) {
 			ICDISession session = (ICDISession)element.getAdapter( ICDISession.class );
-			if ( session instanceof Session && ((Session)session).getSharedLibraryManager() instanceof SharedLibraryManager )
-				return (SharedLibraryManager)((Session)session).getSharedLibraryManager();
+			if ( session instanceof Session )
+				return ((Session)session).getSharedLibraryManager();
+		}
+		return null;
+	}
+
+	private Target getTarget( IAdaptable element ) {
+		if (element != null) {
+			ICDITarget target = (ICDITarget)element.getAdapter( ICDITarget.class );
+			if (target instanceof Target) {
+				return (Target)target;
+			}
 		}
 		return null;
 	}

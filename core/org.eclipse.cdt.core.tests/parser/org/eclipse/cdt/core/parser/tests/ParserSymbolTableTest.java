@@ -2912,5 +2912,37 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 		
 	}
+	
+	/**
+	 * int initialize();
+	 * int initialize(){
+	 *    return 3;
+	 * }
+	 * 
+	 * int i = initialize();
+	 * 
+	 * @throws Exception
+	 */
+	public void testBug44510() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol init1 = table.newParameterizedSymbol( "initialize", TypeInfo.t_function );
+		
+		table.getCompilationUnit().addSymbol( init1 );
+		
+		IParameterizedSymbol init2 = table.newParameterizedSymbol( "initialize", TypeInfo.t_function );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new LinkedList() );
+		assertEquals( look, init1 );
+		
+		init1.getTypeInfo().setIsForwardDeclaration( true );
+		init1.setTypeSymbol( init2 );
+		
+		table.getCompilationUnit().addSymbol( init2 );
+		
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new LinkedList() );
+		
+		assertEquals( look, init2 ); 
+	}
 }
 

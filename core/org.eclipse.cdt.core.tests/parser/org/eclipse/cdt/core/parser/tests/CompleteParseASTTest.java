@@ -970,5 +970,45 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable variable = (IASTVariable)parse( "_Bool x;", true, ParserLanguage.C ).getDeclarations().next();
 		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type._BOOL );
 	}
+	
+	public void testBug44510() throws Exception
+	{
+		Iterator i = parse( "int initialize(); " +
+							"int initialize( char ){} " +
+							"int initialize(){ return 1; } " +
+							"void main(){ int i = initialize(); }" ).getDeclarations();
 		
+		IASTFunction function1 = (IASTFunction) i.next();
+		assertEquals( function1.previouslyDeclared(), false );
+		
+		IASTFunction function2 = (IASTFunction) i.next();
+		assertEquals( function2.previouslyDeclared(), false );
+				
+		IASTFunction function3 = (IASTFunction) i.next();
+		assertEquals( function3.previouslyDeclared(), true );
+		
+		IASTFunction main = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		
+		assertAllReferences( 1, createTaskList( new Task( function3 ) ) );
+	}	
+	
+	public void testBug44925() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "class MyClass { };"); 
+		buffer.append( "class MyClass myObj1;");
+		buffer.append( "enum MyEnum { Item1 };");
+		buffer.append( "enum MyEnum myObj2;");
+		Iterator i = parse( buffer.toString() ).getDeclarations();
+		
+		IASTClassSpecifier MyClass  = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
+		IASTVariable myObj1 = (IASTVariable) i.next();
+		IASTEnumerationSpecifier MyEnum = (IASTEnumerationSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable myObj2 = (IASTVariable) i.next();
+		
+		assertFalse( i.hasNext() );
+		
+		assertAllReferences( 2, createTaskList( new Task( MyClass ), new Task( MyEnum ) ) ); 	
+	}
 }

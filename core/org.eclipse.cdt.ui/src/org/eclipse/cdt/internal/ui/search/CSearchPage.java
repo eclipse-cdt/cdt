@@ -305,7 +305,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				
 		for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
 			SearchFor element = (SearchFor) iter.next();
-			if( element == FUNCTION || element == METHOD || element == VAR || element == FIELD || element == NAMESPACE ){
+			if( element == FUNCTION || element == METHOD 	|| element == VAR || 
+				element == FIELD 	|| element == NAMESPACE || element == UNKNOWN_SEARCH_FOR ){
 				set.add( DEFINITIONS );
 				break;
 			}
@@ -558,6 +559,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			case ICElement.C_METHOD:	searchFor.add( METHOD );		break;
 			
 			case ICElement.C_NAMESPACE: searchFor.add( NAMESPACE );		break;
+			
+			case ICElement.C_ENUMERATION: searchFor.add( ENUM );		break;
 			
 			default: searchFor.add( UNKNOWN_SEARCH_FOR ); break;
 		}

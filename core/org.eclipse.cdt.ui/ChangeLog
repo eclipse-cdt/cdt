@@ -1,3 +1,8 @@
+2003-10-28 Andrew Niefer
+	fix bug 44337 : Disabling of "definition" not making sense in Search dialog 
+	fix bug 44947 : Navigate from Outline: Enumeration type not pre-populated 
+	fix bug 44948 : Navigate via Open Declarations: typedef decl not found 
+
 2003-10-22 Hoda Amer
 	Fixed bug#45115: New Class Wizard: Error in base class doesn't clear when ... 
 	

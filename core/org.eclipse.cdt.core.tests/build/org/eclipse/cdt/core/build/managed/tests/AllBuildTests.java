@@ -12,36 +12,40 @@ package org.eclipse.cdt.core.build.managed.tests;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
-import org.eclipse.cdt.core.build.managed.IManagedBuildPathInfo;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
-import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
+import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.internal.core.build.managed.ToolReference;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 
-/**
- * 
- */
 public class AllBuildTests extends TestCase {
 	private static final boolean boolVal = true;
 	private static final String testConfigName = "test.config.override";
 	private static final String enumVal = "Another Enum";
 	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
-	private static final String projectName = "BuildTest";
+	private static final String projectName = "ManagedBuildTest";
 	private static final String rootExt = "toor";
 	private static final String stringVal = "-c -Wall";
 	private static final String subExt = "bus";
@@ -57,7 +61,7 @@ public class AllBuildTests extends TestCase {
 		suite.addTest(new AllBuildTests("testProject"));
 		suite.addTest(new AllBuildTests("testConfigurations"));
 		suite.addTest(new AllBuildTests("testTargetArtifacts"));
-		suite.addTest(new AllBuildTests("testBuildPathInfoInterface"));
+		suite.addTest(new AllBuildTests("testScannerInfoInterface"));
 		suite.addTest(new AllBuildTests("cleanup"));
 		
 		return suite;
@@ -98,7 +102,7 @@ public class AllBuildTests extends TestCase {
 	 *  
 	 * @throws CoreException
 	 */
-	public void testBuildPathInfoInterface(){
+	public void testScannerInfoInterface(){
 		// Open the test project
 		IProject project = null;
 		try {
@@ -126,25 +130,55 @@ public class AllBuildTests extends TestCase {
 		// Change the default configuration to the sub config
 		IConfiguration[] configs = newTarget.getConfigurations();
 		assertEquals(3, configs.length);
-		IResourceBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
+		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
 		buildInfo.setDefaultConfiguration(newTarget.getConfiguration("sub.config.2"));
-		// Get the path information for the project
-		IManagedBuildPathInfo info = ManagedBuildManager.getBuildPathInfo(project);
-		assertNotNull(info);
-		
-		// Test the interface for include paths. It is important that the build model
-		// return the contents of all options flagged as containing include paths
-		String[] expectedPaths = {"/usr/include", "/opt/gnome/include", "/home/tester/include"};
-		String[] actualPaths = info.getIncludePaths();
-		assertTrue(Arrays.equals(expectedPaths, actualPaths));
-		
-		// Test the interface for defined symbols (there are none but it should not return null)
-		String[] definedSymbols = info.getDefinedSymbols();
-		assertNotNull(definedSymbols);
-		assertEquals(0, definedSymbols.length);
 
+		// Use the plugin mechanism to discover the supplier of the path information
+		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
+		if (extensionPoint == null) {
+			fail("Failed to retrieve the extension point ScannerInfoProvider.");
+		}
+		IExtension[] extensions = extensionPoint.getExtensions();
+		IScannerInfoProvider provider = null;
+		// Find the first IScannerInfoProvider that supplies build info for the project
+		for (int i = 0; i < extensions.length && provider == null; i++) {
+			IExtension extension = extensions[i];
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (int j = 0; j < elements.length; ++j) {
+				IConfigurationElement element = elements[j];
+				if (element.getName().equals("provider")) { 
+					// Check if it handles the info for the project
+					try {
+						IScannerInfoProvider temp = (IScannerInfoProvider)element.createExecutableExtension("class");
+						if (temp.managesResource(project)) {
+							provider = temp;
+							break;
+						}
+					} catch (CoreException e) {
+						fail("Failed retrieving scanner info provider from plugin: " + e.getLocalizedMessage());
+					}
+				}
+			}
+		}
+		assertNotNull(provider);
+		provider.subscribe(project, new IScannerInfoChangeListener () {
+			public void changeNotification(IResource project, IScannerInfo info) {
+				// Test the symbols 
+				Map definedSymbols = info.getDefinedSymbols();
+				assertTrue(definedSymbols.containsKey("DEBUG"));
+				assertTrue(definedSymbols.containsKey("GNOME"));
+				assertTrue(definedSymbols.containsValue("ME"));
+				assertEquals((String)definedSymbols.get("DEBUG"), "");
+				assertEquals((String)definedSymbols.get("GNOME"), "ME");
+				// Test the includes path
+				String[] expectedPaths = {"/usr/include", "/opt/gnome/include", "/home/tester/include"};
+				String[] actualPaths = info.getIncludePaths();
+				assertTrue(Arrays.equals(expectedPaths, actualPaths));
+			}
+		});
+		
 		// Add some defined symbols programmatically
-		String[] expectedSymbols = {"DEBUG", "GNOME"};
+		String[] expectedSymbols = {"DEBUG", "GNOME = ME "};
 		IConfiguration defaultConfig = buildInfo.getDefaultConfiguration(newTarget);
 		ITool[] tools = defaultConfig.getTools();
 		ITool subTool = null;
@@ -167,10 +201,6 @@ public class AllBuildTests extends TestCase {
 		}
 		assertNotNull(symbolOpt);
 		ManagedBuildManager.setOption(defaultConfig, symbolOpt, expectedSymbols);
-		
-		// Retest
-		definedSymbols = info.getDefinedSymbols();
-		assertTrue(Arrays.equals(expectedSymbols, definedSymbols));
 	}
 	
 	/**
@@ -302,7 +332,7 @@ public class AllBuildTests extends TestCase {
 		}
 		
 		// Test that the default config was remembered
-		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		assertEquals(defaultConfig.getId(), info.getDefaultConfiguration(target).getId());
 
 		// Get the targets
@@ -324,7 +354,7 @@ public class AllBuildTests extends TestCase {
 	 * 
 	 * @param project
 	 */
-	private void checkBuildTestSettings(IResourceBuildInfo info) {
+	private void checkBuildTestSettings(IManagedBuildInfo info) {
 		String ext1 = "foo";
 		String ext2 = "bar";
 		String badExt = "cpp";
@@ -332,7 +362,7 @@ public class AllBuildTests extends TestCase {
 		String expectedCmd = "doIt";
 		
 		assertNotNull(info);
-		assertEquals(info.getBuildArtifactName(), "BuildTest.toor");
+		assertEquals(info.getBuildArtifactName(), projectName + "." + rootExt);
 		
 		// There should be a default configuration defined for the project
 		ITarget buildTarget = info.getDefaultTarget();

@@ -33,6 +33,7 @@
    <extension-point id="CBuildVariable" name="C/C++ Build Variable" schema="schema/CBuildVariable.exsd"/>
    <extension-point id="CToolType" name="C/C++ Tool Type" schema="schema/CToolType.exsd"/>
    <extension-point id="ManagedBuildInfo" name="Managed Build Tools" schema="schema/ManagedBuildTools.exsd"/>
+   <extension-point id="ScannerInfoProvider" name="Scanner Information Provider" schema="schema/ScannerInfoProvider.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.CToolType">
@@ -278,6 +279,19 @@
             enabled="true"
             pattern="*.exe">
       </ignore>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.core.ScannerInfoProvider"
+         name="Scanner Information Provider"
+         point="org.eclipse.cdt.core.ScannerInfoProvider">
+      <provider
+            class="org.eclipse.cdt.core.build.managed.ManagedBuildManager"
+            id="org.eclipse.cdt.core.provider.managed">
+      </provider>
+      <provider
+      		class="org.eclipse.cdt.core.build.standard.StandardBuildManager"
+            id="org.eclipse.cdt.core.provider.standard">
+      </provider>
    </extension>
 
     <extension id="task" name="%CTaskName" point="org.eclipse.core.resources.markers">

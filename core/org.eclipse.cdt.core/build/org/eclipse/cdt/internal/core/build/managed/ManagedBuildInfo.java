@@ -19,18 +19,18 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
-import org.eclipse.cdt.core.build.managed.IManagedBuildPathInfo;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
-import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
+import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class ResourceBuildInfo implements IResourceBuildInfo, IManagedBuildPathInfo {
+public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 	private IResource owner;
 	private Map targetMap;
@@ -38,13 +38,13 @@ public class ResourceBuildInfo implements IResourceBuildInfo, IManagedBuildPathI
 	private Map defaultConfigurations;
 	private ITarget defaultTarget;
 	
-	public ResourceBuildInfo() {
+	public ManagedBuildInfo() {
 		targetMap = new HashMap();
 		targets = new ArrayList();
 		defaultConfigurations = new HashMap();
 	}
 	
-	public ResourceBuildInfo(IResource owner, Element element) {
+	public ManagedBuildInfo(IResource owner, Element element) {
 		this();
 		// The id of the default configuration
 		String defaultTargetId = null;
@@ -277,11 +277,11 @@ public class ResourceBuildInfo implements IResourceBuildInfo, IManagedBuildPathI
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildParseInfo#getDefinedSymbols()
+	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getDefinedSymbols()
 	 */
-	public String[] getDefinedSymbols() {
-		// Return the include paths for the default configuration
-		ArrayList paths = new ArrayList();
+	public Map getDefinedSymbols() {
+		// Return the defined symbols for the default configuration
+		HashMap symbols = new HashMap();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int i = 0; i < tools.length; i++) {
@@ -291,7 +291,24 @@ public class ResourceBuildInfo implements IResourceBuildInfo, IManagedBuildPathI
 				IOption option = opts[j];
 				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
 					try {
-						paths.addAll(Arrays.asList(option.getDefinedSymbols()));
+						String[] symbolList = option.getDefinedSymbols();
+						for (int k = 0; k < symbolList.length; k++) {
+							String symbol = symbolList[k];
+							if (symbol.length() == 0){
+								continue;
+							}
+							String key = new String();
+							String value = new String();
+							int index = symbol.indexOf("=");
+							if (index != -1) {
+								key = symbol.substring(0, index).trim();
+								value = symbol.substring(index + 1).trim();
+							} else {
+								key = symbol.trim();
+							}
+							symbols.put(key, value);
+						}
+
 					} catch (BuildException e) {
 						// we should never get here
 						continue;
@@ -299,12 +316,11 @@ public class ResourceBuildInfo implements IResourceBuildInfo, IManagedBuildPathI
 				}
 			}
 		}
-		paths.trimToSize();
-		return (String[])paths.toArray(new String[paths.size()]); 
+		return symbols; 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildParseInfo#getIncludePaths()
+	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public String[] getIncludePaths() {
 		// Return the include paths for the default configuration

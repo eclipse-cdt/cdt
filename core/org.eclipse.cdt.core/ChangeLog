@@ -19,6 +19,60 @@
 	
 	* src/org/eclipse/cdt/internal/core/model/CModelManager.java
 	
+2003-07-03 Sean Evoy
+	New schema and extension point for registering an interface
+	between the build system (managed and standard) and the scanner 
+	clients that need it (like the indexer).
+	* plugin.xml
+	* schema/ScannerInfoProvider.exsd
+	
+	Added some documentation to the schema for managed build information
+	* schema/ManagedBuildTools.exsd
+	
+	Added three new interfaces for getting build information for the scanner. 
+	IScannerInfo contains the actual information the scanner needs and is passed
+	to the scanner by the build model. IScannerInfoChangeListener is the interface
+	that must be implemented by the scanner client that uses the IScannerInfo. 
+	IScannerInfoProvider is the interface implemented by the build model. It is
+	registered through an extension point so clients can discover providers at
+	run time. IScannerInfoListener implementors subscribe and unsubscribe with the 
+	provider and the provider passes them the IScannerInfo when it changes.
+	* parser/org/eclipse/cdt/core/parser/IScannerInfo.java
+	* parser/org/eclipse/cdt/core/parser/IScannerInfoChangeListener.java
+	* parser/org/eclipse/cdt/core/parser/IScannerInfoProvider.java
+	
+	Changed the name of some of the managed build system elements.
+	* build/org/eclipse/cdt/core/build/managed/IManagedBuildInfo.java
+	
+	This resulted in superficial changes to the Target and ManagedBuildManager
+	* build/org/eclipse/cdt/internal/core/build/managed/Target.java
+
+	Implemented the new scanner interfaces in the managed system
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java
+	* build/org/eclipse/cdt/core/build/managed/ManagedBuildManager.java
+	
+	Added a new manager for the standard make system that implements the new
+	scanner interfaces. This manager uses the .cdtbuild file to persist 
+	include path and symbol information (in otherwords, real build information).
+	Like the managed build manager, it also gives clients access to the build 
+	information associated with a project. It does not effect the older preferences
+	which are still managed by the CNature.
+	* build/org/eclipse/cdt/core/build/standard/StandardBuildManager.java
+	
+	Removed the responsibiolity for includes paths and symbols from CNature 
+	added in last patch.
+	* src/org/eclipse/cdt/core/CProjectNature.java
+	
+	Added code for persisting the standard build information for includes paths and 
+	symbols in a file, and implemented the IScannerInfo interface in the BuildInfoFactory.
+	Did not rename it, although ...
+	* src/org/eclipse/cdt/core/BuildInfoFactory.java
+	
+	I did rename the interface it implements since it was the only reference
+	* src/org/eclipse/cdt/core/resources/IStandardBuildInfo.java
+	
+	
+	
 2003-06-26 Sean Evoy
 	Added methods to add and extract include paths and preprocessor 
 	symbols from standard make C and C++ projects.

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.IConfiguration;
-import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
+import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
@@ -68,7 +68,7 @@ public class Target extends BuildObject implements ITarget {
 		this.isTest = parent.isTestTarget();
 
 		// Hook me up
-		IResourceBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
+		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
 		buildInfo.addTarget(this);
 	}
 
@@ -129,7 +129,7 @@ public class Target extends BuildObject implements ITarget {
 	 * @param buildInfo
 	 * @param element
 	 */
-	public Target(ResourceBuildInfo buildInfo, Element element) {
+	public Target(ManagedBuildInfo buildInfo, Element element) {
 		this(buildInfo.getOwner());
 		
 		// id

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.resources.IBuildInfo;
+import org.eclipse.cdt.core.build.standard.StandardBuildManager;
+import org.eclipse.cdt.core.resources.IStandardBuildInfo;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -30,7 +31,7 @@ public class CProjectNature implements IProjectNature {
     public static final String C_NATURE_ID= CCorePlugin.PLUGIN_ID + ".cnature";
 
     private IProject fProject;
-    private IBuildInfo fBuildInfo;
+    private IStandardBuildInfo fBuildInfo;
 
     public CProjectNature() {
     }
@@ -106,30 +107,6 @@ public class CProjectNature implements IProjectNature {
 	    return new Path(buildLocation);
     }
 
-	/**
-	 * Answers a comma-separated list of defined preprocessor symbols
-	 * for the project, or an empty string if there are none.
-	 * 
-	 * @return
-	 * @throws CoreException
-	 */
-	public String getDefinedSymbols() throws CoreException {
-		String symbols = fBuildInfo.getDefinedSymbols();
-		return symbols == null ? new String() : symbols;
-	}
-	
-	/**
-	 * Sets the defined symbols for the project.
-	 * 
-	 * @param symbols
-	 */
-	public void setDefinedSymbols(String symbols, IProgressMonitor monitor) throws CoreException {
-		String oldSymbols = fBuildInfo.getDefinedSymbols();
-		if (symbols != null && !symbols.equals(oldSymbols)) {
-			fBuildInfo.setDefinedSymbols(symbols);
-		}
-	}
-	
     /**
      * Sets the arguments for the full build.
      */
@@ -151,32 +128,6 @@ public class CProjectNature implements IProjectNature {
 		return buildArguments;
     }
     
-    /**
-     * Answers a comma-separated list of include paths defined for
-     * the project, or an empty string if there are none.
-     * 
-	 * @return
-	 * @throws CoreException
-	 */
-	public String getIncludePaths() throws CoreException {
-    	String paths = fBuildInfo.getIncludePaths();
-    	return paths == null ? new String() : paths;
-    }
-
-	/**
-	 * Sets the include path information for the project.
-	 * 
-	 * @param paths
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	public void setIncludePaths(String paths, IProgressMonitor monitor) throws CoreException {
-		String oldPaths = fBuildInfo.getIncludePaths();
-		if (paths != null && !paths.equals(oldPaths)) {
-			fBuildInfo.setIncludePaths(paths);
-		}
-	}
-	
     /**
      * Sets the arguments for the incremental build.
      */
@@ -318,7 +269,7 @@ public class CProjectNature implements IProjectNature {
      */
     public void configure() throws CoreException {
 		addToBuildSpec(getBuilderID(), null);
-		IBuildInfo info = BuildInfoFactory.create();
+		IStandardBuildInfo info = BuildInfoFactory.create();
 		fBuildInfo.setBuildLocation(info.getBuildLocation());
 		fBuildInfo.setFullBuildArguments("");
 		fBuildInfo.setIncrementalBuildArguments("");
@@ -346,6 +297,7 @@ public class CProjectNature implements IProjectNature {
      */
     public void setProject(IProject project) {
 		fProject= project;
-		fBuildInfo = BuildInfoFactory.create(fProject);
+		fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
     }
+    
 }

@@ -16,6 +16,16 @@
 	Added IndexManagerTest::testRemoveProjectFromIndex()
 	Added IndexManagerTest::testRemoveFileFromIndex()
 	
+2003-07-03 Sean Evoy
+	New test suite that exercises the standard make build system including the new
+	IScannerInfoListener and IScannerInfoProvider interfaces.
+
+	Changes to the existing managed build test suite include tests of the new
+	IScannerInfoxxx interface discovery, subscription, and change notification methods. 
+	
+	* build/org/eclipse/cdt/core/build/managed/tests/StandardBuildTests.java
+	* build/org/eclipse/cdt/core/build/managed/tests/AllBuildTests.java
+
 2003-07-02 Victor Mozgin
 	Added DOMTests::testBug39501().
 	Improved filtering of expected failures/inconclusives in TortureTest.

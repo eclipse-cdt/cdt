@@ -1,9 +1,7 @@
 package org.eclipse.cdt.ui.wizards;
 
-import java.util.StringTokenizer;
-
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.resources.IBuildInfo;
+import org.eclipse.cdt.core.build.standard.StandardBuildManager;
+import org.eclipse.cdt.core.resources.IStandardBuildInfo;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -263,23 +261,19 @@ public class BuildPathInfoBlock implements IWizardTab {
 	 * @see org.eclipse.cdt.ui.wizards.IWizardTab#doRun(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doRun(IProject project, IProgressMonitor monitor) {
-		try {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			// Store the paths and symbols as comma-separated lists in the project's nature
-			CProjectNature nature = (CProjectNature) project.getNature(CProjectNature.C_NATURE_ID);
-			monitor.beginTask("Setting Include Paths", 1);
-			String paths = getPathListContents();
-			nature.setIncludePaths(paths, monitor);
-			monitor.beginTask("Setting Defined Symbols", 1);
-			String symbols = getSymbolListContents();
-			nature.setDefinedSymbols(symbols, monitor);
-			
-		}				
-		catch (CoreException e) {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
+		if (project != null) {
+			// Store the paths and symbols 
+			monitor.beginTask("Setting Include Paths", 1);
+			StandardBuildManager.setIncludePaths(project, getPathListContents());
 
+			monitor.beginTask("Setting Defined Symbols", 1);
+			StandardBuildManager.setPreprocessorSymbols(project, getSymbolListContents());
+		
+			StandardBuildManager.saveBuildInfo(project);
+		}
 	}
 
 	/*
@@ -418,33 +412,15 @@ public class BuildPathInfoBlock implements IWizardTab {
 	/**
 	 * @return
 	 */
-	private String getPathListContents() {
-		// Convert the contents of the path list into a comma-separated list
-		StringBuffer buffer = new StringBuffer();
-		if (pathList != null) {
-			String[] paths = pathList.getItems();
-			for (int i = 0; i < paths.length; i++) {
-				String string = paths[i];
-				buffer.append(string + IBuildInfo.SEPARATOR);
-			} 
-		}
-		return buffer.toString();
+	private String[] getPathListContents() {
+		return pathList.getItems();
 	}
 
 	/**
 	 * @return
 	 */
-	private String getSymbolListContents() {
-		// Convert the contents of the symbol list into a comma-separated list
-		StringBuffer buffer = new StringBuffer();
-		if (symbolList != null) {
-			String[] symbols = symbolList.getItems();
-			for (int i = 0; i < symbols.length; i++) {
-				String symbol = symbols[i];
-				buffer.append(symbol + IBuildInfo.SEPARATOR);
-			} 
-		}
-		return buffer.toString();
+	private String[] getSymbolListContents() {
+		return symbolList.getItems();
 	}
 
 	/**
@@ -613,35 +589,15 @@ public class BuildPathInfoBlock implements IWizardTab {
 
 	private void setPathListContents() {
 		if (project != null) {
-			try {
-				CProjectNature nature = (CProjectNature)project.getNature(CProjectNature.C_NATURE_ID);
-				if (nature != null) {
-					String paths = nature.getIncludePaths();
-					StringTokenizer tokens = new StringTokenizer(paths, IBuildInfo.SEPARATOR);
-					while (tokens.hasMoreTokens()) {
-						pathList.add(tokens.nextToken());
-					}
-				}
-			} catch (CoreException e) {
-				// Just have an empty list
-			}
+			IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
+			pathList.setItems(info.getIncludePaths());
 		}
 	}
 	
 	private void setSymbolListContents() {
 		if (project != null) {
-			try {
-				CProjectNature nature = (CProjectNature)project.getNature(CProjectNature.C_NATURE_ID);
-				if (nature != null) {
-					String symbols = nature.getDefinedSymbols();
-					StringTokenizer tokens = new StringTokenizer(symbols, IBuildInfo.SEPARATOR);
-					while (tokens.hasMoreTokens()) {
-						symbolList.add(tokens.nextToken());
-					}
-				}
-			} catch (CoreException e) {
-				// Just have an empty list
-			}
+			IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
+			symbolList.setItems(info.getPreprocessorSymbols());
 		}
 	}
 

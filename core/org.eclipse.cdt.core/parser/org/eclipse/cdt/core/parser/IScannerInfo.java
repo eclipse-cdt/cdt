@@ -1,4 +1,6 @@
-package org.eclipse.cdt.core.build.managed;
+package org.eclipse.cdt.core.parser;
+
+import java.util.Map;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -11,15 +13,20 @@ package org.eclipse.cdt.core.build.managed;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
-public interface IManagedBuildPathInfo {
+public interface IScannerInfo {
 	/**
-	 * Answers a <code>String</code> array containing all the defined  
-	 * preprocessor symbols. If there are no defined symbols, the receiver 
-	 * will return an empty array, never <code>null</code>
+	 * Answers a <code>Map</code> containing all the defined preprocessor 
+	 * symbols and their values as string tuples, (symbol_name, symbol_value).
+	 * Symbols defined without values have an empty string for a value. For 
+	 * example,-Dsymbol=value would have a map entry (symbol,value). A symbol
+	 * defined as -Dsymbol would have a map entry of (symbol,"").
 	 * 
+	 * If there are no defined symbols, the receiver will return 
+	 * an empty Map, never <code>null</code>. 
+	 *  
 	 * @return
 	 */
-	public String[] getDefinedSymbols();
+	public Map getDefinedSymbols();
 
 	/**
 	 * Answers a <code>String</code> array containing all the known include 

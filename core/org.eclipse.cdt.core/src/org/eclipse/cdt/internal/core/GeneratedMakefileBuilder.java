@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.core;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
+import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.MakeUtil;
@@ -72,14 +72,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * 
 	 * @param buffer
 	 */
-	private void addMacros(StringBuffer buffer, IResourceBuildInfo info) {
+	private void addMacros(StringBuffer buffer, IManagedBuildInfo info) {
 		// TODO this should come from the build model
 		buffer.append("RM = rm -f" + NEWLINE);
 		buffer.append("MAKE = make" + NEWLINE);
 		buffer.append(NEWLINE);
 	}
 
-	private void addRule(StringBuffer buffer, IPath sourcePath, String outputName, IResourceBuildInfo info) {
+	private void addRule(StringBuffer buffer, IPath sourcePath, String outputName, IManagedBuildInfo info) {
 		// Add the rule to the makefile
 		buffer.append(outputName + COLON + " " + sourcePath.toString());
 		// Add all of the dependencies on the source file
@@ -96,7 +96,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 *  
 	 * @param buffer
 	 */
-	private void addSources(StringBuffer buffer, IResourceBuildInfo info) throws CoreException {
+	private void addSources(StringBuffer buffer, IManagedBuildInfo info) throws CoreException {
 		// Add the list of project files to be built
 		buffer.append("OBJS = \\" + NEWLINE);
 		
@@ -133,7 +133,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	/**
 	 * @param buffer
 	 */
-	private void addTargets(StringBuffer buffer, IResourceBuildInfo info) {
+	private void addTargets(StringBuffer buffer, IManagedBuildInfo info) {
 		// Generate a rule per source
 
 		// This is the top build rule
@@ -270,9 +270,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.subTask(statusMsg);
 
 		// Get a filehandle for the makefile
-		IPath filePath = getWorkingDirectory();
-		filePath.addTrailingSeparator();
-		filePath.append(FILENAME);
+		IPath filePath = getWorkingDirectory().append(IPath.SEPARATOR + FILENAME);
 		IFile fileHandle = getMakefile(filePath, monitor);
 
 		// Now populate it
@@ -289,7 +287,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private void populateMakefile(IFile fileHandle, IProgressMonitor monitor) throws CoreException {
 		// Write out the contents of the build model
 		StringBuffer buffer = new StringBuffer();
-		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		
 		// Add the macro definitions
 		addMacros(buffer, info);

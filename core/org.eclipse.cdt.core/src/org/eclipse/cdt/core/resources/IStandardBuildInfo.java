@@ -1,30 +1,38 @@
 package org.eclipse.cdt.core.resources;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
 
-public interface IBuildInfo {
-	public static final String SEPARATOR = ",";
-	
+public interface IStandardBuildInfo {
 	String getBuildLocation();
-	String getDefinedSymbols();
+	public String[] getPreprocessorSymbols();
     String getFullBuildArguments();
-    String getIncludePaths();
+    public String[] getIncludePaths();
     String getIncrementalBuildArguments();
     boolean isStopOnError();
-
+    
 	void setBuildLocation(String location);
-	void setDefinedSymbols(String symbols);
+	public void setPreprocessorSymbols(String[] symbols);
     void setFullBuildArguments(String arguments);
-    void setIncludePaths(String paths);
-    void setIncrementalBuildArguments(String arguments);
+	public void setIncludePaths(String[] paths);
+	void setIncrementalBuildArguments(String arguments);
     void setStopOnError(boolean on);
 
 //    boolean isClearBuildConsole();
 
     boolean isDefaultBuildCmd();
     void setUseDefaultBuildCmd(boolean on);
+
+	/**
+	 * @param doc
+	 * @param rootElement
+	 */
+	void serialize(Document doc, Element rootElement);
 }
 

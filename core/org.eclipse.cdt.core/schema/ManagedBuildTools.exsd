@@ -393,7 +393,7 @@ Two additional types exist to flag options of special relevance to the build mod
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         CDT 1.1
+         1.2
       </documentation>
    </annotation>
 

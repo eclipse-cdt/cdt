@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -28,7 +29,8 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.build.managed.ResourceBuildInfo;
+import org.eclipse.cdt.core.parser.*;
+import org.eclipse.cdt.internal.core.build.managed.ManagedBuildInfo;
 import org.eclipse.cdt.internal.core.build.managed.Target;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -46,17 +48,21 @@ import org.w3c.dom.Node;
  * This is the main entry point for getting at the build information
  * for the managed build system. 
  */
-public class ManagedBuildManager {
+public class ManagedBuildManager implements IScannerInfoProvider {
 
 	private static final QualifiedName buildInfoProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "buildInfo");
-
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "managedBuildInfo");
+	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";
+	private static final String FILE_NAME = ".cdtbuild";
 	private static final ITarget[] emptyTargets = new ITarget[0];
 
 	// Targets defined by extensions (i.e., not associated with a resource)
 	private static boolean extensionTargetsLoaded = false;
 	private static List extensionTargets;
 	private static Map extensionTargetMap;
+
+	// Listeners interested in build model changes
+	private static Map buildModelListeners; 
 
 	/**
 	 * Returns the list of targets that are defined by this project,
@@ -108,7 +114,7 @@ public class ManagedBuildManager {
 	 * @return
 	 */
 	public static ITarget[] getTargets(IResource resource) {
-		IResourceBuildInfo buildInfo = getBuildInfo(resource);
+		IManagedBuildInfo buildInfo = getBuildInfo(resource);
 		
 		if (buildInfo != null) {
 			List targets = buildInfo.getTargets();
@@ -131,7 +137,7 @@ public class ManagedBuildManager {
 		ITarget target = null;
 		// Check if the target is spec'd in the build info for the resource
 		if (resource != null) {
-			IResourceBuildInfo buildInfo = getBuildInfo(resource);
+			IManagedBuildInfo buildInfo = getBuildInfo(resource);
 			if (buildInfo != null)
 				target = buildInfo.getTarget(id);
 		}
@@ -187,12 +193,34 @@ public class ManagedBuildManager {
 			return;
 		}
 		// Set the default in build information for the project 
-		IResourceBuildInfo info = getBuildInfo(project);
+		IManagedBuildInfo info = getBuildInfo(project);
 		if (info != null) {
 			info.setDefaultConfiguration(newDefault);
 		}
 	}
 	
+	/**
+	 * @param config
+	 * @param option
+	 */
+	private static void setDirty(IConfiguration config, IOption option) {
+		// Don't bother unless this is something that effect the 
+		if (!(option.getValueType() == IOption.INCLUDE_PATH 
+			|| option.getValueType() == IOption.PREPROCESSOR_SYMBOLS)) {
+			return;
+		}
+		// Figure out if there is a listener for this change
+		IResource resource = config.getOwner();
+		List listeners = (List) getBuildModelListeners().get(resource);
+		if (listeners == null) {
+			return;
+		}
+		ListIterator iter = listeners.listIterator();
+		while (iter.hasNext()) {
+			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, getScannerInfo(resource));
+		}
+	}
+
 	/**
 	 * Set the string value for an option for a given config.
 	 * 
@@ -203,6 +231,7 @@ public class ManagedBuildManager {
 	public static void setOption(IConfiguration config, IOption option, boolean value) {
 		try {
 			config.setOption(option, value);
+			setDirty(config, option);
 		} catch (BuildException e) {
 			return;
 		}
@@ -218,6 +247,7 @@ public class ManagedBuildManager {
 	public static void setOption(IConfiguration config, IOption option, String value) {
 		try {
 			config.setOption(option, value);
+			setDirty(config, option);
 		} catch (BuildException e) {
 			return;
 		}
@@ -233,6 +263,7 @@ public class ManagedBuildManager {
 	public static void setOption(IConfiguration config, IOption option, String[] value) {
 		try {
 			config.setOption(option, value);
+			setDirty(config, option);
 		} catch (BuildException e) {
 			return;
 		}
@@ -247,11 +278,11 @@ public class ManagedBuildManager {
 	public static void saveBuildInfo(IProject project) {
 		// Create document
 		Document doc = new DocumentImpl();
-		Element rootElement = doc.createElement("buildInfo");
+		Element rootElement = doc.createElement(ROOT_ELEM_NAME);
 		doc.appendChild(rootElement);
 
 		// Save the build info
-		ResourceBuildInfo buildInfo = (ResourceBuildInfo) getBuildInfo(project);
+		ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
 		if (buildInfo != null)
 			buildInfo.serialize(doc, rootElement);
 		
@@ -266,7 +297,7 @@ public class ManagedBuildManager {
 				= SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
 			serializer.asDOMSerializer().serialize(doc);
 			xml = s.toString("UTF8"); //$NON-NLS-1$		
-			IFile rscFile = project.getFile(".cdtbuild");
+			IFile rscFile = project.getFile(FILE_NAME);
 			InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
 			// update the resource content
 			if (rscFile.exists()) {
@@ -316,9 +347,9 @@ public class ManagedBuildManager {
 		}
 	}
 
-	private static ResourceBuildInfo loadBuildInfo(IProject project) {
-		ResourceBuildInfo buildInfo = null;
-		IFile file = project.getFile(".cdtbuild");
+	private static ManagedBuildInfo loadBuildInfo(IProject project) {
+		ManagedBuildInfo buildInfo = null;
+		IFile file = project.getFile(FILE_NAME);
 		if (!file.exists())
 			return null;
 	
@@ -327,8 +358,8 @@ public class ManagedBuildManager {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(stream);
 			Node rootElement = document.getFirstChild();
-			if (rootElement.getNodeName().equals("buildInfo")) {
-				buildInfo = new ResourceBuildInfo(project, (Element)rootElement);
+			if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
+				buildInfo = new ManagedBuildInfo(project, (Element)rootElement);
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
 		} catch (Exception e) {
@@ -338,13 +369,14 @@ public class ManagedBuildManager {
 		return buildInfo;
 	}
 
-	private static ResourceBuildInfo findBuildInfo(IResource resource, boolean create) {
+	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
 		// Make sure the extension information is loaded first
 		loadExtensions();
-		ResourceBuildInfo buildInfo = null;
+		ManagedBuildInfo buildInfo = null;
 		try {
-			buildInfo = (ResourceBuildInfo)resource.getSessionProperty(buildInfoProperty);
+			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
 		} catch (CoreException e) {
+			return buildInfo;
 		}
 		
 		if (buildInfo == null && resource instanceof IProject) {
@@ -353,7 +385,7 @@ public class ManagedBuildManager {
 		
 		if (buildInfo == null && create) {
 			try {
-				buildInfo = new ResourceBuildInfo();
+				buildInfo = new ManagedBuildInfo();
 				resource.setSessionProperty(buildInfoProperty, buildInfo);
 			} catch (CoreException e) {
 				buildInfo = null;
@@ -363,12 +395,22 @@ public class ManagedBuildManager {
 		return buildInfo;
 	}
 	
-	public static IResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
-		return (IResourceBuildInfo) findBuildInfo(resource, create);
+	public static IManagedBuildInfo getBuildInfo(IResource resource, boolean create) {
+		return (IManagedBuildInfo) findBuildInfo(resource, create);
 	}
 
-	public static IResourceBuildInfo getBuildInfo(IResource resource) {
-		return (IResourceBuildInfo) findBuildInfo(resource, false);
+	public static IManagedBuildInfo getBuildInfo(IResource resource) {
+		return (IManagedBuildInfo) findBuildInfo(resource, false);
+	}
+
+	/*
+	 * @return
+	 */
+	private static Map getBuildModelListeners() {
+		if (buildModelListeners == null) {
+			buildModelListeners = new HashMap();
+		}
+		return buildModelListeners;
 	}
 
 	/**
@@ -378,8 +420,88 @@ public class ManagedBuildManager {
 	 * @param resource
 	 * @return
 	 */
-	public static IManagedBuildPathInfo getBuildPathInfo(IResource resource) {
-		return (IManagedBuildPathInfo) getBuildInfo(resource, false);
+	private static IScannerInfo getScannerInfo(IResource resource) {
+		return (IScannerInfo) getBuildInfo(resource, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
+	 */
+	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
+		IResource project = null;
+		if (resource instanceof IProject) {
+			project = resource;
+		} else if (resource instanceof IFile) {
+			project = ((IFile)resource).getProject();
+		} else {
+			return;
+		}
+		// Get listeners for this resource
+		Map map = getBuildModelListeners();
+		List list = (List) map.get(project);
+		if (list == null) {
+			// Create a new list
+			list = new ArrayList();
+		}
+		if (!list.contains(listener)) {
+			// Add the new listener for the resource
+			list.add(listener);
+			map.put(project, list);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#managesResource(org.eclipse.core.resources.IResource)
+	 */
+	public boolean managesResource(IResource resource) {
+		// The managed build manager manages build information for the 
+		// resource IFF it it is a project and has a build file with the proper
+		// root element
+		IProject project = null;
+		if (resource instanceof IProject){
+			project = (IProject)resource;
+		} else if (resource instanceof IFile) {
+			project = ((IFile)resource).getProject();
+		} else {
+			return false;
+		}
+		IFile file = project.getFile(FILE_NAME);
+		if (file.exists()) {
+			try {
+				InputStream stream = file.getContents();
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document document = parser.parse(stream);
+				Node rootElement = document.getFirstChild();
+				if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
+					return true;
+				} 
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
+	 */
+	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
+		IResource project = null;
+		if (resource instanceof IProject) {
+			project = resource;
+		} else if (resource instanceof IFile) {
+			project = ((IFile)resource).getProject();
+		} else {
+			return;
+		}
+		// Remove the listener
+		Map map = getBuildModelListeners();
+		List list = (List) map.get(project);
+		if (list != null && !list.isEmpty()) {
+			// The list is not empty so try to remove listener
+			list.remove(listener);
+			map.put(project, list);
+		}
 	}
 
 }

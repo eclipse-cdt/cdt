@@ -13,7 +13,7 @@ import java.util.List;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
-public interface IResourceBuildInfo {
+public interface IManagedBuildInfo {
 
 	/**
 	 * Add a new target to the build information for the receiver

@@ -1,3 +1,9 @@
+2003-07-03 Sean Evoy
+	Changed property/wizard tab to use the new StandardBuildManager and 
+	the improved IStandardBuildInfo interface to set and retrieve 
+	the include and defined symbol information for a standard make project.
+	* src/org/eclipse/cdt/ui/wizards/BuildPathInfoBlock.java
+
 2003-06-27 Andrew Niefer
 	Changes for C/C++ Search:
 	Added:

@@ -1,3 +1,7 @@
+2004-12-03 Mikhail Khodjaiants
+	Fix for bug 62659: Unable to set default for register format via plugin_customization.ini.
+	* CDebugPreferencePage.java
+
 2004-12-02 Mikhail Khodjaiants
 	Fix for bug 80055: ArrayIndexOutOfBoundsException in DisassemblyView.
 	* DisassemblyEditorInput.java

@@ -181,10 +181,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
 		PreferenceConverter.setDefault( store, IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, IInternalCDebugUIConstants.DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.DEF_NUMBER_OF_INSTRUCTIONS );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
 	}
 
 	/**

@@ -1,4 +1,9 @@
 2004-12-03 Mikhail Khodjaiants
+	Fix for bug 62659: Unable to set default for register format via plugin_customization.ini.
+	* CDebugCorePreferenceInitializer.java: new
+	* plugin.xml
+
+2004-12-03 Mikhail Khodjaiants
 	Fix for bug 80106: Terminating during stepping state caused exception in CDT.
 	* CThread.java
 

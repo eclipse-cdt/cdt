@@ -826,29 +826,40 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	
 	public void generateMarkers(final ICProject cProject, final IPathEntry[] entries) {
 		Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
-
+			
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
-					IProject project = cProject.getProject();
-					flushPathEntryProblemMarkers(project);
-					ICModelStatus status = validatePathEntry(cProject, entries);
-					if (!status.isOK()) {
-						createPathEntryProblemMarker(project, status);
-					}
-					for (int j = 0; j < entries.length; j++) {
-						status = validatePathEntry(cProject, entries[j], true, false);
-						if (!status.isOK()) {
-							createPathEntryProblemMarker(project, status);
+				try {
+					CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
+						
+						/* (non-Javadoc)
+						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						public void run(IProgressMonitor monitor) throws CoreException {
+							IProject project = cProject.getProject();
+							flushPathEntryProblemMarkers(project);
+							ICModelStatus status = validatePathEntry(cProject, entries);
+							if (!status.isOK()) {
+								createPathEntryProblemMarker(project, status);
+							}
+							for (int j = 0; j < entries.length; j++) {
+								status = validatePathEntry(cProject, entries[j], true, false);
+								if (!status.isOK()) {
+									createPathEntryProblemMarker(project, status);
+								}
+							}
 						}
-					}
+					}, null);
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+
 				return Status.OK_STATUS;
 			}
-			
-			
 		};
 		markerTask.setRule(CCorePlugin.getWorkspace().getRoot());
 		markerTask.schedule();
@@ -863,28 +874,38 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
-				for(int i = 0; i < cProjects.length; i++) {
-					ArrayList resolvedList = (ArrayList)resolvedMap.get(cProjects[i]);
-					if (resolvedList != null) {
-						IPathEntry[] entries = (IPathEntry[])resolvedList.toArray(new IPathEntry[resolvedList.size()]);
-						IProject project = cProjects[i].getProject();
-						flushPathEntryProblemMarkers(project);
-						ICModelStatus status = validatePathEntry(cProjects[i], entries);
-						if (!status.isOK()) {
-							createPathEntryProblemMarker(project, status);
-						}
-						for (int j = 0; j < entries.length; j++) {
-							status = validatePathEntry(cProjects[i], entries[j], true, false);
-							if (!status.isOK()) {
-								createPathEntryProblemMarker(project, status);
+				try {
+					CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
+						
+						/* (non-Javadoc)
+						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						public void run(IProgressMonitor monitor) throws CoreException {
+							for(int i = 0; i < cProjects.length; i++) {
+								ArrayList resolvedList = (ArrayList)resolvedMap.get(cProjects[i]);
+								if (resolvedList != null) {
+									IPathEntry[] entries = (IPathEntry[])resolvedList.toArray(new IPathEntry[resolvedList.size()]);
+									IProject project = cProjects[i].getProject();
+									flushPathEntryProblemMarkers(project);
+									ICModelStatus status = validatePathEntry(cProjects[i], entries);
+									if (!status.isOK()) {
+										createPathEntryProblemMarker(project, status);
+									}
+									for (int j = 0; j < entries.length; j++) {
+										status = validatePathEntry(cProjects[i], entries[j], true, false);
+										if (!status.isOK()) {
+											createPathEntryProblemMarker(project, status);
+										}
+									}
+								}
 							}
 						}
-					}
+					}, null);
+				} catch (CoreException e) {
+					return e.getStatus();
 				}
 				return Status.OK_STATUS;
 			}
-			
-			
 		};
 		markerTask.setRule(CCorePlugin.getWorkspace().getRoot());
 		markerTask.schedule();

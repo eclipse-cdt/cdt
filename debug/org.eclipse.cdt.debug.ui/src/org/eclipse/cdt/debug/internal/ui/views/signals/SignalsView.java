@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.internal.ui.views.signals;
 import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
-import org.eclipse.cdt.debug.internal.ui.CImageDescriptor;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
@@ -57,7 +56,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 		public Image getColumnImage( Object element, int columnIndex )
 		{
 			if ( columnIndex == 0 )
-				return CDebugUIPlugin.getImageDescriptorRegistry().get( new CImageDescriptor( CDebugImages.DESC_OBJS_SIGNAL,  0 ) );
+				return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SIGNAL );
 			return null;
 		}
 

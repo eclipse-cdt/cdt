@@ -4,6 +4,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.dialogfields;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -14,8 +15,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * Dialog field describing a group with buttons (Checkboxes, radio buttons..)

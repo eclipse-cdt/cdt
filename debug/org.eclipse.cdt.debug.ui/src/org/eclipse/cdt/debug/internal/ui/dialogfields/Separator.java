@@ -5,11 +5,10 @@
 package org.eclipse.cdt.debug.internal.ui.dialogfields;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.swt.layout.GridData;
 
 /**
  * Dialog field describing a separator.

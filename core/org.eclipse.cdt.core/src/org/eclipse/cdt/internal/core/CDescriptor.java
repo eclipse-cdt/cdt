@@ -531,7 +531,7 @@ public class CDescriptor implements ICDescriptor {
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
-			if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+			if (element[i].getName().equalsIgnoreCase(CEXTENSION_NAME)) {
 				cExtension = (InternalCExtension)element[i].createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtenionReference(ext);
 				cExtension.setProject(fProject);

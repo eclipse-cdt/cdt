@@ -12,6 +12,9 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.CProjectDescriptor;
+import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +28,8 @@ import org.eclipse.core.runtime.Status;
 
 
 public class CCorePlugin extends Plugin {
+	
+	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	
 	public static final String PLUGIN_ID= "org.eclipse.cdt.core";
 	public static final String BUILDER_ID= PLUGIN_ID + ".cbuilder";
@@ -121,7 +126,8 @@ public class CCorePlugin extends Plugin {
 			return new IConsole() {
 				public void clear() {
 				}
-			
+				public void start(IProject project) {
+				}
 				public ConsoleOutputStream getOutputStream() {
 					return new ConsoleOutputStream();
 				}
@@ -137,4 +143,12 @@ public class CCorePlugin extends Plugin {
 	public IndexModel getIndexModel() {
 		return IndexModel.getDefault();
 	}	
+	
+	public ICProjectDescriptor getCProjectDescription(IProject project) throws CoreException {
+		return CProjectDescriptor.getDescription(project);
+	}
+	
+	public void mapCProjectOwner(IProject project, String id) throws CoreException {
+		CProjectDescriptor.configure(project, id);
+	}
 }

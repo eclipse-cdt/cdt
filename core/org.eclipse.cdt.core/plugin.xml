@@ -28,6 +28,7 @@
 
    <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
+   <extension-point id="CProjectInfo" name="%CProjectInfo.name"/>
 
    <extension
          id="cbuilder"
@@ -84,5 +85,14 @@
             command="make">
       </buildcommand>
    </extension>
-
+   <extension
+         point="org.eclipse.cdt.core.CProjectInfo"
+         name="%projectinfo.name"
+         id="make">
+         <platform id="org.eclipse.cdt.core.genericmake"
+         	name="%genericmake.name" architecture="*"/>
+         <run 
+         	class = "org.eclipse.cdt.internal.core.make.MakeProject">
+         </run>
+   </extension>
 </plugin>

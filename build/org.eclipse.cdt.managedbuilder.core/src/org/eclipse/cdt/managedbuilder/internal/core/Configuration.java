@@ -104,9 +104,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Check that the tool and the project match
 		IProject project = (IProject) target.getOwner();
 		
-		// Get the tool references from the parent
-		List parentToolRefs = ((Configuration)parentConfig).getLocalToolReferences();
-		Iterator iter = parentToolRefs.listIterator();
+		// Get the tool references from the target and parent
+		List allToolRefs = new Vector(target.getLocalToolReferences());
+		allToolRefs.addAll(((Configuration)parentConfig).getLocalToolReferences());
+		Iterator iter = allToolRefs.listIterator();
 		while (iter.hasNext()) {
 			ToolReference toolRef = (ToolReference)iter.next();
 
@@ -231,33 +232,58 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return
 	 */
 	private OptionReference createOptionReference(IOption option) {
+		ToolReference searchRef = null;
+		ToolReference answer = null;
 		// The option may already be a reference created to hold user settings
 		if (option instanceof OptionReference) {
 			// The option reference belongs to an existing tool reference
 			OptionReference optionRef = (OptionReference)option;
-			ToolReference toolRef = optionRef.getToolReference();
+			searchRef = optionRef.getToolReference();
+			
 			// That tool reference may belong to a target or to the configuration
-			if (toolRef.ownedByConfiguration(this))
+			if (searchRef.ownedByConfiguration(this))
 				return optionRef;
 			else {
-				// Make a copy so the settings can be saved
-				toolRef = new ToolReference(this, toolRef);
-				return toolRef.createOptionReference(option);
+				// All this means is that the tool ref does not belong to the receiver. 
+				// The receiver may also have a reference to the tool
+				if ((answer = findLocalReference(searchRef)) == null) {
+					// Otherwise, create one and save the option setting in it
+					answer = new ToolReference(this, searchRef);
+				}
+				return answer.createOptionReference(option);
 			}
 		} else {
 			// Find out if a tool reference already exists
-			ToolReference toolRef = (ToolReference) getToolReference(option.getTool());
-			if (toolRef == null) {
-				toolRef = new ToolReference(this, option.getTool());
+			searchRef = (ToolReference) getToolReference(option.getTool());
+			if (searchRef == null) {
+				answer = new ToolReference(this, option.getTool());
 			} else {
 				// The reference may belong to the target
-				if (!toolRef.ownedByConfiguration(this)) {
-					toolRef = new ToolReference(this, toolRef);
+				if (!searchRef.ownedByConfiguration(this)) {
+					answer = new ToolReference(this, searchRef);
+				} else {
+					answer = searchRef;
 				}
 			}
-		
-			return toolRef.createOptionReference(option);
+			return answer.createOptionReference(option);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @param toolRef
+	 * @return
+	 */
+	private ToolReference findLocalReference(ToolReference toolRef) {
+		Iterator iter = getLocalToolReferences().iterator();
+		
+		while (iter.hasNext()) {
+			ToolReference ref = (ToolReference)iter.next();
+			if (toolRef.getTool().equals(ref.getTool())) {
+				return ref;
+			}
+		}
+		
+		return null;
 	}
 
 	/* (non-Javadoc)

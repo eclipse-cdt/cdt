@@ -222,7 +222,7 @@
          <option
                name="%Option.Posix.Linker.Defname"
                category="gnu.c.link.category.shared"
-               command="-Wl,--output-def,"
+               command="-Wl,--output-def="
                id="gnu.c.link.option.defname"
                valueType="string">
          </option>
@@ -307,7 +307,7 @@
          <option
                name="%Option.Posix.Linker.XLinker"
                category="gnu.cpp.link.category.other"
-               command="-Xlinker,"
+               command="-Xlinker "
                valueType="stringList"
                id="gnu.cpp.link.option.other">
          </option>
@@ -348,7 +348,7 @@
          <option
                name="%Option.Posix.Linker.Defname"
                category="gnu.cpp.link.category.shared"
-               command="-Wl,--output-def,"
+               command="-Wl,--output-def="
                valueType="string"
                id="gnu.cpp.link.option.defname">
          </option>
@@ -438,6 +438,27 @@
                name="%Option.Posix.UndefSym"
                id="gnu.windres.option.preprocessor.undefined.symbols"/>
       </tool-->
+      <!--tool
+            command="as"
+            sources="s,S"
+            outputs="o"
+            name="%ToolName.assembler.gnu"
+            outputFlag="-o"
+            id="cdt.managedbuild.tool.gnu.assembler"
+            natureFilter="both">
+         <optionCategory
+               owner="cdt.managedbuild.tool.gnu.assembler"
+               name="%OptionCategory.General"
+               id="gnu.asm.category.general">
+         </optionCategory>
+         <option
+               name="%Option.Posix.Assembler.Flags"
+               category="gnu.asm.category.general"
+               valueType="string"
+               id="gnu.both.asm.option.flags">
+         </option>
+            
+      <tool/-->
       <target
             name="%TargetName.gnu"
             id="cdt.managedbuild.target.gnu"
@@ -1047,11 +1068,17 @@
                outputs="so"
                outputPrefix="lib"
                id="cdt.managedbuild.tool.gnu.c.linker">
+            <optionReference
+                  defaultValue="true"
+                  id="gnu.c.link.option.shared"/>
          </toolReference>
          <toolReference
                outputs="so"
                outputPrefix="lib"
                id="cdt.managedbuild.tool.gnu.cpp.linker">
+            <optionReference
+                  defaultValue="true"
+                  id="gnu.cpp.link.option.shared"/>
          </toolReference>
       </target>
       <target
@@ -1261,10 +1288,16 @@
          <toolReference
                outputs="dll,a.dll"
                id="cdt.managedbuild.tool.gnu.c.linker">
+            <optionReference
+                  defaultValue="true"
+                  id="gnu.c.link.option.shared"/>
          </toolReference>
          <toolReference
                outputs="dll,a.dll"
                id="cdt.managedbuild.tool.gnu.cpp.linker">
+            <optionReference
+                  defaultValue="true"
+                  id="gnu.cpp.link.option.shared"/>
          </toolReference>
       </target>
       <target

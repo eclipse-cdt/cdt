@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -149,15 +150,19 @@ public class ToolReference implements IToolReference {
 	 * Created a tool reference on the fly based on an existing tool or tool reference.
 	 * 
 	 * @param owner The <code>BuildObject</code> the receiver will be added to.
-	 * @param parent The <code>ITool</code>tool the reference will be based on.
+	 * @param tool The <code>ITool</code>tool the reference will be based on.
 	 */
-	public ToolReference(BuildObject owner, ITool parent) {
-		this.parent = parent;
+	public ToolReference(BuildObject owner, ITool tool) {
 		this.owner = owner;
-		command = parent.getToolCommand();
-		outputFlag = parent.getOutputFlag();
-		outputPrefix = parent.getOutputPrefix();
-		String[] extensions = parent.getOutputExtensions();
+		if (tool instanceof ToolReference) {
+			parent = ((ToolReference)tool).getTool();
+		} else {
+			parent = tool;
+		}
+		command = tool.getToolCommand();
+		outputFlag = tool.getOutputFlag();
+		outputPrefix = tool.getOutputPrefix();
+		String[] extensions = tool.getOutputExtensions();
 		outputExtensions = new String();
 		if (extensions != null) {
 			for (int index = 0; index < extensions.length; ++index) {
@@ -165,6 +170,34 @@ public class ToolReference implements IToolReference {
 				outputExtensions += extensions[index];
 				if (index < extensions.length - 1) {
 					outputExtensions += DEFAULT_SEPARATOR;
+				}
+			}
+		}
+		
+		// Create a copy of the option references of the parent in the receiver
+		if (tool instanceof ToolReference) {
+			List parentRefs = ((ToolReference)tool).getOptionReferenceList();
+			Iterator iter = parentRefs.iterator();
+			while (iter.hasNext()) {
+				IOption parent = (IOption)iter.next();
+				OptionReference clone = createOptionReference(parent);
+				try {
+					switch (parent.getValueType()) {
+						case IOption.BOOLEAN:
+							clone.setValue(parent.getBooleanValue());
+							break;
+						case IOption.STRING:
+							clone.setValue(parent.getStringValue());
+						case IOption.ENUMERATED:
+							clone.setValue(parent.getSelectedEnum());
+							break;
+						default:
+							clone.setValue(parent.getStringListValue());
+							break;
+					}
+				} catch (BuildException e) {
+					ManagedBuilderCorePlugin.log(e);
+					continue;
 				}
 			}
 		}
@@ -250,7 +283,14 @@ public class ToolReference implements IToolReference {
 	public OptionReference createOptionReference(IOption option) {
 		// Check if the option reference already exists
 		OptionReference ref = getOptionReference(option);
-		if (ref == null) {
+		// It is possible that the search will return an option reference
+		// that is supplied by another element of the build model, not the caller. 
+		// For example, if the search is starated by a configuration and the target 
+		// the caller  belongs to has an option reference for the option, it 
+		// will be returned. While this is correct behaviour for a search, the 
+		// caller will need to create a clone for itself, so make sure the tool 
+		// reference of the search result is owned by the caller
+		if (ref == null || !ref.getToolReference().owner.equals(this.owner)) {
 			ref = new OptionReference(this, option);
 		}
 		return ref;
@@ -504,7 +544,6 @@ public class ToolReference implements IToolReference {
 	public List getOptionReferenceList() {
 		if (optionReferences == null) {
 			optionReferences = new ArrayList();
-			optionReferences.clear();
 		}
 		return optionReferences;
 	}

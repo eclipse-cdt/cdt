@@ -45,7 +45,9 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -1052,6 +1054,24 @@ public class ManagedBuildCoreTests extends TestCase {
 	}
 
 	/*
+	 * The Sub Sub target has a reference to a tool that is defined  
+	 * independently from the target itself. This is a common pattern 
+	 * for tools that are shared between many targets.
+	 * 
+	 * The tool itself is defined as having two option categories, with 
+	 * one option in each category. To test that the reference is properly 
+	 * inheritted, the target overrides the default value of the boolean 
+	 * option. 
+	 * 
+	 * The test confirms that the basic settings are inheritted through the 
+	 * reference, and that the overridden value is used instead of the 
+	 * default. It also tests that the command can be overidden through a 
+	 * tool reference.
+	 * 
+	 * Finally, the string option in the configuration is overridden and the 
+	 * test confirms that it contains both the overridden boolean that the 
+	 * target provides, and the overridden string that it provides.   
+	 *  
 	 * @param testSubSub
 	 */
 	private void checkSubSubTarget(ITarget target) {
@@ -1068,6 +1088,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		final String chainedOptName = "Boolean in Chained";
 		final String freeOptValue = "Live free or die";
 		final String newCmd = "Let the Wookie win";
+		final String stringOverride = "The future language of slaves";
 		
 		// Check the inherited clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
@@ -1079,9 +1100,9 @@ public class ManagedBuildCoreTests extends TestCase {
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
 
-		// Get the 4 configurations
+		// Get the 5 configurations (3 from test, 1 from test sub and 1 from this)
 		IConfiguration[] configs = target.getConfigurations();
-		assertEquals(4, configs.length);
+		assertEquals(5, configs.length);
 		
 		// Check the tools. We should have 3 (1 from each parent and the one referenced).
 		ITool[] tools = target.getTools();
@@ -1115,7 +1136,13 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals(freeOptName, optsInCat[0].getName());
 		assertEquals(IOption.STRING, optsInCat[0].getValueType());
 		try {
-			assertEquals(freeOptValue, optsInCat[0].getStringValue());
+			// We get the option categories and options from the tool itself, but the 
+			// tool reference will have a set of 0 to n option references that contain 
+			// overridden settings. In this case, the string is inheritted and should 
+			// not be reference
+			IOption stringOpt = toolRef.getOptionById(optsInCat[0].getId());
+			assertTrue(stringOpt instanceof Option);
+			assertEquals(freeOptValue, stringOpt.getStringValue());
 		} catch (BuildException e1) {
 			fail("Failed getting string value in subsubtarget :" + e1.getLocalizedMessage());
 		}
@@ -1123,10 +1150,12 @@ public class ManagedBuildCoreTests extends TestCase {
 		// Do the same for the options in the child cat
 		IOption[] optsInSubCat = subCategories[0].getOptions(null);
 		assertEquals(1, optsInSubCat.length);
-		assertEquals(chainedOptName, optsInSubCat[0].getName());
-		assertEquals(IOption.BOOLEAN, optsInSubCat[0].getValueType());
+		IOption booleanRef = toolRef.getOptionById(optsInSubCat[0].getId());
+		assertTrue(booleanRef instanceof OptionReference);
+		assertEquals(chainedOptName, booleanRef.getName());
+		assertEquals(IOption.BOOLEAN, booleanRef.getValueType());
 		try {
-			assertFalse(optsInSubCat[0].getBooleanValue());
+			assertTrue(booleanRef.getBooleanValue());
 		} catch (BuildException e) {
 			fail("Failure getting boolean value in subsubtarget: " + e.getLocalizedMessage());
 		}
@@ -1134,6 +1163,57 @@ public class ManagedBuildCoreTests extends TestCase {
 		// Test that the tool command can be changed through the reference
 		((IToolReference)toolRef).setToolCommand(newCmd);
 		assertEquals(toolRef.getToolCommand(), newCmd);
+		
+		// Muck about with the options in the local config
+		IConfiguration subSubConfig = target.getConfiguration("sub.sub.config");
+		assertNotNull(subSubConfig);
+		ITool[] configTools = subSubConfig.getTools();
+		// This tool ref is inherited from parent, so it does not belong to the config
+		ITool configToolRef = configTools[2];
+		assertNotNull(configToolRef);
+		assertFalse(((ToolReference)configToolRef).ownedByConfiguration(subSubConfig));
+		IOption configStringOpt = configToolRef.getOptionById(optsInCat[0].getId());
+		assertNotNull(configStringOpt);
+		// Override the string option		
+		try {
+			subSubConfig.setOption(configStringOpt, stringOverride);
+		} catch (BuildException e) {
+			fail("Failure setting string value in subsubconfiguration: " + e.getLocalizedMessage());
+		}
+		// Now the config should have a tool ref to the independent tool
+		configTools = subSubConfig.getTools();
+		configToolRef = configTools[2];
+		assertNotNull(configToolRef);
+		assertTrue(((ToolReference)configToolRef).ownedByConfiguration(subSubConfig));
+		
+		// Test that the string option is overridden in the configuration
+		configStringOpt = configToolRef.getOptionById(optsInCat[0].getId());
+		try {
+			assertEquals(stringOverride, configStringOpt.getStringValue());
+		} catch (BuildException e) {
+			fail("Failure getting string value in subsubconfiguration: " + e.getLocalizedMessage());
+		}
+		// The tool should also contain the boolean option set to true
+		IOption configBoolOpt = configToolRef.getOptionById(optsInSubCat[0].getId());
+		assertNotNull(configBoolOpt);
+		try {
+			assertTrue(configBoolOpt.getBooleanValue());
+		} catch (BuildException e) {
+			fail("Failure getting boolean value in subsubconfiguration: " + e.getLocalizedMessage());
+		}
+			
+		// Override it in config and retest
+		try {
+			subSubConfig.setOption(configBoolOpt, false);
+		} catch (BuildException e) {
+			fail("Failure setting boolean value in subsubconfiguration: " + e.getLocalizedMessage());
+		}
+		configBoolOpt = configToolRef.getOptionById(optsInSubCat[0].getId());
+		try {
+			assertFalse(configBoolOpt.getBooleanValue());
+		} catch (BuildException e) {
+			fail("Failure getting boolean value in subsubconfiguration: " + e.getLocalizedMessage());
+		}
 	}
 
 	/*

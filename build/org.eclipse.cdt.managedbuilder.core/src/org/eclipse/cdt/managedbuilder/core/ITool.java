@@ -72,8 +72,9 @@ public interface ITool extends IBuildObject {
 
 	/**
 	 * This is a deprecated method for retrieving an <code>IOption</code> from 
-	 * the receiver based on an ID. It is preferred that you use the newer method
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 * the receiver based on an ID. It is preferred that you use the newer method 
+	 * <code>getOptionById</code>
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptionById(java.lang.String)
 	 *  
 	 * @param id unique identifier of the option to search for
 	 * @return <code>IOption</code>

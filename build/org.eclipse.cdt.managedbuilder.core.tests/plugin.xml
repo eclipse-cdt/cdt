@@ -38,7 +38,7 @@
                name="String in Free"
                category="indy.cat.free"
                valueType="string"
-               id="org.eclipse.cdt.core.tests.option1">
+               id="indy.cat.free.string">
          </option>
          <optionCategory
                owner="indy.cat.free"
@@ -50,7 +50,7 @@
                name="Boolean in Chained"
                category="indy.cat.chained"
                valueType="boolean"
-               id="org.eclipse.cdt.core.tests.option2">
+               id="indy.cat.chained.boolean">
          </option>
       </tool>
       <target
@@ -293,7 +293,13 @@
             id="test.sub.sub">
          <toolReference
                id="target.independent.tool">
+            <optionReference
+                  defaultValue="true"
+                  id="indy.cat.chained.boolean"/>
          </toolReference>
+         <configuration
+               name="Sub Sub Config"
+               id="sub.sub.config"/>
       </target>
       <dynamicElementProvider
             name="Test Target Provider"

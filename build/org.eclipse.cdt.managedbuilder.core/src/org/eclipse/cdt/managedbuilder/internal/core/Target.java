@@ -502,7 +502,7 @@ public class Target extends BuildObject implements ITarget {
 	 * 
 	 * @return List
 	 */
-	private List getLocalToolReferences() {
+	protected List getLocalToolReferences() {
 		if (toolReferences == null) {
 			toolReferences = new ArrayList();
 		}

@@ -5,14 +5,20 @@
 
 package org.eclipse.cdt.debug.mi.core;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.CygwinCommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -25,8 +31,29 @@ public class CygwinGDBDebugger extends GDBDebugger {
 	static final CygwinCommandFactory commandFactory =
 		new CygwinCommandFactory();
 
-	/* Cygwin does not have any special initialization like solib paths etc.. */
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
+		try {
+			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
+			if (mgr instanceof SharedLibraryManager) {
+				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
+				try {
+					((SharedLibraryManager)mgr).setStopOnSolibEvents(stopOnSolibEvents);
+				} catch (CDIException e) {
+					// Ignore this error
+					// it seems to be a real problem on many gdb platform
+				}
+			}
+			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
+			if (p.size() > 0) {
+				String[] oldPaths = mgr.getSharedLibraryPaths();
+				String[] paths = new String[oldPaths.length + p.size()];
+				System.arraycopy((String[])p.toArray(new String[p.size()]), 0, paths, 0, p.size());
+				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
+				mgr.setSharedLibraryPaths(paths);
+			}
+		} catch (CoreException e) {
+			throw new CDIException("Error initializing shared library options: " + e.getMessage());
+		}
 	}
 
 	public ICDISession createLaunchSession(

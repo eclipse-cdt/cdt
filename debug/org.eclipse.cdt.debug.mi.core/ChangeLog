@@ -1,3 +1,8 @@
+2003-09-29 Mikhail Khodjaiants
+	Added the initialization of the shared libraries' attributes to CygwinGDBDebugger.
+	
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+
 2003-09-26 Alain Magloire
 
 	Second part of PR 43496.
@@ -14,7 +19,7 @@
 
 	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
 
-2003-11-10 Mikhail Khodjaiants
+2003-09-11 Mikhail Khodjaiants
 	Moving the shared library search paths block to mi UI.
 	* IMILaunchConfigurationConstants.java: added the 'ATTR_DEBUGGER_SOLIB_PATH' attribute.
 
@@ -30,7 +35,7 @@
 
 2003-09-09 Mikhail Khodjaiants
 	Added the 'stop-on-solib-events' option. 
-	Changed the initialization of the hared library search path.
+	Changed the initialization of the shared library search path.
 	Changed the messages of the thrown exceptions.
 	* GDBDebugger.java
 

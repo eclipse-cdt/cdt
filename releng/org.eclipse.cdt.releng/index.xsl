@@ -6,19 +6,19 @@
     <xsl:template match="/">
         <html>
 	    <head>
-	        <title>CDT 1.2 Build Page</title>
+	        <title>CDT 2.0 Build Page</title>
 	    </head>
 	    <body>
-	        <h2>CDT 1.2 Build Page</h2>
+	        <h2>CDT 2.0 Build Page</h2>
 	        <p>
-		    The nightly builds are currently run every weeknight,
-		    Monday to Friday at 3:00 a.m. EDT/EST.
+		    The nightly builds are currently run twice a week
+		    Monday and Thursday at 3:00 a.m. EDT/EST.
 
 		    To get download and install the builds, add the following
 		    as a site bookmark in Eclipse's Update Manager perspective:
 		</p>
 		<p>
-		    http://update.eclipse.org/tools/cdt/updates/builds/1.2
+		    http://update.eclipse.org/tools/cdt/updates/builds/2.0
 		</p>
 		<p>
 		    There is one category for each build. Expanding the

@@ -282,9 +282,10 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 		if (selection == null || !(selection instanceof IStructuredSelection)) {
 			return project;
 		}
-		try {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			IAdaptable input = (IAdaptable) ssel.getFirstElement();
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		Object element = ssel.getFirstElement();
+		if (element instanceof IAdaptable) {
+			IAdaptable input = (IAdaptable) element;
 			if (input != null) {
 				IResource resource = null;
 				if (input instanceof IResource) {
@@ -296,7 +297,6 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 					project = resource.getProject();
 				}
 			}
-		} catch (ClassCastException e) {
 		}
 		return project;
 	}

@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
@@ -232,6 +233,8 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 			postCommand(exit);
 		} catch (MIException e) {
 		}
+
+		getEventQueue().addItem(new MIExitEvent());
 
 		// Close the input GDB prompt
 		try {

@@ -73,50 +73,31 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.cdt.make.ui.popupMenu.BuildContribution">
-         <menu
-               label="%MenuMakeNew.label"
-               path="additions"
-               id="org.eclipse.cdt.make.ui.menu">
-            <separator
-                  name="group1">
-            </separator>
-            <separator
-                  name="group2">
-            </separator>
-         </menu>
+            objectClass="org.eclipse.cdt.core.model.ICContainer"
+            adaptable="false"
+            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
          <action
                label="%ActionMakeBuildCreate.label"
                class="org.eclipse.cdt.make.ui.actions.CreateBuildAction"
-               menubarPath="org.eclipse.cdt.make.ui.menu/group1"
+               menubarPath="buildGroup"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.createBuildAction">
+               id="org.eclipse.cdt.make.ui.CViewCreateBuildAction">
          </action>
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.make.core.makeNature">
+         </filter>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IContainer"
+            adaptable="false"
+            id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution">
          <action
-               label="%ActionMakeAll.label"
-               icon="icons/ctool16/make.gif"
-               class="org.eclipse.cdt.make.internal.ui.actions.MakeBuilderAction"
-               menubarPath="org.eclipse.cdt.make.ui.menu/group2"
+               label="%ActionMakeBuildCreate.label"
+               class="org.eclipse.cdt.make.ui.actions.CreateBuildAction"
+               menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.makeBuildAction.all">
-         </action>
-         <action
-               label="%ActionMakeClean.label"
-               icon="icons/ctool16/make.gif"
-               class="org.eclipse.cdt.make.internal.ui.actions.MakeBuilderAction"
-               menubarPath="org.eclipse.cdt.make.ui.menu/group2"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.makeBuildAction.clean">
-         </action>
-         <action
-               label="%ActionMakeRebuild.label"
-               icon="icons/ctool16/make.gif"
-               class="org.eclipse.cdt.make.internal.ui.actions.MakeBuilderAction"
-               menubarPath="org.eclipse.cdt.make.ui.menu/group2"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.makeBuildAction.clean.all">
+               id="org.eclipse.cdt.make.ui.NavigatorCreateBuildAction">
          </action>
          <filter
                name="nature"

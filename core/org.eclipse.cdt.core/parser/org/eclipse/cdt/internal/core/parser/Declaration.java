@@ -1,13 +1,19 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * Rational Software - Initial API and implementation
+***********************************************************************/
+
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * @author aniefer
@@ -17,12 +23,13 @@ import java.util.Set;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
+
 public class Declaration {
 
 	/**
 	 * Constructor for Declaration.
 	 */
-	public Declaration() {
+	public Declaration(){
 		super();
 	}
 
@@ -35,36 +42,139 @@ public class Declaration {
 		_object = obj;
 	}
 
-	//Type information, only what we need for now...
-	public static final int typeMask   = 0x0001f;
-	public static final int isStatic   = 0x00020;
+	public static final int typeMask   = 0x001f;
+	public static final int isAuto     = 0x0020;
+	public static final int isRegister = 0x0040;
+	public static final int isStatic   = 0x0080;
+	public static final int isExtern   = 0x0100;
+	public static final int isMutable  = 0x0200;
+	public static final int isInline   = 0x0400;
+	public static final int isVirtual  = 0x0800;
+	public static final int isExplicit = 0x1000;
+	public static final int isTypedef  = 0x2000;
+	public static final int isFriend   = 0x4000;
+	public static final int isConst    = 0x8000;
+	public static final int isVolatile = 0x10000;
+	public static final int isUnsigned = 0x20000;
+	public static final int isShort    = 0x40000;
+	public static final int isLong     = 0x80000;
+	
+	public void setAuto(boolean b) { setBit(b, isAuto); }
+	public boolean isAuto() { return checkBit(isAuto); }
+	
+	public void setRegister(boolean b) { setBit(b, isRegister); }
+	public boolean isRegister() { return checkBit(isRegister); } 
+	
+	public void setStatic(boolean b) { setBit(b, isStatic); }
+	public boolean isStatic() { return checkBit(isStatic); }
+	
+	public void setExtern(boolean b) { setBit(b, isExtern); }
+	public boolean isExtern() { return checkBit(isExtern); }
+	
+	public void setMutable(boolean b) { setBit(b, isMutable); }
+	public boolean isMutable() { return checkBit(isMutable); }
+	
+	public void setInline(boolean b) { setBit(b, isInline); }
+	public boolean isInline() { return checkBit(isInline); }
+	
+	public void setVirtual(boolean b) { setBit(b, isVirtual); }
+	public boolean isVirtual() { return checkBit(isVirtual); }
+	
+	public void setExplicit(boolean b) { setBit(b, isExplicit); }
+	public boolean isExplicit() { return checkBit(isExplicit); }
+	
+	public void setTypedef(boolean b) { setBit(b, isTypedef); }
+	public boolean isTypedef() { return checkBit(isTypedef); }
+	
+	public void setFriend(boolean b) { setBit(b, isFriend); }
+	public boolean isFriend() { return checkBit(isFriend); }
+	
+	public void setConst(boolean b) { setBit(b, isConst); }
+	public boolean isConst() { return checkBit(isConst); }
+	
+	public void setVolatile(boolean b) { setBit(b, isVolatile); }
+	public boolean isVolatile() { return checkBit(isVolatile); }
 
+	public void setUnsigned(boolean b) { setBit(b, isUnsigned); }
+	public boolean isUnsigned() {	return checkBit(isUnsigned); }
+	
+	public void setShort(boolean b) { setBit(b, isShort); }
+	public boolean isShort() { return checkBit(isShort); }
+
+	public void setLong(boolean b) { setBit(b, isLong); }
+	public boolean isLong() {	return checkBit(isLong); }
+	
 	// Types
-	public static final int t_type        = 0; // Type Specifier
-	public static final int t_class       = 1;
-	public static final int t_struct      = 2;
-	public static final int t_union       = 3;
-	public static final int t_enum        = 4;
+	// Note that these should be considered ordered and if you change
+	// the order, you should consider the ParserSymbolTable uses
+	public static final int t_type        =  0; // Type Specifier
+	public static final int t_namespace   =  1;
+	public static final int t_class       =  2;
+	public static final int t_struct      =  3;
+	public static final int t_union       =  4;
+	public static final int t_enum        =  5;
+	public static final int t_function    =  6;
+	public static final int t_char        =  7;
+	public static final int t_wchar_t     =  8;
+	public static final int t_bool        =  9;
+	public static final int t_int         = 10;
+	public static final int t_float       = 11;
+	public static final int t_double      = 12;
+	public static final int t_void        = 13;
+	public static final int t_enumerator  = 14;
+	
 
-	public void setStatic( boolean b ) { setBit( b, isStatic ); }
-	public boolean isStatic() { return checkBit( isStatic ); }
-
-	public void setType(int t) throws ParserSymbolTableException {
-		if( t > typeMask )
+	public void setType(int t) throws ParserSymbolTableException{ 
+		//sanity check, t must fit in its allocated 5 bits in _typeInfo
+		if( t > typeMask ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
+		}
+		
 		_typeInfo = _typeInfo & ~typeMask | t; 
 	}
+	
 	public int getType(){ 
 		return _typeInfo & typeMask; 
 	}
-	public boolean isType( int t ){
-		return ( t == -1 || getType() == t );	
+	
+	public boolean isType( int type ){
+		return isType( type, 0 ); 
+	}
+	
+	/**
+	 * 
+	 * @param type
+	 * @param upperType
+	 * @return boolean
+	 * 
+	 * type checking, check that this declaration's type is between type and
+	 * upperType (inclusive).  upperType of 0 means no range and our type must
+	 * be type.
+	 */
+	public boolean isType( int type, int upperType ){
+		//type of -1 means we don't care
+		if( type == -1 )
+			return true;
+		
+		//upperType of 0 means no range
+		if( upperType == 0 ){
+			return ( getType() == type );
+		} else {
+			return ( getType() >= type && getType() <= upperType );
+		}
 	}
 		
-	public Declaration getTypeDeclaration() {	return _typeDeclaration; }
+	public Declaration getTypeDeclaration(){	
+		return _typeDeclaration; 
+	}
+	
 	public void setTypeDeclaration( Declaration type ){
-		try { setType( t_type ); }
-		catch (ParserSymbolTableException e) { /*will never happen*/ }
+		//setting our type to a declaration implies we are type t_type
+		try { 
+			setType( t_type ); 
+		} catch (ParserSymbolTableException e) { 
+			/*will never happen*/ 
+		}
 		
 		_typeDeclaration = type; 
 	}
@@ -76,137 +186,64 @@ public class Declaration {
 	public void setObject( Object obj ) { _object = obj; }
 	
 	public Declaration	getContainingScope() { return _containingScope; }
-	protected void setContainingScope( Declaration scope ) { _containingScope = scope; }
+	protected void setContainingScope( Declaration scope ){ 
+		_containingScope = scope;
+		_depth = scope._depth + 1; 
+	}
 	
 	public void addParent( Declaration parent ){
 		addParent( parent, false );
 	}
 	public void addParent( Declaration parent, boolean virtual ){
+		if( _parentScopes == null ){
+			_parentScopes = new LinkedList();
+		}
+			
 		_parentScopes.add( new ParentWrapper( parent, virtual ) );
-	}
-
-	protected void addDeclaration( Declaration obj ){
-		obj.setContainingScope( this );
-		_containedDeclarations.put( obj.getName(), obj );
 	}
 	
 	public Map getContainedDeclarations(){
 		return _containedDeclarations;
 	}
 	
-	/**
-	 * Lookup the given name in this context.
-	 * @param type: for elaborated lookups, only return declarations of this
-	 * 				 type
-	 * @param name: Name of the object to lookup
-	 * @return Declaration 
-	 * @throws ParserSymbolTableException
-	 * @see ParserSymbolTable#Lookup
-	 */
-	protected Declaration Lookup( int type, String name ) throws ParserSymbolTableException{
+	public Map createContained(){
+		if( _containedDeclarations == null )
+			_containedDeclarations = new HashMap();
 		
-		if( type != -1 && type < t_class && type > t_union )
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
-			
-		Declaration decl = null;
-		
-		//if this name define in this scope?
-		decl = (Declaration) _containedDeclarations.get( name );
-		
-		//if yes, it hides any others, we are done.
-		if( decl != null && decl.isType( type ) ){
-			return decl; 
-		}
-
-		//if no, we next check any parents we have	
-		decl = LookupInParents( type, name, new HashSet() );	
-					
-		//if still not found, check our containing scope.			
-		if( decl == null && _containingScope != null ) 
-			decl = _containingScope.Lookup( type, name );
-
-		return decl;
+		return _containedDeclarations;
 	}
 
-	private Declaration LookupInParents( int type, String name, Set virtualsVisited ) throws ParserSymbolTableException{
-		
-		Declaration decl = null, temp = null;
-				
-		Iterator iterator = _parentScopes.iterator();
-		
-		ParentWrapper wrapper = null;
-		try{
-			wrapper = (ParentWrapper) iterator.next();
-		}
-		catch ( NoSuchElementException e ){
-			wrapper = null;
-		}
-		
-		while( wrapper != null )
-		{
-			if( !wrapper.isVirtual || !virtualsVisited.contains( wrapper.parent ) ){
-				if( wrapper.isVirtual )
-					virtualsVisited.add( wrapper.parent );
-					
-				//is this name define in this scope?
-				temp = (Declaration) wrapper.parent._containedDeclarations.get( name );
-				if( temp == null || !temp.isType( type ) )
-					temp = wrapper.parent.LookupInParents( type, name, virtualsVisited );
-			}	
-				
-			if( temp != null && temp.isType( type ) ){
-				if( decl == null  )
-					decl = temp;
-				else if ( temp != null )
-				{
-					//it is not ambiguous if temp & decl are the same thing and it is static
-					//or an enum
-					if( decl == temp && ( temp.isStatic() || temp.getType() == t_enum) )
-						temp = null;
-					else
-						throw( new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ) );
-		
-				}
-			}
-			else
-				temp = null;
-			
-			try{
-				wrapper = (ParentWrapper) iterator.next();
-			}
-			catch (NoSuchElementException e){
-				wrapper = null;	
-			}		
-		}
-		
-		return decl;	
+	public LinkedList getParentScopes(){
+		return _parentScopes;
 	}
 	
-
 	// Convenience methods
-	private void setBit(boolean b, int mask) {
-		if (b)	_typeInfo = _typeInfo | mask;
-		else	_typeInfo = _typeInfo & ~mask;
+	private void setBit(boolean b, int mask){
+		if( b ){
+			_typeInfo = _typeInfo | mask; 
+		} else {
+			_typeInfo = _typeInfo & ~mask; 
+		} 
 	}
 	
-	private boolean checkBit(int mask) {
+	private boolean checkBit(int mask){
 		return (_typeInfo & mask) != 0;
 	}	
 	
+	private 	int   		_typeInfo;				//our type info
+	private 	String 		_name;					//our name
+	private	Object 		_object;				//the object associated with us
+	private 	Declaration	_typeDeclaration;		//our type if _typeInfo says t_type
 	
-	//Other scopes to check if the name is not in currRegion
-	//we might want another Vector to deal with namespaces & using...
-	private Declaration _containingScope  = null;
-	private Declaration _type             = null;
-	private Declaration _typeDeclaration  = null;
-	private int   _typeInfo               = 0;
-	private Object _object                = null;
-	private List   _parentScopes          = new LinkedList();
-	private Map    _containedDeclarations = new HashMap();
-	private String _name;
+	protected	Declaration	_containingScope;		//the scope that contains us
+	protected	LinkedList 	_parentScopes;			//inherited scopes (is base classes)
+	protected	LinkedList 	_usingDirectives;		//collection of nominated namespaces
+	protected	Map    		_containedDeclarations;	//declarations contained by us.
 	
+	protected	int 		_depth;					//how far down the scope stack we are
 		
-	private class ParentWrapper{
+	protected class ParentWrapper
+	{
 		public ParentWrapper( Declaration p, boolean v ){
 			parent    = p;
 			isVirtual = v;
@@ -215,6 +252,5 @@ public class Declaration {
 		public boolean isVirtual = false;
 		public Declaration parent = null;
 	}
-
-
+	
 }

@@ -1192,23 +1192,6 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 
-//	public void testBug36047()
-//	{
-//		try
-//		{
-//			StringWriter writer = new StringWriter(); 
-//			writer.write( "# define MAD_VERSION_STRINGIZE(str)	#str\n" ); 
-//			writer.write( "# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n" ); 
-//			writer.write( "# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\"\n" );
-//			initializeScanner( writer.toString() );  
-//			validateEOF(); 
-//		}
-//		catch( ScannerException se )
-//		{
-//			fail( EXCEPTION_THROWN + se.toString() );
-//		}
-//	}
-
 	public void testBug36045() throws Exception
 	{
 		StringBuffer buffer = new StringBuffer();
@@ -1293,5 +1276,30 @@ public class ScannerTestCase extends TestCase
 		{
 			fail(EXCEPTION_THROWN + se.toString());			
 		}
+	}
+	
+	public void testNestedRecursiveDefines() throws Exception
+	{
+		initializeScanner( "#define C B A\n#define B C C\n#define A B\nA" );
+		
+		validateIdentifier("B");
+		validateDefinition("A", "B");
+		validateDefinition("B", "C C");
+		validateDefinition("C", "B A");
+		validateIdentifier("A");
+		validateIdentifier("B");
+		validateIdentifier("A");
+		validateEOF();
+	}
+	
+	public void testBug36316() throws Exception
+	{
+		initializeScanner( "#define A B->A\nA" );
+	
+		validateIdentifier("B");
+		validateDefinition("A", "B->A");
+		validateToken(Token.tARROW);
+		validateIdentifier("A");
+		validateEOF();
 	}
 }

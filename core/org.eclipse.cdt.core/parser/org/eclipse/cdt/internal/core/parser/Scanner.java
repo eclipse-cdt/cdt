@@ -18,12 +18,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -40,18 +37,21 @@ public class Scanner implements IScanner {
 	}
 
 	protected void init(Reader reader, String filename) {
-		// this is a hack to get around a sudden EOF experience
-		contextStack.push(
-			new ScannerContext().initialize(
-				new StringReader("\n"),
-				START,
-				ScannerContext.SENTINEL));
-		if (filename == null)
-			currentContext =
-				new ScannerContext().initialize(reader, TEXT, ScannerContext.TOP ); 
-		else
-			currentContext =
-				new ScannerContext().initialize(reader, filename, ScannerContext.TOP ); 
+		try {
+			//this is a hack to get around a sudden EOF experience
+			contextStack.push(
+						new ScannerContext().initialize(
+						new StringReader("\n"),
+						START,
+						ScannerContext.SENTINEL));
+
+			if (filename == null)
+				contextStack.push( new ScannerContext().initialize(reader, TEXT, ScannerContext.TOP ) ); 
+			else
+				contextStack.push( new ScannerContext().initialize(reader, filename, ScannerContext.TOP ) );
+		} catch( ScannerException se ) {
+			//won't happen since we aren't adding an include or a macro
+		} 
 	}
 
 	public Scanner() {
@@ -62,42 +62,7 @@ public class Scanner implements IScanner {
 		definitions = defns;
 	}
 
-	protected void updateContext(Reader reader, String filename, int type) throws ScannerException {
-		if( type == IScannerContext.INCLUSION )
-		{
-			if( !inclusions.add( filename ) )
-				throw new ScannerException( "Inclusion " + filename + " already encountered." ); 	
-				
-			System.out.println( "Handle inclusion - " + filename );	
-		}
 
-		contextStack.push(currentContext);
-		currentContext =
-			new ScannerContext().initialize(reader, filename, type );
-			
-	}
-
-	protected boolean rollbackContext() {
-		try {
-			currentContext.getReader().close();
-		} catch (IOException ie) {
-			System.out.println("Error closing reader");
-		}
-
-		if( currentContext.getKind() == IScannerContext.INCLUSION )
-		{
-			inclusions.remove( currentContext.getFilename() );
-			System.out.println( "Completed inclusion - " + currentContext.getFilename() );
-		}
-
-		if (contextStack.isEmpty()) {
-			currentContext = null;
-			return false;
-		}
-
-		currentContext = (ScannerContext) contextStack.pop();
-		return true;
-	}
 
 	public void addIncludePath(String includePath) {
 		includePathNames.add(includePath);
@@ -137,7 +102,7 @@ public class Scanner implements IScanner {
 		return includePathNames.toArray();
 	}
 
-	protected boolean skipOverWhitespace() {
+	protected boolean skipOverWhitespace() throws ScannerException {
 		int c = getChar();
 		boolean result = false; 
 		while ((c != NOCHAR) && ((c == ' ') || (c == '\t')))
@@ -233,7 +198,7 @@ public class Scanner implements IScanner {
 		return currentToken;
 	}
 	
-	protected String getNextIdentifier() {
+	protected String getNextIdentifier() throws ScannerException {
 		StringBuffer buffer = new StringBuffer();
 		skipOverWhitespace();
 		int c = getChar();
@@ -275,7 +240,7 @@ public class Scanner implements IScanner {
 						try {
 							FileReader inclusionReader =
 								new FileReader(includeFile);
-							updateContext(inclusionReader, newPath, ScannerContext.INCLUSION );
+							contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION );
 							return;
 						} catch (FileNotFoundException fnf) {
 							// do nothing - check the next directory
@@ -286,7 +251,7 @@ public class Scanner implements IScanner {
 		}
 		else // local inclusion
 		{
-			String currentFilename = currentContext.getFilename(); 
+			String currentFilename = contextStack.getCurrentContext().getFilename(); 
 			File currentIncludeFile = new File( currentFilename );
 			String parentDirectory = currentIncludeFile.getParent();
 			currentIncludeFile = null; 
@@ -296,7 +261,7 @@ public class Scanner implements IScanner {
 				try {
 					FileReader inclusionReader =
 						new FileReader(includeFile);
-					updateContext(inclusionReader, fullPath, ScannerContext.INCLUSION );
+					contextStack.updateContext(inclusionReader, fullPath, ScannerContext.INCLUSION );
 					return;
 				} catch (FileNotFoundException fnf) {
 					if (throwExceptionOnInclusionNotFound)
@@ -321,14 +286,14 @@ public class Scanner implements IScanner {
 	private static final String DEFINED = "defined";
 	private static final String POUND_DEFINE = "#define ";
 
-	private IScannerContext currentContext;
-	private Stack contextStack = new Stack();
-
+	private ContextStack contextStack = new ContextStack();
+	private IScannerContext lastContext = null;
+	
 	private List includePathNames = new ArrayList();
 	private List includePaths = new ArrayList();
 	private Hashtable definitions = new Hashtable();
 	private StringBuffer storageBuffer = null; 
-	private Set inclusions = new HashSet(); 
+	
 	private int count = 0;
 	private static HashMap keywords = new HashMap();
 	private static HashMap ppDirectives = new HashMap();
@@ -367,7 +332,10 @@ public class Scanner implements IScanner {
 
 	private int getChar( boolean insideString ) {
 		int c = NOCHAR;
-		if (currentContext == null)
+		
+		lastContext = contextStack.getCurrentContext();
+		
+		if (contextStack.getCurrentContext() == null)
 			// past the end of file
 			return c;
 
@@ -375,13 +343,13 @@ public class Scanner implements IScanner {
 		do {
 			done = true;
 
-			if (currentContext.undoStackSize() != 0 ) {
-				c = currentContext.popUndo();
+			if (contextStack.getCurrentContext().undoStackSize() != 0 ) {
+				c = contextStack.getCurrentContext().popUndo();
 			} else {
 				try {
-					c = currentContext.read();
+					c = contextStack.getCurrentContext().read();
 					if (c == NOCHAR) {
-						if (rollbackContext() == false) {
+						if (contextStack.rollbackContext() == false) {
 							c = NOCHAR;
 							break;
 						} else {
@@ -389,7 +357,7 @@ public class Scanner implements IScanner {
 						}
 					}
 				} catch (IOException e) {
-					if (rollbackContext() == false) {
+					if (contextStack.rollbackContext() == false) {
 						c = NOCHAR;
 					} else {
 						done = false;
@@ -413,13 +381,14 @@ public class Scanner implements IScanner {
 		return c;
 	}
 
-	private void ungetChar(int c) {
+	private void ungetChar(int c) throws ScannerException{
 		// Should really check whether there already is a char there
 		// If so, we should be using a buffer, instead of a single char
-		currentContext.pushUndo(c);
+		contextStack.getCurrentContext().pushUndo(c);
+		contextStack.undoRollback( lastContext );
 	}
 
-	protected boolean lookAheadForTokenPasting()
+	protected boolean lookAheadForTokenPasting() throws ScannerException
 	{
 		int c = getChar(); 
 		if( c == '#' )
@@ -526,7 +495,7 @@ public class Scanner implements IScanner {
 					return newToken(
 						type,
 						buff.toString(),
-						currentContext);
+						contextStack.getCurrentContext());
 	
 				} else {
 					if (throwExceptionOnUnboundedString)
@@ -563,9 +532,11 @@ public class Scanner implements IScanner {
 				Object mapping = definitions.get(ident);
 
 				if (mapping != null) {
-					expandDefinition(ident, mapping);
-					c = getChar();
-					continue;
+					if( contextStack.shouldExpandDefinition( POUND_DEFINE + ident ) ) {					
+						expandDefinition(ident, mapping);
+						c = getChar();
+						continue;
+					}
 				}
 
 				Object tokenTypeObject = keywords.get(ident);
@@ -590,7 +561,7 @@ public class Scanner implements IScanner {
 						if( storageBuffer != null )
 						{
 							storageBuffer.append( ident );
-							updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION );
+							contextStack.updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION );
 							storageBuffer = null;  
 							c = getChar(); 
 							continue;
@@ -598,7 +569,7 @@ public class Scanner implements IScanner {
 					}
 				}
 
-				return newToken(tokenType, ident, currentContext);
+				return newToken(tokenType, ident, contextStack.getCurrentContext());
 			} else if ((c >= '0') && (c <= '9') || c == '.' ) {
 				StringBuffer buff;
 				
@@ -625,10 +596,10 @@ public class Scanner implements IScanner {
 					if( ! firstCharZero && floatingPoint )
 					{
 						ungetChar( c ); 
-						return newToken( Token.tDOT, ".", currentContext ); 
+						return newToken( Token.tDOT, ".", contextStack.getCurrentContext() ); 
 					}
 					else if( ! firstCharZero ) 
-						throw new ScannerException( "Invalid Hexidecimal @ offset " + currentContext.getOffset() );
+						throw new ScannerException( "Invalid Hexidecimal @ offset " + contextStack.getCurrentContext().getOffset() );
 					
 					hex = true;
 					c = getChar();
@@ -647,7 +618,7 @@ public class Scanner implements IScanner {
 					if( floatingPoint || hex ) 	{
 						if( buff.toString().equals( "..") && getChar() == '.' ) 
 							return newToken( Token.tELIPSE, "..." ); 
-						throw new ScannerException( "Invalid floating point @ offset " + currentContext.getOffset() );						
+						throw new ScannerException( "Invalid floating point @ offset " + contextStack.getCurrentContext().getOffset() );						
 					} 
 					
 					floatingPoint = true;
@@ -705,7 +676,7 @@ public class Scanner implements IScanner {
 					{
 						if( storageBuffer != null )
 						{
-							updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION );
+							contextStack.updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION );
 							storageBuffer = null;  
 							c = getChar(); 
 							continue; 
@@ -724,10 +695,10 @@ public class Scanner implements IScanner {
 				return newToken(
 					tokenType,
 					result,
-					currentContext);
+					contextStack.getCurrentContext());
 				
 			} else if (c == '#') {
-				int beginningOffset = currentContext.getOffset() - 1;
+				int beginningOffset = contextStack.getCurrentContext().getOffset() - 1;
 				// lets prepare for a preprocessor statement
 				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
@@ -740,7 +711,7 @@ public class Scanner implements IScanner {
 				if( c == '#' )
 				{
 					if( skipped )
-						throw new ScannerException(BAD_PP + currentContext.getOffset()); 
+						throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset()); 
 					else 
 						return newToken( tPOUNDPOUND, "##" );
 				} 
@@ -758,7 +729,7 @@ public class Scanner implements IScanner {
 				if (directive == null) {
 					if (throwExceptionOnBadPreprocessorSyntax)
 						throw new ScannerException(
-							BAD_PP + currentContext.getOffset());
+							BAD_PP + contextStack.getCurrentContext().getOffset());
 					
 
 				} else {
@@ -832,7 +803,7 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.ENDIF :
 							String restOfLine = getRestOfPreprocessorLine().trim();
 							if( ! restOfLine.equals( "" ) && throwExceptionOnBadPreprocessorSyntax )
-								throw new ScannerException( BAD_PP + currentContext.getOffset() );
+								throw new ScannerException( BAD_PP + contextStack.getCurrentContext().getOffset() );
 							passOnToClient = branches.poundendif(); 
 							c = getChar();
 							continue;
@@ -905,7 +876,7 @@ public class Scanner implements IScanner {
 							if (!remainderOfLine.equals("")) {
 								if (throwExceptionOnBadPreprocessorSyntax)
 									throw new ScannerException(
-										BAD_PP + currentContext.getOffset());
+										BAD_PP + contextStack.getCurrentContext().getOffset());
 							}
 
 							c = getChar();
@@ -913,7 +884,7 @@ public class Scanner implements IScanner {
 						default :
 							if (throwExceptionOnBadPreprocessorSyntax)
 								throw new ScannerException(
-									BAD_PP + currentContext.getOffset());
+									BAD_PP + contextStack.getCurrentContext().getOffset());
 
 					}
 				}
@@ -923,10 +894,10 @@ public class Scanner implements IScanner {
 						c = getChar(); 
 						int next = getChar(); 
 						if( next == '\'' )
-							return newToken( Token.tCHAR, new Character( (char)c ).toString(), currentContext ); 
+							return newToken( Token.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
 						else
 							if( throwExceptionOnBadCharacterRead )
-								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
+								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
 					case ':' :
 						c = getChar();
 						switch (c) {
@@ -934,32 +905,32 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tCOLONCOLON,
 									"::",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tCOLON,
 									":",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case ';' :
-						return newToken(Token.tSEMI, ";", currentContext);
+						return newToken(Token.tSEMI, ";", contextStack.getCurrentContext());
 					case ',' :
-						return newToken(Token.tCOMMA, ",", currentContext);
+						return newToken(Token.tCOMMA, ",", contextStack.getCurrentContext());
 					case '?' :
-						return newToken(Token.tQUESTION, "?", currentContext);
+						return newToken(Token.tQUESTION, "?", contextStack.getCurrentContext());
 					case '(' :
-						return newToken(Token.tLPAREN, "(", currentContext);
+						return newToken(Token.tLPAREN, "(", contextStack.getCurrentContext());
 					case ')' :
-						return newToken(Token.tRPAREN, ")", currentContext);
+						return newToken(Token.tRPAREN, ")", contextStack.getCurrentContext());
 					case '[' :
-						return newToken(Token.tLBRACKET, "[", currentContext);
+						return newToken(Token.tLBRACKET, "[", contextStack.getCurrentContext());
 					case ']' :
-						return newToken(Token.tRBRACKET, "]", currentContext);
+						return newToken(Token.tRBRACKET, "]", contextStack.getCurrentContext());
 					case '{' :
-						return newToken(Token.tLBRACE, "{", currentContext);
+						return newToken(Token.tLBRACE, "{", contextStack.getCurrentContext());
 					case '}' :
-						return newToken(Token.tRBRACE, "}", currentContext);
+						return newToken(Token.tRBRACE, "}", contextStack.getCurrentContext());
 					case '+' :
 						c = getChar();
 						switch (c) {
@@ -967,18 +938,18 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tPLUSASSIGN,
 									"+=",
-									currentContext);
+									contextStack.getCurrentContext());
 							case '+' :
 								return newToken(
 									Token.tINCR,
 									"++",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tPLUS,
 									"+",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '-' :
 						c = getChar();
@@ -987,12 +958,12 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tMINUSASSIGN,
 									"-=",
-									currentContext);
+									contextStack.getCurrentContext());
 							case '-' :
 								return newToken(
 									Token.tDECR,
 									"--",
-									currentContext);
+									contextStack.getCurrentContext());
 							case '>' :
 								c = getChar();
 								switch (c) {
@@ -1000,20 +971,20 @@ public class Scanner implements IScanner {
 										return newToken(
 											Token.tARROWSTAR,
 											"->*",
-											currentContext);
+											contextStack.getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
 											Token.tARROW,
 											"->",
-											currentContext);
+											contextStack.getCurrentContext());
 								}
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tMINUS,
 									"-",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '*' :
 						c = getChar();
@@ -1022,13 +993,13 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tSTARASSIGN,
 									"*=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tSTAR,
 									"*",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '%' :
 						c = getChar();
@@ -1037,13 +1008,13 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tMODASSIGN,
 									"%=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tMOD,
 									"%",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '^' :
 						c = getChar();
@@ -1052,13 +1023,13 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tXORASSIGN,
 									"^=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tXOR,
 									"^",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '&' :
 						c = getChar();
@@ -1067,18 +1038,18 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tAMPERASSIGN,
 									"&=",
-									currentContext);
+									contextStack.getCurrentContext());
 							case '&' :
 								return newToken(
 									Token.tAND,
 									"&&",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tAMPER,
 									"&",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '|' :
 						c = getChar();
@@ -1087,21 +1058,21 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tBITORASSIGN,
 									"|=",
-									currentContext);
+									contextStack.getCurrentContext());
 							case '|' :
 								return newToken(
 									Token.tOR,
 									"||",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tBITOR,
 									"|",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '~' :
-						return newToken(Token.tCOMPL, "~", currentContext);
+						return newToken(Token.tCOMPL, "~", contextStack.getCurrentContext());
 					case '!' :
 						c = getChar();
 						switch (c) {
@@ -1109,13 +1080,13 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tNOTEQUAL,
 									"!=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tNOT,
 									"!",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '=' :
 						c = getChar();
@@ -1124,13 +1095,13 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tEQUAL,
 									"==",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tASSIGN,
 									"=",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					case '<' :
 						c = getChar();
@@ -1142,22 +1113,22 @@ public class Scanner implements IScanner {
 										return newToken(
 											Token.tSHIFTLASSIGN,
 											"<<=",
-											currentContext);
+											contextStack.getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
 											Token.tSHIFTL,
 											"<<",
-											currentContext);
+											contextStack.getCurrentContext());
 								}
 							case '=' :
 								return newToken(
 									Token.tLTEQUAL,
 									"<=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
-								return newToken(Token.tLT, "<", currentContext);
+								return newToken(Token.tLT, "<", contextStack.getCurrentContext());
 						}
 					case '>' :
 						c = getChar();
@@ -1169,22 +1140,22 @@ public class Scanner implements IScanner {
 										return newToken(
 											Token.tSHIFTRASSIGN,
 											">>=",
-											currentContext);
+											contextStack.getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
 											Token.tSHIFTR,
 											">>",
-											currentContext);
+											contextStack.getCurrentContext());
 								}
 							case '=' :
 								return newToken(
 									Token.tGTEQUAL,
 									">=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
-								return newToken(Token.tGT, ">", currentContext);
+								return newToken(Token.tGT, ">", contextStack.getCurrentContext());
 						}
 					case '.' :
 						c = getChar();
@@ -1196,7 +1167,7 @@ public class Scanner implements IScanner {
 										return newToken(
 											Token.tELIPSE,
 											"...",
-											currentContext);
+											contextStack.getCurrentContext());
 									default :
 										break;
 								}
@@ -1205,13 +1176,13 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tDOTSTAR,
 									".*",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tDOT,
 									".",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 						break;
 					case '/' :
@@ -1230,18 +1201,18 @@ public class Scanner implements IScanner {
 								return newToken(
 									Token.tDIVASSIGN,
 									"/=",
-									currentContext);
+									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									Token.tDIV,
 									"/",
-									currentContext);
+									contextStack.getCurrentContext());
 						}
 					default :
 						// Bad character
 						if( throwExceptionOnBadCharacterRead )
-							throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
+							throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
 						else
 						{
 							c = ' ';
@@ -1509,7 +1480,7 @@ public class Scanner implements IScanner {
 		{ 
 			if( callback != null )
 			{
-				offset = currentContext.getOffset() - f.length() - 1; // -1 for the end quote
+				offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
 				
 				callback.inclusionBegin( f, offset, beginningOffset );
 				callback.inclusionEnd();  
@@ -1523,7 +1494,7 @@ public class Scanner implements IScanner {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
-		int offset = currentContext.getOffset() - key.length() - currentContext.undoStackSize();
+		int offset = contextStack.getCurrentContext().getOffset() - key.length() - contextStack.getCurrentContext().undoStackSize();
 
 		if (!quickScan) {
 			String checkForRedefinition = (String) definitions.get(key);
@@ -1617,24 +1588,24 @@ public class Scanner implements IScanner {
 				// it is a bad statement
 				if (throwExceptionOnBadPreprocessorSyntax)
 					throw new ScannerException(
-						BAD_PP + currentContext.getOffset());
+						BAD_PP + contextStack.getCurrentContext().getOffset());
 			}
 		} else {
 			System.out.println("Unexpected character " + ((char) c));
 			if (throwExceptionOnBadPreprocessorSyntax)
-				throw new ScannerException(BAD_PP + currentContext.getOffset());
+				throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset());
 		}
 
 		// call the callback accordingly
 		if( callback != null )
-			callback.macro( key, offset, beginning, currentContext.getOffset() );
+			callback.macro( key, offset, beginning, contextStack.getCurrentContext().getOffset() );
 	}
-
+	
 	protected void expandDefinition(String symbol, Object expansion)
 		throws ScannerException {
 		if (expansion instanceof String ) {
 			String replacementValue = (String) expansion;
-			updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION );
+			contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION );
 		} else if (expansion instanceof IMacroDescriptor ) {
 			IMacroDescriptor macro = (IMacroDescriptor) expansion;
 			skipOverWhitespace();
@@ -1710,7 +1681,7 @@ public class Scanner implements IScanner {
 						buffer.append( " " ); 
 				}
 				String finalString = buffer.toString(); 
-				updateContext(
+				contextStack.updateContext(
 					new StringReader(finalString),
 					POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION );
 			} else 

@@ -85,6 +85,16 @@ public class CValue extends CDebugElement implements IValue
 	 */
 	public boolean hasVariables() throws DebugException
 	{
+		try
+		{
+			ICDIValue value = getUnderlyingValue();
+			if ( value != null )
+				return value.hasChildren();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( "Operation failed. Reason: ", e );
+		}
 		return false;
 	}
 

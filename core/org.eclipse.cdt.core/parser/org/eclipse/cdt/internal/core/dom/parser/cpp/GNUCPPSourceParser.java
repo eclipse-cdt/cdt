@@ -4305,10 +4305,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          EndOfFileException {
       IToken mark = mark();
       try {
-         IASTExpression e = expression();
-         consume(IToken.tSEMI);
-         return e;
-
+        IASTExpression e = null;
+        if( LT(1) != IToken.tSEMI )
+        	e = expression();
+        consume(IToken.tSEMI);
+        // TODO is this a problem? Should we wrap this in an expression
+        // statement?
+        return e;
       } catch (BacktrackException bt) {
          backup(mark);
          try {

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
@@ -219,9 +220,9 @@ public class DOMLocationTests extends AST2BaseTest {
         String code = "enum hue { red, blue, green };"; //$NON-NLS-1$
         IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
         IASTSimpleDeclaration d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-        IASTEnumerationSpecifier enum = (IASTEnumerationSpecifier) d
+        IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) d
                 .getDeclSpecifier();
-        IASTEnumerationSpecifier.IASTEnumerator enumerator = enum
+        IASTEnumerationSpecifier.IASTEnumerator enumerator = enumeration
                 .getEnumerators()[0];
         assertSoleLocation(enumerator, code.indexOf("red"), "red".length()); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -447,5 +448,15 @@ public class DOMLocationTests extends AST2BaseTest {
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 		IASTDeclarator d = sd.getDeclarators()[0];
 		assertSoleLocation( d, code.indexOf("*p = (int []){2, 4}"), "*p = (int []){2, 4}".length() );  //$NON-NLS-1$//$NON-NLS-2$
+	}
+    
+    public void testBug86323() throws Exception {
+		String code = "void f() { int i=0;	for (; i<10; i++) {	} }";
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p);
+            IASTForStatement for_stmt = (IASTForStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[1];
+            assertNull( for_stmt.getInitDeclaration() );
+        }
 	}
 }

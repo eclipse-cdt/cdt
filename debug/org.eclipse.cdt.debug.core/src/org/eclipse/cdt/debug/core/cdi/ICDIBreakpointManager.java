@@ -90,4 +90,17 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 								ICDICatchEvent event,
 								String expression,
 								ICDICondition condition ) throws CDIException;
+
+
+	/**
+	 * Return a ICDICondition
+	 */
+	ICDICondition createCondition(int ignoreCount, String expression);
+
+	
+	/**
+	 * Returns a ICDILocation
+	 */
+	ICDILocation createLocation(String file, String function, int line);
+
 }

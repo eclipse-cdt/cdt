@@ -35,7 +35,7 @@
             delegate="org.eclipse.cdt.launch.internal.LocalRunLaunchDelegate"
             modes="run,debug"
             public="true"
-            id="org.eclipse.cdt.launch.localRunLaunch">
+            id="org.eclipse.cdt.launch.localCLaunch">
       </launchConfigurationType>
       <launchConfigurationType
             name="%LocalAttachCDTLaunch.name"
@@ -56,7 +56,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="icons/c_app.gif"
-            configTypeID="org.eclipse.cdt.launch.localRunLaunch"
+            configTypeID="org.eclipse.cdt.launch.localCLaunch"
             id="org.eclipse.cdt.launch.localRunLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
@@ -73,7 +73,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.localRunLaunch"
+            type="org.eclipse.cdt.launch.localCLaunch"
             class="org.eclipse.cdt.launch.internal.ui.LocalRunLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.localRunLaunchTabGroup">
       </launchConfigurationTabGroup>

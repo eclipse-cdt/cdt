@@ -62,6 +62,13 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	 */
 	public int getLineNumber( long address )
 	{
+		for ( int i = 0; i < fInstructions.length; ++i )
+		{
+			if ( fInstructions[i].getAdress() == address )
+			{
+				return i + 1;
+			}
+		}
 		return 0;
 	}
 
@@ -139,7 +146,7 @@ public class DisassemblyStorage implements IDisassemblyStorage
 		StringBuffer lines = new StringBuffer();
 		for ( int i = 0; i < fInstructions.length; ++i )
 		{
-			lines.append( fInstructions[i].toString() );
+			lines.append( getInstructionString( fInstructions[i] ) );
 		}
 		fInputStream = new ByteArrayInputStream( lines.toString().getBytes() );
 	}
@@ -158,6 +165,22 @@ public class DisassemblyStorage implements IDisassemblyStorage
 		StringBuffer sb = new StringBuffer();
 		if ( instruction != null )
 		{
+			sb .append( CDebugUtils.toHexAddressString( instruction.getAdress() ) );
+			sb.append( ' ' );
+			if ( instruction.getFuntionName() != null && instruction.getFuntionName().length() > 0 )
+			{
+				sb.append( '<' );
+				sb.append( instruction.getFuntionName() );
+				if ( instruction.getOffset() != 0 )
+				{
+					sb.append( '+' );
+					sb.append( instruction.getOffset() );
+				}
+				sb.append( ">:" );
+				sb.append( '\t' );
+			}
+			sb.append( instruction.getInstruction() );
+			sb.append( '\n' );
 		}
 		return sb.toString();
 	}

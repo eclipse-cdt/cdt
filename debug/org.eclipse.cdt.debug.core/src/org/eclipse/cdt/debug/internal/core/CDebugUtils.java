@@ -64,4 +64,17 @@ public class CDebugUtils
 			}
 		}
 	}
+	
+	public static String toHexAddressString( long address )
+	{
+		String addressString = Long.toHexString( address );
+		StringBuffer sb = new StringBuffer( 10 );
+		sb.append( "0x" );
+		for ( int i = 0; i < 8 - addressString.length(); ++i )
+		{
+			sb.append( '0' );
+		}
+		sb.append( addressString );
+		return sb.toString();
+	}
 }

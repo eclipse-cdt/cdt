@@ -52,6 +52,10 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 				return frameInfo.getFrameLineNumber();
 			}
 		}
+		if ( getRealMode() == ISourceMode.MODE_DISASSEMBLY && getDisassemblyManager() != null )
+		{
+			return getDisassemblyManager().getLineNumber( frameInfo );
+		}
 		return 0;
 	}
 

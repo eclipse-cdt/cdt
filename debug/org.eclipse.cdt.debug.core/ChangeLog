@@ -1,3 +1,9 @@
+2002-10-10 Mikhail Khodjaiants
+	* CSourceManager.java: Implementing the disassembly mode.
+	* DisassemblyManager.java: Implementing the disassembly mode.
+	* DisassemblyStorage.java: Implementing the disassembly mode.
+	* CDebugUtils.java: Added the 'toHexAddressString' method.
+
 2002-10-10 Alain Magloire
 
 	* ICDISourceManager.java: Changing the getInstructions()

@@ -118,7 +118,7 @@ public class DisassemblyManager
 					{
 						try
 						{
-							instructions = sm.getInstructions( "0x" + Long.toHexString( address ), "0x" + Long.toHexString( address + DISASSEMBLY_BLOCK_SIZE ) );
+							instructions = sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE );
 						}
 						catch( CDIException e )
 						{

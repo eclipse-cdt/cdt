@@ -28,7 +28,7 @@ import org.eclipse.jface.text.rules.WordRule;
 public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 
 
-	private final static String SKIP= "__skip";
+	//private final static String SKIP= "__skip";
 
 
 	public final static String ASM_MULTILINE_COMMENT= ICColorConstants.C_MULTI_LINE_COMMENT;
@@ -112,6 +112,7 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 
 		// Add rule for single line comments.
 		rules.add(new EndOfLineRule("//", single_comment));
+		rules.add(new EndOfLineRule("#", single_comment)); //$NON-NLS-1$
 
 		// Add rule for strings and character constants.
 		rules.add(new SingleLineRule("\"", "\"", string, '\\'));

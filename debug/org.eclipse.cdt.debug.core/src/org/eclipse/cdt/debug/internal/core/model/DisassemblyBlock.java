@@ -182,7 +182,6 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	}
 
 	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ICDIInstruction[] instructions ) {
-		
 		return new IAsmSourceLine[] { new AsmSourceLine( factory, "", instructions ) }; //$NON-NLS-1$
 	}
 

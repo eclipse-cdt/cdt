@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -190,6 +192,11 @@ public class ManageConfigDialog extends Dialog {
 		buildArtifactExt.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				buildArtifactExt = null;
+			}
+		});
+		buildArtifactExt.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = ManagedBuilderUIMessages.getResourceString(OUTPUT_EXT);
 			}
 		});
 	}

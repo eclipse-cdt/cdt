@@ -91,11 +91,13 @@ public class Elf {
 		public final static int EM_H8_300 = 46;
 		public final static int EM_H8_300H = 47;
 		public final static int EM_IA_64 = 50;
+		public final static int EM_AVR = 83;
 		public final static int EM_FR30 = 84;     /* Fujitsu FR30 */
 		public final static int EM_V850 = 87;
 		public final static int EM_M32R = 88;
 		public final static int EM_MN10300 = 89;
 		public final static int EM_MN10200 = 90;
+		public final static int EM_MSP430 = 105;
 		public final static int EM_EXCESS = 111;
 		public final static int EM_NIOSII = 113;
 		public final static int EM_NIOS = 0xFEBB;
@@ -660,6 +662,12 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_IA_64:
 				attrib.cpu = "ia64"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_AVR:
+				attrib.cpu = "avr";
+			break;
+			case Elf.ELFhdr.EM_MSP430:
+				attrib.cpu = "msp430";
 				break;
 			case Elf.ELFhdr.EM_NONE:
 			default:

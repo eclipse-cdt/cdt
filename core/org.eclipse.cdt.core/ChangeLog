@@ -1,5 +1,10 @@
 2004-06-07 Alain Magloire
 
+	Fix for PR 64090
+	model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
+2004-06-07 Alain Magloire
+
 	Fix for PR 65633
 	* model/org/eclipse/cdt/internal/core/model/CProject.java
 	* model/org/eclipse/cdt/internal/core/model/IncludeEntry.java

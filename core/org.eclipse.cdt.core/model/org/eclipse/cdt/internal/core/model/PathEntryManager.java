@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author alain
@@ -126,9 +127,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
-		//boolean markers = cproject.getProject().getWorkspace().isTreeLocked();
-		//return getResolvedPathEntries(cproject, !markers);
-		return getResolvedPathEntries(cproject, false);
+		boolean markers = cproject.getProject().getWorkspace().isTreeLocked();
+		return getResolvedPathEntries(cproject, !markers);
 	}
 	
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
@@ -163,18 +163,29 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			entries = new IPathEntry[list.size()];
 			list.toArray(entries);
 			if (generateMarkers) {
-				IProject project = cproject.getProject();
-				flushPathEntryProblemMarkers(project);
-				ICModelStatus status = validatePathEntry(cproject, entries);
-				if (!status.isOK()) {
-					createPathEntryProblemMarker(project, status);
-				}
-				for (int j = 0; j < entries.length; j++) {
-					status = validatePathEntry(cproject, entries[j], true, false);
-					if (!status.isOK()) {
-						createPathEntryProblemMarker(project, status);
+				final ICProject finalCProject = cproject;
+				final IPathEntry[] finalEntries = entries;
+				Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
+					/* (non-Javadoc)
+					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					protected IStatus run(IProgressMonitor monitor) {
+						IProject project = finalCProject.getProject();
+						flushPathEntryProblemMarkers(project);
+						ICModelStatus status = validatePathEntry(finalCProject, finalEntries);
+						if (!status.isOK()) {
+							createPathEntryProblemMarker(project, status);
+						}
+						for (int j = 0; j < finalEntries.length; j++) {
+							status = validatePathEntry(finalCProject, finalEntries[j], true, false);
+							if (!status.isOK()) {
+								createPathEntryProblemMarker(project, status);
+							}
+						}
+						return CModelStatus.OK_STATUS;
 					}
-				}
+				};
+				markerTask.schedule();
 			}
 			resolvedMap.put(cproject, entries);
 		}
@@ -1264,7 +1275,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			);
 		} catch (CoreException e) {
 			// could not create marker: cannot do much
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -1283,7 +1294,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		} catch (CoreException e) {
 			// could not flush markers: not much we can do
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 

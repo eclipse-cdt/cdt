@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
+import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -139,5 +140,14 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 
 	public void dispose() {
 		fInstructions = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter ) {
+		if ( IExecFileInfo.class.equals( adapter ) )
+			return getDebugTarget().getAdapter( adapter );
+		return super.getAdapter( adapter );
 	}
 }

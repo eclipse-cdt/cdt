@@ -1,3 +1,7 @@
+2004-04-21 Mikhail Khodjaiants
+	Disassembly should provide an adapter for IExecFialeInfo.
+	* Disassembly.java
+	
 2004-04-20 Mikhail Khodjaiants
 	The "getCFileGlobals" method of "IExecFileInfo" throws "DebugException".
 	* IExecFileInfo.java

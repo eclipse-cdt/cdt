@@ -1,3 +1,8 @@
+2002-11-22 Alex Chapiro
+
+	* src/.../wizards/conversion/ConversionWizard.java(doRun):
+	doRunPrologue() should not be call from doRun().
+
 2002-11-21 David Inglis
 	* plugin.xml
 	* plugin.properties

@@ -81,7 +81,7 @@ public class MemoryText
 		refresh();
 	}
 
-	private void handleExtendedModify( ExtendedModifyEvent event )
+	protected void handleExtendedModify( ExtendedModifyEvent event )
 	{
 		if ( event.length != 1 )
 			return;
@@ -137,7 +137,7 @@ public class MemoryText
 		}
 	}
 
-	private void handleVerifyKey( VerifyEvent event ) 
+	protected void handleVerifyKey( VerifyEvent event ) 
 	{
 		if ( event.character == SWT.LF ||
 			 event.character == SWT.CR || 

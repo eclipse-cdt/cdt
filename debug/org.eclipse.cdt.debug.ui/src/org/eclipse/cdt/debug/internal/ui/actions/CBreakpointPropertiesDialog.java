@@ -73,8 +73,8 @@ public class CBreakpointPropertiesDialog extends Dialog
 		{
 			if ( wHint != SWT.DEFAULT && hHint != SWT.DEFAULT )
 				return new Point( wHint, hHint );
-			int x = fMinimumPageSize.x;
-			int y = fMinimumPageSize.y;
+			int x = getMinimumPageSize().x;
+			int y = getMinimumPageSize().y;
 
 			Control[] children = composite.getChildren();
 			for ( int i = 0; i < children.length; i++ )
@@ -496,5 +496,10 @@ public class CBreakpointPropertiesDialog extends Dialog
 	{
 		fOkButton = createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true );
 		createButton( parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false );
+	}
+	
+	protected Point getMinimumPageSize()
+	{
+		return fMinimumPageSize;
 	}
 }

@@ -214,7 +214,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 	/**
 	 * Tidy up the widgets that were used
 	 */
-	private void cleanup()
+	protected void cleanup()
 	{
 		fKeyReleased = false;
 		if ( fEditorText != null )

@@ -10,8 +10,7 @@ import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.jface.preference.IPreferenceStore;
+//import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -61,9 +60,11 @@ public class MemoryControlArea extends Composite
 
 	private MemoryPresentation createPresentation()
 	{
+/*
 		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
 		char[] paddingCharStr = pstore.getString( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ).toCharArray();
 		char paddingChar = ( paddingCharStr.length > 0 ) ? paddingCharStr[0] : '.';
+*/
 		return new MemoryPresentation();
 	}
 
@@ -103,9 +104,9 @@ public class MemoryControlArea extends Composite
 		return new MemoryText( parent, SWT.BORDER | SWT.HIDE_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL, presentation );
 	}
 
-	private void handleAddressEnter()
+	protected void handleAddressEnter()
 	{
-		String address = fAddressText.getText().trim();
+//		String address = fAddressText.getText().trim();
 	}
 
 	public void propertyChange( PropertyChangeEvent event )

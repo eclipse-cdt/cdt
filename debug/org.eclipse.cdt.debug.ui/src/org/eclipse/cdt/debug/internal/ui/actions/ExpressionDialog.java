@@ -100,7 +100,7 @@ public class ExpressionDialog extends Dialog
 		return text;
 	}
 
-	private void setOkButtonState()
+	protected void setOkButtonState()
 	{
 		if ( fBtnOk == null )
 			return;

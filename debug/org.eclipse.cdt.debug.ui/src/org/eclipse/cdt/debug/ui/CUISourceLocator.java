@@ -57,7 +57,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	 * Initially true, until the user checks the 'do not
 	 * ask again' box.
 	 */
-	private boolean fAllowedToAsk;
+	protected boolean fAllowedToAsk;
 
 
 	/**

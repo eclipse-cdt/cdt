@@ -137,7 +137,7 @@ public class AddWatchpointDialog extends Dialog
         				} );
 	}
 
-	private void setOkButtonState()
+	protected void setOkButtonState()
 	{
 		if ( fBtnOk == null )
 			return;

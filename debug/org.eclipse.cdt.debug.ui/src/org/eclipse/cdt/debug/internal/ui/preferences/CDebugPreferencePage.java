@@ -266,7 +266,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Refresh all views in the given workbench page with the given view id
 	 */
-	private void refreshViews( IWorkbenchPage page, String viewID )
+	protected void refreshViews( IWorkbenchPage page, String viewID )
 	{
 		IViewPart part = page.findView( viewID );
 		if ( part != null )

@@ -23,12 +23,12 @@ public class ComboFieldEditor extends FieldEditor {
 	/**
 	 * The <code>Combo</code> widget.
 	 */
-	private Combo fCombo;
+	protected Combo fCombo;
 	
 	/**
 	 * The value (not the name) of the currently selected item in the Combo widget.
 	 */
-	private String fValue;
+	protected String fValue;
 	
 	/**
 	 * The names (labels) and underlying values to populate the combo widget.  These should be
@@ -174,5 +174,21 @@ public class ComboFieldEditor extends FieldEditor {
 		if (fEntryNamesAndValues.length > 0) {
 			fValue = fEntryNamesAndValues[0][1];
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#fireValueChanged(String, Object, Object)
+	 */
+	protected void fireValueChanged( String property, Object oldValue, Object newValue )
+	{
+		super.fireValueChanged( property, oldValue, newValue );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#setPresentsDefaultValue(boolean)
+	 */
+	protected void setPresentsDefaultValue( boolean b )
+	{
+		super.setPresentsDefaultValue( b );
 	}
 }

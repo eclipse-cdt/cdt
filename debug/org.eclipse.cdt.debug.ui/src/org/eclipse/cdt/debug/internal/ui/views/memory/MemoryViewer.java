@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -56,7 +55,6 @@ public class MemoryViewer extends ContentViewer
 			fControl.setLayout( layout );
 			fControl.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 			fTabFolder = new CTabFolder( fControl, SWT.TOP );
-			GridData gridData = new GridData();
 			fTabFolder.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_VERTICAL ) );
 			for ( int i = 0; i < NUMBER_OF_TABS; ++i )
 			{

@@ -205,8 +205,6 @@
 				<move todir="test">
 					<fileset dir="eclipse"/>
 				</move>
-				<unzip src="zips/org.eclipse.test_2.1.0.zip" dest="test/plugins"/>
-				<unzip src="zips/org.eclipse.ant.optional.junit_2.1.0.zip" dest="test/plugins"/>
 		
 				<xsl:for-each select="projects/plugin|projects/feature">
 					<unjar>
@@ -227,21 +225,15 @@
 				</xsl:for-each>
 				
 				<!-- Run the tests -->
-				<chmod perm="+x" file="test/eclipse"/>
+				<chmod file="test/eclipse" perm="+x"/>
+				<mkdir dir="logs/${{build.version}}.${{build.number}}"/>
 				<exec executable="${{basedir}}/test/eclipse" dir="test">
 					<arg line="-nosplash"/>
-					<arg line="-application org.eclipse.ant.core.antRunner"/>
-					<arg line="-buildfile plugins/org.eclipse.cdt.core.tests_${{build.version}}.${{build.number}}/test.xml"/>
-					<arg line="-Dorg.eclipse.test=org.eclipse.test_2.1.0"/>
-					<arg line="-Declipse-home=${{basedir}}/test"/>
+					<arg line="-application org.eclipse.cdt.core.tests.runTests"/>
+					<arg line="-testout ../logs/${{build.version}}.${{build.number}}/org.eclipse.cdt.core.tests.xml"/>
+					<arg line="-testreport ../../testReport.xsl"/>
 				</exec>
-		
-				<!-- Create the reports -->
-				<delete dir="logs"/>
-					<xslt in="test/org.eclipse.cdt.core.tests.xml"
-						out="logs/${{build.version}}.${{build.number}}/org.eclipse.cdt.core.tests.html"
-						style="junit.xsl"/>
-		
+
 				<!-- Add our version to site.xml -->
 				<tstamp>
 					<format property="build.date" pattern="EEE MMM d HH:mm:ss z yyyy"/>
@@ -269,10 +261,11 @@
 						<include name="plugins/*.jar"/>
 						<include name="features/*.jar"/>
 						<include name="dist/*.zip"/>
-						<include name="logs/**/*.html"/>
+						<include name="logs/**/*.xml"/>
 						<include name="build.number"/>
 						<include name="index.html"/>
 						<include name="site.xml"/>
+						<include name="testReport.xsl"/>
 					</fileset>
 				</ftp>
 			</target>
@@ -286,7 +279,7 @@
 				</mail>
 			</target>
 	
-			<target name="all" depends="build,upload,mail"/>
+			<target name="all" depends="build,test,upload,mail"/>
 			<!-- test removed since it doesn't work right now -->
 			
 		</project>

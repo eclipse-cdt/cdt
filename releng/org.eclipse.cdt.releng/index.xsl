@@ -55,7 +55,7 @@
 		        <xsl:attribute name="href">
 			    <xsl:text>logs/</xsl:text>
 			    <xsl:value-of select="substring-after(@name,'CDT Build ')"/>
-			    <xsl:text>/org.eclipse.cdt.core.tests.html</xsl:text>
+			    <xsl:text>/org.eclipse.cdt.core.tests.xml</xsl:text>
 			</xsl:attribute>
 			org.eclipse.cdt.core.tests
 		    </a>

@@ -52,7 +52,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			scInfo.setESIProviderCommandEnabled(true);
 			scInfo.setUseDefaultESIProviderCmd(true);
 			scInfo.setESIProviderCommand(new Path("gcc")); //$NON-NLS-1$
-			scInfo.setESIProviderArguments("-E -P -v ${plugin_state_location}/${specs_file}");	//$NON-NLS-1$
+			scInfo.setESIProviderArguments("-E -P -v -dD ${plugin_state_location}/${specs_file}");	//$NON-NLS-1$
 			scInfo.setESIProviderConsoleParserId(MakeCorePlugin.GCC_SPECS_CONSOLE_PARSER_ID);
 			scInfo.setMakeBuilderConsoleParserId(MakeCorePlugin.GCC_SCANNER_INFO_CONSOLE_PARSER_ID);
 			scInfo.setSIProblemGenerationEnabled(true);

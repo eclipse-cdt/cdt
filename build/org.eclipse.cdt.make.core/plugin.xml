@@ -119,7 +119,7 @@
             </parameter>
             <parameter
                   name="defaultAttributes"
-                  value="-E -P -v ${plugin_state_location}/${specs_file}">
+                  value="-E -P -v -dD ${plugin_state_location}/${specs_file}">
             </parameter>
          </run>
       </externalScannerInfoProvider>

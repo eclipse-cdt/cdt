@@ -109,4 +109,11 @@ public interface ICDIConfiguration {
 	 * @return whether this session supports expression evaluation
 	 */
 	boolean supportsExpressionEvaluation();
+
+	/**
+	 * Returns whether the session should be terminated when the inferior exits.
+	 *
+	 * @return whether the session be terminated when the inferior exits
+	 */
+	boolean terminateSessionOnExit();
 }

@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.core;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
+import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -40,6 +41,8 @@ public class CDebugCorePlugin extends Plugin
 	private HashMap fDebugConfigurations;
 
 	private IAsyncExecutor fAsyncExecutor = null;
+
+	private SessionManager fSessionManager = null;
 
 	/**
 	 * The constructor.
@@ -169,6 +172,7 @@ public class CDebugCorePlugin extends Plugin
 	 */
 	public void shutdown() throws CoreException
 	{
+		setSessionManager( null );
 		resetBreakpointsInstallCount();
 		super.shutdown();
 	}
@@ -180,6 +184,7 @@ public class CDebugCorePlugin extends Plugin
 	{
 		super.startup();
 		resetBreakpointsInstallCount();
+		setSessionManager( new SessionManager() );
 	}
 
 	protected void resetBreakpointsInstallCount()
@@ -211,5 +216,17 @@ public class CDebugCorePlugin extends Plugin
 	{
 		if ( fAsyncExecutor != null )
 			fAsyncExecutor.asyncExec( runnable );
+	}
+
+	protected SessionManager getSessionManager()
+	{
+		return fSessionManager;
+	}
+
+	protected void setSessionManager( SessionManager sm )
+	{
+		if ( fSessionManager != null )
+			fSessionManager.dispose();
+		fSessionManager = sm;
 	}
 }

@@ -1,3 +1,10 @@
+2003-05-01 Mikhail Khodjaiants
+	Implementation of termination policy.
+	* ICDIConfiguration.java: new "terminateSessionOnExit" method added.
+	* SessionManager.java: terminates the launch when all targets are terminated or disconnected.
+	* CDebugCorePlugin.java: provides an access to the current session managers.
+	* CDebugTarget.java
+ 
 2003-04-25 Mikhail Khodjaiants
 	Fix for bug 36909
 	* DisassemblyManager.java: check if the address of a stack frame is not 0;

@@ -155,6 +155,7 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
          assertSoleFileLocation(
                incs[0],
                "code.cpp", code.indexOf("#inc"), code.indexOf(".h\"\n") + ".h\"".length() - code.indexOf("#inc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+         
       }
    }
 
@@ -254,6 +255,10 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
                "source.c", cpp_code.indexOf("#include \"header2.h\""), "#include \"header2.h\"".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          assertSoleFileLocation(declarations[2],
                "source.c", cpp_code.indexOf("int z;"), "int z;".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         
+         IASTTranslationUnit.IDependencyTree tree = tu.getDependencyTree();
+         assertEquals( tree.getInclusions().length, 2 );
+         
       }
    }
 

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -2363,8 +2364,28 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     public IDependencyTree getDependencyTree() {
-        // TODO Auto-generated method stub
-        return null;
+        DependencyTree result = new DependencyTree(getTranslationUnitPath());
+        buildDependencyTree( result, tu );
+        return result;
+    }
+
+    protected void buildDependencyTree(IDependencyNodeHost result, _CompositeFileContext context) {
+        _Context [] subs = context.getSubContexts();
+        for( int i = 0; i < subs.length; ++i )
+        {
+            if( subs[i] instanceof _Inclusion )
+            {
+                IASTTranslationUnit.IDependencyTree.IASTInclusionNode node = createDepTreeNode( (_Inclusion)subs[i] );
+                result.addInclusionNode( node );
+            }
+        }
+    }
+
+    private IASTInclusionNode createDepTreeNode(_Inclusion inclusion) {
+        IASTPreprocessorIncludeStatement stmt = createASTInclusion( inclusion );
+        InclusionNode node = new  InclusionNode( stmt );
+        buildDependencyTree(node, inclusion);
+        return node;
     }
 
     public IMacroDefinition registerBuiltinObjectStyleMacro(ObjectStyleMacro macro) {

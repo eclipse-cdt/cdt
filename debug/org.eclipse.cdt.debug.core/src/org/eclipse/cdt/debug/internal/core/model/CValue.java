@@ -43,7 +43,6 @@ import org.eclipse.debug.core.model.IVariable;
  * Represents the value of a variable in the CDI model.
  */
 public class CValue extends AbstractCValue {
-
 	/**
 	 * Cached value.
 	 */
@@ -454,5 +453,10 @@ public class CValue extends AbstractCValue {
 		while( it.hasNext() ) {
 			((AbstractCVariable)it.next()).resetValue();
 		}
+	}
+
+	public ICType getType() throws DebugException {
+		AbstractCVariable var = getParentVariable();
+		return ( var instanceof CVariable ) ? ((CVariable)var).getType() : null;
 	}
 }

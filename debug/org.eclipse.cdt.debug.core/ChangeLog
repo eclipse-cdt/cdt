@@ -1,3 +1,10 @@
+2004-10-06 Mikhail Khodjaiants
+	Added the "getType" method to ICValue.
+	* ICValue.java
+	* AbstractCValue.java
+	* CArrayPartitionValue.java
+	* CValue.java
+
 2004-09-30 Mikhail Khodjaiants
 	Implementing adapters for the platform's Memory view.
 	* CExtendedMemoryBlockRetrieval.java: new

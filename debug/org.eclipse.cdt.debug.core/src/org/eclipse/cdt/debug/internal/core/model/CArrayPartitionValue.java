@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -164,5 +165,9 @@ public class CArrayPartitionValue extends AbstractCValue {
 		while( it.hasNext() ) {
 			((AbstractCVariable)it.next()).resetValue();
 		}
+	}
+
+	public ICType getType() throws DebugException {
+		return null;
 	}
 }

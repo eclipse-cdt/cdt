@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
 /**
  * Extends the IValue interface by C/C++ specific functionality.
  */
 public interface ICValue extends IValue, ICDebugElement {
+	
+	ICType getType() throws DebugException;
 
 	String evaluateAsExpression();
 }

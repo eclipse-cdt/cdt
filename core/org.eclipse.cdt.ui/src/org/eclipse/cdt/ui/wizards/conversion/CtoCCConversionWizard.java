@@ -81,11 +81,8 @@ public class CtoCCConversionWizard extends ConversionWizard {
      * @see Wizard#createPages
      */ 
     public void addPages() { 
-        mainPage = new ConvertCtoCCProjectWizardPage(getPrefix());
+        mainPage = new ConvertCtoCCStdMakeProjectWizardPage(getPrefix());
         
         addPage(mainPage);
-        
-        // ensure proper window name by overwriting the title set by the super class
-        this.setWindowTitle(getWindowTitleResource());
     }     
 }

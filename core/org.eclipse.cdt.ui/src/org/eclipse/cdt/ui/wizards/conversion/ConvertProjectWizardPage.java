@@ -60,8 +60,8 @@ import org.eclipse.ui.PlatformUI;
 public abstract class ConvertProjectWizardPage
     extends WizardPage {
 
-    public static final String  KEY_TITLE = "ProjectConvertionWizard.title";
-    public static final String  KEY_CONVERTING = "ProjectConvertionWizard.converting";
+    public static final String  KEY_TITLE = "ConvertionWizard.title";
+    public static final String  KEY_CONVERTING = "ConvertionWizard.converting";
     private static final String PROJECT_LIST = "ConversionWizard.projectlist";
 
     // The Main widget containing the table and its list of condidate open projects

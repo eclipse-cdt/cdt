@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -40,9 +39,6 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.ICProjectDescriptor;
-import org.eclipse.cdt.core.ICProjectOwnerInfo;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
@@ -50,6 +46,7 @@ import org.eclipse.cdt.utils.ui.swt.IValidation;
 
 /**
  * C Project wizard that creates a new project resource in
+ * a location of the user's choice.
  */
 public abstract class CProjectWizard extends BasicNewResourceWizard implements IExecutableExtension {
 
@@ -300,43 +297,10 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 		IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 		description.setLocation(newPath);
 
-		newProject = createProject(description, newProjectHandle, monitor);
+		newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, monitor, getProjectID());
 		return newProject;
 	}
 
-	/**
-	 * Creates a project resource given the project handle and description.
-	 *
-	 * @param description the project description to create a project resource for
-	 * @param projectHandle the project handle to create a project resource for
-	 * @param monitor the progress monitor to show visual progress with
-	 *
-	 * @exception CoreException if the operation fails
-	 * @exception OperationCanceledException if the operation is canceled
-	 */
-	private IProject createProject(IProjectDescription description, IProject projectHandle,
-		IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		try {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask("Creating C Project", 3);//$NON-NLS-1$
-
-			projectHandle.create(description, new SubProgressMonitor(monitor, 1));
-
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
-
-			// Open first.
-			projectHandle.open(new SubProgressMonitor(monitor, 1));
-			// Add C Nature.
-			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-			CCorePlugin.getDefault().mapCProjectOwner(projectHandle, getProjectID());
-		} finally {
-			//monitor.done();
-		}
-		return projectHandle;
-	}
 
 	/**
 	 * Method getID.

@@ -6,7 +6,6 @@ package org.eclipse.cdt.ui.wizards;
  */
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,7 +70,10 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
+        // super.doRun() just creates the project and does not assign a builder to it.
 		super.doRun(monitor);
+        
+        // Modify the project based on what the user has selected
 		if (newProject != null) {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
@@ -85,8 +87,9 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 			if (settingsBlock != null) {
 				settingsBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
 			}
-			// Set the Default C Builder.
-			CProjectNature.addCBuildSpec(newProject, new SubProgressMonitor(monitor, 1));
+            
+            // Set the Default C Builder to make this a StdMakeProject.
+            CCorePlugin.getDefault().addDefaultCBuilder(newProject, new SubProgressMonitor(monitor, 1));
 		}
 	}
 	

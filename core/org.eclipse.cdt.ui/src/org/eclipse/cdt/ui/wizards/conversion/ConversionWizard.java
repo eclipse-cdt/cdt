@@ -11,8 +11,10 @@ import org.eclipse.cdt.ui.wizards.CProjectWizard;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * ConversionWizard  This wizard provides a method by which the user can
@@ -55,6 +57,14 @@ public abstract class ConversionWizard
         super(title, desc);
     }
 
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchWizard.
+     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        super.init(workbench, currentSelection);
+        setWindowTitle(getWindowTitleResource());
+    }
+    
     /**
      * Method getWindowTitleResource, allows Wizard Title label value to be
      * changed by subclasses

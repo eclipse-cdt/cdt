@@ -8,14 +8,13 @@ package org.eclipse.cdt.ui.wizards.conversion;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  *
- * ConvertProjectWizardPage
+ * ConvertCtoCCStdMakeProjectWizardPage
  * Standard main page for a wizard that converts a project's nature from C to C++.
  * This conversion is one way in that the project cannot be converted back from a C++ project to a C project.
  *
@@ -24,22 +23,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *<p>
  * Example useage:
  * <pre>
- * mainPage = new ConvertCtoCCProjectWizardPage("CtoCCConvertProjectPage");
+ * mainPage = new ConvertCtoCCStdMakeProjectWizardPage("CtoCCConvertProjectPage");
  * mainPage.setTitle("Project Conversion");
  * mainPage.setDescription("Convert a project's nature from C to C++.");
  * </pre>
  * </p>
  */
-public class ConvertCtoCCProjectWizardPage extends ConvertProjectWizardPage {
+public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPage {
     
     private static final String WZ_TITLE = "CtoCCConversionWizard.title"; //$NON-NLS-1$
     private static final String WZ_DESC = "CtoCCConversionWizard.description"; //$NON-NLS-1$
     
 	/**
-	 * Constructor for ConvertCtoCCProjectWizardPage.
+	 * Constructor for ConvertCtoCCStdMakeProjectWizardPage.
 	 * @param pageName
 	 */
-	public ConvertCtoCCProjectWizardPage(String pageName) {
+	public ConvertCtoCCStdMakeProjectWizardPage(String pageName) {
 		super(pageName);
 	}
     
@@ -90,7 +89,7 @@ public class ConvertCtoCCProjectWizardPage extends ConvertProjectWizardPage {
      */
     public void convertProject(IProject project, IProgressMonitor monitor, String projectID)
         throws CoreException {
-        CoreUtility.addNatureToProject(project, CoreModel.CC_NATURE_ID, monitor);
-        CCorePlugin.getDefault().mapCProjectOwner(project, projectID);
+            
+        CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor, projectID);
     }        
 }

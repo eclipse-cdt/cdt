@@ -8,15 +8,14 @@ package org.eclipse.cdt.ui.wizards.conversion;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  *
- * ConvertUKtoCProjectWizardPage
- * Standard main page for a wizard that adds a C project Nature to a project with no nature associated with it.
+ * ConvertSimpleToCCStdMakeProjectWizardPage
+ * Standard main page for a wizard that adds a C++ project Nature to a project with no nature associated with it.
  * This conversion is one way in that the project cannot be converted back (i.e have the nature removed).
  *
  * @author Judy N. Green
@@ -24,22 +23,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *<p>
  * Example useage:
  * <pre>
- * mainPage = new ConvertUKtoCProjectWizardPage("UKtoCConvertProjectPage");
+ * mainPage = new ConvertSimpleToCCStdMakeProjectWizardPage("UKtoCCConvertProjectPage");
  * mainPage.setTitle("Project Conversion");
- * mainPage.setDescription("Add C a Nature to a project.");
+ * mainPage.setDescription("Add C++ a Nature to a project.");
  * </pre>
  * </p>
  */
-public class ConvertUKtoCProjectWizardPage extends ConvertProjectWizardPage {
+public class ConvertSimpleToCCStdMakeProjectWizardPage extends ConvertSimpleToCStdMakeProjectWizardPage {
     
-    private static final String WZ_TITLE = "UKtoCConversionWizard.title"; //$NON-NLS-1$
-    private static final String WZ_DESC = "UKtoCConversionWizard.description"; //$NON-NLS-1$
+    private static final String WZ_TITLE = "SimpleToCCStdMakeConversionWizard.title"; //$NON-NLS-1$
+    private static final String WZ_DESC = "SimpleToCCStdMakeConversionWizard.description"; //$NON-NLS-1$
     
 	/**
-	 * Constructor for ConvertUKtoCProjectWizardPage.
+	 * Constructor for ConvertSimpleToCCStdMakeProjectWizardPage.
 	 * @param pageName
 	 */
-	public ConvertUKtoCProjectWizardPage(String pageName) {
+	public ConvertSimpleToCCStdMakeProjectWizardPage(String pageName) {
 		super(pageName);
 	}
     
@@ -58,32 +57,34 @@ public class ConvertUKtoCProjectWizardPage extends ConvertProjectWizardPage {
     protected String getWzDescriptionResource(){
         return CPlugin.getResourceString(WZ_DESC);
     }
-       
+    
     /**
      * Method isCandidate returns projects that have
-     * no "C" Nature
+     * neither a "C" Nature nor a "C++" Nature
      * 
      * @param project
      * @return boolean
      */
     protected boolean isCandidate(IProject project) {
-        boolean noCNature = false;
+        boolean noCNature = super.isCandidate(project);
+        boolean noCCNature = false;
         
         // hasNature() throws a CoreException if the 
         // project is not open and/or is not visible to this view
         // which is what happens when a project does not have a 
         // C nature
-        try {
-            project.hasNature(CoreModel.C_NATURE_ID);
+       
+       try {
+            noCCNature = !project.hasNature(CoreModel.CC_NATURE_ID);
        } catch (CoreException e) {
-           noCNature = true;
-       }
-        return (noCNature);
+           noCCNature = true;
+        }
+        return (noCNature && noCCNature);
     }
-   
+
     /**
-     * Method convertProject adds a C Nature to those projects 
-     * that were selected by the user.
+     * Method convertProject adds a C++ Nature and default make builder
+     * to those projects that were selected by the user.
      * 
      * @param project
      * @param monitor
@@ -94,8 +95,7 @@ public class ConvertUKtoCProjectWizardPage extends ConvertProjectWizardPage {
         throws CoreException {
         if (!project.isOpen()){
             project.open(monitor);   
-        }
-        CoreUtility.addNatureToProject(project, CoreModel.C_NATURE_ID, monitor);        
-        CCorePlugin.getDefault().mapCProjectOwner(project, projectID);
-    }     
+        }       
+        CCorePlugin.getDefault().convertProjectToCC(project, monitor, projectID);
+    }        
 }

@@ -9,29 +9,29 @@ import org.eclipse.cdt.internal.ui.CPlugin;
 
 /**
  * This wizard provides a method by which the user can 
- * add a C nature to a project that previously had no nature associated with it.
+ * add a C++ nature to a project that previously had no nature associated with it.
  */
-public class UKtoCConversionWizard extends ConversionWizard {
+public class SimpleToCCStdMakeConversionWizard extends ConversionWizard {
 	
-    private static final String WZ_TITLE = "UKtoCConversionWizard.title"; //$NON-NLS-1$
-	private static final String WZ_DESC = "UKtoCConversionWizard.description"; //$NON-NLS-1$
-    private static final String PREFIX= "UKtoCConversionWizard"; //$NON-NLS-1$
+    private static final String WZ_TITLE = "SimpleToCCStdMakeConversionWizard.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "SimpleToCCStdMakeConversionWizard.description"; //$NON-NLS-1$
+    private static final String PREFIX= "SimpleToCCStdMakeConversionWizard"; //$NON-NLS-1$
     
-    private static final String WINDOW_TITLE = "UKtoCConversionWizard.windowTitle";//$NON-NLS-1$
+    private static final String WINDOW_TITLE = "SimpleToCCStdMakeConversionWizard.windowTitle";//$NON-NLS-1$
     
     /**
-     * UKtoCConversionWizard Wizard constructor
+     * SimpleToCCStdMakeConversionWizard Wizard constructor
      */
- 	public UKtoCConversionWizard() {
+ 	public SimpleToCCStdMakeConversionWizard() {
 		this(getWindowTitleResource(), getWzDescriptionResource());
 	}
     /**
-     * UKtoCConversionWizard Wizard constructor
+     * SimpleToCCStdMakeConversionWizard Wizard constructor
      * 
      * @param title
      * @param desc
      */
-	public UKtoCConversionWizard(String title, String desc) {
+	public SimpleToCCStdMakeConversionWizard(String title, String desc) {
 		super(title, desc);
 	}
  
@@ -67,7 +67,7 @@ public class UKtoCConversionWizard extends ConversionWizard {
     }
     
    /**
-     * Method getPrefix,  allows prefix value to be changed by subclasses
+     * Method getPrefix, allows prefix value to be changed by subclasses
      * 
      * @return String
      */
@@ -76,16 +76,13 @@ public class UKtoCConversionWizard extends ConversionWizard {
     }
     
     /**
-     * Method addPages adds our C to C++ conversion Wizard page.
+     * Method addPages adds our C++ conversion Wizard page.
      * 
      * @see Wizard#createPages
      */ 
     public void addPages() { 
-        mainPage = new ConvertUKtoCProjectWizardPage(getPrefix());
+        mainPage = new ConvertSimpleToCCStdMakeProjectWizardPage(getPrefix());
         
         addPage(mainPage);
-        
-        // ensure proper window name by overwriting the title set by the super class
-        this.setWindowTitle(getWindowTitleResource());
     }     
 }

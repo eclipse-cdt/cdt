@@ -5,14 +5,12 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.widgets.TabFolder;
-
 
 /**
  */
@@ -44,7 +42,8 @@ public class StdCCWizard extends StdMakeProjectWizard {
 				monitor = new NullProgressMonitor();
 			}
 			monitor.beginTask("Standard C++ Make", 1);
-			CCProjectNature.addCCNature(newProject, new SubProgressMonitor(monitor, 1));
+            // Add C++ Nature to the newly created project.
+            CCorePlugin.getDefault().convertProjectFromCtoCC(newProject, monitor);
 		}
 	}
 }

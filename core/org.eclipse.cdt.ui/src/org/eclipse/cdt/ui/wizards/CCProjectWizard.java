@@ -5,11 +5,10 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
 
 
 /**
@@ -58,9 +57,9 @@ public abstract class CCProjectWizard extends CProjectWizard {
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		super.doRun(monitor);
-		// Add C++ Nature.
-		if (newProject != null) {
-			CCProjectNature.addCCNature(newProject, monitor);
-		}
+		// Add C++ Nature to the newly created project.
+        if (newProject != null){
+            CCorePlugin.getDefault().convertProjectFromCtoCC(newProject, monitor);
+        }
 	}
 }

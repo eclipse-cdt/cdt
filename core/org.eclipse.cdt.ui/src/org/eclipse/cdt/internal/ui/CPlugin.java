@@ -212,7 +212,7 @@ public class CPlugin extends AbstractUIPlugin {
     		public Object createPresentation() {
     			return new CDebugModelPresentation();
     		}
-    		
+		
     		public String getIdentifier() {
     			return PLUGIN_ID;
     		}
@@ -290,7 +290,7 @@ public class CPlugin extends AbstractUIPlugin {
 			display.asyncExec(run);
 		} else {
 			run.run();
-		}		
+	}
 	}
 
 	/**
@@ -302,11 +302,11 @@ public class CPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(new ResourceAdapterFactory(), IResource.class);
 		manager.registerAdapters(new CElementAdapterFactory(), ICElement.class);
 		runUI(new Runnable() {
-			public void run() {
-				CPluginImages.initialize();
-			}
+				public void run() {
+					CPluginImages.initialize();
+				}
 		});
-	}
+			}
 	
 	/**
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
@@ -315,10 +315,10 @@ public class CPlugin extends AbstractUIPlugin {
 		super.initializeDefaultPreferences(store);
 		runUI(new Runnable() {
 			public void run() {
-				CPluginPreferencePage.initDefaults(store);
-				CEditorPreferencePage.initDefaults(store);
-				CView.initDefaults(store);
-			}
+		CPluginPreferencePage.initDefaults(store);
+		CEditorPreferencePage.initDefaults(store);
+		CView.initDefaults(store);
+	}
 		});
 	}
 	

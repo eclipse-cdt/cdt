@@ -146,8 +146,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -166,17 +166,17 @@
             %StdCWizard.description
          </description>
       </wizard>
-<!-- For C Conversion Wizards -->
+<!-- For C Conversion Wizards -->      
       <wizard
-            name="%UKtoCConversionWizard.name"
+            name="%SimpleToCStdMakeConversionWizard.name"
             icon="icons/full/ctool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.UKtoCConversionWizard"
+            class="org.eclipse.cdt.ui.wizards.conversion.SimpleToCStdMakeConversionWizard"
             project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.UKtoCConversionWizard">
+            id="org.eclipse.cdt.ui.wizards.SimpleToCStdMakeConversionWizard">
          <description>
-            %UKtoCConversionWizard.description
+            %SimpleToCStdMakeConversionWizard.description
          </description>
       </wizard>
 <!-- For C++ Wizards -->
@@ -209,15 +209,15 @@
          </description>
       </wizard>
       <wizard
-            name="%UKtoCCConversionWizard.name"
+            name="%SimpleToCCStdMakeConversionWizard.name"
             icon="icons/full/ctool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.UKtoCCConversionWizard"
+            class="org.eclipse.cdt.ui.wizards.conversion.SimpleToCCStdMakeConversionWizard"
             project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.UKtoCCConversionWizard">
+            id="org.eclipse.cdt.ui.wizards.SimpleToCCStdMakeConversionWizard">
          <description>
-            %UKtoCCConversionWizard.description
+            %SimpleToCCStdMakeConversionWizard.description
          </description>
       </wizard>
    </extension>
@@ -431,6 +431,7 @@
             id="org.eclipse.cdt.ui.cProjectNatureImage">
       </image>
    </extension>
+
 <!-- =========================================================================== -->
 <!-- Debug Model Presentation                                                      -->
 <!-- =========================================================================== -->

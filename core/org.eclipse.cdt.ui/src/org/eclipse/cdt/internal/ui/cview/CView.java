@@ -773,12 +773,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			MakeTarget[] aClean = new MakeTarget[1];
 			aClean[0] = new MakeTarget(resource, "clean");
 			menu.add(new MakeAction(aClean, getViewSite().getShell(), "Clean"));
-		}
-		//if (resource instanceof IProject) {
-		//	menu.add(rebuildAction);
-		//}
-		MenuManager submenu= new MenuManager("Make");
-		if (isContainer) {
+		
+			MenuManager submenu= new MenuManager("Make");
 			String [] directives = MakeUtil.getPersistentTargets(resource);
 			if (directives.length > 0) {
 				for (int i = 0; i < directives.length; i++) {
@@ -787,9 +783,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 					submenu.add(new MakeAction(a, getViewSite().getShell(), directives[i]));
 				}
 			}
-		}
-		menu.add(submenu);
-		if (isContainer) {
+			menu.add(submenu);
+		
 			menu.add(makeTargetAction);
 		}
 	}

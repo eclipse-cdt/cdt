@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -32,15 +33,15 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @author aniefer
  */
 public class CFunction implements IFunction, ICBinding {
-	private IASTFunctionDeclarator [] declarators = null;
+	private IASTStandardFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
 	IFunctionType type = null;
 	
 	public CFunction( IASTFunctionDeclarator declarator ){
-	    if( declarator.getParent() instanceof IASTFunctionDefinition )
+	    if( declarator.getParent() instanceof IASTFunctionDefinition || declarator instanceof ICASTKnRFunctionDeclarator )
 	        definition = declarator;
 	    else {
-	        declarators = new IASTFunctionDeclarator [] { declarator };
+	        declarators = new IASTStandardFunctionDeclarator [] { (IASTStandardFunctionDeclarator) declarator };
 	    }
 	}
 	
@@ -48,36 +49,26 @@ public class CFunction implements IFunction, ICBinding {
         return ( definition != null ) ? definition : declarators[0];
     }
     public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
-        if( fnDeclarator instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) 
+        updateParameterBindings( fnDeclarator );
+        if( fnDeclarator.getParent() instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) 
             definition = fnDeclarator;
         else {
             if( declarators == null ){
-                declarators = new IASTFunctionDeclarator[] { fnDeclarator };
+                declarators = new IASTStandardFunctionDeclarator[] { (IASTStandardFunctionDeclarator) fnDeclarator };
             	return;
             }
             for( int i = 0; i < declarators.length; i++ ){
                 if( declarators[i] == null ){
-                    declarators[i] = fnDeclarator;
+                    declarators[i] = (IASTStandardFunctionDeclarator) fnDeclarator;
                     return;
                 }
             }
-            IASTFunctionDeclarator tmp [] = new IASTFunctionDeclarator [ declarators.length * 2 ];
+            IASTStandardFunctionDeclarator tmp [] = new IASTStandardFunctionDeclarator [ declarators.length * 2 ];
             System.arraycopy( declarators, 0, tmp, 0, declarators.length );
-            tmp[ declarators.length ] = fnDeclarator;
+            tmp[ declarators.length ] = (IASTStandardFunctionDeclarator) fnDeclarator;
             declarators = tmp;
         }
     }
-//	private IASTFunctionDeclarator checkForDefinition( IASTFunctionDeclarator dtor ){
-//		if( dtor.getParent() instanceof IASTFunctionDefinition )
-//			return dtor;
-//		
-//		IASTFunctionDeclarator def = CVisitor.findDefinition( dtor );
-//		if( def != null && def != dtor ){
-//			dtor = def;
-//			((CASTName)dtor.getName()).setBinding( this );
-//		}
-//		return dtor;
-//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
@@ -168,7 +159,131 @@ public class CFunction implements IFunction, ICBinding {
         return type;
     }
 	
-//	public IASTDeclaration getDeclaration(){
-//	    return (IASTDeclaration) declarator.getParent();
-//	}
+    public IBinding resolveParameter( IASTName paramName ){
+    	if( ((CASTName)paramName).hasBinding() )
+    	    return paramName.resolveBinding();
+
+    	IBinding binding = null;
+    	int idx = 0;
+    	IASTNode parent = paramName.getParent();
+    	if( !(parent instanceof ICASTKnRFunctionDeclarator ) )
+    	    parent = parent.getParent();
+    	
+    	ICASTKnRFunctionDeclarator fKnRDtor = null;
+    	IASTDeclarator knrParamDtor = null;
+    	if( parent instanceof IASTParameterDeclaration ){
+    	    IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) parent.getParent();
+    	    IASTParameterDeclaration [] ps = fdtor.getParameters();
+        	for( ; idx < ps.length; idx++ ){
+        		if( parent == ps[idx] )
+        			break;
+        	}
+    	} else if( parent instanceof IASTSimpleDeclaration ){ 
+    	    //KnR: name in declaration list
+    	    fKnRDtor = (ICASTKnRFunctionDeclarator) parent.getParent();
+    	    IASTName [] ps = fKnRDtor.getParameterNames();
+    	    char [] n = paramName.toCharArray();
+        	for( ; idx < ps.length; idx++ ){
+        		if( CharArrayUtils.equals( ps[idx].toCharArray(), n ) )
+        			break;
+        	}    	    
+    	} else {
+    	    //KnR: name in name list
+    	    fKnRDtor = (ICASTKnRFunctionDeclarator) parent;
+    	    IASTName [] ps = fKnRDtor.getParameterNames();
+        	for( ; idx < ps.length; idx++ ){
+        		if( ps[idx] == paramName)
+        			break;
+        	}
+        	knrParamDtor = getKnRParameterDeclarator( fKnRDtor, paramName );
+        	paramName = knrParamDtor.getName();
+    	}
+    	
+    	//create a new binding and set it for the corresponding parameter in all known defns and decls
+    	binding = new CParameter( paramName );
+    	IASTParameterDeclaration temp = null;
+    	if( definition != null ){
+    	    if( definition instanceof IASTStandardFunctionDeclarator ){
+    	        temp = ((IASTStandardFunctionDeclarator)definition).getParameters()[idx];
+        		((CASTName)temp.getDeclarator().getName()).setBinding( binding );
+    	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
+    	        IASTName n = fKnRDtor.getParameterNames()[idx];
+    	        ((CASTName)n).setBinding( binding );
+    	        IASTDeclarator dtor = getKnRParameterDeclarator( fKnRDtor, n );
+    	        if( dtor != null ){
+    	            ((CASTName)dtor.getName()).setBinding( binding );
+    	        }
+    	    }
+    	}
+    	if( declarators != null ){
+    		for( int j = 0; j < declarators.length && declarators[j] != null; j++ ){
+    		    if( declarators[j].getParameters().length > idx ){
+					temp = declarators[j].getParameters()[idx];
+		    		((CASTName)temp.getDeclarator().getName()).setBinding( binding );
+    		    }
+    		}
+    	}
+    	return binding;
+    }
+    
+    private IASTDeclarator getKnRParameterDeclarator( ICASTKnRFunctionDeclarator fKnRDtor, IASTName name ){
+        IASTDeclaration [] decls = fKnRDtor.getParameterDeclarations();
+        char [] n = name.toCharArray();
+        for( int i = 0; i < decls.length; i++ ){
+            if( !( decls[i] instanceof IASTSimpleDeclaration ) )
+                continue;
+            
+            IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
+            for( int j = 0; j < dtors.length; j++ ){
+                if( CharArrayUtils.equals( dtors[j].getName().toCharArray(), n ) ){
+                    return dtors[j]; 
+                }
+            }
+        }
+        return null;
+    }
+    
+    protected void updateParameterBindings( IASTFunctionDeclarator fdtor ){
+        CParameter temp = null;
+        if( fdtor instanceof IASTStandardFunctionDeclarator ){
+            IASTStandardFunctionDeclarator orig = (IASTStandardFunctionDeclarator) getPhysicalNode();
+        	IASTParameterDeclaration [] ops = orig.getParameters();
+        	IASTParameterDeclaration [] nps = ((IASTStandardFunctionDeclarator)fdtor).getParameters();
+
+        	for( int i = 0; i < nps.length; i++ ){
+        	    CASTName origname = (CASTName) ops[i].getDeclarator().getName();
+        	    if( origname.hasBinding() ){
+        	        temp = (CParameter) origname.resolveBinding();
+            		if( temp != null ){
+            		    CASTName name = (CASTName) nps[i].getDeclarator().getName();
+            			name.setBinding( temp );
+            			temp.addDeclaration( name );
+            		}    
+        	    }
+        		
+        	}
+        } else {
+            IASTParameterDeclaration [] ops = declarators[0].getParameters();
+            IASTName [] ns = ((ICASTKnRFunctionDeclarator)fdtor).getParameterNames();
+            if( ops.length > 0 && ops.length != ns.length )
+                return; //problem
+            
+            for( int i = 0; i < ops.length; i++ ){
+        	    CASTName origname = (CASTName) ops[i].getDeclarator().getName();
+        	    if( origname.hasBinding() ){
+        	        temp = (CParameter) origname.resolveBinding();
+            		if( temp != null ){
+            		    CASTName name = (CASTName) ns[i];
+            			name.setBinding( temp );
+            			
+            			IASTDeclarator dtor = getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
+            			if( dtor != null ){
+            			    ((CASTName) dtor.getName()).setBinding( temp );
+            			    temp.addDeclaration( (CASTName) dtor.getName() );
+            			}
+            		}    
+        	    }
+        	}
+        }
+    }
 }

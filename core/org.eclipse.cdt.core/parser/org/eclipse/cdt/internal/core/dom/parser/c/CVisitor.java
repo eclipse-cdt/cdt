@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -55,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -528,8 +528,11 @@ public class CVisitor {
 				} else { 
 					binding = createBinding(declarator);
 				}
-			} else { // createBinding for one of the ICASTKnRFunctionDeclarator's parameterNames 
-				binding = resolveKnRParameterBinding((ICASTKnRFunctionDeclarator) declarator, name);
+			} else { // createBinding for one of the ICASTKnRFunctionDeclarator's parameterNames
+			    IBinding f = declarator.getName().resolveBinding();
+			    if( f instanceof CFunction ){
+			        binding = ((CFunction) f).resolveParameter( name );
+			    }
 
 				if ( declarator.getParent() instanceof IASTFunctionDefinition ) {
 					ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)declarator.getParent()).getBody()).getScope();
@@ -540,19 +543,18 @@ public class CVisitor {
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			binding = createBinding( (IASTSimpleDeclaration) parent, name );
 		} else if( parent instanceof IASTParameterDeclaration ){
-			binding = createBinding( (IASTParameterDeclaration ) parent );
-			
-			// C99 6.2.1-4: within the list of parameter declarations in a function definition, the 
-			// identifier has block scope, which terminates at the end of the associated block.
-			parent = parent.getParent();
-			if ( parent instanceof IASTStandardFunctionDeclarator ) {
-				parent = parent.getParent();
-				if ( parent instanceof IASTFunctionDefinition ) {
-					ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+		    IASTParameterDeclaration param = (IASTParameterDeclaration) parent;
+		    IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
+		    IBinding b = fDtor.getName().resolveBinding();
+		    if( b instanceof IFunction ){
+		        binding = ((CFunction)b).resolveParameter( name );
+		        parent = fDtor.getParent();
+		        if( parent instanceof IASTFunctionDefinition ){
+		            ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
 					if ( scope != null && binding != null )
 						scope.addBinding(binding);
 				}
-			}
+		    }
 		} else if ( parent instanceof IASTFunctionDeclarator ) {
 			binding = createBinding(declarator);
 		}
@@ -634,7 +636,11 @@ public class CVisitor {
 		    if( binding == null ){
 		    	// if the simpleDeclaration is part of a KRC function declarator, then the binding is to a KRC parameter
 		    	if ( simpleDeclaration.getParent() instanceof IASTFunctionDeclarator ) {
-		    		binding = resolveKnRParameterBinding((ICASTKnRFunctionDeclarator) simpleDeclaration.getParent(), name); // is resolveKnRParameterBinding still necessary?
+		    	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) simpleDeclaration.getParent();
+		    	    IBinding fn = fdtor.getName().resolveBinding();
+		    	    if( fn instanceof CFunction ){
+		    	        binding = ((CFunction)fn).resolveParameter( name );
+		    	    }
 		    	} else {
 			        binding = new CVariable( name );		    		
 		    	}
@@ -646,13 +652,6 @@ public class CVisitor {
 		return binding;
 	}
 
-	private static IBinding createBinding( IASTParameterDeclaration parameterDeclaration ){
-		IBinding binding = resolveBinding( parameterDeclaration, CURRENT_SCOPE );
-		if( binding == null )
-			binding = new CParameter( parameterDeclaration );
-		return binding;
-	}
-	
 	protected static IBinding resolveBinding( IASTNode node ){
 		return resolveBinding( node, COMPLETE );
 	}
@@ -675,23 +674,6 @@ public class CVisitor {
 		} else if( node instanceof ICASTCompositeTypeSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			return findBinding( blockItem, ((ICASTCompositeTypeSpecifier)node).getName(), bits );
-		} else if( node instanceof IASTParameterDeclaration ){
-			IASTParameterDeclaration param = (IASTParameterDeclaration) node;
-			IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
-			
-			if ( fDtor.getName().resolveBinding() instanceof IFunction ) { // possible to have IASTParameterDeclaration whose parent is an IVariable
-				IFunction function = (IFunction) fDtor.getName().resolveBinding();
-				if( ((ICBinding)function).getPhysicalNode() != fDtor ) {
-				    IASTParameterDeclaration [] ps = fDtor.getParameters();
-				    int index = -1;
-				    for( index = 0; index < ps.length; index++ )
-				        if( ps[index] == param ) break; 
-					IParameter [] params = function.getParameters();
-					if( index >= 0 && index < params.length ){
-					    return params[ index ];
-					}
-				}
-			}
 		} else if( node instanceof IASTTypeId ){
 			IASTTypeId typeId = (IASTTypeId) node;
 			IASTDeclSpecifier declSpec = typeId.getDeclSpecifier();
@@ -1693,44 +1675,4 @@ public class CVisitor {
 
 		return action.getDeclarationNames();
 	}
-	
-	private static IBinding resolveKnRParameterBinding(ICASTKnRFunctionDeclarator declarator, IASTName name) {
-		IASTDeclaration[] parmDeclarations = declarator.getParameterDeclarations();
-		
-		if ( declarator.getName().resolveBinding() instanceof IFunction ) { // possible to have IASTParameterDeclaration whose parent is an IVariable
-			IFunction function = (IFunction) declarator.getName().resolveBinding();
-			if( ((ICBinding)function).getPhysicalNode() != declarator ) {
-			    IASTDeclaration [] ps = declarator.getParameterDeclarations();
-			    int index = -1;
-			    outerLoop: for( index = 0; index < ps.length; index++ )
-			    	for (int j=0; j<parmDeclarations.length; j++)
-			    		if( ps[index] == parmDeclarations[j] ) break outerLoop;
-				IParameter[] params = function.getParameters();
-				if( index >= 0 && index < params.length ){
-				    return params[ index ];
-				}
-			}
-		}
-		
-        
-        for (int i=0; i<parmDeclarations.length; i++) {
-        	if ( parmDeclarations[i] instanceof IASTSimpleDeclaration ) {
-        		IASTDeclarator[] decltors = ((IASTSimpleDeclaration)parmDeclarations[i]).getDeclarators();
-        		for (int j=0; j<decltors.length; j++) {
-	        		if (CharArrayUtils.equals( decltors[j].getName().toCharArray(), name.toCharArray()) ) {
-	        			if (decltors[j].getName() instanceof CASTName && ((CASTName)decltors[j].getName()).hasBinding())
-	        				return decltors[j].getName().resolveBinding();
-
-	        			return new CKnRParameter( parmDeclarations[i], decltors[j].getName() );
-	        		}
-        		}
-        	}
-        }
-        
-        // NOTE: without a function prototype a parameter name without a matching declaration currently resolves to a null binding
-        // i.e. int f(x,y) char x; {} // this compiles/runs, but does not compile when the prototype is included
-
-        return null; // nothing found
-	}
-	
 }

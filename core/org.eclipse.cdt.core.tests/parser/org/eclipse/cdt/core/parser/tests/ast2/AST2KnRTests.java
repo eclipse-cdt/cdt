@@ -46,7 +46,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.c.CKnRParameter;
+import org.eclipse.cdt.internal.core.dom.parser.c.CParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICBinding;
 
@@ -215,6 +215,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	IASTSimpleDeclaration isroot_decl = (IASTSimpleDeclaration)tu.getDeclarations()[1];
     	IASTFunctionDefinition isroot_def = (IASTFunctionDefinition)tu.getDeclarations()[2];
 
+    	IASTName x0 = ((IASTStandardFunctionDeclarator)isroot_decl.getDeclarators()[0]).getParameters()[0].getDeclarator().getName();
     	IASTName x1 = ((ICASTKnRFunctionDeclarator)isroot_def.getDeclarator()).getParameterNames()[0];
     	IASTName x2 = ((IASTSimpleDeclaration)((ICASTKnRFunctionDeclarator)isroot_def.getDeclarator()).getParameterDeclarations()[0]).getDeclarators()[0].getName();
     	IASTName x3 = ((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)isroot_def.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName();
@@ -247,8 +248,9 @@ public class AST2KnRTests extends AST2BaseTest {
     	
 		// test tu.getDeclarations(IBinding)
 		IASTName[] decls = tu.getDeclarations(x3.resolveBinding()); 
-		assertEquals( decls.length, 1 );
-		assertEquals( decls[0], x2 );
+		assertEquals( decls.length, 2 );
+		assertEquals( decls[0], x0 );
+		assertEquals( decls[1], x2 );
 		
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("c").toCharArray()) ); //$NON-NLS-1$
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("isroot").toCharArray()) ); //$NON-NLS-1$
@@ -484,6 +486,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	IFunction f_fun1 = (IFunction)f_name1.resolveBinding();
     	assertEquals( f_name1.toString(), "f" ); //$NON-NLS-1$
     	assertEquals( f_decltor1.getParameters().length, 1 );
+    	IASTName x0 = f_decltor1.getParameters()[0].getDeclarator().getName();
     	IASTName A_name2 = ((ICASTTypedefNameSpecifier)f_decltor1.getParameters()[0].getDeclSpecifier()).getName();
     	assertEquals( A_name2.toString(), "A" ); //$NON-NLS-1$
     	ITypedef A_var2 = (ITypedef)A_name2.resolveBinding();
@@ -537,8 +540,9 @@ public class AST2KnRTests extends AST2BaseTest {
 
 		// test tu.getDeclarations(IBinding)
 		IASTName[] decls = tu.getDeclarations(x2.resolveBinding()); 
-		assertEquals( decls.length, 1 );
-		assertEquals( decls[0], x2 );
+		assertEquals( decls.length, 2 );
+		assertEquals( decls[0], x0 );
+		assertEquals( decls[1], x2 );
 		
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_TAG, new String("A_struct").toCharArray()) ); //$NON-NLS-1$
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("A").toCharArray()) ); //$NON-NLS-1$
@@ -603,8 +607,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	IFunction f_fun = (IFunction)f_decltor.getName().resolveBinding();
     	IParameter [] f_parms = f_fun.getParameters();
     	assertEquals( f_parms.length, 2 );
-    	assertEquals( ((CKnRParameter)f_parms[0]).getName(), "a" ); //$NON-NLS-1$
-    	assertEquals( ((CKnRParameter)f_parms[1]).getName(), "b" ); //$NON-NLS-1$
+    	assertEquals( ((CParameter)f_parms[0]).getName(), "a" ); //$NON-NLS-1$
+    	assertEquals( ((CParameter)f_parms[1]).getName(), "b" ); //$NON-NLS-1$
     	
     }
 

@@ -11,79 +11,81 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 
 /**
  * Created on Nov 5, 2004
  * @author aniefer
  */
 public class CParameter implements IParameter {
-	final private IASTParameterDeclaration parameterDeclaration;
+	private IASTName [] declarations;
 	
-	public CParameter( IASTParameterDeclaration parameterDeclaration ){
-		//parameterDeclaration = checkForDefinition( parameterDeclaration );
-		this.parameterDeclaration = parameterDeclaration;
+	public CParameter( IASTName parameterName ){
+		this.declarations = new IASTName [] { parameterName };
 	}
 
-	public IASTNode getPhysicalNode(){
-	    return parameterDeclaration;
-	}
-//	private IASTParameterDeclaration checkForDefinition( IASTParameterDeclaration paramDecl ){
-//		IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) paramDecl.getParent();
-//		if( fnDtor.getParent() instanceof IASTFunctionDefinition  )
-//			return paramDecl;
-//		
-//		IASTFunctionDeclarator fDef = CVisitor.findDefinition( fnDtor );
-//		if( fDef != null && fDef instanceof IASTFunctionDefinition ){
-//			int index = fnDtor.getParameters().indexOf( paramDecl );
-//			if( index >= 0 && index < fDef.getParameters().size() ) {
-//				IASTParameterDeclaration pDef = (IASTParameterDeclaration) fDef.getParameters().get( index );
-//				((CASTName)pDef.getDeclarator().getName()).setBinding( this );
-//				paramDecl = pDef;
-//			}
-//		}
-//		return paramDecl;
-//	}
-
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	
     public IType getType() {
-		IASTDeclSpecifier declSpec = parameterDeclaration.getDeclSpecifier();
-		if( declSpec instanceof ICASTTypedefNameSpecifier ){
-			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-			return (IType) nameSpec.getName().resolveBinding();
-		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
-			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
-			return (IType) elabTypeSpec.getName().resolveBinding();
-		}
-		return null;
+        return CVisitor.createType( declarations[0], true );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return parameterDeclaration.getDeclarator().getName().toString();
+		return declarations[0].toString();
 	}
 	public char[] getNameCharArray(){
-	    return ((CASTName)parameterDeclaration.getDeclarator().getName()).toCharArray();
+	    return declarations[0].toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CVisitor.getContainingScope( parameterDeclaration );
+	    //IASTParameterDeclaration or IASTSimpleDeclaration
+	    for( int i = 0; i < declarations.length; i++ ){
+	        IASTNode parent = declarations[i].getParent();
+	        if( parent instanceof ICASTKnRFunctionDeclarator ){
+	            parent = parent.getParent();
+	            return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+	        }
+	        
+	        IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent().getParent();
+			parent = fdtor.getParent();
+			if( parent instanceof IASTFunctionDefinition ) {
+				return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+			}
+	    }
+		//TODO: if not definition, find definition
+		return null;
 	}
+
+    /**
+     * @param name
+     */
+    public void addDeclaration( CASTName name ) {
+		for( int i = 0; i < declarations.length; i++ ){
+			if( declarations[i] == null ){
+				declarations[i] = name;
+				return;
+			}
+		}
+		IASTName [] tmp = new IASTName[ declarations.length * 2 ];
+		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
+		tmp[ declarations.length ] = name;
+		declarations = tmp;
+    }
 
 }

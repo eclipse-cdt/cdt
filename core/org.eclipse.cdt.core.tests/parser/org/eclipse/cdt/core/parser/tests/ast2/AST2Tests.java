@@ -1617,9 +1617,7 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], name_A1 );
 		
-        decls = tu.getDeclarations(name_d.resolveBinding()); 
-		assertEquals( decls.length, 1 );
-		assertEquals( decls[0], name_d );
+        assertNull(name_d.resolveBinding()); 
     }
     
     public void testDesignatedInitializers() throws ParserException

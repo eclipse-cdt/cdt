@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
 
 public class ProjectTargets {
 
-	private static final String MAKE_TARGET_KEY = MakeCorePlugin.getUniqueIdentifier() + ".buildtargets";
+	private static final String MAKE_TARGET_KEY = MakeCorePlugin.getUniqueIdentifier() + ".buildtargets"; //$NON-NLS-1$
 	private static final String TARGETS_EXT = "targets"; //$NON-NLS-1$
 
 	private static final String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$

@@ -74,9 +74,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 	Button incrButton;
 	Button autoButton;
 
-	private IMakeBuilderInfo fBuildInfo;
-	private Preferences fPrefs;
-	private String fBuilderID;
+	IMakeBuilderInfo fBuildInfo;
+	Preferences fPrefs;
+	String fBuilderID;
 
 	public SettingsBlock(Preferences prefs, String builderID) {
 		super(MakeUIPlugin.getResourceString(MAKE_LABEL));
@@ -354,15 +354,15 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetFull.setText(info.getFullBuildTarget());
 	}
 
-	private boolean isStopOnError() {
+	boolean isStopOnError() {
 		return stopOnErrorButton.getSelection();
 	}
 
-	private boolean useDefaultBuildCmd() {
+	boolean useDefaultBuildCmd() {
 		return defButton.getSelection();
 	}
 
-	private String getBuildLine() {
+	String getBuildLine() {
 		if (buildCommand != null) {
 			String cmd = buildCommand.getText();
 			if (cmd != null)

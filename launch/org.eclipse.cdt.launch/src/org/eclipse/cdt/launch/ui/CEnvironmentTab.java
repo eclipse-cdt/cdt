@@ -107,7 +107,6 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		private boolean fEdit = false;
 
 		private Button fBtnOk = null;
-		private Button fBtnCancel = null;
 		private Text fTextName = null;
 		private Text fTextValue = null;
 
@@ -175,7 +174,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 		protected void createButtonsForButtonBar(Composite parent) {
 			fBtnOk = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-			fBtnCancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		}
 
 		protected void updateButtonsState() {

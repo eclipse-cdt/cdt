@@ -85,7 +85,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 			new ProgressMonitorDialog(getShell()).run(false, true, op);
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
-			MakeUIPlugin.errorDialog(getShell(), MakeUIPlugin.getResourceString("MakeProjectPropertyPage.internalError"),e1.toString(), e1);
+			MakeUIPlugin.errorDialog(getShell(), MakeUIPlugin.getResourceString("MakeProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {
 			// cancelled

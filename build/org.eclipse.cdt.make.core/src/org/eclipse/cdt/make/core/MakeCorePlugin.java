@@ -250,7 +250,7 @@ public class MakeCorePlugin extends Plugin {
 						for (int j = 0; j < configElements.length; j++) {
 							IConfigurationElement[] runElement = configElements[j].getChildren("run"); //$NON-NLS-1$
 							if (runElement.length > 0) { 
-								IExternalScannerInfoProvider builder = (IExternalScannerInfoProvider) runElement[0].createExecutableExtension("class");
+								IExternalScannerInfoProvider builder = (IExternalScannerInfoProvider) runElement[0].createExecutableExtension("class"); //$NON-NLS-1$
 								return builder;
 							}
 						}

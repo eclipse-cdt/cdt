@@ -56,7 +56,7 @@ public class GDBSolibBlock extends Observable implements Observer
 				
 		if ( autoSolib )
 		{	
-			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIPlugin.getResourceString("mi.internal.ui.GDBSolibBlock.Load_shared_lib_symbols_automatically") );
+			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIPlugin.getResourceString("mi.internal.ui.GDBSolibBlock.Load_shared_lib_symbols_automatically") ); //$NON-NLS-1$
 			fAutoSoLibButton.addSelectionListener( 
 										new SelectionAdapter()
 											{

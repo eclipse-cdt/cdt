@@ -335,7 +335,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			return;
 		}
 
-		Object [] results = (Object [])dialog.getResult();
+		Object [] results = dialog.getResult();
 		
 		try {
 			fProgText.setText(((IResource)results[0]).getProjectRelativePath().toString());

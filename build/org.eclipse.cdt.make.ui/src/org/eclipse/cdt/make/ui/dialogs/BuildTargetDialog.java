@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class BuildTargetDialog extends Dialog {
-	private TargetListViewerPart targetPart;
-	private IContainer fContainer;
+	TargetListViewerPart targetPart;
+	IContainer fContainer;
 
 	public BuildTargetDialog(Shell shell, IContainer container) {
 		super(shell);

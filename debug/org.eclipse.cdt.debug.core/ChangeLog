@@ -1,3 +1,8 @@
+2004-10-14 Mikhail Khodjaiants
+	Partial fix for bug 39936 GDB hits modified conditional breakpoints when condition not satisfied.
+	Condition has to be set at the mi level.
+	* CBreakpointManager.java
+
 2004-10-08 Mikhail Khodjaiants
 	Added the launch configuration preference for the register bookkeeping.
 	* ICDTLaunchConfigurationConstants.java

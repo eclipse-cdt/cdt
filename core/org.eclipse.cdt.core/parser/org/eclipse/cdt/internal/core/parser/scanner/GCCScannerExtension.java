@@ -32,6 +32,7 @@ public class GCCScannerExtension implements IScannerExtension {
 
 
 	private static final String __CONST__ = "__const__"; //$NON-NLS-1$
+	private static final String __CONST = "__const"; //$NON-NLS-1$
 	private static final String __INLINE__ = "__inline__"; //$NON-NLS-1$
 	private static final String __VOLATILE__ = "__volatile__"; //$NON-NLS-1$
 	private static final String __SIGNED__ = "__signed__"; //$NON-NLS-1$
@@ -85,6 +86,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L")); //$NON-NLS-1$
 		
 		setupAlternativeKeyword(__CONST__, Keywords.CONST);
+		setupAlternativeKeyword(__CONST, Keywords.CONST);
 		setupAlternativeKeyword(__INLINE__, Keywords.INLINE);
 		setupAlternativeKeyword(__SIGNED__, Keywords.SIGNED);
 		setupAlternativeKeyword(__VOLATILE__, Keywords.VOLATILE);

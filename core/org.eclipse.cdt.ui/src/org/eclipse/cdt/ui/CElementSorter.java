@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
@@ -28,6 +29,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
+import org.eclipse.cdt.internal.ui.cview.LibraryRefContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,27 +47,33 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  *	A sorter to sort the file and the folders in the C viewer in the following order:
- * 	1st Project
- * 	2nd BinaryContainer
- *  3nd ArchiveContainer
- *  4  Folder
- *  5  C File
- *  6 the reset
+ * 	1 Project
+ * 	2 BinaryContainer
+ *  3 ArchiveContainer
+ *  4 LibraryContainer
+ *  5 IncludeContainer
+ *  6 Source roots
+ *  5 C Elements
+ *  6 non C Elements
  */
 public class CElementSorter extends ViewerSorter { 
 
 	private static final int CMODEL = 0;
 	private static final int PROJECTS = 10;
-	private static final int BINARYCONTAINER = 11;
-	private static final int ARCHIVECONTAINER = 12;
-	private static final int SOURCEROOTS = 13;
-	private static final int CCONTAINERS = 14;
-	private static final int TRANSLATIONUNIT_HEADERS = 15;
-	private static final int TRANSLATIONUNIT_SOURCE = 16;
-	private static final int TRANSLATIONUNITS = 17;
-	private static final int BINARIES = 18;
-	private static final int ARCHIVES = 19;
-	private static final int LIBRARYREFERENCES = 20;
+	private static final int OUTPUTREFCONTAINER = 11;
+	private static final int BINARYCONTAINER = 12;
+	private static final int ARCHIVECONTAINER = 13;
+	private static final int INCLUDEREFCONTAINER = 14;
+	private static final int LIBRARYREFCONTAINER = 15;
+	private static final int SOURCEROOTS = 16;
+	private static final int CCONTAINERS = 17;
+	private static final int TRANSLATIONUNIT_HEADERS = 18;
+	private static final int TRANSLATIONUNIT_SOURCE = 19;
+	private static final int TRANSLATIONUNITS = 20;
+	private static final int BINARIES = 21;
+	private static final int ARCHIVES = 22;
+	private static final int LIBRARYREFERENCES = 23;
+	private static final int INCLUDEREFERENCES = 24;
 	
 	private static final int INCLUDES = 30;
 	private static final int MACROS = 31;
@@ -161,6 +170,8 @@ public class CElementSorter extends ViewerSorter {
 			return BINARIES;
 		} else if (element instanceof ILibraryReference) {
 			return LIBRARYREFERENCES;
+		} else if (element instanceof IIncludeReference) {
+			return INCLUDEREFERENCES;
 		} else if (element instanceof ICElement) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) { //$NON-NLS-1$
@@ -178,6 +189,10 @@ public class CElementSorter extends ViewerSorter {
 			return RESOURCEFOLDERS;
 		} else if (element instanceof IStorage) {
 			return STORAGE;
+		} else if (element instanceof LibraryRefContainer) {
+			return LIBRARYREFCONTAINER;
+		} else if (element instanceof IncludeRefContainer) {
+			return INCLUDEREFCONTAINER;
 		}
 		return OTHERS;
 	}

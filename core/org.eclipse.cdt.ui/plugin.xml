@@ -291,7 +291,7 @@
          name="%cDocumentSetupParticipant"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            extensions="*"
+            extensions="c,C,cc,cpp,cxx,h,H,hh,hpp,hxx"
             class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant">
       </participant>
    </extension>
@@ -300,7 +300,7 @@
          name="%cDocumentFactory"
          point="org.eclipse.core.filebuffers.documentCreation">
       <factory
-            extensions="*"
+            extensions="c,C,cc,cpp,cxx,h,H,hh,hpp,hxx"
             class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory">
       </factory>
    </extension>

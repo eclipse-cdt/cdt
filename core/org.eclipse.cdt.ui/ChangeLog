@@ -1,5 +1,14 @@
 2004-09-24 Chris Wiebe
 
+	remove obsolete classes
+	* src/org/eclipse/cdt/internal/ui/wizards/BaseClassSelectionDialog.java
+	* src/org/eclipse/cdt/internal/ui/wizards/OpenNewFileWizardAction.java
+	* src/org/eclipse/cdt/internal/ui/wizards/OpenNewFolderWizardAction.java
+	* src/org/eclipse/cdt/ui/wizards/NewClassWizard.java
+	* src/org/eclipse/cdt/ui/wizards/NewClassWizardPage.java
+
+2004-09-24 Chris Wiebe
+
 	new folder wizards
 	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPerspectiveFactory.java
 	* icons/full/ctool16/newsrcfldr_wiz.gif

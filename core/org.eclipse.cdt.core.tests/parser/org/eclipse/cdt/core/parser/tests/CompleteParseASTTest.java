@@ -1511,4 +1511,43 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( f_SD_01.getName(), "f_SD_01");
 		assertAllReferences( 1, createTaskList( new Task( SD_01 )));
 	}
+	
+	public void testBug39697() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "__asm__( \"CODE\" );\n" );
+		writer.write( "__inline__ int foo() { return 4; }\n");
+		writer.write( "__const__ int constInt;\n");
+		writer.write( "__volatile__ int volInt;\n");
+		writer.write( "__signed__ int signedInt;\n");
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		IASTASMDefinition asmDefinition = (IASTASMDefinition) i.next();
+		assertEquals( asmDefinition.getBody(), "CODE");
+		IASTFunction foo = (IASTFunction) i.next();
+		assertTrue( foo.isInline() );
+		IASTVariable constInt = (IASTVariable) i.next();
+		assertTrue( constInt.getAbstractDeclaration().isConst());
+		IASTVariable volInt = (IASTVariable) i.next();
+		assertTrue( volInt.getAbstractDeclaration().isVolatile() );
+		IASTVariable signedInt = (IASTVariable) i.next();
+		assertTrue( ((IASTSimpleTypeSpecifier) signedInt.getAbstractDeclaration().getTypeSpecifier()).isSigned() );
+		assertFalse( i.hasNext() );
+		writer = new StringWriter();
+		writer.write( "int * __restrict__ resPointer1;\n");
+		writer.write( "int * __restrict resPointer2;\n");
+		i = parse( writer.toString(), true, ParserLanguage.C ).getDeclarations();
+		int count = 0;
+		while( i.hasNext() )
+		{
+			++count;
+			IASTVariable resPointer = (IASTVariable) i.next();
+			Iterator pOps = resPointer.getAbstractDeclaration().getPointerOperators();
+			assertTrue( pOps.hasNext() );
+			ASTPointerOperator op = (ASTPointerOperator) pOps.next();
+			assertFalse( pOps.hasNext() );
+			assertEquals( op, ASTPointerOperator.RESTRICT_POINTER );
+		}
+
+		assertEquals( count, 2 );
+	}
 }

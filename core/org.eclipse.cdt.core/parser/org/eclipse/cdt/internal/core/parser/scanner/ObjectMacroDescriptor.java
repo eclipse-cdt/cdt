@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 public class ObjectMacroDescriptor implements IMacroDescriptor {
 
-	private static final ArrayList EMPTY_LIST = new ArrayList();
+	private static final ArrayList EMPTY_LIST = new ArrayList(0);
 	private final String expansionSignature;
 	private final String name;
 	private final IToken token;

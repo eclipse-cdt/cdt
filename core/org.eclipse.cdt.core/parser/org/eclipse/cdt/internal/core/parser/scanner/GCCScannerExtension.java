@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
@@ -30,16 +31,29 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 public class GCCScannerExtension implements IScannerExtension {
 
 
+	private static final String __CONST__ = "__const__"; //$NON-NLS-1$
+	private static final String __INLINE__ = "__inline__"; //$NON-NLS-1$
+	private static final String __VOLATILE__ = "__volatile__"; //$NON-NLS-1$
+	private static final String __SIGNED__ = "__signed__"; //$NON-NLS-1$
+	private static final String __RESTRICT = "__restrict"; //$NON-NLS-1$
+	private static final String __RESTRICT__ = "__restrict__"; //$NON-NLS-1$
+	private static final String __ASM__ = "__asm__"; //$NON-NLS-1$
+	
 	private IScannerData scannerData;
-	private static final String __ATTRIBUTE__ = "__attribute__";
-	private static final String __DECLSPEC = "__declspec";
+	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
+	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
 	private static final List EMPTY_LIST = new ArrayList();
 
-	private static final List simpleIdentifiers;
+	private static final List simpleIdentifiersDeclSpec;
+	private static final List simpleIdentifiersAttribute;
+	
 	static
 	{
-		simpleIdentifiers = new ArrayList();
-		simpleIdentifiers.add( "x" ); //$NON-NLS-1
+		simpleIdentifiersDeclSpec = new ArrayList( 1 );
+		simpleIdentifiersDeclSpec.add( "x" ); //$NON-NLS-1$
+		
+		simpleIdentifiersAttribute = new ArrayList( 1 );
+		simpleIdentifiersAttribute.add( "xyz"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
@@ -56,23 +70,42 @@ public class GCCScannerExtension implements IScannerExtension {
 	public void setupBuiltInMacros(ParserLanguage language) {
 
 		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
-		{
-			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
-		}
+			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 		
 		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
-		{
-			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
-		}
-
+			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 		
 		if( language == ParserLanguage.CPP )
 			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
 				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1")); //$NON-NLS-1$
+		
 		if( scannerData.getScanner().getDefinition(IScanner.__STDC_HOSTED__) == null )
 			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0")); //$NON-NLS-1$
 		if( scannerData.getScanner().getDefinition( IScanner.__STDC_VERSION__) == null )
 			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L")); //$NON-NLS-1$
+		
+		setupAlternativeKeyword(__CONST__, Keywords.CONST);
+		setupAlternativeKeyword(__INLINE__, Keywords.INLINE);
+		setupAlternativeKeyword(__SIGNED__, Keywords.SIGNED);
+		setupAlternativeKeyword(__VOLATILE__, Keywords.VOLATILE);
+		if( language == ParserLanguage.C )
+		{
+			setupAlternativeKeyword( __RESTRICT, Keywords.RESTRICT);
+			setupAlternativeKeyword( __RESTRICT__, Keywords.RESTRICT);
+		}
+		else
+			setupAlternativeKeyword( __ASM__, Keywords.ASM );
+		
+	}
+
+	/**
+	 * 
+	 */
+	protected void setupAlternativeKeyword(String keyword, String mapping) {
+		// alternate keyword forms
+		// TODO - make this more efficient - update TokenFactory to avoid a context push for these token to token cases
+		if( scannerData.getScanner().getDefinition( keyword ) == null )
+			scannerData.getScanner().addDefinition( keyword, new ObjectMacroDescriptor( __CONST__, mapping )); //$NON-NLS-1$
 	}
 
 	public void setScannerData(IScannerData scannerData) {

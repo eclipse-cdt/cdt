@@ -333,11 +333,15 @@ c, quickParse);
 		Token linkageName = consume( Token.tSTRING );
 		try{ linkageSpec = callback.linkageSpecificationBegin( scope.getCallbackExtension(), linkageName.getImage() );} catch( Exception e ) {}
 		
-		Declaration linkageSymbol = pst.new Declaration( "");
-		try {
-			scope.addDeclaration( linkageSymbol );
-		} catch (ParserSymbolTableException e1) {
-			// TODO Auto-generated catch block
+		Declaration linkageSymbol = pst.new Declaration( "", TypeInfo.t_block );
+		
+		if( ! quickParse )
+		{
+			try {
+				scope.addDeclaration( linkageSymbol );
+			} catch (ParserSymbolTableException e1) {
+				// TODO Auto-generated catch block
+			}
 		}
 		linkageSymbol.setCallbackExtension( linkageSpec );
 
@@ -407,7 +411,7 @@ c, quickParse);
 			Object instantiation = null; 
 			try { instantiation = callback.explicitInstantiationBegin( scope.getCallbackExtension() ); } catch( Exception e ) { }
 			
-			Declaration declaration = pst.new Declaration("");
+			Declaration declaration = pst.new Declaration("",TypeInfo.t_template);
 			declaration.setCallbackExtension( instantiation );
 			declaration( declaration );
 			try { callback.explicitInstantiationEnd( instantiation ); } catch( Exception e ) { }
@@ -422,7 +426,7 @@ c, quickParse);
 				// explicit-specialization
 				Object specialization = null;
 				try{ specialization = callback.explicitSpecializationBegin( scope.getCallbackExtension() ); } catch( Exception e ) { }
-				Declaration specializationSymbol = pst.new Declaration(""); 
+				Declaration specializationSymbol = pst.new Declaration("",TypeInfo.t_template); 
 				specializationSymbol.setCallbackExtension( specialization );
 				declaration( specializationSymbol  ); 
 				try{ callback.explicitSpecializationEnd( specialization ); } catch( Exception e ) { }
@@ -434,9 +438,18 @@ c, quickParse);
 		try
 		{
 			try{ templateDeclaration = callback.templateDeclarationBegin( scope.getCallbackExtension(), firstToken ); } catch ( Exception e ) {}
-			Declaration templateSymbol = pst.new Declaration( "");
+			Declaration templateSymbol = pst.new Declaration( "",TypeInfo.t_template);
 			templateSymbol.setCallbackExtension(  templateDeclaration );
-			templateParameterList( templateDeclaration );
+			if(!quickParse)
+			{
+				try {
+					scope.addDeclaration( templateSymbol );
+				} catch (ParserSymbolTableException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			templateParameterList( templateSymbol, templateDeclaration );
 			consume( Token.tGT );
 			declaration( templateSymbol ); 
 			try{ callback.templateDeclarationEnd( templateDeclaration, lastToken ); } catch( Exception e ) {}
@@ -473,7 +486,7 @@ c, quickParse);
 	 * @param templateDeclaration		Callback's templateDeclaration which serves as a scope to this list.  
 	 * @throws Backtrack				request for a backtrack
 	 */
-	protected void templateParameterList( Object templateDeclaration ) throws Backtrack {
+	protected void templateParameterList( Declaration scope, Object templateDeclaration ) throws Backtrack {
 		// if we have gotten this far then we have a true template-declaration
 		// iterate through the template parameter list
 		Object templateParameterList = null;
@@ -517,7 +530,7 @@ c, quickParse);
 				consume( Token.tLT );
 				Object newTemplateParm = null;
 				try{ newTemplateParm = callback.templateTypeParameterBegin(templateParameterList,kind ); } catch( Exception e ) {}
-				templateParameterList( newTemplateParm );
+				templateParameterList( scope, newTemplateParm );
 				consume( Token.tGT );						 
 				consume( Token.t_class );
 				if( LT(1) == Token.tIDENTIFIER ) // optional identifier
@@ -540,7 +553,7 @@ c, quickParse);
 			}
 			else
 			{
-				parameterDeclaration( templateParameterList );
+				parameterDeclaration( scope, templateParameterList );
 			}
 		}
 	}
@@ -649,15 +662,17 @@ c, quickParse);
 	
 			if( namespaceSymbol == null )
 			{
-				namespaceSymbol = pst.new Declaration( identifier );
-				namespaceSymbol.setType( TypeInfo.t_namespace );
+				namespaceSymbol = pst.new Declaration( identifier, TypeInfo.t_namespace );
 				
 				try{ namespace = callback.namespaceDefinitionBegin( scope.getCallbackExtension(), firstToken );} catch( Exception e ) {}
 				namespaceSymbol.setCallbackExtension( namespace );
-				try {
-					scope.addDeclaration( namespaceSymbol );
-				} catch (ParserSymbolTableException e2) {
-					// TODO ambiguity?
+				if( ! quickParse )
+				{
+					try {
+						scope.addDeclaration( namespaceSymbol );
+					} catch (ParserSymbolTableException e2) {
+						// TODO ambiguity?
+					}
 				}
 				if( !identifier.equals( "" ))
 					try{ callback.namespaceDefinitionId( namespace );} catch( Exception e ) {}
@@ -728,17 +743,17 @@ c, quickParse);
 		Object simpleDecl = null; 
 		try{ simpleDecl = callback.simpleDeclarationBegin( scope.getCallbackExtension(), LA(1));} catch( Exception e ) {}
 		declSpecifierSeq(scope, simpleDecl, false, tryConstructor);
-		Object declarator = null; 
+		Declaration declaratorSymbol = null; 
 
 		if (LT(1) != Token.tSEMI)
 			try {
-				declarator = initDeclarator(simpleDecl);
+				declaratorSymbol = initDeclarator(scope, simpleDecl);
 				
 				while (LT(1) == Token.tCOMMA) {
 					consume();
 					
 					try {
-						initDeclarator(simpleDecl);
+						initDeclarator(scope, simpleDecl);
 					} catch (Backtrack b) {
 						throw b;
 					}
@@ -752,7 +767,7 @@ c, quickParse);
 				consume(Token.tSEMI);
 				break;
 			case Token.tCOLON:
-				ctorInitializer(declarator);					
+				ctorInitializer(declaratorSymbol);					
 				// Falling through on purpose
 			case Token.tLBRACE:
 				Object function = null; 
@@ -778,7 +793,9 @@ c, quickParse);
 				try{ callback.functionBodyEnd(function );} catch( Exception e ) {}
 				break;
 			default:
+				//TODO: we need to rollback here once Andrew has it ready
 				throw backtrack;
+				
 		}
 		
 		try{ callback.simpleDeclarationEnd(simpleDecl, lastToken);} catch( Exception e ) {}
@@ -795,11 +812,11 @@ c, quickParse);
 	 * @param declarator	IParserCallback object that represents the declarator (constructor) that owns this initializer
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void ctorInitializer(Object declarator) throws Backtrack  {
+	protected void ctorInitializer(Declaration declaratorSymbol ) throws Backtrack  {
 		consume( Token.tCOLON );
 		
 		Object constructorChain = null; 
-		try { constructorChain = callback.constructorChainBegin(declarator);} catch( Exception e ) {}
+		try { constructorChain = callback.constructorChainBegin(declaratorSymbol.getCallbackExtension());} catch( Exception e ) {}
 		
 		try	{
 			for( ; ; ) {
@@ -850,7 +867,7 @@ c, quickParse);
 	 * @param containerObject	The IParserCallback object representing the parameterDeclarationClause owning the parm. 
 	 * @throws Backtrack		request a backtrack
 	 */
-	protected void parameterDeclaration( Object containerObject ) throws Backtrack
+	protected void parameterDeclaration( Declaration scope, Object containerObject ) throws Backtrack
 	{
 		Token current = LA(1);
 		Object parameterDecl = null;
@@ -859,7 +876,7 @@ c, quickParse);
 		
 		if (LT(1) != Token.tSEMI)
 			try {
-				Object declarator = initDeclarator(parameterDecl);
+				Declaration declaratorSymbol = initDeclarator( scope, parameterDecl  );       
 				
 				
 			} catch (Backtrack b) {
@@ -1237,7 +1254,7 @@ c, quickParse);
 	 * 
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void name() throws Backtrack {
+	protected Token name() throws Backtrack {
 		Token first = LA(1);
 		Token last = null;
 		
@@ -1318,7 +1335,7 @@ c, quickParse);
 		}
 
 		try{ callback.nameEnd(last);} catch( Exception e ) {}
-
+		return last;
 	}
 
 
@@ -1353,8 +1370,8 @@ c, quickParse);
 	 * @return				declarator that this parsing produced.  
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected Object initDeclarator( Object owner ) throws Backtrack {
-		Object declarator = declarator( owner );
+	protected Declaration initDeclarator( Declaration scope, Object owner ) throws Backtrack {
+		Declaration declaratorSymbol = declarator( scope, owner );
 		
 			
 		// handle = initializerClause
@@ -1365,7 +1382,7 @@ c, quickParse);
 			Object expression = null; 
 			try
 			{
-				try{ expression = callback.expressionBegin( declarator ); } catch( Exception e ) {}
+				try{ expression = callback.expressionBegin( declaratorSymbol.getCallbackExtension() ); } catch( Exception e ) {}
 				assignmentExpression( expression );
 				try{ callback.expressionEnd( expression );} catch( Exception e ) {}   
 			}
@@ -1398,7 +1415,7 @@ c, quickParse);
 			Object expression = null; 
 			try
 			{
-				try{ expression = callback.expressionBegin( declarator ); } catch( Exception e ) {}
+				try{ expression = callback.expressionBegin( declaratorSymbol.getCallbackExtension() ); } catch( Exception e ) {}
 				expression( expression );
 				try{ callback.expressionEnd( expression );   } catch( Exception e ) {}
 			}
@@ -1413,8 +1430,20 @@ c, quickParse);
 		
 		}
 		
-		try{ callback.declaratorEnd( declarator );} catch( Exception e ) {}
-		return declarator;
+		if( ! quickParse )
+		{
+			try {
+				scope.addDeclaration( declaratorSymbol );
+			} catch (ParserSymbolTableException e1) {
+				try{ callback.declaratorAbort( declaratorSymbol.getCallbackExtension()); } catch( Exception e ) {}
+				throw backtrack;
+			}
+		}
+		
+		
+		try{ callback.declaratorEnd( declaratorSymbol.getCallbackExtension() );} catch( Exception e ) {}
+
+		return declaratorSymbol;
 	}
 	
 	/**
@@ -1437,7 +1466,7 @@ c, quickParse);
 	 * @return				declarator that this parsing produced.
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected Object declarator( Object container ) throws Backtrack {
+	protected Declaration declarator( Declaration scope, Object container ) throws Backtrack {
 		
 		boolean anonymous = false;
 		do
@@ -1445,6 +1474,7 @@ c, quickParse);
 			Object declarator = null;
 			try{ declarator = callback.declaratorBegin( container );} catch( Exception e ) {}
 			
+			Name name = null;
 			for (;;) {
 				try {
 					ptrOperator(declarator);
@@ -1455,9 +1485,9 @@ c, quickParse);
 			
 			if (LT(1) == Token.tLPAREN) {
 				consume();
-				Object subDeclarator = declarator(declarator);
+				Declaration subDeclarator = declarator( scope, declarator );
 				consume(Token.tRPAREN);
-				try{ callback.declaratorEnd( subDeclarator );} catch( Exception e ) {}
+				try{ callback.declaratorEnd( subDeclarator.getCallbackExtension() );} catch( Exception e ) {}
 			}
 			else if( LT(1) == Token.t_operator )
 			{
@@ -1504,6 +1534,7 @@ c, quickParse);
 					callback.nameBegin( operatorToken );
 					callback.nameEnd( toSend );
 				} catch( Exception e ) {}
+				name = new Name( operatorToken, toSend );
 
 				try{ callback.declaratorId(declarator);} catch( Exception e ) {}				
 			}
@@ -1511,7 +1542,9 @@ c, quickParse);
 			{
 				try
 				{
-					name();
+					Token first = LA(1);
+					Token last = name();
+					name = new Name( first, last );
 					try{ callback.declaratorId(declarator);} catch( Exception e ) {}
 				}
 				catch( Backtrack bt )
@@ -1568,6 +1601,7 @@ c, quickParse);
 								callback.nameEnd( end );
 							} catch( Exception e ) {}
 
+							name = new Name( start, end );
 							try{ callback.declaratorId(declarator);} catch( Exception e ) {}
 						}				
 					}
@@ -1579,6 +1613,9 @@ c, quickParse);
 				}
 			}
 
+			Declaration declaratorSymbol = null;
+			declaratorSymbol = pst.new Declaration( name == null? "" : name.toString() );
+			declaratorSymbol.setCallbackExtension( declarator );
 			
 			for (;;) {
 				switch (LT(1)) {
@@ -1607,7 +1644,7 @@ c, quickParse);
 									default:
 										if (seenParameter)
 											throw backtrack;
-										parameterDeclaration( clause );
+										parameterDeclaration( declaratorSymbol, clause );
 										seenParameter = true;
 								}
 							}
@@ -1616,7 +1653,7 @@ c, quickParse);
 							if( LT(1) == Token.tCOLON ) 
 							{
 								// this is most likely the definition of the constructor 
-								return declarator; 
+								return declaratorSymbol; 
 							}
 														
 							// const-volatile marker on the method
@@ -1705,7 +1742,9 @@ c, quickParse);
 				declarator = null;
 			}
 			else
-				return declarator; 
+			{
+				return declaratorSymbol;
+			} 
 				
 		} while( true );
 	}
@@ -1903,11 +1942,12 @@ c, quickParse);
 			
 			Declaration classSymbol = pst.new Declaration( className );
 			classSymbol.setCallbackExtension( classSpec );
-			try {
-				scope.addDeclaration( classSymbol );
-			} catch (ParserSymbolTableException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if( !quickParse )
+			{
+				try {
+					scope.addDeclaration( classSymbol );
+				} catch (ParserSymbolTableException e1) {
+				}
 			}
 			
 			memberDeclarationLoop:

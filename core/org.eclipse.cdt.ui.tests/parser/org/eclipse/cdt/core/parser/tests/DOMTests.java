@@ -899,7 +899,7 @@ public class DOMTests extends BaseDOMTest {
 	
 	public void testConstructorChain() throws Exception
 	{
-		TranslationUnit tu = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}" );
+		TranslationUnit tu = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}", true, true);
 		List tuDeclarations = tu.getDeclarations(); 
 		assertEquals( tuDeclarations.size(), 1 );
 		SimpleDeclaration decl1 = (SimpleDeclaration)tuDeclarations.get(0);

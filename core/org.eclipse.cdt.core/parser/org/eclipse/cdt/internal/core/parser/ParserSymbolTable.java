@@ -1440,6 +1440,12 @@ public class ParserSymbolTable {
 			_object = obj;
 			_typeInfo = new TypeInfo();
 		}
+		
+		public Declaration( String name, int typeInfo )
+		{
+			_name =name;
+			_typeInfo = new TypeInfo( typeInfo, this );
+		}
 
 		/**
 		 * clone
@@ -1704,8 +1710,7 @@ public class ParserSymbolTable {
 					throw new ParserSymbolTableException();
 				}
 			
-				if( unnamed || (origList == null) ? isValidOverload( origDecl, obj ) : isValidOverload( origList, obj ) ){
-					if( origList == null ){
+				if( unnamed || ((origList == null) ? isValidOverload( origDecl, obj ) : isValidOverload( origList, obj ) )){					if( origList == null ){
 						origList = new LinkedList();
 						origList.add( origDecl );
 						origList.add( obj );
@@ -2221,6 +2226,8 @@ public class ParserSymbolTable {
 		public static final int t_double      = 13;
 		public static final int t_void        = 14;
 		public static final int t_enumerator  = 15;
+		public static final int t_block       = 16;
+		public static final int t_template    = 17;
 		
 		private static final String _image[] = {	"", 
 													"", 

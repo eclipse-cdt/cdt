@@ -13,6 +13,9 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
 
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 
@@ -36,5 +39,11 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 	public ErrorParserBlock getErrorParserBlock() {
 		return errParserBlock;
 	}
-	
+	public Control createContents(Composite parent) {
+		Control control = super.createContents( parent );
+		
+		WorkbenchHelp.setHelp(getErrorParserBlock().getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_ERROR_PARSER);
+
+		return control;
+	}	
 }

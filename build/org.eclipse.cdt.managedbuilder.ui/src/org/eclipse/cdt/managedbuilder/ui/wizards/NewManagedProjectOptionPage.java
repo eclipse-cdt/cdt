@@ -11,9 +11,14 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.managedbuilder.internal.ui.ErrorParserBlock;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedProjectOptionBlock;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
@@ -21,6 +26,7 @@ import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 	
@@ -51,7 +57,25 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 			addTab(new ReferenceBlock());
 			errorParsers = new ErrorParserBlock();
 			addTab(errorParsers);
-			addTab(indexBlock = new IndexerBlock()); 
+			addTab(indexBlock = new IndexerBlock());
+		}
+		
+		public void setupHelpContextIds(){
+			List pages = getOptionPages();
+			
+			Iterator iter = pages.iterator();
+			for( int i = 0; i < 3 && iter.hasNext(); i++ ) {
+				ICOptionPage page = (ICOptionPage) iter.next();
+				
+				String id = null;
+				switch( i ){
+					case 0 : id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_PROJECTS_TAB;     break;
+					case 1 : id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_ERRORPARSERS_TAB; break;
+					case 2 : id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_INDEXER_TAB;      break;
+				}
+				WorkbenchHelp.setHelp(page.getControl(), id);	
+				
+			}
 		}
 	}
 	
@@ -93,5 +117,8 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 		optionBlock.updateTargetProperties();
 	}
 	
+	public void setupHelpContextIds(){
+		optionBlock.setupHelpContextIds();
+	}
 	
 }

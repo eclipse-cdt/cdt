@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -28,6 +29,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 
 public class NewManagedProjectWizard extends NewCProjectWizard {
@@ -78,6 +82,20 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		addPage(optionPage);
 	}
 	
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls( pageContainer );
+		
+		IWizardPage [] pages = getPages();
+		
+		if( pages != null && pages.length == 3 ){
+			WorkbenchHelp.setHelp(pages[0].getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_NAME_PAGE);
+	
+			//pages[1] is the CProjectPlatformPage which already has a help id.
+			
+			NewManagedProjectOptionPage optionPage = (NewManagedProjectOptionPage) pages[2];
+			optionPage.setupHelpContextIds();
+		}
+	}
 	public void updateTargetProperties() {
 		//  Update the error parser list
 		optionPage.updateTargetProperties();

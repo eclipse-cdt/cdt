@@ -58,7 +58,7 @@ public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
 	ICDIThread getThread();
 
 	/**
-	 * Returns the level of the stack frame.
+	 * Returns the level of the stack frame, 1 based.
 	 * 
 	 * @return the level of the stack frame 
 	 */

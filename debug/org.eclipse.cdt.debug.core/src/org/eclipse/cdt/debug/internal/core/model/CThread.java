@@ -154,7 +154,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 					}
 				}
 				int depth = getStackDepth();
-				ICDIStackFrame[] frames = (depth != 0) ? getCDIStackFrames( 0, (depth > getMaxStackDepth()) ? getMaxStackDepth() - 1 : depth - 1 ) : new ICDIStackFrame[0];
+				ICDIStackFrame[] frames = (depth != 0) ? getCDIStackFrames( 0, (depth > getMaxStackDepth()) ? getMaxStackDepth() : depth ) : new ICDIStackFrame[0];
 				if ( fStackFrames.isEmpty() ) {
 					addStackFrames( frames, 0, frames.length );
 				}

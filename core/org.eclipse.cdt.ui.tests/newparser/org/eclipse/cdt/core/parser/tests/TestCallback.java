@@ -110,7 +110,7 @@ public class TestCallback extends Assert implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void declSpecifier(Token specifier) {
+	public void simpleDeclSpecifier(Token specifier) {
 		fail();
 	}
 

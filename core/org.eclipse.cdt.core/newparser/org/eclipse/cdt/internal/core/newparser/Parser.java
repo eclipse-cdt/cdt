@@ -69,6 +69,7 @@ c, quick);
 	 * 
 	 */
 	public void translationUnit() throws Exception {
+		callback.translationUnitBegin();
 		Token lastBacktrack = null;
 		while (LT(1) != Token.tEOF) {
 			try {
@@ -92,6 +93,7 @@ c, quick);
 				}
 			}
 		}
+		callback.translationUnitEnd();
 	}
 	
 	/**
@@ -144,6 +146,7 @@ c, quick);
 	 * - work in ctorInitializer and functionTryBlock
 	 */
 	public void simpleDeclaration() throws Exception {
+		callback.simpleDeclarationBegin(LA(1));
 		declSpecifierSeq();
 
 		try {
@@ -218,96 +221,29 @@ c, quick);
 		for (;;) {
 			switch (LT(1)) {
 				case Token.t_auto:
-					consume();
-					//declSpecifierSeq.setAuto(true);
-					break;
 				case Token.t_register:
-					consume();
-					//declSpecifierSeq.setRegister(true);
-					break;
 				case Token.t_static:
-					consume();
-					//declSpecifierSeq.setStatic(true);
-					break;
 				case Token.t_extern:
-					consume();
-					//declSpecifierSeq.setExtern(true);
-					break;
 				case Token.t_mutable:
-					consume();
-					//declSpecifierSeq.setMutable(true);
-					break;
 				case Token.t_inline:
-					consume();
-					//declSpecifierSeq.setInline(true);
-					break;
 				case Token.t_virtual:
-					consume();
-					//declSpecifierSeq.setVirtual(true);
-					break;
 				case Token.t_explicit:
-					consume();
-					//declSpecifierSeq.setExplicit(true);
-					break;
 				case Token.t_typedef:
-					consume();
-					//declSpecifierSeq.setTypedef(true);
-					break;
 				case Token.t_friend:
-					consume();
-					//declSpecifierSeq.setFriend(true);
-					break;
 				case Token.t_const:
-					consume();
-					//declSpecifierSeq.setConst(true);
-					break;
 				case Token.t_volatile:
-					consume();
-					//declSpecifierSeq.setVolatile(true);
-					break;
 				case Token.t_char:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_char);
-					break;
 				case Token.t_wchar_t:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_wchar_t);
-					break;
 				case Token.t_bool:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_bool);
-					break;
 				case Token.t_short:
-					consume();
-					//declSpecifierSeq.setShort(true);
-					break;
 				case Token.t_int:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_int);
-					break;
 				case Token.t_long:
-					consume();
-					//declSpecifierSeq.setLong(true);
-					break;
 				case Token.t_signed:
-					consume();
-					//declSpecifierSeq.setUnsigned(false);
-					break;
 				case Token.t_unsigned:
-					consume();
-					//declSpecifierSeq.setUnsigned(true);
-					break;
 				case Token.t_float:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_float);
-					break;
 				case Token.t_double:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_double);
-					break;
 				case Token.t_void:
-					consume();
-					//declSpecifierSeq.setType(DeclSpecifierSeq.t_void);
+					callback.simpleDeclSpecifier(consume());
 					break;
 				case Token.t_typename:
 					consume();

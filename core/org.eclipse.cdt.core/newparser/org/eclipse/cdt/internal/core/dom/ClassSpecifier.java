@@ -3,7 +3,7 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClassSpecifier extends DeclSpecifierSeq {
+public class ClassSpecifier extends Object {
 
 	public static final int t_class = 0;
 	public static final int t_struct = 1;

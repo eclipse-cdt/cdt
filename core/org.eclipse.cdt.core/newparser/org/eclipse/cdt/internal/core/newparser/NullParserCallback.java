@@ -52,7 +52,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(Token)
 	 */
-	public void declSpecifier(Token specifier) {
+	public void simpleDeclSpecifier(Token specifier) {
 	}
 
 	/**

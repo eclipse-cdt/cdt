@@ -23,7 +23,7 @@ public interface IParserCallback {
 	public void simpleDeclarationBegin(Token firstToken);
 	public void simpleDeclarationEnd(Token lastToken);
 	
-	public void declSpecifier(Token specifier);
+	public void simpleDeclSpecifier(Token specifier);
 	
 	public void declaratorBegin();
 	public void declaratorId(Token id);

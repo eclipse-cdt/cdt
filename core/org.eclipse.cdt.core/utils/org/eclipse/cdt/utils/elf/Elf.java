@@ -78,17 +78,35 @@ public class Elf {
 		public final static int EM_MIPS = 8;
 		public final static int EM_MIPS_RS3_LE = 10;
 		public final static int EM_RS6000 = 11;
-		public final static int EM_PA_RSIC = 15;
+		public final static int EM_PARISC = 15;
 		public final static int EM_nCUBE = 16;
-		public final static int EM_VPP500 = 17;
+		public final static int EM_VPP550 = 17;
 		public final static int EM_SPARC32PLUS = 18;
 		public final static int EM_PPC = 20;
+		public final static int EM_PPC64 = 21;
 		public final static int EM_ARM = 40;
 		public final static int EM_SH = 42;
+		public final static int EM_SPARCV9 = 43;
+		public final static int EM_H8_300 = 46;
+		public final static int EM_H8_300H = 47;
+		public final static int EM_FR30 = 84;     /* Fujitsu FR30 */
+		public final static int EM_V850 = 87;
+		public final static int EM_M32R = 88;
+		public final static int EM_MN10300 = 89;
+		public final static int EM_MN10200 = 90;
+		public final static int EM_CYGNUS_POWERPC = 0x9025;
+		public final static int EM_CYGNUS_M32R = 0x9041;
+		public final static int EM_CYGNUS_V850 = 0x9080;
+		public final static int EM_CYGNUS_MN10200 = 0xdead;
+		public final static int EM_CYGNUS_MN10300 = 0xbeef;
+		public final static int EM_CYGNUS_FR30 = 0x3330;
+		public final static int EM_XSTORMY16 = 0xad45;
+		public final static int EM_CYGNUS_FRV = 0x5441;
+		public final static int EM_IQ2000 = 0xFEBA;
 
 		public byte 	e_ident[] = new byte[EI_NDENT];
-		public short 	e_type; 				/* file type (Elf32_Half) */
-		public short 	e_machine;				/* machine type (Elf32_Half) */
+		public int 	e_type; 				/* file type (Elf32_Half) */
+		public int 	e_machine;				/* machine type (Elf32_Half) */
 		public long		e_version;				/* version number (Elf32_Word) */
 		public long		e_entry;        		/* entry point (Elf32_Addr)*/
 	    public long		e_phoff;				/* Program hdr offset (Elf32_Off)*/
@@ -651,28 +669,65 @@ public class Elf {
 		switch (ehdr.e_machine) {
 			case Elf.ELFhdr.EM_386 :
 			case Elf.ELFhdr.EM_486 :
-				attrib.cpu = new String("x86");
+				attrib.cpu = "x86";
+				break;
+			case Elf.ELFhdr.EM_68K:
+				attrib.cpu = "m68k";
 				break;
 			case Elf.ELFhdr.EM_PPC :
-				attrib.cpu = new String("ppc");
+			case Elf.ELFhdr.EM_CYGNUS_POWERPC :
+			case Elf.ELFhdr.EM_RS6000 :
+				attrib.cpu = "ppc";
+				break;
+			case Elf.ELFhdr.EM_PPC64 :
+				attrib.cpu = "ppc64";
 				break;
 			case Elf.ELFhdr.EM_SH :
-				attrib.cpu = new String("sh");
+				attrib.cpu = "sh";
 				break;
 			case Elf.ELFhdr.EM_ARM :
-				attrib.cpu = new String("arm");
+				attrib.cpu = "arm";
 				break;
 			case Elf.ELFhdr.EM_MIPS_RS3_LE :
 			case Elf.ELFhdr.EM_MIPS :
-			case Elf.ELFhdr.EM_RS6000 :
 				attrib.cpu = "mips";
 				break;
 			case Elf.ELFhdr.EM_SPARC32PLUS:
 			case Elf.ELFhdr.EM_SPARC:
+			case Elf.ELFhdr.EM_SPARCV9:
 				attrib.cpu = "sparc";
 				break;
-			case Elf.ELFhdr.EM_68K:
-				attrib.cpu = "m68k";
+			case Elf.ELFhdr.EM_H8_300:
+			case Elf.ELFhdr.EM_H8_300H:
+				attrib.cpu = "h8300";
+				break;
+			case Elf.ELFhdr.EM_V850:
+			case Elf.ELFhdr.EM_CYGNUS_V850:
+				attrib.cpu = "v850";
+				break;
+			case Elf.ELFhdr.EM_MN10300:
+			case Elf.ELFhdr.EM_CYGNUS_MN10300:
+				attrib.cpu = "mn10300";
+				break;
+			case Elf.ELFhdr.EM_MN10200:
+			case Elf.ELFhdr.EM_CYGNUS_MN10200:
+				attrib.cpu = "mn10200";
+				break;
+			case Elf.ELFhdr.EM_M32R:
+				attrib.cpu = "m32r";
+				break;
+			case Elf.ELFhdr.EM_FR30:
+			case Elf.ELFhdr.EM_CYGNUS_FR30:
+				attrib.cpu = "fr30";
+				break;
+			case Elf.ELFhdr.EM_XSTORMY16:
+				attrib.cpu = "xstormy16";
+				break;
+			case Elf.ELFhdr.EM_CYGNUS_FRV:
+				attrib.cpu = "frv";
+				break;
+			case Elf.ELFhdr.EM_IQ2000:
+				attrib.cpu = "iq2000";
 				break;
 			case Elf.ELFhdr.EM_NONE:
 			default:

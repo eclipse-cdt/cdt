@@ -1,3 +1,11 @@
+2004-01-21  Anthony Green
+ 
+ 	PR 50397.
+
+	* utils/org/eclipse/cdt/utils/elf/Elf.java: Add some ELF machine
+	magic numbers.
+	RS6000 is ppc, not mips.  Fix some typos.
+
 2004-01-13 Alain Magloire
  
 	Small fix on in the elf parser, we have to check for

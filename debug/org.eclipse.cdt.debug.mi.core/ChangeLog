@@ -1,3 +1,18 @@
+2002-11-1 Alain Magloire
+
+	The change in MISession(), will catch things like starting gdb-5.0
+	with argument "-i mi1", that level of mi is not supported.
+
+	* src/.../mi/core/cdi/MemoryBlock.java (refresh):  When doing the refresh
+	check if other blocks wehre affected and update them.
+	* src/.../mi/core/cdi/MemoryManager.java (update): Return the array of
+	affected addresses.
+	* src/.../mi/core/MIPlugin.java (createCSession): Do not throw an
+	error when trying "set new-console", it does not work on Linux.
+	* src/.../mi/core/MISession.java (MISession):  Check if the process
+	terminated early, maybe because of wron arguments etc .. and throw
+	the exception.
+
 2002-11-1 David Inglis
 	* src/.../mi/core/MIPlugin.java
 	throw MIExceptions in createSession (not rethorwn IOExceptions)

@@ -67,12 +67,6 @@ public class CodeReader {
 			stream.close();
 		}
 	}
-	
-	public CodeReader( String filename, InputStream stream ) throws IOException
-	{
-		this( filename, SYSTEM_DEFAULT_ENCODING, stream );
-	}
-	
 	public CodeReader( String fileName, String charSet, InputStream stream ) throws IOException {
 	    filename = fileName.toCharArray();
 	    

@@ -1,3 +1,11 @@
+2003-01-15 Alain Magloire
+
+	* src/.../mi/core/command/CommandFactory.java (createMIInfoSharedLibrary):
+	New method.
+	* src/../mi/core/command/MIInfoSharedLibrary.java: New file.
+	* src/../mi/core/output/MIInfoSharedLibraryInfo.java: New File.
+	* src/../mi/core/output/MIShared.java: new File.
+
 2003-01-13 Mikhail Khodjaiants
 	* CTarget.java: in the 'runUntil' method check if file name or function name length > 0, otherwise use address.
 

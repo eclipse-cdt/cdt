@@ -4,6 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.make.internal.ui.editor.IMakefileDocumentProvider;
+import org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentProvider;
+import org.eclipse.cdt.make.internal.ui.editor.WorkingCopyManager;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -29,6 +33,9 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 	private static MakeUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+
+	private IWorkingCopyManager fWorkingCopyManager;
+	private IMakefileDocumentProvider fMakefileDocumentProvider;
 
 	/**
 	 * The constructor.
@@ -215,4 +222,28 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 			return windows[0].getShell();
 		}
 	}
+
+	public synchronized IMakefileDocumentProvider getMakefileDocumentProvider() {
+		if (fMakefileDocumentProvider == null) {
+			fMakefileDocumentProvider=  new MakefileDocumentProvider();
+		}
+		return fMakefileDocumentProvider;
+	}
+
+	public synchronized IWorkingCopyManager getWorkingCopyManager() {
+		if (fWorkingCopyManager == null) {
+			IMakefileDocumentProvider provider= getMakefileDocumentProvider();
+			fWorkingCopyManager= new WorkingCopyManager(provider);
+		}
+		return fWorkingCopyManager;
+	}
+
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		if (fWorkingCopyManager != null) {
+				fWorkingCopyManager.shutdown();
+				fWorkingCopyManager= null;
+		}
+        }
+
 }

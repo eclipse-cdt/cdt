@@ -54,10 +54,19 @@ public class MakeUIImages {
 
 	public static final String IMG_OBJS_MAKEFILE_MACRO = NAME_PREFIX + "macro_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_MACRO = createManaged(OBJ, IMG_OBJS_MAKEFILE_MACRO);
+
 	public static final String IMG_OBJS_MAKEFILE_TARGET_RULE = NAME_PREFIX + "trule_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_TARGET_RULE = createManaged(OBJ, IMG_OBJS_MAKEFILE_TARGET_RULE);
+
 	public static final String IMG_OBJS_MAKEFILE_INFERENCE_RULE = NAME_PREFIX + "irule_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_INFERENCE_RULE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INFERENCE_RULE);
+
+	public static final String IMG_OBJS_MAKEFILE_RELATION = NAME_PREFIX + "relation_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAKEFILE_RELATION = createManaged(OBJ, IMG_OBJS_MAKEFILE_RELATION);
+
+	public static final String IMG_OBJS_MAKEFILE_COMMAND = NAME_PREFIX + "command_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAKEFILE_COMMAND = createManaged(OBJ, IMG_OBJS_MAKEFILE_COMMAND);
+
 	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
 
 	private static ImageDescriptor createManaged(String prefix, String name) {

@@ -10,19 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.make.core.makefile.IMakefile;
-import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
-import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
@@ -40,31 +34,45 @@ public class MakefileEditor extends TextEditor {
 
 	private MakefileContentOutlinePage getOutlinePage() {
 		if (page == null) {
-			page = new MakefileContentOutlinePage(getDocumentProvider(), this);
+			page = new MakefileContentOutlinePage(this);
 			page.setInput(getEditorInput());
 		}
 		return page;
 	}
 
-	public IMakefile getMakefile() {
-		IDocument document = getDocumentProvider().getDocument(getEditorInput());
-		return getMakefile(document);
-	}
-
-	public IMakefile getMakefile(IDocument document) {
-		if (document != null) {
-			if (makefile == null || isDirty()) {
-				try {
-					String content = document.get();
-					Reader r = new StringReader(content);
-					makefile = new PosixMakefile(r);
-				} catch (IOException e) {
-					makefile = new NullMakefile();
-				}
-			}
-		}
-		return makefile;
-	}
+//	public IMakefile getMakefile() {
+//		IDocument document = getDocumentProvider().getDocument(getEditorInput());
+//		if (makefile == null) {
+//			makefile = new GNUMakefile();
+//			try {
+//				String content = document.get();
+//				Reader r = new StringReader(content);
+//				makefile.parse(r);
+//			} catch (IOException e) {
+//			}
+//			IEditorInput input = getEditorInput();
+//			if (makefile instanceof GNUMakefile) {
+//				GNUMakefile gnu = (GNUMakefile)makefile;
+//				if (input instanceof IFileEditorInput) {
+//					IFile file = ((IFileEditorInput)input).getFile();
+//					String[] dirs = gnu.getIncludeDirectories();
+//					String[] includes = new String[dirs.length + 1];
+//					System.arraycopy(dirs, 0, includes, 0, dirs.length);
+//					String cwd = file.getLocation().removeLastSegments(1).toOSString();
+//					includes[dirs.length] = cwd;
+//					gnu.setIncludeDirectories(includes);
+//				}
+//			}
+//		} else if (isDirty()) {
+//			try {
+//				String content = document.get();
+//				Reader r = new StringReader(content);
+//				makefile.parse(r);
+//			} catch (IOException e) {
+//			}
+//		}
+//		return makefile;
+//	}
 
 	public MakefileEditor() {
 		super();
@@ -80,7 +88,7 @@ public class MakefileEditor extends TextEditor {
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#MakefileEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#MakefileRulerContext"); //$NON-NLS-1$
-		setDocumentProvider(new MakefileDocumentProvider());
+		setDocumentProvider(MakeUIPlugin.getDefault().getMakefileDocumentProvider());
 	}
 
 	/* (non-Javadoc)

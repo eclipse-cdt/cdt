@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IRule;
-import org.eclipse.cdt.make.core.makefile.IStatement;
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
-import org.eclipse.cdt.make.internal.ui.editor.MakefileEditor;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.WordPartDetector;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -31,6 +32,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * MakefileCompletionProcessor
@@ -70,10 +72,13 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	protected IContextInformationValidator fValidator = new Validator();
 	protected Image imageMacro = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_MACRO);
 	protected Image imageTarget = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_TARGET_RULE);
-	protected MakefileEditor fEditor;
 
-	public MakefileCompletionProcessor(MakefileEditor editor) {
+	protected IEditorPart fEditor;
+	protected IWorkingCopyManager fManager;
+
+	public MakefileCompletionProcessor(IEditorPart editor) {
 		fEditor = editor;
+		fManager =  MakeUIPlugin.getDefault().getWorkingCopyManager();
 	}
 
 	/* (non-Javadoc)
@@ -81,8 +86,12 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		boolean macro = inMacro(viewer, documentOffset);
-		IMakefile makefile = fEditor.getMakefile(viewer.getDocument());
-		IStatement[] statements = null;
+		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
+//		IMakefile makefile = fEditor.getMakefile();
+//		String content = viewer.getDocument().get();
+//		Reader r = new StringReader(content);
+//		makefile.parse(r);
+		IDirective[] statements = null;
 		if (macro) {
 			statements = makefile.getMacroDefinitions();
 		} else {
@@ -100,7 +109,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			if (statements[i] instanceof IMacroDefinition) {
 				name = ((IMacroDefinition) statements[i]).getName();
 				image = imageMacro;
-				infoString = ((IMacroDefinition)statements[i]).getValue();
+				infoString = ((IMacroDefinition)statements[i]).getValue().toString();
 			} else if (statements[i] instanceof IRule) {
 				name = ((IRule) statements[i]).getTarget().toString();
 				image = imageTarget;
@@ -131,15 +140,17 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
 		boolean macro = inMacro(viewer, documentOffset);
-		IMakefile makefile = fEditor.getMakefile(viewer.getDocument());
+		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
+		//IMakefile makefile = fEditor.getMakefile(viewer.getDocument());
+		//IMakefile makefile = fEditor.getMakefile();
 		ArrayList contextList = new ArrayList();
 		if (macro) {
-			IStatement[] statements = makefile.getMacroDefinitions();
+			IDirective[] statements = makefile.getMacroDefinitions();
 			for (int i = 0; i < statements.length; i++) {
 				if (statements[i] instanceof IMacroDefinition) {
 					String name = ((IMacroDefinition) statements[i]).getName();
 					if (name != null && name.equals(wordPart.getString())) {
-						String value = ((IMacroDefinition) statements[i]).getValue();
+						String value = ((IMacroDefinition) statements[i]).getValue().toString();
 						if (value != null && value.length() > 0) {
 							contextList.add(value);
 						}

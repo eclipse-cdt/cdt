@@ -1,5 +1,11 @@
 2005-02-16 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
+	Replaced the table viewer by text widgets.
+	* PropertyPageMessages.properties
+	* ModulePropertyPage.java
+
+2005-02-16 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
 	The symbols file name isn't shown in the detail pane if module's 
 	symbols are not loaded.
 	* ModulesView.java

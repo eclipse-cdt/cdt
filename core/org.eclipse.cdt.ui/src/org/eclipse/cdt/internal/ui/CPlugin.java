@@ -33,14 +33,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.resources.ICPlugin;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.IMessageDialog;
-import org.eclipse.cdt.core.resources.IPropertyStore;
-import org.eclipse.cdt.internal.CCorePlugin;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
@@ -51,7 +48,7 @@ import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 
 
-public class CPlugin extends AbstractUIPlugin implements ICPlugin {
+public class CPlugin extends AbstractUIPlugin {
 	
 	public static final String PLUGIN_ID= "org.eclipse.cdt.ui";
 	public static final String PLUGIN_CORE_ID= "org.eclipse.cdt.core";
@@ -133,14 +130,6 @@ public class CPlugin extends AbstractUIPlugin implements ICPlugin {
 	}	
 	
 	// ------ CPlugin
-
-	public IMessageDialog getMessageDialog() {
-		return new IMessageDialog() {
-			public void openError(String title, String msg) {
-				MessageDialog.openError(getActiveWorkbenchShell(), title, msg);
-			}
-		};
-	}
 	
 	private ConsoleDocument fConsoleDocument;
 	private CoreModel fCoreModel;
@@ -214,27 +203,6 @@ public class CPlugin extends AbstractUIPlugin implements ICPlugin {
 		}
 	}
     
-   	private IPropertyStore fPropertyStore;
-	
-	public IPropertyStore getPropertyStore() {
-		if (fPropertyStore == null) {
-			fPropertyStore = new IPropertyStore() {
-				public String getString(String name) {
-					return getPreferenceStore().getString(name);
-				}
-				public void putValue(String name, String value) {
-					getPreferenceStore().putValue(name, value);
-				}
-				public void setDefault(String name, String def) {
-					getPreferenceStore().setDefault(name, def);
-				}
-			};
-		}
-		return fPropertyStore;
-	}
-	
-	//	protected ACDebugModel fModel;
-	
 	public CPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		fgCPlugin= this;
@@ -321,7 +289,6 @@ public class CPlugin extends AbstractUIPlugin implements ICPlugin {
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new ResourceAdapterFactory(), IResource.class);
 		manager.registerAdapters(new CElementAdapterFactory(), ICElement.class);
-		manager.registerAdapters(new PluginAdapterFactory(), CCorePlugin.class);
 		CPluginImages.initialize();
 		
 	}
@@ -348,15 +315,6 @@ public class CPlugin extends AbstractUIPlugin implements ICPlugin {
 		return fCoreModel;
 	}	
 
-	public Object getAdapter(Class adapter) {
-		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
-
-/*	
-	public ACDebugModel getDebugModel() {
-		return fModel;
-	}
-*/
 	public static String getPluginId() {
 		return PLUGIN_ID;
 	}

@@ -5,12 +5,12 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  */

@@ -5,6 +5,11 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -14,11 +19,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.ResourcePropertySource;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
 
 /**
  * Implements basic UI support for C elements.
@@ -61,9 +61,10 @@ public class CElementAdapterFactory implements IAdapterFactory {
 					}
 				} else {
 					try {
-						res = celem.getCorrespondingResource();
-						if (res != null)
+						if ( celem instanceof ICResource ) {
+							res = ((ICResource)celem).getResource();
 							return new ResourcePropertySource(res);
+						}	
 					} catch (CModelException e) {
 					}
 				}

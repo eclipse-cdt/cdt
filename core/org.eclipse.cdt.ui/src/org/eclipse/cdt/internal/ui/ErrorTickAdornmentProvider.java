@@ -7,18 +7,16 @@ package org.eclipse.cdt.internal.ui;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
@@ -43,9 +41,9 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 				switch (type) {
 					case ICElement.C_PROJECT:
 					case ICElement.C_FOLDER:
-						return getErrorTicksFromMarkers(element.getCorrespondingResource(), IResource.DEPTH_INFINITE, null);
+						return getErrorTicksFromMarkers(((ICResource)element).getResource(), IResource.DEPTH_INFINITE, null);
 					case ICElement.C_FILE:
-						return getErrorTicksFromMarkers(element.getCorrespondingResource(), IResource.DEPTH_ONE, null);
+						return getErrorTicksFromMarkers(((ICResource)element).getResource(), IResource.DEPTH_ONE, null);
 					case ICElement.C_FUNCTION:
 					case ICElement.C_CLASS:
 					case ICElement.C_UNION:
@@ -56,7 +54,7 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 						if (tu != null && tu.exists()) {
 							// I assume that only source elements in compilation unit can have markers
 							ISourceRange range= ((ISourceReference)element).getSourceRange();
-							return getErrorTicksFromMarkers(tu.getCorrespondingResource(), IResource.DEPTH_ONE, range);
+							return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE, range);
 						}
 					default:
 				}

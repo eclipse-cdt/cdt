@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IFolder;
 /**
  * A C Folder Resource.
  */
-public interface ICFolder extends IParent, ICElement {
+public interface ICFolder extends IParent, ICResource, ICElement {
 
 	public IFolder getFolder();
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -142,7 +143,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		insertElement();
 		if (fCreationOccurred) {
 			//a change has really occurred
-			IFile file = (IFile)unit.getCorrespondingResource();
+			IFile file = (IFile)((ICResource)unit).getResource();
 			StringBuffer buffer = getContent(file);
 			switch (fReplacementLength) {
 				case -1 : 

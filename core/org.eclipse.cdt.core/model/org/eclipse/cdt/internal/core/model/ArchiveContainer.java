@@ -65,9 +65,9 @@ public class ArchiveContainer extends Parent implements IArchiveContainer {
 	//	return null;
 	//}
 
-	public IResource getCorrespondingResource() {
-		return null;
-	}
+//	public IResource getCorrespondingResource() {
+//		return null;
+//	}
 
 	void addChildIfLib(IFile file) {
 		CModelManager factory = CModelManager.getDefault();

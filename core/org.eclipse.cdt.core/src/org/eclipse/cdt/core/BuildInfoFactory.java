@@ -13,11 +13,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 
 import org.eclipse.cdt.core.resources.IBuildInfo;
-import org.eclipse.cdt.core.resources.IPropertyStore;
-import org.eclipse.cdt.internal.CCorePlugin;
 
 public class BuildInfoFactory {
 	public static final String LOCATION = "buildLocation";
@@ -30,7 +29,7 @@ public class BuildInfoFactory {
 	public static abstract class Store implements IBuildInfo {
     	public String getBuildLocation() {
     		if ( isDefaultBuildCmd() ) {
-				Plugin plugin = CCorePlugin.getDefaultPlugin();
+				Plugin plugin = CCorePlugin.getDefault();
 				if (plugin != null) {
 					IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint("CBuildCommand");
 					if (extension != null) {
@@ -107,14 +106,14 @@ public class BuildInfoFactory {
 	}
 	
 	public static class Preference extends Store {
-		IPropertyStore prefs;
+		Preferences prefs;
 		
 		public Preference() {
-			prefs = CCorePlugin.getDefault().getPropertyStore();
+			prefs = CCorePlugin.getDefault().getPluginPreferences();
 		}
 		
 		public void putValue(String name, String value) {
-			prefs.putValue(name, value);
+			prefs.setValue(name, value);
 		}
 		
 		public String getString(String property) {

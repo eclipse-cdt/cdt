@@ -186,20 +186,6 @@ public interface ICElement extends IAdaptable {
 	boolean exists();
 
 	/**
-	 * Returns the resource that corresponds directly to this element,
-	 * or <code>null</code> if there is no resource that corresponds to
-	 * this element.
-	 * <p>
-	 * For example, the corresponding resource for an <code>ATranslationUnit</code>
-	 * is its underlying <code>IFile</code>.
-	 *
-	 * @return the corresponding resource, or <code>null</code> if none
-	 * @exception CModelException if this element does not exist or if an
-	 *		exception occurs while accessing its corresponding resource
-	 */
-	IResource getCorrespondingResource() throws CModelException;
-
-	/**
 	 * Returns the name of this element.
 	 *
 	 * @return the element name

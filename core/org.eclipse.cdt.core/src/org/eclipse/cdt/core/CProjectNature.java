@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.cdt.core.resources.IBuildInfo;
-import org.eclipse.cdt.internal.CCorePlugin;
-import org.eclipse.cdt.core.*;
 
 
 

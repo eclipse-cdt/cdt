@@ -6,40 +6,43 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.ICFolder;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.utils.elf.AR;
+import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.CModelException;
-
-import org.eclipse.cdt.core.model.CoreModel;
-
-import org.eclipse.cdt.utils.elf.Elf;
-import org.eclipse.cdt.utils.elf.AR;
 
 public class CModelManager implements IResourceChangeListener {
 
@@ -95,15 +98,15 @@ public class CModelManager implements IResourceChangeListener {
 	 * Returns the CRoot for the given workspace, creating
 	 * it if it does not yet exist.
 	 */
-	public ICElement getCRoot(IWorkspaceRoot root) {
+	public ICRoot getCRoot(IWorkspaceRoot root) {
 		return create(root);
 	}
 
-	public ICElement getCRoot () {
+	public ICRoot getCRoot () {
 		return create(ResourcesPlugin.getWorkspace().getRoot());
 	}
 
-	public ICElement create (IPath path) {
+	public ICResource create (IPath path) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// Assume it is fullpath relative to workspace
 		IResource res = root.findMember(path);
@@ -118,7 +121,7 @@ public class CModelManager implements IResourceChangeListener {
 		return create (res);
 	}
 
-	public ICElement create (IResource resource) {
+	public ICResource create (IResource resource) {
 		if (resource == null) {
 			return null;
 		}
@@ -137,7 +140,7 @@ public class CModelManager implements IResourceChangeListener {
 		}
 	}
 
-	public ICElement create(ICElement parent, IResource resource) {
+	public ICResource create(ICElement parent, IResource resource) {
 		int type = resource.getType();
 		switch (type) {
 			case IResource.PROJECT :
@@ -153,76 +156,76 @@ public class CModelManager implements IResourceChangeListener {
 		}
 	}
 
-	public ICElement create(IFile file) {
+	public ICFile create(IFile file) {
 		IResource parent = file.getParent();
-		ICElement celement = null;
+		ICElement cparent = null;
 		if (parent instanceof IFolder) {
-			celement = create ((IFolder)parent);
+			cparent = create ((IFolder)parent);
 		} else if (parent instanceof IProject) {
-			celement = create ((IProject)parent);
+			cparent = create ((IProject)parent);
 		}
-		if (celement != null)
-			return create (celement, file);
-		return celement;
+		if (cparent != null)
+			return (ICFile) create (cparent, file);
+		return null;
 	}
 
-	public synchronized ICElement create(ICElement parent, IFile file) {
-		ICElement celement = (ICElement)fParsedResources.get(file);
-		if (celement == null) {
+	public synchronized ICFile create(ICElement parent, IFile file) {
+		ICFile cfile = (ICFile)fParsedResources.get(file);
+		if (cfile == null) {
 			if (file.exists()) {
 				if (isArchive(file)) {
-					celement = new Archive(parent, file);
+					cfile = new Archive(parent, file);
 				} else if (isBinary(file)) {
-					celement = new Binary(parent, file);
+					cfile = new Binary(parent, file);
 				} else if (isTranslationUnit(file)) {
-					celement = new TranslationUnit(parent, file);
+					cfile = new TranslationUnit(parent, file);
 				} else {
-					celement = new CFile(parent, file);
+					cfile = new CFile(parent, file);
 				}
-				fParsedResources.put(file, celement);
+				fParsedResources.put(file, cfile);
 			}
 		}
 		// Added also to the Containers
-		if (celement != null) {
-			if (celement instanceof IArchive) {
-				CProject cproj = (CProject)celement.getCProject();
+		if (cfile != null) {
+			if (cfile instanceof IArchive) {
+				CProject cproj = (CProject)cfile.getCProject();
 				ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
-				container.addChild(celement);
-			} else if (celement instanceof IBinary) {
-				IBinary bin = (IBinary)celement;
+				container.addChild(cfile);
+			} else if (cfile instanceof IBinary) {
+				IBinary bin = (IBinary)cfile;
 				if (bin.isExecutable() || bin.isSharedLib()) {
-					CProject cproj = (CProject)celement.getCProject();
+					CProject cproj = (CProject)cfile.getCProject();
 					BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
 					container.addChild(bin);
 				}
 			}
 		}
-		return celement;
+		return cfile;
 	}
 
-	public ICElement create(IFolder folder) {
+	public ICFolder create(IFolder folder) {
 		IResource parent = folder.getParent();
-		ICElement celement = null;
+		ICElement cparent = null;
 		if (parent instanceof IFolder) {
-			celement = create ((IFolder)parent);
+			cparent = create ((IFolder)parent);
 		} else if (parent instanceof IProject) {
-			celement = create ((IProject)parent);
+			cparent = create ((IProject)parent);
 		}
-		if (celement != null)
-			return create (celement, folder);
-		return celement;
+		if (cparent != null)
+			return (ICFolder) create (cparent, folder);
+		return null;
 	}
 
-	public synchronized ICElement create(ICElement parent, IFolder folder) {
-		ICElement celement = (ICElement)fParsedResources.get(folder);
-		if (celement == null) {
-			celement = new CFolder(parent, folder);
-			fParsedResources.put(folder, celement);
+	public synchronized ICFolder create(ICElement parent, IFolder folder) {
+		ICFolder cfolder = (ICFolder)fParsedResources.get(folder);
+		if (cfolder == null) {
+			cfolder = new CFolder(parent, folder);
+			fParsedResources.put(folder, cfolder);
 		}
-		return celement;
+		return cfolder;
 	}
 		
-	public ICElement create(IProject project) {
+	public ICProject create(IProject project) {
 		IResource parent = project.getParent();
 		ICElement celement = null;
 		if (parent instanceof IWorkspaceRoot) {
@@ -231,24 +234,24 @@ public class CModelManager implements IResourceChangeListener {
 		return create(celement, project);
 	}
 
-	public synchronized ICElement create(ICElement parent, IProject project) {
-		ICElement celement = (ICElement)fParsedResources.get(project);
-		if (celement == null) {
+	public synchronized ICProject create(ICElement parent, IProject project) {
+		ICProject cproject = (ICProject)fParsedResources.get(project);
+		if (cproject == null) {
 			if (hasCNature(project)) {
-				celement = new CProject(parent, project);
-				fParsedResources.put(project, celement);
+				cproject = new CProject(parent, project);
+				fParsedResources.put(project, cproject);
 			}
 		}
-		return celement;
+		return cproject;
 	}
 
-	public ICElement create(IWorkspaceRoot root) {
-		ICElement celement = (ICElement)fParsedResources.get(root);
-		if (celement == null) {
-			celement = new CRoot(root);
-			fParsedResources.put(root, celement);
+	public ICRoot create(IWorkspaceRoot root) {
+		ICRoot croot = (ICRoot)fParsedResources.get(root);
+		if (croot == null) {
+			croot = new CRoot(root);
+			fParsedResources.put(root, croot);
 		}
-		return celement;
+		return croot;
 	}
 
 	public static void addCNature(IProject project, IProgressMonitor monitor) throws CModelException {

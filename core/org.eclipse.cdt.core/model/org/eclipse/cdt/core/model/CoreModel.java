@@ -85,7 +85,7 @@ public class CoreModel {
 	 * Creates an ICElement form and IPath.
 	 * Returns null if not found.
 	 */
-	public ICElement create(IPath path) {
+	public ICResource create(IPath path) {
 		return manager.create(path);
 	}
 
@@ -93,7 +93,7 @@ public class CoreModel {
 	 * Creates an ICElement form and IFile.
 	 * Returns null if not found.
 	 */
-	public ICElement create(IFile file) {
+	public ICFile create(IFile file) {
 		return manager.create(file);
 	}
 
@@ -101,7 +101,7 @@ public class CoreModel {
 	 * Creates an ICElement form and IFolder.
 	 * Returns null if not found.
 	 */
-	public ICElement create(IFolder folder) {
+	public ICFolder create(IFolder folder) {
 		return manager.create(folder);
 	}
 
@@ -109,30 +109,22 @@ public class CoreModel {
 	 * Creates an ICElement form and IProject.
 	 * Returns null if not found.
 	 */
-	public ICElement create(IProject project) {
+	public ICProject create(IProject project) {
 		return manager.create(project);
-	}
-
-	/**
-	 * Creates an ICElement form and IWorkspaceRoot.
-	 * Returns null if not found.
-	 */
-	public ICElement create(IWorkspaceRoot root) {
-		return manager.create(root);
 	}
 
 	/**
 	 * Creates an ICElement form and IResource.
 	 * Returns null if not found.
 	 */
-	public ICElement create(IResource resource) {
+	public ICResource create(IResource resource) {
 		return manager.create(resource);
 	}
 
 	/**
 	 * Returns the default ICRoot.
 	 */
-	public ICElement getCRoot() {
+	public ICRoot getCRoot() {
 		return manager.getCRoot();
 	}
 

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.cdt.internal.CCorePlugin;
+import org.eclipse.cdt.core.CCorePlugin;
 
 /**
  *

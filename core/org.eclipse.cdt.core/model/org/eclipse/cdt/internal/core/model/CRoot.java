@@ -5,14 +5,14 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import  org.eclipse.cdt.core.model.ICElement;
-import  org.eclipse.cdt.core.model.ICProject;
-import  org.eclipse.cdt.core.model.ICRoot;
-import  org.eclipse.cdt.core.model.CModelException;
 
 public class CRoot extends CResource implements ICRoot {
 
@@ -54,8 +54,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null
-			&& elements[0].getCorrespondingResource() != null ) {
+		if (elements != null && elements[0] != null && elements[0] instanceof ICResource ) {
 			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		} else {
 			throw new CModelException (new CModelStatus());
@@ -65,8 +64,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor)
 		throws CModelException {
-		if (elements != null && elements[0] != null
-			&& elements[0].getCorrespondingResource() != null) {
+		if (elements != null && elements[0] != null && elements[0] instanceof ICResource) {
 			runOperation(new DeleteResourceElementsOperation(elements, force), monitor);
 		} else {
 			throw new CModelException (new CModelStatus());
@@ -76,8 +74,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null
-			&& elements[0].getCorrespondingResource() == null) {
+		if (elements != null && elements[0] != null && elements[0] instanceof ICResource ) {
 			runOperation(new MoveResourceElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		} else {
 			throw new CModelException (new CModelStatus());
@@ -87,8 +84,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings,
 		boolean force, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null
-			&& elements[0].getCorrespondingResource() == null) {
+		if (elements != null && elements[0] != null && elements[0] instanceof ICResource) {
 			runOperation(new RenameResourceElementsOperation(elements, destinations,
 					renamings, force), monitor);
 		} else {

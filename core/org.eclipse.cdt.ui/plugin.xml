@@ -29,23 +29,23 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 <!-- =========================================================================== -->
-<!-- must implement org.eclipse.cdt.ui.ICEditorContextMenuAction           -->
-<!-- Extension Implementation:                                                   -->
-<!-- Purpose: Provide an action for the CEditor's context menu                   -->
 <!-- Extension point: org.eclipse.cdt.ui.editorActions                      -->
+<!-- Purpose: Provide an action for the CEditor's context menu                   -->
+<!-- Extension Implementation:                                                   -->
+<!-- must implement org.eclipse.cdt.ui.ICEditorContextMenuAction           -->
 <!-- =========================================================================== -->
    <extension-point id="editorActions" name="%editorActionsName"/>
 <!-- =========================================================================== -->
-<!-- must implement org.eclipse.cdt.ui.ICEditorRulerAction                 -->
-<!-- Extension Implementation:                                                   -->
-<!-- Purpose: Provide an action for the CEditor's ruler                          -->
 <!-- Extension point: org.eclipse.cdt.ui.editorRulerActions                -->
+<!-- Purpose: Provide an action for the CEditor's ruler                          -->
+<!-- Extension Implementation:                                                   -->
+<!-- must implement org.eclipse.cdt.ui.ICEditorRulerAction                 -->
 <!-- =========================================================================== -->
    <extension-point id="editorRulerActions" name="%editorRulerActionsName"/>
 
@@ -148,8 +148,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -247,14 +247,6 @@
       </page>
    </extension>
 <!--
-   <page
-         objectClass="org.eclipse.core.resources.IFile"
-         name="%CLaunchingPropertyPage.executionArguments.name"
-         class="org.eclipse.cdt.internal.ui.preferences.CLaunchingPropertyPage"
-         id="org.eclipse.cdt.ui.preferences.CLaunchingPropertyPage">
-   </page>
--->
-<!--
 <extension
       point="org.eclipse.debug.core.launchers">
    <launcher
@@ -267,6 +259,14 @@
          id="org.eclipse.cdt.core.CApplicationLauncher">
    </launcher>
 </extension>
+-->
+<!--
+   <page
+         objectClass="org.eclipse.core.resources.IFile"
+         name="%CLaunchingPropertyPage.executionArguments.name"
+         class="org.eclipse.cdt.internal.ui.preferences.CLaunchingPropertyPage"
+         id="org.eclipse.cdt.ui.preferences.CLaunchingPropertyPage">
+   </page>
 -->
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -397,6 +397,11 @@
             class="org.eclipse.cdt.core.debug.ui.CDebugModelPresentation"
             id="org.eclipse.cdt.ui">
       </debugModelPresentation>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+         <CBuildConsole class="org.eclipse.cdt.internal.ui.CConsole">
+         </CBuildConsole>
    </extension>
 
 </plugin>

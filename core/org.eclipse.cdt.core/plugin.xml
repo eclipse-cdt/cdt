@@ -4,7 +4,7 @@
    name="%pluginName"
    version="1.0.0"
    provider-name="%providerName"
-   class="org.eclipse.cdt.internal.CCorePlugin">
+   class="org.eclipse.cdt.core.CCorePlugin">
 
    <runtime>
       <library name="cdtcore.jar">
@@ -27,6 +27,7 @@
 
 
    <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
+   <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
 
    <extension
          id="cbuilder"

@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.IPropertyStore;
-import org.eclipse.cdt.internal.CCorePlugin;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserManager;
 import org.eclipse.cdt.core.*;
 import org.eclipse.cdt.core.resources.*;
@@ -39,11 +37,9 @@ public class CBuilder extends ACBuilder {
 	
 	private static final String BUILD_ERROR= "CBuilder.build_error";
 	
-	private IPropertyStore fPreferenceStore;
 	private ErrorParserManager fErrorParserManager;
 		
 	public CBuilder() {
-		fPreferenceStore= CCorePlugin.getDefault().getPropertyStore();
 		fErrorParserManager= new ErrorParserManager(this);
 	}
 

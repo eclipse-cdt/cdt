@@ -31,6 +31,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
 
 public class ReferenceBlock implements IWizardTab {
@@ -59,14 +60,9 @@ public class ReferenceBlock implements IWizardTab {
 		lbldata.horizontalSpan = 1;
 		label.setLayoutData(lbldata);
 
-		referenceProjectsViewer = new CheckboxTableViewer(composite, SWT.BORDER);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
+		referenceProjectsViewer = ControlFactory.createListViewer
+			(composite, null, SWT.DEFAULT, SWT.DEFAULT, GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 
-		data.heightHint = getDefaultFontHeight( referenceProjectsViewer.getTable(),
-				PROJECT_LIST_MULTIPLIER);
-		referenceProjectsViewer.getTable().setLayoutData(data);
 		referenceProjectsViewer.setLabelProvider(new WorkbenchLabelProvider());
 		referenceProjectsViewer.setContentProvider(getContentProvider());
 		referenceProjectsViewer.setInput(ResourcesPlugin.getWorkspace());
@@ -96,11 +92,11 @@ public class ReferenceBlock implements IWizardTab {
 				if (!(element instanceof IWorkspace))
 					return new Object[0];
 				ArrayList aList = new ArrayList(15);
-				IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
+				final IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					if (CoreModel.hasCNature(projects[i])) {
 						// Do not show the actual project being look at
-						if (project != null && project.equals(projects[i])) {
+						if ((project != null) && project.equals(projects[i])) {
 							continue;
 						}
 						aList.add(projects[i]);

@@ -6,13 +6,13 @@ package org.eclipse.cdt.internal.core.model;
  */
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IResourceDelta;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.core.resources.IResourceDelta;
 
 
 /**
@@ -102,12 +102,8 @@ public class CElementDelta implements ICElementDelta {
 
 		// if a child delta is added to a translation unit delta or below, 
 		// it's a fine grained delta
-		try {
-			if (fChangedElement.getCorrespondingResource() == null) {
-				fineGrained();
-			}
-		} catch (CModelException e) {
-			e.printStackTrace();
+		if (!(fChangedElement instanceof ICResource)) {
+			fineGrained();
 		}
 	
 		if (fAffectedChildren.length == 0) {

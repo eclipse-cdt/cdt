@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @see CCore#create(org.eclipse.core.resources.IWorkspaceRoot)
  */
-public interface ICRoot extends ICElement, IParent {
+public interface ICRoot extends ICResource, ICElement, IParent {
 	/**
 	 * Copies the given elements to the specified container(s).
 	 * If one container is specified, all elements are copied to that

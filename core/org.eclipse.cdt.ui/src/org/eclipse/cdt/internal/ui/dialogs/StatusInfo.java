@@ -7,7 +7,7 @@ package org.eclipse.cdt.internal.ui.dialogs;
  
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.cdt.internal.CCorePlugin;
+import org.eclipse.cdt.core.CCorePlugin;
 
 /**
  * A settable IStatus

@@ -5,7 +5,7 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.CCorePlugin;
+import org.eclipse.cdt.core.CCorePlugin;
 
 
 /**

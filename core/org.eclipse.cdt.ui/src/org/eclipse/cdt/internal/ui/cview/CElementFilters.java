@@ -46,7 +46,7 @@ public class CElementFilters {
 		if (definedFilters == null) {
 			// Overide the default by the user preference
 			CPlugin plugin = CPlugin.getDefault();
-			String storedPatterns= plugin.getPropertyStore().getString(FILTERS_TAG);
+			String storedPatterns= plugin.getPluginPreferences().getString(FILTERS_TAG);
 
 			if (storedPatterns.length() > 0) {
 				StringTokenizer entries = new StringTokenizer(storedPatterns, COMMA_SEPARATOR);

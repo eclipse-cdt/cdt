@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.ACBuilder;
-import org.eclipse.cdt.internal.CCorePlugin;
 public class ErrorParserManager {
 	
 	private static String PREF_ERROR_PARSER= "errorOutputParser";
@@ -92,7 +92,7 @@ public class ErrorParserManager {
 	
 	private void readPreferences() {
 		fErrorParsers.clear();
-		String parserNames= CCorePlugin.getDefault().getPropertyStore().getString(PREF_ERROR_PARSER);
+		String parserNames= CCorePlugin.getDefault().getPluginPreferences().getString(PREF_ERROR_PARSER);
 		if (parserNames != null && parserNames.length() > 0) {
 			StringTokenizer tok= new StringTokenizer(parserNames, ";");
 			while (tok.hasMoreElements()) {
@@ -133,7 +133,7 @@ public class ErrorParserManager {
 			buf.append(fErrorParsers.get(i).getClass().getName());
 			buf.append(';');
 		}
-		CCorePlugin.getDefault().getPropertyStore().putValue(PREF_ERROR_PARSER, buf.toString());
+		CCorePlugin.getDefault().getPluginPreferences().setValue(PREF_ERROR_PARSER, buf.toString());
 	}
 	
 	protected void collectFiles(IContainer parent, List result) {

@@ -6,8 +6,8 @@ package org.eclipse.cdt.core.resources;
  */
 
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.internal.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.IResource;

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal;
+package org.eclipse.cdt.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -9,25 +9,22 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.index.IndexModel;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.cdt.core.resources.ICPlugin;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.IMessageDialog;
-import org.eclipse.cdt.core.resources.IPropertyStore;
-import org.eclipse.cdt.core.ConsoleOutputStream;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.index.IndexModel;
-
-
-public class CCorePlugin extends AbstractPlugin implements ICPlugin {
+public class CCorePlugin extends Plugin {
 	
 	public static final String PLUGIN_ID= "org.eclipse.cdt.core";
 	public static final String BUILDER_ID= PLUGIN_ID + ".cbuilder";
@@ -71,15 +68,7 @@ public class CCorePlugin extends AbstractPlugin implements ICPlugin {
 		return fgResourceBundle;
 	}
 		
-	public static Plugin getDefaultPlugin() {
-		return fgCPlugin;
-	}
-	
-	public static ICPlugin getDefault() {
-		ICPlugin plugin;
-		if ((plugin = (ICPlugin)fgCPlugin.getAdapter(ICPlugin.class)) != null) {
-			return plugin;
-		}
+	public static CCorePlugin getDefault() {
 		return fgCPlugin;
 	}
 	
@@ -90,53 +79,13 @@ public class CCorePlugin extends AbstractPlugin implements ICPlugin {
 	public static void log(IStatus status) {
 		((Plugin)getDefault()).getLog().log(status);
 	}	
-	
-	public IPropertyStore getPropertyStore() {
-		return getPreferenceStore();
-	}
-	
+		
 	// ------ CPlugin
-
-	public IMessageDialog getMessageDialog() {
-		return new IMessageDialog() {
-			public void openError(String title, String msg) {
-				System.err.println(title +": " +msg);
-			}
-		};
-	}
-
-	private IConsole fConsoleDocument;
 
 	public CCorePlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		fgCPlugin= this;
-/*		
-		fModel = new ACDebugModel() {
-    		public Object createPresentation() {
-    			return null;
-    		}
-    		
-    		public String getIdentifier() {
-    			return PLUGIN_ID;
-    		}
-    
-			public IMarker createBreakpoint( final IResource resource, 
-											final Map attributes,
-											final String markerType ) throws CoreException {
-				return null;
-			}
-		};
-*/		
-		fConsoleDocument= new IConsole() {
-			public void clear() {
-			}
-			
-			public ConsoleOutputStream getOutputStream() {
-				return new ConsoleOutputStream();
-			}
-		};
 	}
-
 		
 	/**
 	 * @see Plugin#shutdown
@@ -157,15 +106,28 @@ public class CCorePlugin extends AbstractPlugin implements ICPlugin {
 		getIndexModel();
 	}
 	
-	/**
-	 * @see AbstractPlugin#initializeDefaultPreferences
-	 */
-	protected void initializeDefaultPreferences(IPropertyStore store) {
-		super.initializeDefaultPreferences(store);
-	}
-	
-	public IConsole getConsole() {
-		return fConsoleDocument;
+	public IConsole getConsole() throws CoreException {
+		IConsole consoleDocument = null;
+
+		IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole");
+		if (extension != null) {
+			IExtension[] extensions =  extension.getExtensions();
+			for(int i = 0; i < extensions.length; i++){
+				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+				consoleDocument = (IConsole)configElements[0].createExecutableExtension("class");
+			}
+		}		
+		if ( consoleDocument == null ) {
+			return new IConsole() {
+				public void clear() {
+				}
+			
+				public ConsoleOutputStream getOutputStream() {
+					return new ConsoleOutputStream();
+				}
+			};
+		}
+		return consoleDocument;
 	}
 	
 	public CoreModel getCoreModel() {
@@ -174,11 +136,5 @@ public class CCorePlugin extends AbstractPlugin implements ICPlugin {
 
 	public IndexModel getIndexModel() {
 		return IndexModel.getDefault();
-	}
-
-/*	
-	public ACDebugModel getDebugModel() {
-		return fModel;
-	}
-*/
+	}	
 }

@@ -5,12 +5,20 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
+import org.eclipse.cdt.ui.wizards.ReferenceBlock;
+import org.eclipse.cdt.ui.wizards.SettingsBlock;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+import org.eclipse.cdt.utils.ui.swt.IValidation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -19,15 +27,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
-
-import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
-import org.eclipse.cdt.ui.wizards.ReferenceBlock;
-import org.eclipse.cdt.ui.wizards.SettingsBlock;
-import org.eclipse.cdt.utils.ui.swt.IValidation;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 public class CProjectPropertyPage extends PropertyPage implements IStatusChangeListener, IValidation {
 	
@@ -40,7 +39,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		composite.setLayout(new FillLayout());
 		
 		IProject project= getProject();
 		if (!project.isOpen()) {
@@ -55,8 +54,6 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	private void contentForCProject(Composite parent) {
 		folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
-		GridData gdFolder= new GridData(GridData.FILL_HORIZONTAL);
-		folder.setLayoutData(gdFolder);
 
 		referenceBlock = new ReferenceBlock(this, getProject());
 		TabItem item = new TabItem(folder, SWT.NONE);

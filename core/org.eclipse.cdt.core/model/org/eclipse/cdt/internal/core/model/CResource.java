@@ -9,10 +9,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CModelException;
 
-public abstract class CResource extends Parent {
+public abstract class CResource extends Parent implements ICResource {
 	
 	public CResource (ICElement parent, IPath path, int type) {
 		// Check if the file is under the workspace.
@@ -36,5 +37,9 @@ public abstract class CResource extends Parent {
 		return resource;
 	}
 
+	public IResource getResource() throws CModelException {
+		return resource;
+	}
+	
 	protected abstract CElementInfo createElementInfo ();
 }

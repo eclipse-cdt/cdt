@@ -6,21 +6,21 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * This operation copies/moves/renames a collection of resources from their current
@@ -126,9 +126,9 @@ public class CopyResourceElementsOperation extends MultiOperation {
 		String destName = (newName != null) ? newName : source.getElementName();
 
 		// copy resource
-		IFile sourceResource = (IFile)source.getCorrespondingResource();
+		IFile sourceResource = (IFile)((ICResource)source).getResource();
 		// can be an IFolder or an IProject
-		IContainer destFolder = (IContainer)dest.getCorrespondingResource();
+		IContainer destFolder = (IContainer)((ICResource)dest).getResource();
 		IFile destFile = destFolder.getFile(new Path(destName));
 		if (!destFile.equals(sourceResource)) {
 			try {
@@ -185,7 +185,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 */
 	protected void processElement(ICElement element) throws CModelException {
 		ICElement dest = getDestinationParent(element);
-		if (element.getCorrespondingResource() != null) {
+		if (element instanceof ICResource) {
 			processResource(element, dest);
 			//fCreatedElements.add(dest.getCompilationUnit(element.getElementName()));
 		} else {

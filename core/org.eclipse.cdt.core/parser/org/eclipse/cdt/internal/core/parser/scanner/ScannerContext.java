@@ -176,6 +176,19 @@ public class ScannerContext implements IScannerContext
 	}
 	
 	private IASTInclusion inc = null;
+	
+	
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "file "); //$NON-NLS-1$
+		buffer.append( getFilename() );
+		buffer.append( ":"); //$NON-NLS-1$
+		buffer.append( getLine() );
+		return buffer.toString();
+	}
 }

@@ -214,6 +214,7 @@ public class ExpressionParser implements IExpressionParser {
 	        		failed = true;
 	        		break;
 	        	}catch( Exception e ){
+	        		logException( "templateArgumentList::createExpression()", e ); //$NON-NLS-1$
 	        		failed = true;
 	        		break;
 	        	}
@@ -464,6 +465,7 @@ public class ExpressionParser implements IExpressionParser {
 	        }
 	        catch (Exception e)
 	        {
+	        	logException( "consumeArrayModifiers::createArrayModifier()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	        d.addArrayModifier(arrayMod);
@@ -618,6 +620,7 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException( "expression::createExpression()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
@@ -730,6 +733,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "throwExpression::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}
@@ -763,6 +767,7 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException( "conditionalExpression::createExpression()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
@@ -798,6 +803,7 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException( "logicalOrExpression::createExpression()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
@@ -831,6 +837,7 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException( "logicalAndExpression::createExpression()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
@@ -865,6 +872,7 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException( "inclusiveOrExpression::createExpression()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
@@ -900,6 +908,7 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException( "exclusiveORExpression::createExpression()", e ); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
@@ -934,10 +943,30 @@ public class ExpressionParser implements IExpressionParser {
 	            throw backtrack;
 	        } catch (Exception e)
 	        {
+	        	logException("andExpression::createExpression()", e); //$NON-NLS-1$
 	            throw backtrack;
 	        }
 	    }
 	    return firstExpression;
+	}
+
+	/**
+	 * @param methodName
+	 * @param e
+	 */
+	protected void logException(String methodName, Exception e) {
+		if( !(e instanceof EndOfFileException ))
+		{
+			StringBuffer buffer = new StringBuffer();
+			buffer.append( "Parser: Unexpected exception in "); //$NON-NLS-1$
+			buffer.append( methodName );
+			buffer.append( ":"); //$NON-NLS-1$
+			buffer.append( e.getMessage() );
+			buffer.append( ". w/"); //$NON-NLS-1$
+			buffer.append( scanner.toString() );
+			log.traceLog( buffer.toString() );
+			log.errorLog( buffer.toString() );
+		}
 	}
 
 	/**
@@ -975,6 +1004,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "equalityExpression::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -1055,6 +1085,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        throw backtrack;
 	                    } catch (Exception e)
 	                    {
+	                    	logException( "relationalExpression::createExpression()", e ); //$NON-NLS-1$
 	                        throw backtrack;
 	                    }
 	                }
@@ -1099,6 +1130,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "shiftExpression::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -1142,6 +1174,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "additiveExpression::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -1196,6 +1229,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "multiplicativeExpression::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -1239,6 +1273,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "pmExpression::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -1285,6 +1320,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "castExpression::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        }
@@ -1491,6 +1527,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "typeId::createTypeId()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}
@@ -1535,6 +1572,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "deleteExpression::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}
@@ -1678,6 +1716,7 @@ public class ExpressionParser implements IExpressionParser {
 								throw backtrack;
 							} catch (Exception e)
 	                        {
+								logException( "newExpression_1::createExpression()", e ); //$NON-NLS-1$
 	                            throw backtrack;
 	                        }
 	                    }
@@ -1739,6 +1778,7 @@ public class ExpressionParser implements IExpressionParser {
 			return null;
 		} catch (Exception e)
 	    {
+			logException( "newExpression_2::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 		
@@ -1829,6 +1869,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "unaryExpression_1::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	            else if (unaryExpression != null && d == null)
@@ -1848,6 +1889,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "unaryExpression_1::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	            else
@@ -1926,6 +1968,7 @@ public class ExpressionParser implements IExpressionParser {
 					throw backtrack;
 				} catch (Exception e)
 	            {
+					logException( "postfixExpression_1::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	            break;                
@@ -2038,6 +2081,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "postfixExpression_2::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	            break;
@@ -2074,6 +2118,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "postfixExpression_3::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -2117,6 +2162,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "postfixExpression_4::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -2140,6 +2186,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "postfixExpression_5::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -2163,6 +2210,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "postfixExpression_6::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -2204,6 +2252,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "postfixExpression_7::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                } 
 	                break;
@@ -2244,6 +2293,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
+	                	logException( "postfixExpression_8::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
 	                break;
@@ -2303,6 +2353,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "simpleTypeConstructorExpression::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}
@@ -2334,6 +2385,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_1::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        case IToken.tFLOATINGPT :
@@ -2354,6 +2406,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_2::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        case IToken.tSTRING :
@@ -2368,6 +2421,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_3::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        
@@ -2390,6 +2444,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_4::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	              
@@ -2413,6 +2468,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_5::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	                
@@ -2434,6 +2490,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_6::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        case IToken.tLPAREN :
@@ -2458,6 +2515,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_7::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        case IToken.tIDENTIFIER :
@@ -2517,6 +2575,7 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            } catch (Exception e)
 	            {
+	            	logException( "primaryExpression_8::createExpression()", e ); //$NON-NLS-1$
 	                throw backtrack;
 	            }
 	        default :
@@ -2534,6 +2593,10 @@ public class ExpressionParser implements IExpressionParser {
 					// TODO Auto-generated catch block
 					e9.printStackTrace();
 					
+				} catch( Exception e )
+				{
+					logException( "primaryExpression_9::createExpression()", e ); //$NON-NLS-1$
+					throw backtrack;
 				}
 				return empty;
 	    }
@@ -2698,6 +2761,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "assignmentOperatorExpression::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}
@@ -2733,6 +2797,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "unaryOperatorCastExpression::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}
@@ -2761,6 +2826,7 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    } catch (Exception e)
 	    {
+	    	logException( "specialCastExpression::createExpression()", e ); //$NON-NLS-1$
 	        throw backtrack;
 	    }
 	}

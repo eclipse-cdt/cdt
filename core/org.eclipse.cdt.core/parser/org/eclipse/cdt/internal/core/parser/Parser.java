@@ -131,6 +131,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
         catch (Exception e2)
         {
+        	logException( "translationUnit::createCompilationUnit()", e2 ); //$NON-NLS-1$
             return;
         }
 
@@ -261,6 +262,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e1)
                 {
+                	logException( "usingClause:createUsingDirective", e1 ); //$NON-NLS-1$
                     throw backtrack;
                 }
                 astUD.acceptElement(requestor);
@@ -310,6 +312,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e1)
                 {
+                	logException( "usingClause:createUsingDeclaration", e1 ); //$NON-NLS-1$
                     throw backtrack;
                 }
                 declaration.acceptElement( requestor );
@@ -353,6 +356,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "linkageSpecification_1:createLinkageSpecification", e ); //$NON-NLS-1$
                 throw backtrack;
             }
             
@@ -398,6 +402,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "linkageSpecification_2:createLinkageSpecification", e ); //$NON-NLS-1$
                 throw backtrack;
             }
 			linkage.enterScope( requestor );
@@ -443,6 +448,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "templateDeclaration:createTemplateInstantiation", e ); //$NON-NLS-1$
                 throw backtrack;
             }
             templateInstantiation.enterScope( requestor );
@@ -470,6 +476,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e)
                 {
+                	logException( "templateDeclaration:createTemplateSpecialization", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
 				templateSpecialization.enterScope(requestor);
@@ -497,6 +504,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "templateDeclaration:createTemplateDeclaration", e ); //$NON-NLS-1$
                 throw backtrack;
             }
             templateDecl.enterScope( requestor );
@@ -595,6 +603,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e)
                 {
+                	logException( "templateParameterList_1:createTemplateParameter", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
 
@@ -634,6 +643,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e)
                 {
+                	logException( "templateParameterList_2:createTemplateParameter", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
             }
@@ -671,6 +681,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e)
                 {
+                	logException( "templateParameterList:createParameterDeclaration", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
             }
@@ -730,6 +741,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e)
                 {
+                	logException( "declaration:createASMDefinition", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
                 // if we made it this far, then we have all we need 
@@ -855,6 +867,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e1)
             {
+            	logException( "namespaceDefinition:createNamespaceDefinition", e1 ); //$NON-NLS-1$
                 throw backtrack;
             }
             namespaceDefinition.enterScope( requestor );
@@ -910,6 +923,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e1)
             {
+            	logException( "namespaceDefinition:createNamespaceAlias", e1 ); //$NON-NLS-1$
                 throw backtrack;
             }
         }
@@ -969,6 +983,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e1)
             {
+            	logException( "simpleDeclaration:createSimpleTypeSpecifier", e1 ); //$NON-NLS-1$
                 throw backtrack;
             }
         
@@ -1089,6 +1104,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e1)
             {
+            	logException( "simpleDeclaration:createTypeSpecDeclaration", e1 ); //$NON-NLS-1$
                 throw backtrack;
             }
         }
@@ -1157,6 +1173,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e1)
                 {
+                	logException( "ctorInitializer:addConstructorMemberInitializer", e1 ); //$NON-NLS-1$
                     throw backtrack;
                 }
                 if (LT(1) == IToken.tLBRACE)
@@ -1211,6 +1228,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "parameterDeclaration:createSimpleTypeSpecifier", e ); //$NON-NLS-1$
                 throw backtrack;
             }
         
@@ -1702,6 +1720,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			throw backtrack;
         } catch (Exception e)
         {
+        	logException( "elaboratedTypeSpecifier:createElaboratedTypeSpecifier", e ); //$NON-NLS-1$
             throw backtrack;
         }
         sdw.setTypeSpecifier(elaboratedTypeSpec);
@@ -1869,6 +1888,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "cInitializerClause:createInitializerClause", e ); //$NON-NLS-1$
                 throw backtrack;
             }
         }
@@ -1899,6 +1919,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 catch (Exception e)
                 {
+                	logException( "initializerClause_1:createInitializerClause", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
             }
@@ -1923,6 +1944,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "initializerClause_2:createInitializerClause", e ); //$NON-NLS-1$
                 throw backtrack;
             }
         }
@@ -1944,6 +1966,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "initializerClause_3:createInitializerClause", e ); //$NON-NLS-1$
                 throw backtrack;
             }
         }
@@ -2061,6 +2084,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                     }
                                     catch (Exception e)
                                     {
+                                    	logException( "declarator:queryIsTypeName", e ); //$NON-NLS-1$
                                         throw backtrack;
                                     }
 	                        	} catch( BacktrackException b )
@@ -2174,6 +2198,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                     throw backtrack;
                                 } catch (Exception e)
                                 {
+                                	logException( "declarator:createExceptionSpecification", e ); //$NON-NLS-1$
                                     throw backtrack;
                                 }
                         }
@@ -2332,6 +2357,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 				throw backtrack;               
             } catch (Exception e)
             {
+            	logException( "enumSpecifier:createEnumerationSpecifier", e ); //$NON-NLS-1$
                 throw backtrack;
             }
             consume(IToken.tLBRACE);
@@ -2371,6 +2397,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 						throw backtrack;                   
                     } catch (Exception e)
                     {
+                    	logException( "enumSpecifier:addEnumerator", e ); //$NON-NLS-1$
                         throw backtrack;
                     }
                     break;
@@ -2394,6 +2421,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 					throw backtrack; 
                 } catch (Exception e)
                 {
+                	logException( "enumSpecifier:addEnumerator", e ); //$NON-NLS-1$
                     throw backtrack;
                 }
                 consume(IToken.tCOMMA);
@@ -2486,6 +2514,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			throw backtrack;
         } catch (Exception e)
         {
+        	logException( "classSpecifier:createClassSpecifier", e ); //$NON-NLS-1$
             throw backtrack;
         }
         sdw.setTypeSpecifier(astClassSpecifier);
@@ -2548,6 +2577,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e1)
             {
+            	logException( "classSpecifier:signalEndOfClassSpecifier", e1 ); //$NON-NLS-1$
                 throw backtrack;
             }
             
@@ -2618,6 +2648,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 						throw backtrack;
                     } catch (Exception e)
                     {
+                    	logException( "baseSpecifier_1::addBaseSpecifier", e ); //$NON-NLS-1$
                         throw backtrack;
                     }
                     isVirtual = false;
@@ -2644,6 +2675,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			throw backtrack;
         } catch (Exception e)
         {
+        	logException( "baseSpecifier_2::addBaseSpecifier", e ); //$NON-NLS-1$
             throw backtrack;
         }
     }
@@ -2842,6 +2874,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
         catch (Exception e)
         {
+        	logException( "singleStatementScope:createNewCodeBlock", e ); //$NON-NLS-1$
             throw backtrack;
         }
         newScope.enterScope( requestor );
@@ -2909,6 +2942,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	logException( "compoundStatement:createNewCodeBlock", e ); //$NON-NLS-1$
                 throw backtrack;
             }        
         	newScope.enterScope( requestor );
@@ -2942,52 +2976,6 @@ public abstract class Parser extends ExpressionParser implements IParser
         	newScope.exitScope( requestor );
     }
     
-    /**
-     * @throws Exception
-     */
-    protected void varName() throws Exception
-    {
-        if (LT(1) == IToken.tCOLONCOLON)
-            consume();
-        for (;;)
-        {
-            switch (LT(1))
-            {
-                case IToken.tIDENTIFIER :
-                    consume();
-                    //if (isTemplateArgs()) {
-                    //	rTemplateArgs();
-                    //}
-                    if (LT(1) == IToken.tCOLONCOLON)
-                    {
-                        switch (LT(2))
-                        {
-                            case IToken.tIDENTIFIER :
-                            case IToken.tCOMPL :
-                            case IToken.t_operator :
-                                consume();
-                                break;
-                            default :
-                                return;
-                        }
-                    }
-                    else
-                        return;
-                    break;
-                case IToken.tCOMPL :
-                    consume();
-                    consume(IToken.tIDENTIFIER);
-                    return;
-                case IToken.t_operator :
-                    consume();
-                    //rOperatorName();
-                    return;
-                default :
-                    throw backtrack;
-            }
-        }
-    }
-
     protected IASTCompilationUnit compilationUnit;
     
     /* (non-Javadoc)

@@ -3200,4 +3200,18 @@ public class Scanner implements IScanner {
 		return getCurrentFile().toCharArray();
 	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "Scanner @"); //$NON-NLS-1$
+		if( scannerData.getContextStack().getCurrentContext() != null )
+			buffer.append( scannerData.getContextStack().getCurrentContext().toString());
+		else
+			buffer.append( "EOF"); //$NON-NLS-1$
+		return buffer.toString();
+	}
 }

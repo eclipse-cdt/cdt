@@ -58,13 +58,11 @@ public class ResumedEvent implements ICDIResumedEvent {
 				cdiType = ICDIResumedEvent.STEP_INTO_INSTRUCTION;
 			break;
 
+			case MIRunningEvent.RETURN:
 			case MIRunningEvent.FINISH:
 				cdiType = ICDIResumedEvent.STEP_RETURN;
 			break;
 
-			//MIRunningEvent.UNTIL:
-			//cdiType = ICDIResumedEvent.STEP_UNTIL;
-			//break;
 		}
 		return cdiType;
 	}

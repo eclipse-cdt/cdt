@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -41,6 +42,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 
 	List sharedList;
 	boolean autoupdate;
+	boolean isDeferred;
 
 	public SharedLibraryManager (Session session) {
 		super(session);
@@ -71,13 +73,21 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	 */
 	public void update() throws CDIException {
 		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		List eventList = updateState();
+		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
+	}
+
+	public List updateState() throws CDIException {
+		Session session = (Session)getSession();
 		ICDIConfiguration conf = session.getConfiguration();
 		if (!conf.supportsSharedLibrary()) {
-			return; // Bail out early;
+			return Collections.EMPTY_LIST; // Bail out early;
 		}
 
 		MIShared[] miLibs = getMIShareds();
-		List eventList = new ArrayList(miLibs.length);
+		ArrayList eventList = new ArrayList(miLibs.length);
 		for (int i = 0; i < miLibs.length; i++) {
 			ICDISharedLibrary sharedlib = getSharedLibrary(miLibs[i].getName());
 			if (sharedlib != null) {
@@ -107,9 +117,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 				eventList.add(new MISharedLibUnloadedEvent(oldlibs[i].getFileName())); 
 			}
 		}
-		MISession mi = session.getMISession();
-		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
-		mi.fireEvents(events);
+		return eventList;
 	}
 
 	public boolean hasSharedLibChanged(ICDISharedLibrary lib, MIShared miLib) {
@@ -131,6 +139,14 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			}
 		}
 		return null;
+	}
+
+	public void setDeferredBreakpoint (boolean set) {
+		isDeferred = set;
+	}
+
+	public boolean isDeferredBreakpoint() {
+		return isDeferred;
 	}
 
 	/**

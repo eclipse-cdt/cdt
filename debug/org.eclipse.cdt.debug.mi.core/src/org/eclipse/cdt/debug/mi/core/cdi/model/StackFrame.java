@@ -58,7 +58,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		level = l;
 	}
 
-	MIFrame getMIFrame() {
+	public MIFrame getMIFrame() {
 		return frame;
 	}
 

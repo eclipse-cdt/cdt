@@ -40,7 +40,7 @@ public class Thread extends CObject implements ICDIThread {
 		id = threadId;
 	}
 	
-	int getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -51,6 +51,13 @@ public class Thread extends CObject implements ICDIThread {
 
 	public String toString() {
 		return Integer.toString(id);
+	}
+
+	public void updateState() {
+		try {
+			getCurrentStackFrame();
+		} catch (CDIException e) {
+		}
 	}
 
 	public ICDIStackFrame getCurrentStackFrame() throws CDIException {

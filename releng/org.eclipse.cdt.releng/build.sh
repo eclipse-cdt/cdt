@@ -1,9 +1,16 @@
-# Treat this is an example build script
-# Please adjust paths as necessary for your build machine
+# JAVA_HOME must be set to the root of your JRE directory (JDK if you want to do javadoc)
+# ECLIPSE_HOME must be set to the root of you Eclipse install that you want to do the build with
+#    right now, this must be a 3.1.0 install (for PDE build scripts)
 
-export JAVA_HOME=/opt/java/j2sdk1.4.2_03
-export PATH=$JAVA_HOME/bin:$PATH
-export ECLIPSE_HOME=~/eclipse/3.0/eclipse
+die() {
+	echo $*
+	exit 1
+}
+
+[ -n "$JAVA_HOME" ] || die JAVA_HOME not set
+[ -n "$ECLIPSE_HOME" ] || die ECLIPSE_HOME not set
+
+export PATH="$JAVA_HOME/bin:$PATH"
 
 cd `dirname $0`
 

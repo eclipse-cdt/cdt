@@ -1,18 +1,16 @@
-<project default="zips">
+<project default="test-build">
 
-	<target name="build" depends="zips"/>
-	<target name="nightly" depends="build,upload,mail"/>
-	<target name="integration" depends="nightly,wswbmap"/>
-	<target name="milestone" depends="nightly,milestoneSite"/>
+	<target name="test-build" depends="zips,test"/>
+	<target name="build" depends="zips,test,upload,mail"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="branchVersion" value="2.1.0"/>
+		<property name="branchVersion" value="3.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build_3.0.0/scripts"/>
+		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build_3.1.0/scripts"/>
 		<property name="eclipseZip" value="eclipse-SDK.zip"/>
 		<property name="collectingFolder" value="eclipse"/>
 		<property name="archivePrefix" value="eclipse"/>
@@ -23,9 +21,9 @@
 		<property name="buildingOSGi" value="true"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
-		<property name="remotedir" value="${cdtuser}:${cdtpasswd}@download1.eclipse.org:/home/www/tools/cdt/builds/${branchVersion}"/>
-		<property name="cdtserver" value="download1.eclipse.org"/>
-		<property name="cdtdir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="cdtuser" value="nobody"/>
+		<property name="cdtpasswd" value="home"/>
+		<property name="remotedir" value="ftp://download1.eclipse.org/cdt/builds/${branchVersion}"/>
 	</target>
 
 	<target name="fetch" depends="init">
@@ -50,9 +48,15 @@
 	<target name="zips" depends="init,unzip">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
+			<property name="baseos" value="${osgi.os}"/>
+			<property name="basews" value="${osgi.ws}"/>
+			<property name="basearch" value="${osgi.arch}"/>
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/sdk" />
+			<property name="baseos" value="${osgi.os}"/>
+			<property name="basews" value="${osgi.ws}"/>
+			<property name="basearch" value="${osgi.arch}"/>
 		</ant>
 		<concat destfile="${zipsdir}/compilelog.txt">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
@@ -71,10 +75,11 @@
 	<target name="test" depends="init" unless="hasErrors">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />
+			<property name="baseos" value="${osgi.os}"/>
+			<property name="basews" value="${osgi.ws}"/>
+			<property name="basearch" value="${osgi.arch}"/>
 		</ant>
-		<!-- This depends on what platform we run the test, it would be
-		     nice to figure this out on the fly -->
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${buildDirectory}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}.zip" dest="${buildDirectory}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${buildId}.zip" dest="${buildDirectory}"/>
 		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.test">
 			<fileset dir="../org.eclipse.test"/>
@@ -82,47 +87,38 @@
 		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.ant.optional.junit">
 			<fileset dir="../org.eclipse.ant.optional.junit"/>
 		</copy>
-		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${siteversion}">
+		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
+			<property name="os" value="${osgi.os}"/>
+			<property name="ws" value="${osgi.ws}"/>
+			<property name="arch" value="${osgi.arch}"/>
 		</ant>
 		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test/JUNIT.XSL"
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
-			out="${sitedir}/logs/${siteversion}.${timestamp}.html"/>
+			out="${zipsdir}/junits.html"/>
 	</target>
 	
 	<target name="upload" depends="init" unless="hasErrors">
-		<ftp action="get" server="${cdtserver}" remotedir="${cdtdir}" userid="${cdtuser}" password="${cdtpasswd}">
-			<fileset file="index.html"/>
-		</ftp>
-		<replace file="index.html">
+		<exec dir="${buildDirectory}" executable="curl">
+			<arg line="-u${cdtuser}:${cdtpasswd} ${remotedir}/index.html -o index.html"/>
+		</exec>
+		<replace file="${buildDirectory}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
 			<replacevalue><![CDATA[  <li><a href="@buildId@/index.html">@buildId@</a></li>
   <!-- add here -->]]></replacevalue>
 		</replace>
-		<replace file="index.html">
+		<replace file="${buildDirectory}/index.html">
 			<replacefilter token="@buildType@" value="${buildType}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
-		<ftp server="${cdtserver}" remotedir="${cdtdir}" userid="${cdtuser}" password="${cdtpasswd}">
-			<fileset file="index.html"/>
-		</ftp>
-		<ftp action="mkdir" server="${cdtserver}" remotedir="${cdtdir}/${buildId}" userid="${cdtuser}" password="${cdtpasswd}"/>
-		<ftp server="${cdtserver}" remotedir="${cdtdir}/${buildId}" userid="${cdtuser}" password="${cdtpasswd}">
-			<fileset dir="${zipsdir}"/>
-		</ftp>
+		<exec dir="${buildDirectory}" executable="curl">
+			<arg line="-u${cdtuser}:${cdtpasswd} -T index.html ${remotedir}/index.html"/>
+		</exec>
+		<exec dir="${zipsdir}" executable="sh">
+			<arg line="${basedir}/upload.sh ${cdtuser} ${cdtpasswd} ${remotedir}/${buildId}/"/>
+		</exec>
 	</target>
 	
-	<target name="wswbmap" depends="init" unless="hasErrors">
-		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
-		<replace file="cdt-map.txt">
-			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
-			<replacefilter token="@buildId@" value="${buildId}"/>
-		</replace>
-		<ftp server="${cdtserver}" remotedir="/home/www/tools/cdt/wswb" userid="${cdtuser}" password="${cdtpasswd}">
-			<fileset file="cdt-map.txt"/>
-		</ftp>
-	</target>
-
 	<target name="mail" depends="init">
 		<antcall target="mailPass"/>
 		<antcall target="mailFail"/>
@@ -147,57 +143,6 @@
 		</mail>
 	</target>
 
-	<target name="milestoneSite" depends="init" unless="hasErrors">
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-aix.motif.ppc.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-hpux.motif.PA_RISC.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.gtk.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.motif.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-qnx.photon.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-solaris.motif.sparc.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-win32.win32.x86.zip" dest="${milestonedir}"/>
-		<antcall target="allElements">
-			<param name="target" value="milestoneJars"/>
-		</antcall>
-		<copy file="site.in" tofile="${milestonedir}/site.xml"/>
-		<replace file="${milestonedir}/site.xml" token="@milestone@" value="${milestone}"/>
-		<delete dir="${milestonedir}/eclipse"/>
-		<mkdir dir="${milestonedir}/zips"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-aix.motif.ppc.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-aix.motif.ppc.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-hpux.motif.PA_RISC.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-hpux.motif.PA_RISC.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.gtk.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-linux.gtk.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.motif.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-linux.motif.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-qnx.photon.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-qnx.photon.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-solaris.motif.sparc.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-solaris.motif.sparc.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-win32.win32.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-win32.win32.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-aix.motif.ppc.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-hpux.motif.PA_RISC.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-hpux.motif.PA_RISC.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-linux.gtk.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-linux.motif.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-qnx.photon.x86.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-solaris.motif.sparc.zip"/>
-		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip"
-			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-win32.win32.x86.zip"/>
-	</target>
-
-	<target name="milestoneJars">
-		<mkdir dir="${milestonedir}/${dir}"/>
-		<zip basedir="${milestonedir}/eclipse/${dir}/${id}_${siteversion}"
-		     zipfile="${milestonedir}/${dir}/${id}_${siteversion}.jar"/>
-	</target>
-	
 	<target name="allElements">
  		<antcall target="${target}">
  			<param name="type" value="plugin"/>

@@ -653,16 +653,6 @@ public class CoreModel implements ICDescriptorListener {
 	}
 
 	/**
-	 * TODO: this is a temporary hack until, the CDescriptor manager is in
-	 * place and could fire deltas of Parser change.
-	 * 
-	 * @deprecated this function will be removed shortly.
-	 */
-	public void resetBinaryParser(IProject project) {
-		manager.resetBinaryParser(project);
-	}
-
-	/**
 	 * Return the singleton.
 	 */
 	public static CoreModel getDefault() {

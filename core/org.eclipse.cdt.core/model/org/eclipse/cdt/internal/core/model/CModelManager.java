@@ -141,6 +141,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				| IResourceChangeEvent.POST_CHANGE
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_CLOSE);
+
+			// Register the Core Model on the Descriptor
+			// Manager, it needs to know about changes.
+			CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
 		}
 		return factory;
 	}
@@ -544,7 +548,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				binaryParsersMap.remove(project);
 				celement = create(project);
 				Parent parent = (Parent)celement.getParent();
-				CElementInfo info = (CElementInfo)parent.getElementInfo();
+				CElementInfo info = parent.getElementInfo();
 				info.addChild(celement);
 
 				// Fired and ICElementDelta.PARSER_CHANGED
@@ -831,7 +835,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
 	 */
 	public void descriptorChanged(CDescriptorEvent event) {
-/*		int flags = event.getFlags();
+		int flags = event.getFlags();
 		if ((flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
 			ICDescriptor cdesc = event.getDescriptor();
 			if (cdesc != null) {
@@ -845,7 +849,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					} else { // may reorder
 						for (int i = 0; i < newIds.length; i++) {
 							String id = newIds[i];
-							if (!id.equals(currentConfigs)) {
+							if (!id.equals(currentConfigs[i].getId())) {
 								resetBinaryParser(project);
 								break;
 							}
@@ -856,7 +860,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				}
 			}
 		}
-*/	}
+	}
 
 	/**
 	 * Fire C Model deltas, flushing them after the fact. 

@@ -11,11 +11,12 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ICDescriptorManager {
 	public ICDescriptor getDescriptor(IProject project) throws CoreException;
 
-	public void runDescriptorOperation(ICDescriptor descriptor, ICDescriptorOperation op) throws CoreException;
+	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException;
 	
 	public void addDescriptorListener(ICDescriptorListener listener);
 	public void removeDescriptorListener(ICDescriptorListener listener);

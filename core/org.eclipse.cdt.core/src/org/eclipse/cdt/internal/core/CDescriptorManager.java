@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class CDescriptorManager implements ICDescriptorManager, IResourceChangeListener {
 
@@ -44,7 +45,36 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	HashMap fDescriptorMap = new HashMap();
 	List listeners = new Vector();
 
-	private IWorkspace getWorkspace() {
+	class CDescriptorUpdater extends Job {
+
+		CDescriptor fDescriptor;
+
+		public CDescriptorUpdater(CDescriptor descriptor) {
+			super(CCorePlugin.getResourceString("CDescriptorManager.async_updater")); //$NON-NLS-1$
+			fDescriptor = descriptor;
+			setPriority(Job.INTERACTIVE);
+			setSystem(true);
+			setRule(descriptor.getProject());
+		}
+
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				getWorkspace().run(new IWorkspaceRunnable() {
+
+					public void run(IProgressMonitor mon) throws CoreException {
+						fDescriptor.save();
+					}
+				}, getRule(), IWorkspace.AVOID_UPDATE, monitor);
+
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+
+	}
+
+	IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 
@@ -59,10 +89,8 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 				if (resource.getType() == IResource.PROJECT) {
 					IProject project = (IProject) resource;
 					try {
-						if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-							if (project.isOpen()) {
-								getDescriptor(project);
-							}
+						if (project.isAccessible() && project.hasNature(CProjectNature.C_NATURE_ID)) {
+							getDescriptor(project);
 						}
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
@@ -86,8 +114,8 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 			IResource resource = event.getResource();
 
 			switch (event.getType()) {
-				case IResourceChangeEvent.PRE_DELETE:
-				case IResourceChangeEvent.PRE_CLOSE:
+				case IResourceChangeEvent.PRE_DELETE :
+				case IResourceChangeEvent.PRE_CLOSE :
 					try {
 						if (resource.getType() == IResource.PROJECT && ((IProject) resource).hasNature(CProjectNature.C_NATURE_ID)) {
 							CDescriptor descriptor = (CDescriptor) fDescriptorMap.remove(resource);
@@ -99,7 +127,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 						CCorePlugin.log(e);
 					}
 					break;
-				case IResourceChangeEvent.PRE_AUTO_BUILD:
+				case IResourceChangeEvent.PRE_AUTO_BUILD :
 					IResourceDelta resDelta = event.getDelta();
 					if (resDelta == null) {
 						break;
@@ -112,15 +140,12 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 								if (dResource.getType() == IResource.PROJECT) {
 									if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 										IProject project = (IProject) dResource;
-										if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-											if (project.isOpen()) {
-												getDescriptor(project);
-											} else {
-												CDescriptor descriptor = (CDescriptor) fDescriptorMap.remove(project);
-												if (descriptor != null) {
-													fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_REMOVED,
-															0));
-												}
+										if (project.isAccessible() && project.hasNature(CProjectNature.C_NATURE_ID)) {
+											getDescriptor(project);
+										} else {
+											CDescriptor descriptor = (CDescriptor) fDescriptorMap.remove(project);
+											if (descriptor != null) {
+												fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_REMOVED, 0));
 											}
 										}
 										return false;
@@ -134,7 +159,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 												// the file got deleted lets
 												// try
 												// and restore for memory.
-												updateDescriptor(descriptor);
+												descriptor.updateOnDisk();
 											} else if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
 												// content change lets try to
 												// read and update
@@ -160,7 +185,6 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		CDescriptor descriptor = (CDescriptor) fDescriptorMap.get(project);
 		if (descriptor == null) {
 			descriptor = new CDescriptor(this, project);
-			descriptor.setAutoSave(true);
 			fDescriptorMap.put(project, descriptor);
 		}
 		return descriptor;
@@ -171,7 +195,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		synchronized (this) {
 			descriptor = (CDescriptor) fDescriptorMap.get(project);
 			if (descriptor != null) {
-				if (!descriptor.getOwner().getID().equals(id)) {
+				if (!descriptor.getProjectOwner().getID().equals(id)) {
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
 							CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), //$NON-NLS-1$
 							(Throwable) null);
@@ -181,7 +205,6 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 			}
 			try {
 				descriptor = new CDescriptor(this, project, id);
-				descriptor.getOwner().configure(project, descriptor);
 			} catch (CoreException e) { // if .cdtproject already exists will
 				// use that
 				IStatus status = e.getStatus();
@@ -193,8 +216,6 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 			fDescriptorMap.put(project, descriptor);
 		}
 		fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_ADDED, 0));
-		descriptor.setAutoSave(true);
-		updateDescriptor(descriptor);
 	}
 
 	public void convert(IProject project, String id) throws CoreException {
@@ -202,11 +223,8 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		synchronized (this) {
 			descriptor = new CDescriptor(this, project, new COwner(id));
 			fDescriptorMap.put(project, descriptor);
-			descriptor.getOwner().configure(project, descriptor);
 		}
 		fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.OWNER_CHANGED));
-		descriptor.setAutoSave(true);
-		updateDescriptor(descriptor);
 	}
 
 	public void addDescriptorListener(ICDescriptorListener listener) {
@@ -257,11 +275,12 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		}
 	}
 
-	public void runDescriptorOperation(ICDescriptor descriptor, ICDescriptorOperation op) throws CoreException {
+	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException {
+		ICDescriptor descriptor = getDescriptor(project);
 		synchronized (descriptor) {
 			beginOperation(descriptor);
 			try {
-				op.execute(descriptor);
+				op.execute(descriptor, monitor);
 			} finally {
 				endOperation(descriptor);
 			}
@@ -286,15 +305,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	 * owner update method, while the workspace is locked (ie during a
 	 * resourceChange event).
 	 */
-	protected void updateDescriptor(final CDescriptor descriptor) throws CoreException {
-		if (fOperationMap.containsKey(descriptor)) {
-			return;
-		}
-		getWorkspace().run(new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {
-				descriptor.saveInfo();
-			}
-		}, descriptor.getProject(), IWorkspace.AVOID_UPDATE, null);
+	protected void updateDescriptor(CDescriptor descriptor) {
+		new CDescriptorUpdater(descriptor).schedule();
 	}
 }

@@ -120,7 +120,8 @@ public class CCorePlugin extends Plugin {
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 
-	private CDescriptorManager fDescriptorManager;
+	private CDescriptorManager fDescriptorManager = new CDescriptorManager();
+
 	private CoreModel fCoreModel;
 
 	// -------- static methods --------
@@ -230,19 +231,14 @@ public class CCorePlugin extends Plugin {
 		//Set debug tracing options
 		CCorePlugin.getDefault().configurePluginDebugOptions();
 		
+		fDescriptorManager.startup();
+
 		// Fired up the model.
 		fCoreModel = CoreModel.getDefault();
 		fCoreModel.startup();
 
 		//Fired up the indexer
 		fCoreModel.startIndexing();
-		
-		fDescriptorManager = new CDescriptorManager();
-		fDescriptorManager.startup();
-
-		// Register the Core Model on the Descriptor
-		// Manager, it needs to know about changes.
-		fDescriptorManager.addDescriptorListener(fCoreModel);
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
@@ -819,7 +815,7 @@ public class CCorePlugin extends Plugin {
 				if (extensions.length > 0)
 					provider = (IScannerInfoProvider) extensions[0].createExtension();
 			} catch (CoreException e) {
-				log(e);
+				// log(e);
 			}
 		}
 		return provider;

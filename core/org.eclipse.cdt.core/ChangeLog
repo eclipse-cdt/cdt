@@ -1,3 +1,22 @@
+2004-03-19 David Inglis
+	
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	Removed deprecated method and now use descriptor change events for binary parser change.
+	
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	Fixed setting raw paths entries to not clear cached until after raw set.
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ICDescriptorManager.java
+	* src/org/eclipse/cdt/core/ICDescriptorOperation.java
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/CExtensionReference.java
+	Fixed decriptor file updating to be handling as a job when extensions change.
+	Update operation runnable to take project and IProgress.
+	Suppress events and saves on initialization.
+
 2004-03-19 Hoda Amer
 	The CModelBuilder sets TranslationUnit.isStructureKnown() based on
 	both parser errors and IProblems sent to the callback.

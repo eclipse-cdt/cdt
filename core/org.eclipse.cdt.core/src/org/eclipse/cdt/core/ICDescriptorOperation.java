@@ -10,9 +10,10 @@
 package org.eclipse.cdt.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ICDescriptorOperation {
 	
-	void execute(ICDescriptor descriptor) throws CoreException;
+	void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException;
 
 }

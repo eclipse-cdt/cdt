@@ -130,7 +130,6 @@ public class PathEntryManager {
 	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		try {
 			IPathEntry[] oldResolvedEntries = (IPathEntry[]) resolvedMap.get(cproject);
-			resolvedMap.put(cproject, null);
 			SetPathEntriesOperation op = new SetPathEntriesOperation(cproject, oldResolvedEntries, newEntries);
 			CModelManager.getDefault().runOperation(op, monitor);
 		} catch (CoreException e) {
@@ -410,6 +409,7 @@ public class PathEntryManager {
 				encodePathEntries(cproject.getPath(), doc, rootElement, newRawEntries);
 			}
 			descriptor.saveProjectData();
+			resolvedMap.put(cproject, null);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}

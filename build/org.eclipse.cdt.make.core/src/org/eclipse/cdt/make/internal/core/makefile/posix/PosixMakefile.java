@@ -125,6 +125,7 @@ public class PosixMakefile extends AbstractMakefile {
 				continue;
 			}
 
+			// Target Rule ?
 			if (MakefileUtil.isTargetRule(line)) {
 				String[] targets;
 				String[] reqs = new String[0];
@@ -132,7 +133,10 @@ public class PosixMakefile extends AbstractMakefile {
 				int index = MakefileUtil.indexOf(line.toCharArray(), ':');
 				if (index != -1) {
 					String target = line.substring(0, index);
-					// Break the targets
+					// Break the targets, some target have "::" for separator
+					if (target.startsWith(":")) {
+						target = target.substring(1);
+					}
 					targets = MakefileUtil.findTargets(target.trim());
 
 					String req = line.substring(index + 1);

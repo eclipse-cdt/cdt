@@ -1,3 +1,11 @@
+2004-02-12 Thomas Fletcher
+
+	Fix to address PR 39580.  Since we can't do anything short term about the 
+	scalability of the initial loading of the CModel, give the user a chance to
+	select the binary directly by browsing the project.
+
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+
 2004-02-02 Thomas Fletcher
 
 	Improve the previous fix to use a TwoElementPane dialog to properly differentiate between

@@ -308,22 +308,6 @@
                </pluginState>
             </enablement>
          </action>
-         <action
-               label="%ShowDebuggerConsoleAction.label"
-               style="toggle"
-               icon="icons/full/clcl16/debugger_console.gif"
-               helpContextId="show_debugger_console_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
-               menubarPath="renderGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#CEditorRulerContext"
@@ -927,25 +911,6 @@
                </pluginState>
             </enablement>
          </action>
-         <action
-               style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
-               toolbarPath="renderGroup"
-               hoverIcon="icons/full/clcl16/debugger_console.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
-               disabledIcon="icons/full/dlcl16/debugger_console.gif"
-               enablesFor="1"
-               icon="icons/full/elcl16/debugger_console.gif"
-               helpContextId="show_debugger_console_action_context"
-               label="%ShowDebuggerConsoleAction.label"
-               tooltip="%ShowDebuggerConsoleAction.tooltip">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.DebugView"
@@ -1145,9 +1110,6 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate">
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">

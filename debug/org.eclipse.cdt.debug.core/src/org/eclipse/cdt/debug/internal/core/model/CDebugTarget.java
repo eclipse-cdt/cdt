@@ -399,23 +399,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
-/*
-		if ( breakpoint instanceof ICBreakpoint )
-		{
-			ISourceLocator sl =  getSourceLocator();
-			if ( sl != null && sl instanceof IAdaptable && ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) != null )
-			{
-				return ((ICSourceLocator)((IAdaptable)sl).getAdapter( ICSourceLocator.class )).contains( breakpoint.getMarker().getResource() );
-			}
-			return true;
-		}
-		return false;
-*/
-		if ( breakpoint instanceof ICAddressBreakpoint )
-		{
-			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
-		}
-		return true;
+		return ( findCDIBreakpoint( breakpoint ) != null );
 	}
 
 	private boolean supportsAddressBreakpoint( ICAddressBreakpoint breakpoint )
@@ -646,13 +630,14 @@ public class CDebugTarget extends CDebugElement
 		{
 			return;
 		}
-		if ( supportsBreakpoint( breakpoint ) )
+		if ( getConfiguration().supportsBreakpoints() )
 		{
 			try
 			{
 				if ( breakpoint instanceof ICAddressBreakpoint )
 				{
-					setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
+					if ( supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint ) )
+						setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
 				}
 				else if ( breakpoint instanceof ICLineBreakpoint )
 				{

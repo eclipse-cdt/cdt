@@ -1,3 +1,7 @@
+2003-01-20 Mikhail Khodjaiants
+	Fix for the 'Show breakpoints supported by selected target' action.
+	* CDebugTarget.java
+
 2003-01-20 Alain Maglorei
 
 	* src/build.properties: Add schema in soure.cdtdebugcore.jar

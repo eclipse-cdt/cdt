@@ -1,3 +1,8 @@
+2004-07-26 Vladimir Hirsl
+
+	Tracking PR 70820, SOM Binary parser.
+	* utils/org/eclipse/cdt/utils/som/SOM.java
+
 2004-07-20 Alain Magloire
 	Fix for PR 70449
 	* src/org/eclipse/cdt/core/internal/filetype/ResolverModel.java

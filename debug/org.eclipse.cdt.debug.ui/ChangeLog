@@ -1,5 +1,20 @@
 2005-02-17 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
+	Removed the Shared Libraries view.
+	* CDebugModelPresentation.java
+	* LoadSymbolsActionDelegate.java
+	* LoadSymbolsForAllActionDelegate.java
+	* SharedLibrariesMessages.java
+	* SharedLibrariesMessages.properties
+	* SharedLibrariesView.java
+	* SharedLibrariesViewContentProvider.java
+	* SharedLibrariesViewEventHandler.java
+	* ICDebugUIConstants.java
+	* plugin.properties
+	* plugin.xml
+
+2005-02-17 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
 	No need to compute the module's labels in background.
 	* ModulesView.java
 

@@ -41,13 +41,6 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="%SharedLibrariesView.name"
-            icon="icons/full/cview16/sharedlibraries_view.gif"
-            category="org.eclipse.debug.ui"
-            class="org.eclipse.cdt.debug.internal.ui.views.sharedlibs.SharedLibrariesView"
-            id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
-      </view>
-      <view
             name="%SignalsView.name"
             icon="icons/full/cview16/signals_view.gif"
             category="org.eclipse.debug.ui"
@@ -72,15 +65,6 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
-         <view
-               relative="org.eclipse.debug.ui.VariableView"
-               visible="false"
-               relationship="stack"
-               id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
-         </view>
-         <viewShortcut
-               id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
-         </viewShortcut>
          <view
                relative="org.eclipse.debug.ui.VariableView"
                visible="false"
@@ -427,45 +411,6 @@
                menubarPath="org.eclipse.cdt.debug.ui.CVariableFormatMenu/formatGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.NaturalVariableFormatActionDelegate">
-         </action>
-      </objectContribution>
-      <viewerContribution
-            targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
-            id="org.eclipse.cdt.debug.ui.SharedLibrariesViewPopupActions">
-         <action
-               helpContextId="load_symbols_for_all_context"
-               label="%LoadSymbolsForAllAction.label"
-               tooltip="%LoadSymbolsForAllAction.tooltip"
-               icon="icons/full/elcl16/load_all_symbols_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
-               style="push"
-               menubarPath="sharedLibrariesGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-      </viewerContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.model.ICSharedLibrary"
-            id="org.eclipse.cdt.debug.ui.SharedLibraryActions">
-         <action
-               label="%LoadSymbolsAction.label"
-               icon="icons/full/clcl16/load_symbols_co.gif"
-               helpContextId="load_symbols_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate"
-               tooltip="%LoadSymbolsAction.tooltip"
-               menubarPath="sharedLibrariesGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
          </action>
       </objectContribution>
       <objectContribution
@@ -898,41 +843,6 @@
          </action>
       </viewContribution>
       <viewContribution
-            targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
-            id="org.eclipse.debug.ui.sharedLibrariesView.menu">
-         <action
-               label="%ShowFullPathsAction.label"
-               style="toggle"
-               icon="icons/full/clcl16/show_paths.gif"
-               helpContextId="show_full_paths_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
-               tooltip="%ShowFullPathsAction.tooltip"
-               menubarPath="cDebugActions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
-         </action>
-      </viewContribution>
-      <viewContribution
-            targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
-            id="org.eclipse.debug.ui.sharedLibrariesView.toolbar">
-         <action
-               helpContextId="load_symbols_for_all_context"
-               disabledIcon="icons/full/dlcl16/load_all_symbols_co.gif"
-               hoverIcon="icons/full/clcl16/load_all_symbols_co.gif"
-               toolbarPath="sharedLibrariesGroupLoadSymbolsForAllAction.label"
-               label="%LoadSymbolsForAllAction.label"
-               tooltip="%LoadSymbolsForAllAction.tooltip"
-               icon="icons/full/elcl16/load_all_symbols_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
-               style="push"
-               id="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-      </viewContribution>
-      <viewContribution
             targetID="org.eclipse.debug.ui.RegisterView"
             id="org.eclipse.debug.ui.registersView.toolbar">
          <menu
@@ -1114,10 +1024,6 @@
          point="org.eclipse.debug.ui.contextViewBindings">
       <contextViewBinding
             viewId="org.eclipse.debug.ui.MemoryView"
-            contextId="org.eclipse.cdt.debug.ui.debugging">
-      </contextViewBinding>
-      <contextViewBinding
-            viewId="org.eclipse.cdt.debug.ui.SharedLibrariesView"
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding

@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.ui;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
@@ -244,9 +242,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		if ( element instanceof IVariable ) {
 			return getVariableImage( (IVariable)element );
 		}
-		if ( element instanceof ICSharedLibrary ) {
-			return getSharedLibraryImage( (ICSharedLibrary)element );
-		}
 		if ( element instanceof ICModule ) {
 			return getModuleImage( (ICModule)element );
 		}
@@ -334,10 +329,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		boolean showQualified = isShowQualifiedNames();
 		StringBuffer label = new StringBuffer();
 		try {
-			if ( element instanceof ICSharedLibrary ) {
-				label.append( getSharedLibraryText( (ICSharedLibrary)element, showQualified ) );
-				return label.toString();
-			}
 			if ( element instanceof ICModule ) {
 				label.append( getModuleText( (ICModule)element, showQualified ) );
 				return label.toString();
@@ -404,20 +395,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return getDefaultText( element );
 	}
 
-	protected String getSharedLibraryText( ICSharedLibrary library, boolean qualified ) {
-		String label = new String();
-		String name = library.getFileName();
-		if ( !isEmpty( name ) ) {	
-			IPath path = new Path( library.getFileName() );
-			if ( !path.isEmpty() )
-				label += ( qualified ? path.toOSString() : path.lastSegment() );
-		}
-		else {
-			label += CDebugUIMessages.getString( "CDebugModelPresentation.unknown_1" ); //$NON-NLS-1$
-		}
-		return label;
-	}
-
 	protected String getModuleText( ICModule module, boolean qualified ) {
 		StringBuffer sb = new StringBuffer();
 		IPath path = module.getImageName();
@@ -453,10 +430,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	private OverlayImageCache getImageCache() {
 		return this.fImageCache;
-	}
-
-	private CDebugImageDescriptorRegistry getDebugImageRegistry() {
-		return this.fDebugImageRegistry;
 	}
 
 	private boolean isEmpty( String string ) {
@@ -652,16 +625,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	protected Image getExpressionImage( IExpression element ) {
 		return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
-
-	protected Image getSharedLibraryImage( ICSharedLibrary element ) {
-		if ( element.areSymbolsLoaded() ) {
-			return getImageCache().getImageFor(
-				new OverlayImageDescriptor( getDebugImageRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS ),
-											new ImageDescriptor[] { null, CDebugImages.DESC_OVRS_SYMBOLS, null, null } ) );
-		}
-		return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY );
-	}
-
 
 	protected Image getModuleImage( ICModule element ) {
 		switch( element.getType() ) {

@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jface.action.IAction;
 
 /**
- * The delegate for the "Load Symbols For All" action of the Shared Libraries view.
+ * The delegate for the "Load Symbols For All" action of the Modules view.
  */
 public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate {
 
@@ -53,7 +53,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 					
 					public void run() {
 						try {
-							target.loadSymbols();
+							target.loadSymbolsForAllModules();
 						}
 						catch( DebugException e ) {
 							failed( e );

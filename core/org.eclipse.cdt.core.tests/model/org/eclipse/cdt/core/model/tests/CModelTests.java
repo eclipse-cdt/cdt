@@ -124,7 +124,11 @@ public class CModelTests extends TestCase {
         CCProjectNature.removeCNature(testProject.getProject(), monitor);                
         assertTrue("hasCNature works without cnature", !CoreModel.getDefault().hasCNature(testProject.getProject()));
         assertTrue("hasCCNature works without ccnature or cnature", !(CoreModel.getDefault().hasCCNature(testProject.getProject())));
-
+		try{
+			testProject.getProject().delete(true,true,monitor);
+		} 
+		catch (ResourceException e) {} 
+		catch (CoreException e) {}
     }    
 
     /***

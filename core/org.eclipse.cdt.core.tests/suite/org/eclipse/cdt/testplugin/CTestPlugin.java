@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Plugin;
 
 public class CTestPlugin extends Plugin {
 	
+	public static final String PLUGIN_ID = "org.eclipse.cdt.core.tests";
 	private static CTestPlugin fgDefault;
 	
 	public CTestPlugin(IPluginDescriptor descriptor) {

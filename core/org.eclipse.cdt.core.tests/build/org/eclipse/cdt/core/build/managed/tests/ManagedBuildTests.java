@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -59,7 +60,6 @@ import org.eclipse.core.runtime.Path;
 
 public class ManagedBuildTests extends TestCase {
 	private static final boolean boolVal = true;
-	private static final String PROJECT_ID = CCorePlugin.PLUGIN_ID + ".make";
 	private static final String testConfigId = "test.config.override";
 	private static final String testConfigName = "Tester";
 	private static final String enumVal = "Another Enum";
@@ -896,7 +896,7 @@ public class ManagedBuildTests extends TestCase {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), PROJECT_ID);
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
 		} else {
 			newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
 			project = newProjectHandle;

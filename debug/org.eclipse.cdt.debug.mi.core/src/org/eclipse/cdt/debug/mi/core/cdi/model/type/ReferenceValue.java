@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Value;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -16,7 +15,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
  * 
  * @since Jun 3, 2003
  */
-public class ReferenceValue extends Value implements ICDIReferenceValue {
+public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 
 	/**
 	 * @param v

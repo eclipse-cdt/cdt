@@ -35,11 +35,13 @@ import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.DoubleValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.EnumValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.FloatValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.FunctionValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.IntValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongLongValue;
@@ -47,6 +49,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.PointerValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ReferenceValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ShortValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.StructValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -101,13 +104,22 @@ public class Variable extends CObject implements ICDIVariable {
 	}
 
 	public ICDIVariable[] getChildren() throws CDIException {
+		// Use the default timeout.
+		return getChildren(-1);
+	}
+
+	public ICDIVariable[] getChildren(int timeout) throws CDIException {
 		Session session = (Session)(getTarget().getSession());
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarListChildren var =
 			factory.createMIVarListChildren(getMIVar().getVarName());
 		try {
-			mi.postCommand(var);
+			if (timeout >= 0) {
+				mi.postCommand(var, timeout);
+			} else {
+				mi.postCommand(var);
+			}
 			MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
@@ -172,21 +184,15 @@ public class Variable extends CObject implements ICDIVariable {
 			} else if (t instanceof ICDIDoubleType) {
 				value = new DoubleValue(this);
 			} else if (t instanceof ICDIFunctionType) {
-				//value = new FunctionValue(this);
-				value = new Value(this);
+				value = new FunctionValue(this);
 			} else if (t instanceof ICDIPointerType) {
-				//((ICDIPointerType)t).getComponentType();
 				value = new PointerValue(this);
-				//value = new Value(this);
 			} else if (t instanceof ICDIReferenceType) {
 				value = new ReferenceValue(this);
 			} else if (t instanceof ICDIArrayType) {
-				//((ICDIArrayType)t).getComponentType();
-				//value = new ArrayValue(this);
-				value = new Value(this);
+				value = new ArrayValue(this);
 			} else if (t instanceof ICDIStructType) {
-				//value = new StructValue(this);	
-				value = new Value(this);
+				value = new StructValue(this);	
 			} else {
 				value = new Value(this);
 			}

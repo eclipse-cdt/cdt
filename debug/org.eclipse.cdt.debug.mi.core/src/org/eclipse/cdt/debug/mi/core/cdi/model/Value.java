@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
  */
 public class Value extends CObject implements ICDIValue {
 
-	Variable variable;
+	protected Variable variable;
 
 	public Value(Variable v) {
 		super(v.getTarget());
@@ -86,6 +86,7 @@ public class Value extends CObject implements ICDIValue {
 	*/
 		return (getChildrenNumber() > 0);	
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */

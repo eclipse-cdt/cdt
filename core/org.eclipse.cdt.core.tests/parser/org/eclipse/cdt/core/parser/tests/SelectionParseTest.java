@@ -390,4 +390,20 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		assertTrue( node instanceof IASTVariable );
 		assertEquals( ((IASTVariable)node).getName(), "FOUND_ME" ); //$NON-NLS-1$
 	}
+	
+	public void testBug72721() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write(" class ABC { public: ABC(int); };   \n"); //$NON-NLS-1$
+	    writer.write("void f() {                          \n"); //$NON-NLS-1$
+	    writer.write("   int j = 1;                       \n"); //$NON-NLS-1$
+	    writer.write("   new ABC( j + 1 );                \n"); //$NON-NLS-1$
+	    writer.write("}                                   \n"); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( "ABC(" ); //$NON-NLS-1$
+	    IASTNode node = parse( code, startIndex, startIndex + 3 );
+	    assertTrue( node instanceof IASTMethod );
+	    assertEquals( ((IASTMethod)node).getName(), "ABC" ); //$NON-NLS-1$
+	    assertTrue( ((IASTMethod)node).isConstructor() );
+	}
 }

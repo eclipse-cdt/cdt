@@ -1168,7 +1168,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		List parameters = new ArrayList();
 		while( expressionList != null ){
 			parameters.add( expressionList.getResultType().getResult() );
-			expressionList = (ASTExpression) expressionList.getRHSExpression();
+			if( expressionList.getExpressionKind() == IASTExpression.Kind.EXPRESSIONLIST )
+			    expressionList = (ASTExpression) expressionList.getRHSExpression();
+			else 
+			    expressionList = null;
 		}
 		
 		IParameterizedSymbol constructor = null;
@@ -3610,7 +3613,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						ASTExpression expressionList = (ASTExpression) newInitializerExpressions.get(i);
 						while( expressionList != null ){
 							parameters.add( expressionList.getResultType().getResult() );
-							expressionList = (ASTExpression) expressionList.getRHSExpression();
+							if( expressionList.getExpressionKind() == IASTExpression.Kind.EXPRESSIONLIST )
+							    expressionList = (ASTExpression) expressionList.getRHSExpression();
+							else 
+							    expressionList = null;
 						}
 					}
 					

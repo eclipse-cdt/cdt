@@ -19,10 +19,10 @@ public class Spawner extends Process {
 	private int KILL = 9;
 	private int TERM = 15;
 
-	private int pid = 0;
-	private int status;
-	private int[] channels = new int[3];
-	private boolean isDone;
+	int pid = 0;
+	int status;
+	int[] channels = new int[3];
+	boolean isDone;
 	OutputStream out;
 	InputStream in;
 	InputStream err;

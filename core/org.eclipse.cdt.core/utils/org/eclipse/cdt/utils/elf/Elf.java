@@ -17,22 +17,22 @@ import org.eclipse.cdt.utils.CPPFilt;
 public class Elf {
 	protected ERandomAccessFile efile;		
 
-	private ELFhdr ehdr;
-	private Section[] sections;
+	protected ELFhdr ehdr;
+	protected Section[] sections;
+	protected Addr2line addr2line;
+    protected boolean cppFiltEnabled = true;
+	protected CPPFilt cppFilt;
+	protected String file;
+	protected byte[] section_strtab;	
+
 	private int syms = 0;
-	private Addr2line addr2line;
-    private boolean cppFiltEnabled = true;
-	private CPPFilt cppFilt;
-	private String file;
-	private byte[] section_strtab;	
 	private Symbol[] symbols;
-	// private Section sym;
     private Symbol[] symtab_symbols;
 	private Section  symtab_sym;
     private Symbol[] dynsym_symbols;
 	private Section  dynsym_sym;
 
-	private String EMPTY_STRING = "";
+	protected String EMPTY_STRING = "";
 
 
 	public class ELFhdr {
@@ -101,7 +101,7 @@ public class Elf {
 	    public short 	e_shnum;				/* Number of section headers (Elf32_Half)*/
 	    public short	e_shstrndx;				/* String table index (Elf32_Half)*/
 
-		private ELFhdr() throws IOException {
+		protected ELFhdr() throws IOException {
 			efile.seek(0);
 			efile.readFully(e_ident);
 			if ( e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 
@@ -185,7 +185,7 @@ public class Elf {
 		}
 	}
 
-	private String string_from_elf_section(Elf.Section section, int index) throws IOException {
+	protected String string_from_elf_section(Elf.Section section, int index) throws IOException {
 		StringBuffer str = new StringBuffer();
 		byte tmp;
 		if ( index > section.sh_size ) {
@@ -491,7 +491,7 @@ public class Elf {
 		private Section section;
 		private String name;
 						
-		private Dynamic(Section section, long tag, long val) {
+		protected Dynamic(Section section, long tag, long val) {
 			this.section = section;
 			d_tag = tag;
 			d_val = val;

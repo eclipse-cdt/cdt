@@ -21,10 +21,10 @@ import java.util.Vector;
  */
 public class AR {
 
-    private String               filename;
-    private ERandomAccessFile    efile;
+    protected String               filename;
+    protected ERandomAccessFile    efile;
+    protected long                 strtbl_pos = -1;
     private ARHeader[]           headers;
-    private long                 strtbl_pos = -1;
 
 
     public void dispose() {

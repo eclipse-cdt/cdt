@@ -37,7 +37,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class MIPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
 	// Timeout preference widgets
-	private IntegerFieldEditor fTimeoutText;
+	IntegerFieldEditor fTimeoutText;
 
 	/**
 	 * Constructor for MIPreferencePage.

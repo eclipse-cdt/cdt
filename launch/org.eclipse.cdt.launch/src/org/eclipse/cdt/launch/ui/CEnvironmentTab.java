@@ -170,7 +170,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			fBtnCancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		}
 
-		private void updateButtonsState() {
+		protected void updateButtonsState() {
 			if (fBtnOk != null)
 				fBtnOk.setEnabled(fTextName.getText().trim().length() > 0);
 		}
@@ -308,19 +308,19 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		});
 	}
 
-	private void updateButtons() {
+	protected void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fVariableList.getSelection();
 		fBtnEdit.setEnabled(selection.size() == 1);
 		fBtnRemove.setEnabled(selection.size() > 0);
 	}
 
-	private void elementDoubleClicked(IStructuredSelection selection) {
+	protected void elementDoubleClicked(IStructuredSelection selection) {
 		if (selection.size() != 1)
 			return;
 		doEdit((Map.Entry) selection.getFirstElement());
 	}
 
-	private void newEntry() {
+	protected void newEntry() {
 		EntryDialog dialog = new EntryDialog(new String(), new String(), false);
 		if (dialog.open() == dialog.OK) {
 			fElements.setProperty(dialog.getName(), dialog.getValue());
@@ -329,12 +329,12 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		updateButtons();
 	}
 
-	private void edit() {
+	protected void edit() {
 		IStructuredSelection selection = (IStructuredSelection) fVariableList.getSelection();
 		doEdit((Map.Entry) selection.getFirstElement());
 	}
 
-	private void doEdit(Map.Entry entry) {
+	protected void doEdit(Map.Entry entry) {
 		EntryDialog dialog = new EntryDialog(entry.getKey().toString(), entry.getValue().toString(), true);
 		if (dialog.open() == dialog.OK) {
 			fElements.remove(entry.getKey());
@@ -344,7 +344,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		updateButtons();
 	}
 
-	private void remove() {
+	protected void remove() {
 		IStructuredSelection selection = (IStructuredSelection) fVariableList.getSelection();
 		Object[] elements = selection.toArray();
 		for (int i = 0; i < elements.length; ++i)

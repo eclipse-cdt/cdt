@@ -75,6 +75,7 @@ public class CSignalManager extends CUpdateManager implements ICSignalManager
 		}
 		fSignals = null;
 		fIsDisposed = true;
+		super.dispose();
 	}
 
 	/* (non-Javadoc)

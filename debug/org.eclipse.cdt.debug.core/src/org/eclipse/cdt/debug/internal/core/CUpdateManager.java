@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core;
 
+import java.util.Observable;
 import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
@@ -20,7 +21,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * 
  * @since Mar 31, 2003
  */
-public abstract class CUpdateManager implements ICUpdateManager, IAdaptable
+public abstract class CUpdateManager extends Observable implements ICUpdateManager, IAdaptable
 {
 	private CDebugTarget fDebugTarget = null;
 
@@ -40,6 +41,9 @@ public abstract class CUpdateManager implements ICUpdateManager, IAdaptable
 		if ( getCDIManager() != null )
 		{
 			getCDIManager().setAutoUpdate( enable );
+			setChanged();
+			notifyObservers();
+			clearChanged();
 		}
 	}
 
@@ -96,12 +100,18 @@ public abstract class CUpdateManager implements ICUpdateManager, IAdaptable
 			return getDebugTarget();
 		if ( ICDebugTarget.class.equals( adapter ) )
 			return getDebugTarget();
+		if ( Observable.class.equals( adapter ) )
+			return this;
 		return null;
 	}
 
 	public CDebugTarget getDebugTarget()
 	{
 		return fDebugTarget;
+	}
+
+	public void dispose() {
+		deleteObservers();
 	}
 
 	abstract protected ICDIManager getCDIManager();

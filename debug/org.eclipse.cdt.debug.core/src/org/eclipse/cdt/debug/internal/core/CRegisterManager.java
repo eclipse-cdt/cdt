@@ -59,6 +59,7 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 	public void dispose()
 	{
 		removeAllRegisterGroups();
+		super.dispose();
 	}
 
 	/* (non-Javadoc)

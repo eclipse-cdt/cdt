@@ -104,6 +104,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			((CSharedLibrary)it.next()).dispose();
 		}
 		fSharedLibraries.clear();
+		super.dispose();
 	}
 
 	/* (non-Javadoc)

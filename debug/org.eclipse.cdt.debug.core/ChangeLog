@@ -1,4 +1,11 @@
 2004-06-12 Mikhail Khodjaiants
+	"CUpdateManager" extends "Observable" to support "Auto-Refresh" toggle actions.
+	* CRegisterManager.java
+	* CSharedLibraryManager.java
+	* CSignalManager.java
+	* CUpdateManager.jave
+
+2004-06-12 Mikhail Khodjaiants
 	Changed the comments and copyright text.
 	* ICUpdateManager.java
 

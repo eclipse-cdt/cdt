@@ -18,7 +18,6 @@
 	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 
 		<topic label="Outline View" href="concepts/cdt_c_outlineview.htm"/> 
 		<topic label="Project File views" href="concepts/cdt_c_proj_file_views.htm"/> 
-		<topic label="C/C++ search" href="concepts/cdt_c_search.htm"/> 
 		<topic label="Open declarations" href="concepts/cdt_c_open_declarations.htm"/> 
 	</topic>
 	<topic label="Build" href="concepts/cdt_o_build_conc.htm"> 
@@ -29,5 +28,12 @@
 		<topic label="Adding Break Points" href="concepts/cdt_c_brkpnts.htm"/> 
 		<topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/> 
 		<topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/> 
+	</topic>
+	<topic label="C/C++ search" href="concepts/cdt_c_search.htm"> 
+		<topic label="C/C++ Indexer" href="concepts/cdt_c_indexer.htm"/> 
+		<topic label="C/C++ Indexer Problem Reporting" href="concepts/cdt_c_indexer_prob_rep.htm"/> 
+		<topic label="C/C++ Indexer Opening or Closing a project" href="concepts/cdt_c_indexer_open_close.htm"/> 
+		<topic label="C/C++ Indexer Progress Bar" href="concepts/cdt_c_indexer_prog_bar.htm"/> 
+		<topic label="Searching External Files" href="concepts/cdt_c_search_ext.htm"/> 
 	</topic>
 </toc>

@@ -23,7 +23,6 @@
 				<topic label="Importing and exporting code templates" href="tasks/cdt_t_imp_code_temp.htm"/>
 			</topic>
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
-			<topic label="Search for C/C++ elements" href="tasks/cdt_t_search.htm"/>
 			<topic label="Selection Search for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
 			<topic label="Refactoring" href="tasks/cdt_t_refactoring.htm"/>
@@ -75,6 +74,11 @@
 				<topic label="Workign with memory" href="tasks/cdt_t_memory.htm"/>
 			</topic>
 		</topic>
-		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm"/>
-
+		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm">
+			<topic label="Searching External Files" href="tasks/cdt_t_search_ext.htm"/>
+			<topic label="Enable/Disable the C/C++ Indexer" href="tasks/cdt_t_endis_indexer.htm"/>
+			<topic label="C/C++ Indexer Problem Reporting" href="tasks/cdt_t_indexer_prob_rep.htm"/>
+			<topic label="C/C++ Indexer - Indexer Timeout" href="tasks/cdt_t_indexer_timeout.htm"/>
+			<topic label="Setting Source Folders" href="tasks/cdt_t_set_src_fold.htm"/>
+		</topic>
 </toc>

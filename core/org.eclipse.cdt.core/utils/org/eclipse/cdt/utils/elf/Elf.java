@@ -167,6 +167,8 @@ public class Elf {
 		public String toString() {
 			try {
 				if ( section_strtab == null ) {
+					if ( ehdr.e_shstrndx > sections.length || ehdr.e_shstrndx < 0)
+						return EMPTY_STRING;
 					int size = (int)sections[ehdr.e_shstrndx].sh_size;
 					if ( size <= 0 || size > efile.length() )
 						return EMPTY_STRING;
@@ -555,18 +557,18 @@ public class Elf {
 	}
 
     private void commonSetup( String file, long offset, boolean filton ) 
-        throws IOException 
+       throws IOException 
     {
         this.cppFiltEnabled = filton;
 
-        efile = new ERandomAccessFile(file, "r");
-        efile.setFileOffset( offset );
 		try {
+	        efile = new ERandomAccessFile(file, "r");
+    	    efile.setFileOffset( offset );
 			ehdr = new ELFhdr();
 			this.file = file;
 		} finally {
 			if ( ehdr == null ) {
-				efile.close();
+				dispose();
 			}
 		}
     }

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
-import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2.InclusionData;
+import org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner.InclusionData;
 
 /**
  * @author aniefer
@@ -47,9 +47,10 @@ public class ScannerCallbackManager {
 	    Object obj = null;
 	    for( int i = 0; i <= callbackPos; i++ ){
 	        obj = callbackStack[i];
+	        if( obj == null ) continue;
 	        //on the stack, InclusionData means enter, IASTInclusion means exit
-	        if( obj instanceof InclusionData )
-	            requestor.enterInclusion( ((InclusionData)obj).inclusion );
+	        if( obj instanceof InclusionData && ((InclusionData)obj).inclusion != null )
+	            requestor.enterInclusion( (IASTInclusion) ((InclusionData)obj).inclusion );
 	        else if( obj instanceof IASTInclusion )
 	            requestor.exitInclusion( (IASTInclusion) obj );
 	        else if( obj instanceof IASTMacro )

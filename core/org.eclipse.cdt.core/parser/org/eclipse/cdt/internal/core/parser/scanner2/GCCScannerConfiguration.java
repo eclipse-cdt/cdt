@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner.ExpressionEvaluator;
 
 /**
  * @author jcamelon

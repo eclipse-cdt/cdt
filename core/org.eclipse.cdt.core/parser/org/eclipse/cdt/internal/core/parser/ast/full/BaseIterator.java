@@ -40,7 +40,7 @@ public class BaseIterator implements Iterator {
 	 */
 	public Object next() {
 		ParserSymbolTable.Declaration.ParentWrapper wrapper = (ParserSymbolTable.Declaration.ParentWrapper)rawIter.next(); 
-		return new ASTBaseSpecifier( (IASTClassSpecifier)wrapper.getParent().getASTNode(), wrapper.getAccess(), wrapper.isVirtual());
+		return new ASTBaseSpecifier( (IASTFClassSpecifier)wrapper.getParent().getASTNode(), wrapper.getAccess(), wrapper.isVirtual());
 	}
 
 	/* (non-Javadoc)

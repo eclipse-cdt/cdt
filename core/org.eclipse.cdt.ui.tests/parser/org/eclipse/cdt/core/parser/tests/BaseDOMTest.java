@@ -31,7 +31,7 @@ public class BaseDOMTest extends TestCase {
 	
 	public TranslationUnit parse( String code ) throws Exception
 	{
-		return parse( code, false, true );
+		return parse( code, true, true );
 	}
 	
 	public TranslationUnit parse(String code, boolean quickParse, boolean throwOnError ) throws Exception {

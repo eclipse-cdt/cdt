@@ -8,35 +8,38 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.core.parser.ast;
 
-import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTASMDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTLinkageSpecification;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTNamespaceDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTScope;
 
 /**
  * @author jcamelon
  *
  */
 public interface IASTFactory {
-	public abstract IASTUsingDirective createUsingDirective(
+	
+	public IASTMacro createMacro( String name, int startingOffset, int endingOffset, int nameOffset );
+	public IASTInclusion createInclusion( String name, String fileName, boolean local, int startingOffset, int endingOffset, int nameOffset );
+
+	public IASTUsingDirective createUsingDirective(
 		IASTScope scope,
 		TokenDuple duple)
 		throws Backtrack;
-	public abstract IASTASMDefinition createASMDefinition(
+		
+	public IASTASMDefinition createASMDefinition(
 		IASTScope scope,
 		String assembly,
 		int first,
 		int last);
-	public abstract IASTNamespaceDefinition createNamespaceDefinition(
-		int first,
+	
+	public IASTNamespaceDefinition createNamespaceDefinition(
+		IASTScope scope,
 		String identifier,
-		int nameOffset);
-	public abstract IASTCompilationUnit createCompilationUnit();
-	public abstract IASTLinkageSpecification createLinkageSpecification(String spec);
+		int startingOffset, int nameOffset);
+	
+	public IASTCompilationUnit createCompilationUnit();
+	
+	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec);
+	
 }

@@ -10,13 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.full;
 
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier
-	extends IASTScope, org.eclipse.cdt.core.parser.ast.IASTClassSpecifier {
+public interface IASTFCompilationUnit
+	extends
+		org.eclipse.cdt.core.parser.ast.IASTCompilationUnit,
+		IASTFScope {
 
 }

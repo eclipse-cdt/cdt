@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  * @author jcamelon
  *
  */
-public class ASTLinkageSpecification implements IASTLinkageSpecification {
+public class ASTLinkageSpecification implements IASTFLinkageSpecification {
 
 	public ASTLinkageSpecification( IContainerSymbol symbol, String linkage )
 	{

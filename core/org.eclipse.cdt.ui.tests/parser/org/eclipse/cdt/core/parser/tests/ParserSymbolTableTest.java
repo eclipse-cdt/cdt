@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.full.ASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTFCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
@@ -107,7 +107,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IContainerSymbol x = table.new Declaration("x");
 		
-		IASTCompilationUnit obj = new ASTCompilationUnit( x );
+		IASTFCompilationUnit obj = new ASTCompilationUnit( x );
 		x.setASTNode( obj );
 				
 		table.getCompilationUnit().addSymbol( x );

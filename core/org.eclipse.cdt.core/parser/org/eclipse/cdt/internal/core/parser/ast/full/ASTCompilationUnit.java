@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  * @author jcamelon
  *
  */
-public class ASTCompilationUnit implements IASTCompilationUnit {
+public class ASTCompilationUnit implements IASTFCompilationUnit {
 
 	public ASTCompilationUnit( IContainerSymbol symbol )
 	{

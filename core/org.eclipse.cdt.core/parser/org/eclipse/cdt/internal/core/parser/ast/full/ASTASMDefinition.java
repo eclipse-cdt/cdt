@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  * @author jcamelon
  *
  */
-public class ASTASMDefinition implements IASTASMDefinition {
+public class ASTASMDefinition implements IASTFASMDefinition {
 
 	private final String body; 
 	

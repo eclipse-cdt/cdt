@@ -8,97 +8,92 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTNamespaceDefinition implements IASTFNamespaceDefinition {
+public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamespaceDefinition, IASTQScope {
 
-	public ASTNamespaceDefinition( IContainerSymbol symbol, String name )
+	private final String name;
+	private NamedOffsets offsets = new NamedOffsets(); 
+	
+	public ASTNamespaceDefinition( IASTScope scope, String name )
 	{
-		this.symbol = symbol;
-		this.name = name;
+		super( scope );
+		this.name = name; 
 	}
-
-	private final String name; 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition#getName()
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
-	 */
-	public Iterator getDeclarations() {
-		return new ScopeIterator( symbol.getContainedSymbols() );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension#getSymbol()
-	 */
-	public ISymbol getSymbol() {
-		return symbol;
-	}
-
-	private final IContainerSymbol symbol;
-
-	private int nameOffset = 0, startingOffset = 0, endingOffset = 0;
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
 	 */
 	public int getElementNameOffset() {
-		return nameOffset;
+		return offsets.getElementNameOffset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
 	 */
 	public void setNameOffset(int o) {
-		nameOffset = o;
+		offsets.setNameOffset( o );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
 	 */
 	public void setStartingOffset(int o) {
-		startingOffset = o;
+		offsets.setStartingOffset(o);
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
 	 */
 	public void setEndingOffset(int o) {
-		endingOffset = o;	
+		offsets.setEndingOffset(o);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
 	 */
 	public int getElementStartingOffset() {
-		return startingOffset;
+		return offsets.getElementStartingOffset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
 	 */
 	public int getElementEndingOffset() {
-		return endingOffset;
+		return offsets.getElementEndingOffset();
 	}
 
+	private List declarations = new ArrayList(); 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.ast.IPSTContainerExtension#getContainerSymbol()
+	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
 	 */
-	public IContainerSymbol getContainerSymbol() {
-		return symbol;
-	} 
+	public Iterator getDeclarations() {
+		return declarations.iterator();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.quick.IASTQScope#addDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+	 */
+	public void addDeclaration(IASTDeclaration declaration) {
+		declarations.add( declaration );
+	}
 }

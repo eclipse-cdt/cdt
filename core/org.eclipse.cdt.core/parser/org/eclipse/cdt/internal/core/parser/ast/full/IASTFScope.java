@@ -8,13 +8,13 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.full;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTLinkageSpecification extends IASTScope {
+public interface IASTFScope
+	extends org.eclipse.cdt.core.parser.ast.IASTScope, IPSTContainerExtension {
 
-	public String getLinkageString(); 
 }

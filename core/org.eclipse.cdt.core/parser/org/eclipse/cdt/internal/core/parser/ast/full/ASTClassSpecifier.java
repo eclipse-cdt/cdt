@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
  * @author jcamelon
  *
  */
-public class ASTClassSpecifier implements IASTClassSpecifier, IPSTSymbolExtension {
+public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtension {
 
 	private final IDerivableContainerSymbol symbol;
 	private final ClassKind classKind;

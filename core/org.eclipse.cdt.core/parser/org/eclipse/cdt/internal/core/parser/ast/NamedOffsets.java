@@ -8,16 +8,30 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
+package org.eclipse.cdt.internal.core.parser.ast;
 
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTCompilationUnit
-	extends
-		org.eclipse.cdt.core.parser.ast.IASTCompilationUnit,
-		IASTScope {
+public class NamedOffsets extends Offsets  {
+
+	private int nameOffset = 0; 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
+	 */
+	public int getElementNameOffset() {
+		return nameOffset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+	 */
+	public void setNameOffset(int o) {
+		nameOffset = o; 
+	}
+
 
 }

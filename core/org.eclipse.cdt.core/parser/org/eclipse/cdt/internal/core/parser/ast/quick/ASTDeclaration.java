@@ -8,13 +8,28 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
+
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTLinkageSpecification
-	extends org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification, IASTScope {
+public class ASTDeclaration implements IASTDeclaration {
+
+	private final IASTScope scope; 
+	public ASTDeclaration( IASTScope scope )
+	{
+		this.scope = scope; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTDeclaration#getOwnerScope()
+	 */
+	public IASTScope getOwnerScope() {
+		return scope;
+	}
 
 }

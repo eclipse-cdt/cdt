@@ -25,11 +25,11 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
-import org.eclipse.cdt.internal.core.parser.ast.ASTInclusion;
-import org.eclipse.cdt.internal.core.parser.ast.ASTMacro;
 
 /**
  * @author jcamelon
@@ -310,10 +310,7 @@ public class Scanner implements IScanner {
 		if (throwExceptionOnInclusionNotFound && inclusionReader == null )
 			throw new ScannerException("Cannot find inclusion " + fileName);
 		
-		IASTInclusion inclusion = new ASTInclusion( fileName, newPath, !useIncludePaths );
-		inclusion.setNameOffset(nameOffset);
-		inclusion.setStartingOffset(beginOffset);
-		inclusion.setEndingOffset( endOffset);
+		IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, endOffset, nameOffset ); 
 		contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
 	}
 
@@ -1796,10 +1793,8 @@ public class Scanner implements IScanner {
 			
 			if( requestor != null )
 			{
-				IASTInclusion i = new ASTInclusion(f,"",!useIncludePath);
-				i.setStartingOffset( beginningOffset );
-				i.setNameOffset( offset );
-				i.setEndingOffset( contextStack.getCurrentContext().getOffset() ); 
+				IASTInclusion i = astFactory.createInclusion( f, "", !useIncludePath, beginningOffset, 
+					contextStack.getCurrentContext().getOffset(), offset ); 
 				requestor.enterInclusion(i);
 				requestor.exitInclusion(i);
 			}
@@ -1975,10 +1970,7 @@ public class Scanner implements IScanner {
 		
 		if( requestor != null )
 		{
-			IASTMacro m = new ASTMacro(key);
-			m.setStartingOffset(beginning);
-			m.setNameOffset(offset); 
-			m.setEndingOffset(contextStack.getCurrentContext().getOffset());
+			IASTMacro m = astFactory.createMacro( key, beginning, contextStack.getCurrentContext().getOffset(), offset ); 
 			requestor.acceptMacro(m);
 		}
 	}
@@ -2222,5 +2214,13 @@ public class Scanner implements IScanner {
 		requestor = r; 
 	}
 	
-	private ISourceElementRequestor requestor = null;  
+	private ISourceElementRequestor requestor = null;
+	private IASTFactory astFactory = null; 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScanner#setASTFactory(org.eclipse.cdt.internal.core.parser.ast.IASTFactory)
+	 */
+	public void setASTFactory(IASTFactory f) {
+		astFactory = f;	
+	}  
 }

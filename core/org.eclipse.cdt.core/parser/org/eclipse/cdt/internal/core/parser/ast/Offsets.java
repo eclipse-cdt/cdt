@@ -8,13 +8,32 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTLinkageSpecification extends IASTScope {
+public class Offsets {
 
-	public String getLinkageString(); 
+	protected int startingOffset = 0;
+
+	protected int endingOffset = 0;
+
+	public void setStartingOffset(int o) {
+		startingOffset = o;
+	}
+
+	public void setEndingOffset(int o) {
+		endingOffset = o;
+	}
+
+	public int getElementStartingOffset() {
+		return startingOffset;
+	}
+
+	public int getElementEndingOffset() {
+		return endingOffset;
+	}
+
 }

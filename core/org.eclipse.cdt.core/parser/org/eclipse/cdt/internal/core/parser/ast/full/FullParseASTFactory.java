@@ -12,13 +12,18 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.ASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
@@ -46,7 +51,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		{
 			try
 			{
-				symbol = (IContainerSymbol)scope.getContainerSymbol().Lookup( t1.getImage() );
+				symbol = (IContainerSymbol)((IASTFScope)scope).getContainerSymbol().Lookup( t1.getImage() );
 			}
 			catch( ParserSymbolTableException pste )
 			{
@@ -69,7 +74,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		}
 		
 		try {
-			scope.getContainerSymbol().addUsingDirective( symbol );
+			((IASTFScope)scope).getContainerSymbol().addUsingDirective( symbol );
 		} catch (ParserSymbolTableException pste) {
 			handlePSTException( pste );
 		}
@@ -83,9 +88,9 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		String assembly,
 		int first,
 		int last) {
-		IContainerSymbol containerSymbol = (IContainerSymbol)scope.getSymbol();
+		IContainerSymbol containerSymbol = (IContainerSymbol)((IASTFScope)scope).getSymbol();
 		ISymbol asmSymbol = pst.newSymbol( "", ParserSymbolTable.TypeInfo.t_asm );
-		IASTASMDefinition asmDefinition = new ASTASMDefinition( asmSymbol, assembly );
+		IASTFASMDefinition asmDefinition = new ASTASMDefinition( asmSymbol, assembly );
 		asmSymbol.setASTNode( asmDefinition );
 		
 		try {
@@ -100,13 +105,14 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	}
 
 	public IASTNamespaceDefinition createNamespaceDefinition(
-		int first,
+		IASTScope scope,
 		String identifier, 
-		int nameOffset ) {
+		int first, int nameOffset ) {
+		
 		IContainerSymbol namespaceSymbol = null; 
 		
 		pst.newContainerSymbol( identifier, ParserSymbolTable.TypeInfo.t_namespace );
-		IASTNamespaceDefinition namespaceDefinition = new ASTNamespaceDefinition( namespaceSymbol, identifier );
+		IASTFNamespaceDefinition namespaceDefinition = new ASTNamespaceDefinition( namespaceSymbol, identifier );
 		namespaceDefinition.setStartingOffset( first ); 
 		if( identifier != "" )
 			namespaceDefinition.setNameOffset( nameOffset );
@@ -114,13 +120,13 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	}
 
 	public IASTCompilationUnit createCompilationUnit() {
-		IASTCompilationUnit compilationUnit = new ASTCompilationUnit( pst.getCompilationUnit() );  
+		IASTFCompilationUnit compilationUnit = new ASTCompilationUnit( pst.getCompilationUnit() );  
 		return compilationUnit;
 	}
 	
-	public IASTLinkageSpecification createLinkageSpecification(String spec) {
+	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec) {
 		IContainerSymbol symbol = pst.newContainerSymbol("", ParserSymbolTable.TypeInfo.t_linkage );
-		IASTLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec);
+		IASTFLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec);
 		return linkage;
 	}
 	
@@ -130,4 +136,5 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	private void handlePSTException(ParserSymbolTableException pste) throws Backtrack {
 		throw new Backtrack(); 
 	}
+
 }

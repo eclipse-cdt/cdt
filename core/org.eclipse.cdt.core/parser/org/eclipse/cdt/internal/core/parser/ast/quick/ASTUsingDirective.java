@@ -8,13 +8,31 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.full;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
+
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTScope
-	extends org.eclipse.cdt.core.parser.ast.IASTScope, IPSTContainerExtension {
+public class ASTUsingDirective
+	extends ASTDeclaration
+	implements IASTUsingDirective {
+
+
+	public ASTUsingDirective( IASTScope scope, String name )
+	{
+		super( scope );
+		this.namespaceName = name; 
+	}
+	private final String namespaceName; 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTUsingDirective#getNamespaceName()
+	 */
+	public String getNamespaceName() {
+		return namespaceName;
+	}
 
 }

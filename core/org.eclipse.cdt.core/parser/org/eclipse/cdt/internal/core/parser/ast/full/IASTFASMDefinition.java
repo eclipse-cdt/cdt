@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
  * @author jcamelon
  *
  */
-public interface IASTASMDefinition
+public interface IASTFASMDefinition
 	extends org.eclipse.cdt.core.parser.ast.IASTASMDefinition, IPSTSymbolExtension {
 
 }

@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTLinkageSpecification extends IASTScope {
+public interface IASTTemplateParameter {
 
-	public String getLinkageString(); 
 }

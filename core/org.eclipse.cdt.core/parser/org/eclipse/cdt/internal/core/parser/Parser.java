@@ -16,15 +16,17 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTASMDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTLinkageSpecification;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTNamespaceDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTFScope;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -43,7 +45,7 @@ public class Parser implements IParser {
 	private boolean parsePassed = true;				// did the parse pass?
 	private boolean cppNature = true;				// true for C++, false for C
 	private ISourceElementRequestor requestor = null; // new callback mechanism 
-	private IASTFactory astFactory = ParserFactory.createASTFactory( false ); 
+	private IASTFactory astFactory = null;				// ast factory 
 	
 	/**
 	 * This is the single entry point for setting parsePassed to 
@@ -76,6 +78,7 @@ public class Parser implements IParser {
 		astFactory = ParserFactory.createASTFactory( quick );
 		scanner.setQuickScan(quick);
 		scanner.setCallback(c);
+		scanner.setASTFactory( astFactory );
 	}
 
 	
@@ -345,7 +348,7 @@ c, quickParse);
 	 * @param container Callback object representing the scope these definitions fall into.
 	 * @throws Backtrack	request for a backtrack
 	 */
-	protected void linkageSpecification( Object container ) throws Backtrack
+	protected void linkageSpecification( Object container, IASTScope scope ) throws Backtrack
 	{
 		consume( Token.t_extern );
 
@@ -360,7 +363,7 @@ c, quickParse);
 		{	
 			consume(Token.tLBRACE);
 		
-			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification(spec.getImage());
+			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification(scope, spec.getImage());
 		
 			requestor.enterLinkageSpecification( linkage );
 			 
@@ -394,7 +397,7 @@ c, quickParse);
 		else // single declaration
 		{
 			
-			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification( spec.getImage() );
+			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification( scope, spec.getImage() );
 		
 			requestor.enterLinkageSpecification( linkage );
 
@@ -625,7 +628,7 @@ c, quickParse);
 			case Token.t_extern:
 				if( LT(2) == Token.tSTRING )
 				{
-					linkageSpecification( container ); 
+					linkageSpecification( container, scope ); 
 					return;
 				}
 			default:
@@ -673,8 +676,10 @@ c, quickParse);
 			consume(); 
 			
 			IASTNamespaceDefinition namespaceDefinition =
-				astFactory.createNamespaceDefinition(first.getOffset(), identifier.getImage(), 
-				( identifier == null ? 0 : identifier.getOffset()) );
+				astFactory.createNamespaceDefinition( 
+					scope, 
+					( identifier == null ? "" : identifier.getImage() ), 
+					first.getOffset(), ( identifier == null ? 0 : identifier.getOffset()) );
 			
 			requestor.enterNamespaceDefinition( namespaceDefinition );
 			

@@ -1,18 +1,18 @@
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.core.parser;
 
 import java.io.Reader;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.internal.core.parser.IParserCallback;
+import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.cdt.internal.core.parser.ScannerException;
+import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author jcamelon
  *
- * To change this generated comment edit the template variable 
-"typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public interface IScanner {
 	
@@ -36,4 +36,5 @@ public interface IScanner {
 	public void setQuickScan(boolean qs);
 	public void setCallback(IParserCallback c);
 	public void setRequestor( ISourceElementRequestor r );
+	public void setASTFactory( IASTFactory f );
 }

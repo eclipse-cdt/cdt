@@ -14,6 +14,6 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTNamespaceDefinition extends IASTOffsetableNamedElement {
+public interface IASTNamespaceDefinition extends IASTOffsetableNamedElement, IASTScope {
 
 }

@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.internal.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.full.FullParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 

@@ -1,3 +1,18 @@
+2002-11-29 Alain Magloire
+
+	* src/.../mi/core/event/MIBreakpointEvent.java:
+	* src/.../mi/core/event/MIFunctionFinishedEvent.java:
+	* src/.../mi/core/event/MILocationReachedEvent.java:
+	* src/.../mi/core/event/MISignalEvent.java:
+	* src/.../mi/core/event/MISteppingRangeEvent.java:
+	* src/.../mi/core/event/MIStoppedEvent.java:
+	* src/.../mi/core/event/MIWatchpointEvent.java:
+	* src/.../mi/core/event/MIWatchpointTriggerEvent.java:
+	* src/.../mi/core/RxThread.java:
+	Some events like the temporary events, do not have
+	any specific format but do provide a frame and a thread-id
+	move the code in MIStoppedEvent.
+
 2002-11-28 Alain Magloire
 
 	* src/.../mi/core/cdi/MemoryBlock.java (setValue):  Only get a byte.

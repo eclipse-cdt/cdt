@@ -20,7 +20,7 @@
 CRITICAL_SECTION cs;
 
 
-TCHAR path[MAX_PATH + 1] = {_T('\0') };  // Directory where spawner.dll is located
+_TCHAR path[MAX_PATH + 1] = {_T('\0') };  // Directory where spawner.dll is located
 
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
@@ -32,14 +32,14 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	{
 		case DLL_PROCESS_ATTACH:
 			{
-			LPTSTR p;
+			_TCHAR * p;
 			InitializeCriticalSection(&cs);
-			GetModuleFileName(hModule, path, MAX_PATH);
+			GetModuleFileNameW(hModule, path, MAX_PATH);
 			p = _tcsrchr(path, _T('\\'));
 			if(NULL != p)
 				*(p + 1) = _T('\0');
 			else
-				_tcscat(path, "\\"); 
+				_tcscat(path, _T("\\")); 
 			}
 			break;
 		case DLL_THREAD_ATTACH:

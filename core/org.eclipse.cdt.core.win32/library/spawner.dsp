@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SPAWNER_EXPORTS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /Gz /MT /W3 /GX /O2 /I "$(JAVA_HOME)\include" /I "$(JAVA_HOME)\include\Win32" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SPAWNER_EXPORTS" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /Gz /MT /W3 /GX /O2 /I "$(JAVA_HOME)\include" /I "$(JAVA_HOME)\include\Win32" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "_USRDLL" /D "SPAWNER_EXPORTS" /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SPAWNER_EXPORTS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /Gz /MD /W3 /Gm /GX /ZI /Od /I "$(JAVA_HOME)\include" /I "$(JAVA_HOME)\include\Win32" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SPAWNER_EXPORTS" /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /Gz /MD /W3 /Gm /GX /ZI /Od /I "$(JAVA_HOME)\include" /I "$(JAVA_HOME)\include\Win32" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "_USRDLL" /D "SPAWNER_EXPORTS" /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -96,7 +96,7 @@ SOURCE=.\iostream.c
 
 !IF  "$(CFG)" == "spawner - Win32 Release"
 
-# ADD CPP /I "E:\Java\jdk1.3.1\include" /I "E:\Java\jdk1.3.1\include\Win32"
+# ADD CPP /I "E:\Java\jdk1.3.1\include" /I "E:\Java\jdk1.3.1\include\Win32" /FAcs
 
 !ELSEIF  "$(CFG)" == "spawner - Win32 Debug"
 
@@ -141,7 +141,7 @@ SOURCE=.\Win32ProcessEx.c
 
 !IF  "$(CFG)" == "spawner - Win32 Release"
 
-# ADD CPP /I "E:\Java\jdk1.3.1\include" /I "E:\Java\jdk1.3.1\include\Win32"
+# ADD CPP /I "E:\Java\jdk1.3.1\include" /I "E:\Java\jdk1.3.1\include\Win32" /FAcs
 
 !ELSEIF  "$(CFG)" == "spawner - Win32 Debug"
 

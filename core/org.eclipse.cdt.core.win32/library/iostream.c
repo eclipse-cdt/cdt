@@ -23,6 +23,7 @@
 #include "jni.h"
 #include "io.h"
 
+//#define READ_REPORT
 
 JNIEXPORT void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
@@ -40,7 +41,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 	BYTE tmpBuf[BUFF_SIZE];	
 	int nBuffOffset = 0;
 #ifdef DEBUG_MONITOR
-	char buffer[1000];
+	_TCHAR buffer[1000];
 #endif
 	OVERLAPPED overlapped;
 	overlapped.Offset     = 0; 
@@ -51,7 +52,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 									NULL);   // unnamed event object  
  
 	if(NULL == overlapped.hEvent) {
-		LPTSTR lpMsgBuf;
+		char * lpMsgBuf;
 		FormatMessage( 
 			FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 			FORMAT_MESSAGE_FROM_SYSTEM | 
@@ -59,17 +60,21 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 			NULL,
 			GetLastError(),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &lpMsgBuf,
+			(char *) &lpMsgBuf,
 			0,
 			NULL 
 		);
 
 		ThrowByName(env, "java/io/IOException", lpMsgBuf);
+		// Free the buffer.
+		LocalFree( lpMsgBuf );
 	}
 
 #ifdef DEBUG_MONITOR
-	sprintf(buffer, "Start read %i\n", fd);
-	OutputDebugString(buffer);
+#ifdef READ_REPORT
+	_stprintf(buffer, _T("Start read %i\n"), fd);
+	OutputDebugStringW(buffer);
+#endif
 #endif
 
 	while(len > nBuffOffset)
@@ -95,11 +100,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 				break;
 			if(err != 0)
 				{
-				LPTSTR lpMsgBuf;
+				char * lpMsgBuf;
 #ifdef DEBUG_MONITOR
-				char buffer[200];
-				sprintf(buffer, "Read failed - %i, error %i\n", fd, err);
-				OutputDebugString(buffer);
+				_stprintf(buffer, _T("Read failed - %i, error %i\n"), fd, err);
+				OutputDebugStringW(buffer);
 #endif
 				if(err != ERROR_MORE_DATA) // Otherwise error means just that there are more data
 					{                      // than buffer can accept
@@ -110,7 +114,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 						NULL,
 						err,
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-						(LPTSTR) &lpMsgBuf,
+						(char *) &lpMsgBuf,
 						0,
 						NULL 
 					);
@@ -132,8 +136,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 		}
 	CloseHandle(overlapped.hEvent);
 #ifdef DEBUG_MONITOR
-	sprintf(buffer, "End read %i\n", fd);
-	OutputDebugString(buffer);
+#ifdef READ_REPORT
+	_stprintf(buffer, _T("End read %i\n"), fd);
+	OutputDebugStringW(buffer);
+#endif
 #endif
 	return nBuffOffset; // This is a real full readed length
 
@@ -149,15 +155,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_clo
 {
 	int rc;
 #ifdef DEBUG_MONITOR
-		char buffer[1000];
-		sprintf(buffer, "Close %i\n", fd);
-		OutputDebugString(buffer);
+		_TCHAR buffer[1000];
+		_stprintf(buffer, _T("Close %i\n"), fd);
+		OutputDebugStringW(buffer);
 #endif
 		DisconnectNamedPipe((HANDLE)fd);
 		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
 #ifdef DEBUG_MONITOR
-		sprintf(buffer, "Closed %i\n", fd);
-		OutputDebugString(buffer);
+		_stprintf(buffer, _T("Closed %i\n"), fd);
+		OutputDebugStringW(buffer);
 #endif
 		return (rc ? GetLastError() : 0);
 }
@@ -181,7 +187,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 		(*env) -> GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
 		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) 
 			{
-			LPTSTR lpMsgBuf;
+			char * lpMsgBuf;
 			FormatMessage( 
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 				FORMAT_MESSAGE_FROM_SYSTEM | 
@@ -189,7 +195,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 				NULL,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(LPTSTR) &lpMsgBuf,
+				(char *) &lpMsgBuf,
 				0,
 				NULL 
 			);
@@ -213,15 +219,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_cl
 {
 	int rc;
 #ifdef DEBUG_MONITOR
-		char buffer[1000];
-		sprintf(buffer, "Close %i\n", fd);
-		OutputDebugString(buffer);
+		_TCHAR buffer[1000];
+		_stprintf(buffer, _T("Close %i\n"), fd);
+		OutputDebugStringW(buffer);
 #endif
 		DisconnectNamedPipe((HANDLE)fd);
 		rc = (CloseHandle((HANDLE)fd) ? 0 : -1);	
 #ifdef DEBUG_MONITOR
-		sprintf(buffer, "Closed %i\n", fd);
-		OutputDebugString(buffer);
+		_stprintf(buffer, _T("Closed %i\n"), fd);
+		OutputDebugStringW(buffer);
 #endif
 		return (rc ? GetLastError() : 0);
 }

@@ -1,3 +1,7 @@
+2004-04-29 Alex Chapiro
+
+	Support for I18N within spawner.
+
 2004-03-25 David Inglis
 	
 	Added platform attribute to processlist extension

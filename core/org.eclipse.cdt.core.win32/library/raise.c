@@ -64,7 +64,7 @@ find_child_console (HWND hwnd, LPARAM arg)
 int interruptProcess(int pid) 
 {
 #ifdef DEBUG_MONITOR
-    char buffer[1000];
+    _TCHAR buffer[1000];
 #endif
 	int rc;
 	// Try another method
@@ -72,8 +72,8 @@ int interruptProcess(int pid)
 	consoleHWND = NULL;
 
 #ifdef DEBUG_MONITOR
-		sprintf(buffer, "Try to interrupt process %i\n", pid);
-		OutputDebugString(buffer);
+		_stprintf(buffer, _T("Try to interrupt process %i\n"), pid);
+		OutputDebugStringW(buffer);
 #endif
 	// Find console
 	EnumWindows (find_child_console, (LPARAM) pid);
@@ -140,16 +140,15 @@ int interruptProcess(int pid)
            AttachThreadInput (GetCurrentThreadId (),
                                    child_thread, FALSE);
 #ifdef DEBUG_MONITOR
-		sprintf(buffer, "Sent Ctrl-C & Ctrl-Break to process %i\n", pid);
-		OutputDebugString(buffer);
+		_stprintf(buffer, _T("Sent Ctrl-C & Ctrl-Break to process %i\n"), pid);
+		OutputDebugStringW(buffer);
 #endif
         }
     } 
 #ifdef DEBUG_MONITOR
 	else {
-		sprintf(buffer, "Cannot find console for process %i\n", pid);
-
-		OutputDebugString(buffer);
+		_stprintf(buffer, _T("Cannot find console for process %i\n"), pid);
+		OutputDebugStringW(buffer);
 	}
 #endif
 

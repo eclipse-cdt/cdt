@@ -5,8 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -203,18 +201,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			sourceManipulationInfo = new SourceManipulationInfo(this);
 		}
 		return sourceManipulationInfo;
-	}
-
-	protected Map parse(InputStream in) {
-		try {
-			removeChildren();
-
-			CModelBuilder modelBuilder = new CModelBuilder(this);
-			return modelBuilder.parse();
-		} catch (Exception e) {
-			System.out.println(e);
-			return null;
-		}
 	}
 
 	protected CElementInfo createElementInfo () {
@@ -476,16 +462,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * Parse the buffer contents of this element.
 	 */
 	public Map parse(){
-		try{
-			String buf =this.getBuffer().getContents();
-			if (buf != null) {
-				StringBufferInputStream in = new StringBufferInputStream (buf);
-				return (parse (in));
-			}
-			return null;
-
-		} catch (CModelException e){
-			// error getting the buffer
+		try {
+				removeChildren();
+				CModelBuilder modelBuilder = new CModelBuilder(this);
+				return modelBuilder.parse();
+		} catch (Exception e) {
+			// FIXME: use the debug log for this exception.
+			//System.out.println(e);
 			return null;
 		}
 	}

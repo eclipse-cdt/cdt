@@ -429,17 +429,12 @@ public class SOM {
 		// Machine type.
 		switch (filehdr.system_id) {
 			case FileHeader.PA_RISC_10:
-				attrib.cpu = "pa-risc_1.0"; //$NON-NLS-1$
-			break;
 			case FileHeader.PA_RISC_11:
-				attrib.cpu = "pa-risc_1.1"; //$NON-NLS-1$
-			break;
 			case FileHeader.PA_RISC_20:
-				attrib.cpu = "pa-risc_2.0"; //$NON-NLS-1$
+				attrib.cpu = "PA_RISC"; //$NON-NLS-1$
 			break;
 			default:
 				attrib.cpu = "unknown"; //$NON-NLS-1$
-			break;
 		}
 
 		/* SOM characteristics, FileHeader.a_magic.  */

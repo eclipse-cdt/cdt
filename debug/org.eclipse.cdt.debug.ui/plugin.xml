@@ -112,6 +112,13 @@
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
          <action
+               label="%BreakpointProperties.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
+         </action>
+         <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"

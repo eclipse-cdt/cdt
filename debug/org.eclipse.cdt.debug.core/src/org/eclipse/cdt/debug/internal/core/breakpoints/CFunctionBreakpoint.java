@@ -5,9 +5,13 @@
  */
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.util.Map;
+
 import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 
 /**
  * 
@@ -17,6 +21,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakpoint
 {
+	private static final String C_FUNCTION_BREAKPOINT = "org.eclipse.jdt.debug.cFunctionBreakpointMarker"; //$NON-NLS-1$
+
 	/**
 	 * Breakpoint attribute storing the function this breakpoint suspends 
 	 * execution in (value <code>"org.eclipse.cdt.debug.core.function"</code>).
@@ -27,10 +33,11 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 	/**
 	 * Constructor for CFunctionBreakpoint.
 	 */
-	public CFunctionBreakpoint()
+	public CFunctionBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
-		super();
+		super( resource, C_FUNCTION_BREAKPOINT, attributes, add );
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICFunctionBreakpoint#getFunction()
 	 */
@@ -69,5 +76,13 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 	public int getCharEnd() throws CoreException
 	{
 		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
+	}
+
+	/**
+	 * Returns the type of marker associated with this type of breakpoints
+	 */
+	public static String getMarkerType()
+	{
+		return C_FUNCTION_BREAKPOINT;
 	}
 }

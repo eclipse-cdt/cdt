@@ -5,9 +5,13 @@
  */
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.util.Map;
+
 import org.eclipse.cdt.debug.core.ICAddressBreakpoint;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 
 /**
  * 
@@ -17,6 +21,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoint
 {
+	private static final String C_ADDRESS_BREAKPOINT = "org.eclipse.jdt.debug.cAddressBreakpointMarker"; //$NON-NLS-1$
+
 	/**
 	 * Breakpoint attribute storing the address this breakpoint suspends 
 	 * execution at (value <code>"org.eclipse.cdt.debug.core.address"</code>).
@@ -27,9 +33,9 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 	/**
 	 * Constructor for CAddressBreakpoint.
 	 */
-	public CAddressBreakpoint()
+	public CAddressBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
-		super();
+		super( resource, C_ADDRESS_BREAKPOINT, attributes, add );
 	}
 
 	/* (non-Javadoc)
@@ -70,5 +76,13 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 	public int getCharEnd() throws CoreException
 	{
 		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
+	}
+
+	/**
+	 * Returns the type of marker associated with this type of breakpoints
+	 */
+	public static String getMarkerType()
+	{
+		return C_ADDRESS_BREAKPOINT;
 	}
 }

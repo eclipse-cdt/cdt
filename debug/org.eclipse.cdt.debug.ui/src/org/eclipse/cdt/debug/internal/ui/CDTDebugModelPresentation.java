@@ -9,16 +9,24 @@ package org.eclipse.cdt.debug.internal.ui;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
+import org.eclipse.cdt.debug.core.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -26,7 +34,9 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -57,6 +67,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 	public final static String DISPLAY_QUALIFIED_NAMES = "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
 	
 	protected HashMap fAttributes = new HashMap(3);
+
+	protected CDebugImageDescriptorRegistry fDebugImageRegistry = CDebugUIPlugin.getImageDescriptorRegistry();
 
 	private static CDTDebugModelPresentation fInstance = null;
 
@@ -141,6 +153,24 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public Image getImage( Object element )
 	{
+		try
+		{
+			if ( element instanceof IMarker ) 
+			{
+				IBreakpoint bp = getBreakpoint( (IMarker)element );
+				if ( bp != null && bp instanceof ICBreakpoint ) 
+				{
+					return getBreakpointImage( (ICBreakpoint)bp );
+				}
+			}
+			if ( element instanceof ICBreakpoint ) 
+			{
+				return getBreakpointImage( (ICBreakpoint)element );
+			}
+		}
+		catch( CoreException e )
+		{
+		}
 		return super.getImage( element );
 	}
 
@@ -165,6 +195,21 @@ public class CDTDebugModelPresentation extends LabelProvider
 				return label.toString();
 			}
 
+			if ( element instanceof IMarker )
+			{
+				IBreakpoint breakpoint = getBreakpoint( (IMarker)element );
+				if ( breakpoint != null )
+				{
+					return getBreakpointText( breakpoint, showQualified );
+				}
+				return null;
+			}
+			
+			if ( element instanceof IBreakpoint )
+			{
+				return getBreakpointText( (IBreakpoint)element, showQualified );
+			}
+			
 			if ( element instanceof IDebugTarget )
 				label.append( getTargetText( (IDebugTarget)element, showQualified ) );
 			else if ( element instanceof IThread )
@@ -192,9 +237,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 				return label.toString();
 			}
 		}
-		catch ( DebugException e )
+		catch( DebugException e )
 		{		
 			return "<not_responding>";
+		}
+		catch( CoreException e )
+		{
+			CDebugUIPlugin.log( e );
 		}
 
 		return null;
@@ -318,5 +367,144 @@ public class CDTDebugModelPresentation extends LabelProvider
 	public static String getFormattedString(String string, String[] args)
 	{
 		return MessageFormat.format( string, args );
+	}
+
+	protected Image getBreakpointImage( ICBreakpoint breakpoint ) throws CoreException
+	{
+		if ( breakpoint instanceof ICLineBreakpoint )
+		{
+			return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
+		}
+		return null;
+	}
+
+	protected Image getLineBreakpointImage( ICLineBreakpoint breakpoint ) throws CoreException
+	{
+		int flags = computeBreakpointAdornmentFlags( breakpoint );
+		CImageDescriptor descriptor = null;
+		if ( breakpoint.isEnabled() )
+		{
+			descriptor = new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_BREAKPOINT ),  flags );
+		}
+		else
+		{
+			descriptor = new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED ),  flags );
+		}
+		return fDebugImageRegistry.get( descriptor );
+	}
+
+	protected IBreakpoint getBreakpoint( IMarker marker )
+	{
+		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
+	}
+
+	protected String getBreakpointText( IBreakpoint breakpoint, boolean qualified ) throws CoreException
+	{
+
+		if ( breakpoint instanceof ICLineBreakpoint )
+		{
+			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICAddressBreakpoint )
+		{
+			return getAddressBreakpointText( (ICAddressBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICFunctionBreakpoint )
+		{
+			return getFunctionBreakpointText( (ICFunctionBreakpoint)breakpoint, qualified );
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	protected String getLineBreakpointText( ICLineBreakpoint breakpoint, boolean qualified ) throws CoreException
+	{
+		StringBuffer label = new StringBuffer();
+		appendResourceName( breakpoint, label, qualified );
+		appendLineNumber( breakpoint, label );
+		appendIgnoreCount( breakpoint, label );
+		appendCondition( breakpoint, label );
+		return label.toString();
+	}
+
+	protected String getAddressBreakpointText( ICAddressBreakpoint breakpoint, boolean qualified ) throws CoreException
+	{
+		return null;
+	}
+
+	protected String getFunctionBreakpointText( ICFunctionBreakpoint breakpoint, boolean qualified ) throws CoreException
+	{
+		return null;
+	}
+
+	protected StringBuffer appendResourceName( ICLineBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException
+	{
+		IPath path = breakpoint.getMarker().getResource().getLocation();
+		if ( !path.isEmpty() )
+			label.append( qualified ? path.toOSString() : path.lastSegment() );
+		return label;
+}
+	
+	protected StringBuffer appendLineNumber( ICLineBreakpoint breakpoint, StringBuffer label ) throws CoreException
+	{
+		int lineNumber = breakpoint.getLineNumber();
+		if ( lineNumber > 0 )
+		{
+			label.append( " [" ); //$NON-NLS-1$
+			label.append( "line:" );
+			label.append( ' ' );
+			label.append( lineNumber );
+			label.append( ']' );
+		}
+		return label;
+	}
+
+	protected StringBuffer appendIgnoreCount( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException
+	{
+		int ignoreCount = breakpoint.getIgnoreCount();
+		if ( ignoreCount > 0 )
+		{
+			label.append( " [" ); //$NON-NLS-1$
+			label.append( "ignore count:" ); //$NON-NLS-1$
+			label.append( ' ' );
+			label.append( ignoreCount );
+			label.append( ']' );
+		}
+		return label;
+	}
+
+	protected void appendCondition( ICLineBreakpoint breakpoint, StringBuffer buffer ) throws CoreException
+	{
+		String condition = breakpoint.getCondition();
+		if ( condition != null && condition.length() > 0 )
+		{
+			buffer.append( " if " ); 
+			buffer.append( condition );
+		}
+	}
+
+	/**
+	 * Returns the adornment flags for the given breakpoint.
+	 * These flags are used to render appropriate overlay
+	 * icons for the breakpoint.
+	 */
+	private int computeBreakpointAdornmentFlags( ICBreakpoint breakpoint )
+	{
+		int flags = 0;
+		try
+		{
+			if ( breakpoint.isEnabled() )
+			{
+				flags |= CImageDescriptor.ENABLED;
+			}
+			if ( breakpoint.isInstalled() )
+			{
+				flags |= CImageDescriptor.INSTALLED;
+			}
+		}
+		catch( CoreException e )
+		{
+			CDebugUIPlugin.log( e );
+		}
+		return flags;
 	}
 }

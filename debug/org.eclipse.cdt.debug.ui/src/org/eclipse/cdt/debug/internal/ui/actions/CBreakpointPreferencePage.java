@@ -6,8 +6,13 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -234,36 +239,13 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 
 	/**
 	 * Constructor for CBreakpointPreferencePage.
-	 * @param style
+	 * @param breakpoint
 	 */
 	public CBreakpointPreferencePage( ICBreakpoint breakpoint )
 	{
 		super( GRID );
 		setBreakpoint( breakpoint );
-	}
-
-	/**
-	 * Constructor for CBreakpointPreferencePage.
-	 * @param title
-	 * @param style
-	 */
-	public CBreakpointPreferencePage(String title, int style)
-	{
-		super(title, style);
-	}
-
-	/**
-	 * Constructor for CBreakpointPreferencePage.
-	 * @param title
-	 * @param image
-	 * @param style
-	 */
-	public CBreakpointPreferencePage(
-		String title,
-		ImageDescriptor image,
-		int style)
-	{
-		super(title, image, style);
+		noDefaultAndApplyButton();
 	}
 
 	/* (non-Javadoc)
@@ -271,6 +253,88 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void createFieldEditors()
 	{
+		ICBreakpoint breakpoint = getBreakpoint();
+		String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
+		if ( fileName != null )
+		{
+			addField( createLabelEditor( getFieldEditorParent(), "File: ", fileName ) );
+		}
+
+		if ( breakpoint instanceof ILineBreakpoint )
+		{
+			setTitle( "C/C++ Line Breakpoint Properties" );
+			ILineBreakpoint lBreakpoint = (ILineBreakpoint)breakpoint;
+			StringBuffer lineNumber = new StringBuffer( 4 );
+			try
+			{
+				int lNumber = lBreakpoint.getLineNumber();
+				if ( lNumber > 0 )
+				{
+					lineNumber.append( lNumber );
+				}
+			}
+			catch( CoreException ce )
+			{
+				CDebugUIPlugin.log( ce );
+			}
+			if ( lineNumber.length() > 0 )
+			{
+				addField( createLabelEditor( getFieldEditorParent(), "Line Number: ", lineNumber.toString() ) );
+			}
+		}
+		IPreferenceStore store = getPreferenceStore();
+
+		try
+		{
+			String condition= breakpoint.getCondition();
+			if ( condition == null ) 
+			{
+				condition = "";
+			}
+			store.setValue( CBreakpointPreferenceStore.CONDITION, condition );
+
+			createConditionEditor( getFieldEditorParent() );
+
+			store.setValue( CBreakpointPreferenceStore.ENABLED, breakpoint.isEnabled() );
+			int ignoreCount = breakpoint.getIgnoreCount();
+			store.setValue( CBreakpointPreferenceStore.IGNORE_COUNT, ( ignoreCount >= 0 ) ? ignoreCount : 0 );
+
+			createIgnoreCountEditor( getFieldEditorParent() );
+		}
+		catch( CoreException ce )
+		{
+			CDebugUIPlugin.log( ce );
+		}
+	}
+
+	protected void createConditionEditor( Composite parent )
+	{
+		fCondition = new BreakpointStringFieldEditor( CBreakpointPreferenceStore.CONDITION, "&Condition", parent );
+		fConditionTextControl = fCondition.getTextControl(parent);
+		fCondition.setEmptyStringAllowed( true );
+		fCondition.setErrorMessage( "Invalid_condition" );
+		addField( fCondition );
+	}
+
+	protected void createIgnoreCountEditor( Composite parent )
+	{
+		fIgnoreCount = new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.IGNORE_COUNT, "&Ignore Count: ", parent );
+		fIgnoreCount.setValidRange( 0, Integer.MAX_VALUE );
+		fIgnoreCountTextControl = fIgnoreCount.getTextControl( parent );
+		try
+		{
+			fIgnoreCountTextControl.setEnabled( getBreakpoint().getIgnoreCount() >= 0 );
+		}
+		catch (CoreException ce)
+		{
+			CDebugUIPlugin.log( ce );
+		}
+		addField( fIgnoreCount );
+	}
+
+	protected FieldEditor createLabelEditor( Composite parent, String title, String value )
+	{
+		return new LabelFieldEditor( parent, title, value );
 	}
 
 	protected ICBreakpoint getBreakpoint() 

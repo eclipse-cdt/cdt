@@ -306,8 +306,15 @@ public class CBreakpointPreferenceStore implements IPreferenceStore
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(String, String)
 	 */
-	public void setValue(String name, String value)
+	public void setValue( String name, String newValue )
 	{
+		Object oldValue = fProperties.get( name );
+		if ( oldValue == null || !oldValue.equals( newValue ) )
+		{
+			fProperties.put( name, newValue );
+			setDirty( true );
+			firePropertyChangeEvent( name, oldValue, newValue );
+		}
 	}
 
 	/* (non-Javadoc)

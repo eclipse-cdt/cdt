@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
+import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.core.resources.IWorkspace;
@@ -18,11 +19,15 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -36,6 +41,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	private ResourceBundle resourceBundle;
 
 	protected Map fDebuggerPageMap;
+
+	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
+
 	/**
 	 * The constructor.
 	 */
@@ -201,5 +209,99 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 			String id = infos[i].getAttribute("debuggerID"); //$NON-NLS-1$
 			fDebuggerPageMap.put(id, infos[i]);
 		}		
+	}
+
+	public static void errorDialog( String message, IStatus status )
+	{
+		log( status );
+		Shell shell = getActiveWorkbenchShell();
+		if ( shell != null )
+		{
+			ErrorDialog.openError( shell, "Error", message, status );
+		}
+	}
+
+	public static void errorDialog( String message, Throwable t )
+	{
+		log( t );
+		Shell shell = getActiveWorkbenchShell();
+		if ( shell != null )
+		{
+			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Error logged from CDT Debug UI: ", t ); //$NON-NLS-1$	
+			ErrorDialog.openError( shell, "Error", message, status );
+		}
+	}
+
+	/**
+	 * Returns the active workbench window
+	 * 
+	 * @return the active workbench window
+	 */
+	public static IWorkbenchWindow getActiveWorkbenchWindow()
+	{
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+
+	public static IWorkbenchPage getActivePage()
+	{
+		IWorkbenchWindow w = getActiveWorkbenchWindow();
+		if ( w != null )
+		{
+			return w.getActivePage();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the active workbench shell or <code>null</code> if none
+	 * 
+	 * @return the active workbench shell or <code>null</code> if none
+	 */
+	public static Shell getActiveWorkbenchShell()
+	{
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if ( window != null )
+		{
+			return window.getShell();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay()
+	{
+		Display display;
+		display = Display.getCurrent();
+		if ( display == null )
+			display = Display.getDefault();
+		return display;
+	}
+
+	/**
+	 * Returns the image descriptor registry used for this plugin.
+	 */
+	public static CDebugImageDescriptorRegistry getImageDescriptorRegistry()
+	{
+		if ( getDefault().fImageDescriptorRegistry == null )
+		{
+			getDefault().fImageDescriptorRegistry = new CDebugImageDescriptorRegistry();
+		}
+		return getDefault().fImageDescriptorRegistry;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException
+	{
+		if ( fImageDescriptorRegistry != null )
+		{
+			fImageDescriptorRegistry.dispose();
+		}
+		super.shutdown();
 	}
 }

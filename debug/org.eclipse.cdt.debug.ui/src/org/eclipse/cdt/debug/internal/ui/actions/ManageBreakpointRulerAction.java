@@ -6,9 +6,12 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -16,16 +19,19 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -228,7 +234,44 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 		IEditorInput editorInput = getTextEditor().getEditorInput();
 		IDocument document = getDocument();
 		int rulerLine = getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
-		// create breakpoint
+		try
+		{
+			BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
+			int lineNumber = bv.getValidBreakpointLocation( document, rulerLine );
+			if ( lineNumber > 0 )
+			{
+				IRegion line = document.getLineInformation( lineNumber - 1 );
+				String fileName = null;
+				if ( editorInput instanceof IFileEditorInput )
+				{
+					fileName = ((IFileEditorInput)editorInput).getFile().getLocation().toString();
+				}
+				if ( fileName != null )
+				{
+					if ( CDebugModel.lineBreakpointExists( fileName, lineNumber ) == null )
+					{
+						CDebugModel.createLineBreakpoint( ((IFileEditorInput)editorInput).getFile(),
+														  lineNumber,
+														  true,
+														  0,
+														  "",
+														  true );
+					}
+				}
+			}
+		}
+		catch( DebugException e )
+		{
+			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+		}
+		catch( CoreException e )
+		{
+			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+		}
+		catch( BadLocationException e )
+		{
+			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+		}
 	}
 
 	protected void removeMarkers( List markers )
@@ -245,7 +288,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 		}
 		catch( CoreException e )
 		{
-//			CDebugUIPlugin.errorDialog( ActionMessages.getString("ManageBreakpointRulerAction.error.removing.message1"), e); //$NON-NLS-1$
+			CDebugUIPlugin.errorDialog( "Cannot remove breakpoint", e );
 		}
 	}
 }

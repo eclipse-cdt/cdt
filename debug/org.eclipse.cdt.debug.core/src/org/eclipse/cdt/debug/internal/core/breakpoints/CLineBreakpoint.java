@@ -5,9 +5,15 @@
  */
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 
 /**
  * 
@@ -17,12 +23,14 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CLineBreakpoint extends CBreakpoint implements ICLineBreakpoint
 {
+	private static final String C_LINE_BREAKPOINT = "org.eclipse.cdt.debug.core.cLineBreakpointMarker"; //$NON-NLS-1$
+
 	/**
 	 * Constructor for CLineBreakpoint.
 	 */
-	public CLineBreakpoint()
+	public CLineBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
-		super();
+		super( resource, getMarkerType(), attributes, add );
 	}
 
 	/* (non-Javadoc)
@@ -47,5 +55,13 @@ public class CLineBreakpoint extends CBreakpoint implements ICLineBreakpoint
 	public int getCharEnd() throws CoreException
 	{
 		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
+	}
+
+	/**
+	 * Returns the type of marker associated with this type of breakpoints
+	 */
+	public static String getMarkerType()
+	{
+		return C_LINE_BREAKPOINT;
 	}
 }

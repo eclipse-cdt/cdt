@@ -24,6 +24,14 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface ICBreakpoint extends IBreakpoint
 {
+	/*
+	 * C Breakpoint attributes
+	 */
+	public static final String CONDITION = "condition"; //$NON-NLS-1$
+	public static final String IGNORE_COUNT = "ignoreCount"; //$NON-NLS-1$
+	public static final String THREAD_ID = "threadId"; //$NON-NLS-1$
+	public static final String INSTALL_COUNT = "installCount"; //$NON-NLS-1$
+
 	/**
 	 * Returns whether this breakpoint is installed in at least
 	 * one debug target.

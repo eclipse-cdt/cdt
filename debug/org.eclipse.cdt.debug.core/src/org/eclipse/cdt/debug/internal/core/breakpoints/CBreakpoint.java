@@ -6,10 +6,20 @@
 
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
+import java.text.MessageFormat;
+import java.util.Map;
+
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
 
@@ -54,9 +64,26 @@ public abstract class CBreakpoint extends Breakpoint
 	/**
 	 * Constructor for CBreakpoint.
 	 */
-	public CBreakpoint()
+	public CBreakpoint( final IResource resource, final String markerType, final Map attributes, final boolean add ) throws DebugException
 	{
-		super();
+		IWorkspaceRunnable wr= new IWorkspaceRunnable() 
+									{
+										public void run( IProgressMonitor monitor ) throws CoreException 
+										{
+											// create the marker
+											setMarker( resource.createMarker( markerType ) );
+											
+											// set attributes
+											ensureMarker().setAttributes( attributes );
+											
+											//set the marker message
+											setAttribute( IMarker.MESSAGE, getMarkerMessage() );
+											
+											// add to breakpoint manager if requested
+											register( add );
+										}
+									};
+		run( wr );
 	}
 
 	/* (non-Javadoc)
@@ -128,5 +155,41 @@ public abstract class CBreakpoint extends Breakpoint
 	 */
 	public void handleDebugEvents( DebugEvent[] events )
 	{
+	}
+
+	/**
+	 * Execute the given workspace runnable
+	 */
+	protected void run( IWorkspaceRunnable wr ) throws DebugException
+	{
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( wr, null );
+		}
+		catch ( CoreException e )
+		{
+			throw new DebugException( e.getStatus() );
+		}
+	}
+
+	/**
+	 * Add this breakpoint to the breakpoint manager,
+	 * or sets it as unregistered.
+	 */
+	protected void register( boolean register ) throws CoreException
+	{
+		if ( register )
+		{
+			DebugPlugin.getDefault().getBreakpointManager().addBreakpoint( this );
+		}
+		else
+		{
+			setRegistered( false );
+		}
+	}
+
+	protected String getMarkerMessage() throws CoreException
+	{
+		return null;
 	}
 }

@@ -1,3 +1,7 @@
+2002-12-17 Mikhail Khodjaiants
+	Changed the implementation of the 'refresh' method of CVariable.
+	* CVariable.java
+
 2002-12-16 Mikhail Khodjaiants
 	Added support of variable formatting.
 	* ICValue.java: new type - TYPE_UNKNOWN

@@ -388,13 +388,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void refresh() throws DebugException
 	{
-		try
-		{
-			getCDIVariable().setValue( getCDIVariable().getValue().getValueString() );
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
-		}
+		((ICValue)getValue()).setChanged( true );
+		fireChangeEvent( DebugEvent.STATE );
 	}
 }

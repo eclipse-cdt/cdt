@@ -539,7 +539,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_waitFor
 
     if (what == WAIT_OBJECT_0)
 		{
-		GetExitCodeProcess((void *)(pCurProcInfo -> pid), &exit_code);
+		GetExitCodeProcess(hProc, &exit_code);
 		}
 
 

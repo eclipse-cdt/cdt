@@ -55,7 +55,7 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toOSString(), pid);
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toOSString(), pid, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {

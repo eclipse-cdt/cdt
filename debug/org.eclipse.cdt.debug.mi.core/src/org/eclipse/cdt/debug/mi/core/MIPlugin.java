@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
+import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -135,18 +136,27 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, String program, int pid) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, String program, int pid, String[] targetParams) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
 		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", program};
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.ATTACH);
+		MIInfo info = null;
 		try {
 			CommandFactory factory = session.getCommandFactory();
+			if (targetParams != null && targetParams.length > 0) {
+				MITargetSelect target = factory.createMITargetSelect(targetParams);
+				session.postCommand(target);
+				info = target.getMIInfo();
+				if (info == null) {
+					throw new IOException("No answer");
+				}
+			}
 			MITargetAttach attach = factory.createMITargetAttach(pid);
 			session.postCommand(attach);
-			MIInfo info = attach.getMIInfo();
+			info = attach.getMIInfo();
 			if (info == null) {
 				throw new IOException("No answer");
 			}

@@ -56,7 +56,9 @@ public class ProblemTreeViewer extends TreeViewer {
 	}
 	
 	
-
+	protected void doUpdateItem(Item item) {
+		doUpdateItem(item, item.getData(), true);
+	}
 	/*
 	 * @see StructuredViewer#mapElement(Object, Widget)
 	 */
@@ -114,17 +116,18 @@ public class ProblemTreeViewer extends TreeViewer {
 		return;
 	}
 	
-    /**
-     * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object, java.lang.String[])
-     */
-    public void update(Object element, String[] properties)
-    {
+//    /**
+//     * @see org.eclipse.jface.viewers.StructuredViewer#update(java.lang.Object, java.lang.String[])
+//     */
+//    public void update(Object element, String[] properties)
+//    {
         /* Calling StructuredViewer.update() causes
          * RunnableLock deadlock with StructuredViewer.doInternalUpdate()
          * when long h file (with lots of declarations) is edited.
          * This is only workaround, it only protects against
          * deadlock but may cause other problems. */
-    }
+//    }
+// Yeah, and the problem tree no longer updates after a schecdule decoration job!!!!
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object)

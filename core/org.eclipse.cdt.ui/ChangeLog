@@ -1,3 +1,9 @@
+2005-03-18 David Inglis
+	
+	Fixed problem with error tick in CView not updateing properly.
+	
+	* src/org/eclipse/cdt/internal/ui/util/ProblemTreeViewer.java
+	
 2005-03-13 Bogdan Gheorghe
 	New UI items to support index framework
 	

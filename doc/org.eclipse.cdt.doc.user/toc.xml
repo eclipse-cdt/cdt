@@ -38,7 +38,7 @@
      <topic label="Tasks" href="cdt_o_tasks.htm">
           <topic label="Updating the CDT" href="cdt_t_update_man.htm"/>
           <topic label="Working with C/C++ project files" href="cdt_o_proj_files.htm">
-               <topic label="Displaying C/C++ file components" href="cdt_t_show_proj_files.htm"/>
+               <topic label="Displaying C/C++ file components in the C/C++ Projects view" href="cdt_t_show_proj_files.htm"/>
                <topic label="Creating a project file" href="cdt_t_new_proj.htm"/>
                <topic label="Converting to a C or C++ Project" href="cdt_t_conv_proj.htm"/>
                <topic label="Creating a managed make C++ Project" href="cdt_t_man_proj.htm"/>

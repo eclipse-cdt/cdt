@@ -1,3 +1,6 @@
+2004-02-06 Hoda Amer
+	Fix for Bug#51208: NullPointerException in CModelBuilder
+	
 2004-02-05 Alain Magloire
                                                                                                                              
     PR 50810

@@ -122,7 +122,9 @@ public class CModelBuilder {
 			parser = ParserFactory.createParser( 
 				ParserFactory.createScanner( 
 					new StringReader( code ), 
-					translationUnit.getUnderlyingResource().getLocation().toOSString(), 
+					(translationUnit.getUnderlyingResource() != null ? 
+					 translationUnit.getUnderlyingResource().getLocation().toOSString() :
+					 ""),
 					scanInfo, 
 					mode, 
 					language, 

@@ -10,13 +10,13 @@ All Rights Reserved.
 <!-- C++ -->
 
 <template description="for loop" name="for" context="C Function">
-for (${var} = 0; ${var} &lt; ${max}; ${var}++) {
+for (${var} = 0; ${var} &lt; ${max}; ++${var}) {
 	${cursor}
 }
 </template>
 
 <template description="for loop with temporary variable" name="for" context="C Function">
-for (int ${var} = 0; ${var} &lt; ${max}; ${var}++) {
+for (int ${var} = 0; ${var} &lt; ${max}; ++${var}) {
 	${cursor}
 }
 </template>

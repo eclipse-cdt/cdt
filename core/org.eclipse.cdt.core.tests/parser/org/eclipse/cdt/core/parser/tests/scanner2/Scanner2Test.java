@@ -314,7 +314,7 @@ public class Scanner2Test extends BaseScanner2Test
 		validateEOF();
 		validateDefinition(
 				"SIMPLE_STRING", //$NON-NLS-1$
-				"This 	is a simple 	string.\\\n		Continue please."); //$NON-NLS-1$
+				"This 	is a simple 	string.		Continue please."); //$NON-NLS-1$
 	}
 
 

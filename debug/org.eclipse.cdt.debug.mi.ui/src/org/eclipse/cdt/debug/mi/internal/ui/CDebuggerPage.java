@@ -12,6 +12,8 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +53,12 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 
 		fAutoSoLibButton = new Button(comp, SWT.CHECK ) ;
 		fAutoSoLibButton.setText("Load shared library symbols automatically");
+		fAutoSoLibButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fAutoSoLibButton.setLayoutData(gd);

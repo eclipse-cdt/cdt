@@ -125,15 +125,15 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout(2, false);
-			layout.marginWidth= 5;
-			layout.numColumns= 2;
+			layout.marginWidth = 5;
+			layout.numColumns = 2;
 			composite.setLayout(layout);
-			
+
 			GC gc = new GC(composite);
 			gc.setFont(composite.getFont());
-			FontMetrics metrics= gc.getFontMetrics();
+			FontMetrics metrics = gc.getFontMetrics();
 			gc.dispose();
-			int fieldWidthHint= convertWidthInCharsToPixels(metrics, 50);
+			int fieldWidthHint = convertWidthInCharsToPixels(metrics, 50);
 
 			Label label = new Label(composite, SWT.NONE);
 			label.setText("Name:");
@@ -195,7 +195,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		fElements = new Properties();
 		Composite control = new Composite(parent, SWT.NONE);
 		GridLayout gl = new GridLayout(2, false);
-		
+
 		createVerticalSpacer(control, 2);
 
 		control.setLayout(gl);
@@ -204,7 +204,6 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		setControl(control);
 		fVariableList.setInput(fElements);
 		fVariableList.getTable().setFocus();
-		updateButtons();
 	}
 
 	public void set(String env) {
@@ -212,8 +211,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		ByteArrayInputStream input = new ByteArrayInputStream(env.getBytes());
 		try {
 			fElements.load(input);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 		}
 
 		fVariableList.refresh();
@@ -265,15 +263,14 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		column2.setText("Value");
 		tableLayout.addColumnData(new ColumnWeightData(30));
 
-		fVariableList.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				updateButtons();
-			}
-		});
-
 		fVariableList.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
 				elementDoubleClicked((IStructuredSelection) e.getSelection());
+			}
+		});
+		fVariableList.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				updateButtons();
 			}
 		});
 	}
@@ -327,6 +324,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			fVariableList.refresh();
 		}
 		updateButtons();
+		updateLaunchConfigurationDialog();
 	}
 
 	protected void edit() {
@@ -342,6 +340,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			fVariableList.refresh();
 		}
 		updateButtons();
+		updateLaunchConfigurationDialog();
 	}
 
 	protected void remove() {
@@ -351,6 +350,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			fElements.remove(((Map.Entry) elements[i]).getKey());
 		fVariableList.refresh();
 		updateButtons();
+		updateLaunchConfigurationDialog();
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
@@ -360,19 +360,20 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			Map env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
-			if ( env != null ) {
+			Map env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+			if (env != null) {
+				fElements.clear();
 				fElements.putAll(env);
 				fVariableList.refresh();
 				updateButtons();
 			}
-//			config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
-		} catch ( CoreException e ) {
+			//			config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
+		} catch (CoreException e) {
 		}
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, fElements);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) fElements.clone());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
 	}
 

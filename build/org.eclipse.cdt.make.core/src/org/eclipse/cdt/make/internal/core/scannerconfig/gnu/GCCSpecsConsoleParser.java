@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -96,7 +97,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				return rc;
 		}
 			
-		fCollector.contributeToScannerConfig(fProject, includes, symbols, null);
+		fCollector.contributeToScannerConfig(fProject, includes, symbols, new HashMap());
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
 				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
 		

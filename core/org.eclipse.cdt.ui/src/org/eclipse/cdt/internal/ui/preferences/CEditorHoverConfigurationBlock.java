@@ -149,6 +149,7 @@ public class CEditorHoverConfigurationBlock {
 	private TableColumn fModifierColumn;
 	private Text fDescription;
 	//private Button fShowHoverAffordanceCheckbox;
+	private Button fShowEditorAnnotationCheckbox;
 	
 	private CEditorPreferencePage fMainPreferencePage;
 
@@ -181,8 +182,8 @@ public class CEditorHoverConfigurationBlock {
 		ArrayList overlayKeys= new ArrayList();
 	
 		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
-
 		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS));
 		
@@ -212,10 +213,15 @@ public class CEditorHoverConfigurationBlock {
 		// Affordance checkbox
 		//fShowHoverAffordanceCheckbox= new Button(hoverComposite, SWT.CHECK);
 		//fShowHoverAffordanceCheckbox.setText(PreferencesMessages.getString("CEditorHoverConfigurationBlock.showAffordance")); //$NON-NLS-1$
+		//fShowHoverAffordanceCheckbox.setLayoutData(gd);
+		
+		// Disable/enable editor problem annotaion checkbox
+		fShowEditorAnnotationCheckbox = new Button(hoverComposite, SWT.CHECK);
+		fShowEditorAnnotationCheckbox.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviourPage.EnableEditorProblemAnnotation")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 0;
 		gd.horizontalSpan= 2;
-		//fShowHoverAffordanceCheckbox.setLayoutData(gd);
+		fShowEditorAnnotationCheckbox.setLayoutData(gd);
 
 		addFiller(hoverComposite);
 
@@ -396,7 +402,8 @@ public class CEditorHoverConfigurationBlock {
 
 	void initializeFields() {
 		//fShowHoverAffordanceCheckbox.setSelection(fStore.getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
-
+		
+		fShowEditorAnnotationCheckbox.setSelection(fStore.getBoolean(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		fModifierEditor.setEnabled(false);
 		
 		Iterator e= fCheckBoxes.keySet().iterator();
@@ -435,7 +442,7 @@ public class CEditorHoverConfigurationBlock {
 		fStore.setValue(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, maskBuf.toString());
 		
 		//fStore.setValue(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, fShowHoverAffordanceCheckbox.getSelection());
-		
+		fStore.setValue(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, fShowEditorAnnotationCheckbox.getSelection());
 		CUIPlugin.getDefault().resetCEditorTextHoverDescriptors();
 	}
 

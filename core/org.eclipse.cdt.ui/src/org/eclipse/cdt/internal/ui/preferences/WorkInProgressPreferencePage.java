@@ -13,7 +13,6 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.ui.search.CSearchPage;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -48,7 +47,6 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	private Button fExternEnabled;
 	private Button fIProblemMarkers;
 	private Button fBackgroundTypeCacheEnabled;
-	private Button fEditorCorrection;
 	
 	
 	protected OverlayPreferenceStore fOverlayStore;
@@ -67,7 +65,6 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSearchPage.EXTERNALMATCH_VISIBLE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, SourceIndexer.CDT_INDEXER_TIMEOUT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -151,16 +148,6 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		editorCorrectionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		editorCorrectionGroup.setText("Editor"); //$NON-NLS-1$
 
-		fEditorCorrection = createCheckButton(editorCorrectionGroup, "Enable editor problem annotation"); //$NON-NLS-1$
-		fEditorCorrection.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-			public void widgetSelected(SelectionEvent e) {
-				Button button = (Button) e.widget;
-				fOverlayStore.setValue(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, button.getSelection());
-			}
-		});
-	
 		initialize(); 
 		
 		return result;
@@ -178,7 +165,6 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		
 		fBackgroundTypeCacheEnabled.setSelection(fOverlayStore.getBoolean(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
 		
-		fEditorCorrection.setSelection(fOverlayStore.getBoolean(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 	}
 	
 	/* (non-Javadoc)
@@ -235,10 +221,10 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	public boolean performOk() {
 		
 		String timeOut = fTextControl.getText();
-		try{
-			Integer timeInt = new Integer(timeOut);
-		}
-		catch (NumberFormatException ex){
+		try {
+			// Check the string number
+			Integer.parseInt(timeOut);
+		} catch (NumberFormatException ex){
 			timeOut = TIMEOUT_VALUE;
 		}
 		
@@ -252,8 +238,6 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		prefs.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT,timeOut);
 
 		prefs.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, fOverlayStore.getString(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
-
-		prefs.setValue(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, fOverlayStore.getString(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 
 		CCorePlugin.getDefault().savePluginPreferences();
 		

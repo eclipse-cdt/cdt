@@ -1,3 +1,8 @@
+2003-10-07 Mikhail Khodjaiants
+
+	All methods of 'IRuntimeOptions' should throw CDI exceptions in case of failure.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RuntimeOptions.java
+
 2003-09-30 Alain Magloire
 
 	ICDIVariableObject.equals();

@@ -20,19 +20,19 @@ public interface ICDIRuntimeOptions {
 	 *
 	 * @param args the string representing the arguments.
 	 */
-	void setArguments(String[] args);
+	void setArguments(String[] args) throws CDIException;
 
 	/**
 	 * Program/Inferior environment settings.
 	 *
 	 * @param props the new environment variable to add.
 	 */
-	void setEnvironment(Properties props);
+	void setEnvironment(Properties props) throws CDIException;
 
 	/**
 	 * Program/Inferior working directory.
 	 *
 	 * @param wd the working directory to start the program.
 	 */
-	void setWorkingDirectory(String wd);
+	void setWorkingDirectory(String wd) throws CDIException;
 }

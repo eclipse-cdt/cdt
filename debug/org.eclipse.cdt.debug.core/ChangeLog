@@ -3,6 +3,10 @@
 	'setCurrentThread': check if the old current thread is not null.
 	* CDebugTarget.java
 
+2003-10-07 Mikhail Khodjaiants
+	All methods of 'IRuntimeOptions' should throw CDI exceptions in case of failure.
+	* ICDIRuntimeOptions.java
+
 2003-09-30 Mikhail Khodjaiants
 	Use the new 'equals' method of ICDIVaraiableObject to compare variables.
 	* CVariable.java

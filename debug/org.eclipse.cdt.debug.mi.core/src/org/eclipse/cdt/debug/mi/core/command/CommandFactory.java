@@ -215,6 +215,10 @@ public class CommandFactory {
 		return new MIThreadListIds();
 	}
 
+	public MIInfoThreads createMIInfoThreads() {
+		return new MIInfoThreads();
+	}
+
 	public MIThreadSelect createMIThreadSelect(int threadNum) {
 		return new MIThreadSelect(threadNum);
 	}

@@ -439,7 +439,7 @@ public abstract class ConvertProjectWizardPage
      * @param project
      * @return boolean
      */
-    protected abstract boolean isCandidate(IProject project);
+    public abstract boolean isCandidate(IProject project);
 
     /**
      * convertProject must be overwritten in subclasses to change behaviour
@@ -449,7 +449,7 @@ public abstract class ConvertProjectWizardPage
      * @param projectID
      * @throws CoreException
      */
-    protected abstract void convertProject(IProject project, 
+    public abstract void convertProject(IProject project, 
                                            IProgressMonitor monitor, String projectID)
                                     throws CoreException;
 }

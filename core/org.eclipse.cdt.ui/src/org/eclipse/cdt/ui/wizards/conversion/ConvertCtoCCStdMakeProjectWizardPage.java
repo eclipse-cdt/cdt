@@ -65,7 +65,7 @@ public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPa
      * @param project
      * @return boolean
      */
-    protected boolean isCandidate(IProject project) {
+    public boolean isCandidate(IProject project) {
         try {
             if (project.hasNature(CoreModel.C_NATURE_ID) 
                     && !project.hasNature(CoreModel.CC_NATURE_ID))

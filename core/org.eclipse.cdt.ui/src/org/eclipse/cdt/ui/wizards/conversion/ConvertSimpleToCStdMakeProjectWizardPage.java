@@ -65,7 +65,7 @@ public class ConvertSimpleToCStdMakeProjectWizardPage extends ConvertProjectWiza
      * @param project
      * @return boolean
      */
-    protected boolean isCandidate(IProject project) {       
+    public boolean isCandidate(IProject project) {       
         boolean noCNature = false;
         try {
             noCNature =  !project.hasNature(CoreModel.C_NATURE_ID);

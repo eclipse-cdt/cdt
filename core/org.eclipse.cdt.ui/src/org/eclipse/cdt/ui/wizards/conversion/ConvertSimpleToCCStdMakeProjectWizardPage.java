@@ -65,7 +65,7 @@ public class ConvertSimpleToCCStdMakeProjectWizardPage extends ConvertSimpleToCS
      * @param project
      * @return boolean
      */
-    protected boolean isCandidate(IProject project) {
+    public boolean isCandidate(IProject project) {
         boolean noCNature = super.isCandidate(project);
         boolean noCCNature = false;
 

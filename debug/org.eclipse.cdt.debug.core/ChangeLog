@@ -1,3 +1,10 @@
+2003-08-06 Alain Magloire
+
+	Move some of the methods in ICDIVariableObject.
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariable.java
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariableObject.java
+
 2003-08-05 Mikhail Khodjaiants
 	Use the 'getReferencedProject' method to obtain all referenced projects.
 	* CDebugUtils.java

@@ -123,7 +123,9 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	 * Gets the project location path from the main page
 	 * Overwrite this method if you do not have a main page
 	 */
-	protected IPath getLocationPath() {
+	protected IPath getLocationPath() throws UnsupportedOperationException {
+		if (null == fMainPage)
+			throw new UnsupportedOperationException();
 		return fMainPage.getLocationPath();
 	}
 
@@ -132,7 +134,9 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	 * Overwrite this method if you do not have a main page
 	 */
 
-	protected IProject getProjectHandle() {
+	protected IProject getProjectHandle() throws UnsupportedOperationException {
+		if (null == fMainPage)
+			throw new UnsupportedOperationException();
 		return fMainPage.getProjectHandle();
 	}
 
@@ -254,8 +258,8 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 			CUIPlugin.log(th);
 			try {
 				getProjectHandle().delete(false, false, null);
-			}
-			catch (CoreException ignore) {
+			} catch (CoreException ignore) {
+			} catch (UnsupportedOperationException ignore) {
 			}
 			return false;
 		} catch  (InterruptedException e) {
@@ -290,7 +294,12 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 			return newProject;
 
 		// get a project handle
-		IProject newProjectHandle = getProjectHandle();
+		IProject newProjectHandle = null;
+		try {
+			newProjectHandle = getProjectHandle();
+		} catch (UnsupportedOperationException e) {
+			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, e.getMessage(), null));
+		}
 
 		// get a project descriptor
 		IPath defaultPath = Platform.getLocation();

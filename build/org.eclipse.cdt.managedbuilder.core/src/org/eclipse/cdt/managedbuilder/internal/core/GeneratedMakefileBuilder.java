@@ -59,6 +59,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
 	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
 	private static final String BUILD_FINISHED = MESSAGE + ".finished";	//$NON-NLS-1$
+	private static final String NOTHING_BUILT = MESSAGE + ".no.build";	//$NON-NLS-1$
 	private static final String MAKE = MESSAGE + ".make";	//$NON-NLS-1$
 	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
 	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
@@ -204,7 +205,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (topBuildDir != null) {
 			invokeMake(true, topBuildDir, info, monitor);
 		} else {
-			statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
+			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
 			return;
 		}
@@ -354,7 +355,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (buildDir != null) {
 			invokeMake(false, buildDir, info, monitor);
 		} else {
-			monitor.done();
+			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
+			monitor.subTask(statusMsg);
 			return;
 		}
 		monitor.worked(1);

@@ -68,6 +68,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 public class Scanner implements IScanner {
 
+	protected static final EndOfFileException EOF = new EndOfFileException();
 	static ScannerStringBuffer strbuff = new ScannerStringBuffer(100);
 	protected static final String HEX_PREFIX = "0x"; //$NON-NLS-1$
 	private static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( __CPLUSPLUS, "199711L"); //$NON-NLS-1$
@@ -2302,7 +2303,7 @@ public class Scanner implements IScanner {
 		if( node == null )
 		{	
 			if( offsetLimit == NO_OFFSET_LIMIT )
-				throw new EndOfFileException();
+				throw EOF;
 			
 			if( finalToken != null && finalToken.getEndOffset() == offsetLimit )
 				throw new OffsetLimitReachedException(finalToken);

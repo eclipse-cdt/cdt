@@ -142,14 +142,14 @@ public abstract class Parser extends ExpressionParser implements IParser
 		}
 		
         IToken lastBacktrack = null;
-        IToken checkToken = null;
+        
         while (true)
         {
             try
             {
-                checkToken = LA(1);
+                int checkOffset = LA(1).getOffset();
                 declaration(compilationUnit, null, null);
-                if (LA(1) == checkToken)
+                if (LA(1).getOffset() == checkOffset)
                     errorHandling();
             }
             catch (EndOfFileException e)
@@ -355,7 +355,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             linkage.enterScope( requestor );    
             linkageDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
-                IToken checkToken = LA(1);
+                int checkToken = LA(1).getOffset();
                 switch (LT(1))
                 {
                     case IToken.tRBRACE :
@@ -369,11 +369,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         catch (BacktrackException bt)
                         {
                             failParse();
-                            if (checkToken == LA(1))
+                            if (checkToken == LA(1).getOffset())
                                 errorHandling();
                         }
                 }
-                if (checkToken == LA(1))
+                if (checkToken == LA(1).getOffset())
                     errorHandling();
             }
             // consume the }
@@ -891,7 +891,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             setCompletionValues(scope,CompletionKind.VARIABLE_TYPE, Key.DECLARATION );
             namespaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
-                IToken checkToken = LA(1);
+                int checkToken = LA(1).getOffset();
                 switch (LT(1))
                 {
                     case IToken.tRBRACE :
@@ -905,11 +905,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         catch (BacktrackException bt)
                         {
                             failParse();
-                            if (checkToken == LA(1))
+                            if (checkToken == LA(1).getOffset())
                                 errorHandling();
                         }
                 }
-                if (checkToken == LA(1))
+                if (checkToken == LA(1).getOffset())
                     errorHandling();
             }
             setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,Key.EMPTY );
@@ -1001,6 +1001,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 						sdw.isComplex(), 
 						sdw.isImaginary(),
 						sdw.isGloballyQualified(), sdw.getExtensionParameters()));
+                sdw.setTypeName( null );
             }
             catch (Exception e1)
             {
@@ -1837,40 +1838,42 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             consume(IToken.tASSIGN);
             setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
-            simpleDeclarationMark = null; 
+            throwAwayMarksForInitializerClause(d);
             IASTInitializerClause clause = initializerClause(scope,constructInitializers);
 			d.setInitializerClause(clause);
 			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
         }
         else if (LT(1) == IToken.tLPAREN )
         {
-        	IToken mark = mark(); 
             // initializer in constructor
-            try
-            {
-                consume(IToken.tLPAREN); // EAT IT!
-                setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
-                IASTExpression astExpression = null;
-                astExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION);
-                setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
-                consume(IToken.tRPAREN);
-                d.setConstructorExpression(astExpression);
-            } catch( BacktrackException bt )
-            {
-            	backup( mark ); 
-            	throw bt;
-            }
+            consume(IToken.tLPAREN); // EAT IT!
+            setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
+            IASTExpression astExpression = null;
+            astExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION);
+            setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
+            consume(IToken.tRPAREN);
+            d.setConstructorExpression(astExpression);
         }
     }
     
-    protected void optionalCInitializer( Declarator d, boolean constructInitializers ) throws EndOfFileException, BacktrackException
+    /**
+	 * @param d
+	 */
+	protected void throwAwayMarksForInitializerClause(Declarator d) {
+		simpleDeclarationMark = null; 
+		if( d.getNameDuple() != null )
+			d.getNameDuple().getLastToken().setNext( null );
+	}
+
+
+	protected void optionalCInitializer( Declarator d, boolean constructInitializers ) throws EndOfFileException, BacktrackException
     {
     	final IASTScope scope = d.getDeclarationWrapper().getScope();
     	setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
     	if( LT(1) == IToken.tASSIGN )
     	{
     		consume( IToken.tASSIGN );
-    		simpleDeclarationMark = null; 
+    		throwAwayMarksForInitializerClause(d);
     		setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
 			d.setInitializerClause( cInitializerClause(scope, Collections.EMPTY_LIST, constructInitializers ) );
 			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
@@ -1887,11 +1890,11 @@ public abstract class Parser extends ExpressionParser implements IParser
     {    	
         if (LT(1) == IToken.tLBRACE)
         {
-            IToken mark = consume(IToken.tLBRACE);
+        	consume(IToken.tLBRACE);
             List initializerList = new ArrayList();
             for (;;)
             {
-            	IToken checkToken = LA(1);
+            	int checkOffset = LA(1).getOffset();
                 // required at least one initializer list
                 // get designator list
                 List newDesignators = designatorList(scope);
@@ -1909,11 +1912,9 @@ public abstract class Parser extends ExpressionParser implements IParser
                     consume(IToken.tCOMMA);
                 if (LT(1) == IToken.tRBRACE)
                     break;
-                if( checkToken == LA(1))
-                {
-                	backup( mark );
+                if( checkOffset == LA(1).getOffset())
                 	throw backtrack;
-                }
+                
                 // otherwise, its another initializer in the list
             }
             // consume the closing brace
@@ -2648,7 +2649,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             handleClassSpecifier( astClassSpecifier );
             memberDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
-                IToken checkToken = LA(1);
+                int checkToken = LA(1).getOffset();
                 switch (LT(1))
                 {
                     case IToken.t_public :
@@ -2678,11 +2679,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         catch (BacktrackException bt)
                         {
                             failParse();
-                            if (checkToken == LA(1))
+                            if (checkToken == LA(1).getOffset())
                                 errorHandling();
                         }
                 }
-                if (checkToken == LA(1))
+                if (checkToken == LA(1).getOffset())
                     errorHandling();
             }
             // consume the }
@@ -3083,7 +3084,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }        
         	newScope.enterScope( requestor );
         }
-        IToken checkToken = null;
+        
         setCompletionValues( 
         		(createNewScope ? newScope : scope ), 
 				CompletionKind.SINGLE_NAME_REFERENCE, 
@@ -3091,7 +3092,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         while (LT(1) != IToken.tRBRACE)
         {
-        	checkToken = LA(1);
+        	int checkToken = LA(1).getOffset();
         	try
         	{
             	statement((IASTCodeScope) (createNewScope ? newScope : scope) );
@@ -3099,7 +3100,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         	catch( BacktrackException b )
         	{
         		failParse(); 
-        		if( LA(1) == checkToken )
+        		if( LA(1).getOffset() == checkToken )
         			errorHandling();
         	}
         	setCompletionValues(((createNewScope ? newScope : scope )), CompletionKind.SINGLE_NAME_REFERENCE, 

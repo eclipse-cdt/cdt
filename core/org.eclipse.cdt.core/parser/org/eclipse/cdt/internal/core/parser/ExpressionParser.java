@@ -230,6 +230,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @throws BacktrackException	request a backtrack
 	 */
 	protected IToken consumeTemplateParameters(IToken previousLast) throws EndOfFileException, BacktrackException {
+		if( language != ParserLanguage.CPP ) return previousLast;
 	    IToken last = previousLast;
 	    if (LT(1) == IToken.tLT)
 	    {
@@ -524,6 +525,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @throws BacktrackException
 	 */
 	protected IToken consumeTemplateArguments(IASTScope scope, IToken last, TemplateParameterManager argumentList) throws EndOfFileException, BacktrackException {
+		if( language != ParserLanguage.CPP ) return last;
 		if( LT(1) == IToken.tLT ){
 			IToken secondMark = mark();
 			consume( IToken.tLT );
@@ -1206,11 +1208,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            case IToken.tLTEQUAL :
 	            case IToken.tGTEQUAL :
 	                IToken mark = mark();
-	                IToken t = consume();
-	                IToken next = LA(1);
-	                IASTExpression secondExpression =
-	                    shiftExpression(scope,kind, key);
-	                if (next == LA(1))
+	                int t = consume().getType();
+	                IASTExpression secondExpression = shiftExpression(scope,kind, key);
+	                if (LA(1) == mark.getNext() )
 	                {
 	                    // we did not consume anything
 	                    // this is most likely an error
@@ -1218,7 +1218,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                    return firstExpression;
 	                }
                     IASTExpression.Kind expressionKind = null;
-                    switch (t.getType())
+                    switch (t)
                     {
                         case IToken.tGT :
                             expressionKind =
@@ -1476,8 +1476,17 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        // If this isn't a type name, then we shouldn't be here
 	        try
 	        {
-				typeId = typeId(scope, false, getCastExpressionKind(kind));
-	            consume(IToken.tRPAREN);
+	        	try
+				{
+	        		typeId = typeId(scope, false, getCastExpressionKind(kind));
+		            consume(IToken.tRPAREN);
+				}
+	        	catch( BacktrackException bte )
+				{
+	        		backup( mark );
+	        		throw bte;
+				}
+	        	mark = null; // clean up mark so that we can garbage collect
 	            if( templateIdScopes != null ){ templateIdScopes.pop();	popped = true;}
 	            IASTExpression castExpression = castExpression(scope,kind,key);
 	            try
@@ -1502,7 +1511,6 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        }
 	        catch (BacktrackException b)
 	        {
-	            backup(mark);
 	            if( templateIdScopes != null && !popped ){ templateIdScopes.pop();	}
 	        }
 	    }
@@ -1526,7 +1534,6 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	public IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers, CompletionKind completionKind) throws EndOfFileException, BacktrackException {
 		IToken mark = mark();
-		IToken start = mark;
 		ITokenDuple name = null;
 		boolean isConst = false, isVolatile = false; 
 		boolean isSigned = false, isUnsigned = false; 
@@ -1703,8 +1710,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		try
 	    {
 			String signature = "";//$NON-NLS-1$
-			if( start != null && lastToken != null )
-				signature = TokenDuple.createStringRepresentation(start, lastToken);
+			if( lastToken != null )
+				signature = TokenDuple.createStringRepresentation(mark, lastToken);
 	        return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers(), signature);
 	    }
 	    catch (ASTSemanticException e)
@@ -2136,6 +2143,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						throw bt;
 					backup( current );
 				}
+				current = null;
 	            consume( IToken.tLPAREN ); 
 	            if( templateIdScopes != null ){ templateIdScopes.push( new Integer( IToken.tLPAREN ) );	}
 	            IASTExpression expressionList = expression( scope, CompletionKind.TYPE_REFERENCE, key ); 
@@ -2706,13 +2714,14 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        case IToken.tCOMPL:
 	            ITokenDuple duple = null; 
 	            
-	            IToken mark = mark();
+	            
 	            try
 	            {
 					duple = name(scope, kind, key);
 	            }
 	            catch( BacktrackException bt )
 	            {
+	            	IToken mark = mark();
 	            	Declarator d = new Declarator( new DeclarationWrapper(scope, mark.getOffset(), mark.getLineNumber(), null) );
 	
 					if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER)

@@ -192,6 +192,7 @@ public class TokenDuple implements ITokenDuple {
 	private static final Integer LPAREN = new Integer( IToken.tLPAREN );
 	private String [] qualifiedName = null;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private String stringRepresentation = null;
 
 	public IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
 	    IToken token = name;
@@ -298,7 +299,9 @@ public class TokenDuple implements ITokenDuple {
 	
 	public String toString() 
 	{
-		return createStringRepresentation(firstToken, lastToken);
+		if( stringRepresentation == null )
+			stringRepresentation = createStringRepresentation(firstToken, lastToken);
+		return stringRepresentation;
 	}
 	
 	public boolean isIdentifier()
@@ -540,5 +543,6 @@ public class TokenDuple implements ITokenDuple {
 		qualifiedName = (String[]) qn.toArray( qualifiedName );
 		
 	}
+
 	
 }

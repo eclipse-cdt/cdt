@@ -2364,6 +2364,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	= new ObjectStyleMacro("__const__".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __const
 	= new ObjectStyleMacro("__const".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __signed__
+	= new ObjectStyleMacro("__signed__".toCharArray(), "signed".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static final FunctionStyleMacro __attribute__
 		= new FunctionStyleMacro(
@@ -2394,6 +2396,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		definitions.put(__restrict__.name, __restrict__);
 		definitions.put(__restrict.name, __restrict);
 		definitions.put(__volatile__.name, __volatile__);
+		definitions.put(__signed__.name, __signed__ );
 		if( language == ParserLanguage.CPP )
 			definitions.put(__asm__.name, __asm__);
 		else

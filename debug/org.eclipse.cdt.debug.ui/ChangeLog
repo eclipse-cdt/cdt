@@ -1,4 +1,8 @@
 2003-07-28 Mikhail Khodjaiants
+	Minimize the number of the "evaluate expression" requests when changing the value of the floating point types.
+	* CDTDebugModelPresentation.java
+
+2003-07-28 Mikhail Khodjaiants
 	Refactoring: moved the 'isNaN', 'isPositiveInfinity' and 'isNegativeInfinity' to the 'CDebugUtils' class.
 	* CDTDebugModelPresentation.java
 

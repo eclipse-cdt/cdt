@@ -590,11 +590,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 				}
 				else if ( type != null && type.isFloatingPointType() )
 				{
-					if ( CDebugUtils.isNaN( (ICValue)value ) )
+					Number floatingPointValue = CDebugUtils.getFloatingPointValue( (ICValue)value );
+					if ( CDebugUtils.isNaN( floatingPointValue ) )
 						valueString = "NAN";
-					if ( CDebugUtils.isPositiveInfinity( (ICValue)value ) )
+					if ( CDebugUtils.isPositiveInfinity( floatingPointValue ) )
 						valueString = "Infinity";
-					if ( CDebugUtils.isNegativeInfinity( (ICValue)value ) )
+					if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
 						valueString = "-Infinity";
 					label.append( "= " );
 					label.append( valueString );

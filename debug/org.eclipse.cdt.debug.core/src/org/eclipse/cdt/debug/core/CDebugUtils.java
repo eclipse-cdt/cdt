@@ -344,7 +344,7 @@ public class CDebugUtils
 		return null;
 	}
 
-	public static boolean isNaN( ICValue value )
+	public static Number getFloatingPointValue( ICValue value )
 	{
 		if ( value instanceof CValue )
 		{
@@ -353,66 +353,55 @@ public class CDebugUtils
 				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
 				if ( cdiValue instanceof ICDIDoubleValue )
 				{
-					return Double.isNaN( ((ICDIDoubleValue)cdiValue).doubleValue() );
+					return new Double( ((ICDIDoubleValue)cdiValue).doubleValue() );
 				}
 				if ( cdiValue instanceof ICDIFloatValue )
 				{
-					return Float.isNaN( ((ICDIFloatValue)cdiValue).floatValue() );
+					return new Float( ((ICDIFloatValue)cdiValue).floatValue() );
 				}
 			}
 			catch( CDIException e ) 
 			{
 			}
 		}
-		return false;
+		return null;
 	}
 
-	public static boolean isPositiveInfinity( ICValue value )
+	public static boolean isNaN( Number value )
 	{
-		if ( value instanceof CValue )
+		if ( value instanceof Double )
 		{
-			try 
-			{
-				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
-				if ( cdiValue instanceof ICDIDoubleValue )
-				{
-					double dbl = ((ICDIDoubleValue)cdiValue).doubleValue();
-					return ( Double.isInfinite( dbl ) && Double.POSITIVE_INFINITY == dbl );
-				}
-				if ( cdiValue instanceof ICDIFloatValue )
-				{
-					float flt = ((ICDIFloatValue)cdiValue).floatValue();
-					return ( Float.isInfinite( flt ) && Float.POSITIVE_INFINITY == flt );
-				}
-			}
-			catch( CDIException e ) 
-			{
-			}
+			return ((Double)value).isNaN();
+		}
+		if ( value instanceof Float )
+		{
+			return ((Float)value).isNaN();
 		}
 		return false;
 	}
 
-	public static boolean isNegativeInfinity( ICValue value )
+	public static boolean isPositiveInfinity( Number value )
 	{
-		if ( value instanceof CValue )
+		if ( value instanceof Double )
 		{
-			try 
-			{
-				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
-				if ( cdiValue instanceof ICDIDoubleValue )
-				{
-					double dbl = ((ICDIDoubleValue)cdiValue).doubleValue();
-					return ( Double.isInfinite( dbl ) && Double.NEGATIVE_INFINITY == dbl );
-				}
-				if ( cdiValue instanceof ICDIFloatValue )
-				{
-					float flt = ((ICDIFloatValue)cdiValue).floatValue();
-					return ( Float.isInfinite( flt ) && Float.NEGATIVE_INFINITY == flt );
-				}
-			}
-			catch( CDIException e ) 
-			{
-			}
+			return ( ((Double)value).isInfinite() && value.doubleValue() == Double.POSITIVE_INFINITY );
+		}
+		if ( value instanceof Float )
+		{
+			return ( ((Float)value).isInfinite() && value.floatValue() == Float.POSITIVE_INFINITY );
+		}
+		return false;
+	}
+
+	public static boolean isNegativeInfinity( Number value )
+	{
+		if ( value instanceof Double )
+		{
+			return ( ((Double)value).isInfinite() && value.doubleValue() == Double.NEGATIVE_INFINITY );
+		}
+		if ( value instanceof Float )
+		{
+			return ( ((Float)value).isInfinite() && value.floatValue() == Float.NEGATIVE_INFINITY );
 		}
 		return false;
 	}

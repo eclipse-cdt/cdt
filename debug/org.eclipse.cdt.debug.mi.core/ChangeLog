@@ -1,3 +1,9 @@
+2003-07-28 Mikhail Khodjaiants
+
+	Minimize the number of the "evaluate expression" requests when changing the value of the floating point types.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/FloatingPointValue.java
+
 2003-07-17 Alain Magloire
 
 	Catch the use of cli command "detach" and fire the appropriate events.

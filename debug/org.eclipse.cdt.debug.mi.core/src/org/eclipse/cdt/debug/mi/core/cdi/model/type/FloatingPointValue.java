@@ -26,15 +26,16 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	 */
 	public double doubleValue() throws CDIException {
 		double result = 0;
-		if (isNaN())
+		String valueString = getValueString();
+		if (isNaN(valueString))
 			result = Double.NaN;
-		else if (isNegativeInfinity())
+		else if (isNegativeInfinity(valueString))
 			result = Double.NEGATIVE_INFINITY;
-		else if (isPositiveInfinity())
+		else if (isPositiveInfinity(valueString))
 			result = Double.POSITIVE_INFINITY;
 		else {		
 			try {
-				result = Double.parseDouble(getValueString());
+				result = Double.parseDouble(valueString);
 			} catch (NumberFormatException e) {
 			}
 		}
@@ -46,33 +47,31 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	 */
 	public float floatValue() throws CDIException {
 		float result = 0;
-		if (isNaN())
+		String valueString = getValueString();
+		if (isNaN(valueString))
 			result = Float.NaN;
-		else if (isNegativeInfinity())
+		else if (isNegativeInfinity(valueString))
 			result = Float.NEGATIVE_INFINITY;
-		else if (isPositiveInfinity())
+		else if (isPositiveInfinity(valueString))
 			result = Float.POSITIVE_INFINITY;
 		else {		
 			try {
-				result = Float.parseFloat(getValueString());
+				result = Float.parseFloat(valueString);
 			} catch (NumberFormatException e) {
 			}
 		}
 		return result;
 	}
 
-	private boolean isPositiveInfinity() throws CDIException {
-		String valueString = getValueString();
+	private boolean isPositiveInfinity(String valueString) {
 		return (valueString != null) ? valueString.indexOf("inf") != -1 : false;
 	}
 
-	private boolean isNegativeInfinity() throws CDIException {
-		String valueString = getValueString();
+	private boolean isNegativeInfinity(String valueString) {
 		return (valueString != null) ? valueString.indexOf("-inf") != -1 : false;
 	}
 
-	private boolean isNaN() throws CDIException {
-		String valueString = getValueString();
+	private boolean isNaN(String valueString) {
 		return (valueString != null) ? valueString.indexOf("nan") != -1 : false;
 	}
 }

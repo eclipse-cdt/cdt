@@ -11,5 +11,5 @@ package org.eclipse.cdt.core.model;
 public interface IVariableDeclaration extends ICElement, ISourceManipulation, ISourceReference {
 
 	public String getType ();
-	public int getAccesControl();
+	public int getAccessControl() throws CModelException;
 }

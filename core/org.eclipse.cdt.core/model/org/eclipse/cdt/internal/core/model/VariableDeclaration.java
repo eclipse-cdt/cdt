@@ -18,7 +18,7 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		return "";
 	}
 
-	public int getAccesControl() {
+	public int getAccessControl() {
 		return 0;
 	}
 

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
@@ -69,7 +70,7 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 	 */
 	public boolean hasRegisters() throws DebugException
 	{
-		return getRegisters0().size() > 0;
+		return fRegisterObjects.length > 0;
 	}
 
 	private List getRegisters0() throws DebugException
@@ -147,6 +148,24 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 				register.setCDIVariable( cdiRegisters[index] );
 			}
 			index++;
+		}
+	}
+	
+	protected void preserve()
+	{
+		if ( fRegisters == null )
+			return;
+		try
+		{
+			Iterator it = fRegisters.iterator();
+			while( it.hasNext() )
+			{
+				((CVariable)it.next()).setChanged( false );
+			}
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
 		}
 	}
 }

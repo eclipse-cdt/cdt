@@ -682,7 +682,13 @@ public class CStackFrame extends CDebugElement
 		return (IVariable[])list.toArray( new IVariable[list.size()] );
 	}
 	
-	protected synchronized void preserveVariables()
+	protected synchronized void preserve()
+	{
+		preserveVariables();
+		preserveRegisters();
+	}
+
+	private void preserveVariables()
 	{
 		if ( fVariables == null )
 			return;
@@ -698,6 +704,11 @@ public class CStackFrame extends CDebugElement
 		{
 			CDebugCorePlugin.log( e );
 		}
+	}
+	
+	private void preserveRegisters()
+	{
+		((CDebugTarget)getDebugTarget()).preserveRegisters();
 	}
 	
 	// temporary solution

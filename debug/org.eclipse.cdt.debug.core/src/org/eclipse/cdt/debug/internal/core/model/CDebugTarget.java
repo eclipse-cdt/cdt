@@ -1647,4 +1647,13 @@ public class CDebugTarget extends CDebugElement
 			((CRegisterGroup)it.next()).dispose();
 		}
 	}
+	
+	protected void preserveRegisters()
+	{
+		Iterator it = fRegisterGroups.iterator();
+		while( it.hasNext() )
+		{
+			((CRegisterGroup)it.next()).preserve();
+		}
+	}
 }

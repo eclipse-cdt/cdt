@@ -227,6 +227,13 @@ public class RegistersView extends AbstractDebugEventHandlerView
 			return;
 		}
 
+		if ( current != null && frame != null && 
+			 current instanceof IStackFrame && 
+			 ((IStackFrame)current).getDebugTarget().equals( frame.getDebugTarget() ) )
+		{
+			return;
+		}
+
 		showViewer();
 		getViewer().setInput( frame );
 	}

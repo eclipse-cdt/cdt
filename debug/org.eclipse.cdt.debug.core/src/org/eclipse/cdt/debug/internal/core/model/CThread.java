@@ -657,7 +657,7 @@ public class CThread extends CDebugElement
 		Iterator it = fStackFrames.iterator();
 		while( it.hasNext() )
 		{
-			((CStackFrame)it.next()).preserveVariables();
+			((CStackFrame)it.next()).preserve();
 		}
 		setRefreshChildren( true );
 	}

@@ -183,8 +183,8 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
+            	log.traceLog( "Parser::translationUnit: Unexpected exception occurred : " + e.getMessage() );
 				failParse();
-                break;
             }
         }
         compilationUnit.exitScope( requestor );

@@ -951,4 +951,12 @@ public class DOMBuilder implements ISourceElementRequestor
         // TODO Auto-generated method stub
         
     }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
+     */
+    public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -54,6 +55,7 @@ public interface ISourceElementRequestor {
 	public void acceptASMDefinition( IASTASMDefinition asmDefinition );
 	public void acceptTypedefDeclaration( IASTTypedefDeclaration typedef );
 	public void acceptEnumerationSpecifier( IASTEnumerationSpecifier enumeration );
+	public void acceptElaboratedForewardDeclaration( IASTElaboratedTypeSpecifier elaboratedType );
 	public void acceptAbstractTypeSpecDeclaration( IASTAbstractTypeSpecifierDeclaration abstractDeclaration );
 
 	public void enterFunctionBody( IASTFunction function );

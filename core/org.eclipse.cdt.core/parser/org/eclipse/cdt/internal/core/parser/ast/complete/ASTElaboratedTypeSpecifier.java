@@ -10,10 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
@@ -23,8 +26,11 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElaboratedTypeSpecifier
 {
-	private final ASTClassKind kind;
+	private final boolean isForwardDeclaration;
+    private final ASTClassKind kind;
+	private final ASTQualifiedNamedElement qualifiedName;
     private Offsets offsets = new Offsets();
+    private final ASTReferenceStore store; 
 	
     /**
      * @param checkSymbol
@@ -32,12 +38,16 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int endOffset)
+    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int endOffset, List references, boolean isDecl )
     {
         super( checkSymbol );
         this.kind = kind;
         setStartingOffset( startingOffset );
         setEndingOffset( endOffset );
+        qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), checkSymbol.getName() );
+        store = new ASTReferenceStore( references );
+        isForwardDeclaration = isDecl;
+        
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getName()
@@ -93,6 +103,9 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
+    	if( isForwardDeclaration )
+			requestor.acceptElaboratedForewardDeclaration(this);
+		store.processReferences(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -105,5 +118,12 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
     }
 }

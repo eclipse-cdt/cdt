@@ -1,4 +1,7 @@
-2003-08-12
+2003-08-12 John Camelon
+	Added CompleteParseASTTest::testForewardDeclarationWithUsage(). 
+
+2003-08-12 Hoda Amer
 	Added CompletionProposalsTest to the suit to test the generation 
 	of completion proposals.
 

@@ -1,3 +1,6 @@
+2003-08-12 John Camelon
+	Added X-Ref/Elaborated type support w/element requestor callbacks.  
+
 2003-08-11 John Camelon
 	Added Complete Parse support for ASM Definitions.  
 	Added isVolatile() to abstract declarations.

@@ -10,9 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
@@ -24,19 +27,21 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
 
 	private Offsets offsets = new Offsets();
 	private final String typeName;
-	private final ASTClassKind classKind;  
+	private final ASTClassKind classKind;
+	private final ASTQualifiedNamedElement qualifiedName;   
     /**
      * @param elaboratedClassKind
      * @param typeName
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
+    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
     {
     	classKind = elaboratedClassKind; 
     	this.typeName = typeName;
     	offsets.setStartingOffset( startingOffset );
     	offsets.setEndingOffset( endOffset );
+    	qualifiedName = new ASTQualifiedNamedElement( scope, typeName );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getTypeName()
@@ -87,5 +92,31 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
     public boolean isResolved() throws ASTNotImplementedException
     {
     	throw new ASTNotImplementedException();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void acceptElement(ISourceElementRequestor requestor)
+    {
+    	requestor.acceptElaboratedForewardDeclaration(this);
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void enterScope(ISourceElementRequestor requestor)
+    {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void exitScope(ISourceElementRequestor requestor)
+    {
     }
 }

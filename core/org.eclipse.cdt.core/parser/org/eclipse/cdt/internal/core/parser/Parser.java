@@ -1493,7 +1493,8 @@ public class Parser implements IParser
  
         ITokenDuple d = name();
         IASTElaboratedTypeSpecifier elaboratedTypeSpec = null;
-        
+		final boolean isForewardDecl = ( LT(1) == IToken.tSEMI );
+		
         try
         {
             elaboratedTypeSpec =
@@ -1503,7 +1504,7 @@ public class Parser implements IParser
                     d,
                     t.getOffset(),
                     d.getLastToken().getEndOffset(), 
-                    ( LT(1) == IToken.tSEMI ) );
+                    isForewardDecl );
         }
         catch (ASTSemanticException e)
         {
@@ -1511,6 +1512,9 @@ public class Parser implements IParser
 			throw backtrack;
         }
         sdw.setTypeSpecifier(elaboratedTypeSpec);
+        
+        if( isForewardDecl )
+        	elaboratedTypeSpec.acceptElement( requestor );
     }
     /**
      * Consumes template parameters.  

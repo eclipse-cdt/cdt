@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
 /**
  * @author jcamelon
@@ -23,13 +24,13 @@ public class ASTClassReference
     extends ASTReference
     implements IASTClassReference
 {
-	private final IASTClassSpecifier reference; 
+    private final IASTTypeSpecifier reference; 
     /**
      * @param i
      * @param string
      * @param specifier
      */
-    public ASTClassReference(int i, String string, IASTClassSpecifier specifier)
+    public ASTClassReference(int i, String string, IASTTypeSpecifier specifier)
     {
     	super( i, string );
 		reference = specifier;
@@ -39,7 +40,7 @@ public class ASTClassReference
      */
     public ISourceElementCallbackDelegate getReferencedElement()
     {
-        return reference;
+        return (ISourceElementCallbackDelegate)reference;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -59,5 +60,12 @@ public class ASTClassReference
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTClassReference#isResolved()
+     */
+    public boolean isResolved()
+    {
+        return ( reference instanceof IASTClassSpecifier );
     }
 }

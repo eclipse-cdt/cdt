@@ -400,6 +400,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		IDerivableContainerSymbol newSymbol = pst.newDerivableContainerSymbol( lastToken.getImage(), pstType );
 		
+		if( classSymbol != null )
+			classSymbol.setTypeSymbol( newSymbol );
+			
 		try
         {
             currentScopeSymbol.addSymbol( newSymbol );
@@ -408,9 +411,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
         	throw new ASTSemanticException();
         }
-		
-		if( classSymbol != null )
-			classSymbol.setTypeSymbol( newSymbol );
 			
         ASTClassSpecifier classSpecifier = new ASTClassSpecifier( newSymbol, kind, type, access, startingOffset, nameOffset, references );
         try
@@ -500,7 +500,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				 symbol.getType() == TypeInfo.t_struct || 
 				 symbol.getType() == TypeInfo.t_union ) 
 		{  
-			return new ASTClassReference( offset, string, (IASTClassSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
+			return new ASTClassReference( offset, string, (IASTTypeSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
 		}
 		else if( symbol.getTypeInfo().checkBit( TypeInfo.isTypedef ))
 		{
@@ -1296,7 +1296,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	            }
 	            
 	            ASTElaboratedTypeSpecifier elab = 
-	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, endOffset );
+	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, endOffset, references, isForewardDecl );
 	            	
 	            try
                 {

@@ -16,5 +16,5 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTClassReference extends IASTReference
 {
-	
+	public boolean isResolved();
 }

@@ -104,6 +104,7 @@ public class CompleteParseASTTest extends TestCase
 	public class FullParseCallback implements ISourceElementRequestor 
 	{
 		private List references = new ArrayList(); 
+		private List forewardDecls = new ArrayList();
         private Stack inclusions = new Stack();
         private Scope compilationUnit;
         
@@ -499,6 +500,22 @@ public class CompleteParseASTTest extends TestCase
         {
         	return references;
         }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
+         */
+        public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType)
+        {
+            forewardDecls.add( elaboratedType );
+        }
+        /**
+         * @return
+         */
+        public List getForewardDecls()
+        {
+            return forewardDecls;
+        }
+
 	}
 	
 	protected Iterator getDeclarations( IASTScope scope )
@@ -851,6 +868,25 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( variableA.getName(), "a");
 		assertEquals( variableA.getAbstractDeclaration().getTypeSpecifier(), elab ); 
 	}
+	
+	public void testForewardDeclarationWithUsage() throws Exception
+	{
+		Iterator declarations = parse( "class A; A * anA;class A { };").getDeclarations();
+		IASTAbstractTypeSpecifierDeclaration forewardDecl = (IASTAbstractTypeSpecifierDeclaration)declarations.next(); 
+		IASTVariable variable = (IASTVariable)declarations.next();
+		IASTAbstractTypeSpecifierDeclaration classDecl = (IASTAbstractTypeSpecifierDeclaration)declarations.next();
+		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)forewardDecl.getTypeSpecifier();
+		IASTClassSpecifier clasSpec = (IASTClassSpecifier)classDecl.getTypeSpecifier();
+		assertEquals( elab.getName(), clasSpec.getName() );
+		String [] fqnClass = clasSpec.getFullyQualifiedName();
+		String [] fqnElab = elab.getFullyQualifiedName();
+		assertEquals( fqnClass.length, fqnElab.length );
+		for( int i = 0; i < fqnClass.length; ++i )
+			assertEquals( fqnClass[i], fqnElab[i]);
+		assertEquals( callback.getReferences().size(), 1 );
+		assertEquals( callback.getForewardDecls().size(), 1 );
+	}
+		
 	
 	public void testASM() throws Exception
 	{

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -403,4 +404,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		if (reference.getReferencedElement() instanceof IASTMethod)
 		 indexer.addMethodReference((IASTMethod) reference.getReferencedElement());
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
+     */
+    public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType)
+    {
+        // TODO BOGDAN IMPLEMENT THIS        
+    }
 }

@@ -10,13 +10,15 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTElaboratedTypeSpecifier extends IASTTypeSpecifier, IASTOffsetableElement {
+public interface IASTElaboratedTypeSpecifier extends IASTTypeSpecifier, IASTOffsetableElement, IASTQualifiedNameElement, ISourceElementCallbackDelegate {
 
 	public String getName(); 
 	public ASTClassKind getClassKind();

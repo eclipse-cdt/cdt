@@ -143,7 +143,6 @@ public class ErrorParserManager extends OutputStream {
 		}
 	}
 
-
 	private void initErrorParsersMap() {
 		String[] parserIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
 		for (int i = 0; i < parserIDs.length; i++) {
@@ -172,6 +171,9 @@ public class ErrorParserManager extends OutputStream {
 	 * Parses the input and try to generate error or warning markers
 	 */
 	private void processLine(String line) {
+		if (fErrorParsers.size() == 0)
+			return;
+
 		String[] parserIDs = new String[fErrorParsers.size()];
 		Iterator items = fErrorParsers.keySet().iterator();
 		for (int i = 0; items.hasNext(); i++) {

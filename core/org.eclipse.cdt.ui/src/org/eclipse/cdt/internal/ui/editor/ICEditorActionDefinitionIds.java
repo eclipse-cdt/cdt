@@ -1,7 +1,13 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -49,9 +55,14 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String TOGGLE_PRESENTATION= "org.eclipse.cdt.ui.edit.text.c.toggle.presentation"; //$NON-NLS-1$
 	/**
 	 * Action definition ID of the open declaration action
-	 * (value <code>"org.eclipse.cdt.ui.edit.text.java.toggle.presentation"</code>).
+	 * (value <code>"org.eclipse.cdt.ui.edit.opendecl"</code>).
 	 */
 	public static final String OPEN_DECL= "org.eclipse.cdt.ui.edit.opendecl"; //$NON-NLS-1$
 
-
+	/**
+	 * Action definition ID of the show in C/C++ Projects View action
+	 * (value <code>"org.eclipse.cdt.ui.edit.opencview"</code>).
+	 */
+	public static final String OPEN_CVIEW= "org.eclipse.cdt.ui.edit.opencview"; //$NON-NLS-1$
+ 
 }

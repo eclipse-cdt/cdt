@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -461,11 +462,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action);
 
+		action = new ShowInCViewAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
+		setAction("ShowInCView", action); //$NON-NLS-1$
+
 		fFileSearchAction = new FileSearchAction(getSelectionProvider());
 		
 		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(getSelectionProvider());
 		
 		fSearchDialogAction = new SearchDialogAction(getSelectionProvider(), this);
+
 	}
 
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
@@ -498,6 +504,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenDeclarations"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$	
 	}
 
 	public void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {

@@ -223,7 +223,9 @@ public class Thread extends CObject implements ICDIThread {
 			// To generate changeEvents.
 			if (doUpdate) {
 				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
-				regMgr.update();
+				if (regMgr.isAutoUpdate()) {
+					regMgr.update();
+				}
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);

@@ -131,7 +131,9 @@ public class Target  implements ICDITarget {
 			// To generate changeEvents.
 			if (doUpdate) {
 				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
-				regMgr.update();
+				if (regMgr.isAutoUpdate()) {
+					regMgr.update();
+				}
 			}
 		}
 

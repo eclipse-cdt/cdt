@@ -245,7 +245,7 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 			postCommand(exit);
 		} catch (MIException e) {
 		}
-
+		
 		// Close the input GDB prompt
 		try {
 			if (inChannel != null)
@@ -297,6 +297,12 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 				miOutPipe.close();
 			}
 		} catch (IOException e) {
+		}
+		
+		// Make sure it gdb is killed.
+		// FIX: Spawner will do the waitFor();
+		if (miProcess != null) {
+			miProcess.destroy();
 		}
 	}
 

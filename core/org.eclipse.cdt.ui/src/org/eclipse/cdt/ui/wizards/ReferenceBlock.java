@@ -94,7 +94,7 @@ public class ReferenceBlock implements IWizardTab {
 				ArrayList aList = new ArrayList(15);
 				final IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
-					if (CoreModel.hasCNature(projects[i])) {
+					if (CoreModel.getDefault().hasCNature(projects[i])) {
 						// Do not show the actual project being look at
 						if ((project != null) && project.equals(projects[i])) {
 							continue;

@@ -37,6 +37,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -1322,5 +1324,465 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @return
      */
     protected abstract IASTCastExpression createCastExpression();
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseDeclarationOrExpressionStatement() throws EndOfFileException, BacktrackException {
+        // expressionStatement
+        // Note: the function style cast ambiguity is handled in
+        // expression
+        // Since it only happens when we are in a statement
+        IToken mark = mark();
+        IASTExpressionStatement expressionStatement = null;
+        IToken lastTokenOfExpression = null;
+        BacktrackException savedBt = null;
+        try {
+            IASTExpression expression = expression();
+            lastTokenOfExpression = consume(IToken.tSEMI);
+            expressionStatement = createExpressionStatement();
+            expressionStatement.setExpression( expression );
+            expression.setParent( expressionStatement );
+            expression.setPropertyInParent( IASTExpressionStatement.EXPFRESSION );
+        } catch (BacktrackException b) {
+        }
+    
+        backup( mark );
+        
+        // declarationStatement
+        IASTDeclarationStatement ds = null;
+        try
+        {
+            IASTDeclaration d = declaration();
+            ds = createDeclarationStatement();
+            ds.setDeclaration(d);
+            d.setParent( ds );
+            d.setPropertyInParent( IASTDeclarationStatement.DECLARATION );
+        }
+        catch( BacktrackException b )
+        {
+            savedBt = b;
+            backup( mark );
+        }
+        
+        
+        if( expressionStatement == null && ds != null )
+        {
+            cleanupLastToken();
+            return ds;
+        }
+        if( expressionStatement != null && ds == null )
+        {
+            while( true ) 
+            {
+                if( consume() == lastTokenOfExpression )
+                    break;
+            }
+            cleanupLastToken();
+            return expressionStatement;
+        }
+        
+        if( expressionStatement == null && ds == null )
+            throwBacktrack(savedBt);
+        //resolve ambiguities
+        //A * B = C;
+        //A & B = C;
+        if( expressionStatement.getExpression() instanceof IASTBinaryExpression )
+        {
+            IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement.getExpression();
+            if( exp.getOperator() == IASTBinaryExpression.op_assign )
+            {
+                IASTExpression lhs = exp.getOperand1();
+                if( lhs instanceof IASTBinaryExpression && ((IASTBinaryExpression)lhs).getOperator() == IASTBinaryExpression.op_multiply ) 
+                {
+                    cleanupLastToken();
+                    return ds;
+                }
+                if( lhs instanceof IASTBinaryExpression && ((IASTBinaryExpression)lhs).getOperator() == IASTBinaryExpression.op_binaryAnd ) 
+                {
+                    cleanupLastToken();
+                    return ds;
+                }
+            }
+        } 
+        if( ds.getDeclaration() instanceof IASTSimpleDeclaration && 
+        	((IASTSimpleDeclaration)ds.getDeclaration()).getDeclSpecifier() instanceof IASTSimpleDeclSpecifier &&
+        	((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)ds.getDeclaration()).getDeclSpecifier() ).getType() == IASTSimpleDeclSpecifier.t_unspecified)
+        {
+            backup( mark );
+            while( true ) 
+            {
+                if( consume() == lastTokenOfExpression )
+                    break;
+            }
+            cleanupLastToken();
+            return expressionStatement;                                    
+        }
+        backup( mark );
+        while( true ) 
+        {
+            if( consume() == lastTokenOfExpression )
+                break;
+        }
+        cleanupLastToken();
+        return expressionStatement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseLabelStatement() throws EndOfFileException, BacktrackException {
+        IToken labelName = consume(IToken.tIDENTIFIER);
+        consume(IToken.tCOLON);
+        IASTLabelStatement label_statement = createLabelStatement();
+        ((ASTNode)label_statement).setOffset( labelName.getOffset() );
+        IASTName name = createName( labelName );
+        label_statement.setName( name );
+        name.setParent( label_statement );
+        name.setPropertyInParent( IASTLabelStatement.NAME );
+        return label_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseNullStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.tSEMI ).getOffset();
+        cleanupLastToken();
+        IASTNullStatement null_statement = createNullStatement();
+        ((ASTNode)null_statement).setOffset( startOffset );
+        return null_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseGotoStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_goto).getOffset();
+        IToken identifier = consume(IToken.tIDENTIFIER);
+        consume(IToken.tSEMI);
+        cleanupLastToken();
+        IASTName goto_label_name = createName( identifier );
+        IASTGotoStatement goto_statement = createGoToStatement();
+        ((ASTNode)goto_statement).setOffset( startOffset );
+        goto_statement.setName( goto_label_name );
+        goto_label_name.setParent( goto_statement );
+        goto_label_name.setPropertyInParent( IASTGotoStatement.NAME );
+        return goto_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseBreakStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_break).getOffset();
+        consume(IToken.tSEMI);
+        cleanupLastToken();
+        IASTBreakStatement break_statement = createBreakStatement();
+        ((ASTNode)break_statement).setOffset( startOffset );
+        return break_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseContinueStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_continue).getOffset();
+        consume(IToken.tSEMI);
+        cleanupLastToken();
+        IASTContinueStatement continue_statement = createContinueStatement();
+        ((ASTNode)continue_statement).setOffset( startOffset );
+        return continue_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseReturnStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_return).getOffset();
+        IASTExpression result = null;
+        if (LT(1) != IToken.tSEMI) {
+            result = expression();
+            cleanupLastToken();
+        }
+        consume(IToken.tSEMI);
+        cleanupLastToken();
+        IASTReturnStatement return_statement = createReturnStatement();
+        ((ASTNode)return_statement).setOffset( startOffset );
+        if( result != null )
+        {
+            return_statement.setReturnValue( result );
+            result.setParent( return_statement );
+            result.setPropertyInParent( IASTReturnStatement.RETURNVALUE );
+        }
+        return return_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseForStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume( IToken.t_for ).getOffset();
+        consume(IToken.tLPAREN);
+        IASTNode init = forInitStatement();
+        IASTExpression for_condition = null;
+        if (LT(1) != IToken.tSEMI)
+            for_condition = condition();
+        consume(IToken.tSEMI);
+        IASTExpression iterationExpression = null;
+        if (LT(1) != IToken.tRPAREN) {
+            iterationExpression = expression();
+            cleanupLastToken();
+        }
+        consume(IToken.tRPAREN);
+        IASTStatement for_body = statement();
+        cleanupLastToken();
+        IASTForStatement for_statement = createForStatement();
+        ((ASTNode)for_statement).setOffset( startOffset );
+        if( init instanceof IASTDeclaration )
+        {
+            for_statement.setInit((IASTDeclaration) init);
+            ((IASTDeclaration) init).setParent( for_statement );
+            ((IASTDeclaration) init).setPropertyInParent( IASTForStatement.INITDECLARATION );
+        }
+        else if( init instanceof IASTExpression )
+        {
+            for_statement.setInit((IASTExpression) init);
+            ((IASTExpression) init).setParent( for_statement );
+            ((IASTExpression) init).setPropertyInParent( IASTForStatement.INITEXPRESSION );
+        }
+        if( for_condition != null )
+        {
+            for_statement.setCondition( for_condition );
+            for_condition.setParent( for_statement );
+            for_condition.setPropertyInParent( IASTForStatement.CONDITION );
+        }
+        if( iterationExpression != null )
+        {
+            for_statement.setIterationExpression( iterationExpression );
+            iterationExpression.setParent( for_statement );
+            iterationExpression.setPropertyInParent( IASTForStatement.ITERATION );
+        }
+        for_statement.setBody( for_body );
+        for_body.setParent( for_statement );
+        for_body.setPropertyInParent( IASTForStatement.BODY );
+        return for_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseDoStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_do).getOffset();
+        IASTStatement do_body = statement();
+        consume(IToken.t_while);
+        consume(IToken.tLPAREN);
+        IASTExpression do_condition = condition();
+        consume(IToken.tRPAREN);
+        cleanupLastToken();
+        IASTDoStatement do_statement = createDoStatement();
+        ((ASTNode)do_statement).setOffset( startOffset );
+        do_statement.setBody( do_body );
+        do_body.setParent( do_statement );
+        do_body.setPropertyInParent( IASTDoStatement.BODY );
+        do_statement.setCondition( do_condition );
+        do_condition.setParent( do_statement );
+        do_condition.setPropertyInParent( IASTDoStatement.CONDITION );
+        return do_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseWhileStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_while).getOffset();
+        consume(IToken.tLPAREN);
+        IASTExpression while_condition = condition();
+        consume(IToken.tRPAREN);
+        IASTStatement while_body = statement();
+        cleanupLastToken();
+        IASTWhileStatement while_statement = createWhileStatement();
+        ((ASTNode)while_statement).setOffset( startOffset );
+        while_statement.setCondition( while_condition );
+        while_condition.setParent( while_statement );
+        while_condition.setPropertyInParent( IASTWhileStatement.CONDITION );
+        while_statement.setBody( while_body );
+        while_condition.setParent( while_statement );
+        while_condition.setPropertyInParent( IASTWhileStatement.BODY );
+        while_body.setParent( while_statement );
+        return while_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseSwitchStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume( IToken.t_switch ).getOffset();
+        consume(IToken.tLPAREN);
+        IASTExpression switch_condition = condition();
+        consume(IToken.tRPAREN);
+        IASTStatement switch_body = statement();
+        cleanupLastToken();
+        IASTSwitchStatement switch_statement = createSwitchStatement();
+        ((ASTNode)switch_statement).setOffset( startOffset );
+        switch_statement.setController( switch_condition );
+        switch_condition.setParent( switch_statement );
+        switch_condition.setPropertyInParent( IASTSwitchStatement.CONTROLLER );
+        switch_statement.setBody( switch_body );
+        switch_body.setParent( switch_statement );
+        switch_body.setPropertyInParent( IASTSwitchStatement.BODY );
+        return switch_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseIfStatement() throws EndOfFileException, BacktrackException {
+        IASTIfStatement if_statement = null;
+        if_loop: while( true ){
+        	int so = consume(IToken.t_if).getOffset();
+        	consume(IToken.tLPAREN);
+        	IToken start = LA(1);
+        	boolean passedCondition = true;
+        	IASTExpression condition = null;
+        	try {
+        		condition = condition();
+        		consume(IToken.tRPAREN);
+        	} catch (BacktrackException b) {
+        	    //if the problem has no offset info, make a new one that does
+        	    if( b.getProblem() != null && b.getProblem().getSourceLineNumber() == -1 ){
+        	        IProblem p = b.getProblem();
+        	        IProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
+                            		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
+                                       start.getLineNumber(), p.getOriginatingFileName(),
+                                       p.getArguments() != null ? p.getArguments().toCharArray() : null,
+                                       p.isWarning(), p.isError() );
+        	        b.initialize( p2 );
+        	    }
+        		failParse(b);
+        		failParseWithErrorHandling();
+        		passedCondition = false;
+        	}
+        	
+        	IASTStatement thenClause = null;
+        	if( passedCondition ){
+        	    thenClause = statement();
+        	}
+        	
+        	IASTIfStatement new_if_statement = createIfStatement();
+        	((ASTNode)new_if_statement).setOffset( so );
+        	new_if_statement.setCondition( condition );
+        	condition.setParent( new_if_statement );
+        	condition.setPropertyInParent( IASTIfStatement.CONDITION );
+        	if( thenClause != null )
+        	{
+        	    new_if_statement.setThenClause( thenClause );
+        	    thenClause.setParent( new_if_statement );
+        	    thenClause.setPropertyInParent(IASTIfStatement.THEN );
+        	}
+        	if (LT(1) == IToken.t_else) {
+        		consume(IToken.t_else);
+        		if (LT(1) == IToken.t_if) {
+        			//an else if, don't recurse, just loop and do another if
+        			cleanupLastToken();
+        			if( if_statement != null )
+        			{
+        			    if_statement.setElseClause( new_if_statement );
+        			    new_if_statement.setParent( if_statement );
+        			    new_if_statement.setPropertyInParent( IASTIfStatement.ELSE );
+        			    if_statement = new_if_statement;
+        			}
+        			continue if_loop;
+        		} 
+        		IASTStatement elseStatement = statement();
+        		new_if_statement.setElseClause( elseStatement );
+        		elseStatement.setParent( new_if_statement );
+        		elseStatement.setPropertyInParent( IASTIfStatement.ELSE );
+        		if_statement = new_if_statement;
+        	}
+        	else
+        	    if_statement = new_if_statement;
+        	break if_loop;
+        }
+        cleanupLastToken();
+        return if_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseCompoundStatement() throws EndOfFileException, BacktrackException {
+        IASTCompoundStatement compound = compoundStatement();
+        cleanupLastToken();
+        return compound;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseDefaultStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_default).getOffset();
+        consume(IToken.tCOLON);
+        cleanupLastToken();
+        IASTDefaultStatement df = createDefaultStatement();
+        ((ASTNode)df).setOffset( startOffset );
+        return df;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseCaseStatement() throws EndOfFileException, BacktrackException {
+        int startOffset = consume(IToken.t_case).getOffset();
+        IASTExpression case_exp = constantExpression();
+        consume(IToken.tCOLON);
+        cleanupLastToken();
+        IASTCaseStatement cs = createCaseStatement();
+        ((ASTNode)cs).setOffset( startOffset );
+        cs.setExpression( case_exp );
+        case_exp.setParent( cs );
+        case_exp.setPropertyInParent( IASTCaseStatement.EXPRESSION );
+        return cs;
+    }
 
 }

@@ -848,5 +848,27 @@ public class AST2Tests extends AST2BaseTest {
         ICPPASTPointerToMember po = (ICPPASTPointerToMember) d.getPointerOperators().get(0);
         assertEquals( po.getName().toString(), "X::"); //$NON-NLS-1$
     }
+    
+    public void testAmbiguity() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class A { };\n"); //$NON-NLS-1$
+        buffer.append( "int f() { \n"); //$NON-NLS-1$
+        buffer.append( "  A * b = 0;\n"); //$NON-NLS-1$
+        buffer.append( "  A & c = 0;\n"); //$NON-NLS-1$
+        buffer.append( "}"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        IASTSimpleDeclaration A = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[1];
+        IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
+        for( int i = 0; i < 2; ++i )
+        {
+	        IASTDeclarationStatement ds = (IASTDeclarationStatement) body.getStatements()[i];
+	        String s1 = ((IASTNamedTypeSpecifier)((IASTSimpleDeclaration)ds.getDeclaration()).getDeclSpecifier()).getName().toString();
+	        String s2 = ((IASTCompositeTypeSpecifier)A.getDeclSpecifier()).getName().toString();
+	        assertEquals( s1, s2);
+        }
+         
+    }
 }
 

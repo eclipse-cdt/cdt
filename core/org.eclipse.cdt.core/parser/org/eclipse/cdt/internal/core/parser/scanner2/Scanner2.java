@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
@@ -54,6 +55,9 @@ public class Scanner2 extends BaseScanner {
         this.expressionEvaluator = new ExpressionEvaluator(callbackManager, spf);
         this.workingCopies = workingCopies;
         postConstructorSetup(reader, info);
+        if (reader.filename != null)
+            fileCache.put(reader.filename, reader);
+
     }
 
     /*
@@ -225,6 +229,8 @@ public class Scanner2 extends BaseScanner {
 
     protected static final ScannerProblemFactory spf = new ScannerProblemFactory();
 
+    protected final CharArrayObjectMap fileCache = new CharArrayObjectMap(100);
+
     /*
      * (non-Javadoc)
      * 
@@ -331,5 +337,26 @@ public class Scanner2 extends BaseScanner {
      */
     protected void processPragma(int startPos, int endPos) {
     }
+    
+    protected CodeReader createReader(String path, String fileName){
+        String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+        char[] finalPathc = finalPath.toCharArray();
+        CodeReader reader = (CodeReader) fileCache.get(finalPathc);
+        if (reader != null)
+            return reader; // found the file in the cache
+
+        // create a new reader on this file (if the file does not exist we will
+        // get null)
+        reader = createReaderDuple(finalPath);
+        if (reader == null)
+            return null; // the file was not found
+
+        if (reader.filename != null)
+            // put the full requested path in the cache -- it is more likely
+            // to match next time than the reader.filename
+            fileCache.put(finalPathc, reader);
+        return reader;
+    }
+
 
 }

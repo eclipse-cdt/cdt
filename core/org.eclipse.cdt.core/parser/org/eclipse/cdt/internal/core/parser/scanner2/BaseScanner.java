@@ -111,8 +111,6 @@ abstract class BaseScanner implements IScanner {
 
     protected ExpressionEvaluator expressionEvaluator;
 
-    protected final CharArrayObjectMap fileCache = new CharArrayObjectMap(100);
-
     // The context stack
     protected static final int bufferInitialSize = 8;
 
@@ -1225,9 +1223,6 @@ abstract class BaseScanner implements IScanner {
             keywords = cppkeywords;
 
         additionalKeywords = configuration.getAdditionalKeywords();
-
-        if (reader.filename != null)
-            fileCache.put(reader.filename, reader);
 
         setupBuiltInMacros(configuration);
 
@@ -2865,25 +2860,8 @@ abstract class BaseScanner implements IScanner {
                 fileNameArray);
     }
 
-    protected CodeReader createReader(String path, String fileName) {
-        String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-        char[] finalPathc = finalPath.toCharArray();
-        CodeReader reader = (CodeReader) fileCache.get(finalPathc);
-        if (reader != null)
-            return reader; // found the file in the cache
-
-        // create a new reader on this file (if the file does not exist we will
-        // get null)
-        reader = createReaderDuple(finalPath);
-        if (reader == null)
-            return null; // the file was not found
-
-        if (reader.filename != null)
-            // put the full requested path in the cache -- it is more likely
-            // to match next time than the reader.filename
-            fileCache.put(finalPathc, reader);
-        return reader;
-    }
+    protected abstract CodeReader createReader(String path, String fileName);
+    
 
     private int findIncludePos(String[] paths, File currentDirectory) {
         for (int i = 0; i < paths.length; ++i)

@@ -446,4 +446,11 @@ public class DOMScanner extends BaseScanner {
     protected void afterReplaceAllMacros() {
         --fsmCount;
     }
+    
+    protected CodeReader createReader(String path, String fileName){
+        String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+        CodeReader reader = createReaderDuple(finalPath);
+        return reader;
+    }
+
 }

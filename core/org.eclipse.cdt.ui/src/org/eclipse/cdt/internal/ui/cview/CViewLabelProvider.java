@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /*
  * CViewLabelProvider 
@@ -46,6 +47,7 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 				IPath p = ref.getPath();
 				IPath parentLocation = ((IIncludeReference)parent).getPath();
 				if (parentLocation.isPrefixOf(p)) {
+					p = p.setDevice(null);
 					p = p.removeFirstSegments(parentLocation.segmentCount());
 				}
 				return p.toString();

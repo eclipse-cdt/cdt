@@ -193,4 +193,25 @@ public class ContentAssistTests extends TestCase {
         assertEquals( results[1].getDisplayString(), "IDIOT" ); //$NON-NLS-1$
         assertEquals( results[2].getDisplayString(), "NORMAL" ); //$NON-NLS-1$
     }
+    
+    public void testBug72559() throws Exception {
+        StringWriter writer = new StringWriter();
+        writer.write("void foo(){               \n"); //$NON-NLS-1$
+        writer.write("   int var;               \n"); //$NON-NLS-1$
+        writer.write("   {                      \n"); //$NON-NLS-1$
+        writer.write("      float var;          \n"); //$NON-NLS-1$
+        writer.write("      v                   \n"); //$NON-NLS-1$
+        writer.write("   }                      \n"); //$NON-NLS-1$
+        writer.write("}                         \n"); //$NON-NLS-1$
+
+        String code = writer.toString();
+        IFile cu = importFile( "t.cpp", code ); //$NON-NLS-1$
+        ICompletionProposal [] results = getResults( cu, code.indexOf( "v " ) + 1 ); //$NON-NLS-1$
+        
+        assertEquals( results.length, 4 );
+        assertEquals( results[0].getDisplayString(), "var : float" ); //$NON-NLS-1$
+        assertEquals( results[1].getDisplayString(), "virtual" ); //$NON-NLS-1$
+        assertEquals( results[2].getDisplayString(), "void" ); //$NON-NLS-1$
+        assertEquals( results[3].getDisplayString(), "volatile" ); //$NON-NLS-1$
+    }
 }

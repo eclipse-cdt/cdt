@@ -38,6 +38,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -47,6 +48,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private WorkingCopy fInput;
 	private ProblemTreeViewer treeViewer;
 	private ListenerList selectionChangedListeners = new ListenerList();
+	private TogglePresentationAction fTogglePresentation;
 	
 	private OpenIncludeAction fOpenIncludeAction;
 	private SearchForReferencesAction fSearchForReferencesAction;
@@ -55,6 +57,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		super();
 		fEditor= editor;
 		fInput= null;
+
+		fTogglePresentation= new TogglePresentationAction();
+		fTogglePresentation.setEditor(editor);
 		
 		fOpenIncludeAction= new OpenIncludeAction(this);
 		fSearchForReferencesAction= new SearchForReferencesAction(this);
@@ -147,6 +152,12 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		Control control= treeViewer.getControl();
 		Menu menu= manager.createContextMenu(control);
 		control.setMenu(menu);
+
+		// register global actions
+		IPageSite site= getSite();
+		IActionBars bars= site.getActionBars();		
+		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION, fTogglePresentation);
+
 		
 		//IFileEditorInput editorInput= (IFileEditorInput)fEditor.getEditorInput();
 		IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();

@@ -87,6 +87,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	protected SelectionAction fShiftLeft;
 	protected SelectionAction fShiftRight;
 	private TextOperationAction caAction;
+	private TogglePresentationAction fTogglePresentation;
 	//private ToggleTextHoverAction fToggleTextHover;
 	private GotoErrorAction fPreviousError;
 	private GotoErrorAction fNextError;
@@ -108,6 +109,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection.");
 		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection.");
 
+		// actions that are "contributed" to editors, they are considered belonging to the active editor
+		fTogglePresentation= new TogglePresentationAction();
 		//fToggleTextHover= new ToggleTextHoverAction();
 		fPreviousError= new GotoErrorAction("Editor.PreviousError.", false); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(fPreviousError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_PREV_ERROR);
@@ -150,10 +153,10 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	public void contributeToToolBar(IToolBarManager tbm) {
 		super.contributeToToolBar(tbm);
 		tbm.add(new Separator());
-		//tbm.add(fTogglePresentation);
+		tbm.add(fTogglePresentation);
 		//tbm.add(fToggleTextHover);
 		tbm.add(fNextError);
-		tbm.add(fPreviousError);
+		tbm.add(fPreviousError);		
 	}
 	
 	/**
@@ -172,6 +175,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fShiftLeft.setEditor(textEditor);
 		fNextError.setEditor(textEditor);
 		fPreviousError.setEditor(textEditor);
+		fTogglePresentation.setEditor(textEditor);
+
 		//caAction.setEditor(textEditor);
 		//caAction.update();
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$

@@ -20,7 +20,6 @@ public interface CTextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String STATUS_INPUT_MODE= "InputMode";
 
-
 }
 
 

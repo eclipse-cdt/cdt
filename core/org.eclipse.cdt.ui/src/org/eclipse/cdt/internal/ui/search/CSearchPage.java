@@ -144,7 +144,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 */
 		
 		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
-		NewSearchUI.activateSearchResultView();
+		//NewSearchUI.activateSearchResultView();
 	    CSearchResult result = new CSearchResult(job);
 		NewSearchUI.runSearchInBackground(job, result);
 		

@@ -1,3 +1,12 @@
+2003-10-17 Alain Magloire
+
+	ICDIBreakpointManager new method
+	setLocationBreakpoint(...., deferred);
+	The new boolean "deferred" indicate if yes or not the breakpoint
+	should be on the deferred list if the setting fails.
+
+	* ICDIBreakpointManager.java
+
 2003-10-17 Mikhail Khodjaiants
 	Core support of the 'Search for duplicate source files' option.
 	* ICSourceLocation.java

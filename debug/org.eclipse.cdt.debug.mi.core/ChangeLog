@@ -1,3 +1,23 @@
+2003-10-17 Alain Magloire
+
+	Put the framework to deal with deferred breakpoint.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ResumeEvent.java
+	Deal with MIRunningEvent.RETURN.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+	Check if MIBreakpoint is null first.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Watchpoint.java
+	Check if MIWathchpoint is null first.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	Implement Deferred Breakpoint
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java
+	Implement Deferred Breakpoint
+	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java
+	Enable deferredBreakpoint.
+	* src/org/eclipse/cdt/debug/mi/core/CygwinDebugger.java
+	Enable deferredBreakpoint.
+	
+
 2003-10-07 Mikhail Khodjaiants
 
 	All methods of 'IRuntimeOptions' should throw CDI exceptions in case of failure.

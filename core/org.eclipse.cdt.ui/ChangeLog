@@ -1,3 +1,19 @@
+2002-10-31 Judy N. Green
+	Removed the ReferenceBlock from the Project Properties display. Eclipse
+	adds a Project Properties entry to the Project Properties.
+	This was resulting in confusion since the 
+	C/C++ Project --> Project References (filtered on nature == cnature)
+	
+	and the 
+	Project References (unfiltered, showing all projects)
+	
+	Both listed some files in common, but they were not linked in any way
+	so the user could get into a very awkward state, when selecting or deselecting
+	as one view woud over ride the other.
+	
+	src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java
+	
+	
 2002-10-29 David Inglis
 
 	Refactor ui.internal.CPlugin to ui.CUIPlugin with method to get the new 

@@ -9,7 +9,6 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.ReferenceBlock;
 import org.eclipse.cdt.ui.wizards.SettingsBlock;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
@@ -32,7 +31,6 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	private static final String MSG_CLOSEDPROJECT= "CProjectPropertyPage.closedproject";
 	
 	private TabFolder folder;
-	ReferenceBlock referenceBlock;
 	SettingsBlock settingsBlock;
 
 	protected Control createContents(Composite parent) {
@@ -52,15 +50,6 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	private void contentForCProject(Composite parent) {
 		folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
-
-		referenceBlock = new ReferenceBlock(this, getProject());
-		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(referenceBlock.getLabel());
-		Image img = referenceBlock.getImage();
-		if (img != null)
-			item.setImage(img);
-		item.setData(referenceBlock);
-		item.setControl(referenceBlock.getControl(folder));
 
 		settingsBlock = new SettingsBlock(this, getProject());
 		TabItem item2 = new TabItem(folder, SWT.NONE);
@@ -84,9 +73,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 
 	public void setComplete(boolean complete) {
 		boolean ok = true;
-		if (referenceBlock != null) {
-			ok = referenceBlock.isValid();
-		}
+		
 		if (ok && settingsBlock != null) {
 			ok = settingsBlock.isValid();
 		}
@@ -99,8 +86,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	public boolean performOk() {
 		if (settingsBlock != null)
 			settingsBlock.doRun(getProject(), null);
-		if (referenceBlock != null)
-			referenceBlock.doRun(getProject(), null);
+		
 		return true;
 	}
 		
@@ -119,7 +105,6 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		super.setVisible(visible);
 		if (visible && folder != null) {
 			settingsBlock.setVisible(visible);
-			referenceBlock.setVisible(visible);
 			folder.setFocus();
 		}
 	}	

@@ -40,14 +40,28 @@ public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
 	public void enterScope(ISourceElementRequestor requestor) {
-		requestor.enterCodeBlock( this );
+		try
+        {
+            requestor.enterCodeBlock( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
 	public void exitScope(ISourceElementRequestor requestor) {
-		requestor.exitCodeBlock( this );
+		try
+        {
+            requestor.exitCodeBlock( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
 	}
 
     /* (non-Javadoc)

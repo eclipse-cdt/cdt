@@ -74,7 +74,14 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptASMDefinition(this);
+        try
+        {
+            requestor.acceptASMDefinition(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

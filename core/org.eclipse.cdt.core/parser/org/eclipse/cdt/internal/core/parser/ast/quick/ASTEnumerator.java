@@ -35,12 +35,13 @@ public class ASTEnumerator
      * @param startingOffset
      * @param endingOffset
      */
-    public ASTEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset, IASTExpression initialValue)
+    public ASTEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)
     {
     	this.enumeration = enumeration; 
         name = string;
         offsets.setStartingOffset( startingOffset );
-		offsets.setNameOffset( startingOffset );
+		offsets.setNameOffset( nameOffset );
+		offsets.setNameEndOffset( nameEndOffset );
 		offsets.setEndingOffset( endingOffset );
 		this.initialValue = initialValue;
     }
@@ -125,4 +126,20 @@ public class ASTEnumerator
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
+    
 }

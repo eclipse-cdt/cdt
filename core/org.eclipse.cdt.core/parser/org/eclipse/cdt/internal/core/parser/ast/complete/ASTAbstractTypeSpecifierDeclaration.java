@@ -46,7 +46,14 @@ public class ASTAbstractTypeSpecifierDeclaration
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptAbstractTypeSpecDeclaration(this);
+        try
+        {
+            requestor.acceptAbstractTypeSpecDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
     /* (non-Javadoc)

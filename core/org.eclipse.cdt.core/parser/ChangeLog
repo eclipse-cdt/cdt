@@ -1,3 +1,7 @@
+2003-09-29 John Camelon
+	Continued work on Bug 43062 : Outline is confused on operator methods containing spaces 
+	Partial fix for   Bug 43680 : Fix Parser Error Handling 
+
 2003-09-26 John Camelon
 	Fixed Bug 43644 : 6 triangle icons appearing in outline viewer when typing an error
 	Fixed Bug 43062 : Outline is confused on operator methods containing spaces 

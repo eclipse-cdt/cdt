@@ -89,13 +89,27 @@ public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements 
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        requestor.enterLinkageSpecification(this);
+        try
+        {
+            requestor.enterLinkageSpecification(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        requestor.exitLinkageSpecification(this);
+        try
+        {
+            requestor.exitLinkageSpecification(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 }

@@ -36,12 +36,13 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
      * @param name
      * @param startingOffset
      */
-    public ASTEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int nameOffset)
+    public ASTEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int nameOffset, int nameEndOffset )
     {
     	super( scope, name );
         this.name = name;
         offsets.setNameOffset( nameOffset );
         offsets.setStartingOffset( startingOffset);
+        setNameEndOffset(nameEndOffset);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
@@ -111,7 +112,14 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptEnumerationSpecifier(this);
+    	try
+        {
+            requestor.acceptEnumerationSpecifier(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -125,4 +133,19 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

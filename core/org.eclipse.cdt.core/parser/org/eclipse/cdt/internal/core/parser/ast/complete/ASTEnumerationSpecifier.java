@@ -34,11 +34,12 @@ public class ASTEnumerationSpecifier
     /**
      * @param symbol
      */
-    public ASTEnumerationSpecifier(ISymbol symbol, int startingOffset, int nameOffset )
+    public ASTEnumerationSpecifier(ISymbol symbol, int startingOffset, int nameOffset, int nameEndOffset )
     {
         super(symbol);
         setStartingOffset(startingOffset);
         setNameOffset( nameOffset );
+        setNameEndOffset(nameEndOffset);
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
     }
 
@@ -62,7 +63,14 @@ public class ASTEnumerationSpecifier
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptEnumerationSpecifier(this);
+        try
+        {
+            requestor.acceptEnumerationSpecifier(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -132,4 +140,19 @@ public class ASTEnumerationSpecifier
     {
         return offsets.getEndingOffset();
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

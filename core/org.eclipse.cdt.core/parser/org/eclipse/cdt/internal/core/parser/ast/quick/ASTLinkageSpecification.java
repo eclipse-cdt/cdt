@@ -101,7 +101,14 @@ public class ASTLinkageSpecification
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-		requestor.enterLinkageSpecification(this);
+		try
+        {
+            requestor.enterLinkageSpecification(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
     /* (non-Javadoc)
@@ -109,7 +116,14 @@ public class ASTLinkageSpecification
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitLinkageSpecification(this);
+    	try
+        {
+            requestor.exitLinkageSpecification(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
 }

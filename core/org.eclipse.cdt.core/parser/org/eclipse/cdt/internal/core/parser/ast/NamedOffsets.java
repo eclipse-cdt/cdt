@@ -17,7 +17,8 @@ package org.eclipse.cdt.internal.core.parser.ast;
  */
 public class NamedOffsets extends Offsets  {
 
-	private int nameOffset = 0; 
+	private int nameEndOffset = 0;
+    private int nameOffset = 0; 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
@@ -32,6 +33,15 @@ public class NamedOffsets extends Offsets  {
 	public void setNameOffset(int o) {
 		nameOffset = o; 
 	}
+	
+	public int getNameEndOffset()
+	{
+		return nameEndOffset; 
+	}
 
+	public void setNameEndOffset( int offset )
+	{
+		nameEndOffset = offset;
+	}
 
 }

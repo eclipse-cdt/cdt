@@ -38,7 +38,7 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
      * @param nameOffset
      * @param references
      */
-    public ASTTypedef(ISymbol newSymbol, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, List references)
+    public ASTTypedef(ISymbol newSymbol, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, int nameEndOffset, List references)
     {
         super( newSymbol );
         this.mapping = mapping;
@@ -46,6 +46,7 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
         this.qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName());
         setStartingOffset(startingOffset);
         setNameOffset(nameOffset);
+        setNameEndOffset( nameEndOffset );
     }
 
     /* (non-Javadoc)
@@ -69,7 +70,14 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptTypedefDeclaration(this);
+        try
+        {
+            requestor.acceptTypedefDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         referenceStore.processReferences(requestor);
         getAbstractDeclarator().acceptElement( requestor );
     }
@@ -143,5 +151,20 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
     {
         return qualifiedName.getFullyQualifiedName();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 	
 }

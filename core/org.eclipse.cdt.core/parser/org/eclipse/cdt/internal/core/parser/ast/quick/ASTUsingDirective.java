@@ -76,7 +76,14 @@ public class ASTUsingDirective
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptUsingDirective(this);
+    	try
+        {
+            requestor.acceptUsingDirective(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)

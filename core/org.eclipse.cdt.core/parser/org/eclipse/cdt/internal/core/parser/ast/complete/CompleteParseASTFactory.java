@@ -368,7 +368,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTScope scope,
         String identifier,
         int startingOffset,
-        int nameOffset) throws ASTSemanticException
+        int nameOffset, int nameEndOffset) throws ASTSemanticException
     {
     	
     	IContainerSymbol pstScope = scopeToSymbol(scope);
@@ -411,7 +411,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	}
         }
         
-        ASTNamespaceDefinition namespaceDef = new ASTNamespaceDefinition( namespaceSymbol, startingOffset, nameOffset );
+        ASTNamespaceDefinition namespaceDef = new ASTNamespaceDefinition( namespaceSymbol, startingOffset, nameOffset, nameEndOffset );
         try
         {
             attachSymbolExtension( namespaceSymbol, namespaceDef );
@@ -490,7 +490,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ClassNameType type,
         ASTAccessVisibility access,
         int startingOffset,
-        int nameOffset) throws ASTSemanticException
+        int nameOffset, int nameEndOffset) throws ASTSemanticException
     {
         IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
         TypeInfo.eType pstType = classKindToTypeInfo(kind);		
@@ -544,7 +544,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	throw new ASTSemanticException();
         }
 			
-        ASTClassSpecifier classSpecifier = new ASTClassSpecifier( newSymbol, kind, type, access, startingOffset, nameOffset, references );
+        ASTClassSpecifier classSpecifier = new ASTClassSpecifier( newSymbol, kind, type, access, startingOffset, nameOffset, nameEndOffset, references );
         try
         {
             attachSymbolExtension(newSymbol, classSpecifier );
@@ -691,7 +691,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTScope scope,
         String name,
         int startingOffset,
-        int nameOffset) throws ASTSemanticException
+        int nameOffset, int nameEndOffset) throws ASTSemanticException
     {
 		IContainerSymbol containerSymbol = scopeToSymbol(scope);
 		TypeInfo.eType pstType = TypeInfo.t_enumeration;
@@ -706,7 +706,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			throw new ASTSemanticException();
 		}
         
-        ASTEnumerationSpecifier enumSpecifier = new ASTEnumerationSpecifier( classSymbol, startingOffset, nameOffset );
+        ASTEnumerationSpecifier enumSpecifier = new ASTEnumerationSpecifier( classSymbol, startingOffset, nameOffset, nameEndOffset  );
 		
 		try
 		{
@@ -725,8 +725,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTEnumerationSpecifier enumeration,
         String string,
         int startingOffset,
-        int endingOffset,
-        IASTExpression initialValue) throws ASTSemanticException
+        int nameOffset,
+        int nameEndOffset, int endingOffset, IASTExpression initialValue) throws ASTSemanticException
     {
         IContainerSymbol enumerationSymbol = (IContainerSymbol)((ISymbolOwner)enumeration).getSymbol();
         
@@ -739,7 +739,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
 			throw new ASTSemanticException();
         }
-        ASTEnumerator enumerator = new ASTEnumerator( enumeratorSymbol, enumeration, startingOffset, endingOffset, initialValue ); 
+        ASTEnumerator enumerator = new ASTEnumerator( enumeratorSymbol, enumeration, startingOffset, nameOffset, nameEndOffset, endingOffset, initialValue ); 
         ((ASTEnumerationSpecifier)enumeration).addEnumerator( enumerator );
         try
         {
@@ -1413,7 +1413,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTFunction createFunction(
 	    IASTScope scope,
 	    String name,
-	    int nameEndOffset,
 	    List parameters,
 	    IASTAbstractDeclaration returnType,
 	    IASTExceptionSpecification exception,
@@ -1422,6 +1421,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    boolean isStatic,
 	    int startOffset,
 	    int nameOffset,
+	    int nameEndOffset,
 		IASTTemplate ownerTemplate,
 		boolean isConst,
 		boolean isVolatile,
@@ -1718,7 +1718,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTMethod createMethod(
 		IASTScope scope,
 		String name,
-		int nameEndOffset,
 		List parameters,
 		IASTAbstractDeclaration returnType,
 		IASTExceptionSpecification exception,
@@ -1727,6 +1726,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isStatic,
 		int startOffset,
 		int nameOffset,
+		int nameEndOffset,
 		IASTTemplate ownerTemplate,
 		boolean isConst,
 		boolean isVolatile,
@@ -1881,7 +1881,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isRegister,
         boolean isStatic,
         int startingOffset,
-        int nameOffset, IASTExpression constructorExpression) throws ASTSemanticException
+        int nameOffset, int nameEndOffset, IASTExpression constructorExpression) throws ASTSemanticException
     {
 		List references = new ArrayList(); 
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
@@ -1933,7 +1933,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			){
 				IASTScope fieldParentScope = (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
 				return createField(fieldParentScope, fieldName,isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, 
-				isRegister, isStatic, startingOffset, offset, constructorExpression, ASTAccessVisibility.PRIVATE, references);
+				isRegister, isStatic, startingOffset, offset, nameEndOffset, constructorExpression, ASTAccessVisibility.PRIVATE, references);
 			}
 		}
 		
@@ -1968,7 +1968,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			// TODO Auto-generated catch block
 		}
         
-        ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, constructorExpression, previouslyDeclared );
+        ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, nameEndOffset, references, constructorExpression, previouslyDeclared );
         try
         {
             attachSymbolExtension(newSymbol, variable );
@@ -2041,10 +2041,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isStatic,
 		int startingOffset,
 		int nameOffset,
-		IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException
+		int nameEndOffset, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException
 	{
 		return createField(scope, name,isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, 
-		isRegister, isStatic, startingOffset, nameOffset, constructorExpression, visibility, null);		
+		isRegister, isStatic, startingOffset, nameOffset, nameEndOffset, constructorExpression, visibility, null);		
 	}
 	
     public IASTField createField(
@@ -2060,6 +2060,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isStatic,
         int startingOffset,
         int nameOffset,
+        int nameEndOffset, 
         IASTExpression constructorExpression, 
         ASTAccessVisibility visibility,
         List references) throws ASTSemanticException
@@ -2104,7 +2105,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			throw new ASTSemanticException();
 		}
 		
-		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, previouslyDeclared, constructorExpression, visibility );
+		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, nameEndOffset, references, previouslyDeclared, constructorExpression, visibility );
 		try
 		{
 			attachSymbolExtension(newSymbol, field );
@@ -2171,7 +2172,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         String name,
         IASTAbstractDeclaration mapping,
         int startingOffset,
-        int nameOffset) throws ASTSemanticException
+        int nameOffset, int nameEndOffset) throws ASTSemanticException
     {
     	IContainerSymbol containerSymbol = scopeToSymbol(scope);
     	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
@@ -2192,7 +2193,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
             throw new ASTSemanticException(); 
         }
-        ASTTypedef d = new ASTTypedef( newSymbol, mapping, startingOffset, nameOffset, references );
+        ASTTypedef d = new ASTTypedef( newSymbol, mapping, startingOffset, nameOffset, nameEndOffset, references );
         try
         {
             attachSymbolExtension(newSymbol, d );
@@ -2260,7 +2261,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	            }
 	            
 	            ASTElaboratedTypeSpecifier elab = 
-	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), endOffset, references, isForewardDecl );
+	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), endOffset, references, isForewardDecl );
 	            	
 	            try
                 {
@@ -2279,7 +2280,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
 			)
 			{
-				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), endOffset, references, isForewardDecl );
+				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), endOffset, references, isForewardDecl );
 				try
 				{
 					attachSymbolExtension( checkSymbol, elab );
@@ -2304,7 +2305,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNamespaceAlias(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ITokenDuple, int, int, int)
      */
-    public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, String identifier, ITokenDuple alias, int startingOffset, int nameOffset, int endOffset) throws ASTSemanticException
+    public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, String identifier, ITokenDuple alias, int startingOffset, int nameOffset, int nameEndOffset, int endOffset) throws ASTSemanticException
     {
         IContainerSymbol startingSymbol = scopeToSymbol(scope);
         List references = new ArrayList();
@@ -2328,7 +2329,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
         ASTNamespaceAlias astAlias = new ASTNamespaceAlias(
         	newSymbol, alias.toString(), (IASTNamespaceDefinition)namespaceSymbol.getASTExtension().getPrimaryDeclaration(), 
-        	startingOffset, nameOffset, endOffset, references ); 
+        	startingOffset, nameOffset, nameEndOffset, endOffset, references ); 
         try
         {
             attachSymbolExtension( newSymbol, astAlias );
@@ -2380,9 +2381,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return false;
 	}
 
-    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int endingOffset, int nameOffset)
+    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset)
     {
-        return new ASTParameterDeclaration( null, isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp, parameterName, initializerClause, startingOffset, endingOffset, nameOffset );
+        return new ASTParameterDeclaration( null, isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp, parameterName, initializerClause, startingOffset, endingOffset, nameOffset, nameEndOffset );
     }
 
     /* (non-Javadoc)

@@ -47,7 +47,14 @@ public class ASTFieldReference
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptFieldReference(this);
+        try
+        {
+            requestor.acceptFieldReference(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -91,7 +91,14 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptUsingDirective( this );
+        try
+        {
+            requestor.acceptUsingDirective( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         referenceDelegate.processReferences(requestor);
     }
     /* (non-Javadoc)

@@ -89,7 +89,14 @@ public class ASTTemplateSpecialization extends ASTDeclaration implements IASTTem
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        requestor.enterTemplateSpecialization(this);
+        try
+        {
+            requestor.enterTemplateSpecialization(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
     /* (non-Javadoc)
@@ -97,6 +104,13 @@ public class ASTTemplateSpecialization extends ASTDeclaration implements IASTTem
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitTemplateSpecialization(this);
+    	try
+        {
+            requestor.exitTemplateSpecialization(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 }

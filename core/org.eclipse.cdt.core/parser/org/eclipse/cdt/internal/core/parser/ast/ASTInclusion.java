@@ -19,14 +19,19 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
  */
 public class ASTInclusion implements IASTInclusion {
 
-	public ASTInclusion( String name, String fileName, boolean local )
+	public ASTInclusion( String name, String fileName, boolean local, int startingOffset, int nameOffset, int nameEndOffset, int endOffset )
 	{
 		this.name = name; 
 		this.fileName = fileName;
 		this.local = local;
+		setStartingOffset(startingOffset);
+		setNameOffset(nameOffset);
+		setNameEndOffset(nameEndOffset);
+		setEndingOffset(endOffset);
 	}
 
-	private final String name, fileName;
+	private int nameEndOffset;
+    private final String name, fileName;
 	private final boolean local; 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInclusion#getName()
@@ -109,7 +114,14 @@ public class ASTInclusion implements IASTInclusion {
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-		requestor.enterInclusion(this);
+		try
+        {
+            requestor.enterInclusion(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
     /* (non-Javadoc)
@@ -117,7 +129,28 @@ public class ASTInclusion implements IASTInclusion {
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitInclusion(this);
+    	try
+        {
+            requestor.exitInclusion(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return nameEndOffset;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		nameEndOffset = o;
+	}
 }

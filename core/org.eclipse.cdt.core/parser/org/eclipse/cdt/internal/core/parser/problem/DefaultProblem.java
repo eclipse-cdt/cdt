@@ -253,7 +253,14 @@ public class DefaultProblem implements IProblem {
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptProblem( this );
+    	try
+        {
+            requestor.acceptProblem( this );
+        }
+        catch (Exception e)
+        {
+        	// do nothing
+        }
     }
 
     /* (non-Javadoc)

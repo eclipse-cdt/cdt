@@ -35,11 +35,12 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
      * @param nameOffset
      * @param endOffset
      */
-    public ASTNamespaceAlias(IASTScope scope, String identifier, String string, int startingOffset, int nameOffset, int endOffset)
+    public ASTNamespaceAlias(IASTScope scope, String identifier, String string, int startingOffset, int nameOffset, int nameEndOffset, int endOffset)
     {
         super( scope );
         setStartingOffset(startingOffset);
         setNameOffset(nameOffset);
+        setNameEndOffset( nameEndOffset );
         setEndingOffset(endOffset);
         this.identifier = identifier;
         this.alias = string;
@@ -129,4 +130,19 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
     {        
         return offsets.getEndingOffset();
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

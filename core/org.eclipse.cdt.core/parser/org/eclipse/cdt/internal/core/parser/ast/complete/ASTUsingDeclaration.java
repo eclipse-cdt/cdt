@@ -98,7 +98,14 @@ public class ASTUsingDeclaration implements IASTUsingDeclaration
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptUsingDeclaration( this );
+        try
+        {
+            requestor.acceptUsingDeclaration( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         delegate.processReferences(requestor);
     }
     /* (non-Javadoc)

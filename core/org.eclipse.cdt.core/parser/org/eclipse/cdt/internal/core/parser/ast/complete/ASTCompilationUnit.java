@@ -41,13 +41,27 @@ public class ASTCompilationUnit
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        requestor.enterCompilationUnit( this );
+        try
+        {
+            requestor.enterCompilationUnit( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        requestor.exitCompilationUnit( this );
+        try
+        {
+            requestor.exitCompilationUnit( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 }

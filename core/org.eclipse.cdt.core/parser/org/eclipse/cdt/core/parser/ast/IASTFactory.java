@@ -23,15 +23,15 @@ public interface IASTFactory
     public IASTMacro createMacro(
         String name,
         int startingOffset,
-        int endingOffset,
-        int nameOffset);
+        int nameOffset,
+        int nameEndOffset, int endingOffset);
     public IASTInclusion createInclusion(
         String name,
         String fileName,
         boolean local,
         int startingOffset,
-        int endingOffset,
-        int nameOffset);
+        int nameOffset,
+        int nameEndOffset, int endingOffset);
     public IASTUsingDirective createUsingDirective(
         IASTScope scope,
         ITokenDuple duple, int startingOffset, int endingOffset)
@@ -49,7 +49,7 @@ public interface IASTFactory
         IASTScope scope,
         String identifier,
         int startingOffset,
-        int nameOffset) throws ASTSemanticException;
+        int nameOffset, int nameEndOffset) throws ASTSemanticException;
         
     public IASTNamespaceAlias    createNamespaceAlias( 
     	IASTScope scope, 
@@ -57,7 +57,7 @@ public interface IASTFactory
     	ITokenDuple alias, 
     	int startingOffset, 
     	int nameOffset, 
-    	int endOffset ) throws ASTSemanticException;
+    	int nameEndOffset, int endOffset ) throws ASTSemanticException;
         
     public IASTCompilationUnit createCompilationUnit();
     public IASTLinkageSpecification createLinkageSpecification(
@@ -70,7 +70,7 @@ public interface IASTFactory
         ClassNameType type,
         ASTAccessVisibility access,
         int startingOffset,
-        int nameOffset) throws ASTSemanticException;
+        int nameOffset, int nameEndOffset) throws ASTSemanticException;
     /**
      * @param astClassSpec
      * @param isVirtual
@@ -90,12 +90,12 @@ public interface IASTFactory
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,
         String name,
-        int startingOffset, int nameOffset) throws ASTSemanticException;
+        int startingOffset, int nameOffset, int nameEndOffset) throws ASTSemanticException;
     public void addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String string,
         int startingOffset,
-        int endingOffset, IASTExpression initialValue)throws ASTSemanticException;
+        int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)throws ASTSemanticException;
     public IASTExpression createExpression(
         IASTScope scope,
         IASTExpression.Kind kind,
@@ -133,7 +133,6 @@ public interface IASTFactory
     public IASTFunction createFunction(
         IASTScope scope,
         String name,
-        int nameEndOffset,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -142,6 +141,7 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
+        int nameEndOffset,
 		IASTTemplate ownerTemplate,
 		boolean isConst,
 		boolean isVolatile,
@@ -156,7 +156,6 @@ public interface IASTFactory
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
-        int nameEndOffset,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -165,6 +164,7 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
+        int nameEndOffset,
         IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,
@@ -173,11 +173,11 @@ public interface IASTFactory
         boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition) throws ASTSemanticException;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression ) throws ASTSemanticException;
+		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression ) throws ASTSemanticException;
 		   
-	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException;
+	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException;
 	
-	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int endingOffset, int nameOffset );
+	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset );
 	
 	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ); 
 
@@ -187,7 +187,7 @@ public interface IASTFactory
 	
 	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset); 
 	
-	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset ) throws ASTSemanticException;
+	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, int nameEndOffset ) throws ASTSemanticException;
 
 	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset);
 	

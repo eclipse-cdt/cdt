@@ -46,7 +46,14 @@ public class ASTParameterReference extends ASTReference implements IASTParameter
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptParameterReference( this );
+        try
+        {
+            requestor.acceptParameterReference( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -47,7 +47,14 @@ public class ASTEnumerationReference
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptEnumerationReference( this );
+        try
+        {
+            requestor.acceptEnumerationReference( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

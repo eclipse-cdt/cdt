@@ -112,7 +112,14 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-    	requestor.enterTemplateDeclaration(this);
+    	try
+        {
+            requestor.enterTemplateDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
     /* (non-Javadoc)
@@ -120,6 +127,13 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitTemplateDeclaration(this);
+    	try
+        {
+            requestor.exitTemplateDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 }

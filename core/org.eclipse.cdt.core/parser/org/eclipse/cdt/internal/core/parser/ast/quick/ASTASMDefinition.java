@@ -73,7 +73,14 @@ public class ASTASMDefinition
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-		requestor.acceptASMDefinition(this);
+		try
+        {
+            requestor.acceptASMDefinition(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
     /* (non-Javadoc)

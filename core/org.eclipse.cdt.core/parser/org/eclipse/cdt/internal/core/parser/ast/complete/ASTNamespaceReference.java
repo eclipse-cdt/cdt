@@ -48,7 +48,14 @@ public class ASTNamespaceReference
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptNamespaceReference( this );
+        try
+        {
+            requestor.acceptNamespaceReference( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
 {
-	private Offsets offsets = new Offsets(); 
+    private NamedOffsets offsets = new NamedOffsets(); 
 	private final IASTExpression initialValue;
 	private final IASTEnumerationSpecifier owner; 
     /**
@@ -32,10 +32,12 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
      * @param endingOffset
      * @param initialValue
      */
-    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int endingOffset, IASTExpression initialValue)
+    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)
     {
         super( enumeratorSymbol );
         setStartingOffset(startingOffset);
+        setNameOffset( nameOffset );
+        setNameEndOffset( nameEndOffset );
         setEndingOffset( endingOffset );
         this.initialValue = initialValue;
         this.owner = owner;
@@ -121,4 +123,19 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
     {
         return offsets.getEndingOffset();
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

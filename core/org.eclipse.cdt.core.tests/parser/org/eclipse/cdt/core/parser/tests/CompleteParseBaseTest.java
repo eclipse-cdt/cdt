@@ -666,14 +666,19 @@ public class CompleteParseBaseTest extends TestCase
     	return null;
     }
     protected FullParseCallback callback;
-    protected IASTScope parse(String code) throws ParserException
+    
+    protected IASTScope parse( String code ) throws ParserException
+    {
+    	return parse( code, true );
+    }
+    protected IASTScope parse(String code, boolean throwOnError) throws ParserException
     {
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
     			ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback ), callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP	
     		);
-    	if( ! parser.parse() ) throw new ParserException( "FAILURE");
+    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();
     }
         

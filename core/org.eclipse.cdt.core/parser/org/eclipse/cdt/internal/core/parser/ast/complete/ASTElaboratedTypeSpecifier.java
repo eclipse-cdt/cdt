@@ -39,12 +39,13 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int nameOffset, int endOffset, List references, boolean isDecl )
+    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int nameOffset, int nameEndOffset, int endOffset, List references, boolean isDecl )
     {
         super( checkSymbol );
         this.kind = kind;
         setStartingOffset( startingOffset );
         setNameOffset( nameOffset );
+        setNameEndOffset(nameEndOffset);
         setEndingOffset( endOffset );
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), checkSymbol.getName() );
         store = new ASTReferenceStore( references );
@@ -106,7 +107,14 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     public void acceptElement(ISourceElementRequestor requestor)
     {
     	if( isForwardDeclaration )
-			requestor.acceptElaboratedForewardDeclaration(this);
+			try
+            {
+                requestor.acceptElaboratedForewardDeclaration(this);
+            }
+            catch (Exception e)
+            {
+                /* do nothing */
+            }
 		store.processReferences(requestor);
     }
     /* (non-Javadoc)
@@ -144,5 +152,20 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
 	public List getReferences() 
 	{
 		return references;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
 	}
 }

@@ -37,9 +37,9 @@ public class ASTField extends ASTVariable implements IASTField
      * @param references
      * @param visibility
      */
-    public ASTField(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, List references, boolean previouslyDeclared, IASTExpression constructorExpression, ASTAccessVisibility visibility)
+    public ASTField(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, int nameEndOffset, List references, boolean previouslyDeclared, IASTExpression constructorExpression, ASTAccessVisibility visibility)
     {
-        super( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, constructorExpression, previouslyDeclared );
+        super( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, nameEndOffset, references, constructorExpression, previouslyDeclared );
         this.visibility = visibility;  
         
     }
@@ -53,7 +53,14 @@ public class ASTField extends ASTVariable implements IASTField
     
 	public void acceptElement(ISourceElementRequestor requestor)
 	{
-		requestor.acceptField(this);
+		try
+        {
+            requestor.acceptField(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
 		referenceDelegate.processReferences(requestor);
 		if( getInitializerClause() != null )
 			getInitializerClause().acceptElement(requestor);

@@ -46,7 +46,14 @@ public class ASTFunctionReference
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptFunctionReference( this );
+        try
+        {
+            requestor.acceptFunctionReference( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

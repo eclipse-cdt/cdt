@@ -91,7 +91,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     /**
      * @param symbol
      */
-    public ASTClassSpecifier(ISymbol symbol, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset, List references )
+    public ASTClassSpecifier(ISymbol symbol, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset, int nameEndOffset, List references )
     {
         super(symbol);
         classKind = kind;
@@ -99,6 +99,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         currentVisibility = access;
         setStartingOffset(startingOffset);
         setNameOffset(nameOffset);
+        setNameEndOffset(nameEndOffset);
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
 		this.references = new ASTReferenceStore( references );
     }
@@ -171,7 +172,14 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     public void enterScope(ISourceElementRequestor requestor)
     {
     	references.processReferences( requestor );
-        requestor.enterClassSpecifier(this); 
+        try
+        {
+            requestor.enterClassSpecifier(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        } 
         Iterator i = getBaseClauses();
         while( i.hasNext() )
         {
@@ -184,7 +192,14 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        requestor.exitClassSpecifier(this);
+        try
+        {
+            requestor.exitClassSpecifier(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
@@ -227,5 +242,19 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     public IASTScope getOwnerScope()
     {
 		return (IASTScope)symbol.getContainingSymbol().getASTExtension().getPrimaryDeclaration();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+     */
+    public int getNameEndOffset()
+    {
+        return offsets.getNameEndOffset();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+     */
+    public void setNameEndOffset(int o)
+    {
+    	offsets.setNameEndOffset(o);
     }
 }

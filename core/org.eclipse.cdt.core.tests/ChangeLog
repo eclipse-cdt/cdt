@@ -1,3 +1,6 @@
+2003-09-29 John Camelon
+	Added testErrorHandling_1() to CompleteParseASTTest.java.  
+
 2003-09-26 John Camelon
 	Added QuickParseASTTests::testBug43644() & testBug43062().  
 	Moved ASTFailedTests::testBug39531() to QuickParseASTTests.

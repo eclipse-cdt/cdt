@@ -48,7 +48,14 @@ public class ASTVariableReference
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptVariableReference( this );
+        try
+        {
+            requestor.acceptVariableReference( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

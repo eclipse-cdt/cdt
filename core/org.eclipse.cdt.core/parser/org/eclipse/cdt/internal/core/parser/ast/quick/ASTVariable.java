@@ -41,7 +41,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
      * @param scope
      */
     public ASTVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression )
+    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression )
     {
         super(scope);
 		this.isAuto = isAuto;
@@ -57,6 +57,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		qualifiedName = new ASTQualifiedNamedElement( scope, name );
 		setStartingOffset(startingOffset);
 		setNameOffset(nameOffset);
+		setNameEndOffset( nameEndOffset );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isAuto()
@@ -182,7 +183,14 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptVariable(this);
+    	try
+        {
+            requestor.acceptVariable(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -203,6 +211,20 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
     {
         return constructorExpression;
     }
-   
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}   
  
 }

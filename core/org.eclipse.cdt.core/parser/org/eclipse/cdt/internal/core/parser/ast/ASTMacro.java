@@ -19,10 +19,15 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
  */
 public class ASTMacro implements IASTMacro {
 
-	private final String name; 
-	public ASTMacro( String name )
+	private int nameEndOffset = 0;
+    private final String name; 
+	public ASTMacro( String name, int start, int end, int nameBeg, int nameEnd )
 	{
 		this.name =name; 
+		setStartingOffset(start);
+		setNameOffset(nameBeg);
+		setNameEndOffset(nameEnd);
+		setEndingOffset(end);
 	}
 	
 	private int startingOffset = 0, endingOffset = 0, nameOffset = 0;
@@ -74,7 +79,14 @@ public class ASTMacro implements IASTMacro {
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptMacro( this );
+    	try
+        {
+            requestor.acceptMacro( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -89,4 +101,18 @@ public class ASTMacro implements IASTMacro {
     {
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return nameEndOffset;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		nameEndOffset = o;
+	}
 }

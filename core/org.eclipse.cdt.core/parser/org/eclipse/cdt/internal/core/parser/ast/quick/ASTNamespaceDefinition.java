@@ -31,11 +31,14 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
 	private NamedOffsets offsets = new NamedOffsets();
 	private final ASTQualifiedNamedElement qualifiedNameElement; 
 	
-	public ASTNamespaceDefinition( IASTScope scope, String name )
+	public ASTNamespaceDefinition( IASTScope scope, String name, int startOffset, int nameOffset, int nameEndOffset )
 	{
 		super( scope );
 		qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
 		this.name = name; 
+		setStartingOffset(startOffset);
+		setNameOffset(nameOffset);
+		setNameEndOffset(nameEndOffset);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
@@ -118,13 +121,42 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-    	requestor.enterNamespaceDefinition(this);
+    	try
+        {
+            requestor.enterNamespaceDefinition(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exit(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitNamespaceDefinition(this);
+    	try
+        {
+            requestor.exitNamespaceDefinition(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

@@ -94,7 +94,14 @@ public class ASTTemplateInstantiation extends ASTDeclaration implements IASTTemp
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        requestor.enterTemplateInstantiation(this);
+        try
+        {
+            requestor.enterTemplateInstantiation(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         
     }
 
@@ -103,6 +110,13 @@ public class ASTTemplateInstantiation extends ASTDeclaration implements IASTTemp
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitTemplateExplicitInstantiation(this);
+    	try
+        {
+            requestor.exitTemplateExplicitInstantiation(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 }

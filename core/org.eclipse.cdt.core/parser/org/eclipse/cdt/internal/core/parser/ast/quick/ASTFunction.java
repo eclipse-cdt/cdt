@@ -51,10 +51,10 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         offsets.setStartingOffset( startOffset );
         offsets.setNameOffset( nameOffset );
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
-        this.nameEndOffset = nameEndOffset;
+        setNameEndOffset(nameEndOffset);
     }
     
-    private final int nameEndOffset;
+    private boolean previouslyDeclared;
     private boolean hasFunctionBody = false;
     private final IASTQualifiedNameElement qualifiedName; 
     private final IASTTemplate ownerTemplateDeclaration;
@@ -184,14 +184,28 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptFunctionDeclaration(this);
+        try
+        {
+            requestor.acceptFunctionDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        requestor.enterFunctionBody( this );
+        try
+        {
+            requestor.enterFunctionBody( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         
     }
     /* (non-Javadoc)
@@ -199,7 +213,14 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitFunctionBody( this );
+    	try
+        {
+            requestor.exitFunctionBody( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFunction#setHasFunctionBody(boolean)
@@ -225,14 +246,19 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      */
     public boolean previouslyDeclared()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return previouslyDeclared;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getNameEndOffset()
-     */
-    public int getNameEndOffset()
-    {
-        return nameEndOffset;
-    }
-}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}}

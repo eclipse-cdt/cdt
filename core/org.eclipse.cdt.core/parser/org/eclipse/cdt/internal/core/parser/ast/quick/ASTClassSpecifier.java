@@ -34,6 +34,9 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         String name,
         ASTClassKind kind,
         ClassNameType type,
+        int startingOffset, 
+        int nameOffset, 
+        int nameEndOffset, 
         ASTAccessVisibility access)
     {
     	super( scope, name );
@@ -41,6 +44,9 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
         classNameType = type;
         classKind = kind;
+        offsets.setStartingOffset(startingOffset);
+        offsets.setNameOffset(nameOffset);
+        offsets.setNameEndOffset(nameEndOffset);
         this.access = access;
         this.name = name;
     }
@@ -171,14 +177,42 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-    	requestor.enterClassSpecifier(this);
+    	try
+        {
+            requestor.enterClassSpecifier(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exit(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-    	requestor.exitClassSpecifier(this);
+    	try
+        {
+            requestor.exitClassSpecifier(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

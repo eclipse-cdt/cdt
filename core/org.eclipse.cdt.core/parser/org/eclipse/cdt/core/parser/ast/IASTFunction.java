@@ -35,5 +35,4 @@ public interface IASTFunction extends IASTCodeScope, IASTOffsetableNamedElement,
 	
 	public boolean previouslyDeclared();
 
-	public int getNameEndOffset(); // necessary for operator new, etc. which are > 1 token
 }

@@ -46,7 +46,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      * @param nameOffset
      * @param references
      */
-    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, List references, IASTExpression constructorExpression, boolean previouslyDeclared  )
+    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, int nameEndOffset, List references, IASTExpression constructorExpression, boolean previouslyDeclared  )
     {
     	super( newSymbol );
         this.abstractDeclaration = abstractDeclaration;
@@ -55,6 +55,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
 		this.constructorExpression = constructorExpression;
 		setStartingOffset( startingOffset );
 		setNameOffset( nameOffset );
+		setNameEndOffset(nameEndOffset);
 		referenceDelegate = new ASTReferenceStore( references );
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName() );
 		this.previouslyDeclared =previouslyDeclared;		
@@ -162,7 +163,14 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptVariable(this);
+        try
+        {
+            requestor.acceptVariable(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         referenceDelegate.processReferences(requestor);
         if( initializerClause != null )
         	initializerClause.acceptElement(requestor);
@@ -205,6 +213,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     {
         return offsets.getStartingOffset();
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
@@ -212,6 +221,20 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     {
         return offsets.getEndingOffset();
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#getConstructorExpression()
      */

@@ -40,7 +40,7 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
      * @param parameterName
      * @param initializerClause
      */
-    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int endingOffset, int nameOffset)
+    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int endingOffset, int nameOffset, int nameEndOffset )
     {
     	super( symbol );
     	abstractDeclaration = new ASTAbstractDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
@@ -49,6 +49,7 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
 		setStartingOffset(startingOffset);
 		setEndingOffset(endingOffset);
 		setNameOffset(nameOffset);
+		setNameEndOffset( nameEndOffset );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getName()
@@ -177,5 +178,20 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     {
         return offsets.getEndingOffset();
     }    
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
     
 }

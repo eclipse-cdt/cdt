@@ -35,12 +35,13 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int nameOffset, int endOffset)
+    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int nameOffset, int nameEndOffset, int endOffset)
     {
     	classKind = elaboratedClassKind; 
     	this.typeName = typeName;
     	setStartingOffset( startingOffset );
     	setNameOffset( nameOffset );
+    	setNameEndOffset( nameEndOffset );
     	setEndingOffset( endOffset );
     	qualifiedName = new ASTQualifiedNamedElement( scope, typeName );
     }
@@ -106,7 +107,14 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptElaboratedForewardDeclaration(this);
+    	try
+        {
+            requestor.acceptElaboratedForewardDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -131,5 +139,20 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
 	 */
 	public void setNameOffset(int o) {
 		offsets.setNameOffset(o);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
 	}
 }

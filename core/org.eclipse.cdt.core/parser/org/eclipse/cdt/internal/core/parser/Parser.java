@@ -128,7 +128,7 @@ public class Parser implements IParser
         requestor = callback;
         this.mode = mode;
         this.language = language;
-        astFactory = ParserFactory.createASTFactory(mode, language);
+        astFactory = ParserFactory.createASTFactory( mode, language);
         scanner.setASTFactory(astFactory);
     }
     // counter that keeps track of the number of times Parser.parse() is called
@@ -606,7 +606,7 @@ public class Parser implements IParser
                             declarator.getArrayModifiers(),
                             null, null, declarator.getName() == null
                                             ? ""
-                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getEndOffset(), declarator.getNameStartOffset()),
+                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), wrapper.getEndOffset()),
                         null));
             }
         }
@@ -757,7 +757,8 @@ public class Parser implements IParser
                         scope,
                         (identifier == null ? "" : identifier.getImage()),
                         first.getOffset(),
-                        (identifier == null ? first.getOffset() : identifier.getOffset()));
+                        (identifier == null ? first.getOffset() : identifier.getOffset()), 
+                        (identifier == null ? first.getEndOffset() : identifier.getEndOffset() ));
             }
             catch (ASTSemanticException e)
             {
@@ -808,7 +809,7 @@ public class Parser implements IParser
             {
                 astFactory.createNamespaceAlias( 
                 	scope, identifier.toString(), duple, first.getOffset(), 
-                	identifier.getOffset(), duple.getLastToken().getEndOffset() );
+                	identifier.getOffset(), identifier.getEndOffset(), duple.getLastToken().getEndOffset() );
             }
             catch (ASTSemanticException e)
             {
@@ -2315,7 +2316,9 @@ public class Parser implements IParser
                         mark.getOffset(), 
                         ((identifier == null)
                             ? mark.getOffset()
-                            : identifier.getOffset()));
+                            : identifier.getOffset()), 
+                         ((identifier == null)? mark.getEndOffset()
+				: identifier.getEndOffset()));
             }
             catch (ASTSemanticException e)
             {
@@ -2349,8 +2352,8 @@ public class Parser implements IParser
                             enumeration,
                             enumeratorIdentifier.getImage(),
                             enumeratorIdentifier.getOffset(),
-                            enumeratorIdentifier.getEndOffset(),
-                            initialValue);
+							enumeratorIdentifier.getOffset(),
+                            enumeratorIdentifier.getEndOffset(), enumeratorIdentifier.getEndOffset(), initialValue);
                     }
                     catch (ASTSemanticException e1)
                     {
@@ -2369,8 +2372,8 @@ public class Parser implements IParser
                         enumeration,
                         enumeratorIdentifier.getImage(),
                         enumeratorIdentifier.getOffset(),
-                        enumeratorIdentifier.getEndOffset(),
-                        initialValue);
+						enumeratorIdentifier.getOffset(),
+						enumeratorIdentifier.getEndOffset(), enumeratorIdentifier.getEndOffset(), initialValue);
                 }
                 catch (ASTSemanticException e1)
                 {
@@ -2452,7 +2455,8 @@ public class Parser implements IParser
                         nameType,
                         access,
                         classKey.getOffset(),
-            			duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset());
+            			duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset(), 
+						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getEndOffset() );
         }
         catch (ASTSemanticException e)
         {

@@ -344,7 +344,7 @@ public class Scanner implements IScanner {
 			}
 		}
 		if (inclusionReader != null) {
-			IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, endOffset, nameOffset ); 
+			IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, nameOffset, nameOffset + fileName.length(), endOffset ); 
 			contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
 		}
 	}
@@ -2011,7 +2011,7 @@ public class Scanner implements IScanner {
 			if( requestor != null )
 			{
 				IASTInclusion i = astFactory.createInclusion( f, "", !useIncludePath, beginningOffset, 
-					endOffset, startOffset );
+					startOffset, startOffset + f.length(), endOffset );
 				i.enterScope( requestor );
 				i.exitScope( requestor );					 
 			}
@@ -2168,7 +2168,7 @@ public class Scanner implements IScanner {
 			throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 		}
 		
-		astFactory.createMacro( key, beginning, contextStack.getCurrentContext().getOffset(), offset ).acceptElement( requestor ); 
+		astFactory.createMacro( key, beginning, offset, offset + key.length(), contextStack.getCurrentContext().getOffset() ).acceptElement( requestor ); 
 	}
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {

@@ -844,4 +844,16 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( i.hasNext() );
 		assertAllReferences( 8, createTaskList( new Task( SD_02), new Task( SD_01, 3 ), new Task( a ), new Task( f_SD_01 ), new Task( f_SD_02 ), new Task( next ) ));
 	}
+	
+	public void testErrorHandling_1() throws Exception
+	{
+		Iterator i = parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ).getDeclarations();
+		IASTVariable x = (IASTVariable)i.next();
+		assertEquals( x.getName(), "x");
+		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable anotherA = (IASTVariable)i.next();
+		IASTVariable b = (IASTVariable)i.next();
+		assertEquals( b.getName(), "b");
+		assertFalse(i.hasNext());
+	}
 }

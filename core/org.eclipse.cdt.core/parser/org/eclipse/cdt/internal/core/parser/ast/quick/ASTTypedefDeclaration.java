@@ -32,13 +32,14 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
      * @param name
      * @param mapping
      */
-    public ASTTypedefDeclaration(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset)
+    public ASTTypedefDeclaration(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, int nameEndOffset )
     {
         super( scope );
         this.name = name; 
         this.mapping = mapping;
         setStartingOffset(startingOffset);
         setNameOffset(nameOffset);
+        setNameEndOffset(nameEndOffset);
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     /* (non-Javadoc)
@@ -110,7 +111,14 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptTypedefDeclaration(this);
+    	try
+        {
+            requestor.acceptTypedefDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -124,5 +132,20 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 
 }

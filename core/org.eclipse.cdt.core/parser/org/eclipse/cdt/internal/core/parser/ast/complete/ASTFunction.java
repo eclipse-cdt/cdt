@@ -62,6 +62,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	this.exception = exception; 
     	setStartingOffset(startOffset);
     	setNameOffset(nameOffset);
+    	setNameEndOffset(nameEndOffset);
     	this.ownerTemplate = ownerTemplate;
     	this.references = new ASTReferenceStore( references );
     	qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
@@ -195,7 +196,14 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptFunctionDeclaration(this);
+        try
+        {
+            requestor.acceptFunctionDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         functionCallbacks(requestor);
     }
     
@@ -233,7 +241,14 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-		requestor.enterFunctionBody( this );
+		try
+        {
+            requestor.enterFunctionBody( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
 		functionCallbacks( requestor );
     }
     /* (non-Javadoc)
@@ -241,7 +256,14 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        requestor.exitFunctionBody( this );
+        try
+        {
+            requestor.exitFunctionBody( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
 
 
@@ -263,13 +285,18 @@ public class ASTFunction extends ASTScope implements IASTFunction
         return previouslyDeclared;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getNameEndOffset()
-     */
-    public int getNameEndOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset()
+	{
+		return offsets.getNameEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+	 */
+	public void setNameEndOffset(int o)
+	{
+		offsets.setNameEndOffset(o);
+	}
 }

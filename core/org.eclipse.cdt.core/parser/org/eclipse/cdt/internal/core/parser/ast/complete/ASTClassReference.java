@@ -47,7 +47,14 @@ public class ASTClassReference
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptClassReference( this );
+        try
+        {
+            requestor.acceptClassReference( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

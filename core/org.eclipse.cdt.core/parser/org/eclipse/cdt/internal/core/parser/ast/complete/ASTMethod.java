@@ -126,7 +126,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        requestor.acceptMethodDeclaration(this);
+        try
+        {
+            requestor.acceptMethodDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
         methodCallbacks(requestor);
     }
     protected void methodCallbacks(ISourceElementRequestor requestor)
@@ -152,7 +159,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-		requestor.enterMethodBody(this);
+		try
+        {
+            requestor.enterMethodBody(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
 		methodCallbacks( requestor );
     }
     /* (non-Javadoc)
@@ -160,7 +174,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        requestor.exitMethodBody( this );
+        try
+        {
+            requestor.exitMethodBody( this );
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getConstructorChainInitializers()

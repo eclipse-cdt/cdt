@@ -381,9 +381,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
 				return astFactory.createTypedef(
 					scope,
 					name,
-					abs, getStartingOffset(), d.getNameStartOffset() ); 
+					abs, getStartingOffset(), d.getNameStartOffset(), d.getNameEndOffset() ); 
         	else
-        		return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), d.getNameStartOffset(), d.getConstructorExpression() );
+        		return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), d.getNameStartOffset(), d.getNameEndOffset(), d.getConstructorExpression() );
         	
         }
         else
@@ -406,7 +406,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 constt,
                 volatil,
                 getTypeSpecifier(),
-                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset());
+                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset(), declarator.getNameEndOffset());
     }
     /**
      * @param declarator
@@ -418,8 +418,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             .createMethod(
                 scope,
                 nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
-				declarator.getNameEndOffset(),
-                createParameterList(declarator.getParameters()),
+				createParameterList(declarator.getParameters()),
                 astFactory.createAbstractDeclaration(
                     constt,
 					volatil,
@@ -431,6 +430,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 staticc,
                 startingOffset,
                 declarator.getNameStartOffset(),
+                declarator.getNameEndOffset(),
                 templateDeclaration,
                 declarator.isConst(),
 		        declarator.isVolatile(),
@@ -448,7 +448,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
         return astFactory.createFunction(
             scope,
 			nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
-            declarator.getNameEndOffset(),
             createParameterList(declarator.getParameters()),
             astFactory.createAbstractDeclaration(
                 constt,
@@ -461,6 +460,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             staticc,
             startingOffset,
             declarator.getNameStartOffset(),
+            declarator.getNameEndOffset(),
 		templateDeclaration,
 		declarator.isConst(),
 		declarator.isVolatile(),
@@ -492,7 +492,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             staticc,
             startingOffset,
             declarator.getNameStartOffset(),
-            declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
+			declarator.getNameEndOffset(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
     }
     private List createParameterList(List currentParameters)
     {
@@ -514,7 +514,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         declarator.getArrayModifiers(),
                         null, null, declarator.getName() == null
                                         ? ""
-                                        : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getEndOffset(), declarator.getNameStartOffset()));
+                                        : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), wrapper.getEndOffset()));
             }
         }
         return result;
@@ -541,7 +541,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             register,
             staticc,
             getStartingOffset(),
-            declarator.getNameStartOffset(), declarator.getConstructorExpression());
+            declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getConstructorExpression());
     }        
     
     /* (non-Javadoc)

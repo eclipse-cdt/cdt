@@ -44,20 +44,6 @@ public interface IParser {
 	public IASTExpression expression(IASTScope scope) throws Backtrack;
 	
 	/**
-	 * Is the parser configured for ANSI C or ANSI C++?
-	 * 
-	 * @return	true for C++, false for C
-	 */
-	public ParserLanguage getLanguage();
-	
-	/**
-	 * Set the Parser explicitly to be a C or C++ parser.
-	 * 
-	 * @param l		CPP or C 
-	 */
-	public void setLanguage( ParserLanguage l);
-	
-	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  
 	 * 
 	 * @return		-1 for no error, otherwise the character offset where we encountered 

@@ -1,5 +1,6 @@
 2004-02-19 Alain Magloire
-	PR 52317
+	
+	PR #52317
 	The children were added in the wrong order.
 
 	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java

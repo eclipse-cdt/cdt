@@ -1,3 +1,7 @@
+2004-08-18 Mikhail Khodjaiants
+	New constant - the default value for the "stop at main" property.
+	* ICDTLaunchConfigurationConstants.java
+
 2004-08-14 Alain Magloire
 	Fix for 71992.
 	* CType.java

@@ -103,9 +103,9 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_VARIABLE_BOOKKEEPING"; //$NON-NLS-1$
 		
 	/**
-	 * Launch configuration attribute key. Boolean value to set the 'deferred breakpoints' property of debugger.
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_STOP_AT_MAIN.
 	 */
-//	public static final String ATTR_DEBUGGER_DEFERRED_BREAKPOINTS = CDT_LAUNCH_ID + ".DEFERRED_BREAKPOINTS"; //$NON-NLS-1$
+	public static boolean DEBUGGER_STOP_AT_MAIN_DEFAULT = true;
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.

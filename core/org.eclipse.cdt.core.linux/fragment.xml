@@ -8,13 +8,8 @@
    plugin-version="1.0.0">
 
    <runtime>
-      <library name="linux.jar"/>
+      <library name="cdt_linux.jar"/>
    </runtime>
-
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-   </requires>
 
 
    <extension

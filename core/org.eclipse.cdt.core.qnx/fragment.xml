@@ -6,15 +6,4 @@
    provider-name="Eclipse.org"
    plugin-id="org.eclipse.cdt.core"
    plugin-version="1.0.0">
-
-   <runtime>
-      <library name="qnx.jar"/>
-   </runtime>
-
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-   </requires>
-
-
 </fragment>

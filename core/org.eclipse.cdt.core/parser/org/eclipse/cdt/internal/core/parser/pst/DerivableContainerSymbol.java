@@ -205,10 +205,13 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#lookupConstructor(java.util.List)
 	 */
-	public IParameterizedSymbol lookupConstructor( List parameters ) throws ParserSymbolTableException
+	public IParameterizedSymbol lookupConstructor( final List parameters ) throws ParserSymbolTableException
 	{
-		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_constructor );
-		data.parameters = parameters;
+		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME ){
+			public List getParameters() { return params; }
+			public TypeFilter getFilter() { return CONSTRUCTOR_FILTER; }
+			final private List params = parameters;
+		};
 		
 		List constructors = null;
 		if( !getConstructors().isEmpty() ){
@@ -256,7 +259,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			//of function will have them from the original declaration
 			boolean foundThis = false;
 			
-			LookupData data = new LookupData( ParserSymbolTable.THIS, TypeInfo.t_any );
+			LookupData data = new LookupData( ParserSymbolTable.THIS );
 			try {
 				Map map = ParserSymbolTable.lookupInContained( data, obj );
 				foundThis = ( map != null ) ? map.containsKey( data.name ) : false;
@@ -339,8 +342,6 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * class scope.
 	 */
 	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
-		
 		IContainerSymbol enclosing = getContainingSymbol();
 		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
 			while( enclosing != null && ( enclosing.getType() != TypeInfo.t_namespace) )
@@ -348,17 +349,20 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 				enclosing = enclosing.getContainingSymbol();
 			}
 		}
-		data.stopAt = enclosing;
-		data.returnInvisibleSymbols = true;
-	
+		
+		final ISymbol finalEnc = enclosing;
+		LookupData data = new LookupData( name ){
+			public ISymbol getStopAt() { return stopAt; }
+			public boolean shouldReturnInvisibleSymbols() {	return true; }
+			final private ISymbol stopAt = finalEnc;
+		};
+
 		ParserSymbolTable.lookup( data, this );
 		return ParserSymbolTable.resolveAmbiguities( data ); 
 	}
 	
-	public IParameterizedSymbol lookupFunctionForFriendship( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
-		
-		data.parameters = parameters;
+	public IParameterizedSymbol lookupFunctionForFriendship( String name, final List parameters ) throws ParserSymbolTableException{
+
 		
 		IContainerSymbol enclosing = getContainingSymbol();
 		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
@@ -367,7 +371,13 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 				enclosing = enclosing.getContainingSymbol();
 			}
 		}
-		data.stopAt = enclosing;
+		final ISymbol finalEnc = enclosing;
+		LookupData data = new LookupData( name ){
+			public List getParameters() { return params; }
+			public ISymbol getStopAt()  { return stopAt; }
+			final private List params = parameters;
+			final ISymbol stopAt = finalEnc;
+		};
 		
 		ParserSymbolTable.lookup( data, this );
 		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data );

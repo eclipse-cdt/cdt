@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
-import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -169,7 +168,7 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( data.mode == LookupMode.NORMAL && ( ( data.foundItems != null && !data.foundItems.isEmpty()) || data.stopAt == inSymbol ) ){
+		if( !data.isPrefixLookup() && ( ( data.foundItems != null && !data.foundItems.isEmpty()) || data.getStopAt() == inSymbol ) ){
 			return;
 		}
 			
@@ -186,7 +185,7 @@ public class ParserSymbolTable {
 		}
 					
 		//if still not found, check our containing scope.			
-		if( ( data.foundItems == null || data.foundItems.isEmpty() || data.mode == LookupMode.PREFIX )
+		if( ( data.foundItems == null || data.foundItems.isEmpty() || data.isPrefixLookup() )
 			&& inSymbol.getContainingSymbol() != null )
 		{ 
 			if( data.qualified ){
@@ -261,7 +260,7 @@ public class ParserSymbolTable {
 				
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
-				if( (!data.qualified || !foundSomething || data.mode == LookupMode.PREFIX ) && temp.hasUsingDirectives() ){
+				if( (!data.qualified || !foundSomething || data.isPrefixLookup() ) && temp.hasUsingDirectives() ){
 					//name wasn't found, add transitive using directives for later consideration
 					if( transitiveDirectives == null )
 						transitiveDirectives = new ArrayList(4);
@@ -317,15 +316,15 @@ public class ParserSymbolTable {
 		
 		Object obj = null;
 	
-		if( data.associated != null ){
+		if( data.getAssociated() != null ){
 			//we are looking in lookIn, remove it from the associated scopes list
-			data.associated.remove( lookIn );
+			data.getAssociated().remove( lookIn );
 		}
 		
 		Map declarations = lookIn.getContainedSymbols();
 		
 		Iterator iterator = null;
-		if( data.mode == LookupMode.PREFIX && declarations != Collections.EMPTY_MAP ){
+		if( data.isPrefixLookup() && declarations != Collections.EMPTY_MAP ){
 			if( declarations instanceof SortedMap ){
 				iterator = ((SortedMap)declarations).tailMap( data.name.toLowerCase() ).keySet().iterator();
 			} else {
@@ -358,7 +357,7 @@ public class ParserSymbolTable {
 			}
 		} 
 		
-		if( found != null && data.mode == LookupMode.NORMAL ){
+		if( found != null && !data.isPrefixLookup() ){
 			return found;
 		}
 		
@@ -413,7 +412,7 @@ public class ParserSymbolTable {
 		Map parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
 		if( parameters != Collections.EMPTY_MAP ){
 			iterator = null;
-			if( data.mode == LookupMode.PREFIX ){
+			if( data.isPrefixLookup() ){
 				if( parameters instanceof SortedMap ){
 					iterator = ((SortedMap) parameters).tailMap( data.name.toLowerCase() ).keySet().iterator();
 				} else {
@@ -446,18 +445,18 @@ public class ParserSymbolTable {
 	}
 
 	private static boolean nameMatches( LookupData data, String name ){
-		if( data.mode == LookupMode.PREFIX ){
+		if( data.isPrefixLookup() ){
 			return name.regionMatches( true, 0, data.name, 0, data.name.length() );
 		} 
 		return name.equals( data.name );
 	}
 	private static boolean checkType( LookupData data, ISymbol symbol ) { //, TypeInfo.eType type, TypeInfo.eType upperType ){
-		if( data.filter == null ){
+		if( data.getFilter() == null ){
 			return true;
 		}
 		
 		TypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
-		return data.filter.shouldAccept( symbol, typeInfo ) || data.filter.shouldAccept( symbol );
+		return data.getFilter().shouldAccept( symbol, typeInfo ) || data.getFilter().shouldAccept( symbol );
 	}
 	
 	private static Object collectSymbol(LookupData data, Object object ) throws ParserSymbolTableException {
@@ -510,11 +509,8 @@ public class ParserSymbolTable {
 							} else if( foundSymbol.getTypeInfo().isForwardDeclaration() && foundSymbol.getTypeSymbol() == cls ){
 								//decl is a forward declaration of cls, we already have what we want (cls)
 							} else {
-								if( data.mode == LookupMode.PREFIX ){
-									if( data.ambiguities == null ){
-										data.ambiguities = new HashSet();
-									}
-									data.ambiguities.add( foundSymbol.getName() );
+								if( data.isPrefixLookup() ){
+									data.addAmbiguity( foundSymbol.getName() );
 								} else {
 									throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 								}
@@ -525,11 +521,8 @@ public class ParserSymbolTable {
 						if( obj == null ){
 							obj = foundSymbol;	
 						} else {
-							if( data.mode == LookupMode.PREFIX ){
-								if( data.ambiguities == null ){
-									data.ambiguities = new HashSet();
-								}
-								data.ambiguities.add( foundSymbol.getName() );
+							if( data.isPrefixLookup() ){
+								data.addAmbiguity( foundSymbol.getName() );
 							} else {
 								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 							} 
@@ -583,8 +576,8 @@ public class ParserSymbolTable {
 		}
 		
 		if( numTemplateFunctions > 0 ){
-			if( data.parameters != null && ( !data.exactFunctionsOnly || data.templateParameters != null ) ){
-				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.parameters, data.templateParameters );
+			if( data.getParameters() != null && ( !data.exactFunctionsOnly || data.getTemplateParameters() != null ) ){
+				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.getParameters(), data.getTemplateParameters() );
 				if( fns != null )
 					functionSet.addAll( fns );
 				numFunctions = functionSet.size();
@@ -605,11 +598,8 @@ public class ParserSymbolTable {
 		}
 		
 		if( ambiguous ){
-			if( data.mode == LookupMode.PREFIX ){
-				if( data.ambiguities == null ){
-					data.ambiguities = new HashSet();
-				}
-				data.ambiguities.add( foundSymbol.getName() );
+			if( data.isPrefixLookup() ){
+				data.addAmbiguity( foundSymbol.getName() );
 			} else {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 			} 
@@ -678,7 +668,7 @@ public class ParserSymbolTable {
 						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 					}
 					
-					if( (temp == null || temp.isEmpty()) || data.mode == LookupMode.PREFIX ){
+					if( (temp == null || temp.isEmpty()) || data.isPrefixLookup() ){
 						inherited = lookupInParents( data, parent );
 						if( temp == null )
 							temp = inherited;
@@ -705,11 +695,8 @@ public class ParserSymbolTable {
 							ISymbol sym = (ISymbol) (( objList != null && objListSize > 0 ) ? objList.get(0) : obj);
 							while( sym != null ){
 								if( !checkAmbiguity( sym, temp.get( key ) ) ){
-									if( data.mode == LookupMode.PREFIX ){
-										if( data.ambiguities == null ){
-											data.ambiguities = new HashSet();
-										}
-										data.ambiguities.add( sym.getName() );
+									if( data.isPrefixLookup() ){
+										data.addAmbiguity( sym.getName() );
 									} else {
 										throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 									} 								
@@ -932,7 +919,7 @@ public class ParserSymbolTable {
 	static protected ISymbol resolveAmbiguities( LookupData data ) throws ParserSymbolTableException{
 		ISymbol resolvedSymbol = null;
 		
-		if( data.foundItems == null || data.foundItems.isEmpty() || data.mode == LookupMode.PREFIX ){
+		if( data.foundItems == null || data.foundItems.isEmpty() || data.isPrefixLookup() ){
 			return null;
 		}
 		
@@ -961,7 +948,7 @@ public class ParserSymbolTable {
 		}
 		
 		if( resolvedSymbol == null ){
-			if( data.parameters == null ){
+			if( data.getParameters() == null ){
 				//we have no parameter information, if we only have one function, return
 				//that, otherwise we can't decide between them
 				if( functionList.size() == 1){
@@ -984,7 +971,7 @@ public class ParserSymbolTable {
 		//reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable( data, functions );
 		
-		if( data.exactFunctionsOnly && data.templateParameters == null ){
+		if( data.exactFunctionsOnly && data.getTemplateParameters() == null ){
 			if( functions.size() == 1 ){
 				return (IParameterizedSymbol) functions.get( 0 );
 			} else if( functions.size() == 0 ){
@@ -994,7 +981,7 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		int numSourceParams = ( data.parameters == null ) ? 0 : data.parameters.size();
+		int numSourceParams = ( data.getParameters() == null ) ? 0 : data.getParameters().size();
 		int numFns = functions.size();
 		
 		if( numSourceParams == 0 ){
@@ -1015,7 +1002,7 @@ public class ParserSymbolTable {
 				}
 			}
 			
-			if( data.parameters == null )
+			if( data.getParameters() == null )
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 		}
 		
@@ -1046,7 +1033,7 @@ public class ParserSymbolTable {
 			sourceParameters.add( new TypeInfo( TypeInfo.t_void, 0, null ) );
 			numSourceParams = 1;
 		} else {
-			sourceParameters = data.parameters;
+			sourceParameters = data.getParameters();
 		}
 		
 		for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
@@ -1125,7 +1112,7 @@ public class ParserSymbolTable {
 					hasWorse = true;
 					hasBetter = false;
 					
-					if( data.mode == LookupMode.PREFIX ){
+					if( data.isPrefixLookup() ){
 						//for prefix lookup, just remove from the function list those functions
 						//that don't fit the parameters
 						functions.remove( fnIdx-- );
@@ -1148,7 +1135,7 @@ public class ParserSymbolTable {
 			}
 			
 			//during a prefix lookup, we don't need to rank the functions
-			if( data.mode == LookupMode.PREFIX )
+			if( data.isPrefixLookup() )
 				continue;
 			
 			//If function has a parameter match that is better than the current best,
@@ -1174,12 +1161,12 @@ public class ParserSymbolTable {
 					}
 					//we prefer normal functions over template functions, unless we specified template arguments
 					else if( bestIsTemplate && !currIsTemplate ){
-						if( data.templateParameters == null )
+						if( data.getTemplateParameters() == null )
 							hasBetter = true;
 						else
 							ambiguous = false;
 					} else if( !bestIsTemplate && currIsTemplate ){
-						if( data.templateParameters == null )
+						if( data.getTemplateParameters() == null )
 							ambiguous = false;
 						else
 							hasBetter = true;
@@ -1221,10 +1208,10 @@ public class ParserSymbolTable {
 	}
 	
 	static private void reduceToViable( LookupData data, List functions ){
-		int numParameters = ( data.parameters == null ) ? 0 : data.parameters.size();
+		int numParameters = ( data.getParameters() == null ) ? 0 : data.getParameters().size();
 		int num;	
 			
-		if( data.mode == LookupMode.PREFIX )
+		if( data.isPrefixLookup() )
 		{
 			if( numParameters >= 1 )
 				numParameters++;
@@ -1255,7 +1242,7 @@ public class ParserSymbolTable {
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
-				if( data.exactFunctionsOnly && !functionHasParameters( function, data.parameters ) ){
+				if( data.exactFunctionsOnly && !functionHasParameters( function, data.getParameters() ) ){
 					functions.remove( i-- );
 					size--;
 				}
@@ -1268,7 +1255,7 @@ public class ParserSymbolTable {
 					continue;
 			}
 			else if( numParameters == 1 && num == 0 ){
-				TypeInfo paramType = (TypeInfo) data.parameters.iterator().next();
+				TypeInfo paramType = (TypeInfo) data.getParameters().iterator().next();
 				if( paramType.isType( TypeInfo.t_void ) )
 					continue;
 			}
@@ -1286,7 +1273,7 @@ public class ParserSymbolTable {
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
 			else {
-				if( data.mode == LookupMode.PREFIX ){
+				if( data.isPrefixLookup() ){
 					//during prefix lookup, having more parameters than what is provided is ok
 					continue;
 				}
@@ -1871,10 +1858,13 @@ public class ParserSymbolTable {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			}
 			if( targetDecl.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
-				LookupData data = new LookupData( EMPTY_NAME, TypeInfo.t_constructor);
-				data.parameters = new ArrayList(1);
-				data.parameters.add( source );
+				LookupData data = new LookupData( EMPTY_NAME){
+					public List getParameters() { return parameters; };
+					public TypeFilter getFilter() { return CONSTRUCTOR_FILTER; }
+					private List parameters = new ArrayList( 1 );
+				};
 				data.forUserDefinedConversion = true;
+				data.getParameters().add( source );
 				
 				if( targetDecl instanceof IDeferredTemplateInstance ){
 					targetDecl = ((IDeferredTemplateInstance)targetDecl).getTemplate().getTemplatedSymbol();
@@ -1901,10 +1891,11 @@ public class ParserSymbolTable {
 				String name = target.toString();
 				
 				if( !name.equals(EMPTY_NAME) ){
-					LookupData data = new LookupData( "operator " + name, TypeInfo.t_function ); //$NON-NLS-1$
-					data.parameters = Collections.EMPTY_LIST;
+					LookupData data = new LookupData( "operator " + name ){ //$NON-NLS-1$
+						public List getParameters() { return Collections.EMPTY_LIST; };
+						public TypeFilter getFilter() { return FUNCTION_FILTER; }
+					};
 					data.forUserDefinedConversion = true;
-					
 					data.foundItems = lookupInContained( data, (IContainerSymbol) sourceDecl );
 					conversion = (data.foundItems != null ) ? (IParameterizedSymbol)resolveAmbiguities( data ) : null;	
 				}
@@ -2112,33 +2103,18 @@ public class ParserSymbolTable {
 //	}
 	
 
-	static public class LookupMode extends Enum{
-		public static final LookupMode PREFIX = new LookupMode( 1 );
-		public static final LookupMode NORMAL = new LookupMode( 2 );
-
-		private LookupMode( int constant)
-		{
-			super( constant ); 
-		}
-	}
-
 	
 	static protected class LookupData
 	{
 		protected static final TypeFilter ANY_FILTER = new TypeFilter( TypeInfo.t_any );
-		public Set ambiguities;
+		protected static final TypeFilter CONSTRUCTOR_FILTER = new TypeFilter( TypeInfo.t_constructor );
+		protected static final TypeFilter FUNCTION_FILTER = new TypeFilter( TypeInfo.t_function );
+		
 		public String name;
 		public Map usingDirectives; 
 		public Set visited = new HashSet();	//used to ensure we don't visit things more than once
-		
-		public HashSet inheritanceChain;		//used to detect circular inheritance
-		
-		public List parameters;                 //parameter info for resolving functions
-		public List templateParameters;			//template parameters
-		public HashSet associated;				//associated namespaces for argument dependant lookup
-		public ISymbol stopAt;					//stop looking along the stack once we hit this declaration
-		public TypeFilter filter = null;
-		public ISymbol templateMember;  //to assit with template member defs
+		public HashSet inheritanceChain;	//used to detect circular inheritance
+		public ISymbol templateMember;  	//to assit with template member defs
 		
 		public boolean qualified = false;
 		public boolean ignoreUsingDirectives = false;
@@ -2149,18 +2125,22 @@ public class ParserSymbolTable {
 		
 		public Map foundItems = null;
 		
-		public LookupMode mode = LookupMode.NORMAL;
-		
-		public LookupData( String n, TypeInfo.eType t ){
+		public LookupData( String n ){
 			name = n;
-			if( t == TypeInfo.t_any ) filter = ANY_FILTER;
-			else filter = new TypeFilter( t );
 		}
-		public LookupData( String n, TypeFilter f ) {
-			name = n;
-			filter = ( f != null ) ? f : ANY_FILTER;
-		}
+
+		//the following function are optionally overloaded by anonymous classes deriving from 
+		//this LookupData
+		public boolean isPrefixLookup(){ return false;}       //prefix lookup
+		public Set getAmbiguities()    { return null; }       
+		public void addAmbiguity(String name) {	}
+		public List getParameters()    { return null; }       //parameter info for resolving functions
+		public HashSet getAssociated() { return null; }       //associated namespaces for argument dependant lookup
+		public ISymbol getStopAt()     { return null; }       //stop looking along the stack once we hit this declaration
+		public List getTemplateParameters() { return null; }  //template parameters
+		public TypeFilter getFilter() { return ANY_FILTER; }
 	}
+
 	
 	static protected class Cost
 	{

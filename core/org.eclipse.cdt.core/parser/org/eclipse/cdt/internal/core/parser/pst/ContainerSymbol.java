@@ -364,7 +364,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
 	public IUsingDeclarationSymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
+		LookupData data = new LookupData( name );
 
 		if( declContext != null ){				
 			data.qualified = true;
@@ -450,8 +450,18 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
-	public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, type );
+	public ISymbol elaboratedLookup( final TypeInfo.eType type, String name ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name ){
+			public TypeFilter getFilter() {
+				if( t == TypeInfo.t_any ) return ANY_FILTER;
+				else {
+					if( filter == null ) filter = new TypeFilter( t );
+					return filter;
+				}
+			};
+			private TypeFilter filter = null;
+			private final TypeInfo.eType t = type;
+		};
 	
 		ParserSymbolTable.lookup( data, this );
 	
@@ -478,7 +488,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookup(java.lang.String)
 	 */
 	public ISymbol lookup( String name ) throws ParserSymbolTableException {
-		LookupData data = new LookupData( name, TypeInfo.t_any );
+		LookupData data = new LookupData( name );
 	
 		ParserSymbolTable.lookup( data, this );
 	
@@ -523,7 +533,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * for a definition.
 	 */
 	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
+		LookupData data = new LookupData( name );
 		data.qualified = true;
 		
 		IContainerSymbol container = this;
@@ -542,10 +552,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 
-	public IParameterizedSymbol lookupMethodForDefinition( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
+	public IParameterizedSymbol lookupMethodForDefinition( String name, final List parameters ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name ){
+			public List getParameters() { return params; };
+			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
+		};
 		data.qualified = true;
-		data.parameters = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 		data.exactFunctionsOnly = true;
 		
 		IContainerSymbol container = this;
@@ -586,10 +598,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	private IContainerSymbol lookupNestedNameSpecifier(String name, IContainerSymbol inSymbol ) throws ParserSymbolTableException{		
 		ISymbol foundSymbol = null;
 	
-		LookupData data = new LookupData( name, TypeInfo.t_namespace );
-		data.filter.addAcceptedType( TypeInfo.t_class );
-		data.filter.addAcceptedType( TypeInfo.t_struct );
-		data.filter.addAcceptedType( TypeInfo.t_union );
+		final TypeFilter filter = new TypeFilter( TypeInfo.t_namespace );
+		filter.addAcceptedType( TypeInfo.t_class );
+		filter.addAcceptedType( TypeInfo.t_struct );
+		filter.addAcceptedType( TypeInfo.t_union );
+		
+		LookupData data = new LookupData( name ){
+			public TypeFilter getFilter() { return typeFilter; }
+			final private TypeFilter typeFilter = filter; 
+		};
 		
 		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	
@@ -611,15 +628,29 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String)
 	 */
 	public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name );
+		data.qualified = true;
+		ParserSymbolTable.lookup( data, this );
 	
-		return qualifiedLookup(name, TypeInfo.t_any); 
+		return ParserSymbolTable.resolveAmbiguities( data );	
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, t );
+	public ISymbol qualifiedLookup( String name, final TypeInfo.eType t ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name ){
+			public TypeFilter getFilter() { 
+				if( t == TypeInfo.t_any ) return ANY_FILTER;
+				else {
+					if( filter == null )
+						filter = new TypeFilter( t );
+					return filter;
+				}
+			}
+			private TypeFilter filter = null;
+			private final TypeInfo.eType type = t;
+		};
 		data.qualified = true;
 		ParserSymbolTable.lookup( data, this );
 	
@@ -651,10 +682,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * ordinary unqualified lookup and the set of declarations found in the
 	 * namespaces and classes associated with the argument types.
 	 */
-	public IParameterizedSymbol unqualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
+	public IParameterizedSymbol unqualifiedFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
 		//figure out the set of associated scopes first, so we can remove those that are searched
 		//during the normal lookup to avoid doing them twice
-		HashSet associated = new HashSet();
+		final HashSet associated = new HashSet();
 	
 		//collect associated namespaces & classes.
 		int size = ( parameters == null ) ? 0 : parameters.size();
@@ -684,12 +715,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 	
-		LookupData data = new LookupData( name, TypeInfo.t_function );
-		//if parameters == null, thats no parameters, but we need to distinguish that from
-		//no parameter information at all, so make an empty list.
-		data.parameters = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
-		data.associated = associated;
-	
+		LookupData data = new LookupData( name ){
+			public HashSet getAssociated() { return assoc; }
+			public List    getParameters() { return params; }
+			public TypeFilter getFilter()  { return FUNCTION_FILTER; }
+			
+			final private HashSet assoc = associated;
+			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
+		};
+		
 		ParserSymbolTable.lookup( data, this );
 	
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
@@ -740,12 +774,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * Member lookup really proceeds as an unqualified lookup, but doesn't
 	 * include argument dependant scopes
 	 */
-	public IParameterizedSymbol memberFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_function );
-		//if parameters == null, thats no parameters, but we need to distinguish that from
-		//no parameter information at all, so make an empty list.
-		data.parameters = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
-		
+	public IParameterizedSymbol memberFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name ){
+			public List getParameters() { return params; };
+			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
+			public TypeFilter getFilter() { return FUNCTION_FILTER; }
+		};
 		ParserSymbolTable.lookup( data, this );
 		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
 	}
@@ -753,12 +787,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedFunctionLookup(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_function );
+	public IParameterizedSymbol qualifiedFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name ){
+			public List getParameters() { return params; };
+			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
+			public TypeFilter getFilter() { return FUNCTION_FILTER; }
+		};
 		data.qualified = true;
-		//if parameters == null, thats no parameters, but we need to distinguish that from
-		//no parameter information at all, so make an empty list.
-		data.parameters = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 	
 		ParserSymbolTable.lookup( data, this );
 	
@@ -770,7 +805,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 */
 	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException
 	{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
+		LookupData data = new LookupData( name );
 		
 		ParserSymbolTable.lookup( data, this );
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
@@ -790,11 +825,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
 	 */
-	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments, boolean forDefinition) throws ParserSymbolTableException {
-		LookupData data = new LookupData( name, TypeInfo.t_function );
+	public ISymbol lookupFunctionTemplateId(String name, final List parameters, final List arguments, boolean forDefinition) throws ParserSymbolTableException {
+		LookupData data = new LookupData( name ){
+			public List getParameters() { return params; }
+			public List getTemplateParameters() { return templateParams; }
+			public TypeFilter getFilter() { return FUNCTION_FILTER; }
+			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
+			final private List templateParams = arguments;
+		};
 		data.exactFunctionsOnly = forDefinition;
-		data.parameters = parameters;
-		data.templateParameters = arguments;
 		
 		ParserSymbolTable.lookup( data, this );
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
@@ -806,16 +845,31 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupTemplateIdForDefinition(java.lang.String, java.util.List)
 	 */
-	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments) throws ParserSymbolTableException {
+	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments){
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified, List paramList ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( prefix, filter );
+	public List prefixLookup( final TypeFilter filter, String prefix, boolean qualified, final List paramList ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( prefix ){
+			public List 	getParameters() { return params;      }
+			public boolean 	isPrefixLookup(){ return true;        }
+			public Set 		getAmbiguities(){ return ambiguities; }
+			public TypeFilter getFilter() { return typeFilter; }
+			
+			public void addAmbiguity( String name ){
+				if( ambiguities == Collections.EMPTY_SET ){
+					ambiguities = new HashSet();
+				}
+				ambiguities.add( name );
+			}
+			
+			final private List params = paramList;
+			private Set ambiguities = Collections.EMPTY_SET;	
+			final private TypeFilter typeFilter = filter;
+		};
+		
 		data.qualified = qualified;
-		data.mode = ParserSymbolTable.LookupMode.PREFIX;
-		data.parameters = paramList;
 		
 		ParserSymbolTable.lookup( data, this );
 		
@@ -841,8 +895,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			return null;
 		}
 		//remove any ambiguous symbols
-		if( data.ambiguities != null && !data.ambiguities.isEmpty() ){
-			Iterator iter = data.ambiguities.iterator();
+		if( data.getAmbiguities() != null && !data.getAmbiguities().isEmpty() ){
+			Iterator iter = data.getAmbiguities().iterator();
 			while( iter.hasNext() ){
 				data.foundItems.remove( iter.next() );
 			}

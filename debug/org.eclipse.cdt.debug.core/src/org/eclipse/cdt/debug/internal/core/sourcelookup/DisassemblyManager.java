@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -105,12 +107,15 @@ public class DisassemblyManager
 				String fileName = frameInfo.getFile();
 				int lineNumber = frameInfo.getFrameLineNumber();
 				ICDIInstruction[] instructions = new ICDIInstruction[0];
-				try
+				if ( fileName != null && fileName.length() > 0 )
 				{
-					instructions = sm.getInstructions( fileName, lineNumber, DISASSEMBLY_MAX_LINE_COUNT );
-				}
-				catch( CDIException e )
-				{
+					try
+					{
+						instructions = sm.getInstructions( fileName, lineNumber, DISASSEMBLY_MAX_LINE_COUNT );
+					}
+					catch( CDIException e )
+					{
+					}
 				}
 				if ( instructions.length == 0 )
 				{
@@ -119,7 +124,7 @@ public class DisassemblyManager
 					{
 						try
 						{
-							instructions = sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE );
+							instructions = getFunctionInstructions( sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE ) );
 						}
 						catch( CDIException e )
 						{
@@ -134,5 +139,25 @@ public class DisassemblyManager
 			}
 		}
 		return getDisassemblyStorage();
+	}
+	
+	private ICDIInstruction[] getFunctionInstructions( ICDIInstruction[] rawInstructions )
+	{
+		if ( rawInstructions.length > 0 && 
+			 rawInstructions[0].getFuntionName() != null &&
+			 rawInstructions[0].getFuntionName().length() > 0 )
+		{
+			ArrayList list = new ArrayList( rawInstructions.length );
+			list.add( rawInstructions[0] );
+			for ( int i = 1; i < rawInstructions.length; ++i )
+			{
+				if ( rawInstructions[0].getFuntionName().equals( rawInstructions[i].getFuntionName() ) )
+				{
+					list.add( rawInstructions[i] );
+				}
+			}
+			return (ICDIInstruction[])list.toArray( new ICDIInstruction[list.size()] );
+		}
+		return rawInstructions;
 	}
 }

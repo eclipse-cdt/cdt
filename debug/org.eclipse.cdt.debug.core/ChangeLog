@@ -1,4 +1,8 @@
 2002-11-15 Mikhail Khodjaiants
+	Partial fix for bug 25956.
+	* DisassemblyManager.java: Filter out the instructions that do not belong to the function.
+
+2002-11-15 Mikhail Khodjaiants
 	If the backtrace is very deep the debugger is unable to parse MI output.
 	The limited number of stack frames will be displayed.
 	* IDummyStackFrame.java

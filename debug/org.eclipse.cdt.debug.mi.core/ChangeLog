@@ -1,3 +1,9 @@
+2002-11-18 Alain Magloire
+
+	* src/.../mi/core/cdi/CThread.java (getStackFrameCount):
+	Set the new thread before getting the value and restore
+	after.
+
 2002-11-14 Alain Magloire
 
 	This is needed in post-mortem, application doing a 

@@ -39,7 +39,7 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 	public MemoryViewPreferencePage()
 	{
 		super( GRID );
-		setDescription( "Debug Memory View Settings." );
+		setDescription( "Memory View Settings." );
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 	}
 

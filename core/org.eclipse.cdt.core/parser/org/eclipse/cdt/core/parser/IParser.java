@@ -56,25 +56,6 @@ public interface IParser {
 	public void setCppNature(boolean b);
 	
 	/**
-	 * Do we wish to keep track of the lineNumbers/Offset mapping? 
-	 * 
-	 * By default, the value is false.  Setting it to true impacts performance but 
-	 * provides that feature.  
-	 * 
-	 * @param value		true for the feature, false for improved performance
-	 */
-	public void mapLineNumbers( boolean value );
-	
-	/**
-	 * Given an character offset into the file, return the lineNumber this offset maps to.  
-	 * 
-	 * @param offset	character offset in the file
-	 * @return			lineNumber this offset maps to
-	 * @throws NoSuchMethodException	if mapLineNumbers( true ) was not previously called
-	 */
-	public int getLineNumberForOffset(int offset) throws NoSuchMethodException;
-	
-	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  
 	 * 
 	 * @return		-1 for no error, otherwise the character offset where we encountered 

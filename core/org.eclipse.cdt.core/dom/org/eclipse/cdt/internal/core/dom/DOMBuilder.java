@@ -458,7 +458,8 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	public void pointerOperatorEnd(Object ptrOperator) {
 		PointerOperator ptrOp = (PointerOperator)ptrOperator;
 		Declarator owner = ptrOp.getOwnerDeclarator();
-		owner.addPointerOperator( ptrOp );
+		if( owner != null ) // can be since operator * 
+			owner.addPointerOperator( ptrOp );
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,10 @@
+2003-06-25 John Camelon
+	Create new interface and support for calculating lineNumber/offset mapping.  
+	Updated IASTClassSpecifier for qualified name query.  
+	Began structuring expressions and declarators in Parser for ISourceElementRequestor.  
+	Updated other packages to use new interfaces.
+	Updated automatedtests/torture test to use new line number information.  
+
 2003-06-24 John Camelon
 	Updates for ISourceElementRequestor - elaborated types & enumerations.  
 

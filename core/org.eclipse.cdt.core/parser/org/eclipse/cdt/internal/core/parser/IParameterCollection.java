@@ -10,12 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.util.List;
+
 /**
  * @author jcamelon
  *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public interface IOffsetToLineMapping {
-	public abstract int getLineNo(int offset);
+public interface IParameterCollection
+{
+	public List getParameters();
+	public void addParameter( DeclarationWrapper param );
 }

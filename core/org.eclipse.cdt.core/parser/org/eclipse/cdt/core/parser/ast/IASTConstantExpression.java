@@ -10,22 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import java.util.Iterator;
-
 /**
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration {
-
-	public ClassNameType getClassNameType(); 
-
-	public ClassKind getClassKind();
-
-	public Iterator getBaseClauses();
-	
-	public AccessVisibility getCurrentVisibilityMode(); 
-	
-	public String[] getFullyQualifiedName();
-	 
+public interface IASTConstantExpression extends IASTExpression
+{
+	public int evaluate();
 }

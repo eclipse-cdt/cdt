@@ -206,13 +206,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		return sourceManipulationInfo;
 	}
-	protected Map parse(InputStream in, boolean requiresLineNumbers) {
+	protected Map parse(InputStream in) {
 		try {
 			removeChildren();
 			if (CCorePlugin.getDefault().useNewParser()) {
 				// new parser
 				CModelBuilder modelBuilder = new CModelBuilder(this);
-				return (modelBuilder.parse(requiresLineNumbers));
+				return (modelBuilder.parse());
 
 			} else {
 				// cdt 1.0 parser
@@ -483,7 +483,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			String buf =this.getBuffer().getContents();
 			if (buf != null) {
 				StringBufferInputStream in = new StringBufferInputStream (buf);
-				return (parse (in, requireLineNumbers));
+				return (parse (in));
 			}
 			return null;
 

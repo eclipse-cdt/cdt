@@ -14,14 +14,11 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
@@ -31,7 +28,6 @@ import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -53,47 +49,12 @@ public class LineNumberTest extends TestCase {
 		fileIn = new FileInputStream(fileName);
 	}
 	
-	public void testLineNos() throws Exception
-	{
-		IScanner scanner = ParserFactory.createScanner( new StringReader( "int x = 3;\n foo\nfire\nfoe " ), "string", null, null, null );
-		scanner.mapLineNumbers(true);
-		IToken t = scanner.nextToken(); 
-		assertEquals( t.getType(), IToken.t_int );
-		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
-		t = scanner.nextToken(); 
-		assertEquals( t.getImage(), "x");
-		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
-		t = scanner.nextToken(); 
-		assertEquals( t.getType(), IToken.tASSIGN );
-		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
-		t = scanner.nextToken(); 
-		assertEquals( t.getImage(), "3" );
-		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
-		t = scanner.nextToken(); 
-		assertEquals( t.getType(), IToken.tSEMI);
-		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
-		for( int i = 2; i < 5; ++i )
-		{ 
-			t = scanner.nextToken(); 
-			assertEquals( t.getType(), IToken.tIDENTIFIER);
-			assertEquals( scanner.getLineNumberForOffset(t.getOffset()), i );
-		}
-
-		try {
-			t = scanner.nextToken();
-			fail( "EOF");
-		} 
-		catch (Parser.EndOfFile e) {
-			assertEquals( scanner.getLineNumberForOffset(29), 4 ); 
-		}
-
-	}
 	
 	public void testDOMLineNos() throws Exception
 	{
 		DOMBuilder domBuilder = new DOMBuilder();
 		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader( fileIn ), null, null, null, ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE ); 
-		parser.mapLineNumbers(true); 
+		//parser.mapLineNumbers(true); 
 		if( ! parser.parse() ) fail( "Parse of file failed");
 		
 		List macros = domBuilder.getTranslationUnit().getMacros();

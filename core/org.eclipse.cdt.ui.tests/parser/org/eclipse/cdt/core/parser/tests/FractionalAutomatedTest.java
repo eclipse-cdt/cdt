@@ -240,7 +240,6 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 				IParser parser = ParserFactory.createParser( 
 						ParserFactory.createScanner( new StringReader( code ), null, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
 				parser.setCppNature( cppNature );
-				parser.mapLineNumbers(true);
 				parser.parse();
 			} catch ( Exception e ){
 				result = e.getClass().toString();

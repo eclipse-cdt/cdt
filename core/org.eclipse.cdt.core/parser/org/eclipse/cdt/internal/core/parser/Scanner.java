@@ -425,29 +425,22 @@ public class Scanner implements IScanner {
 					}
 				} else if (c == '\n')
 				{
-					contextStack.newLine();
 					c = getChar(false);
-					if( c == '\n')
-						contextStack.newLine(); 
+ 
 				} else // '\' is not the last character on the line
 				{
 					ungetChar(c);
 					c = '\\';
 				}
 			}
-			else if( c == '\n' )
-				contextStack.newLine();
 
 		}
-		else if( c == '\n' )
-			contextStack.newLine();
 			
 		return c;
 	}
 
 	private void ungetChar(int c) throws ScannerException{
 		contextStack.getCurrentContext().pushUndo(c);
-		if( c == '\n' ) contextStack.recantNewline();
 		contextStack.undoRollback( lastContext, requestor );
 	}
 
@@ -2186,14 +2179,7 @@ public class Scanner implements IScanner {
 		return "0";
 	}
 	
-	/**
-	 * @return
-	 */
-	public int getLineNumberForOffset(int offset) throws NoSuchMethodException {
-		if( this.mapLineNumbers )
-			return contextStack.mapOffsetToLineNumber(offset);
-		throw new NoSuchMethodException();
-	}
+	
 
 	private boolean cppNature = true; 
 	/* (non-Javadoc)
@@ -2203,14 +2189,6 @@ public class Scanner implements IScanner {
 		cppNature = value; 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.IScanner#mapLineNumbers(boolean)
-	 */
-	public void mapLineNumbers(boolean value) {
-		mapLineNumbers = value; 
-	}
-
-	private boolean mapLineNumbers = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IScanner#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -102,12 +103,12 @@ public class TortureTest extends FractionalAutomatedTest {
 	}
 	
 	
-	static protected void reportException (Throwable e, String file, IParser parser){
+	static protected void reportException (Throwable e, String file, IParser parser, ILineOffsetReconciler mapping){
 		String output = null;
 		int lineNumber = -1;
 		
 		try {
-			lineNumber = parser.getLineNumberForOffset(parser.getLastErrorOffset());
+			lineNumber = mapping.getLineNumberForOffset(parser.getLastErrorOffset());
 		} catch (Exception ex) {}
 		
 		if (e instanceof AssertionFailedError) {
@@ -178,7 +179,7 @@ public class TortureTest extends FractionalAutomatedTest {
 				thread.stop();
 				reportHang(testCode, filePath);
 			} else if (thread.result != null) {
-				reportException(thread.result, filePath, thread.parser);
+				reportException(thread.result, filePath, thread.parser, thread.mapping );
 			}
 		} else {
 			// gcc probably didn't expect this test to pass.
@@ -198,15 +199,16 @@ public class TortureTest extends FractionalAutomatedTest {
 		public Throwable 	result = null;
 		public IParser 		parser = null;
 		public boolean 		quickParse = true;
+		public ILineOffsetReconciler mapping = null;
 	
 		public void run(){
 			try {           
 				DOMBuilder domBuilder = new DOMBuilder(); 
 				IParser parser = ParserFactory.createParser( 
 					ParserFactory.createScanner( new StringReader( code ), null, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
+				mapping = ParserFactory.createLineOffsetReconciler( new StringReader( code ) );
 	
 				parser.setCppNature(cppNature);
-				parser.mapLineNumbers(true);
 	            
 				assertTrue(parser.parse());
 			} 

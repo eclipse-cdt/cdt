@@ -72,7 +72,7 @@ public class PreprocessorTest extends TestCase {
 	
 	public IPreprocessor setupPreprocessor( String text, List includePaths, Map defns, ISourceElementRequestor rq )
 	{
-		IPreprocessor p = ParserFactory.createPreprocesor( new StringReader( text ), "test", defns, includePaths, ParserMode.COMPLETE_PARSE );
+		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", defns, includePaths, ParserMode.COMPLETE_PARSE );
 		p.setRequestor( rq );
 		return p; 
 	}

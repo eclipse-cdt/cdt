@@ -148,7 +148,6 @@ public class ContextStack {
 	private LinkedList undoStack = new LinkedList();
 	private Set inclusions = new HashSet(); 
 	private Set defines = new HashSet();
-	private OffsetToLineMapping offsetLineMap = new OffsetToLineMapping(); 
 	
 	/**
 	 * @return
@@ -157,21 +156,4 @@ public class ContextStack {
 		return topContext;
 	}
 	
-	public int mapOffsetToLineNumber( int offset )
-	{
-		return offsetLineMap.getLineNo(offset);
-	}
-	
-	public void newLine()
-	{
-		if( currentContext == topContext )
-			offsetLineMap.newLine( topContext.getOffset() );
-	}
-
-	public void recantNewline()
-	{
-		if( currentContext == topContext )
-			offsetLineMap.recantLastNewLine();
-		
-	}
 }

@@ -14,16 +14,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
+
 /**
  * @author jcamelon
  *
  */
-public class Declarator
+public class Declarator implements IParameterCollection 
 {
 	private final DeclarationWrapper owner1;
 	private final Declarator owner2;
 	private String name; 
-	private List ptrOps = new ArrayList(); 
+	private IASTExpression initialValueExpression;
+	private List ptrOps = new ArrayList();
+	private List parameters = new ArrayList();  
 	
 	private int nameStartOffset, nameEndOffset; 
 
@@ -114,4 +118,32 @@ public class Declarator
 	{
 		ptrOps.add( ptrOp ); 
 	}
+    /**
+     * @return
+     */
+    public List getParameters()
+    {
+        return parameters;
+    }
+
+	public void addParameter( DeclarationWrapper param )
+	{
+		parameters.add( param );
+	}
+    /**
+     * @return
+     */
+    public IASTExpression getInitialValueExpression()
+    {
+        return initialValueExpression;
+    }
+
+    /**
+     * @param expression
+     */
+    public void setInitialValueExpression(IASTExpression expression)
+    {
+        initialValueExpression = expression;
+    }
+
 }

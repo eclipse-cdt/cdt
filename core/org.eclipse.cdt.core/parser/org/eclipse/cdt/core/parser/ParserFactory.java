@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Preprocessor;
@@ -52,7 +53,7 @@ public class ParserFactory {
 		return s; 
 	}
 	
-	public static IPreprocessor createPreprocesor( Reader input, String fileName, Map defns, List inclusions, ParserMode mode )
+	public static IPreprocessor createPreprocessor( Reader input, String fileName, Map defns, List inclusions, ParserMode mode )
 	{
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
 		IPreprocessor s = new Preprocessor( input, fileName, defns );
@@ -60,4 +61,10 @@ public class ParserFactory {
 		s.overwriteIncludePath(inclusions); 
 		return s; 
 	}
+	
+	public static ILineOffsetReconciler createLineOffsetReconciler( Reader input )
+	{
+		return new LineOffsetReconciler( input ); 
+	}
+	
 }

@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -47,6 +48,7 @@ public class AutomatedTest extends AutomatedFramework {
 		
 		File file = null;
 		IParser parser = null;
+		ILineOffsetReconciler mapping = null; 
 		
 		try{
 			file = (File)fileList.removeFirst();
@@ -55,7 +57,8 @@ public class AutomatedTest extends AutomatedFramework {
 			String filePath = file.getCanonicalPath();
 			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
 			parser.setCppNature( ((String)natures.get( filePath )).equalsIgnoreCase("cpp") );
-			parser.mapLineNumbers(true);
+			
+			mapping = ParserFactory.createLineOffsetReconciler( new InputStreamReader( stream ) );
 			
 			assertTrue( parser.parse() );
 		} 
@@ -64,10 +67,10 @@ public class AutomatedTest extends AutomatedFramework {
 			String output = null;
 			if( e instanceof AssertionFailedError ){
 				output = file.getCanonicalPath() + ": Parse failed on line ";
-				output += parser.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n";
+				output += mapping.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n";
 			} else {
 				output = file.getCanonicalPath() + ": " + e.getClass().toString();
-				output += " on line " + parser.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n";
+				output += " on line " + mapping.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n";
 			}
 			if( report != null ){
 				report.write( output.getBytes() );

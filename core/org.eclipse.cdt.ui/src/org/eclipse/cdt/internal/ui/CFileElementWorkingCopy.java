@@ -51,7 +51,7 @@ public class CFileElementWorkingCopy extends WorkingCopy {
 		if (doc != null) {
 			DocumentInputStream dis= new DocumentInputStream(doc);
 			try {
-				parse(dis, false); // we do not believe we require line numbers
+				parse(dis); 
 			} finally {
 				try { dis.close(); } catch (IOException e) {}
 			}

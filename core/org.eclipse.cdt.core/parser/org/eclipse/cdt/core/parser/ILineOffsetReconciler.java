@@ -8,24 +8,14 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
-
-import java.util.Iterator;
+package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration {
-
-	public ClassNameType getClassNameType(); 
-
-	public ClassKind getClassKind();
-
-	public Iterator getBaseClauses();
-	
-	public AccessVisibility getCurrentVisibilityMode(); 
-	
-	public String[] getFullyQualifiedName();
-	 
+public interface ILineOffsetReconciler
+{
+	public int getLineNumberForOffset( int offset ); 
+	public IOffsetDuple getOffsetRangeForLineNumber( int LineNumber );
 }

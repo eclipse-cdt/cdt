@@ -143,4 +143,13 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
 		return null;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

@@ -26,9 +26,9 @@ public interface IScanner  {
 	
 	public IToken nextToken() throws ScannerException, Parser.EndOfFile;
 	public IToken nextToken( boolean next ) throws ScannerException, Parser.EndOfFile;
-	public int getLineNumberForOffset(int offset) throws NoSuchMethodException; 
+	 
 	public void setCppNature( boolean value );
-	public void mapLineNumbers( boolean value );
+	
 	public void setMode(ParserMode mode);
 	public void setCallback(IParserCallback c);
 	

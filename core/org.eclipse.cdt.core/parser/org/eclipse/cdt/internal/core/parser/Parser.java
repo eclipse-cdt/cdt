@@ -712,7 +712,7 @@ public class Parser implements IParser
             }
             else
             {
-                parameterDeclaration(templateParameterList);
+                parameterDeclaration(templateParameterList, null); // this should be something real
             }
         }
     }
@@ -1147,7 +1147,7 @@ public class Parser implements IParser
      * @param containerObject	The IParserCallback object representing the parameterDeclarationClause owning the parm. 
      * @throws Backtrack		request a backtrack
      */
-    protected void parameterDeclaration(Object containerObject)
+    protected void parameterDeclaration(Object containerObject, IParameterCollection collection)
         throws Backtrack
     {
         IToken current = LA(1);
@@ -1178,6 +1178,10 @@ public class Parser implements IParser
             }
         if (current == LA(1))
             throw backtrack;
+        
+        if ( collection != null ) 
+        	collection.addParameter( sdw );
+        	
         try
         {
             callback.parameterDeclarationEnd(parameterDecl);
@@ -1914,6 +1918,7 @@ public class Parser implements IParser
                 catch (Exception e)
                 {
                 }
+                //TODO add in expression information here
             }
             catch (Backtrack b)
             {
@@ -1928,6 +1933,7 @@ public class Parser implements IParser
             }
             if (LT(1) == IToken.tLBRACE)
             {
+            	//TODO do this for real
                 // for now, just consume to matching brace
                 consume();
                 int depth = 1;
@@ -2134,7 +2140,7 @@ public class Parser implements IParser
                                     default :
                                         if (seenParameter)
                                             throw backtrack;
-                                        parameterDeclaration(clause);
+                                        parameterDeclaration(clause, d);
                                         seenParameter = true;
                                 }
                             }
@@ -2187,8 +2193,7 @@ public class Parser implements IParser
                                             done = true;
                                             break;
                                         case IToken.tIDENTIFIER :
-                                            //TODO this is not exactly right - should be type-id rather than just a name
-                                            name(); 
+                                            typeId(); 
                                             try
                                             {
                                                 callback
@@ -2226,8 +2231,8 @@ public class Parser implements IParser
                                 {
                                 }
                             }
-                            if (afterCVModifier != LA(1)
-                                || LT(1) == IToken.tSEMI)
+ 
+                            if ( ( afterCVModifier != LA(1) ||  LT(1) == IToken.tSEMI ) && cvModifier != null  )
                             {
                                 // There were C++-specific clauses after const/volatile modifier
                                 // Then it is a marker for the method
@@ -2488,14 +2493,7 @@ public class Parser implements IParser
             try
             {
                 callback.pointerOperatorType(ptrOp, consume(IToken.tAMPER));
-      
-            }
-            catch (Exception e)
-            {
-            }
-            try
-            {
-                callback.pointerOperatorEnd(ptrOp);
+				callback.pointerOperatorEnd(ptrOp);
             }
             catch (Exception e)
             {
@@ -4289,20 +4287,7 @@ public class Parser implements IParser
         if (scanner != null)
             scanner.setCppNature(b);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.IParser#getLineNumberForOffset(int)
-     */
-    public int getLineNumberForOffset(int offset) throws NoSuchMethodException
-    {
-        return scanner.getLineNumberForOffset(offset);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.IParser#mapLineNumbers(boolean)
-     */
-    public void mapLineNumbers(boolean value)
-    {
-        scanner.mapLineNumbers(value);
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#getLastErrorOffset()
      */
@@ -4310,6 +4295,7 @@ public class Parser implements IParser
     {
         return firstErrorOffset;
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.IParser#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */

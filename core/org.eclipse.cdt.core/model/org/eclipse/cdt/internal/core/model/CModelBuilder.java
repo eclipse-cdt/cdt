@@ -66,12 +66,10 @@ public class CModelBuilder {
 		this.newElements = new HashMap();
 	}
 
-	public Map parse(boolean requiresLineNumbers) throws Exception {
-		// Note - if a CModel client wishes to have a CModel with valid line numbers
-		// DOMFactory.createDOMBuilder should be given the parameter 'true'
+	public Map parse() throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();  
 		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( translationUnit.getBuffer().getContents() ), null, null, null, ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE);
-		parser.mapLineNumbers(requiresLineNumbers);
+
 		if( translationUnit.getCProject() != null )
 		{
 			IProject currentProject = translationUnit.getCProject().getProject();

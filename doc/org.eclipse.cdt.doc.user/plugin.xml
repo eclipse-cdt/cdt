@@ -9,7 +9,7 @@
 
    name = "C/C++ Development User Guide"
    id = "org.eclipse.cdt.doc.user"
-   version = "1.2.0.9"
+   version = "1.2.0.18"
   provider-name = "Rational Software: IBM Software Group">
    <!-- Configure the help contribution for this plugin --> 
    <!-- This part should be in a documentation plugin -->

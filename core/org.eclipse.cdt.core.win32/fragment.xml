@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fragment
    id="org.eclipse.cdt.core.win32"
-   name="CDT Core Win32 Fragment"
+   name="%fragmentName"
    version="1.0.0"
-   provider-name="Eclipse.org"
+   provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
    plugin-version="1.0.0">
 

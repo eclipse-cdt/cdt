@@ -5,17 +5,17 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.IPath;
-
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This class is used by <code>CModelManager</code> to convert
@@ -58,9 +58,25 @@ public class DeltaProcessor {
 	 * Returns null if none was found.
 	 */
 	protected ICElement createElement(IResource resource) {
+		CModelManager manager = CModelManager.getDefault();
 		if (resource == null)
 			return null;
-		return CModelManager.getDefault().create(resource);
+		ICElement celement = manager.create(resource);
+		if (celement == null) {
+			ICElement parent = manager.create(resource.getParent());
+			// Probably it was deleted, find it
+			if (parent instanceof IParent) {
+				ICElement[] children = ((CElement)parent).getElementInfo().getChildren();
+				for (int i = 0; i < children.length; i++) {
+					IResource res = children[i].getResource();
+					if (res != null && res.equals(resource)) {
+						celement = children[i];
+						break;
+					}
+				}
+			}
+		}
+		return celement;
 	}
 
 	/**
@@ -80,39 +96,13 @@ public class DeltaProcessor {
 	}
 
 	/**
-	 * Release the Resource.
-	 * Returns null if none was found.
-	 */
-	protected void releaseCElement(IResource resource) {
-		CModelManager.getDefault().releaseCElement(resource);
-	}
-
-	/**
-	 * get the CElement from the hashtable, if it exist without
-	 * creating it.
-	 * Returns null if none was found.
-	 */
-	protected ICElement getElement(IResource res) {
-		return CModelManager.getDefault().getCElement(res);
-	}
-
-	protected ICElement getElement(IPath path) {
-		return CModelManager.getDefault().getCElement(path);
-	}
-
-	/**
 	 * Adds the given child handle to its parent's cache of children. 
 	 */
 	protected void addToParentInfo(Openable child) {
-
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
-			//try {
-				CElementInfo info = (CElementInfo)parent.getElementInfo();
-				info.addChild(child);
-			//} //catch (CModelException e) {
-				// do nothing - we already checked if open
-			//}
+			CElementInfo info = (CElementInfo)parent.getElementInfo();
+			info.addChild(child);
 		}
 	}
 
@@ -133,7 +123,7 @@ public class DeltaProcessor {
 		if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
 			//ICElement movedFromElement = createElement(delta.getMovedFromPath());
 			if  (movedFromElement == null)
-				movedFromElement = getElement(delta.getMovedFromPath());
+				movedFromElement = createElement(delta.getMovedFromPath());
 			fCurrentDelta.movedTo(element, movedFromElement);
 			movedFromElement = null;
 		} else {
@@ -322,13 +312,27 @@ public class DeltaProcessor {
 	protected void traverseDelta(IResourceDelta delta) {
 		try {
 			if (!updateCurrentDeltaAndIndex(delta)) {
-				fCurrentDelta.addResourceDelta(delta);
+				nonCResourcesChanged(delta);
 			}
 		} catch (CModelException e) {
 		}
 		IResourceDelta [] children = delta.getAffectedChildren();
 		for (int i = 0; i < children.length; i++) {
 				traverseDelta(children[i]);
+		}
+	}
+
+	protected void nonCResourcesChanged(IResourceDelta delta) {
+		fCurrentDelta.addResourceDelta(delta);
+		IResource res = delta.getResource();
+		if (res != null) {
+			ICElement celem = createElement(res.getParent());
+			if (celem instanceof CContainer) {
+				CElementInfo info = ((CContainer)celem).getElementInfo();
+				if (info instanceof CContainerInfo) {
+					((CContainerInfo)info).setNonCResources(null);
+				}
+			}
 		}
 	}
 
@@ -348,50 +352,53 @@ public class DeltaProcessor {
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
 				element = createElement(resource);
-				if (element == null)
-					throw newInvalidElementType();
-				updateIndexAddResource(element, delta);
-				elementAdded(element, delta);
-				isProcess = true;
+				if (element != null) {
+					updateIndexAddResource(element, delta);
+					elementAdded(element, delta);
+					isProcess = true;
+				}
 				break;
 
 			case IResourceDelta.REMOVED :
-				element = getElement(resource);
+				element = createElement(resource);
 				if (element != null) {
 					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
 					isProcess = true;
-				} else {
-					releaseCElement(resource);
 				}
 				break;
 
 			case IResourceDelta.CHANGED :
-				element = createElement(resource);
-				if (element == null)
-					throw newInvalidElementType();
 				int flags = delta.getFlags();
 				if ((flags & IResourceDelta.CONTENT) != 0) {
 					// content has changed
-					contentChanged(element, delta);
-					updateIndexAddResource(element, delta);
+					element = createElement(resource);
+					if (element != null) {
+						contentChanged(element, delta);
+						updateIndexAddResource(element, delta);
+						isProcess = true;
+					}
 				} else if ((flags & IResourceDelta.OPEN) != 0) {
 					// project has been opened or closed
 					IProject res = (IProject)resource;
-					if (res.isOpen()) {
-						elementOpened(element, delta);
-						updateIndexAddResource(element, delta);
-					} else {
-						elementClosed(element, delta);
-						updateIndexRemoveResource(element, delta);
+					element = createElement(resource);
+					if (element != null) {
+						if (res.isOpen()) {
+							elementOpened(element, delta);
+							updateIndexAddResource(element, delta);
+						} else {
+							elementClosed(element, delta);
+							updateIndexRemoveResource(element, delta);
+						}
+						isProcess = true;
 					}
-					// when a project is open/closed don't process children
 				} else if ((flags & IResourceDelta.DESCRIPTION) != 0) {
-					elementAdded(element, delta);
-				} // else if ((flags * IResourceDelta.MARKERS) != 0) {}
-				// else if ((flags * IResourceDelta.TYPE) != 0) {}
-				// else if ((flags * IResourceDelta.SYNC) != 0) {}
-				isProcess = true;
+					element = createElement(resource);
+					if (element != null) {
+						elementAdded(element, delta);
+						isProcess = true;
+					}
+				}
 				break;
 		}
 		return isProcess;

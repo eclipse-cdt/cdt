@@ -10,7 +10,6 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteMemory;
-import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIMemory;
@@ -140,26 +139,23 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		}
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		Long[] addresses = new Long[bytes.length];
 		for (int i = 0; i < bytes.length; i++) {
 			long l = new Byte(bytes[i]).longValue();
 			String value = "0x" + Long.toHexString(l);
-			MIDataWriteMemory mem = factory.createMIDataWriteMemory(offset + i,
+			MIDataWriteMemory mw = factory.createMIDataWriteMemory(offset + i,
 				expression, MIFormat.HEXADECIMAL, 1, value);
 			try {
-				mi.postCommand(mem);
-				MIInfo info = mem.getMIInfo();
+				mi.postCommand(mw);
+				MIInfo info = mw.getMIInfo();
 				if (info == null) {
 					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
 				throw new CDIException(e.getMessage());
 			}
-			addresses[i] = new Long(getStartAddress() + offset + i);
 		}
-		// If the assign was succesfull fire a MIChangedEvent()
-		MIMemoryChangedEvent change = new MIMemoryChangedEvent(addresses);
-		mi.fireEvent(change);
+		// If the assign was succesfull fire a MIChangedEvent() via refresh.
+		refresh();
 	}
 
 }

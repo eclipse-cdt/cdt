@@ -51,6 +51,7 @@ public class Target extends BuildObject implements ITarget {
 	private Map toolMap;
 	private List toolList;
 	private List toolReferences;
+	private boolean resolved = true;
 
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
 	private static final String EMPTY_STRING = new String();
@@ -103,6 +104,10 @@ public class Target extends BuildObject implements ITarget {
 	 * @param element
 	 */
 	public Target(IConfigurationElement element) {
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		resolved = false;
+		
 		// id
 		setId(element.getAttribute(ID));
 		
@@ -121,16 +126,6 @@ public class Target extends BuildObject implements ITarget {
 
 		// Get the default extension
 		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
-
-		// parent
-		String parentId = element.getAttribute(PARENT);
-		if (parentId != null) {
-			parent = ManagedBuildManager.getTarget(null, parentId);
-			// copy over the parents configs
-			IConfiguration[] parentConfigs = parent.getConfigurations();
-			for (int i = 0; i < parentConfigs.length; ++i)
-				addConfiguration(parentConfigs[i]);
-		}
 
 		// isAbstract
 		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT))); //$NON-NLS-1$
@@ -230,6 +225,43 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 	
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			// parent
+			String parentId = element.getAttribute(PARENT);
+			if (parentId != null) {
+				parent = ManagedBuildManager.getTarget(null, parentId);
+				// should resolve before calling methods on it
+				((Target)parent).resolveReferences();
+				// copy over the parents configs
+				IConfiguration[] parentConfigs = parent.getConfigurations();
+				for (int i = 0; i < parentConfigs.length; ++i)
+					addConfiguration(parentConfigs[i]);
+			}
+
+			// call resolve references on any children
+			Iterator toolIter = getToolList().iterator();
+			while (toolIter.hasNext()) {
+				Tool current = (Tool)toolIter.next();
+				current.resolveReferences();
+			}
+			Iterator refIter = getLocalToolReferences().iterator();
+			while (refIter.hasNext()) {
+				ToolReference current = (ToolReference)refIter.next();
+				current.resolveReferences();
+			}
+			if (configurations != null) {
+				Iterator configIter = configurations.iterator();
+				while (configIter.hasNext()) {
+					Configuration current = (Configuration)configIter.next();
+					current.resolveReferences();
+				}
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#removeConfiguration(java.lang.String)
 	 */
@@ -302,6 +334,35 @@ public class Target extends BuildObject implements ITarget {
 		return toolReferences;
 	}
 
+	/* (non-javadoc)
+	 * 
+	 * @param tool
+	 * @return List
+	 */
+	protected List getOptionReferences(ITool tool) {
+		List references = new ArrayList();
+		
+		// Get all the option references I add for this tool
+		ToolReference toolRef = getToolReference(tool);
+		if (toolRef != null) {
+			references.addAll(toolRef.getOptionReferenceList());
+		}
+		
+		// See if there is anything that my parents add that I don't
+		if (parent != null) {
+			List temp = ((Target)parent).getOptionReferences(tool);
+			Iterator iter = temp.listIterator();
+			while (iter.hasNext()) {
+				OptionReference ref = (OptionReference) iter.next();
+				if (!references.contains(ref)) {
+					references.add(ref);
+				}
+			}
+		}
+		
+		return references;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getMakeArguments()
 	 */
@@ -655,7 +716,7 @@ public class Target extends BuildObject implements ITarget {
 	public void addToolReference(ToolReference toolRef) {
 		getLocalToolReferences().add(toolRef);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setArtifactExtension(java.lang.String)
 	 */

@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -37,7 +38,7 @@ public class Option extends BuildObject implements IOption {
 	private ITool tool;
 	private Object value;
 	private int valueType;
-	
+	private boolean resolved = true;
 	 
 	public Option(ITool tool) {
 		this.tool = tool;
@@ -45,6 +46,9 @@ public class Option extends BuildObject implements IOption {
 	
 	public Option(Tool tool, IConfigurationElement element) {
 		this(tool);
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		resolved = false;
 		
 		// Get the unique id of the option
 		setId(element.getAttribute(ID));
@@ -55,11 +59,6 @@ public class Option extends BuildObject implements IOption {
 		// Get the option Name (this is what the user will see in the UI)
 		setName(element.getAttribute(NAME));
 
-		// Options can be grouped into categories
-		String categoryId = element.getAttribute(CATEGORY);
-		if (categoryId != null)
-			setCategory(tool.getOptionCategory(categoryId));
-		
 		// Get the command defined for the option
 		command = element.getAttribute(COMMAND);
 		
@@ -135,6 +134,17 @@ public class Option extends BuildObject implements IOption {
 		}
 	}
 
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			// Options can be grouped into categories
+			String categoryId = element.getAttribute(CATEGORY);
+			if (categoryId != null)
+				setCategory(((Tool)tool).getOptionCategory(categoryId));
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
 	 */

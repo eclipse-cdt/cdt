@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -27,6 +28,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	private IOptionCategory owner;
 	private List children;
+	private Tool tool;
+	private boolean resolved = true;
 
 	private static final IOptionCategory[] emtpyCategories = new IOptionCategory[0];
 	
@@ -35,11 +38,10 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	}
 	
 	public OptionCategory(Tool tool, IConfigurationElement element) {
-		String parentId = element.getAttribute(IOptionCategory.OWNER);
-		if (parentId != null)
-			owner = tool.getOptionCategory(parentId);
-		else
-			owner = tool;
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		resolved = false;
+		this.tool = tool;
 		
 		// id
 		setId(element.getAttribute(IOptionCategory.ID));
@@ -47,15 +49,28 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		// Name
 		setName(element.getAttribute(IOptionCategory.NAME));
 		
-		// Hook me in
-		if (owner instanceof Tool)
-			((Tool)owner).addChildCategory(this);
-		else
-			((OptionCategory)owner).addChildCategory(this);
 
 		tool.addOptionCategory(this);
 	}
 
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			String parentId = element.getAttribute(IOptionCategory.OWNER);
+			if (parentId != null)
+				owner = tool.getOptionCategory(parentId);
+			else
+				owner = tool;
+			
+			// Hook me in
+			if (owner instanceof Tool)
+				((Tool)owner).addChildCategory(this);
+			else
+				((OptionCategory)owner).addChildCategory(this);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
 	 */

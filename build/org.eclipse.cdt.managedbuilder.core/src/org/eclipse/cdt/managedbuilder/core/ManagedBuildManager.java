@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -69,6 +70,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static Map extensionTargetMap;
 	private static List extensionTargets;
 	private static Map extensionToolMap;
+	private static Map configElementMap;
 
 	// Listeners interested in build model changes
 	private static Map buildModelListeners;
@@ -338,32 +340,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		// Find out the parent of the configuration
 		IConfiguration parentConfig = configuration.getParent();
-		// Find the parent target the configuration 
-		ITarget parentTarget = parentConfig.getTarget();
 
-		// Get the extension point information		
-		IExtensionPoint extensionPoint = ManagedBuilderCorePlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_ID);
-		IExtension[] extensions = extensionPoint.getExtensions();
-		for (int i = 0; i < extensions.length; ++i) {
-			IExtension extension = extensions[i];
-			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int j = 0; j < elements.length; ++j) {
-				IConfigurationElement element = elements[j];
-				if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME) && 
-					element.getAttribute(ITarget.ID).equals(parentTarget.getId())) {
-					// We have the parent target so get the definition for the parent config
-					IConfigurationElement[] targetElements = element.getChildren();
-					for (int k = 0; k < targetElements.length; ++k) {
-						IConfigurationElement targetElement = targetElements[k];
-						if (targetElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME) && 
-							targetElement.getAttribute(IConfiguration.ID).equals(parentConfig.getId())) {
-							// We now have the plugin element the target was originally based on
-							((Configuration)configuration).reset(targetElement);							 
-						}
-					}
-				}
-			}
-		}
+		// Get the config element for the parent from the map
+		IConfigurationElement configElement = getConfigElement(parentConfig);
+		
+		// reset the configuration
+		((Configuration)configuration).reset(configElement);
 	}
 	
 
@@ -463,23 +445,44 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 */		// We can read the manifest
 		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
+		// First call the constructors
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] elements = extension.getConfigurationElements();
-			// Load the tools first
 			for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {
-				IConfigurationElement element = elements[toolIndex];
-				// Load the targets
-				if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-					new Tool(element);
-				}				
-			}
-			for (int targetIndex = 0; targetIndex < elements.length; ++targetIndex) {
-				IConfigurationElement element = elements[targetIndex];
-				// Load the targets
-				if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
-					new Target(element);
+				try {
+					IConfigurationElement element = elements[toolIndex];
+					// Load the targets
+					if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
+						new Tool(element);
+					} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
+						new Target(element);
+					}
+				} catch (Exception ex) {
+					// TODO: log
+					ex.printStackTrace();
 				}
+			}
+		}
+		// Then call resolve.
+		Iterator toolIter = getExtensionToolMap().values().iterator();
+		while (toolIter.hasNext()) {
+			try {
+				Tool tool = (Tool)toolIter.next();
+				tool.resolveReferences();
+			} catch (Exception ex) {
+				// TODO: log
+				ex.printStackTrace();
+			}
+		}
+		Iterator targetIter = getExtensionTargetMap().values().iterator();
+		while (targetIter.hasNext()) {
+			try {
+				Target target = (Target)targetIter.next();
+				target.resolveReferences();
+			} catch (Exception ex) {
+				// TODO: log
+				ex.printStackTrace();
 			}
 		}
 		// Let's never do that again
@@ -642,5 +645,28 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			map.put(project, list);
 		}
 	}
+	
+	private static Map getConfigElementMap() {
+		if (configElementMap == null) {
+			configElementMap = new HashMap();
+		}
+		return configElementMap;
+	}
+	
+	/**
+	 * This method public for implementation reasons.  Not intended for use 
+	 * by clients.
+	 */
+	public static void putConfigElement(IBuildObject buildObj, IConfigurationElement configElement) {
+		getConfigElementMap().put(buildObj, configElement);
+	}
 
+	/**
+	 * This method public for implementation reasons.  Not intended for use 
+	 * by clients.
+	 */
+	public static IConfigurationElement getConfigElement(IBuildObject buildObj) {
+		return (IConfigurationElement)getConfigElementMap().get(buildObj);
+	}
+	
 }

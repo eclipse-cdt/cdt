@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -41,6 +42,7 @@ public class OptionReference implements IOption {
 	private ToolReference owner;
 	// The actual value of the reference
 	private Object value;
+	private boolean resolved = true;
 
 	/**
 	 * This constructor will be called when the receiver is created from 
@@ -50,49 +52,14 @@ public class OptionReference implements IOption {
 	 * @param element
 	 */
 	public OptionReference(ToolReference owner, IConfigurationElement element) {
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		resolved = false;
+
 		this.owner = owner;
-		option = owner.getTool().getOption(element.getAttribute(ID));
 		
 		owner.addOptionReference(this);
 
-		// value
-		switch (option.getValueType()) {
-			case BOOLEAN:
-				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
-				break;
-			case STRING:
-				value = element.getAttribute(DEFAULT_VALUE);
-				break;
-			case ENUMERATED:
-				String temp = element.getAttribute(DEFAULT_VALUE);
-				if (temp == null) {
-					try {
-						temp = option.getSelectedEnum();
-					} catch (BuildException e) {
-						temp = new String();
-					}
-				}
-				value = temp;
-				break;
-			case STRING_LIST:
-			case INCLUDE_PATH:
-			case PREPROCESSOR_SYMBOLS:
-			case LIBRARIES:
-			case OBJECTS:
-				List valueList = new ArrayList();
-				IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
-				for (int i = 0; i < valueElements.length; ++i) {
-					IConfigurationElement valueElement = valueElements[i];
-					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
-					if (isBuiltIn.booleanValue()) {
-						getBuiltInList().add(valueElement.getAttribute(LIST_ITEM_VALUE));
-					}
-					else {
-						valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
-					}				}
-				value = valueList;
-				break;
-		}
 	}
 
 	/**
@@ -159,6 +126,60 @@ public class OptionReference implements IOption {
 				break;
 		}
 
+	}
+	
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			
+			// resolve parent (recursively) before calling methods on it.
+			option = owner.getTool().getOption(element.getAttribute(ID));
+			if (option instanceof Option) {
+				((Option)option).resolveReferences();
+			} else if (option instanceof OptionReference) {
+				((OptionReference)option).resolveReferences();
+			}
+			
+			// value
+			switch (option.getValueType()) {
+				case BOOLEAN:
+					value = new Boolean(element.getAttribute(DEFAULT_VALUE));
+					break;
+				case STRING:
+					value = element.getAttribute(DEFAULT_VALUE);
+					break;
+				case ENUMERATED:
+					String temp = element.getAttribute(DEFAULT_VALUE);
+					if (temp == null) {
+						try {
+							temp = option.getSelectedEnum();
+						} catch (BuildException e) {
+							temp = new String();
+						}
+					}
+					value = temp;
+					break;
+				case STRING_LIST:
+				case INCLUDE_PATH:
+				case PREPROCESSOR_SYMBOLS:
+				case LIBRARIES:
+				case OBJECTS:
+					List valueList = new ArrayList();
+					IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
+					for (int i = 0; i < valueElements.length; ++i) {
+						IConfigurationElement valueElement = valueElements[i];
+						Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
+						if (isBuiltIn.booleanValue()) {
+							getBuiltInList().add(valueElement.getAttribute(LIST_ITEM_VALUE));
+						}
+						else {
+							valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
+						}				}
+					value = valueList;
+					break;
+			}
+		}
 	}
 	
 	/**

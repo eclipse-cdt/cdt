@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +37,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private ITarget target;
 	private IConfiguration parent;
 	private List toolReferences;
+	private boolean resolved = true;
 
 	/**
 	 * Build a configuration from the project manifest file.
@@ -152,6 +154,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public Configuration(Target target, IConfigurationElement element) {
 		this.target = target;
 		
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		resolved = false;
+		
 		// id
 		setId(element.getAttribute(IConfiguration.ID));
 		
@@ -183,6 +189,18 @@ public class Configuration extends BuildObject implements IConfiguration {
 		target.addConfiguration(this);
 	}
 
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+//			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			Iterator refIter = getLocalToolReferences().iterator();
+			while (refIter.hasNext()) {
+				ToolReference ref = (ToolReference)refIter.next();
+				ref.resolveReferences();
+			}
+		}
+	}
+	
 	/**
 	 * Adds a tool reference to the receiver.
 	 * 
@@ -371,7 +389,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 		for (int l = 0; l < configElements.length; ++l) {
 			IConfigurationElement configElement = configElements[l];
 			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
-				new ToolReference(this, configElement);
+				ToolReference ref = new ToolReference(this, configElement);
+				ref.resolveReferences();
 			}
 		}
 	}

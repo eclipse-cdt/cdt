@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,6 +31,7 @@ public class ToolReference extends AbstractToolReference {
 	private String command;
 	private List optionReferences;
 	private IBuildObject owner;
+	private boolean resolved = true;
 	
 	/**
 	 * Create a new tool reference based on information contained in 
@@ -76,15 +78,20 @@ public class ToolReference extends AbstractToolReference {
 	 * @param element The element containing build information for the reference.
 	 */
 	public ToolReference(BuildObject owner, IConfigurationElement element) {
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		resolved = false;
+
 		this.owner = owner;
+
+		// hook me up
 		if (owner instanceof Configuration) {
-			Target target = (Target) ((Configuration)owner).getTarget();
-			parent = target.getTool(element.getAttribute(ID));
 			((Configuration)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
-			parent = ((Target)owner).getTool(element.getAttribute(ID));
 			((Target)owner).addToolReference(this);
 		}
+
+		
 		
 		IConfigurationElement[] toolElements = element.getChildren();
 		for (int m = 0; m < toolElements.length; ++m) {
@@ -112,6 +119,32 @@ public class ToolReference extends AbstractToolReference {
 		}
 	}
 
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			// resolve my parent
+			if (owner instanceof Configuration) {
+				Target target = (Target) ((Configuration)owner).getTarget();
+				parent = target.getTool(element.getAttribute(ID));
+			} else if (owner instanceof Target) {
+				parent = ((Target)owner).getTool(element.getAttribute(ID));
+			}
+			// recursively resolve my parent
+			if (parent instanceof Tool) {
+				((Tool)parent).resolveReferences();
+			} else if (parent instanceof ToolReference) {
+				((ToolReference)parent).resolveReferences();
+			}
+
+			Iterator it = getOptionReferenceList().iterator();
+			while (it.hasNext()) {
+				OptionReference optRef = (OptionReference)it.next();
+				optRef.resolveReferences();
+			}
+		}		
+	}	
+	
 	/**
 	 * Adds the option reference specified in the argument to the receiver.
 	 * 
@@ -119,6 +152,17 @@ public class ToolReference extends AbstractToolReference {
 	 */
 	public void addOptionReference(OptionReference optionRef) {
 		getOptionReferenceList().add(optionRef);
+	}
+
+	private OptionReference getOptionReference(String id) {
+		Iterator it = getOptionReferenceList().iterator();
+		while (it.hasNext()) {
+			OptionReference current = (OptionReference)it.next();
+			if (current.getId().equals(id)) {
+				return current;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -228,7 +272,14 @@ public class ToolReference extends AbstractToolReference {
 
 	protected List getAllOptionRefs() {
 		// First get all the option references this tool reference contains
-		return ((Configuration)owner).getOptionReferences(parent);
+		if (owner instanceof Configuration) {
+			return ((Configuration)owner).getOptionReferences(parent);
+		} else if (owner instanceof Target) {
+			return ((Target)owner).getOptionReferences(parent);
+		} else {
+			// this shouldn't happen
+			return null;
+		}
 	}
 	
 	/* (non-javadoc)
@@ -262,7 +313,13 @@ public class ToolReference extends AbstractToolReference {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
 	 */
 	public IOption getOption(String id) {
-		//TODO Implement this
+		IOption[] options = getOptions();
+		for (int i = 0; i < options.length; i++) {
+			IOption current = options[i];
+			if (current.getId().equals(id)) {
+				return current;
+			}
+		}
 		return null;
 	}
 

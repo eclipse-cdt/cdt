@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String outputExtension;
 	private String outputFlag;
 	private String outputPrefix;
+	private boolean resolved = true;
 	
 
 	public Tool(IConfigurationElement element) {
@@ -330,6 +332,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	protected void loadFromManifest(IConfigurationElement element) {
+		// setup for resolving
+		ManagedBuildManager.putConfigElement(this, element);
+		this.resolved = false;
+		
 		// id		
 		setId(element.getAttribute(ITool.ID));
 		
@@ -403,6 +409,29 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		}
 		
 	}
+	
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+//			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			// Tool doesn't have any references, but children might
+			Iterator optionIter = options.iterator();
+			while (optionIter.hasNext()) {
+				Option current = (Option)optionIter.next();
+				current.resolveReferences();
+			}
+			Iterator catIter = categoryMap.values().iterator();
+			while (catIter.hasNext()) {
+				IOptionCategory current = (IOptionCategory)catIter.next();
+				if (current instanceof Tool) {
+					((Tool)current).resolveReferences();
+				} else if (current instanceof OptionCategory) {
+					((OptionCategory)current).resolveReferences();
+				}
+			}
+		}		
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */

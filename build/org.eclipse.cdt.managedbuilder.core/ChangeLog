@@ -1,3 +1,15 @@
+2004-03-12 Sean Evoy
+	Commit for Jeremiah Lott. 
+	Allows the managed build system to resolve "forward references" within its 
+	extensions. In practice this is necessary to allow references between 
+	extensions in different plugins.
+
+	Partial fix for bugzilla 54202:
+	No longer use the cdtbuild file for persisting the default target and 
+	configuration settings for a project. This is assumed to be an individual 
+	workspace level setting so the choices are persisted in the project's 
+	persistent settings store.
+
 2004-03-09 Sean Evoy
 	Fix for bugzilla 45311: "CVS tries to check in contents of build output"
 	

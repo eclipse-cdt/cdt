@@ -1,3 +1,8 @@
+2003-03-11 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIvariableManager.java:
+	New methods getVariableObjectAsArray(), getVariableObjectAsType().
+
 2003-03-09 Mikhail Khodjaiants
 	Core support of the "Display As Array" action.
 	* ICastToArray.java

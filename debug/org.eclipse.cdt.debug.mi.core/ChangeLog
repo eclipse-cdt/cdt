@@ -1,3 +1,8 @@
+2003-03-11 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	New methods getVariableObjectAsArray() getVariableObjectAsType().
+
 2003-03-03 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/CommandQueue.java (print): Comment out.

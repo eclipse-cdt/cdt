@@ -87,6 +87,16 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 		}
 		window.getPartService().addPartListener( this );
 		window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		IAdaptable context = DebugUITools.getDebugContext();
+		if ( context != null && context instanceof IDebugElement )
+		{
+			IDebugTarget target = ((IDebugElement)context).getDebugTarget();
+			if ( target != null && target instanceof ICExpressionEvaluator )
+			{
+				setDebugTarget( target );
+			}
+			
+		}
 		update();
 	}
 

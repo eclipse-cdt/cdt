@@ -1,3 +1,8 @@
+2004-06-08 Alain Magloire
+
+	Fix For Bug 65172
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingContentProvider.java
+
 2004-06-07 Hoda Amer
 	Fix for bug 63395 : [Refactoring] a template class does not refactor its constructor
 	

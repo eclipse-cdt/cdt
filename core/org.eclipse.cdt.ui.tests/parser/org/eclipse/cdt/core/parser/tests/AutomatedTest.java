@@ -14,17 +14,15 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Path;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
 
 import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
+import org.eclipse.core.runtime.Path;
 
 
 

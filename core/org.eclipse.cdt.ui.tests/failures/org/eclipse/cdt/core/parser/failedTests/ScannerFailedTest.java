@@ -17,9 +17,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.parser.tests.ScannerTestCase;
-import org.eclipse.cdt.internal.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.Token;
+import org.eclipse.cdt.core.parser.tests.BaseScannerTest;
 
 /**
  * @author aniefer
@@ -27,7 +25,7 @@ import org.eclipse.cdt.internal.core.parser.Token;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class ScannerFailedTest extends ScannerTestCase {
+public class ScannerFailedTest extends BaseScannerTest  {
 
 	public ScannerFailedTest(String name){
 		super(name);

@@ -13,12 +13,7 @@ package org.eclipse.cdt.core.parser.failedTests;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.eclipse.cdt.core.parser.tests.DOMTests;
-import org.eclipse.cdt.internal.core.dom.TranslationUnit;
-import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.core.parser.tests.BaseDOMTest;
 
 
 /**
@@ -27,7 +22,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class ACEFailedTest extends DOMTests {
+public class ACEFailedTest extends BaseDOMTest {
 
 	/**
 	 * @param arg
@@ -35,44 +30,19 @@ public class ACEFailedTest extends DOMTests {
 	public ACEFailedTest(String arg) {
 		super(arg);
 	}
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-
-		suite.addTest(new ACEFailedTest("testBug36769"));
-		suite.addTest(new ACEFailedTest("testBug36771"));
-		return suite;
+	
+	public void testBug36771() throws Exception {
+		Writer code = new StringWriter();
+		code.write("#include /**/ \"foo.h\"\n");
+		failTest( code.toString());
 	}
 	
-	public void testBug36771(){
-		boolean testPassed = false;
-		try{
-			Writer code = new StringWriter();
-			code.write("#include /**/ \"foo.h\"\n");
-			TranslationUnit tu = parse( code.toString());
-			testPassed = true;
-		} catch( Throwable e ){
-			if( ! (e instanceof ParserException))
-				fail( "Unexpected Error: " + e.getMessage() );
-		}
-		if( testPassed )
-			fail( "The expected error did not occur.");		
-	}
-	
-	public void testBug36769(){
-		boolean testPassed = false;
-		try{
-			Writer code = new StringWriter();
-			code.write("template <class A, B> cls<A, C>::operator op &() const {}\n");
-			code.write("template <class A, B> cls<A, C>::cls() {}\n");
-			code.write("template <class A, B> cls<A, C>::~cls() {}\n");
+	public void testBug36769() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template <class A, B> cls<A, C>::operator op &() const {}\n");
+		code.write("template <class A, B> cls<A, C>::cls() {}\n");
+		code.write("template <class A, B> cls<A, C>::~cls() {}\n");
 			
-			TranslationUnit tu = parse( code.toString());
-			testPassed = true;
-		} catch( Throwable e ){
-			if( ! (e instanceof ParserException))
-				fail( "Unexpected Error: " + e.getMessage() );
-		}
-		if( testPassed )
-			fail( "The expected error did not occur.");
+		failTest( code.toString());
 	}
 }

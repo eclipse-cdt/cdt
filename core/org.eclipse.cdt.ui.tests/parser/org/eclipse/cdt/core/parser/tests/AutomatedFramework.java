@@ -20,12 +20,12 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Set;
 
-import org.eclipse.cdt.internal.core.parser.IParserCallback;
-import org.eclipse.cdt.internal.core.parser.NullParserCallback;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.eclipse.cdt.internal.core.parser.IParserCallback;
+import org.eclipse.cdt.internal.core.parser.NullParserCallback;
 
 /**
  * @author aniefer

@@ -10,11 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import org.eclipse.cdt.core.model.tests.CModelElementsTests;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 
 /**
  * @author jcamelon

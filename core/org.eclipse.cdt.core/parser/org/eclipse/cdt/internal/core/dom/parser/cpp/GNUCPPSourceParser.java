@@ -270,7 +270,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          IToken mark = mark();
 
          try {
-            IASTTypeId typeId = typeId(false);
+            IASTTypeId typeId = typeId(false, false);
             list.add(typeId);
             completedArg = true;
          } catch (BacktrackException e) {
@@ -443,7 +443,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       } else {
          // must be a conversion function
          IToken t = LA(1);
-         typeId(true);
+         typeId(true, false);
          if (t != LA(1)) {
             while (t.getNext() != LA(1)) {
                t = t.getNext();
@@ -858,7 +858,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          // If this isn't a type name, then we shouldn't be here
          try {
             try {
-               typeId = typeId(false);
+               typeId = typeId(false, false);
                consume(IToken.tRPAREN);
             } catch (BacktrackException bte) {
                backup(mark);
@@ -887,7 +887,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
    /**
     * @throws BacktrackException
     */
-   protected IASTTypeId typeId(boolean skipArrayModifiers)
+   protected IASTTypeId typeId(boolean skipArrayModifiers, boolean forNewExpression)
          throws EndOfFileException, BacktrackException {
       IToken mark = mark();
       int startingOffset = mark.getOffset();
@@ -897,7 +897,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       try {
          declSpecifier = declSpecifierSeq(true, true);
          declarator = declarator(SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
-               true);
+               true, forNewExpression );
       } catch (BacktrackException bt) {
          backup(mark);
          throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
@@ -918,6 +918,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                declarator)
                - startingOffset);
       }
+      if ( declarator instanceof IASTArrayDeclarator && skipArrayModifiers ) {
+         backup(mark);
+         throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
+               declarator)
+               - startingOffset);
+      }      
 
       IASTTypeId result = createTypeId();
       ((ASTNode) result).setOffsetAndLength(startingOffset, figureEndOffset(
@@ -1061,7 +1067,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                // CASE: new (typeid-not-looking-as-placement) ...
                // the first expression in () is not a placement
                // - then it has to be typeId
-               typeId = typeId(true);
+               typeId = typeId(true, false);
                lastOffset = consume(IToken.tRPAREN).getEndOffset();
                if (templateIdScopes.size() > 0) {
                   templateIdScopes.pop();
@@ -1084,7 +1090,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   // - then it has to be typeId
                   try {
                      backtrackMarker = mark();
-                     typeId = typeId(true);
+                     typeId = typeId(true, true);
                      lastOffset = calculateEndOffset(typeId);
                      break master_new_loop;
                   } catch (BacktrackException e) {
@@ -1102,7 +1108,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                // The problem is, the first expression might as well be a
                // typeid
                try {
-                  typeId = typeId(true);
+                  typeId = typeId(true, false);
                   lastOffset = consume(IToken.tRPAREN).getEndOffset();
                   if (templateIdScopes.size() > 0) {
                      templateIdScopes.pop();
@@ -1156,7 +1162,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // CASE: new typeid ...
             // new parameters do not start with '('
             // i.e it has to be a plain typeId
-            typeId = typeId(true);
+            typeId = typeId(true, true);
             lastOffset = calculateEndOffset(typeId);
             isNewTypeId = true;
             break master_new_loop;
@@ -1269,7 +1275,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tLPAREN) {
                try {
                   consume(IToken.tLPAREN);
-                  typeId = typeId(false);
+                  typeId = typeId(true, false);
                   lastOffset = consume(IToken.tRPAREN).getEndOffset();
                } catch (BacktrackException bt) {
                   backup(mark);
@@ -1411,7 +1417,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IASTTypeId typeId = null;
 
             try {
-               typeId = typeId(false);
+               typeId = typeId(false, false);
             } catch (BacktrackException b) {
                isTypeId = false;
                lhs = expression();
@@ -1780,7 +1786,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       int startingOffset = LA(1).getOffset();
       consume();
       consume(IToken.tLT);
-      IASTTypeId typeID = typeId(false);
+      IASTTypeId typeID = typeId(false, false);
       consume(IToken.tGT);
       consume(IToken.tLPAREN);
       IASTExpression lhs = expression();
@@ -2168,7 +2174,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                if (LT(1) == IToken.tASSIGN) // optional = type-id
                {
                   consume(IToken.tASSIGN);
-                  typeId = typeId(false); // type-id
+                  typeId = typeId(false, false); // type-id
                   lastOffset = calculateEndOffset(typeId);
                }
             } else {
@@ -3350,7 +3356,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     */
    protected IASTDeclarator initDeclarator(SimpleDeclarationStrategy strategy)
          throws EndOfFileException, BacktrackException {
-      IASTDeclarator d = declarator(strategy, false);
+      IASTDeclarator d = declarator(strategy, false, false );
 
       IASTInitializer initializer = optionalCPPInitializer();
       if (initializer != null) {
@@ -3478,17 +3484,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     * (oldKRParameterDeclaration)*
     * 
     * declaratorId : name
-    * 
     * @param forTypeID
     *           TODO
+    * @param skipArrayDeclarator TODO
     * @param container
     *           IParserCallback object that represents the owner declaration.
+    * 
     * @return declarator that this parsing produced.
     * @throws BacktrackException
     *            request a backtrack
     */
    protected IASTDeclarator declarator(SimpleDeclarationStrategy strategy,
-         boolean forTypeID) throws EndOfFileException, BacktrackException {
+         boolean forTypeID, boolean skipArrayDeclarator) throws EndOfFileException, BacktrackException {
 
       IToken la = LA(1);
       int startingOffset = la.getOffset();
@@ -3516,7 +3523,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IToken mark = mark();
             try {
                consume();
-               innerDecl = declarator(strategy, forTypeID);
+               innerDecl = declarator(strategy, forTypeID, skipArrayDeclarator);
                finalOffset = consume(IToken.tRPAREN).getEndOffset();
             } catch (BacktrackException bte) {
                backup(mark);
@@ -3647,7 +3654,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                               break;
                            default:
                               try {
-                                 exceptionSpecIds.add(typeId(false));
+                                 exceptionSpecIds.add(typeId(false, false ) );
                               } catch (BacktrackException e) {
                                  IASTProblem p = failParse(e);
                                  IASTProblemTypeId typeIdProblem = createTypeIDProblem();
@@ -3691,6 +3698,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   }
                   break;
                case IToken.tLBRACKET:
+                  if( skipArrayDeclarator ) break;
                   arrayMods = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
                   consumeArrayModifiers(arrayMods);
                   if (!arrayMods.isEmpty())

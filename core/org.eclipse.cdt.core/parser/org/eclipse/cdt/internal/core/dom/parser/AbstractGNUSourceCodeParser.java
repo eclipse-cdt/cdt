@@ -592,7 +592,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
    protected abstract IASTExpression multiplicativeExpression()
          throws BacktrackException, EndOfFileException;
 
-   protected abstract IASTTypeId typeId(boolean skipArrayMods)
+   protected abstract IASTTypeId typeId(boolean skipArrayMods, boolean forNewExpression)
          throws BacktrackException, EndOfFileException;
 
    protected abstract IASTExpression castExpression()
@@ -894,7 +894,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       if (LT(1) == IToken.tLPAREN) {
          try {
             consume(IToken.tLPAREN);
-            d = typeId(false);
+            d = typeId(false, false);
             lastOffset = consume(IToken.tRPAREN).getEndOffset();
          } catch (BacktrackException bt) {
             backup(m);
@@ -930,7 +930,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          } else
             try {
                consume(IToken.tLPAREN);
-               d = typeId(false);
+               d = typeId(false, false);
                lastOffset = consume(IToken.tRPAREN).getEndOffset();
             } catch (BacktrackException bt) {
                backup(m);

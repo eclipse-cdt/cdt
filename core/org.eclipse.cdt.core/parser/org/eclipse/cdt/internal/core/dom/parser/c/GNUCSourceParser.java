@@ -771,7 +771,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
          // If this isn't a type name, then we shouldn't be here
          try {
             try {
-               typeId = typeId(false);
+               typeId = typeId(false, false);
                consume(IToken.tRPAREN);
                castExpression = castExpression();
             } catch (BacktrackException bte) {
@@ -821,7 +821,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tLPAREN) {
                try {
                   consume(IToken.tLPAREN);
-                  typeId = typeId(false);
+                  typeId = typeId(false, false);
                   lastOffset = consume(IToken.tRPAREN).getEndOffset();
                } catch (BacktrackException bt) {
                   backup(mark);
@@ -896,7 +896,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IToken m = mark();
             try {
                int offset = consume(IToken.tLPAREN).getOffset();
-               IASTTypeId t = typeId(false);
+               IASTTypeId t = typeId(false, false);
                int lastOffset = consume(IToken.tRPAREN).getEndOffset();
                IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
                firstExpression = buildTypeIdInitializerExpression(t, i, offset,
@@ -1150,7 +1150,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
       return new CASTIdExpression();
    }
 
-   protected IASTTypeId typeId(boolean skipArrayModifiers)
+   protected IASTTypeId typeId(boolean skipArrayModifiers, boolean forNewExpression)
          throws EndOfFileException, BacktrackException {
       IToken mark = mark();
       int startingOffset = mark.getOffset();

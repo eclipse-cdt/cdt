@@ -786,12 +786,12 @@ public class CompleteParser2Tests extends TestCase {
 	 
 	public void testNewExpressions() throws Exception
 	{
-		IASTTranslationUnit tu = parse( "int A; int B; int C; int D; int P; int*p = new  (P) (A)[B][C][D];" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "typedef int A; int B; int C; int D; int P; int*p = new  (P) (A)[B][C][D];" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
  		CPPVisitor.visitTranslationUnit( tu, col );
  		
  		assertEquals( col.size(), 11 );
- 		IVariable A = (IVariable) col.getName(0).resolveBinding();
+ 		ITypedef A = (ITypedef) col.getName(0).resolveBinding();
  		IVariable B = (IVariable) col.getName(1).resolveBinding();
  		IVariable C = (IVariable) col.getName(2).resolveBinding();
  		IVariable D = (IVariable) col.getName(3).resolveBinding();
@@ -1173,7 +1173,7 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testBug39504() throws Exception
 	{
-	    IASTTranslationUnit tu = parse( "const int w = 2; int x[ 5 ]; int y = sizeof (x[w]);" ); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "const int w = 2; int x[ 5 ]; int y = sizeof ( x[w] );" ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
  		CPPVisitor.visitTranslationUnit( tu, col );
  		

@@ -1301,7 +1301,7 @@ public class CPPSemantics {
 			//parameter has a default argument
 			else {
 				IASTParameterDeclaration [] params = function.getParameters();
-				for( int j = num - 1; j > ( numParameters - num); j-- ){
+				for( int j = num - 1; j >= numParameters; j-- ){
 					if( params[j].getDeclarator().getInitializer() == null ){
 					    functions[i] = null;
 						size--;

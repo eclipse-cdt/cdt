@@ -2247,5 +2247,47 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( decls.length, 1 );
         assertSame( decls[0], col.getName(6) );
     }
+    
+    public void _testBug86274() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class D {};                   \n"); //$NON-NLS-1$
+        buffer.append("D d1;                         \n"); //$NON-NLS-1$
+        buffer.append("const D d2;                   \n"); //$NON-NLS-1$
+        buffer.append("void foo() {                  \n"); //$NON-NLS-1$
+        buffer.append("   typeid(d1) == typeid(d2);  \n"); //$NON-NLS-1$
+        buffer.append("   typeid( D ) == typeid(d2); \n"); //$NON-NLS-1$
+        buffer.append("}                             \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        assertEquals( col.size(), 10 );
+        
+        IVariable d1 = (IVariable) col.getName(6).resolveBinding();
+        IVariable d2 = (IVariable) col.getName(7).resolveBinding();
+        ICPPClassType D = (ICPPClassType) col.getName(8).resolveBinding();
+        
+        assertInstances( col, D, 4 );
+        assertInstances( col, d1, 2 );
+        assertInstances( col, d2, 3 );
+    }
+    
+    public void testBug86546() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void point ( int = 3, int = 4 );        \n"); //$NON-NLS-1$
+        buffer.append("void foo() {                            \n"); //$NON-NLS-1$
+        buffer.append("   point( 1, 2 );                       \n"); //$NON-NLS-1$
+        buffer.append("   point( 1 );                          \n"); //$NON-NLS-1$
+        buffer.append("   point( );                            \n"); //$NON-NLS-1$
+        buffer.append("}                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IFunction point = (IFunction) col.getName(0).resolveBinding();
+        
+        assertInstances( col, point, 4 );
+    }
 }
 

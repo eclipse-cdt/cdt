@@ -61,12 +61,15 @@ public class CPElementSorter extends ViewerSorter {
 	public void sort(Viewer viewer, Object[] elements) {
 		// include paths and symbol definitions must not be sorted
 		List sort = new ArrayList(elements.length);
-		List dontSort = new ArrayList(elements.length);
-		for(int i = 0; i < elements.length; i++) {
+		List includes = new ArrayList(elements.length);
+		List syms = new ArrayList(elements.length);
+		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof CPElement) {
 				CPElement element = (CPElement)elements[i];
-				if ( element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO) {
-					dontSort.add(elements[i]);
+				if (element.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+					includes.add(elements[i]);
+				} else if (element.getEntryKind() == IPathEntry.CDT_MACRO) {
+					syms.add(elements[i]);
 				} else {
 					sort.add(elements[i]);
 				}
@@ -74,10 +77,10 @@ public class CPElementSorter extends ViewerSorter {
 				sort.add(elements[i]);
 			}
 		}
-		Object[] sorted = new Object[elements.length];
-		System.arraycopy(sort.toArray(), 0, sorted, 0, sort.size());
-		super.sort(viewer, sorted);
-		System.arraycopy(dontSort.toArray(), 0, sorted, sort.size(), dontSort.size());
+		System.arraycopy(sort.toArray(), 0, elements, 0, sort.size());
+		super.sort(viewer, elements);
+		System.arraycopy(includes.toArray(), 0, elements, sort.size(), includes.size());
+		System.arraycopy(syms.toArray(), 0, elements, sort.size() + includes.size(), syms.size());
 	}
 
 }

@@ -1,3 +1,7 @@
+2005-02-16 Alain Magloire
+	Fix PR 74034
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+
 2005-02-15 Alain Magloire
 	Fix PR 82856
 	* model/org/eclipse/cdt/core/model/IDeclaration.java

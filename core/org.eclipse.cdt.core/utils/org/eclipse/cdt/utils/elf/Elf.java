@@ -123,6 +123,7 @@ public class Elf {
 		public final static int EM_XSTORMY16 = 0xad45;
 		public final static int EM_CYGNUS_FRV = 0x5441;
 		public final static int EM_IQ2000 = 0xFEBA;
+		public static final int EM_XILINX_MICROBLAZE = 0xbaab;
 
 		public byte e_ident[] = new byte[EI_NDENT];
 		public int e_type; /* file type (Elf32_Half) */

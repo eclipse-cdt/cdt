@@ -1,3 +1,7 @@
+2003-08-13 John Camelon
+	Added testSimpleExpression(), testParameterExpressions() && 
+	testNestedNamespaceExpression() to CompleteParseASTTest.java.
+	
 2003-08-13 Sean Evoy
 	Renamed the 'AllBuildTest' class to 'ManagedBuildTest' and updated the 
 	integration suite class.

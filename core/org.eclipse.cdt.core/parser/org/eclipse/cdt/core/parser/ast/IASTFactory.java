@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
@@ -88,14 +89,14 @@ public interface IASTFactory
         int startingOffset,
         int endingOffset, IASTExpression initialValue)throws ASTSemanticException;
     public IASTExpression createExpression(
+        IASTScope scope,
         IASTExpression.Kind kind,
         IASTExpression lhs,
         IASTExpression rhs,
         IASTExpression thirdExpression,
-        String id,
-        String typeId,
-        String literal,
-        IASTNewExpressionDescriptor newDescriptor);
+        IToken id,
+        ITokenDuple typeId,
+        String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor();
     public IASTInitializerClause createInitializerClause(
         IASTInitializerClause.Kind kind,

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -191,7 +192,23 @@ public class ASTFunction extends ASTScope implements IASTFunction
     {
         requestor.acceptFunctionDeclaration(this);
         references.processReferences(requestor);
+        processParameterInitializers(requestor);
     }
+    /**
+     * @param requestor
+     */
+    protected void processParameterInitializers(ISourceElementRequestor requestor)
+    {
+        Iterator i = parameters.iterator();
+        while( i.hasNext() )
+        {
+        	IASTParameterDeclaration parm = (IASTParameterDeclaration)i.next();
+        	if( parm.getDefaultValue() != null )
+        		parm.getDefaultValue().acceptElement(requestor);
+        }
+    }
+
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
@@ -199,6 +216,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     {
 		requestor.enterFunctionBody( this );
 		references.processReferences(requestor);
+		processParameterInitializers(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -968,7 +968,7 @@ public class Parser implements IParser
                 consume(IToken.tLPAREN);
                 IASTExpression expressionList = null;
 
-                expressionList = expression();
+                expressionList = expression(d.getDeclarationWrapper().getScope());
 
                 consume(IToken.tRPAREN);
 
@@ -1001,7 +1001,7 @@ public class Parser implements IParser
         IToken current = LA(1);
  
         DeclarationWrapper sdw =
-            new DeclarationWrapper(null, current.getOffset(), null);
+            new DeclarationWrapper(scope, current.getOffset(), null);
         declSpecifierSeq(true, false, sdw);
         try
         {
@@ -1712,14 +1712,14 @@ public class Parser implements IParser
         if (LT(1) == IToken.tASSIGN)
         {
             consume(IToken.tASSIGN);
-            d.setInitializerClause(initializerClause());
+            d.setInitializerClause(initializerClause(sdw.getScope()));
         }
         else if (LT(1) == IToken.tLPAREN)
         {
             // initializer in constructor
             consume(IToken.tLPAREN); // EAT IT!
             IASTExpression astExpression = null;
-            astExpression = expression();
+            astExpression = expression(sdw.getScope());
             consume(IToken.tRPAREN);
             d.setConstructorExpression(astExpression);
         }
@@ -1729,7 +1729,7 @@ public class Parser implements IParser
     /**
      * 
      */
-    protected IASTInitializerClause initializerClause()
+    protected IASTInitializerClause initializerClause(IASTScope scope)
         throws Backtrack
     {
         if (LT(1) == IToken.tLBRACE)
@@ -1748,7 +1748,7 @@ public class Parser implements IParser
             List initializerClauses = new ArrayList();
             for (;;)
             {
-                IASTInitializerClause clause = initializerClause();
+                IASTInitializerClause clause = initializerClause(scope);
                 initializerClauses.add(clause);
                 if (LT(1) == IToken.tRBRACE)
                     break;
@@ -1767,7 +1767,7 @@ public class Parser implements IParser
   
             IToken marked = mark();
             IASTExpression assignmentExpression =
-                assignmentExpression();
+                assignmentExpression(scope);
    
             return astFactory.createInitializerClause(
                 IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
@@ -1876,6 +1876,7 @@ public class Parser implements IParser
                         {
                             // parameterDeclarationClause
                             d.setIsFunction(true);
+							// TODO need to create a temporary scope object here 
                             consume();
                             boolean seenParameter = false;
                             parameterDeclarationLoop : for (;;)
@@ -2031,7 +2032,7 @@ public class Parser implements IParser
                             IASTExpression exp = null;
                             if (LT(1) != IToken.tRBRACKET)
                             {
-                                exp = constantExpression();
+                                exp = constantExpression(sdw.getScope());
                             }
                             consume(IToken.tRBRACKET);
                             IASTArrayModifier arrayMod =
@@ -2043,7 +2044,7 @@ public class Parser implements IParser
                     case IToken.tCOLON :
                         consume(IToken.tCOLON);
                         IASTExpression exp = null;
-                        exp = constantExpression();
+                        exp = constantExpression(scope);
                         d.setBitFieldExpression(exp);
                     default :
                         break;
@@ -2237,7 +2238,7 @@ public class Parser implements IParser
                 if (LT(1) == IToken.tASSIGN)
                 {
                     consume(IToken.tASSIGN);
-                    initialValue = constantExpression();
+                    initialValue = constantExpression(sdw.getScope());
                 }
   
                 if (LT(1) == IToken.tRBRACE)
@@ -2509,21 +2510,21 @@ public class Parser implements IParser
      * 
      * @throws Backtrack	request a backtrack
      */
-    protected void statement() throws Backtrack
+    protected void statement(IASTScope scope) throws Backtrack
     {
         
         switch (LT(1))
         {
             case IToken.t_case :
                 consume();
-                constantExpression();
+                constantExpression(scope);
                 consume(IToken.tCOLON);
-                statement();
+                statement(null);
                 return;
             case IToken.t_default :
                 consume();
                 consume(IToken.tCOLON);
-                statement();
+                statement(null);
                 return;
             case IToken.tLBRACE :
                 compoundStatement();
@@ -2533,11 +2534,11 @@ public class Parser implements IParser
                 consume(IToken.tLPAREN);
                 condition();
                 consume(IToken.tRPAREN);
-                statement();
+                statement(null);
                 if (LT(1) == IToken.t_else)
                 {
                     consume();
-                    statement();
+                    statement(null);
                 }
                 return;
             case IToken.t_switch :
@@ -2545,18 +2546,18 @@ public class Parser implements IParser
                 consume(IToken.tLPAREN);
                 condition();
                 consume(IToken.tRPAREN);
-                statement();
+                statement(null);
                 return;
             case IToken.t_while :
                 consume();
                 consume(IToken.tLPAREN);
                 condition();
                 consume(IToken.tRPAREN);
-                statement();
+                statement(null);
                 return;
             case IToken.t_do :
                 consume();
-                statement();
+                statement(null);
                 consume(IToken.t_while);
                 consume(IToken.tLPAREN);
                 condition();
@@ -2572,10 +2573,10 @@ public class Parser implements IParser
                 if (LT(1) != IToken.tRPAREN)
                 {
                     //TODO get rid of NULL  
-                    expression();
+                    expression(scope);
                 }
                 consume(IToken.tRPAREN);
-                statement();
+                statement(null);
                 return;
             case IToken.t_break :
                 consume();
@@ -2590,7 +2591,7 @@ public class Parser implements IParser
                 if (LT(1) != IToken.tSEMI)
                 {
                     //TODO get rid of NULL  
-                    expression();
+                    expression(scope);
                 }
                 consume(IToken.tSEMI);
                 return;
@@ -2621,7 +2622,7 @@ public class Parser implements IParser
                 {
                     consume();
                     consume();
-                    statement();
+                    statement(null);
                     return;
                 }
                 // expressionStatement
@@ -2629,7 +2630,7 @@ public class Parser implements IParser
                 // Since it only happens when we are in a statement
                 try
                 {
-                    expression();
+                    expression(scope);
                     consume(IToken.tSEMI);
                     return;
                 }
@@ -2661,38 +2662,46 @@ public class Parser implements IParser
     {
         consume(IToken.tLBRACE);
         while (LT(1) != IToken.tRBRACE)
-            statement();
+            statement(null);
         consume();
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression constantExpression()
+    protected IASTExpression constantExpression( IASTScope scope )
         throws Backtrack
     {
-        return conditionalExpression();
+        return conditionalExpression(scope);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#expression(java.lang.Object)
      */
-    public IASTExpression expression() throws Backtrack
+    public IASTExpression expression(IASTScope scope) throws Backtrack
     {
-        IASTExpression assignmentExpression = assignmentExpression();
+        IASTExpression assignmentExpression = assignmentExpression(scope);
         while (LT(1) == IToken.tCOMMA)
         {
             IToken t = consume();
-            IASTExpression secondExpression = assignmentExpression();
-            assignmentExpression =
-                astFactory.createExpression(
-                    IASTExpression.Kind.EXPRESSIONLIST,
-                    assignmentExpression,
-                    secondExpression,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+            IASTExpression secondExpression = assignmentExpression(scope);
+            try
+            {
+                assignmentExpression =
+                    astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.EXPRESSIONLIST,
+                        assignmentExpression,
+                        secondExpression,
+                        null,
+                        null,
+                        null,
+                        "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         return assignmentExpression;
     }
@@ -2700,15 +2709,15 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression assignmentExpression()
+    protected IASTExpression assignmentExpression( IASTScope scope )
         throws Backtrack
     {
         if (LT(1) == IToken.t_throw)
         {
-            return throwExpression();
+            return throwExpression(scope);
         }
         IASTExpression conditionalExpression =
-            conditionalExpression();
+            conditionalExpression(scope);
         // if the condition not taken, try assignment operators
         if (conditionalExpression != null
             && conditionalExpression.getExpressionKind()
@@ -2717,108 +2726,133 @@ public class Parser implements IParser
         switch (LT(1))
         {
             case IToken.tASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression( scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL);
             case IToken.tSTARASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT);
             case IToken.tDIVASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV);
             case IToken.tMODASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD);
             case IToken.tPLUSASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS);
             case IToken.tMINUSASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS);
             case IToken.tSHIFTRASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT);
             case IToken.tSHIFTLASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT);
             case IToken.tAMPERASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND);
             case IToken.tXORASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR);
             case IToken.tBITORASSIGN :
-                return assignmentOperatorExpression(
+                return assignmentOperatorExpression(scope,
                     IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR);
         }
         return conditionalExpression;
     }
     protected IASTExpression assignmentOperatorExpression(
+    	IASTScope scope,
         IASTExpression.Kind kind)
         throws EndOfFile, Backtrack
     {
         IToken t = consume();
-        IASTExpression assignmentExpression = assignmentExpression();
+        IASTExpression assignmentExpression = assignmentExpression(scope);
  
-        return astFactory.createExpression(
-            kind,
-            assignmentExpression,
-            null,
-            null,
-            "",
-            "",
-            "",
-            null);
+        try
+        {
+            return astFactory.createExpression(
+                scope,
+                kind,
+                assignmentExpression,
+                null,
+                null,
+                null,
+                null,
+                "", null);
+        }
+        catch (ASTSemanticException e)
+        {
+            failParse();
+            throw backtrack;
+        }
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression throwExpression()
+    protected IASTExpression throwExpression( IASTScope scope )
         throws Backtrack
     {
         consume(IToken.t_throw);
         IASTExpression throwExpression = null;
         try
         {
-            throwExpression = expression();
+            throwExpression = expression(scope);
         }
         catch (Backtrack b)
         {
         }
-        return astFactory.createExpression(
-            IASTExpression.Kind.THROWEXPRESSION,
-            throwExpression,
-            null,
-            null,
-            "",
-            "",
-            "",
-            null);
+        try
+        {
+            return astFactory.createExpression(
+                scope,
+                IASTExpression.Kind.THROWEXPRESSION,
+                throwExpression,
+                null,
+                null,
+                null,
+                null,
+                "", null);
+        }
+        catch (ASTSemanticException e)
+        {
+            failParse();
+            throw backtrack;
+        }
     }
     /**
      * @param expression
      * @return
      * @throws Backtrack
      */
-    protected IASTExpression conditionalExpression()
+    protected IASTExpression conditionalExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = logicalOrExpression();
+        IASTExpression firstExpression = logicalOrExpression(scope);
         if (LT(1) == IToken.tQUESTION)
         {
             consume();
-            IASTExpression secondExpression = expression();
+            IASTExpression secondExpression = expression(scope);
             consume(IToken.tCOLON);
-            IASTExpression thirdExpression = assignmentExpression();
-            return astFactory.createExpression(
-                IASTExpression.Kind.CONDITIONALEXPRESSION_HARD,
-                firstExpression,
-                secondExpression,
-                thirdExpression,
-                "",
-                "",
-                "",
-                null);
+            IASTExpression thirdExpression = assignmentExpression(scope);
+            try
+            {
+                return astFactory.createExpression(
+                    scope,
+                    IASTExpression.Kind.CONDITIONALEXPRESSION_HARD,
+                    firstExpression,
+                    secondExpression,
+                    thirdExpression,
+                    null,
+                    null,
+                    "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         else
             return firstExpression;
@@ -2827,25 +2861,33 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression logicalOrExpression()
+    protected IASTExpression logicalOrExpression(IASTScope scope)
         throws Backtrack
     {
-        IASTExpression firstExpression = logicalAndExpression();
+        IASTExpression firstExpression = logicalAndExpression(scope);
         while (LT(1) == IToken.tOR)
         {
             IToken t = consume();
-            IASTExpression secondExpression = logicalAndExpression();
+            IASTExpression secondExpression = logicalAndExpression(scope);
 
-            firstExpression =
-                astFactory.createExpression(
-                    IASTExpression.Kind.LOGICALOREXPRESSION,
-                    firstExpression,
-                    secondExpression,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+            try
+            {
+                firstExpression =
+                    astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.LOGICALOREXPRESSION,
+                        firstExpression,
+                        secondExpression,
+                        null,
+                        null,
+                        null,
+                        "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         return firstExpression;
     }
@@ -2853,24 +2895,32 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression logicalAndExpression()
+    protected IASTExpression logicalAndExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = inclusiveOrExpression();
+        IASTExpression firstExpression = inclusiveOrExpression( scope );
         while (LT(1) == IToken.tAND)
         {
             IToken t = consume();
-            IASTExpression secondExpression = inclusiveOrExpression();
-            firstExpression =
-                astFactory.createExpression(
-                    IASTExpression.Kind.LOGICALANDEXPRESSION,
-                    firstExpression,
-                    secondExpression,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+            IASTExpression secondExpression = inclusiveOrExpression( scope );
+            try
+            {
+                firstExpression =
+                    astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.LOGICALANDEXPRESSION,
+                        firstExpression,
+                        secondExpression,
+                        null,
+                        null,
+                        null,
+                        "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         return firstExpression;
     }
@@ -2878,25 +2928,33 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression inclusiveOrExpression()
+    protected IASTExpression inclusiveOrExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = exclusiveOrExpression();
+        IASTExpression firstExpression = exclusiveOrExpression(scope);
         while (LT(1) == IToken.tBITOR)
         {
             IToken t = consume();
-            IASTExpression secondExpression = exclusiveOrExpression();
+            IASTExpression secondExpression = exclusiveOrExpression(scope);
   
-            firstExpression =
-                astFactory.createExpression(
-                    IASTExpression.Kind.INCLUSIVEOREXPRESSION,
-                    firstExpression,
-                    secondExpression,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+            try
+            {
+                firstExpression =
+                    astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.INCLUSIVEOREXPRESSION,
+                        firstExpression,
+                        secondExpression,
+                        null,
+                        null,
+                        null,
+                        "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         return firstExpression;
     }
@@ -2904,25 +2962,33 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression exclusiveOrExpression()
+    protected IASTExpression exclusiveOrExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = andExpression();
+        IASTExpression firstExpression = andExpression( scope );
         while (LT(1) == IToken.tXOR)
         {
             IToken t = consume();
-            IASTExpression secondExpression = andExpression();
+            IASTExpression secondExpression = andExpression( scope );
 
-            firstExpression =
-                astFactory.createExpression(
-                    IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
-                    firstExpression,
-                    secondExpression,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+            try
+            {
+                firstExpression =
+                    astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
+                        firstExpression,
+                        secondExpression,
+                        null,
+                        null,
+                        null,
+                        "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         return firstExpression;
     }
@@ -2930,24 +2996,32 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression andExpression() throws Backtrack
+    protected IASTExpression andExpression(IASTScope scope) throws Backtrack
     {
-        IASTExpression firstExpression = equalityExpression();
+        IASTExpression firstExpression = equalityExpression(scope);
         while (LT(1) == IToken.tAMPER)
         {
             IToken t = consume();
-            IASTExpression secondExpression = equalityExpression();
+            IASTExpression secondExpression = equalityExpression(scope);
  
-            firstExpression =
-                astFactory.createExpression(
-                    IASTExpression.Kind.ANDEXPRESSION,
-                    firstExpression,
-                    secondExpression,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+            try
+            {
+                firstExpression =
+                    astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.ANDEXPRESSION,
+                        firstExpression,
+                        secondExpression,
+                        null,
+                        null,
+                        null,
+                        "", null);
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
         }
         return firstExpression;
     }
@@ -2955,10 +3029,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression equalityExpression()
+    protected IASTExpression equalityExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = relationalExpression();
+        IASTExpression firstExpression = relationalExpression(scope);
         for (;;)
         {
             switch (LT(1))
@@ -2967,20 +3041,28 @@ public class Parser implements IParser
                 case IToken.tNOTEQUAL :
                     IToken t = consume();
                     IASTExpression secondExpression =
-                        relationalExpression();
+                        relationalExpression(scope);
 
-                    firstExpression =
-                        astFactory.createExpression(
-                            (t.getType() == IToken.tEQUAL)
-                                ? IASTExpression.Kind.EQUALITY_EQUALS
-                                : IASTExpression.Kind.EQUALITY_NOTEQUALS,
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                (t.getType() == IToken.tEQUAL)
+                                    ? IASTExpression.Kind.EQUALITY_EQUALS
+                                    : IASTExpression.Kind.EQUALITY_NOTEQUALS,
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 default :
                     return firstExpression;
@@ -2991,10 +3073,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression relationalExpression()
+    protected IASTExpression relationalExpression(IASTScope scope)
         throws Backtrack
     {
-        IASTExpression firstExpression = shiftExpression();
+        IASTExpression firstExpression = shiftExpression(scope);
         for (;;)
         {
             switch (LT(1))
@@ -3007,7 +3089,7 @@ public class Parser implements IParser
                     IToken t = consume();
                     IToken next = LA(1);
                     IASTExpression secondExpression =
-                        shiftExpression();
+                        shiftExpression(scope);
                     if (next == LA(1))
                     {
                         // we did not consume anything
@@ -3040,16 +3122,24 @@ public class Parser implements IParser
                                         .RELATIONAL_GREATERTHANEQUALTO;
                                 break;
                         }
-                        firstExpression =
-                            astFactory.createExpression(
-                                kind,
-                                firstExpression,
-                                secondExpression,
-                                null,
-                                "",
-                                "",
-                                "",
-                                null);
+                        try
+                        {
+                            firstExpression =
+                                astFactory.createExpression(
+                                    scope,
+                                    kind,
+                                    firstExpression,
+                                    secondExpression,
+                                    null,
+                                    null,
+                                    null,
+                                    "", null);
+                        }
+                        catch (ASTSemanticException e)
+                        {
+                            failParse();
+                            throw backtrack;
+                        }
                     }
                     break;
                 default :
@@ -3061,10 +3151,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression shiftExpression()
+    protected IASTExpression shiftExpression(IASTScope scope)
         throws Backtrack
     {
-        IASTExpression firstExpression = additiveExpression();
+        IASTExpression firstExpression = additiveExpression(scope);
         for (;;)
         {
             switch (LT(1))
@@ -3073,19 +3163,27 @@ public class Parser implements IParser
                 case IToken.tSHIFTR :
                     IToken t = consume();
                     IASTExpression secondExpression =
-                        additiveExpression();
-                    firstExpression =
-                        astFactory.createExpression(
-                            ((t.getType() == IToken.tSHIFTL)
-                                ? IASTExpression.Kind.SHIFT_LEFT
-                                : IASTExpression.Kind.SHIFT_RIGHT),
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                        additiveExpression(scope);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                ((t.getType() == IToken.tSHIFTL)
+                                    ? IASTExpression.Kind.SHIFT_LEFT
+                                    : IASTExpression.Kind.SHIFT_RIGHT),
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 default :
                     return firstExpression;
@@ -3096,10 +3194,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression additiveExpression()
+    protected IASTExpression additiveExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = multiplicativeExpression();
+        IASTExpression firstExpression = multiplicativeExpression( scope );
         for (;;)
         {
             switch (LT(1))
@@ -3108,19 +3206,27 @@ public class Parser implements IParser
                 case IToken.tMINUS :
                     IToken t = consume();
                     IASTExpression secondExpression =
-                        multiplicativeExpression();
-                    firstExpression =
-                        astFactory.createExpression(
-                            ((t.getType() == IToken.tPLUS)
-                                ? IASTExpression.Kind.ADDITIVE_PLUS
-                                : IASTExpression.Kind.ADDITIVE_MINUS),
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                        multiplicativeExpression(scope);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                ((t.getType() == IToken.tPLUS)
+                                    ? IASTExpression.Kind.ADDITIVE_PLUS
+                                    : IASTExpression.Kind.ADDITIVE_MINUS),
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 default :
                     return firstExpression;
@@ -3131,10 +3237,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression multiplicativeExpression()
+    protected IASTExpression multiplicativeExpression( IASTScope scope )
         throws Backtrack
     {
-        IASTExpression firstExpression = pmExpression();
+        IASTExpression firstExpression = pmExpression(scope);
         for (;;)
         {
             switch (LT(1))
@@ -3143,7 +3249,7 @@ public class Parser implements IParser
                 case IToken.tDIV :
                 case IToken.tMOD :
                     IToken t = consume();
-                    IASTExpression secondExpression = pmExpression();
+                    IASTExpression secondExpression = pmExpression(scope);
                     IASTExpression.Kind kind = null;
                     switch (t.getType())
                     {
@@ -3157,16 +3263,24 @@ public class Parser implements IParser
                             kind = IASTExpression.Kind.MULTIPLICATIVE_MODULUS;
                             break;
                     }
-                    firstExpression =
-                        astFactory.createExpression(
-                            kind,
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                kind,
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 default :
                     return firstExpression;
@@ -3177,9 +3291,9 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression pmExpression() throws Backtrack
+    protected IASTExpression pmExpression( IASTScope scope ) throws Backtrack
     {
-        IASTExpression firstExpression = castExpression();
+        IASTExpression firstExpression = castExpression(scope);
         for (;;)
         {
             switch (LT(1))
@@ -3188,19 +3302,27 @@ public class Parser implements IParser
                 case IToken.tARROWSTAR :
                     IToken t = consume();
                     IASTExpression secondExpression =
-                        castExpression();
-                    firstExpression =
-                        astFactory.createExpression(
-                            ((t.getType() == IToken.tDOTSTAR)
-                                ? IASTExpression.Kind.PM_DOTSTAR
-                                : IASTExpression.Kind.PM_ARROWSTAR),
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                        castExpression(scope);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                ((t.getType() == IToken.tDOTSTAR)
+                                    ? IASTExpression.Kind.PM_DOTSTAR
+                                    : IASTExpression.Kind.PM_ARROWSTAR),
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 default :
                     return firstExpression;
@@ -3212,7 +3334,7 @@ public class Parser implements IParser
      * : unaryExpression
      * | "(" typeId ")" castExpression
      */
-    protected IASTExpression castExpression() throws Backtrack
+    protected IASTExpression castExpression( IASTScope scope ) throws Backtrack
     {
         // TO DO: we need proper symbol checkint to ensure type name
         if (LT(1) == IToken.tLPAREN)
@@ -3233,23 +3355,31 @@ public class Parser implements IParser
                         consume();
                 }
                 consume(IToken.tRPAREN);
-                IASTExpression castExpression = castExpression();
-                return astFactory.createExpression(
-                    IASTExpression.Kind.CASTEXPRESSION,
-                    castExpression,
-                    null,
-                    null,
-                    null,
-                    duple.toString(),
-                    "",
-                    null);
+                IASTExpression castExpression = castExpression(scope);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.CASTEXPRESSION,
+                        castExpression,
+                        null,
+                        null,
+                        null,
+                        duple,
+                        "", null);
+                }
+                catch (ASTSemanticException e)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             }
             catch (Backtrack b)
             {
                 backup(mark);
             }
         }
-        return unaryExpression();
+        return unaryExpression(scope);
     }
     /**
      * @throws Backtrack
@@ -3319,7 +3449,7 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression deleteExpression()
+    protected IASTExpression deleteExpression( IASTScope scope )
         throws Backtrack
     {
         if (LT(1) == IToken.tCOLONCOLON)
@@ -3336,18 +3466,26 @@ public class Parser implements IParser
             consume(IToken.tRBRACKET);
             vectored = true;
         }
-        IASTExpression castExpression = castExpression();
-        return astFactory.createExpression(
-            (vectored
-                ? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
-                : IASTExpression.Kind.DELETE_CASTEXPRESSION),
-            castExpression,
-            null,
-            null,
-            "",
-            "",
-            "",
-            null);
+        IASTExpression castExpression = castExpression(scope);
+        try
+        {
+            return astFactory.createExpression(
+                scope,
+                (vectored
+                    ? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
+                    : IASTExpression.Kind.DELETE_CASTEXPRESSION),
+                castExpression,
+                null,
+                null,
+                null,
+                null,
+                "", null);
+        }
+        catch (ASTSemanticException e)
+        {
+            failParse();
+            throw backtrack;
+        }
     }
     /**
      * Pazse a new-expression.  
@@ -3365,7 +3503,7 @@ public class Parser implements IParser
      *							directnewdeclarator [ constantexpression ]
      * newinitializer:	( expressionlist? )
      */
-    protected IASTExpression newExpression() throws Backtrack
+    protected IASTExpression newExpression( IASTScope scope ) throws Backtrack
     {
         if (LT(1) == IToken.tCOLONCOLON)
         {
@@ -3385,7 +3523,7 @@ public class Parser implements IParser
                 // Try to consume placement list
                 // Note: since expressionList and expression are the same...
                 backtrackMarker = mark();
-                expression();
+                expression(scope);
                 consume(IToken.tRPAREN);
                 placementParseFailure = false;
                 if (LT(1) == IToken.tLPAREN)
@@ -3486,7 +3624,7 @@ public class Parser implements IParser
         {
             // array new
             consume();
-            assignmentExpression();
+            assignmentExpression(scope);
             consume(IToken.tRBRACKET);
         }
         // newinitializer
@@ -3494,66 +3632,74 @@ public class Parser implements IParser
         {
             consume(IToken.tLPAREN);
             if (LT(1) != IToken.tRPAREN)
-                expression();
+                expression(scope);
             consume(IToken.tRPAREN);
         }
         return null; //TODO fix this 
     }
-    protected IASTExpression unaryOperatorCastExpression(
+    protected IASTExpression unaryOperatorCastExpression( IASTScope scope,
         IASTExpression.Kind kind,
         IToken consumed)
         throws Backtrack
     {
-        IASTExpression castExpression = castExpression();
-        return astFactory.createExpression(
-            kind,
-            castExpression,
-            null,
-            null,
-            "",
-            "",
-            "",
-            null);
+        IASTExpression castExpression = castExpression(scope);
+        try
+        {
+            return astFactory.createExpression(
+                scope,
+                kind,
+                castExpression,
+                null,
+                null,
+                null,
+                null,
+                "", null);
+        }
+        catch (ASTSemanticException e)
+        {
+            failParse();
+            throw backtrack;
+        }
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression unaryExpression()
+    protected IASTExpression unaryExpression( IASTScope scope )
         throws Backtrack
     {
         switch (LT(1))
         {
             case IToken.tSTAR :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION,
                     consume());
             case IToken.tAMPER :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION,
                     consume());
             case IToken.tPLUS :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION,
                     consume());
             case IToken.tMINUS :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION,
                     consume());
             case IToken.tNOT :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION,
                     consume());
             case IToken.tCOMPL :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION,
                     consume());
             case IToken.tINCR :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_INCREMENT,
                     consume());
             case IToken.tDECR :
-                return unaryOperatorCastExpression(
+                return unaryOperatorCastExpression(scope,
                     IASTExpression.Kind.UNARY_DECREMENT,
                     consume());
             case IToken.t_sizeof :
@@ -3572,58 +3718,74 @@ public class Parser implements IParser
                     catch (Backtrack bt)
                     {
                         backup(mark);
-                        unaryExpression = unaryExpression();
+                        unaryExpression = unaryExpression(scope);
                     }
                 }
                 else
                 {
-                    unaryExpression = unaryExpression();
+                    unaryExpression = unaryExpression(scope);
                 }
                 if (d != null & unaryExpression == null)
-                    return astFactory.createExpression(
-                        IASTExpression.Kind.UNARY_SIZEOF_TYPEID,
-                        null,
-                        null,
-                        null,
-                        "",
-                        d.toString(),
-                        "",
-                        null);
+                    try
+                    {
+                        return astFactory.createExpression(
+                            scope,
+                            IASTExpression.Kind.UNARY_SIZEOF_TYPEID,
+                            null,
+                            null,
+                            null,
+                            null,
+                            d,
+                            "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                 else if (unaryExpression != null && d == null)
-                    return astFactory.createExpression(
-                        IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
-                        unaryExpression,
-                        null,
-                        null,
-                        "",
-                        "",
-                        "",
-                        null);
+                    try
+                    {
+                        return astFactory.createExpression(
+                            scope,
+                            IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
+                            unaryExpression,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "", null);
+                    }
+                    catch (ASTSemanticException e1)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                 else
                     throw backtrack;
             case IToken.t_new :
-                return newExpression();
+                return newExpression(scope);
             case IToken.t_delete :
-                return deleteExpression();
+                return deleteExpression(scope);
             case IToken.tCOLONCOLON :
                 switch (LT(2))
                 {
                     case IToken.t_new :
-                        return newExpression();
+                        return newExpression(scope);
                     case IToken.t_delete :
-                        return deleteExpression();
+                        return deleteExpression(scope);
                     default :
-                        return postfixExpression();
+                        return postfixExpression(scope);
                 }
             default :
-                return postfixExpression();
+                return postfixExpression(scope);
         }
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression postfixExpression()
+    protected IASTExpression postfixExpression( IASTScope scope )
         throws Backtrack
     {
         IASTExpression firstExpression = null;
@@ -3636,72 +3798,72 @@ public class Parser implements IParser
                 // simple-type-specifier ( assignment-expression , .. )
             case IToken.t_char :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR);
                 break;
             case IToken.t_wchar_t :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART);
                 break;
             case IToken.t_bool :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL);
                 break;
             case IToken.t_short :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT);
                 break;
             case IToken.t_int :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT);
                 break;
             case IToken.t_long :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG);
                 break;
             case IToken.t_signed :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED);
                 break;
             case IToken.t_unsigned :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED);
                 break;
             case IToken.t_float :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression(scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT);
                 break;
             case IToken.t_double :
                 firstExpression =
-                    simpleTypeConstructorExpression(
+                    simpleTypeConstructorExpression( scope,
                         IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE);
                 break;
             case IToken.t_dynamic_cast :
                 firstExpression =
-                    specialCastExpression(
+                    specialCastExpression(scope,
                         IASTExpression.Kind.POSTFIX_DYNAMIC_CAST);
                 break;
             case IToken.t_static_cast :
                 firstExpression =
-                    specialCastExpression(
+                    specialCastExpression(scope,
                         IASTExpression.Kind.POSTFIX_STATIC_CAST);
                 break;
             case IToken.t_reinterpret_cast :
                 firstExpression =
-                    specialCastExpression(
+                    specialCastExpression(scope,
                         IASTExpression.Kind.POSTFIX_REINTERPRET_CAST);
                 break;
             case IToken.t_const_cast :
                 firstExpression =
-                    specialCastExpression(
+                    specialCastExpression(scope,
                         IASTExpression.Kind.POSTFIX_CONST_CAST);
                 break;
             case IToken.t_typeid :
@@ -3717,24 +3879,32 @@ public class Parser implements IParser
                 catch (Backtrack b)
                 {
                     isTypeId = false;
-                    lhs = expression();
+                    lhs = expression(scope);
                 }
                 consume(IToken.tRPAREN);
-                firstExpression =
-                    astFactory.createExpression(
-                        (isTypeId
-                            ? IASTExpression.Kind.POSTFIX_TYPEID_TYPEID
-                            : IASTExpression.Kind.POSTFIX_TYPEID_EXPRESSION),
-                        lhs,
-                        null,
-                        null,
-                        "",
-                        (isTypeId ? typeId.toString() : ""),
-                        "",
-                        null);
+                try
+                {
+                    firstExpression =
+                        astFactory.createExpression(
+                            scope,
+                            (isTypeId
+                                ? IASTExpression.Kind.POSTFIX_TYPEID_TYPEID
+                                : IASTExpression.Kind.POSTFIX_TYPEID_EXPRESSION),
+                            lhs,
+                            null,
+                            null,
+                            null,
+                            typeId,
+                            "", null);
+                }
+                catch (ASTSemanticException e6)
+                {
+                    failParse();
+                    throw backtrack;
+                }
                 break;
             default :
-                firstExpression = primaryExpression();
+                firstExpression = primaryExpression(scope);
         }
         IASTExpression secondExpression = null;
         for (;;)
@@ -3744,60 +3914,92 @@ public class Parser implements IParser
                 case IToken.tLBRACKET :
                     // array access
                     consume();
-                    secondExpression = expression();
+                    secondExpression = expression(scope);
                     consume(IToken.tRBRACKET);
-                    firstExpression =
-                        astFactory.createExpression(
-                            IASTExpression.Kind.POSTFIX_SUBSCRIPT,
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                IASTExpression.Kind.POSTFIX_SUBSCRIPT,
+                                firstExpression,
+                                secondExpression,
+                                null,
+                        		null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e2)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 case IToken.tLPAREN :
                     // function call
                     consume();
-                    secondExpression = expression();
+                    secondExpression = expression(scope);
                     consume(IToken.tRPAREN);
-                    firstExpression =
-                        astFactory.createExpression(
-                            IASTExpression.Kind.POSTFIX_FUNCTIONCALL,
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                IASTExpression.Kind.POSTFIX_FUNCTIONCALL,
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e3)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 case IToken.tINCR :
                     consume();
-                    firstExpression =
-                        astFactory.createExpression(
-                            IASTExpression.Kind.POSTFIX_INCREMENT,
-                            firstExpression,
-                            null,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                IASTExpression.Kind.POSTFIX_INCREMENT,
+                                firstExpression,
+                                null,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e1)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 case IToken.tDECR :
                     consume();
-                    firstExpression =
-                        astFactory.createExpression(
-                            IASTExpression.Kind.POSTFIX_DECREMENT,
-                            firstExpression,
-                            null,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                IASTExpression.Kind.POSTFIX_DECREMENT,
+                                firstExpression,
+                                null,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e4)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 case IToken.tDOT :
                     // member access
@@ -3807,19 +4009,27 @@ public class Parser implements IParser
                         consume(IToken.t_template);
                         isTemplate = true;
                     }
-                    secondExpression = primaryExpression();
-                    firstExpression =
-                        astFactory.createExpression(
-                            (isTemplate
-                                ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
-                                : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION),
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    secondExpression = primaryExpression(scope);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                (isTemplate
+                                    ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
+                                    : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION),
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e5)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 case IToken.tARROW :
                     // member access
@@ -3829,26 +4039,34 @@ public class Parser implements IParser
                         consume(IToken.t_template);
                         isTemplate = true;
                     }
-                    secondExpression = primaryExpression();
-                    firstExpression =
-                        astFactory.createExpression(
-                            (isTemplate
-                                ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
-                                : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION),
-                            firstExpression,
-                            secondExpression,
-                            null,
-                            "",
-                            "",
-                            "",
-                            null);
+                    secondExpression = primaryExpression(scope);
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                (isTemplate
+                                    ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
+                                    : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION),
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null,
+                                "", null);
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        failParse();
+                        throw backtrack;
+                    }
                     break;
                 default :
                     return firstExpression;
             }
         }
     }
-    protected IASTExpression specialCastExpression(
+    protected IASTExpression specialCastExpression( IASTScope scope,
         IASTExpression.Kind kind)
         throws EndOfFile, Backtrack
     {
@@ -3857,48 +4075,57 @@ public class Parser implements IParser
         ITokenDuple duple = typeId();
         consume(IToken.tGT);
         consume(IToken.tLPAREN);
-        IASTExpression lhs = expression();
+        IASTExpression lhs = expression(scope);
         consume(IToken.tRPAREN);
-        return astFactory.createExpression(
-            kind,
-            lhs,
-            null,
-            null,
-            "",
-            "",
-            "",
-            null);
+        try
+        {
+            return astFactory.createExpression(
+                scope,
+                kind,
+                lhs,
+                null,
+                null,
+                null,
+                null,
+                "", null);
+        }
+        catch (ASTSemanticException e)
+        {
+            failParse();
+            throw backtrack;
+        }
     }
-    protected IASTExpression simpleTypeConstructorExpression(
+    protected IASTExpression simpleTypeConstructorExpression( IASTScope scope,
         Kind type)
         throws EndOfFile, Backtrack
     {
         consume();
         consume(IToken.tLPAREN);
-        IASTExpression inside = expression();
-        //                while (true)
-        //                {
-        //                    assignmentExpression(expression);
-        //                    if (LT(1) == IToken.tRPAREN)
-        //                        break;
-        //                    consume(IToken.tCOMMA);
-        //                }
+        IASTExpression inside = expression(scope);
         consume(IToken.tRPAREN);
-        return astFactory.createExpression(
-            type,
-            inside,
-            null,
-            null,
-            "",
-            "",
-            "",
-            null);
+        try
+        {
+            return astFactory.createExpression(
+                scope,
+                type,
+                inside,
+                null,
+                null,
+                null,
+                null,
+                "", null);
+        }
+        catch (ASTSemanticException e)
+        {
+            failParse();
+            throw backtrack;
+        }
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression primaryExpression()
+    protected IASTExpression primaryExpression( IASTScope scope )
         throws Backtrack
     {
         IToken t = null;
@@ -3907,104 +4134,176 @@ public class Parser implements IParser
             // TO DO: we need more literals...
             case IToken.tINTEGER :
                 t = consume();
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    t.getImage(),
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        t.getImage(), null);
+                }
+                catch (ASTSemanticException e1)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             case IToken.tFLOATINGPT :
                 t = consume();
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_FLOAT_LITERAL,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    t.getImage(),
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_FLOAT_LITERAL,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        t.getImage(), null);
+                }
+                catch (ASTSemanticException e2)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             case IToken.tSTRING :
             case IToken.tLSTRING :
 				t = consume();
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, "", "", t.getImage(), null );
+				try
+                {
+                    return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, null, null, t.getImage(), null );
+                }
+                catch (ASTSemanticException e5)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             
             case IToken.t_false :
             case IToken.t_true :
                 t = consume();
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    t.getImage(),
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL,
+                        null,
+                        null,
+                        null,
+                    	null,
+                        null,
+                        t.getImage(), null);
+                }
+                catch (ASTSemanticException e3)
+                {
+                    failParse();
+                    throw backtrack;
+                }
                   
             case IToken.tCHAR :
 			case IToken.tLCHAR :
 
                 t = consume();
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_CHAR_LITERAL,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    t.getImage(),
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_CHAR_LITERAL,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        t.getImage(), null);
+                }
+                catch (ASTSemanticException e4)
+                {
+                    failParse();
+                    throw backtrack;
+                }
                     
             case IToken.t_this :
                 consume(IToken.t_this);
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_THIS,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_THIS,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        "", null);
+                }
+                catch (ASTSemanticException e7)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             case IToken.tLPAREN :
                 consume();
-                IASTExpression lhs = expression();
+                IASTExpression lhs = expression(scope);
                 consume(IToken.tRPAREN);
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION,
-                    lhs,
-                    null,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION,
+                        lhs,
+                        null,
+                        null,
+                    	null,
+                        null,
+                        "", null);
+                }
+                catch (ASTSemanticException e6)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             case IToken.tIDENTIFIER :
                 ITokenDuple duple = name();
                 //TODO should be an ID Expression really
-                return astFactory.createExpression(
-                    IASTExpression.Kind.ID_EXPRESSION,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    duple.toString(),
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.ID_EXPRESSION,
+                        null,
+                        null,
+                        null,
+                    	null,
+						duple,
+                        "", null);
+                }
+                catch (ASTSemanticException e8)
+                {
+                    failParse();
+                    throw backtrack;
+                }
             default :
-                return astFactory.createExpression(
-                    IASTExpression.Kind.PRIMARY_EMPTY,
-                    null,
-                    null,
-                    null,
-                    "",
-                    "",
-                    "",
-                    null);
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.PRIMARY_EMPTY,
+                        null,
+                        null,
+                        null,
+                    	null,
+                        null,
+                        "", null);
+                }
+                catch (ASTSemanticException e)
+                {
+                    failParse();
+                    throw backtrack;
+                }
         }
     }
     /**

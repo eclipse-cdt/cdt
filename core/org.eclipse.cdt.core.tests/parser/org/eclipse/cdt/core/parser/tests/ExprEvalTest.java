@@ -27,7 +27,7 @@ public class ExprEvalTest extends TestCase {
 		
 		final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
         IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), null, nullCallback ), nullCallback, ParserMode.QUICK_PARSE);
-		IASTExpression expression = parser.expression();
+		IASTExpression expression = parser.expression(null);
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}
 	

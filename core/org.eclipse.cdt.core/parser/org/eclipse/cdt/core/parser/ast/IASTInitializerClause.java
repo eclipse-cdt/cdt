@@ -13,11 +13,12 @@ package org.eclipse.cdt.core.parser.ast;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.Enum;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 
 /**
  * @author jcamelon
  */
-public interface IASTInitializerClause {
+public interface IASTInitializerClause extends ISourceElementCallbackDelegate{
 
 	public class Kind extends Enum  
 	{

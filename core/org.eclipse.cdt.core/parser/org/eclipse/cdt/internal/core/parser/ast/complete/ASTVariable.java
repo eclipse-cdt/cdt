@@ -160,6 +160,8 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     {
         requestor.acceptVariable(this);
         referenceDelegate.processReferences(requestor);
+        if( initializerClause != null )
+        	initializerClause.acceptElement(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

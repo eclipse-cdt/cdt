@@ -123,6 +123,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     {
         requestor.acceptMethodDeclaration(this);
         references.processReferences(requestor);
+        processParameterInitializers(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -193,6 +193,7 @@ public class CompleteParseASTTest extends TestCase
         public void exitFunctionBody(IASTFunction function)
         {
             popScope();
+			getCurrentScope().addDeclaration(function);
         }
 
         /* (non-Javadoc)
@@ -291,6 +292,7 @@ public class CompleteParseASTTest extends TestCase
         public void exitMethodBody(IASTMethod method)
         {
             popScope();
+			getCurrentScope().addDeclaration(method);
         }
 
         /* (non-Javadoc)
@@ -536,7 +538,7 @@ public class CompleteParseASTTest extends TestCase
 			ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
 				ParserMode.COMPLETE_PARSE, callback ), callback, ParserMode.COMPLETE_PARSE	
 			);
-		parser.parse();
+		if( ! parser.parse() ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();
     }
 
@@ -901,5 +903,30 @@ public class CompleteParseASTTest extends TestCase
 		IASTFunction f2 = (IASTFunction)i.next();
 		assertFalse( i.hasNext() );
 	}	 
-	 
+	
+	public void testSimpleExpression() throws Exception
+	{
+		Iterator i = parse( "int x; int y = x;").getDeclarations();
+		IASTVariable varX = (IASTVariable)i.next();
+		IASTVariable varY = (IASTVariable)i.next();
+		assertEquals( callback.getReferences().size(), 1 );
+	}
+	
+	public void testParameterExpressions() throws Exception
+	{
+		Iterator i = parse( "int x = 5; void foo( int sub = x ) { }").getDeclarations();
+		IASTVariable varX = (IASTVariable)i.next();
+		IASTFunction funFoo = (IASTFunction)i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 1 );	
+	}
+	
+	public void testNestedNamespaceExpression() throws Exception
+	{
+		Iterator i = parse( "namespace A { int x = 666; } int y  = A::x;").getDeclarations();
+		IASTNamespaceDefinition namespaceA = (IASTNamespaceDefinition)i.next(); 
+		IASTVariable variableY = (IASTVariable)i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 2 );		
+	}
 }

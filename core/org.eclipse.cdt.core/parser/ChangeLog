@@ -1,3 +1,6 @@
+2003-08-13 John Camelon
+	Added Expression x-reference support into Parser.
+
 2003-08-12 John Camelon
 	Added X-Ref/Elaborated type support w/element requestor callbacks.  
 

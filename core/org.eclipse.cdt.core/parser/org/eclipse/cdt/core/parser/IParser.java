@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 
 
@@ -40,7 +41,7 @@ public interface IParser {
 	 * @throws Backtrack	thrown if the Scanner/Stream provided does not yield a valid
 	 * 						expression	
 	 */
-	public IASTExpression expression() throws Backtrack;
+	public IASTExpression expression(IASTScope scope) throws Backtrack;
 	
 	/**
 	 * Is the parser configured for ANSI C or ANSI C++?

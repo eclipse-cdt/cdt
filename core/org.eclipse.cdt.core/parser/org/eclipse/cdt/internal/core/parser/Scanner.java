@@ -1786,7 +1786,7 @@ public class Scanner implements IScanner {
             IParser parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE );
  
 			try {
-				IASTExpression exp = parser.expression();
+				IASTExpression exp = parser.expression(null);
 				if( exp.evaluateExpression() == 0 )
 					return false;
 			} catch( Backtrack b )

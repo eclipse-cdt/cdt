@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -148,8 +149,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, String id, String typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		return new ASTExpression( kind, lhs, rhs, thirdExpression, id, typeId, literal, newDescriptor );
+	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IToken id, ITokenDuple typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
+		return new ASTExpression( kind, lhs, rhs, thirdExpression, id == null ? "" : id.getImage(), typeId == null ? "" : typeId.toString(), literal, newDescriptor );
 	}
 
 	/* (non-Javadoc)
@@ -160,13 +161,6 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createIASTInitializerClause()
-	 */
-	public IASTInitializerClause createInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses) {
-		return new ASTInitializerClause( kind, assignmentExpression, initializerClauses );
-	}
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExceptionSpecification(java.util.List)
      */
     public IASTExceptionSpecification createExceptionSpecification(List typeIds)

@@ -55,5 +55,8 @@ public class ASTField extends ASTVariable implements IASTField
 	{
 		requestor.acceptField(this);
 		referenceDelegate.processReferences(requestor);
+		if( getInitializerClause() != null )
+			getInitializerClause().acceptElement(requestor);
+
 	}
 }

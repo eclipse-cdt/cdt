@@ -87,67 +87,79 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
 
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references ) throws ASTSemanticException
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references, boolean throwOnError ) throws ASTSemanticException
 	{
 		ISymbol result = null;
-		IToken firstSymbol = null;		
-		switch( name.length() )
-		{
-			case 0: 
-				throw new ASTSemanticException();
-			case 1:
-				firstSymbol = name.getFirstToken();
-				try
-                {
-                    result = startingScope.lookup( firstSymbol.getImage());
-                    if( result != null ) 
-						references.add( createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
-					else
-						throw new ASTSemanticException();    
-                }
-                catch (ParserSymbolTableException e)
-                {
-                 	throw new ASTSemanticException();    
-                }
-                break;
-			case 2: 
-				firstSymbol = name.getFirstToken();
-				if( firstSymbol.getType() != IToken.tCOLONCOLON )
-					throw new ASTSemanticException();
-				try
-				{
-					result = pst.getCompilationUnit().lookup( name.getLastToken().getImage() );
-					references.add( createReference( result, name.getLastToken().getImage(), name.getLastToken().getOffset() ));
-				}
-				catch( ParserSymbolTableException e)
-				{
-					throw new ASTSemanticException();
-				}
-				break;
-			default:
-				Iterator iter = name.iterator();
-				firstSymbol = name.getFirstToken();
-				result = startingScope;
-				if( firstSymbol.getType() == IToken.tCOLONCOLON )
-					result = pst.getCompilationUnit();
-				while( iter.hasNext() )
-				{
-					IToken t = (IToken)iter.next();
-					if( t.getType() == IToken.tCOLONCOLON ) continue;
+		IToken firstSymbol = null;
+		try
+		{	
+			if( name == null ) throw new ASTSemanticException();
+			
+			switch( name.length() )
+			{
+				case 0: 
+					if( throwOnError )
+						throw new ASTSemanticException();
+				case 1:
+					firstSymbol = name.getFirstToken();
+					try
+	                {
+	                    result = startingScope.lookup( firstSymbol.getImage());
+	                    if( result != null ) 
+							references.add( createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
+						else
+							throw new ASTSemanticException();    
+	                }
+	                catch (ParserSymbolTableException e)
+	                {
+	                 	throw new ASTSemanticException();    
+	                }
+	                break;
+				case 2: 
+					firstSymbol = name.getFirstToken();
+					if( firstSymbol.getType() != IToken.tCOLONCOLON )
+						throw new ASTSemanticException();
 					try
 					{
-						if( t == name.getLastToken() ) 
-							result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
-						else
-							result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
-						references.add( createReference( result, t.getImage(), t.getOffset() ));
+						result = pst.getCompilationUnit().lookup( name.getLastToken().getImage() );
+						references.add( createReference( result, name.getLastToken().getImage(), name.getLastToken().getOffset() ));
 					}
-					catch( ParserSymbolTableException pste )
+					catch( ParserSymbolTableException e)
 					{
-						throw new ASTSemanticException();						
+						throw new ASTSemanticException();
 					}
-				}
-				 
+					break;
+				default:
+					Iterator iter = name.iterator();
+					firstSymbol = name.getFirstToken();
+					result = startingScope;
+					if( firstSymbol.getType() == IToken.tCOLONCOLON )
+						result = pst.getCompilationUnit();
+					while( iter.hasNext() )
+					{
+						IToken t = (IToken)iter.next();
+						if( t.getType() == IToken.tCOLONCOLON ) continue;
+						try
+						{
+							if( t == name.getLastToken() ) 
+								result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
+							else
+								result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
+							references.add( createReference( result, t.getImage(), t.getOffset() ));
+						}
+						catch( ParserSymbolTableException pste )
+						{
+							throw new ASTSemanticException();						
+						}
+					}
+					 
+			}
+		}
+		catch( ASTSemanticException se )
+		{
+			if( throwOnError )
+				throw se;
+			return null;
 		}
 		return result;
 	}
@@ -165,7 +177,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {		
 		List references = new ArrayList();	
 		ISymbol symbol = lookupQualifiedName( 
-			scopeToSymbol( scope), duple, references ); 
+			scopeToSymbol( scope), duple, references, true ); 
 
 		try {
 			((ASTScope)scope).getContainerSymbol().addUsingDirective( (IContainerSymbol)symbol );
@@ -212,7 +224,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int endingOffset) throws ASTSemanticException
     {
         List references = new ArrayList(); 
-		ISymbol symbol = lookupQualifiedName( scopeToSymbol(scope), name, references );
+		ISymbol symbol = lookupQualifiedName( scopeToSymbol(scope), name, references, true );
         
         try
         {
@@ -376,7 +388,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			 ITokenDuple containerSymbolName = 
 			 	name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
 			 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
-			 	containerSymbolName, references);
+			 	containerSymbolName, references, true);
 			 if( currentScopeSymbol == null )
 			 	throw new ASTSemanticException();
 		}
@@ -610,17 +622,58 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor)
      */
     public IASTExpression createExpression(
+        IASTScope scope,
         Kind kind,
         IASTExpression lhs,
         IASTExpression rhs,
         IASTExpression thirdExpression,
-        String id,
-        String typeId,
-        String literal,
-        IASTNewExpressionDescriptor newDescriptor)
+        IToken id,
+        ITokenDuple typeId,
+        String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
     {
-        // TODO FIX THIS
-        return null;
+    	List references = new ArrayList(); 
+    	
+        getExpressionReferences(lhs, references);
+        getExpressionReferences(rhs, references);
+        getExpressionReferences(thirdExpression,references);
+    	
+        //look up id & add to references
+        IContainerSymbol startingScope = scopeToSymbol( scope );
+        
+        if( id != null )
+        {
+	        try
+	        {
+	            ISymbol s = startingScope.lookup( id.getImage() );
+	            if( s != null )
+	            	references.add( createReference( s, id.getImage(), id.getOffset() ));
+	            else
+	            	throw new ASTSemanticException();
+	        }
+	        catch (ParserSymbolTableException e)
+	        {
+				throw new ASTSemanticException();	            
+	        }
+        }
+        
+        //look up typeId & add to references
+        if( typeId != null )
+        	lookupQualifiedName( startingScope, typeId, references, false );
+        
+        //TODO add newDescriptor's references & add to references
+        return new ASTExpression( kind, lhs, rhs, thirdExpression, 
+        							id == null ? "" : id.getImage(), 
+        							typeId == null ? "" : typeId.toString(), 
+        							literal, newDescriptor, references);
+    }
+
+
+    protected void getExpressionReferences(IASTExpression expression, List references)
+    {
+        if( expression != null )
+        {
+        	references.addAll( ((ASTExpression)expression).getReferences() );
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
@@ -630,17 +683,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         // TODO FIX THIS
         return null;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createInitializerClause(org.eclipse.cdt.core.parser.ast.IASTInitializerClause.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, java.util.List)
-     */
-    public IASTInitializerClause createInitializerClause(
-        org.eclipse.cdt.core.parser.ast.IASTInitializerClause.Kind kind,
-        IASTExpression assignmentExpression,
-        List initializerClauses)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExceptionSpecification(java.util.List)
      */
@@ -1263,7 +1306,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			 ITokenDuple containerSymbolName = 
 				name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
 			 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
-				containerSymbolName, references);
+				containerSymbolName, references, true);
 			 if( currentScopeSymbol == null )
 				throw new ASTSemanticException();
 		}

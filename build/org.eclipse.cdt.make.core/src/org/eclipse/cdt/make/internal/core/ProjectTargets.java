@@ -13,8 +13,6 @@ package org.eclipse.cdt.make.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -166,7 +164,7 @@ public class ProjectTargets {
 		return false;
 	}
 
-	public boolean remove(IMakeTarget target) {
+	public boolean remove(MakeTarget target) {
 		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list == null || !list.contains(target)) {
 			return false;
@@ -182,13 +180,14 @@ public class ProjectTargets {
 		return project;
 	}
 
-	protected Document getAsXML() throws IOException {
+	protected Document getAsXML() throws CoreException {
 		Document doc;
 		try {
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException ex) {
 			//This should never happen.
-			throw new IOException("Error creating new XML storage document"); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+					"Error creating new XML storage document", ex)); //$NON-NLS-1$
 		}
 		Element targetsRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
 		doc.appendChild(targetsRootElement);
@@ -234,26 +233,14 @@ public class ProjectTargets {
 		return targetElem;
 	}
 
-	public void saveTargets() throws IOException {
+	public void saveTargets() throws CoreException {
 		Document doc = getAsXML();
 		//Historical method would save the output to the stream specified
 		//translateDocumentToOutputStream(doc, output);
-		try {
-			translateDocumentToCDTProject(doc);
-		} catch (Exception e) {
-			IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
-					TARGETS_EXT);
-			File targetFile = targetFilePath.toFile();
-			try {
-				saveTargets(doc, new FileOutputStream(targetFile));
-			} catch (FileNotFoundException e1) {
-			} catch (IOException e1) {
-			} catch (TransformerException e1) {
-			}
-		}
+		translateDocumentToCDTProject(doc);
 	}
 
-	protected void saveTargets(Document doc, OutputStream output) throws IOException, TransformerException {
+	protected void saveTargets(Document doc, OutputStream output) throws TransformerException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer;
 		transformer = factory.newTransformer();
@@ -268,9 +255,9 @@ public class ProjectTargets {
 	 * This output method saves the information into the .cdtproject metadata file.
 	 * 
 	 * @param doc
-	 * @throws IOException
+	 * @throws CoreException
 	 */
-	protected void translateDocumentToCDTProject(Document doc) throws CoreException, IOException {
+	protected void translateDocumentToCDTProject(Document doc) throws CoreException {
 		ICDescriptor descriptor;
 		descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
 

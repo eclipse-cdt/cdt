@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -74,7 +73,12 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 		((MakeTarget) target).setContainer(container);
 		projectTargets.add((MakeTarget) target);
-		writeTargets(projectTargets);
+		try {
+			writeTargets(projectTargets);
+		} catch (CoreException e) {
+			projectTargets.remove((MakeTarget) target);
+			throw e;
+		}
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
 	}
 
@@ -84,8 +88,13 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
-		if (projectTargets.remove(target)) {
-			writeTargets(projectTargets);
+		if (projectTargets.remove((MakeTarget) target)) {
+			try {
+				writeTargets(projectTargets);
+			} catch (CoreException e) {
+				projectTargets.add((MakeTarget) target);
+				throw e;
+			}
 			notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_REMOVED, target));
 		}
 	}
@@ -252,12 +261,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
-		try {
-			projectTargets.saveTargets();
-		} catch (IOException e) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.error_writing_file"), e)); //$NON-NLS-1$
-		}
+		projectTargets.saveTargets();
 	}
 
 	protected ProjectTargets readTargets(IProject project) throws CoreException {

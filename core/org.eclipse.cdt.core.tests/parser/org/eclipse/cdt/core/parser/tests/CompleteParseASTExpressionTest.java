@@ -16,13 +16,10 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
-import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 
 /**
  * @author hamer
@@ -43,10 +40,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f2 );
-		 
+		assertAllReferences(1, createTaskList( new Task( f2 ) ));
 	}	
 	// Kind PRIMARY_INTEGER_LITERAL : int 
 	public void testPrimaryIntegerLiteral() throws Exception
@@ -55,9 +49,10 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f1 );
+		assertAllReferences( 1, createTaskList( new Task( f1 )));
+//		Iterator references = callback.getReferences().iterator();
+//		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
+//		assertEquals( fr1.getReferencedElement(), f1 );
 		 
 	}	
 	// Kind PRIMARY_CHAR_LITERAL : char
@@ -67,10 +62,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f2 );
-		 
+		assertAllReferences( 1, createTaskList( new Task( f2 )));
 	}	
 	// Kind PRIMARY_FLOAT_LITERAL : float
 	public void testPrimaryFloatLiteral() throws Exception
@@ -79,10 +71,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f2 );
-		 
+		assertAllReferences( 1, createTaskList( new Task( f2 )));
 	}	
 	// Kind PRIMARY_STRING_LITERAL : char*
 	public void testPrimaryStringLiteral() throws Exception
@@ -91,10 +80,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f2 );
-		 
+		assertAllReferences( 1, createTaskList( new Task( f2 )));
 	}	
 	// Kind PRIMARY_BOOLEAN_LITERAL : bool
 	public void testPrimaryBooleanLiteral() throws Exception
@@ -103,10 +89,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f1 );
-		 
+		assertAllReferences( 1, createTaskList( new Task( f1 )));
 	}
 	// Kind PRIMARY_THIS : type of inner most enclosing structure scope
 	public void testPrimaryThis() throws Exception
@@ -119,11 +102,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTMethod   m  = (IASTMethod) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTFunctionReference) references.next()).getReferencedElement(), f2 );
+		assertAllReferences( 4, createTaskList( new Task( cl, 3 ), new Task( f2 )));
 	}	
 	// Kind PRIMARY_BRACKETED_EXPRESSION : LHS
 	public void testPrimaryBracketedExpression() throws Exception
@@ -132,24 +111,20 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( fr1.getReferencedElement(), f1 );
-	}	 
+		assertAllReferences( 1, createTaskList( new Task( f1 )));
+	}
 	// Kind ID_EXPRESSION : type of the ID
 	public void testIdExpression() throws Exception
 	{
 		Iterator i = parse ("class A{}a;  \n int f(A a); \n int f(void); \n int x = f(a);").getDeclarations();
+		
 		IASTVariable a  = (IASTVariable) i.next();
+		IASTClassSpecifier cl = (IASTClassSpecifier)a.getAbstractDeclaration().getTypeSpecifier();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr1.getReferencedElement(), f1 );
+		
+		assertAllReferences( 3, createTaskList( new Task( cl ), new Task( f1 ),new Task( a ) ) );
 	}	
 	// Kind ID_EXPRESSION ( refers to a pointer ) : pointer to type of ID
 	public void testIdExpressionToPointer() throws Exception
@@ -160,14 +135,8 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTClassReference clr2 = (IASTClassReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( clr1.getReferencedElement(), cl );
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr1.getReferencedElement(), f1 );
+		assertAllReferences( 4, createTaskList( new Task( cl, 2 ), new Task( f1 ), new Task( a ) ) );
+
 	}
 	// Kind POSTFIX_SUBSCRIPT	
 	public void testPostfixSubscript() throws Exception
@@ -176,11 +145,8 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable pa  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( callback.getReferences().size(), 2 );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), pa );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), f1 );
+		IASTVariable x  = (IASTVariable) i.next();		
+		assertAllReferences( 2, createTaskList( new Task( f1 ), new Task( pa ) ) );
 	}
 		
  	public void testPostfixSubscriptA() throws Exception
@@ -190,10 +156,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( callback.getReferences().size(), 2 ); // should be = 2
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), pa );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), f1 );
+		assertAllReferences( 2, createTaskList( new Task( f1 ), new Task( pa ) ) );
 	}	 
   
  	public void testPostfixSubscriptB() throws Exception
@@ -203,10 +166,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( callback.getReferences().size(), 2 ); // should be = 2
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), pa );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), f1 );
+		assertAllReferences( 2, createTaskList( new Task( f1 ), new Task( pa ) ) );
 	}	
 	
 	public void testPostfixSubscriptWithReferences() throws Exception
@@ -217,11 +177,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), pa );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), f1 );
+		assertAllReferences( 4, createTaskList( new Task( cl, 2 ), new Task( pa ), new Task( f1 )));
 	}
 	
 	// Kind POSTFIX_FUNCTIONCALL : return type of called function
@@ -230,11 +186,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		Iterator i = parse( "int foo( float b );  int bar( int a, int b ); int test( void ) { int x = bar( foo( 3.0 ), foo( 5.0 ) ) ; }").getDeclarations();
 		IASTFunction foo = (IASTFunction)i.next(); 
 		IASTFunction bar = (IASTFunction)i.next(); 
-		IASTFunction test = (IASTFunction)i.next();
+		i.next();
 		assertFalse( i.hasNext() );
-		Iterator references =  callback.getReferences().iterator();
-		//THIS SHOULD BE 3, 2 references of foo(), one reference of bar()
-		assertEquals( callback.getReferences().size(), 3 ); 
+		assertAllReferences( 3, createTaskList( new Task( bar ), new Task( foo, 2 )));
 	}
 	// Kind POSTFIX_SIMPLETYPE_* : simple type
 	public void testPostfixSimpletypesBug42823() throws Exception
@@ -246,10 +200,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction test = (IASTFunction)i.next();
 		assertFalse( i.hasNext() );
-		Iterator references = callback.getReferences().iterator();
-		//should be 1		
-		assertEquals( callback.getReferences().size(), 1 ); 
+		assertAllReferences( 1, createTaskList( new Task( foo )));
 	}
+	
 	// Kind POSTFIX_TYPENAME_IDENTIFIER
 //	public void testPostfixTypenameIdentifier() throws Exception{
 //		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A(); );").getDeclarations();
@@ -282,15 +235,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x  = (IASTVariable) i.next();
 		Iterator members = getDeclarations(cl);
 		IASTField m = (IASTField)members.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr= (IASTClassReference)references.next();
-		assertEquals(clr.getReferencedElement(), cl);
-		IASTVariableReference ar = (IASTVariableReference)references.next();
-		assertEquals(ar.getReferencedElement(), a);
-		IASTFieldReference mr = (IASTFieldReference) references.next();
-		assertEquals(mr.getReferencedElement(), m);
-		IASTFunctionReference fr = (IASTFunctionReference) references.next();
-		assertEquals(fr.getReferencedElement(), f2);   		
+		assertAllReferences( 4, createTaskList( new Task(cl), new Task(a), new Task(m), new Task(f2) ));
 	}
 	// Kind POSTFIX_ARROW_IDEXPRESSION : type of member in the scope of the container
 	public void testPostfixArrowExpression() throws Exception{
@@ -302,15 +247,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x  = (IASTVariable) i.next();
 		Iterator members = getDeclarations(cl);
 		IASTField m = (IASTField)members.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr= (IASTClassReference)references.next();
-		assertEquals(clr.getReferencedElement(), cl);
-		IASTVariableReference ar = (IASTVariableReference)references.next();
-		assertEquals(ar.getReferencedElement(), a);
-		IASTFieldReference mr = (IASTFieldReference) references.next();
-		assertEquals(mr.getReferencedElement(), m);
-		IASTFunctionReference fr = (IASTFunctionReference) references.next();
-		assertEquals(fr.getReferencedElement(), f2);   		
+		assertAllReferences( 4, createTaskList( new Task(cl), new Task(a), new Task(m), new Task(f2) ));
 	}
 	// Kind POSTFIX_DOT_TEMPL_IDEXPRESS 
 	// Kind POSTFIX_ARROW_TEMPL_IDEXP
@@ -329,11 +266,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)subDecls.next();
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), x );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); // should be foo2 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2)));
 	}
 	// Kind POSTFIX_DECREMENT : LHS
 	public void testPostfixDecrement() throws Exception
@@ -347,11 +280,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)subDecls.next();
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), x );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); // should be foo2 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2)));
 	}
 	
 	// Kind POSTFIX_DYNAMIC_CAST 
@@ -382,30 +311,45 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTFunctionReference fr = (IASTFunctionReference) references.next();
-		assertEquals(fr.getReferencedElement(), f2);   		
-		
+		assertAllReferences( 1, createTaskList( new Task( f2 ))); 		
 	}
-	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
-	public void testPostfixTypeIdTypeId() throws Exception{
+	
+	// Kind POSTFIX_TYPEID_EXPRESSION : type of the ID
+	public void testPostfixTypeIdExpression2() throws Exception{
 		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(a) );").getDeclarations();
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr= (IASTClassReference)references.next();
-		assertEquals(clr.getReferencedElement(), cl);
-		IASTClassReference clr2= (IASTClassReference)references.next();
-		assertEquals(clr2.getReferencedElement(), cl);
-		IASTVariableReference ar = (IASTVariableReference)references.next();
-		assertEquals(ar.getReferencedElement(), a);
-		IASTFunctionReference fr = (IASTFunctionReference) references.next();
-		assertEquals(fr.getReferencedElement(), f1);   		
-		
+		assertAllReferences( 4, createTaskList( new Task(cl, 2),new Task(a),new Task(f1)));
 	}
+
+	
+	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
+	public void testPostfixTypeIdTypeId() throws Exception{
+		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(A) );").getDeclarations();
+		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable a  = (IASTVariable) i.next();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		assertAllReferences( 4, createTaskList( new Task(cl, 3), new Task(f1)));		
+	}
+	
+	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
+	public void testPostfixTypeIdTypeId2() throws Exception{
+		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(const A) );").getDeclarations();
+		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable a  = (IASTVariable) i.next();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		assertAllReferences( 4, createTaskList( new Task(cl, 3), new Task(f1)));
+	}
+
+	
+	
 	// Kind UNARY_INCREMENT : LHS             
 	public void testUnaryIncrement() throws Exception
 	{
@@ -418,11 +362,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)subDecls.next();
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), x );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); // should be foo2 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 2, createTaskList( new Task(foo2), new Task(x) ));
 	}	
 	// Kind UNARY_DECREMENT : LHS             
 	public void testUnaryDecrement() throws Exception
@@ -436,11 +376,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)subDecls.next();
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), x );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); // should be foo2 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 2, createTaskList( new Task(foo2), new Task(x) ));
 	}
 	// Kind UNARY_STAR_CASTEXPRESSION : LHS + t_pointer	
 	public void testUnaryStarCastExpression() throws Exception
@@ -451,15 +387,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTClassReference clr2 = (IASTClassReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( clr1.getReferencedElement(), cl );
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr1.getReferencedElement(), f1 );
-		
+		assertAllReferences( 4, createTaskList( new Task(cl, 2 ), new Task( a ), new Task(f1) ));
 	}
 	// Kind UNARY_AMPSND_CASTEXPRESSION : LHS + t_reference
 	public void testUnaryAmpersandCastExpression() throws Exception
@@ -470,14 +398,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		IASTClassReference clr1 = (IASTClassReference) references.next();
-		IASTClassReference clr2 = (IASTClassReference) references.next();
-		IASTVariableReference ar1 = (IASTVariableReference) references.next();
-		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-		assertEquals( clr1.getReferencedElement(), cl );
-		assertEquals( ar1.getReferencedElement(), a );
-		assertEquals( fr1.getReferencedElement(), f1 );
+		assertAllReferences( 4, createTaskList( new Task(cl, 2 ), new Task( a ), new Task(f1) ));
 	}
 	// Kind UNARY_PLUS_CASTEXPRESSION  : LHS
 	public void testUnaryPlusCastExpression() throws Exception { 
@@ -486,10 +407,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 1 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 1, createTaskList( new Task( foo2 )));
 	}
 	// Kind UNARY_MINUS_CASTEXPRESSION : LHS
 	public void testUnaryMinusCastExpression() throws Exception { 
@@ -498,10 +416,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 1 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 1, createTaskList( new Task( foo2 )));
 	}
 	// Kind UNARY_NOT_CASTEXPRESSION : LHS   
 	public void testUnaryNotCastExpression() throws Exception { 
@@ -511,11 +426,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task( b ), new Task( foo2 )));
 	}
 	// Kind UNARY_TILDE_CASTEXPRESSION : LHS   
 	public void testTildeNotCastExpression() throws Exception { 
@@ -525,11 +436,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		IASTVariable y = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), x );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2 )));
 	}
 	// Kind UNARY_SIZEOF_UNARYEXPRESSION : unsigned int 
 	public void testUnarySizeofUnaryExpression() throws Exception { 
@@ -539,10 +446,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		IASTVariable y = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 1 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 1, createTaskList( new Task( foo2 )));
 	}
 	// Kind UNARY_SIZEOF_TYPEID : unsigned int          
 	public void testUnarySizeofTypeId() throws Exception { 
@@ -552,29 +456,20 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		IASTVariable y = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), x );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );
+		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2 )));
 	}
-
-	// Kind NEW_NEWTYPEID                
-	// Kind NEW_TYPEID                   
-	// There are so many ways to call new, only this case is handeled.
+	
+//	// Kind NEW_NEWTYPEID                
+//	// Kind NEW_TYPEID                   
+//	// There are so many ways to call new, only this case is handeled.
 //	public void testNewTypeId() throws Exception { 
-//		Iterator i = parse( "class A{}; void foo(); int foo( A a ); int x = foo( new A() );").getDeclarations();
+//		Iterator i = parse( "class A{}; void foo(); int foo( A * a ); int x = foo( new A() );").getDeclarations();
 //		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
 //		IASTFunction foo = (IASTFunction)i.next();
 //		IASTFunction foo2 = (IASTFunction)i.next(); 
 //		IASTVariable x = (IASTVariable)i.next();
 //		assertFalse( i.hasNext() );
-//		//assertEquals( callback.getReferences().size(), 3 );
-//		Iterator references =callback.getReferences().iterator();
-//		IASTClassReference clr1 = (IASTClassReference) references.next();
-//		IASTClassReference clr2 = (IASTClassReference) references.next();
-//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-//		assertFalse( references.hasNext() );
+//		assertAllReferences( 3, createTaskList( new Task( cl, 2), new Task( foo2 )));
 //	}
 
 	// Kind DELETE_CASTEXPRESSION        
@@ -590,12 +485,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), a );
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), pm );
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), f2 );
-			
+		assertAllReferences( 4, createTaskList( new Task( cl ), new Task( a), new Task( pm ), new Task(f2)));
 	}
 
 	// Kind PM_ARROWSTAR          
@@ -608,12 +498,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), cl );
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), a );
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), pm );
-		assertEquals( ((IASTReference) references.next()).getReferencedElement(), f2 );
-				
+		assertAllReferences( 4, createTaskList( new Task( cl ), new Task( a), new Task( pm), new Task( f2)));
 	}
 	       
 	// Kind MULTIPLICATIVE_MULTIPLY : usual arithmetic conversions
@@ -626,11 +511,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
 	}
 	// Kind MULTIPLICATIVE_DIVIDE : usual arithmetic conversions        
 	public void testMultiplicativeDivide() throws Exception { 
@@ -641,12 +522,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
 	}	
 	// Kind MULTIPLICATIVE_MODULUS : usual arithmetic conversions      
 	public void testMultiplicativeModulus() throws Exception { 
@@ -657,12 +533,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
 	}	
 	// Kind ADDITIVE_PLUS : usual arithmetic conversions              
 	public void testAdditivePlus() throws Exception { 
@@ -673,12 +544,13 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
+//		assertEquals( callback.getReferences().size(), 3 );
+//		Iterator references =callback.getReferences().iterator();
+//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
+//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
+//		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
+//		assertFalse( references.hasNext() );	
 	}	
 	// Kind ADDITIVE_MINUS : usual arithmetic conversions           
 	public void testAdditiveMinus() throws Exception { 
@@ -689,12 +561,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
 	}	
 	// Kind SHIFT_LEFT : LHS
 	public void testShiftLeft() throws Exception { 
@@ -704,11 +571,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(a), new Task( foo1 ) ) );
 	}
 	                   
 	// Kind SHIFT_RIGHT : LHS                  
@@ -719,11 +582,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(a), new Task( foo1 ) ) );
 	}
 	
 	// Kind RELATIONAL_LESSTHAN : bool          
@@ -734,11 +593,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );	
 	}
 	// Kind RELATIONAL_GREATERTHAN : bool      
 	public void testRelationalGreaterThan() throws Exception { 
@@ -748,11 +603,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
 	}
 	// Kind RELATIONAL_LESSTHANEQUALTO : bool  
 	public void testRelationalLessThanOrEqual() throws Exception { 
@@ -762,11 +613,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
 	}
 	// Kind RELATIONAL_GREATERTHANEQUALTO : bool
 	public void testRelationalGreaterThanOrEqual() throws Exception { 
@@ -776,11 +623,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
 	}
 	// Kind EQUALITY_EQUALS : bool         
 	public void testEqualityEquals() throws Exception { 
@@ -790,11 +633,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
 	}
 	// Kind EQUALITY_NOTEQUALS : bool      
 	public void testEqualityNotEquals() throws Exception { 
@@ -804,11 +643,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
 	}
 	// Kind ANDEXPRESSION  : usual arithmetic conversions          
 	public void testAndExpression() throws Exception { 
@@ -819,12 +654,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
 	}
 	// Kind EXCLUSIVEOREXPRESSION : usual arithmetic conversions      
 	public void testExclusiveOrExpression() throws Exception { 
@@ -835,12 +665,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
 	}
 	// Kind INCLUSIVEOREXPRESSION : : usual arithmetic conversions     
 	public void testInclusiveOrExpression() throws Exception { 
@@ -851,12 +676,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
 	}
 	// Kind LOGICALANDEXPRESSION : bool      
 	public void testLogicalAndExpression() throws Exception { 
@@ -867,12 +687,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
 	}
 	// Kind LOGICALOREXPRESSION  : bool      
 	public void testLogicalOrExpression() throws Exception { 
@@ -883,12 +698,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
 	}
 	// Kind CONDITIONALEXPRESSION : conditional Expression Conversions     
 	public void testConditionalExpression() throws Exception { 
@@ -900,13 +710,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable c = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 4 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), c ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences( 4, createTaskList( new Task( a ), new Task(b), new Task( c ), new Task( foo2 ) ) );	
 	}
 	// Kind CONDITIONALEXPRESSION with references : conditional Expression Conversions      
 	public void testConditionalExpressionWithReferencesA() throws Exception { 
@@ -920,17 +724,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable c = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 8 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), cla );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), cla );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), cla );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), clb );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), c ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), b ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo2 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(8, createTaskList( new Task( cla, 3 ), new Task( clb ), new Task( c ), new Task( b ), new Task( a ), new Task( foo2 )) );
 	}
 	
 	// Kind THROWEXPRESSION
@@ -943,11 +737,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));	
 	}
 	
 	// Kind ASSIGNMENTEXPRESSION_PLUS : LHS  
@@ -958,11 +748,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_MINUS : LHS 
 	public void testAssignmentExpressionMinus() throws Exception { 
@@ -972,11 +758,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_MULT : LHS  
 	public void testAssignmentExpressionMulti() throws Exception { 
@@ -986,11 +768,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_DIV : LHS   
 	public void testAssignmentExpressionDiv() throws Exception { 
@@ -1000,11 +778,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_MOD : LHS   
 	public void testAssignmentExpressionMod() throws Exception { 
@@ -1014,11 +788,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_LSHIFT : LHS
 	public void testAssignmentExpressionLShift() throws Exception { 
@@ -1028,11 +798,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_RSHIFT : LHS
 	public void testAssignmentExpressionRShift() throws Exception { 
@@ -1042,11 +808,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_AND : LHS
 	public void testAssignmentExpressionAnd() throws Exception { 
@@ -1056,11 +818,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_OR : LHS 
 	public void testAssignmentExpressionOr() throws Exception { 
@@ -1070,11 +828,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
 	}
 	// Kind ASSIGNMENTEXPRESSION_XOR : LHS
 	public void testAssignmentExpressionXOr() throws Exception { 
@@ -1084,11 +838,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable a = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		Iterator references =callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), a ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), foo1 ); 
-		assertFalse( references.hasNext() );	
+		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));	
 	}
 	// Kind EXPRESSIONLIST : list of LHS, RHS
 	// Already tested with each test trying to find a reference to function.

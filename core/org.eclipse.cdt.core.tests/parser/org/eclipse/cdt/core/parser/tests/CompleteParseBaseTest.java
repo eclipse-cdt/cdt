@@ -12,15 +12,18 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -48,6 +51,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
+import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
@@ -169,6 +173,17 @@ public class CompleteParseBaseTest extends TestCase
     	private List forewardDecls = new ArrayList();
         private Stack inclusions = new Stack();
         private Scope compilationUnit;
+        
+        public FullParseCallback()
+        {
+//        	System.out.println( "NEW");
+//        	System.out.println();
+        }
+        
+        public void finalize()
+        {
+//			System.out.println( );
+        }
         
         public IASTScope getCompilationUnit()
         {
@@ -504,7 +519,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptClassReference(IASTClassReference reference)
         {
-            references.add( reference );
+            processReference( reference );
         }
     
         /* (non-Javadoc)
@@ -512,7 +527,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptTypedefReference(IASTTypedefReference reference)
         {
-    		references.add( reference );
+			processReference( reference );
             
         }
     
@@ -521,7 +536,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptNamespaceReference(IASTNamespaceReference reference)
         {
-    		references.add( reference );
+			processReference( reference );
             
         }
     
@@ -530,7 +545,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptEnumerationReference(IASTEnumerationReference reference)
         {
-    		references.add( reference );
+			processReference( reference );
         }
     
         /* (non-Javadoc)
@@ -538,8 +553,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptVariableReference(IASTVariableReference reference)
         {
-    		references.add( reference );
-            
+			processReference( reference );
         }
     
         /* (non-Javadoc)
@@ -547,8 +561,13 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptFunctionReference(IASTFunctionReference reference)
         {
-    		references.add( reference );
-            
+            processReference(reference);
+        }
+        
+        protected void processReference(IASTReference reference)
+        {
+            references.add( reference );
+//            System.out.println( "Callback received Reference to " + reference.getName() + " @ offset " + reference.getOffset() );
         }
     
         /* (non-Javadoc)
@@ -556,7 +575,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptFieldReference(IASTFieldReference reference)
         {
-    		references.add( reference );
+			processReference( reference );
             
         }
     
@@ -565,7 +584,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptMethodReference(IASTMethodReference reference)
         {
-    		references.add( reference );
+			processReference( reference );
             
         }
         
@@ -617,7 +636,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptEnumeratorReference(IASTEnumeratorReference reference)
         {
-        	references.add( reference );
+			processReference( reference );
         }
 
         /* (non-Javadoc)
@@ -625,7 +644,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void acceptParameterReference(IASTParameterReference reference)
         {
-            references.add( reference );
+			processReference( reference );
         }
     
     }
@@ -656,4 +675,140 @@ public class CompleteParseBaseTest extends TestCase
     	if( ! parser.parse() ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();
     }
+        
+    protected void assertReferences( 
+    	ISourceElementCallbackDelegate element, 
+    	int expectedDistinctReferenceCount, 
+    	boolean allowDuplicates )
+    {
+    	Set matches = new HashSet(); 
+    	Iterator allReferences = callback.getReferences().iterator();
+    	while( allReferences.hasNext() )
+    	{
+    		IASTReference r = (IASTReference)allReferences.next();
+    		if( r.getReferencedElement() == element )
+    			if( ! matches.add( r ) && ! allowDuplicates )
+    				fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() );
+    	}
+    	
+    	assertEquals( expectedDistinctReferenceCount, matches.size() );
+    }
+    
+    protected static class Task
+    {
+    	private final boolean unique;
+        private final int count;
+        private final ISourceElementCallbackDelegate element;
+    	
+
+        public Task( ISourceElementCallbackDelegate element, int referenceCount, boolean distinct )
+    	{
+    		this.element = element;
+    		this.count = referenceCount;
+    		this.unique = distinct; 
+    	}
+    	
+		public Task( ISourceElementCallbackDelegate element, int referenceCount )
+		{
+			this( element, referenceCount, true );
+		}
+		
+		public Task( ISourceElementCallbackDelegate element )
+		{
+			this( element, 1, false );
+		}
+		
+        /**
+         * @return
+         */
+        public int getCount()
+        {
+            return count;
+        }
+
+        /**
+         * @return
+         */
+        public ISourceElementCallbackDelegate getElement()
+        {
+            return element;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUnique()
+        {
+            return unique;
+        }
+
+    }
+    
+    protected void assertReferenceTask( Task task )
+    {
+		assertReferences( task.getElement(), task.getCount(), task.isUnique() );    	
+    }
+    
+    protected void assertAllReferences( int count, List tasks )
+    {
+		assertEquals( callback.getReferences().size(), count );
+    	if( tasks == null ) return;
+    	Iterator i = tasks.iterator();
+    	while( i.hasNext() )
+    	{
+    		assertReferenceTask( (Task)i.next() );
+    	}
+    }
+
+	protected List createTaskList( Task t1 )
+	{
+		List result = new ArrayList(); 
+		result.add( t1 );
+		return result;
+	}
+    
+    protected List createTaskList( Task t1, Task t2 )
+    {
+    	List result = createTaskList(t1); 
+		result.add( t2 );
+		return result;
+    }
+    
+	protected List createTaskList( Task t1, Task t2, Task t3 )
+	{
+		List result = createTaskList(t1, t2);
+		result.add( t3 );
+		return result;
+	}
+
+	protected List createTaskList( Task t1, Task t2, Task t3, Task t4 )
+	{
+		List result = createTaskList(t1, t2, t3);
+		result.add( t4 );
+		return result;
+	}
+	
+	protected List createTaskList( Task t1, Task t2, Task t3, Task t4, Task t5 )
+	{
+		List result = createTaskList(t1, t2, t3, t4);
+		result.add( t5 );
+		return result;		
+	}
+    /**
+         * @param task
+         * @param task2
+         * @param task3
+         * @param task4
+         * @param task5
+         * @param task6
+         * @return
+         */
+    protected List createTaskList(Task task, Task task2, Task task3, Task task4, Task task5, Task task6)
+    {
+        List result = createTaskList( task, task2, task3, task4, task5 );
+        result.add( task6 );
+        return result;
+    }
+	
+
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 
 /**
@@ -43,5 +44,26 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void acceptElement(ISourceElementRequestor requestor)
+    {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void enterScope(ISourceElementRequestor requestor)
+    {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void exitScope(ISourceElementRequestor requestor)
+    {
+    }
 
 }

@@ -102,8 +102,8 @@ public interface IASTFactory
         IASTExpression lhs,
         IASTExpression rhs,
         IASTExpression thirdExpression,
-        ITokenDuple typeId,
-        String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
+        IASTTypeId typeId,
+        ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions);
     public IASTInitializerClause createInitializerClause(
         IASTInitializerClause.Kind kind,
@@ -200,5 +200,9 @@ public interface IASTFactory
 	 * @return
 	 */
 	public IASTCodeScope createNewCodeBlock(IASTScope scope);
+	
+	public IASTTypeId    createTypeId( IASTScope scope, IASTSimpleTypeSpecifier.Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
+			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods ) throws ASTSemanticException; 
+						
 
 }

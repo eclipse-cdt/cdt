@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 
 /**
  * @author jcamelon
@@ -33,7 +33,7 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
     	Iterator i = typeIds.iterator();
     	this.typeIds = new ArrayList();
     	while( i.hasNext() )
-    		this.typeIds.add( ((ITokenDuple)i.next()).toString() );
+    		this.typeIds.add( ((IASTTypeId)i.next()).getTypeOrClassName());
     }
 
     /* (non-Javadoc)

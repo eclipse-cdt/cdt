@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
@@ -521,7 +522,7 @@ public class Parser implements IParser
                         : IASTTemplateParameter.ParamKind.TYPENAME;
 				
 				IToken id = null;
-				ITokenDuple typeId = null;
+				IASTTypeId typeId = null;
                 try
                 {
                     if (LT(1) == IToken.tIDENTIFIER) // optional identifier
@@ -531,7 +532,7 @@ public class Parser implements IParser
                         if (LT(1) == IToken.tASSIGN) // optional = type-id
                         {
                             consume(IToken.tASSIGN);
-                            typeId = typeId(); // type-id
+                            typeId = typeId(scope, false); // type-id
                         }
                     }
 
@@ -544,7 +545,7 @@ public class Parser implements IParser
 					astFactory.createTemplateParameter(
 						kind,
 						( id == null )? "" : id.getImage(),
-						(typeId == null) ? null : typeId.toString(),
+						(typeId == null) ? null : typeId.getTypeOrClassName(),
 						null,
 						null));
 
@@ -558,7 +559,7 @@ public class Parser implements IParser
                 consume(IToken.tGT);
                 consume(IToken.t_class);
                 IToken optionalId = null;
-                ITokenDuple optionalTypeId = null;
+                IASTTypeId optionalTypeId = null;
                 if (LT(1) == IToken.tIDENTIFIER) // optional identifier
                 {
                     optionalId = identifier();
@@ -566,7 +567,7 @@ public class Parser implements IParser
                     if (LT(1) == IToken.tASSIGN) // optional = type-id
                     {
                         consume(IToken.tASSIGN);
-                        optionalTypeId = typeId();
+                        optionalTypeId = typeId(scope, false);
     
                     }
                 }
@@ -601,7 +602,7 @@ public class Parser implements IParser
                             wrapper.isConst(),
                             wrapper.isVolatile(),
                             wrapper.getTypeSpecifier(),
-                            declarator.getPtrOps(),
+                            declarator.getPointerOperators(),
                             declarator.getArrayModifiers(),
                             null, null, declarator.getName() == null
                                             ? ""
@@ -1732,7 +1733,7 @@ public class Parser implements IParser
      * @throws Backtrack
      */
     protected IToken cvQualifier(
-        Declarator declarator)
+        IDeclarator declarator)
         throws Backtrack
     {
     	IToken result = null; 
@@ -1740,17 +1741,17 @@ public class Parser implements IParser
         {
             case IToken.t_const :
             	result = consume( IToken.t_const ); 
-                if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.CONST_POINTER);
+                declarator.addPointerOperator(ASTPointerOperator.CONST_POINTER);
                 break;
             case IToken.t_volatile :
             	result = consume( IToken.t_volatile ); 
-				if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.VOLATILE_POINTER);
+				declarator.addPointerOperator(ASTPointerOperator.VOLATILE_POINTER);
                 break;
             case IToken.t_restrict : 
             	if( language == ParserLanguage.C )
             	{
             		result = consume( IToken.t_restrict );
-					if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.RESTRICT_POINTER);
+					declarator.addPointerOperator(ASTPointerOperator.RESTRICT_POINTER);
 					break;
             	}
             	else 
@@ -1882,7 +1883,7 @@ public class Parser implements IParser
         {
             d = new Declarator(owner);
  
-            consumePointerOperators(d, false);
+            consumePointerOperators(d);
  
             if (LT(1) == IToken.tLPAREN)
             {
@@ -2014,7 +2015,7 @@ public class Parser implements IParser
                                 consume(); // throw
                                 consume(IToken.tLPAREN); // (
                                 boolean done = false;
-                                ITokenDuple duple = null;
+                                IASTTypeId duple = null;
                                 while (!done)
                                 {
                                     switch (LT(1))
@@ -2030,7 +2031,7 @@ public class Parser implements IParser
                                             String image = LA(1).getImage();
                                             try
                                             {
-                                                duple = typeId();
+                                                duple = typeId(scope, false);
                                                 exceptionSpecIds.add(duple);
                                             }
                                             catch (Backtrack e)
@@ -2120,21 +2121,7 @@ public class Parser implements IParser
                         }
                         break;
                     case IToken.tLBRACKET :
-                        while (LT(1) == IToken.tLBRACKET)
-                        {
-                            consume(); // eat the '['
-                          
-                            IASTExpression exp = null;
-                            if (LT(1) != IToken.tRBRACKET)
-                            {
-                                exp = constantExpression(sdw.getScope());
-                            }
-                            consume(IToken.tRBRACKET);
-                            IASTArrayModifier arrayMod =
-                                astFactory.createArrayModifier(exp);
-                            d.addArrayModifier(arrayMod);
-
-                        }
+                        consumeArrayModifiers(d, sdw.getScope());
                         continue;
                     case IToken.tCOLON :
                         consume(IToken.tCOLON);
@@ -2151,10 +2138,30 @@ public class Parser implements IParser
 
         }
         while (true);
-        if (d.getOwner() instanceof Declarator)
+        if (d.getOwner() instanceof IDeclarator)
              ((Declarator)d.getOwner()).setOwnedDeclarator(d);
         return d;
     }
+    
+    protected void consumeArrayModifiers( IDeclarator d, IASTScope scope )
+        throws EndOfFile, Backtrack
+    {
+        while (LT(1) == IToken.tLBRACKET)
+        {
+            consume( IToken.tLBRACKET ); // eat the '['
+        
+            IASTExpression exp = null;
+            if (LT(1) != IToken.tRBRACKET)
+            {
+                exp = constantExpression(scope);
+            }
+            consume(IToken.tRBRACKET);
+            IASTArrayModifier arrayMod =
+                astFactory.createArrayModifier(exp);
+            d.addArrayModifier(arrayMod);
+        }
+    }
+    
     protected void operatorId(
         Declarator d,
         IToken originalToken)
@@ -2195,21 +2202,8 @@ public class Parser implements IParser
         else
         {
             // must be a conversion function
-            toSend = typeId().getLastToken();
-            
-            try
-            {
-                // this ptrOp doesn't belong to the declarator, 
-                // it's just a part of the name
-                IToken temp = consumePointerOperators(d, true);
-                if( temp != null )
-                	toSend = temp;
-            }
-            catch (Backtrack b)
-            {
-            }
-            // In case we'll need better error recovery 
-            // while( LT(1) != Token.tLPAREN )	{ toSend = consume(); }
+            typeId(d.getDeclarationWrapper().getScope(), false );
+            toSend = lastToken;
         }
         ITokenDuple duple =
             new TokenDuple(
@@ -2229,7 +2223,7 @@ public class Parser implements IParser
      * @param owner 		Declarator that this pointer operator corresponds to.  
      * @throws Backtrack 	request a backtrack
      */
-    protected IToken consumePointerOperators(Declarator d, boolean consumeOnlyOne) throws Backtrack
+    protected IToken consumePointerOperators(IDeclarator d) throws Backtrack
     {
     	IToken result = null;
     	for( ; ; )
@@ -2237,9 +2231,9 @@ public class Parser implements IParser
 	        if (LT(1) == IToken.tAMPER)
 	        {
 	        	result = consume( IToken.tAMPER ); 
-	            if( d != null ) d.addPtrOp(ASTPointerOperator.REFERENCE);
-	            /*if( consumeOnlyOne ) */return result;
-	            /* continue; */
+	            d.addPointerOperator(ASTPointerOperator.REFERENCE);
+	            return result;
+	            
 	        }
 	        IToken mark = mark();
 
@@ -2260,7 +2254,7 @@ public class Parser implements IParser
 	        {
 	            result = consume(Token.tSTAR); // tokenType = "*"
 	
-				if( d != null ) d.setPointerOperatorName(nameDuple);
+				d.setPointerOperatorName(nameDuple);
 	
 				IToken successful = null;
 	            for (;;)
@@ -2273,9 +2267,8 @@ public class Parser implements IParser
 	            
 				if( successful == null )
 				{
-					if( d != null ) d.addPtrOp( ASTPointerOperator.POINTER );
+					d.addPointerOperator( ASTPointerOperator.POINTER );
 				}
-				if( consumeOnlyOne ) return result;
 				continue;	            
 	        }
 	        backup(mark);
@@ -2871,7 +2864,7 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -2972,7 +2965,7 @@ public class Parser implements IParser
 				assignmentExpression,
                 null,
                 null,
-                "", null);
+                null, "", null);
         }
         catch (ASTSemanticException e)
         {
@@ -3005,7 +2998,7 @@ public class Parser implements IParser
                 null,
                 null,
                 null,
-                "", null);
+                null, "", null);
         }
         catch (ASTSemanticException e)
         {
@@ -3037,7 +3030,7 @@ public class Parser implements IParser
                     secondExpression,
                     thirdExpression,
                     null,
-                    "", null);
+                    null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -3071,7 +3064,7 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -3103,7 +3096,7 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -3136,7 +3129,7 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -3169,7 +3162,7 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -3201,7 +3194,7 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
             }
             catch (ASTSemanticException e)
             {
@@ -3241,7 +3234,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -3317,7 +3310,7 @@ public class Parser implements IParser
                                     secondExpression,
                                     null,
                                     null,
-                                    "", null);
+                                    null, "", null);
                         }
                         catch (ASTSemanticException e)
                         {
@@ -3360,7 +3353,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -3402,7 +3395,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -3455,7 +3448,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -3496,7 +3489,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -3521,13 +3514,11 @@ public class Parser implements IParser
         {
             IToken mark = mark();
             consume();
-            ITokenDuple duple = null;
+            IASTTypeId typeId = null;
             // If this isn't a type name, then we shouldn't be here
             try
             {
-                if (LT(1) == IToken.t_const)
-                    consume();
-                duple = typeId();
+                typeId = typeId(scope, false);
                 consume(IToken.tRPAREN);
                 IASTExpression castExpression = castExpression(scope);
                 try
@@ -3538,8 +3529,8 @@ public class Parser implements IParser
                         castExpression,
                         null,
                         null,
-                        duple,
-                        "", null);
+                        typeId,
+                        null, "", null);
                 }
                 catch (ASTSemanticException e)
                 {
@@ -3558,56 +3549,119 @@ public class Parser implements IParser
     /**
      * @throws Backtrack
      */
-    protected ITokenDuple typeId( ) throws Backtrack
+    protected IASTTypeId typeId(IASTScope scope, boolean forNewExpression ) throws Backtrack
     {
-        IToken begin = LA(1);
-        IToken end = null;
-        try
-        {
-            ITokenDuple d = name();
-            IToken checkForPtrs = consumePointerOperators(null, false);
-            if( checkForPtrs == null ) return d; 
-            return new TokenDuple( d.getFirstToken(), checkForPtrs );
-        }
-        catch (Backtrack b)
-        {
+    	IToken mark = mark();
+    	ITokenDuple name = null;
+    	boolean isConst = false, isVolatile = false; 
+    	boolean isSigned = false, isUnsigned = false; 
+    	boolean isShort = false, isLong = false;
+    	boolean isTypename = false; 
+    	
+    	IASTSimpleTypeSpecifier.Type kind = null;
+    	do
+    	{
+	        try
+	        {
+	            name  = name();
+	            kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
+	            break;
+	        }
+	        catch (Backtrack b)
+	        {
+	        	// do nothing
+	        }
+	        
             simpleMods : for (;;)
             {
                 switch (LT(1))
                 {
 					 case IToken.t_signed :
+					 	consume(); 
+					 	isSigned = true; 
+					 	break;
+					 	
 					 case IToken.t_unsigned :
+					 	consume(); 
+					 	isUnsigned = true; 
+					 	break;
+					 	
 					 case IToken.t_short :
+					 	consume(); 
+					 	isShort = true; 
+					 	break;
+					 	
 					 case IToken.t_long :
+					 	consume(); 
+					 	isLong = true; 
+					 	break;
+					 
 					 case IToken.t_const :
+					 	consume(); 
+					 	isConst = true; 
+					 	break; 
+					 	
 					 case IToken.t_volatile :
-                        end = consume();
+					 	consume(); 
+					 	isVolatile = true;
                         break;
-                    case IToken.tAMPER :
-                    case IToken.tSTAR :
+                        
                     case IToken.tIDENTIFIER :
-                        if (end == null)
-                            throw backtrack;
-                        end = consume();
-                        break;
+                        name = name();
+						kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
+                        break simpleMods;
+                        
                     case IToken.t_int :
+                    	kind = IASTSimpleTypeSpecifier.Type.INT;
+						consume();
+                    	break simpleMods;
+                    	
                     case IToken.t_char :
+						kind = IASTSimpleTypeSpecifier.Type.CHAR;
+						consume();
+						break simpleMods;
+
                     case IToken.t_bool :
+						kind = IASTSimpleTypeSpecifier.Type.BOOL;
+						consume();
+						break simpleMods;
+                    
                     case IToken.t_double :
+						kind = IASTSimpleTypeSpecifier.Type.DOUBLE;
+						consume();
+						break simpleMods;
+                    
                     case IToken.t_float :
+						kind = IASTSimpleTypeSpecifier.Type.FLOAT;
+						consume();
+						break simpleMods;
+                    
                     case IToken.t_wchar_t :
+						kind = IASTSimpleTypeSpecifier.Type.WCHAR_T;
+						consume();
+						break simpleMods;
+
+                    
                     case IToken.t_void :
-                        end = consume();
+						kind = IASTSimpleTypeSpecifier.Type.VOID;
+						consume();
+						break simpleMods;
+
+                        
                     default :
                         break simpleMods;
                 }
             }
-            if (end != null)
-            {
-            	IToken end2 = consumePointerOperators(null, false);
-                return new TokenDuple(begin, end2 == null ? end : end2);
-            }
-            else if (
+
+			if( kind != null ) break;
+			
+			if( isShort || isLong || isUnsigned || isSigned )
+			{
+				kind = IASTSimpleTypeSpecifier.Type.INT;
+				break;
+			}
+			
+            if (
                 LT(1) == IToken.t_typename
                     || LT(1) == IToken.t_struct
                     || LT(1) == IToken.t_class
@@ -3615,12 +3669,42 @@ public class Parser implements IParser
                     || LT(1) == IToken.t_union)
             {
                 consume();
-                ITokenDuple d = name();
-				IToken end2 = consumePointerOperators(null, false);
-                return new TokenDuple(begin, ( (end2 == null) ? d.getLastToken() : end2 ) );
+                try
+                {
+                	name = name();
+                	kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
+                } catch( Backtrack b )
+                {
+                	backup( mark );
+                	throw backtrack; 
+                }
             }
-            else
-                throw backtrack;
+        
+    	} while( false );
+    	
+    	if( kind == null )
+    		throw backtrack;
+    	
+    	TypeId id = new TypeId(); 
+    	IToken last = mark(); 
+    	consumePointerOperators( id );
+    	if( lastToken == null ) lastToken = last;
+		
+		if( ! forNewExpression )
+		{
+			last = mark(); 
+	    	consumeArrayModifiers( id, scope );
+			if( lastToken == null ) lastToken = last;
+		}
+		
+    	try
+        {
+            return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers());
+        }
+        catch (ASTSemanticException e)
+        {
+            backup( mark );
+            throw backtrack;
         }
     }
     /**
@@ -3656,7 +3740,7 @@ public class Parser implements IParser
                 null,
                 null,
                 null,
-                "", null);
+                null, "", null);
         }
         catch (ASTSemanticException e)
         {
@@ -3692,7 +3776,7 @@ public class Parser implements IParser
         boolean placementParseFailure = true;
         IToken beforeSecondParen = null;
         IToken backtrackMarker = null;
-        ITokenDuple typeId = null;
+        IASTTypeId typeId = null;
 		ArrayList newPlacementExpressions = new ArrayList();
 		ArrayList newTypeIdExpressions = new ArrayList();
 		ArrayList newInitializerExpressions = new ArrayList();
@@ -3724,7 +3808,7 @@ public class Parser implements IParser
                 // CASE: new (typeid-not-looking-as-placement) ...
                 // the first expression in () is not a placement
                 // - then it has to be typeId
-                typeId = typeId();
+                typeId = typeId(scope, true );
                 consume(IToken.tRPAREN);
             }
             else
@@ -3748,7 +3832,7 @@ public class Parser implements IParser
                         try
                         {
                             backtrackMarker = mark();
-                            typeId = typeId();
+                            typeId = typeId(scope, true);
                         }
                         catch (Backtrack e)
                         {
@@ -3767,7 +3851,7 @@ public class Parser implements IParser
                     // The problem is, the first expression might as well be a typeid
                     try
                     {
-                        typeId = typeId();
+                        typeId = typeId(scope, true);
                         consume(IToken.tRPAREN);
                         if (LT(1) == IToken.tLPAREN
                             || LT(1) == IToken.tLBRACKET)
@@ -3788,8 +3872,8 @@ public class Parser implements IParser
 							{
 							return astFactory.createExpression(
 								scope, IASTExpression.Kind.NEW_TYPEID, 
-								null, null, null, typeId, "", 
-								astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
+								null, null, null, typeId, null, 
+								"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 							}
 							catch (ASTSemanticException e)
 							{
@@ -3812,7 +3896,7 @@ public class Parser implements IParser
             // CASE: new typeid ...
             // new parameters do not start with '('
             // i.e it has to be a plain typeId
-            typeId = typeId();
+            typeId = typeId(scope, true);
         }
         while (LT(1) == IToken.tLBRACKET)
         {
@@ -3833,8 +3917,8 @@ public class Parser implements IParser
 		{
         return astFactory.createExpression(
         	scope, IASTExpression.Kind.NEW_TYPEID, 
-			null, null, null, typeId, "", 
-			astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
+			null, null, null, typeId, null, 
+			"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 		}
 		catch (ASTSemanticException e)
 		{
@@ -3856,7 +3940,7 @@ public class Parser implements IParser
                 null,
                 null,
                 null,
-                "", null);
+                null, "", null);
         }
         catch (ASTSemanticException e)
         {
@@ -3908,14 +3992,14 @@ public class Parser implements IParser
             case IToken.t_sizeof :
                 consume(IToken.t_sizeof);
                 IToken mark = LA(1);
-                ITokenDuple d = null;
+                IASTTypeId d = null;
                 IASTExpression unaryExpression = null;
                 if (LT(1) == IToken.tLPAREN)
                 {
                     try
                     {
                         consume(IToken.tLPAREN);
-                        d = typeId();
+                        d = typeId(scope, false);
                         consume(IToken.tRPAREN);
                     }
                     catch (Backtrack bt)
@@ -3938,7 +4022,7 @@ public class Parser implements IParser
                             null,
                             null,
                             d,
-                            "", null);
+                            null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -3955,7 +4039,7 @@ public class Parser implements IParser
                             null,
                             null,
                             null,
-                            "", null);
+                            null, "", null);
                     }
                     catch (ASTSemanticException e1)
                     {
@@ -4072,10 +4156,10 @@ public class Parser implements IParser
                 consume(IToken.tLPAREN);
                 boolean isTypeId = true;
                 IASTExpression lhs = null;
-                ITokenDuple typeId = null;
+                IASTTypeId typeId = null;
                 try
                 {
-                    typeId = typeId();
+                    typeId = typeId(scope, false);
                 }
                 catch (Backtrack b)
                 {
@@ -4095,7 +4179,7 @@ public class Parser implements IParser
                             null,
                             null,
                             typeId,
-                            "", null);
+                            null, "", null);
                 }
                 catch (ASTSemanticException e6)
                 {
@@ -4126,7 +4210,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e2)
                     {
@@ -4149,7 +4233,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e3)
                     {
@@ -4169,7 +4253,7 @@ public class Parser implements IParser
                                 null,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e1)
                     {
@@ -4189,7 +4273,7 @@ public class Parser implements IParser
                                 null,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e4)
                     {
@@ -4218,7 +4302,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e5)
                     {
@@ -4247,7 +4331,7 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                "", null);
+                                null, "", null);
                     }
                     catch (ASTSemanticException e)
                     {
@@ -4266,7 +4350,7 @@ public class Parser implements IParser
     {
         consume();
         consume(IToken.tLT);
-        ITokenDuple duple = typeId();
+        IASTTypeId duple = typeId(scope, false);
         consume(IToken.tGT);
         consume(IToken.tLPAREN);
         IASTExpression lhs = expression(scope);
@@ -4280,7 +4364,7 @@ public class Parser implements IParser
                 null,
                 null,
                 duple,
-                "", null);
+                null, "", null);
         }
         catch (ASTSemanticException e)
         {
@@ -4305,7 +4389,7 @@ public class Parser implements IParser
                 null,
                 null,
                 null,
-                "", null);
+                null, "", null);
         }
         catch (ASTSemanticException e)
         {
@@ -4335,7 +4419,7 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        t.getImage(), null);
+                        null, t.getImage(), null);
                 }
                 catch (ASTSemanticException e1)
                 {
@@ -4353,7 +4437,7 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        t.getImage(), null);
+                        null, t.getImage(), null);
                 }
                 catch (ASTSemanticException e2)
                 {
@@ -4365,7 +4449,7 @@ public class Parser implements IParser
 				t = consume();
 				try
                 {
-                    return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, null, t.getImage(), null );
+                    return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, null, null, t.getImage(), null );
                 }
                 catch (ASTSemanticException e5)
                 {
@@ -4385,7 +4469,7 @@ public class Parser implements IParser
                         null,
                     	null,
                         null,
-                        t.getImage(), null);
+                        null, t.getImage(), null);
                 }
                 catch (ASTSemanticException e3)
                 {
@@ -4406,7 +4490,7 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        t.getImage(), null);
+                        null, t.getImage(), null);
                 }
                 catch (ASTSemanticException e4)
                 {
@@ -4425,7 +4509,7 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
                 }
                 catch (ASTSemanticException e7)
                 {
@@ -4445,7 +4529,7 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        "", null);
+                        null, "", null);
                 }
                 catch (ASTSemanticException e6)
                 {
@@ -4454,7 +4538,7 @@ public class Parser implements IParser
                 }
             case IToken.tIDENTIFIER :
             case IToken.tCOLONCOLON :
-                ITokenDuple duple = name();
+                ITokenDuple duple = name();                
                 //TODO should be an ID Expression really
                 try
                 {
@@ -4464,8 +4548,8 @@ public class Parser implements IParser
                         null,
                         null,
                     	null,
-						duple,
-                        "", null);
+						null,
+                        duple, "", null);
                 }
                 catch (ASTSemanticException e8)
                 {
@@ -4482,7 +4566,7 @@ public class Parser implements IParser
                         null,
                     	null,
                         null,
-                        "", null);
+                        null, "", null);
                 }
                 catch (ASTSemanticException e)
                 {

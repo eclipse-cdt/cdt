@@ -1431,7 +1431,7 @@ public class QuickParseASTTests extends BaseASTTest
 		assertFalse( enumerators.hasNext() );
 		assertEquals( enumerator.getName(), "isPointer");
 		assertEquals( enumerator.getInitialValue().getExpressionKind(), IASTExpression.Kind.ID_EXPRESSION ); 
-		assertEquals( enumerator.getInitialValue().getTypeIdString(), "PointerTraits<T>::result");
+		assertEquals( enumerator.getInitialValue().getIdExpression(), "PointerTraits<T>::result");
 	}
 
 	public void testBug36690() throws Exception {
@@ -1814,7 +1814,9 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testBug39556() throws Exception
 	{
 		parse("int *restrict ip_fn (void);", true, true, ParserLanguage.C).getDeclarations().next();
-	}		
+
+	}
+			
 	/**
 	 * Test code: struct Example { Example(); Example(int); ~Example();};
 	 * Purpose: tests a declaration in a class scope.
@@ -1842,4 +1844,5 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue(m2.getVisiblity() == ASTAccessVisibility.PUBLIC);
 		assertTrue(m3.getVisiblity() == ASTAccessVisibility.PUBLIC);
 	}		
+
 }

@@ -7,8 +7,10 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 
 
 
@@ -22,7 +24,8 @@ public class ASTExpression implements IASTExpression {
 
 	private final Kind kind; 
 	private final IASTExpression lhs, rhs, third; 
-	private final String typeId, literal; 
+	private final IASTTypeId typeId;
+	private final String literal, idExpression; 
 	private final IASTNewExpressionDescriptor newDescriptor;
 
 	/**
@@ -33,7 +36,7 @@ public class ASTExpression implements IASTExpression {
 	 * @param typeId
 	 * @param literal
 	 */
-	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, String typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
+	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
 		this.kind = kind; 
 		this.lhs =lhs; 
 		this.rhs = rhs; 
@@ -41,6 +44,7 @@ public class ASTExpression implements IASTExpression {
 		this.typeId = typeId; 
 		this.literal = literal;
 		this.newDescriptor = newDescriptor;
+		this.idExpression = idExpression;
 	}
 
 	/* (non-Javadoc)
@@ -74,7 +78,7 @@ public class ASTExpression implements IASTExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getTypeId()
 	 */
-	public String getTypeIdString() {
+	public IASTTypeId getTypeId() {
 		return typeId;
 	}
 
@@ -174,6 +178,22 @@ public class ASTExpression implements IASTExpression {
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getIdExpression()
+     */
+    public String getIdExpression()
+    {
+    	return idExpression;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
+     */
+    public void reconcileReferences() throws ASTNotImplementedException
+    {
+    	throw new ASTNotImplementedException();
     }
 
 

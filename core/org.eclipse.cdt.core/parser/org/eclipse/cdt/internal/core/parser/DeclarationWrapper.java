@@ -348,7 +348,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         {
 
         	Declarator d = declarator.getOwnedDeclarator();
-        	Iterator i = d.getPtrOps().iterator();
+        	Iterator i = d.getPointerOperators().iterator();
         	if( !i.hasNext() )
         	{
                 boolean isWithinClass = scope instanceof IASTClassSpecifier;
@@ -375,7 +375,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	
 			List convertedParms = createParameterList( declarator.getParameters() );        	
         	IASTAbstractDeclaration abs = astFactory.createAbstractDeclaration(
-        		constt, volatil, getTypeSpecifier(), declarator.getPtrOps(), declarator.getArrayModifiers(), 
+        		constt, volatil, getTypeSpecifier(), declarator.getPointerOperators(), declarator.getArrayModifiers(), 
         			convertedParms, (ASTPointerOperator)i.next() );
         	String name = ( d.getPointerOperatorNameDuple() != null ) ? d.getPointerOperatorNameDuple().toString() + d.getName() : d.getName(); 
         	if( typedef )
@@ -407,7 +407,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 constt,
                 volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset());
+                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset());
     }
     /**
      * @param declarator
@@ -425,7 +425,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                     constt,
 					volatil,
                     getTypeSpecifier(),
-                    declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
+                    declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
                 declarator.getExceptionSpecification(),
                 inline,
                 friend,
@@ -455,7 +455,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 constt,
 				volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
+                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
             declarator.getExceptionSpecification(),
             inline,
             friend,
@@ -486,7 +486,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 constt,
 				volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
+                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
             mutable,
             extern,
             register,
@@ -511,7 +511,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         wrapper.isConst(),
                         wrapper.isVolatile(),
                         wrapper.getTypeSpecifier(),
-                        declarator.getPtrOps(),
+                        declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
                         null, null, declarator.getName() == null
                                         ? ""
@@ -536,7 +536,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 constt,
                 volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
+                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
             mutable,
             extern,
             register,

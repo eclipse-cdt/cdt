@@ -1,3 +1,8 @@
+2003-09-23 John Camelon
+	Replaced ASTFailedTests::testBug39504A() with CompleteParseASTTest::testBug39504(). 
+	Moved testPostfixTypeIdExpression2() && testPostfixTypeIdTypeId2() to CompleteParseASTExpressionTest. 
+	Restructured expression reference tests so that the order of arrival will not cause JUnit failures.
+
 2003-09-23 Hoda Amer
 	Added CompleteParseASTTest.testBug43373()
 	Added QuickParseASTTests.testBug43371()

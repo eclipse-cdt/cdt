@@ -43,4 +43,17 @@ public abstract class ASTReference implements IASTReference
     {
         return name;
     }
+    
+	public boolean equals(Object obj)
+	{
+		if( obj == null )
+			return false;
+		if( ! (obj instanceof IASTReference ) )
+			return false;
+		
+		if( ((IASTReference)obj).getName().equals( getName() ) && 
+			((IASTReference)obj).getOffset() == getOffset()  )
+			return true;
+		return false;
+	}
 }

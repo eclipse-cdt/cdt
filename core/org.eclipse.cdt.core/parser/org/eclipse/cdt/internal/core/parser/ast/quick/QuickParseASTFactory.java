@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
@@ -150,8 +151,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, ITokenDuple typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId == null ? "" : typeId.toString(), literal, newDescriptor );
+	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
+		return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor );
 	}
 
 	/* (non-Javadoc)
@@ -295,5 +296,15 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     public IASTParameterDeclaration createParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int endingOffset, int nameOffset)
     {
         return new ASTParameterDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp, parameterName, initializerClause, startingOffset, endingOffset, nameOffset );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypeId(org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type, org.eclipse.cdt.core.parser.ITokenDuple, java.util.List, java.util.List)
+     */
+    public IASTTypeId createTypeId(IASTScope scope, Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
+	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods)
+    {
+        return new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst, 
+        	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename );
     }
 }

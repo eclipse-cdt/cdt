@@ -121,7 +121,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
         		
 	}
 	
-	public interface IASTNewExpressionDescriptor
+	public interface IASTNewExpressionDescriptor extends ISourceElementCallbackDelegate
 	{
 		public Iterator getNewPlacementExpressions();
 		public Iterator getNewTypeIdExpressions();
@@ -135,9 +135,11 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 	public IASTExpression getRHSExpression();
 	public IASTExpression getThirdExpression();
 	public String getLiteralString(); 
-	public String getTypeIdString(); 	
+	public String     getIdExpression();
+	public IASTTypeId getTypeId(); 	
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor(); 
 	
 	public int evaluateExpression() throws ExpressionEvaluationException;
+	public void reconcileReferences() throws ASTNotImplementedException;
 	
 }

@@ -499,11 +499,11 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable variablep = (IASTVariable)declarations.next();
 		assertEquals( callback.getReferences().size(), 5 );
 		Iterator references = callback.getReferences().iterator();
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableP );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableB );
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableC ); 
-		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableD ); 
 		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableA );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableP );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableB ); 
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableC ); 
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableD );
 	}
 
 	public void testBug41520() throws Exception 
@@ -796,5 +796,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		}
 	}
 	
-
+	public void testBug39504() throws Exception
+	{
+		Iterator i = parse( "const int w = 2; int x[ 5 ]; int y = sizeof (x[w]);" ).getDeclarations();
+		IASTVariable varW = (IASTVariable)i.next(); 
+		IASTVariable varX = (IASTVariable)i.next(); 
+		IASTVariable vary = (IASTVariable)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 2 );
+	}
+	
 }

@@ -37,10 +37,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("FUNCTION_MACRO( 1, a )\n	int i;");
     }
-    public void testBug39504A() throws Exception
-    {
-      	assertCodeFailsParse("int y = sizeof(x[0]);");
-    }
+
    
     public void testBug39525() throws Exception
     {

@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 
 /**
@@ -46,5 +48,43 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 	public Iterator getNewInitializerExpressions() {
 		return newInitializerExpressions.iterator();
 	}
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void acceptElement(ISourceElementRequestor requestor)
+    {
+    	accept( requestor, getNewPlacementExpressions() );
+    	accept( requestor, getNewTypeIdExpressions() );
+		accept( requestor, getNewInitializerExpressions() );
+    }
+
+
+    /**
+     * @param requestor
+     * @param iterator
+     */
+    protected void accept(ISourceElementRequestor requestor, Iterator iterator)
+    {
+        while( iterator.hasNext() )
+        	((IASTExpression)iterator.next()).acceptElement(requestor);
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void enterScope(ISourceElementRequestor requestor)
+    {
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void exitScope(ISourceElementRequestor requestor)
+    {
+    }
 
 }

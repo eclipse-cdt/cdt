@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
  * @author jcamelon
  *
  */
-public class Declarator implements IParameterCollection, IDeclaratorOwner
+public class Declarator implements IParameterCollection, IDeclaratorOwner, IDeclarator
 {
 	private ITokenDuple pointerOperatorNameDuple;
     private ITokenDuple namedDuple;
@@ -116,12 +116,12 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
     /**
      * @return
      */
-    public List getPtrOps()
+    public List getPointerOperators()
     {
         return Collections.unmodifiableList( ptrOps );
     }
 
-	public void addPtrOp( ASTPointerOperator ptrOp )
+	public void addPointerOperator( ASTPointerOperator ptrOp )
 	{
 		ptrOps.add( ptrOp ); 
 	}
@@ -362,7 +362,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
     public DeclarationWrapper getDeclarationWrapper()
     {
     	Declarator d = this;
-    	while( d.getOwner() instanceof Declarator )
+    	while( d.getOwner() instanceof IDeclarator )
     		d = (Declarator)d.getOwner();
     	return (DeclarationWrapper)d.getOwner(); 
     }

@@ -13,6 +13,14 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICFolder;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.model.Archive;
+import org.eclipse.cdt.internal.core.model.Binary;
+import org.eclipse.cdt.internal.core.model.BinaryContainer;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.model.ArchiveContainer;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -135,7 +143,132 @@ public class CProjectHelper {
 		//IClasspathEntry cpe= JavaCore.newProjectEntry(required.getProject().getFullPath());
 		//addToClasspath(cproject, cpe);
 	}	
-	
+
+	/**
+	 * Attempts to find an archive with the given name in the workspace
+	 */
+	public static Archive findArchive(ICProject testProject,String name) {
+		Archive myArchive;
+		int x;
+	   	IArchive[] myArchives;
+		ArchiveContainer archCont;
+		/***
+		 * Since ArchiveContainer.getArchives does not wait until 
+		 * all the archives in the project have been parsed before 
+		 * returning the list, we have to do a sync ArchiveContainer.getChildren
+		 * first to make sure we find all the archives.
+		 */
+		archCont=(ArchiveContainer)testProject.getArchiveContainer();
+		archCont.getChildren(true);
+		myArchives=testProject.getArchiveContainer().getArchives();
+		if (myArchives.length<1) 
+			return(null);
+		myArchive=null;
+		for (x=0;x<myArchives.length;x++) {
+			if (myArchives[x].getElementName().equals(name))
+				if (myArchives[x] instanceof Archive) {
+					return((Archive) myArchives[x]);
+					
+				} 
+				
+				
+		}
+		return(null);
+	}	
+	/**
+	 * Attempts to find a binary with the given name in the workspace
+	 */
+	public static Binary findBinary(ICProject testProject,String name) {
+		Binary myBinary;
+		BinaryContainer binCont;
+		int x;
+	   	IBinary[] myBinaries;
+		binCont=(BinaryContainer)testProject.getBinaryContainer();
+		/* Make sure we wait for the childern to be parsed, see comment about
+		 * ArchiveContainer.getArchives() above */
+		binCont.getChildren(true);
+		myBinaries=binCont.getBinaries();
+		if (myBinaries.length<1) 
+			return(null);
+		myBinary=null;
+		for (x=0;x<myBinaries.length;x++) {
+			if (myBinaries[x].getElementName().equals(name))
+				if (myBinaries[x] instanceof Binary) {
+					return((Binary) myBinaries[x]);
+				} 
+				
+				
+		}
+		return(null);
+	}	
+
+	/**
+	 * Attempts to find an object with the given name in the workspace
+	 */
+	public static Binary findObject(ICProject testProject,String name) {
+		ICElement myICElement;
+		int x;
+	   	ICElement[] myElements;
+		myElements=testProject.getChildren();
+		if (myElements.length<1) 
+			return(null);
+		myICElement=null;
+		for (x=0;x<myElements.length;x++) {
+			if (myElements[x].getElementName().equals(name))
+				if (myElements[x] instanceof ICElement) {
+					if (myElements[x] instanceof Binary) {
+						 return((Binary) myElements[x]);
+					}
+				} 				
+		}
+		return(null);
+	}	
+	/**
+	 * Attempts to find a TranslationUnit with the given name in the workspace
+	 */
+	public static TranslationUnit findTranslationUnit(ICProject testProject,String name) {
+		ICElement myICElement;
+		int x;
+	   	ICElement[] myElements;
+		myElements=testProject.getChildren();
+		if (myElements.length<1) 
+			return(null);
+		myICElement=null;
+		for (x=0;x<myElements.length;x++) {
+			if (myElements[x].getElementName().equals(name))
+				if (myElements[x] instanceof ICElement) {
+					if (myElements[x] instanceof TranslationUnit) {
+						 return((TranslationUnit) myElements[x]);
+					}
+				} 				
+		}
+		return(null);
+	}	
+
+
+
+	/**
+	 * Attempts to find an element with the given name in the workspace
+	 */
+	public static ICElement findElement(ICProject testProject,String name) {
+		ICElement myICElement;
+		int x;
+	   	ICElement[] myElements;
+		myElements=testProject.getChildren();
+		if (myElements.length<1) 
+			return(null);
+		myICElement=null;
+		for (x=0;x<myElements.length;x++) {
+			if (myElements[x].getElementName().equals(name))
+				if (myElements[x] instanceof ICElement) {
+					return((ICElement) myElements[x]);
+				} 
+				
+				
+		}
+		return(null);
+	}	
+		
 	
 	/**
 	 * Try to find rt.jar

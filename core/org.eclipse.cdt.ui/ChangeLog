@@ -1,3 +1,11 @@
+2003-04-07 Alain Magloire
+
+	Enable contribution to the outliner ContentProvider, in the future
+	this will let other modules like the debugger add action like
+	breakpoint in the outliner view to a IFunction.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java:
+
 2003-04-05 Alain Magloire
 
 	Implement the new CollapseAll button to be consistent with the

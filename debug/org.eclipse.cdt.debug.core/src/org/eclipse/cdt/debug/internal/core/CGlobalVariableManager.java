@@ -250,9 +250,6 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 		throw new CoreException( s );
 	}
 
-	/**
-	 * @return Returns the initialDescriptors.
-	 */
 	private IGlobalVariableDescriptor[] getInitialDescriptors() {
 		return fInitialDescriptors;
 	}
@@ -267,5 +264,19 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 		catch( CoreException e ) {
 			DebugPlugin.log( e );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#getDescriptors()
+	 */
+	public IGlobalVariableDescriptor[] getDescriptors() {
+		if ( fGlobals == null )
+			return getInitialDescriptors();
+		IGlobalVariableDescriptor[] result = new IGlobalVariableDescriptor[fGlobals.size()];
+		Iterator it = fGlobals.iterator();
+		for ( int i = 0; it.hasNext(); ++i ) {
+			result[i] = ((ICGlobalVariable)it.next()).getDescriptor();
+		}
+		return result;
 	}
 }

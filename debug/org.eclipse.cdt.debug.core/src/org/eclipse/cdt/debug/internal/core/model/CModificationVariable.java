@@ -47,12 +47,15 @@ public abstract class CModificationVariable extends CVariable
 	{
 		try
 		{
-			ICDIValue currentValue = getCurrentValue();
-			if ( currentValue != null )
+			IValue value = getValue();
+			if ( value != null && value instanceof ICValue )
 			{
-				return !( currentValue instanceof ICDIArrayValue || 
-					 	  currentValue instanceof ICDIStructureValue ||
-					 	  currentValue instanceof ICDIStringValue );
+				switch( ((ICValue)value).getType() )
+				{
+					case ICValue.TYPE_POINTER:
+						return true;
+				}
+				return !( value.hasVariables() );
 			}
 		}
 		catch( DebugException e )

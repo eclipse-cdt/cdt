@@ -1,5 +1,10 @@
 2002-11-14 Alain Magloire
 
+	* src/.../internal/ui/cview/CView.java (addBuildMenu):
+	Only show the "Make" and Build menus for containers.
+
+2002-11-14 Alain Magloire
+
 	* src/.../internal/ui/buildconsole/BuildConsoleView.java (convertSelectionToProject):
 	new method.
 	(selectionChanged): Only reset the document if selected project changed.

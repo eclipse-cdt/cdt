@@ -1,4 +1,9 @@
 2004-11-25 Mikhail Khodjaiants
+	Fix for bug 79452: Unable to set a breakpoint on a class method.
+	* CDebugUtils.java: cleanup.
+	* CBreakpointManager.java
+
+2004-11-25 Mikhail Khodjaiants
 	The "decrementInstallCount" method of IBreakpoint should be called from the UI thread.
 	Replaced the "breakpointRemoved" method of ICBreakpointListener by the "breakpointsRemoved"
 	method that accepts multiple breakpoints.

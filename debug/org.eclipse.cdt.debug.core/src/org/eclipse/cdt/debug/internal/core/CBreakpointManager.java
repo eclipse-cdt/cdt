@@ -533,8 +533,9 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		final boolean enabled = breakpoint.isEnabled();
 		final ICDITarget cdiTarget = getCDITarget();
 		String function = breakpoint.getFunction();
-		String fileName = (function != null && function.indexOf( "::" ) == -1) ? breakpoint.getFileName() : null; //$NON-NLS-1$
-		final ICDILocation location = cdiTarget.createLocation( fileName, function, -1 );
+		String fileName = breakpoint.getFileName();
+		int lineNumber = breakpoint.getLineNumber();
+		final ICDILocation location = cdiTarget.createLocation( fileName, function, lineNumber );
 		final ICDICondition condition = createCondition( breakpoint );
 		setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 	}

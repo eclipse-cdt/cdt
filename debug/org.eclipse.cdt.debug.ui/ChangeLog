@@ -1,4 +1,9 @@
 2004-11-25 Mikhail Khodjaiants
+	Fix for bug 79452: Unable to set a breakpoint on a class method.
+	* plugin.xml
+	* ToggleBreakpointAdapter.java
+
+2004-11-25 Mikhail Khodjaiants
 	Replaced the "breakpointRemoved" method of ICBreakpointListener by the "breakpointsRemoved"
 	method that accepts multiple breakpoints.
 	* CBreakpointUpdater.java

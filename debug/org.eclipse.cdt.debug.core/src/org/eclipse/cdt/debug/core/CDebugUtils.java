@@ -22,14 +22,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.eclipse.cdt.core.model.IFunction;
-import org.eclipse.cdt.core.model.IMethod;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -212,42 +208,6 @@ public class CDebugUtils {
 		StreamResult outputTarget = new StreamResult( s );
 		transformer.transform( source, outputTarget );
 		return s.toString( "UTF8" ); //$NON-NLS-1$			
-	}
-
-	public static IResource getFunctionResource( IFunction function ) {
-		ITranslationUnit tu = function.getTranslationUnit();
-		return (tu != null) ? tu.getResource() : function.getCProject().getProject();
-	}
-
-	public static IResource getMethodResource( IMethod method ) {
-		ITranslationUnit tu = method.getTranslationUnit();
-		return (tu != null) ? tu.getResource() : method.getCProject().getProject();
-	}
-
-	public static String getFunctionName( IFunction function ) {
-		String functionName = function.getElementName();
-		StringBuffer name = new StringBuffer( functionName );
-		if ( functionName.indexOf( "::" ) != -1 ) //$NON-NLS-1$
-		{
-			String[] params = function.getParameterTypes();
-			name.append( '(' );
-			if ( params.length == 0 ) {
-				name.append( "void" ); //$NON-NLS-1$
-			}
-			else {
-				for( int i = 0; i < params.length; ++i ) {
-					name.append( params[i] );
-					if ( i != params.length - 1 )
-						name.append( ',' );
-				}
-			}
-			name.append( ')' );
-		}
-		return name.toString();
-	}
-
-	public static String getMethodQualifiedName( IMethod method ) {
-		return null;
 	}
 
 	public static Number getFloatingPointValue( ICValue value ) {

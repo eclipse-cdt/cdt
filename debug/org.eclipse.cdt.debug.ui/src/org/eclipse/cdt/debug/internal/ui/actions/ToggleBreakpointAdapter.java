@@ -12,8 +12,10 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
@@ -161,11 +163,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
-			if ( ss.size() == 1 && ss.getFirstElement() instanceof IFunction ) {
-				IFunction function = (IFunction)ss.getFirstElement();
-				String sourceHandle = getSourceHandle( function );
-				IResource resource = getElementResource( function );
-				String functionName = getFunctionName( function );
+			if ( ss.size() == 1 && (ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod) ) {
+				IDeclaration declaration = (IDeclaration)ss.getFirstElement();
+				String sourceHandle = getSourceHandle( declaration );
+				IResource resource = getElementResource( declaration );
+				String functionName = ( declaration instanceof IFunction ) ? getFunctionName( (IFunction)declaration ) : getMethodName( (IMethod)declaration );
 				ICFunctionBreakpoint breakpoint = CDIDebugModel.functionBreakpointExists( sourceHandle, resource, functionName );
 				if ( breakpoint != null ) {
 					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
@@ -175,7 +177,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					int charStart = -1;
 					int charEnd = -1;
 					try {
-						ISourceRange sourceRange = function.getSourceRange();
+						ISourceRange sourceRange = declaration.getSourceRange();
 						if ( sourceRange != null ) {
 							charStart = sourceRange.getStartPos();
 							charEnd = charStart + sourceRange.getLength();
@@ -201,8 +203,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 															true );
 				}
 			}
-		}
-		
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -212,7 +213,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.size() == 1 ) {
-				return ( ss.getFirstElement() instanceof IFunction );
+				return ( ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod );
 			}
 		}
 		return false;
@@ -381,8 +382,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	private String getFunctionName( IFunction function ) {
 		String functionName = function.getElementName();
 		StringBuffer name = new StringBuffer( functionName );
-		//??????
-		if ( functionName.indexOf( "::" ) != -1 && functionName.indexOf( '(' ) == -1 ) { //$NON-NLS-1$
+		ITranslationUnit tu = function.getTranslationUnit();
+		if ( tu != null && tu.isCXXLanguage() ) {
 			String[] params = function.getParameterTypes();
 			name.append( '(' );
 			if ( params.length == 0 ) {
@@ -397,6 +398,31 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			}
 			name.append( ')' );
 		}
+		return name.toString();
+	}
+
+	private String getMethodName( IMethod method ) {
+		StringBuffer name = new StringBuffer();
+		String methodName = method.getElementName();
+		ICElement parent = method.getParent();
+		while ( parent != null && ( parent.getElementType() == ICElement.C_NAMESPACE || parent.getElementType() == ICElement.C_CLASS ) ) {
+			name.append( parent.getElementName() ).append( "::" ); //$NON-NLS-1$
+			parent = parent.getParent();
+		}
+		name.append( methodName );
+		String[] params = method.getParameterTypes();
+		name.append( '(' );
+		if ( params.length == 0 ) {
+			name.append( "void" ); //$NON-NLS-1$
+		}
+		else {
+			for( int i = 0; i < params.length; ++i ) {
+				name.append( params[i] );
+				if ( i != params.length - 1 )
+					name.append( ',' );
+			}
+		}
+		name.append( ')' );
 		return name.toString();
 	}
 

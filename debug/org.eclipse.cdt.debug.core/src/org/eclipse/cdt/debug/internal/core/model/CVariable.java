@@ -5,16 +5,21 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
+import org.eclipse.cdt.debug.core.model.ICastToType;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -29,7 +34,8 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public abstract class CVariable extends CDebugElement 
 								implements ICVariable,
-										   ICDIEventListener
+										   ICDIEventListener,
+										   ICastToType
 {
 	/**
 	 * The parent object this variable is contained in.
@@ -40,6 +46,11 @@ public abstract class CVariable extends CDebugElement
 	 * The underlying CDI variable.
 	 */
 	private ICDIVariable fCDIVariable;
+	
+	/**
+	 * The shadow CDI variable used for casting.
+	 */
+	private ICDIVariable fShadow;
 	
 	/**
 	 * Cache of current value - see #getValue().
@@ -79,6 +90,7 @@ public abstract class CVariable extends CDebugElement
 		super( (CDebugTarget)parent.getDebugTarget() );
 		fParent = parent;
 		fCDIVariable = cdiVariable;
+		fShadow = null;
 		getCDISession().getEventManager().addEventListener( this );
 	}
 
@@ -158,6 +170,8 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public Object getAdapter( Class adapter )
 	{
+		if ( adapter.equals( ICastToType.class ) )
+			return this;
 		if ( adapter.equals( IVariable.class ) )
 			return this;
 		if ( adapter.equals( ICVariable.class ) )
@@ -229,6 +243,15 @@ public abstract class CVariable extends CDebugElement
 			((CValue)fValue).dispose();
 		}
 		getCDISession().getEventManager().removeEventListener( this );
+		try
+		{
+			if ( getShadow() != null )
+				destroyShadow( getShadow() );
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
 	}
 	
 	protected synchronized void setChanged( boolean changed ) throws DebugException
@@ -300,12 +323,9 @@ public abstract class CVariable extends CDebugElement
 	 */
 	protected ICDIVariable getCDIVariable()
 	{
-		return fCDIVariable;
-	}
-
-	protected void setCDIVariable( ICDIVariable newVar )
-	{
-		fCDIVariable = newVar;
+		if ( fShadow != null )
+			return fShadow;
+		return getOriginalCDIVariable();
 	}
 
 	/**
@@ -325,7 +345,7 @@ public abstract class CVariable extends CDebugElement
 		String name = null;
 		try
 		{
-			name = getCDIVariable().getName();
+			name = getOriginalCDIVariable().getName();
 		}
 		catch( CDIException e )
 		{
@@ -390,5 +410,126 @@ public abstract class CVariable extends CDebugElement
 	{
 		((ICValue)getValue()).setChanged( true );
 		fireChangeEvent( DebugEvent.STATE );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToType#cast(java.lang.String)
+	 */
+	public void cast( String type ) throws DebugException
+	{
+		try
+		{
+			String newName = MessageFormat.format( "({0})({1})", new String[] { type, getOriginalCDIVariable().getName() } );
+			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), newName );
+			ICDIVariable oldVar = getShadow();
+			setShadow( newVar );
+			if ( oldVar != null )
+				destroyShadow( oldVar );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		finally
+		{
+			if ( fValue != null )
+			{
+				((CValue)fValue).dispose();
+				fValue = null;
+			}
+			fireChangeEvent( DebugEvent.STATE );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToType#getCurrentType()
+	 */
+	public String getCurrentType()
+	{
+		try
+		{
+			return getReferenceTypeName();
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
+		return "";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToType#restoreDefault()
+	 */
+	public void restoreDefault() throws DebugException
+	{
+		ICDIVariable oldVar = getShadow();
+		setShadow( null );
+		if ( oldVar != null )
+			destroyShadow( oldVar );
+		if ( fValue != null )
+		{
+			((CValue)fValue).dispose();
+			fValue = null;
+		}
+		fireChangeEvent( DebugEvent.STATE );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToType#supportsCasting()
+	 */
+	public boolean supportsCasting()
+	{
+		return false;
+	}
+	
+	protected ICDIVariable getOriginalCDIVariable()
+	{
+		return fCDIVariable;
+	}
+
+	private ICDIVariable getShadow()
+	{
+		return fShadow;
+	}
+
+	private void setShadow( ICDIVariable shadow )
+	{
+		fShadow = shadow;
+	}
+	
+	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String expression ) throws DebugException
+	{
+		try
+		{
+//			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObject( getCDIVariable().getStackFrame(), newName );
+//			return getCDISession().getVariableManager().createVariable( varObject );
+			return getCDISession().getExpressionManager().createExpression( expression );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return null;
+	}
+	
+	private void destroyShadow( ICDIVariable shadow ) throws DebugException
+	{
+		try
+		{
+//			getCDISession().getVariableManager().destroyVariable( shadow );
+			getCDISession().getExpressionManager().destroyExpression( (ICDIExpression)shadow );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToType#isCasted()
+	 */
+	public boolean isCasted()
+	{
+		return ( getShadow() != null );
 	}
 }

@@ -6,6 +6,9 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 
 /**
  * 
@@ -15,12 +18,36 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
  */
 public class CLocalVariable extends CModificationVariable
 {
-	/**
-	 * Constructor for CLocalVariable.
-	 * @param target
-	 */
 	public CLocalVariable( CDebugElement parent, ICDIVariable cdiVariable )
 	{
 		super( parent, cdiVariable );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToType#supportsCasting()
+	 */
+	public boolean supportsCasting()
+	{
+		boolean enabled = false;
+		try
+		{
+			IValue value = getValue();
+			if ( value instanceof ICValue )
+			{
+				switch( ((ICValue)value).getType() )
+				{
+					case ICValue.TYPE_SIMPLE:
+					case ICValue.TYPE_POINTER:
+					case ICValue.TYPE_CHAR:
+						enabled = true;
+						break;
+				}
+			}	
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
+		return enabled;
+	}	
 }

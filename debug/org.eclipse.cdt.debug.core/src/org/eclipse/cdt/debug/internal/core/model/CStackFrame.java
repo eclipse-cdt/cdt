@@ -129,7 +129,7 @@ public class CStackFrame extends CDebugElement
 		while( index < fVariables.size() )
 		{
 			CLocalVariable local = (CLocalVariable)fVariables.get( index );
-			ICDIVariable var = findVariable( locals, local.getCDIVariable() );
+			ICDIVariable var = findVariable( locals, local.getOriginalCDIVariable() );
 			if ( var != null )
 			{
 				locals.remove( var );
@@ -684,7 +684,7 @@ public class CStackFrame extends CDebugElement
 		for ( int i = 0; i < vars.length; ++i )
 		{
 			if ( vars[i] instanceof CLocalVariable &&
-				 ((CLocalVariable)vars[i]).getCDIVariable() instanceof ICDIArgument )
+				 ((CLocalVariable)vars[i]).getOriginalCDIVariable() instanceof ICDIArgument )
 			{
 				 list.add( vars[i] );
 			}

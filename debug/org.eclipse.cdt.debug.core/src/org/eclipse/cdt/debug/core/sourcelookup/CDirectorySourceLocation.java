@@ -116,25 +116,36 @@ public class CDirectorySourceLocation implements ICSourceLocation
 	private Object findFileByRelativePath( String fileName )
 	{
 		IPath path = getDirectory();
-		path.append( fileName );
-
-		// Try for a file in another workspace project
-		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-		if ( f != null ) 
+		if ( path != null )
 		{
-			return f;
-		} 
-
-		File file = path.toFile();
-		if ( file.exists() )
-		{
-			return createExternalFileStorage( path );
-		} 
+			path = path.append( fileName );
+	
+			// Try for a file in another workspace project
+			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+			if ( f != null ) 
+			{
+				return f;
+			} 
+	
+			File file = path.toFile();
+			if ( file.exists() )
+			{
+				return createExternalFileStorage( path );
+			}
+		}
 		return null;
 	}
 	
 	private IStorage createExternalFileStorage( IPath path )
 	{
 		return new FileStorage( path );
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getPaths()
+	 */
+	public IPath[] getPaths()
+	{
+		return new IPath[] { fDirectory };
 	}
 }

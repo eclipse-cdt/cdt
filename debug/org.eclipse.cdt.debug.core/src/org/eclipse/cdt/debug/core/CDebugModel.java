@@ -6,19 +6,14 @@
 
 package org.eclipse.cdt.debug.core;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.internal.core.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
-import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.core.resources.IMarker;
@@ -97,17 +92,6 @@ public class CDebugModel
 											   final boolean stopInMain ) throws DebugException
 	{
 		final IDebugTarget[] target = new IDebugTarget[1];
-
-		// Temporary
-		try
-		{
-			ICDISourceManager mgr = cdiTarget.getSession().getSourceManager();
-			mgr.addSourcePaths( new String[] { project.getLocation().toOSString() });
-		}
-		catch( CDIException e )
-		{
-			CDebugCorePlugin.log( e );
-		}
 
 		IWorkspaceRunnable r = new IWorkspaceRunnable()
 		{

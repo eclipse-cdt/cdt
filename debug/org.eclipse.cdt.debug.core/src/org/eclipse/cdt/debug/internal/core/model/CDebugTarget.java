@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -53,16 +53,15 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
-import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.internal.core.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -235,6 +234,7 @@ public class CDebugTarget extends CDebugElement
 	protected void initialize() 
 	{
 		initializeState();
+		setSourceSearchPath();
 		initializeBreakpoints();
 		initializeRegisters();
 		getLaunch().addDebugTarget( this );
@@ -1844,10 +1844,33 @@ public class CDebugTarget extends CDebugElement
 	
 	protected ISourceLocator createSourceLocator( IProject project )
 	{
-		CSourceLocator locator = new CSourceLocator( project );
-		List list = Arrays.asList( locator.getSourceLocations() );
-		list.add( new CDirectorySourceLocation( new Path( project.getLocation().toOSString() ) ) );
-		locator.setSourceLocations( (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] ) );
-		return locator;
+		return new CSourceLocator( project );
+	}
+	
+	protected void setSourceSearchPath()
+	{
+		ICDISourceManager mgr = getCDISession().getSourceManager();
+		ISourceLocator locator = getLaunch().getSourceLocator();
+		ArrayList list = new ArrayList();
+		if ( locator != null && locator instanceof ICSourceLocator )
+		{
+			ICSourceLocation[] locations = ((ICSourceLocator)locator).getSourceLocations();
+			for ( int i = 0; i < locations.length; ++i )
+			{
+				IPath[] paths = locations[i].getPaths();
+				for ( int j = 0; j < paths.length; ++j )
+				{
+					list.add( paths[j].toOSString() );
+				}
+			}
+		}
+		try
+		{
+			mgr.addSourcePaths( (String[])list.toArray( new String[list.size()] ) );
+		}
+		catch( CDIException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
 	}
 }

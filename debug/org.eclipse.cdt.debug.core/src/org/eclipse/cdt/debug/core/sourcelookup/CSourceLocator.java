@@ -4,15 +4,12 @@
  * 
  */
 
-package org.eclipse.cdt.debug.internal.core;
+package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
-import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceLocation;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.model.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IContainer;

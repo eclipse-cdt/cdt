@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.core.sourcelookup;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,17 +43,11 @@ public class CProjectSourceLocation implements ICSourceLocation
 	{
 		if ( getProject() != null )
 		{
-			IPath path = new Path( name );
-			String fileName = path.toOSString();
-	
-			String pPath = new String( getProject().getLocation().toOSString() );
-			int i = 0;
-			if ( (i = fileName.indexOf( pPath )) >= 0 ) 
-			{
-				i += pPath.length() + 1;
-				if ( fileName.length() > i )
-					return getProject().getFile( fileName.substring( i ) );
-			}
+			File file = new File( name );
+			if ( file.isAbsolute() )
+				return findFileByAbsolutePath( name );
+			else
+				return findFileByRelativePath( name );
 		}
 		return null;
 	}
@@ -111,5 +107,39 @@ public class CProjectSourceLocation implements ICSourceLocation
 			}
 		}
 		return null;		
+	}
+
+	private Object findFileByAbsolutePath( String name )
+	{
+		IPath path = new Path( name );
+		String fileName = path.toOSString();
+
+		String pPath = new String( getProject().getLocation().toOSString() );
+		int i = 0;
+		if ( (i = fileName.indexOf( pPath )) >= 0 ) 
+		{
+			i += pPath.length() + 1;
+			if ( fileName.length() > i )
+				return getProject().getFile( fileName.substring( i ) );
+		}
+		return null;
+	}
+
+	private Object findFileByRelativePath( String fileName )
+	{
+		return getProject().getFile( fileName );
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getPaths()
+	 */
+	public IPath[] getPaths()
+	{
+		IPath[] result = new IPath[0];
+		if ( getProject() != null )
+		{
+			result = new IPath[] { getProject().getLocation() };
+		}
+		return result;
 	}
 }

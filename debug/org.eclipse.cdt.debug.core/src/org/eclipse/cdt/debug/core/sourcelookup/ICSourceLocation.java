@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * 
@@ -35,4 +36,11 @@ public interface ICSourceLocation extends IAdaptable
 	 * @exception CoreException if an exception occurs while searching for the specified source element
 	 */
 	Object findSourceElement( String name ) throws CoreException;
+	
+	/**
+	 * Returns the paths associated with this location.
+	 * 
+	 * @return the paths associated with this location
+	 */
+	IPath[] getPaths(); 
 }

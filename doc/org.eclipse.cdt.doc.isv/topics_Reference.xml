@@ -5,10 +5,13 @@
 <!-- ============================================================================= -->
 <toc label="Reference">
 	<topic label="API Reference" href="reference/api/overview-summary.html">
-       <topic label="org.eclipse.cdt.core.dom" href="reference/api/org/eclipse/cdt/core/dom/ast/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.c" href="reference/api/org/eclipse/cdt/core/dom/ast/c/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.c.gcc" href="reference/api/org/eclipse/cdt/core/dom/ast/c/gcc/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/cpp/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.model" href="reference/api/org/eclipse/cdt/core/model/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.dom.ast" href="reference/api/org/eclipse/cdt/core/dom/ast/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.dom.ast.c" href="reference/api/org/eclipse/cdt/core/dom/ast/c/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.dom.ast.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/cpp/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.dom.ast.gnu" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.dom.ast.gnu.c" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/c/package-summary.html"/>
+       <topic label="org.eclipse.cdt.core.dom.ast.gnu.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/cpp/package-summary.html"/>
        <topic label="org.eclipse.cdt.debug.core.cdi" href="reference/api/org/eclipse/cdt/debug/core/cdi/package-summary.html"/>
        <topic label="org.eclipse.cdt.debug.core.cdi.event" href="reference/api/org/eclipse/cdt/debug/core/cdi/event/package-summary.html"/>
        <topic label="org.eclipse.cdt.debug.core.cdi.model" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/package-summary.html"/>

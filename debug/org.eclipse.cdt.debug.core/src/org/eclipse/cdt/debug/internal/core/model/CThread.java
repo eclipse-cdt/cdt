@@ -112,6 +112,8 @@ public class CThread extends CDebugElement
 	
 	private int fLastStackDepth = 0;
 
+	private boolean fDisposed = false;
+
 	/**
 	 * Constructor for CThread.
 	 * @param target
@@ -418,6 +420,8 @@ public class CThread extends CDebugElement
 	 */
 	public void handleDebugEvent( ICDIEvent event )
 	{
+		if ( isDisposed() )
+			return;
 		ICDIObject source = event.getSource();
 		if ( source == null )
 			return;
@@ -766,6 +770,7 @@ public class CThread extends CDebugElement
 	protected void terminated() 
 	{
 		setRunning( false );
+		dispose();
 		cleanup();	
 		fireTerminateEvent();
 	}
@@ -1137,5 +1142,15 @@ public class CThread extends CDebugElement
 		if ( adapter.equals( IRunToLine.class ) )
 			return this;
 		return super.getAdapter(adapter);
+	}
+	
+	protected void dispose()
+	{
+		fDisposed = true;
+	}
+	
+	protected boolean isDisposed()
+	{
+		return fDisposed;
 	}
 }

@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -76,7 +77,10 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -424,6 +428,7 @@ public class CVisitor {
 	private static final int CURRENT_SCOPE 		= 1;
 	private static final int TAGS 				= 1 << 1;
 	private static final int INCLUDE_BLOCK_ITEM = 1 << 2;
+	private static final int PREFIX_LOOKUP       = 1 << 3;
 	
 	//definition lookup start loc
 	protected static final int AT_BEGINNING = 1;
@@ -438,7 +443,7 @@ public class CVisitor {
 		} else if( parent instanceof ICASTTypedefNameSpecifier ){
 			binding = resolveBinding( parent );
 		} else if( parent instanceof IASTFieldReference ){
-			binding = findBinding( (IASTFieldReference) parent );
+			binding = (IBinding) findBinding( (IASTFieldReference) parent, false );
 		} else if( parent instanceof IASTDeclarator ){
 			binding = createBinding( (IASTDeclarator) parent, name );
 		} else if( parent instanceof ICASTCompositeTypeSpecifier ){
@@ -545,14 +550,22 @@ public class CVisitor {
 		} else if( parent instanceof IASTTypeId || parent instanceof IASTParameterDeclaration ){
 			IASTNode blockItem = getContainingBlockItem( parent );
 			try {
-                return findBinding( blockItem, elabTypeSpec.getName(), COMPLETE | TAGS );
+                return (IBinding) findBinding( blockItem, elabTypeSpec.getName(), COMPLETE | TAGS );
             } catch ( DOMException e ) {
                 return null;
             }
 		}
 		return null;
 	}
-	private static IBinding findBinding( IASTFieldReference fieldReference ){
+	
+	/**
+	 * if prefix == false, return an IBinding or null
+	 * if prefix == true, return an IBinding[] or null
+	 * @param fieldReference
+	 * @param prefix
+	 * @return
+	 */
+	private static Object findBinding( IASTFieldReference fieldReference, boolean prefix ){
 		IASTExpression fieldOwner = fieldReference.getFieldOwner();
 		IType type = null;
 		if( fieldOwner instanceof IASTArraySubscriptExpression ){
@@ -569,6 +582,21 @@ public class CVisitor {
 	    }
 		
 		if( type != null && type instanceof ICompositeType ){
+		    if( prefix ){
+		        IBinding [] result = null;
+		        try {
+		            char [] p = fieldReference.getFieldName().toCharArray();
+                    IField [] fields = ((ICompositeType) type).getFields();
+                    for ( int i = 0; i < fields.length; i++ ) {
+                        if( CharArrayUtils.equals( fields[i].getNameCharArray(), 0, p.length, p ) ){
+                            result = (IBinding[]) ArrayUtil.append( IBinding.class, result, fields[i] );
+                        }
+                    }
+                    return ArrayUtil.trim( IBinding.class, result );
+                } catch ( DOMException e ) {
+                    return new IBinding[] { e.getProblem() };
+                }
+		    } 
 			try {
                 return ((ICompositeType) type).findField( fieldReference.getFieldName().toString() );
             } catch ( DOMException e ) {
@@ -846,35 +874,35 @@ public class CVisitor {
 			IASTName name = functionDeclartor.getName();
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return findBinding( blockItem, name, bits );
+                return (IBinding) findBinding( blockItem, name, bits );
             } catch ( DOMException e ) {
                 return null;
             }
 		} else if( node instanceof IASTIdExpression ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return findBinding( blockItem, ((IASTIdExpression)node).getName(), bits );
+                return (IBinding) findBinding( blockItem, ((IASTIdExpression)node).getName(), bits );
             } catch ( DOMException e ) {
                 return null;
             }
 		} else if( node instanceof ICASTTypedefNameSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return findBinding( blockItem, ((ICASTTypedefNameSpecifier)node).getName(), bits );
+                return (IBinding) findBinding( blockItem, ((ICASTTypedefNameSpecifier)node).getName(), bits );
             } catch ( DOMException e ) {
                 return null;
             }
 		} else if( node instanceof ICASTElaboratedTypeSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return findBinding( blockItem, ((ICASTElaboratedTypeSpecifier)node).getName(), bits );
+                return (IBinding) findBinding( blockItem, ((ICASTElaboratedTypeSpecifier)node).getName(), bits );
             } catch ( DOMException e ) {
                 return null;
             }
 		} else if( node instanceof ICASTCompositeTypeSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return findBinding( blockItem, ((ICASTCompositeTypeSpecifier)node).getName(), bits );
+                return (IBinding) findBinding( blockItem, ((ICASTCompositeTypeSpecifier)node).getName(), bits );
             } catch ( DOMException e ) {
                 return null;
             }
@@ -1036,8 +1064,16 @@ public class CVisitor {
 		return getContainingBlockItem( parent );
 	}
 	
-	protected static IBinding findBinding( IASTNode blockItem, IASTName name, int bits ) throws DOMException{
-		IBinding binding = null;
+	/**
+	 * if (bits | PREFIX_LOOKUP) then returns IBinding []
+	 * otherwise returns IBinding
+	 */
+	protected static Object findBinding( IASTNode blockItem, IASTName name, int bits ) throws DOMException{
+	    boolean prefix = ( bits & PREFIX_LOOKUP ) != 0;
+		Object binding =  prefix ? new ObjectSet( 2 ) : null;
+		
+		CharArrayObjectMap prefixMap = prefix ? new CharArrayObjectMap(2) : null;
+
 		while( blockItem != null ){
 			
 			IASTNode parent = blockItem.getParent();
@@ -1073,6 +1109,9 @@ public class CVisitor {
 			
 			boolean typesOnly = (bits & TAGS) != 0;
 			boolean includeBlockItem = (bits & INCLUDE_BLOCK_ITEM) != 0;
+			if( prefix )
+			    scope = null;
+			
 			if( scope != null && scope.isFullyCached() ){
 			    try {
                     binding = scope.getBinding( name, true );
@@ -1083,14 +1122,14 @@ public class CVisitor {
 			        return binding;
 			} else {
 			
-				IASTName result = null;
+				Object result = null;
 				if( nodes != null ){
 				    int idx = -1;
 					IASTNode node = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 					while( node != null ) {
-						IASTName candidate = null;
+						Object candidate = null;
 	                    try {
-	                        candidate = checkForBinding( scope, node, name, typesOnly );
+	                        candidate = checkForBinding( scope, node, name, typesOnly, prefixMap );
 	                    } catch ( DOMException e ) {
 	                        continue;
 	                    }
@@ -1119,7 +1158,7 @@ public class CVisitor {
 					
 				} else {
 				    try {
-	                    result = checkForBinding( scope, parent, name, typesOnly );
+	                    result = checkForBinding( scope, parent, name, typesOnly, prefixMap );
 	                } catch ( DOMException e ) {
 	                }
 				}
@@ -1129,8 +1168,9 @@ public class CVisitor {
 	                } catch ( DOMException e ) {
 	                }
 				}
-				if( result != null )
-				    return result.resolveBinding();
+				if( result != null ){
+			        return ((IASTName)result).resolveBinding();
+				}
 			}
 			if( (bits & CURRENT_SCOPE) == 0 )
 				blockItem = parent;
@@ -1140,7 +1180,14 @@ public class CVisitor {
 			if( blockItem instanceof IASTTranslationUnit )
 			    break;
 		}
-		
+		if( prefixMap != null ){
+		    IBinding [] result = null;
+		    Object [] vals = prefixMap.valueArray();
+		    for ( int i = 0; i < vals.length; i++ ) {
+                result = (IBinding[]) ArrayUtil.append( IBinding.class, result, ((IASTName) vals[i]).resolveBinding() );
+            }
+		    return ArrayUtil.trim( IBinding.class, result );
+		}
 		if( blockItem != null)
 		    return externalBinding( (IASTTranslationUnit) blockItem, name );
 		
@@ -1163,22 +1210,30 @@ public class CVisitor {
 	    return external;
 	}
 	
-	private static IASTName checkForBinding( ICScope scope, IASTDeclSpecifier declSpec, IASTName name, boolean typesOnly ) throws DOMException{
+	private static IASTName checkForBinding( ICScope scope, IASTDeclSpecifier declSpec, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 		IASTName tempName = null;
-		
+		IASTName resultName = null;
+		char [] n = name.toCharArray();
 		if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
 			tempName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
 			if( scope != null )
 			    scope.addName( tempName );
-			if( typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-				return tempName;
+			if( typesOnly ){
+			    if( prefixMap != null ) 
+	                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
+	            else if( collectResult( tempName, n, prefixMap ) != null )
+	                resultName = tempName;
 			}
 		} else if( declSpec instanceof ICASTCompositeTypeSpecifier ){
 			tempName = ((ICASTCompositeTypeSpecifier)declSpec).getName();
 			if( scope != null )
 			    scope.addName( tempName );
-			if( typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-				return tempName;
+			
+			if( typesOnly ){
+			    if( prefixMap != null ) 
+	                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
+	            else if( collectResult( tempName, n, prefixMap ) != null )
+	                resultName = tempName;
 			}
 			//also have to check for any nested structs
 			IASTDeclaration [] nested = ((ICASTCompositeTypeSpecifier)declSpec).getMembers();
@@ -1186,9 +1241,10 @@ public class CVisitor {
 				if( nested[i] instanceof IASTSimpleDeclaration ){
 					IASTDeclSpecifier d = ((IASTSimpleDeclaration)nested[i]).getDeclSpecifier();
 					if( d instanceof ICASTCompositeTypeSpecifier ) {
-						IASTName temp = checkForBinding( scope, d, name, typesOnly );
-						if( temp != null )
-							return temp;
+						Object obj = checkForBinding( scope, d, name, typesOnly, prefixMap );
+					    if( prefixMap == null && resultName == null ){
+						    resultName = (IASTName) obj;
+						}
 					}
 				}
 			}
@@ -1197,8 +1253,11 @@ public class CVisitor {
 		    tempName = enumeration.getName();
 		    if( scope != null )
 		        scope.addName( tempName );
-		    if( typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-				return tempName;
+		    if( typesOnly ){
+	            if( prefixMap != null ) 
+	                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
+	            else if( collectResult( tempName, n, prefixMap ) != null )
+	                resultName = tempName;
 			}
 		    //check enumerators
 		    IASTEnumerator [] list = ((ICASTEnumerationSpecifier) declSpec).getEnumerators();
@@ -1208,15 +1267,28 @@ public class CVisitor {
 		        tempName = enumerator.getName();
 		        if( scope != null )
 		            scope.addName( tempName );
-		        if( !typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-					return tempName;
+		        if( !typesOnly ){
+		            if( prefixMap != null ) 
+		                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
+		            else if( collectResult( tempName, n, prefixMap ) != null )
+		                resultName = tempName;
 				}
 		    }
 		}
-		return null;
+		return resultName;
 	}
 	
-	private static IASTName checkForBinding( ICScope scope, IASTParameterDeclaration paramDecl, IASTName name, boolean typesOnly ) throws DOMException{
+	private static Object collectResult( IASTName candidate, char[] name, CharArrayObjectMap prefixMap ){
+	    char [] c = candidate.toCharArray();
+        if( prefixMap == null && CharArrayUtils.equals( c, name ) ){
+            return candidate;
+        } else if( prefixMap != null && CharArrayUtils.equals( c, 0, name.length, name ) && !prefixMap.containsKey( c ) ){
+	        prefixMap.put( c, candidate );
+	    }
+        return prefixMap;
+	}
+	
+	private static IASTName checkForBinding( ICScope scope, IASTParameterDeclaration paramDecl, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 	    if( paramDecl == null ) return null;
 	    
 	    IASTDeclarator dtor = paramDecl.getDeclarator();
@@ -1226,33 +1298,43 @@ public class CVisitor {
 		IASTName tempName = dtor.getName();
 		if( scope != null )
 		    scope.addName( tempName );
-		if( !typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-			return tempName;
-		}
 		
-		if( typesOnly ){
-	        return checkForBinding( scope, paramDecl.getDeclSpecifier(), name, typesOnly );
-	    }
+		if( !typesOnly ) {
+		    char [] c = tempName.toCharArray();
+		    char [] n = name.toCharArray();
+		    if( prefixMap == null && CharArrayUtils.equals( c, n ) )
+		        return tempName;
+		    else if( prefixMap != null && CharArrayUtils.equals( c, 0, n.length, n ) && !prefixMap.containsKey( c ) )
+		        prefixMap.put( c, tempName );
+		} else {
+		    return checkForBinding( scope, paramDecl.getDeclSpecifier(), name, typesOnly, prefixMap );
+		}
 		return null;
 	}
 	
-	private static IASTName checkForBinding( ICScope scope, IASTNode node, IASTName name, boolean typesOnly ) throws DOMException{
+	/**
+	 * if not a prefix lookup, returns IASTName
+	 * if doing prefix lookup, results are in prefixMap, returns null
+	 */
+	private static IASTName checkForBinding( ICScope scope, IASTNode node, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 	    if( node instanceof IASTDeclaration ){
-	        return checkForBinding( scope, (IASTDeclaration) node, name, typesOnly );
+	        return checkForBinding( scope, (IASTDeclaration) node, name, typesOnly, prefixMap );
 	    } else if( node instanceof IASTParameterDeclaration ){
-	        return checkForBinding( scope, (IASTParameterDeclaration) node, name, typesOnly );
+	        return checkForBinding( scope, (IASTParameterDeclaration) node, name, typesOnly, prefixMap );
 	    } else if( node instanceof IASTDeclarationStatement ){
-			return checkForBinding( scope, ((IASTDeclarationStatement)node).getDeclaration(), name, typesOnly );
+			return checkForBinding( scope, ((IASTDeclarationStatement)node).getDeclaration(), name, typesOnly, prefixMap );
 		} else if( node instanceof IASTForStatement ){
 			IASTForStatement forStatement = (IASTForStatement) node;
 			if( forStatement.getInitDeclaration() != null ){
-				return checkForBinding( scope, forStatement.getInitDeclaration(), name, typesOnly );
+				return checkForBinding( scope, forStatement.getInitDeclaration(), name, typesOnly, prefixMap );
 			}
 		}
 	    return null;
 	}
-	private static IASTName checkForBinding( ICScope scope, IASTDeclaration declaration, IASTName name, boolean typesOnly ) throws DOMException{
+	private static IASTName checkForBinding( ICScope scope, IASTDeclaration declaration, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
+	    char [] n = name.toCharArray();
 		IASTName tempName = null;
+		IASTName resultName = null;
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
@@ -1265,13 +1347,17 @@ public class CVisitor {
 				if( scope != null )
 				    scope.addName( tempName );
 				
-				if( !typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-					return tempName;
+				if( !typesOnly ){
+		            if( prefixMap != null ) 
+		                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
+		            else if( collectResult( tempName, n, prefixMap ) != null )
+		                resultName = tempName;
+		            
 				}
 			}
-			tempName = checkForBinding( scope, simpleDeclaration.getDeclSpecifier(), name, typesOnly ); 
-			if( tempName != null ){
-			    return tempName;
+			tempName = checkForBinding( scope, simpleDeclaration.getDeclSpecifier(), name, typesOnly, prefixMap );
+		    if( prefixMap == null && tempName != null ){
+			    resultName = tempName;
 			}
 		} else if( !typesOnly && declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
@@ -1280,16 +1366,21 @@ public class CVisitor {
 			tempName = dtor.getName();
 			if( scope != null )
 			    scope.addName( tempName );
-			if( !typesOnly && CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
-				return tempName;
+
+			if( !typesOnly ){
+	            if( prefixMap != null ) 
+	                prefixMap = (CharArrayObjectMap) collectResult( tempName, n, prefixMap );
+	            else if( collectResult( tempName, n, prefixMap ) != null )
+	                resultName = tempName;
 			}
 			
-			tempName = checkForBinding( scope, functionDef.getDeclSpecifier(), name, typesOnly ); 
-			if( tempName != null ){
-			    return tempName;
+			tempName = checkForBinding( scope, functionDef.getDeclSpecifier(), name, typesOnly, prefixMap ); 
+		    if( prefixMap == null && tempName != null ){
+			    resultName = tempName;
 			}
 		}
-		return null;
+		
+		return resultName;
 	}
 	
 	protected static IASTDeclarator findDefinition( IASTDeclarator declarator, int beginAtLoc ){
@@ -1639,14 +1730,38 @@ public class CVisitor {
         {
             IASTDeclaration [] declarations = ((IASTTranslationUnit)startingPoint).getDeclarations();
             if( declarations.length > 0 )
-               return findBinding( declarations[declarations.length - 1], name, COMPLETE | INCLUDE_BLOCK_ITEM  );
+               return (IBinding) findBinding( declarations[declarations.length - 1], name, COMPLETE | INCLUDE_BLOCK_ITEM  );
         }
         if( startingPoint instanceof IASTCompoundStatement )
         {
             IASTStatement [] statements = ((IASTCompoundStatement)startingPoint).getStatements();
             if( statements.length > 0 )
-                return findBinding( statements[ statements.length - 1 ], name, COMPLETE | INCLUDE_BLOCK_ITEM );
+                return (IBinding) findBinding( statements[ statements.length - 1 ], name, COMPLETE | INCLUDE_BLOCK_ITEM );
         }
         return null;
+    }
+    
+    public static IBinding [] prefixLookup( IASTName name ){
+        ASTNodeProperty prop = name.getPropertyInParent();
+        
+        IBinding [] result = null; 
+        
+        if( prop == IASTFieldReference.FIELD_NAME ){
+            result = (IBinding[]) findBinding( (IASTFieldReference) name.getParent(), true );
+        } else {
+	        int bits = PREFIX_LOOKUP;
+	        if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
+	            bits |= TAGS;
+	        } else if( prop == IASTIdExpression.ID_NAME ){
+	            bits |= INCLUDE_BLOCK_ITEM;
+	        }
+	        
+	        IASTNode blockItem = getContainingBlockItem( name );
+	        try {
+	            result = (IBinding[]) findBinding( blockItem, name, bits );
+	        } catch ( DOMException e ) {
+	        }
+        }
+        return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
 }

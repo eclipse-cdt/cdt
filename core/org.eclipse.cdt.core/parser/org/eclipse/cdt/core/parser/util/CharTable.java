@@ -165,4 +165,10 @@ public class CharTable extends HashTable {
 			
 		return -1;
 	}
+	
+	public Object [] keyArray(){
+	    Object [] keys = new Object[ size() ];
+	    System.arraycopy( keyTable, 0, keys, 0, keys.length );
+	    return keys;
+	}
 }

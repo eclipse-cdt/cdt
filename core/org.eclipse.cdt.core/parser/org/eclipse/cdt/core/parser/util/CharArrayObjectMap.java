@@ -122,4 +122,10 @@ public class CharArrayObjectMap extends CharTable {
             }
         }
     }
+    
+    public Object [] valueArray(){
+	    Object [] values = new Object[ size() ];
+	    System.arraycopy( valueTable, 0, values, 0, values.length );
+	    return values;
+	}
 }

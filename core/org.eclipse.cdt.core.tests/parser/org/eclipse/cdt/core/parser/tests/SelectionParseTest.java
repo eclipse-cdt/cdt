@@ -262,4 +262,17 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		IASTMethod constructor = (IASTMethod) node;
 		assertTrue( constructor.isConstructor() );
 	}
+	
+	public void testBug63966() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "void foo(int a) {}\n" ); //$NON-NLS-1$
+		writer.write( "void foo(long a) {}\n" ); //$NON-NLS-1$
+		writer.write( "int main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( "foo(1); \n }" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "foo(1)"); //$NON-NLS-1$
+		IASTNode node = parse( code, startIndex, startIndex + 3 );
+		
+	}
 }

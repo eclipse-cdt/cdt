@@ -118,7 +118,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
     static 
     {
-    	SUBSCRIPT = new ArrayList();
+    	SUBSCRIPT = new ArrayList(1);
     	SUBSCRIPT.add( TypeInfo.OperatorExpression.subscript );
     }
 
@@ -3456,6 +3456,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						return null;
 					}
 
+				}
+				else if( expression.getExpressionKind() == Kind.POSTFIX_FUNCTIONCALL )
+				{
+					try {
+						ISymbol symbol = getExpressionSymbol( scope, expression.getExpressionKind(), expression.getLHSExpression(), expression.getRHSExpression(), null, null );
+						return symbol.getASTExtension().getPrimaryDeclaration();
+					} catch (ASTSemanticException e) {
+						return null;
+					}
+					
+					
 				}
 				else
 				{

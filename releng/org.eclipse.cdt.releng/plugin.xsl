@@ -53,6 +53,15 @@
 	</xsl:copy>	
     </xsl:template>
 
+    <xsl:template mode="feature" match="url/update">
+        <xsl:copy>
+	    <xsl:attribute name="url">
+	        <xsl:text>http://update.eclipse.org/tools/cdt/updates/builds/1.2</xsl:text>
+	    </xsl:attribute>
+	    <xsl:copy-of select="*|@*[not(name()='url')]"/>
+	</xsl:copy>
+    </xsl:template>
+
     <xsl:template match="@*|*|text()">
         <xsl:copy>
 	    <xsl:apply-templates select="@*|*|text()"/>

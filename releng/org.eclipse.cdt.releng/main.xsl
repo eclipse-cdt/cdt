@@ -87,6 +87,13 @@
 		    </move>
 		</xsl:for-each>
 
+		<!-- Prepare the source plugin -->
+		<property name="source.plugin" value="org.eclipse.cdt.source"/>
+		<replace
+		    file="build/plugins/${{source.plugin}}/build.properties"
+		    token="plugin.properties"
+		    value="plugin.properties,src/"/>
+		
 		<!-- Generate build.xml files for projects -->
 	        <xslt in="manifest.xml" out="build/genscripts.xml" style="genscripts.xsl"/>
 		<chmod perm="+x" file="build/eclipse"/>
@@ -97,6 +104,29 @@
 		</exec>
 
 		<!-- Run the build.xml scripts -->
+		<xsl:for-each select="projects/plugin">
+		    <!-- Build the source jars -->
+		    <ant target="build.sources">
+		        <xsl:attribute name="dir">
+			    <xsl:text>build/plugins/</xsl:text>
+			    <xsl:value-of select="@name"/>
+			</xsl:attribute>
+			<property name="javacFailOnError" value="true"/>
+			<property name="ws" value="gtk"/>
+			<property name="os" value="linux"/>
+		    </ant>
+		    <ant target="gather.sources">
+		        <xsl:attribute name="dir">
+			    <xsl:text>build/plugins/</xsl:text>
+			    <xsl:value-of select="@name"/>
+			</xsl:attribute>
+			<property name="javacFailOnError" value="true"/>
+			<property name="ws" value="gtk"/>
+			<property name="os" value="linux"/>
+			<property name="destination.temp.folder" value="../${{source.plugin}}/src"/>
+		    </ant>
+		</xsl:for-each>
+
 	        <xsl:for-each select="projects/feature">
 		    <!-- The default to build the update jars -->
 		    <ant>

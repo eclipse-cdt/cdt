@@ -211,6 +211,9 @@ public abstract class Parser extends ExpressionParser implements IParser
                     --depth;
                     break;
             }
+            if( depth < 0 )
+            	return;
+            
             consume();
         }
         // eat the SEMI/RBRACE as well

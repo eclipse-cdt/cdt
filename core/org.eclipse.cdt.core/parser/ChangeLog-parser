@@ -1,3 +1,7 @@
+2004-03-29 Andrew Niefer
+	fixed bug 56620 - Outline view stops on error on last line of block
+	(errorHandling() goes to far)
+
 2004-03-29 John Camelon
 	Fixed Bug 56517 - Preprocessor skipping doesn't ignore the contents of string literals.	
 

@@ -253,16 +253,6 @@ public class RegisterManager extends Manager {
 		return new Register[0];
 	}
 
-//	private Register getRegister(RegisterDescriptor regDesc) throws CDIException {
-//		Register[] regs = getRegisters((Target)regDesc.getTarget());
-//		for (int i = 0; i < regs.length; i++) {
-//			if (regDesc.getName().equals(regs[i].getName())) {
-//				return regs[i];
-//			}
-//		}
-//		return null;
-//	}
-
 	/**
 	 * Return the Element with this thread/stackframe, and with this name.
 	 * null is return if the element is not in the cache.

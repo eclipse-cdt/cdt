@@ -1,3 +1,19 @@
+2002-11-21 Alain Magloire
+
+	* src/../internal/ui/WorkingDirectoryBlock.java (setDefaultWorkingDir):
+	Set the workspace directory default to be the Project.
+	* src/.../internal/LocalCLaunchConfigurationDelegate.java (launch):
+	Use the new function getWorkingDirectory(), it does more check by
+	calling verifyWorkingDirectory().
+	* src/.../AbstractCLaunchDelegate.java (getEnvironmentArray):
+	implemented.
+	(getWorkingDirectory): New method, call verifyWorkingDirectory();
+	(verifyWorkingDirectory): New method, does more checking.
+	(getWorkingDir): Deprecated and calls getWorkingDirectory().
+	(getWorkingDirectoryPath): New method.
+	(getCProject): Now static.
+	(getProjectName): Now static
+ 
 2002-11-21 Judy N. Green
 
 	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java (verifyCProject):

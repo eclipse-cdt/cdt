@@ -1,9 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -22,7 +29,8 @@ import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludeOperation;
+import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
+import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -41,7 +49,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -86,11 +93,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 
 	}
 
-
-	public AddIncludeOnSelectionAction() {
-		this(null);
-	}
-	
 	public AddIncludeOnSelectionAction(ITextEditor editor) {	
 		super(CEditorMessages.getString("AddIncludeOnSelection.label"));		 //$NON-NLS-1$
 		setToolTipText(CEditorMessages.getString("AddIncludeOnSelection.tooltip")); //$NON-NLS-1$
@@ -101,20 +103,20 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	}
 	
 	private void addInclude(ITranslationUnit tu) {
-		AddIncludeOperation op= new AddIncludeOperation(fEditor, tu, fRequiredIncludes, fUsings, false);
+		AddIncludesOperation op= new AddIncludesOperation(tu, fRequiredIncludes, fUsings, false);
 		try {
-			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
-			dialog.run(false, true, op);
+			PlatformUI.getWorkbench().getProgressService().runInUI(
+				PlatformUI.getWorkbench().getProgressService(),
+				new WorkbenchRunnableAdapter(op), op.getScheduleRule());
 		} catch (InvocationTargetException e) {
-			//e.printStackTrace();
-			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), e.getTargetException().getMessage()); //$NON-NLS-1$
+			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		}
 
 	}
 	
-	ITranslationUnit getTranslationUnit () {
+	private ITranslationUnit getTranslationUnit () {
 		ITranslationUnit unit = null;
 		if (fEditor != null) {
 			IEditorInput editorInput= fEditor.getEditorInput();
@@ -123,7 +125,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		return unit;
 	}
 	
-	protected Shell getShell() {
+	private Shell getShell() {
 		return fEditor.getSite().getShell();
 	}
 	
@@ -185,8 +187,12 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				return;
 			}
 
-			// Try contributed plugins.
-			findContribution(name);
+			// Try contribution from plugins.
+			IFunctionSummary fs = findContribution(name);
+			if (fs != null) {
+				fRequiredIncludes = fs.getIncludes();
+				fUsings = new String[] {fs.getNamespace()};
+			}
 
 			// Try the type caching.
 			if (fRequiredIncludes == null && fUsings == null) {
@@ -209,18 +215,20 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		
 	}
 
-	void findContribution (String name) {
-		IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(name);
-		if(fs != null) {
-			fRequiredIncludes = fs.getIncludes();
-			fUsings = new String[] {fs.getNamespace()};
-		}
+	private IFunctionSummary findContribution (final String name) {
+		final IFunctionSummary[] fs = new IFunctionSummary[1];
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				fs[0] = CCompletionContributorManager.getDefault().getFunctionInfo(name);
+			}
+		};
+		return fs[0];
 	}
 
 	/**
 	 * Finds a type by the simple name.
 	 */
-	ITypeInfo[] findTypeInfos(final String name) {
+	private ITypeInfo[] findTypeInfos(final String name) {
 		final ITypeInfo[][] infos = new ITypeInfo[1][];
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -241,7 +249,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		return infos[0];
 	}
 
-	IMatch[] findMatches(final String name) {
+	private IMatch[] findMatches(final String name) {
 		final BasicSearchResultCollector searchResultCollector = new BasicSearchResultCollector();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {

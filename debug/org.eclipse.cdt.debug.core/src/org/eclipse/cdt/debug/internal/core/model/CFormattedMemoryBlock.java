@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -313,6 +314,18 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public void dispose()
 	{
+		if ( fCDIMemoryBlock != null )
+		{
+			try
+			{
+				((CDebugTarget)getDebugTarget()).getCDISession().getMemoryManager().removeBlock( fCDIMemoryBlock );
+			}
+			catch( CDIException e )
+			{
+				CDebugCorePlugin.log( e );
+			}
+			fCDIMemoryBlock = null;
+		}
 	}
 
 	/* (non-Javadoc)

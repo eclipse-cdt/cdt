@@ -1,5 +1,9 @@
 2002-10-17 Mikhail Khodjaiants
 	Implementing the memory view support:
+	* CFormattedMemoryBlock.java: implementation of the 'dispose' method added.
+
+2002-10-17 Mikhail Khodjaiants
+	Implementing the memory view support:
 	* CDebugModel.java
 	* ICMemoryManager.java
 	* IFormattedMemoryBlock.java

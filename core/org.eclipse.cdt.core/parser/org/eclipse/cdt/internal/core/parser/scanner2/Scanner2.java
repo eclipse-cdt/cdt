@@ -1715,15 +1715,24 @@ public class Scanner2 implements IScanner, IScannerData {
 			    ++bufferPos[bufferStackPos];  //advances us to the #
 			    if( skipOverWhiteSpace() )
 			        encounteredMultilineComment = true;
-			    ++bufferPos[bufferStackPos]; //advances us past the # (or last whitespace) 
+			    
 			    boolean isArg = false;
-			    for( int i = 0; i < arglist.length && arglist[i] != null; i++ ){
-			        if( CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], arglist[i].length, arglist[i] ) ){
-			            isArg = true;
-			            //advance us to the end of the arg
-			            bufferPos[bufferStackPos] += arglist[i].length - 1;
-			            break;
-			        }
+			    if( bufferPos[bufferStackPos] + 1 < limit )
+			    {
+				    ++bufferPos[bufferStackPos]; //advances us past the # (or last whitespace) 
+				    for( int i = 0; i < arglist.length && arglist[i] != null; i++ )
+				    {
+				        if( bufferPos[bufferStackPos] + arglist[i].length - 1 < limit )
+				        {
+					        if( CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], arglist[i].length, arglist[i] ) )
+					        {
+					            isArg = true;
+					            //advance us to the end of the arg
+					            bufferPos[bufferStackPos] += arglist[i].length - 1;
+					            break;
+					        }
+				        }
+				    }
 			    }
 			    if( !isArg )
 			        handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, bufferPos[bufferStackPos], null );
@@ -2055,6 +2064,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			--bufferPos[bufferStackPos];
 			return encounteredMultiLineComment;
 		}
+		--bufferPos[bufferStackPos];
 		return encounteredMultiLineComment;
 	}
 	
@@ -2122,6 +2132,11 @@ public class Scanner2 implements IScanner, IScannerData {
 								escaped = false;
 						}
 					}
+					//if we hit the limit here, then the outer while loop will advance
+					//us 2 past the end and we'll back up one and still be past the end,
+					//so back up here as well to leave us at the last char.
+					if( bufferPos[bufferStackPos] == bufferLimit[bufferStackPos] )
+					    bufferPos[bufferStackPos]--;
 					break;
 				case '\'':
 					escaped = false;
@@ -2141,10 +2156,13 @@ public class Scanner2 implements IScanner, IScannerData {
 								escaped = false;
 						}
 					}
+					if( bufferPos[bufferStackPos] == bufferLimit[bufferStackPos] )
+					    bufferPos[bufferStackPos]--;
+					
 					break;
 				case '#' :
 				    if( stopAtPound ){
-						if( buffer[ bufferPos[bufferStackPos] + 1] != '#' ){
+						if( bufferPos[bufferStackPos] + 1 >= limit || buffer[ bufferPos[bufferStackPos] + 1] != '#' ){
 						    --bufferPos[bufferStackPos];
 						    return false;
 						} 

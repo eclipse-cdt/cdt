@@ -55,7 +55,10 @@ public class CompletionParser extends ContextualParser implements IParser {
 	 */
 	public IASTCompletionNode parse(int offset) {
 		scanner.setOffsetBoundary(offset);
+		//long startTime = System.currentTimeMillis();
 		translationUnit();
+		//long stopTime = System.currentTimeMillis();
+		//System.out.println("Completion Parse time: " + (stopTime - startTime) + "ms");
 		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ), getCompletionFunctionName(), getParameterListExpression() );
 	}
 

@@ -1,4 +1,7 @@
 2004-04-05 Andrew Niefer
+	added search/org/eclipse/cdt/core/search/tests/ClassDeclarationPatternTests.testBug54169()
+
+2004-04-05 Andrew Niefer
 	Added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testTemplateParametersInExpressions
 
 2004-04-04 John Camelon

@@ -80,7 +80,9 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			if( !( node instanceof IASTEnumerationSpecifier ) )
 				return IMPOSSIBLE_MATCH;
 		} else if ( !( node instanceof IASTClassSpecifier ) &&
-					!( node instanceof IASTElaboratedTypeSpecifier ) )
+					!( node instanceof IASTElaboratedTypeSpecifier ) &&
+					!( node instanceof IASTTypedefDeclaration ) &&
+					!( node instanceof IASTEnumerationSpecifier) )
 		{
 			return IMPOSSIBLE_MATCH;
 		}

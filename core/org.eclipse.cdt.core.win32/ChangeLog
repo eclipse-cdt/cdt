@@ -1,3 +1,8 @@
+2003-01-27 Alex Chapiro
+
+	* os/win32/x86/spawner.dll: Rebuild
+	* src/library/Win32ProcessEx.c: Synchronization error fix.
+
 2003-01-23 Alex Chapiro
 
 	* os/win32/x86/spawner.dll: Rebuild

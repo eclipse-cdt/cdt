@@ -308,7 +308,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		pCurProcInfo -> pid = pi.dwProcessId;
         h[0] = pCurProcInfo -> eventWait;
 		h[1] = (HANDLE)_beginthreadex(NULL, 0, waitProcTermination, 
-			(void *) &(pi.dwProcessId), 0, (UINT*) &dwThreadId);
+			(void *) pi.dwProcessId, 0, (UINT*) &dwThreadId);
 		
 		what = WaitForMultipleObjects(2, h, FALSE, INFINITE); 
 		if((what != WAIT_OBJECT_0) && (pCurProcInfo -> pid > 0)) // CreateProcess failed
@@ -509,12 +509,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 	pProcInfo_t pCurProcInfo = findProcInfo(uid);
 #ifdef DEBUG_MONITOR
 	char buffer[100];
-	sprintf(buffer, "Spawner received signal %i for process %i\n", signal, pCurProcInfo -> pid);
-	OutputDebugString(buffer);
 #endif
 	
 	if(NULL == pCurProcInfo)
 		return -1;
+
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "Spawner received signal %i for process %i\n", signal, pCurProcInfo -> pid);
+	OutputDebugString(buffer);
+#endif
 	
 	hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pCurProcInfo -> pid);
 
@@ -684,7 +687,7 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo)
 unsigned int _stdcall waitProcTermination(void* pv) 
 {
 	int i;
-	int pid = *(int *)pv;
+	int pid = (int)pv;
 	DWORD rc = 0;
 #ifdef DEBUG_MONITOR
 	char buffer[1000];

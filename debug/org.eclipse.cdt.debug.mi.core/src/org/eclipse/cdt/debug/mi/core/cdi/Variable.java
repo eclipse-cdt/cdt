@@ -88,7 +88,7 @@ public class Variable extends CObject implements ICDIVariable {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -107,7 +107,7 @@ public class Variable extends CObject implements ICDIVariable {
 			}
 			return info.isEditable();
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -126,7 +126,7 @@ public class Variable extends CObject implements ICDIVariable {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 

@@ -58,7 +58,7 @@ public class Value extends CObject implements ICDIValue {
 			}
 			result = info.getValue();
 		} catch (MIException e) {
-			//throw new CDIException(e.toString());
+			//throw new CDIException(e.getMessage());
 		}
 		return result;
 	}
@@ -85,7 +85,7 @@ public class Value extends CObject implements ICDIValue {
 					new Variable(variable.getStackFrame(), vars[i].getExp(), vars[i]);
 			}
 		} catch (MIException e) {
-			//throw new CDIException(e.toString());
+			//throw new CDIException(e.getMessage());
 		}
 		return variables;
 	}

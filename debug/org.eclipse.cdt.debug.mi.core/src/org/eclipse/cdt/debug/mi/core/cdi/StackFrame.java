@@ -79,11 +79,11 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 					cdiArgs = new ICDIArgument[0];
 				}
 			} catch (MIException e) {
-				//throw new CDIException(e.toString());
-				System.err.println(e);
+				//throw new CDIException(e.getMessage());
+				//System.err.println(e);
 			} catch (CDIException e) {
 				//throw e;
-				System.err.println(e);
+				//System.err.println(e);
 			}
 		}
 		if (cdiArgs == null) {
@@ -120,11 +120,11 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 				variables = new ICDIVariable[0];
 			}
 		} catch (MIException e) {
-			//throw new CDIException(e.toString());
-			System.err.println(e);
+			//throw new CDIException(e.getMessage());
+			//System.err.println(e);
 		} catch (CDIException e) {
 			//throw e;
-			System.err.println(e);
+			//System.err.println(e);
 		}
 		if (variables == null) {
 			variables = new ICDIVariable[0];
@@ -148,7 +148,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			}
 		} catch (CDIException e) {
 			//throw e;
-			System.err.println(e);
+			//System.err.println(e);
 		}
 		if (registers == null) {
 			registers = new ICDIRegister[0];

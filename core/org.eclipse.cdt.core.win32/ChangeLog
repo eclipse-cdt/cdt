@@ -1,4 +1,4 @@
-2002-1-21  Alain Magloire
+2002-10-21  Alain Magloire
 
 	* library/Win32ProcessEx.c (waitFor): Get the exit value of the process
 	not starter.exe

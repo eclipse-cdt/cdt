@@ -14,24 +14,25 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * This is the action group for all the resource navigator actions.
+ * This is the action group for all the view actions.
  * It delegates to several subgroups for most of the actions.
  * 
  * @see GotoActionGroup
- * @see OpenActionGroup
+ * @see OpenFileGroup
  * @see RefactorActionGroup
  * @see SortAndFilterActionGroup
  * @see WorkspaceActionGroup
  * 
- * @since 2.0
  */
 public abstract class CViewActionGroup extends ActionGroup {
 
@@ -81,10 +82,30 @@ public abstract class CViewActionGroup extends ActionGroup {
 	}
 
 	/**
+	 * Handles a key released event by invoking the appropriate action.
+	 * Does nothing by default.
+	 */
+	public void handleKeyReleased(KeyEvent event) {
+	}
+
+	/**
 	 * Makes the actions contained in this action group.
 	 */
 	protected abstract void makeActions();
 	
+	/**
+	 * Called when the context menu is about to open.
+	 * Override to add your own context dependent menu contributions.
+	 */
+	public abstract void fillContextMenu(IMenuManager menu);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+	 */
+	public abstract void fillActionBars(IActionBars actionBars);
+
+	public abstract void updateActionBars();
+
 	/**
 	 * Runs the default action in the group.
 	 * Does nothing by default.

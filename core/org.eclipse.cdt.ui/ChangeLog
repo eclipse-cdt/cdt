@@ -1,3 +1,15 @@
+2004-02-15 Alain Magloire
+
+	Reorganize the action of the CView and distribute them
+	in different action group.
+
+	New files:
+	* src/org/eclipse/cdt/internal/ui/cview/Buildgroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/OpenFileGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/OpenProjectGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/SelectionConverter.java
+	* src/org/eclipse/cdt/internal/ui/cview/GotoActionGroup.java
+
 2004-02-12 John Camelon
 	Updated Content Assist feature to not use IASTCompletionKind.SCOPED_REFERENCE
 

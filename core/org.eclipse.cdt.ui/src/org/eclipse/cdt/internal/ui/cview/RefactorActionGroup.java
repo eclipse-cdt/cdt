@@ -10,10 +10,7 @@
 ************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -57,13 +54,11 @@ public class RefactorActionGroup extends CViewActionGroup {
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = MainActionGroup.convertSelection(getCView().getViewer().getSelection());
-			//(IStructuredSelection) getContext().getSelection();
+		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
+		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
 
-		boolean anyResourceSelected =
-			!selection.isEmpty()
-				&& allResourcesAreOfType(selection,
-					IResource.PROJECT | IResource.FOLDER | IResource.FILE);
+		boolean anyResourceSelected = !selection.isEmpty()
+				&& SelectionConverter.allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
 		copyAction.selectionChanged(selection);
 		menu.add(copyAction);
@@ -116,7 +111,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
-				
+
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
 		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
@@ -131,8 +126,9 @@ public class RefactorActionGroup extends CViewActionGroup {
 		deleteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 	}
 
-	public void updateActions(IStructuredSelection selection) {
-		//IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
+	public void updateActionBars() {
+		IStructuredSelection celements = (IStructuredSelection) getContext().getSelection();
+		IStructuredSelection selection = SelectionConverter.convertSelectionToResources(celements);
 
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);
@@ -140,20 +136,4 @@ public class RefactorActionGroup extends CViewActionGroup {
 		moveAction.selectionChanged(selection);
 		renameAction.selectionChanged(selection);
 	}
-
-	public static boolean allResourcesAreOfType(IStructuredSelection selection, int resourceMask) {
-		Iterator resources = selection.iterator();
-		while (resources.hasNext()) {
-			Object next = resources.next();
-			IAdaptable element = (IAdaptable)next;
-			IResource resource = (IResource)element.getAdapter(IResource.class);
-			
-			if (resource == null)
-				return false;
-			if ((resource.getType() & resourceMask) == 0)
-				return false;
-		}
-		return true;
-	}
-	
 }

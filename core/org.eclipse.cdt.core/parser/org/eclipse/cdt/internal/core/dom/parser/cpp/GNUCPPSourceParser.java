@@ -3805,6 +3805,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       } else if (bitField != null) {
          IASTFieldDeclarator fl = createFieldDeclarator();
          fl.setBitFieldSize(bitField);
+         bitField.setParent( fl );
+         bitField.setPropertyInParent( IASTFieldDeclarator.FIELD_SIZE );
          d = fl;
       } else {
          d = createDeclarator();

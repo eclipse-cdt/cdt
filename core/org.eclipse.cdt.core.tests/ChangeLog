@@ -1,3 +1,9 @@
+2005-02-02 Tanya Wolff
+	added regression tests to AutomatedIntegrationSuite
+	* build.properties
+	* regression/org.eclipse.cdt.core.tests/SearchRegressionTests.java
+	* suite/org.eclipse.cdt.core.suite/AutomatedIntegrationSuite.java
+
 2005-01-31 Bogdan Gheorghe
 	Patch from Dave Daoust to streamline Index Manager Tests
 	

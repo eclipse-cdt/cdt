@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.search.tests.SearchTestSuite;
+import org.eclipse.cdt.core.tests.RegressionTestSuite;
 
 /**
  * @author vhirsl
@@ -61,6 +62,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(WorkingCopyTests.suite());
 		suite.addTest(SearchTestSuite.suite());
 		suite.addTest(DependencyTests.suite());
+		suite.addTest(RegressionTestSuite.suite());
 		//Indexer Tests need to be run after any indexer client tests
 		//as the last test shuts down the indexing thread
 		suite.addTest(IndexManagerTests.suite());

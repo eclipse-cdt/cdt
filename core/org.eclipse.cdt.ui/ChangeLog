@@ -1,3 +1,8 @@
+2005-04-04 Alain Magloire
+	Move to Eclipse-31M6
+	* src/org/eclipse/cdt/internal/ui/cview/CopyAction.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
+
 2005-03-30 Alain Magloire
 	Fix PR 87334
 	* src/org/eclipse/cdt/internal/ui/compare/CMergeViewer.java

@@ -29,8 +29,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
@@ -77,7 +75,8 @@ public class CopyAction extends SelectionListenerAction {
 		this.clipboard = clipboard;
 		setToolTipText(CViewMessages.getString("CopyAction.toolTip")); //$NON-NLS-1$
 		setId(CopyAction.ID);
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.COPY_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COPY_ACTION);
+
 	}
 	/**
 	 * Creates a new action.
@@ -151,7 +150,7 @@ public class CopyAction extends SelectionListenerAction {
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(shell, WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			if (MessageDialog.openQuestion(shell, CViewMessages.getString("CopyToClipboardProblemDialog.title"), CViewMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
 				setClipboard(resources, fileNames, names);
 		}
 	}

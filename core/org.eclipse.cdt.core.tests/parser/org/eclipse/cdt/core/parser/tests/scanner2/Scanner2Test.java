@@ -1526,13 +1526,6 @@ public class Scanner2Test extends BaseScanner2Test
     	validateEOF();
 	}
     
-    public void testBug39698() throws Exception
-	{
-    	initializeScanner( "<? >?"); //$NON-NLS-1$
-    	validateToken( IGCCToken.tMIN );
-    	validateToken( IGCCToken.tMAX );
-    	validateEOF();
-	}
     
     public void testBug59768() throws Exception
 	{

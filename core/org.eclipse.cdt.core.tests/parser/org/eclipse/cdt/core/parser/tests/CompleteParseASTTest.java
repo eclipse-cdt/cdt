@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
-import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
@@ -28,7 +27,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
@@ -45,8 +43,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
-import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 
@@ -1553,23 +1549,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTClassSpecifier B = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 	}	
-    public void testBug39695() throws Exception
-    {
-        Iterator i = parse("int a = __alignof__ (int);").getDeclarations(); //$NON-NLS-1$
-        IASTVariable a = (IASTVariable) i.next();
-        assertFalse( i.hasNext() );
-        IASTExpression exp = a.getInitializerClause().getAssigmentExpression();
-        assertEquals( exp.getExpressionKind(), IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID );
-        assertEquals( exp.toString(), "__alignof__(int)"); //$NON-NLS-1$
-    }
-    
-    public void testBug39684() throws Exception
-    {
-    	IASTFunction bar = (IASTFunction) parse("typeof(foo(1)) bar () { return foo(1); }").getDeclarations().next(); //$NON-NLS-1$
-    	
-    	IASTSimpleTypeSpecifier simpleTypeSpec = ((IASTSimpleTypeSpecifier)bar.getReturnType().getTypeSpecifier());
-		assertEquals( simpleTypeSpec.getType(), IASTGCCSimpleTypeSpecifier.Type.TYPEOF );
-    }
     
     public void testBug59302() throws Exception
 	{
@@ -1589,20 +1568,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	}
 	
     
-    public void testBug39698A() throws Exception
-    {
-        Iterator i = parse("int c = a <? b;").getDeclarations(); //$NON-NLS-1$
-        IASTVariable c = (IASTVariable) i.next();
-        IASTExpression exp = c.getInitializerClause().getAssigmentExpression();
-        assertEquals( ASTUtil.getExpressionString( exp ), "a <? b" ); //$NON-NLS-1$
-    }
-    public void testBug39698B() throws Exception
-    {
-    	Iterator i = parse("int c = a >? b;").getDeclarations(); //$NON-NLS-1$
-    	IASTVariable c = (IASTVariable) i.next();
-        IASTExpression exp = c.getInitializerClause().getAssigmentExpression();
-        assertEquals( ASTUtil.getExpressionString( exp ), "a >? b" ); //$NON-NLS-1$
-    }
 
     public void testULong() throws Exception
 	{

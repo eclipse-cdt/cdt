@@ -11,17 +11,12 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
@@ -63,23 +58,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 			ASTCompletionNode completionNode = CDOM.getInstance().getCompletionNode(
 				(IFile)workingCopy.getResource(),
 				offset,
-				new ICodeReaderFactory() {
-					public CodeReader createCodeReaderForTranslationUnit(String path) {
-						return new CodeReader(path, viewer.getDocument().get().toCharArray());
-					}
-					public CodeReader createCodeReaderForInclusion(String path) {
-						return ParserUtil.createReader(path,
-							Arrays.asList(CUIPlugin.getSharedWorkingCopies()).iterator());
-					}
-					public int getUniqueIdentifier() {
-						return 99;
-					}
-					public ICodeReaderCache getCodeReaderCache() {
-						// TODO this is useless
-						return null;
-					}
-				}
-			);
+				CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
 			long stopTime = System.currentTimeMillis();
 
 			List proposals = new ArrayList();

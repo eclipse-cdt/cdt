@@ -7,19 +7,25 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICSourceLocator;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -38,8 +44,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.internal.core.CSourceLocator;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -154,6 +162,11 @@ public class CDebugTarget extends CDebugElement
 	private ICSourceLocator fSourceLocator = null;
 
 	/**
+	 * Collection of breakpoints added to this target. Values are of type <code>ICBreakpoint</code>.
+	 */
+	private HashMap fBreakpoints;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -171,9 +184,10 @@ public class CDebugTarget extends CDebugElement
 		setName( name );
 		setProcess( process );
 		setCDITarget( cdiTarget );
-		fConfig = cdiTarget.getSession().getConfiguration();
-		fSupportsTerminate = allowsTerminate & fConfig.supportsTerminate();
-		fSupportsDisconnect = allowsDisconnect & fConfig.supportsDisconnect();
+		setBreakpoints( new HashMap( 5 ) );
+		setConfiguration( cdiTarget.getSession().getConfiguration() );
+		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
+		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
 		fSourceLocator = createSourceLocator( project );
 		launch.setSourceLocator( fSourceLocator );
 		setThreadList( new ArrayList( 5 ) );
@@ -229,6 +243,10 @@ public class CDebugTarget extends CDebugElement
 		IBreakpoint[] bps = (IBreakpoint[])manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
 		for ( int i = 0; i < bps.length; i++ )
 		{
+			if ( bps[i] instanceof ICBreakpoint ) 
+			{
+				breakpointAdded( (ICBreakpoint)bps[i] );
+			}
 		}
 	}
 
@@ -293,6 +311,8 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean supportsBreakpoint( IBreakpoint breakpoint )
 	{
+		if ( !getConfiguration().supportsBreakpoints() )
+			return false;
 		return false;
 	}
 
@@ -512,6 +532,38 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void breakpointAdded( IBreakpoint breakpoint )
 	{
+		if ( !isAvailable() )
+		{
+			return;
+		}
+		if ( supportsBreakpoint( breakpoint ) )
+		{
+			try
+			{
+				if ( breakpoint instanceof ICLineBreakpoint )
+				{
+					setLineBreakpoint( (ICLineBreakpoint)breakpoint );
+				}
+			}
+			catch( DebugException e )
+			{
+				CDebugCorePlugin.log( e );
+			}
+/*
+			try
+			{
+				( (CBreakpoint)breakpoint).addToTarget( this );
+				if ( !getBreakpoints().contains( breakpoint ) )
+				{
+					getBreakpoints().add( breakpoint );
+				}	
+			}
+			catch( CoreException e )
+			{
+				logError( e );
+			}
+*/
+		}
 	}
 
 	/* (non-Javadoc)
@@ -535,7 +587,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected boolean supportsDisconnect()
 	{
-		return fConfig.supportsDisconnect();
+		return getConfiguration().supportsDisconnect();
 	}
 	
 	/**
@@ -545,7 +597,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected boolean supportsTerminate()
 	{
-		return fConfig.supportsTerminate();
+		return getConfiguration().supportsTerminate();
 	}
 
 	/* (non-Javadoc)
@@ -761,7 +813,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canRestart()
 	{
-		return fConfig.supportsRestart() && isSuspended() && isAvailable();
+		return getConfiguration().supportsRestart() && isSuspended() && isAvailable();
 	}
 
 	/* (non-Javadoc)
@@ -1278,6 +1330,69 @@ public class CDebugTarget extends CDebugElement
 		if ( currentCDIThread == null && !getThreadList().isEmpty() )
 		{
 			((CThread)getThreadList().get( 0 )).setCurrent( true );
+		}
+	}
+
+	/**
+	 * Returns the map of breakpoints installed in this debug target.
+	 * 
+	 * @return map of installed breakpoints
+	 */
+	protected HashMap getBreakpoints()
+	{
+		return fBreakpoints;
+	}
+
+	/**
+	 * Sets the map of breakpoints installed in this debug target. 
+	 * 
+	 * @param breakpoints breakpoints map
+	 */
+	private void setBreakpoints( HashMap breakpoints )
+	{
+		fBreakpoints = breakpoints;
+	}
+	
+	/**
+	 * Returns the debug configuration of this target.
+	 * 
+	 * @return the debug configuration of this target
+	 */
+	protected ICDIConfiguration getConfiguration()
+	{
+		return fConfig;
+	}
+	
+	/**
+	 * Sets the debug configuration of this target.
+	 * 
+	 * @param config the debug configuration to set
+	 */
+	private void setConfiguration( ICDIConfiguration config )
+	{
+		fConfig = config;
+	}
+
+	private void setLineBreakpoint( ICLineBreakpoint breakpoint ) throws DebugException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().toString(), null, breakpoint.getLineNumber() );
+			ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+			ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+			if ( !getBreakpoints().containsKey( breakpoint ) )
+			{
+				getBreakpoints().put( breakpoint, cdiBreakpoint );
+			}
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
 		}
 	}
 }

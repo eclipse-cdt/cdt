@@ -6,14 +6,12 @@ package org.eclipse.cdt.testplugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
@@ -22,8 +20,8 @@ public class CTestPlugin extends Plugin {
 	
 	private static CTestPlugin fgDefault;
 	
-	public CTestPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public CTestPlugin() {
+		super();
 		fgDefault= this;
 	}
 	
@@ -45,14 +43,10 @@ public class CTestPlugin extends Plugin {
 	
 	public File getFileInPlugin(IPath path) {
 		try {
-			URL installURL= new URL(getDescriptor().getInstallURL(), path.toString());
-			URL localURL= Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
+			return new File(Platform.asLocalURL(find(path)).getFile());
 		} catch (IOException e) {
 			return null;
 		}
 	}
-	
-		
 
 }

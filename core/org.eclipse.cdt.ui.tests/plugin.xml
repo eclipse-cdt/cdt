@@ -18,10 +18,10 @@
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.cdt.core.tests"/>
       <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
    <extension

@@ -1,3 +1,21 @@
+2003-07-03 Bogdan Gheorghe
+	Added support for adding individual source files to the
+	index.
+	
+	Added support for removing projects/individual files from
+	index.
+	
+	* src/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
+	Added a method to cancel indexing requests when a project is 
+	deleted.
+	
+	Changed create(ICElement parent, IFile file, IBinaryFile bin) to
+	check if a file is a TranslationUnit before doing anything else.
+	This was done to fix Bug 39574.
+	
+	* src/org/eclipse/cdt/internal/core/model/CModelManager.java
+	
 2003-06-26 Sean Evoy
 	Added methods to add and extract include paths and preprocessor 
 	symbols from standard make C and C++ projects.

@@ -211,6 +211,10 @@ public class CModelManager implements IResourceChangeListener {
 
 	public synchronized ICElement create(ICElement parent, IFile file, IBinaryFile bin) {
 		ICElement cfile = null;
+		
+		if (isTranslationUnit(file)) {
+			cfile = new TranslationUnit(parent, file);}
+						
 		if (file.exists()) {
 			// Try to create the binaryFile first.
 			if (bin == null) {
@@ -222,8 +226,6 @@ public class CModelManager implements IResourceChangeListener {
 				} else {
 					cfile = new Binary(parent, file, bin);
 				}
-			} else if (isTranslationUnit(file)) {
-				cfile = new TranslationUnit(parent, file);
 			} 
 		}
 		// Added also to the Containers
@@ -545,9 +547,16 @@ public class CModelManager implements IResourceChangeListener {
 
 		if (event.getSource() instanceof IWorkspace) {
 			IResourceDelta delta = event.getDelta();
+			IResource resource = event.getResource();
 			switch(event.getType()){
 				case IResourceChangeEvent.PRE_DELETE :
-					// Do something relevant?
+				try{
+					if (resource.getType() == IResource.PROJECT && 	
+					    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+					      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+						this.deleting((IProject) resource);}
+				}catch (CoreException e){
+				}
 				break;
 
 				case IResourceChangeEvent.PRE_AUTO_BUILD :
@@ -761,6 +770,11 @@ public class CModelManager implements IResourceChangeListener {
 	
 	public IndexManager getIndexManager() {
 		return this.fDeltaProcessor.indexManager;
+	}
+	
+	public void deleting(IProject project){
+		//	discard all indexing jobs for this project
+		this.getIndexManager().discardJobs(project.getName());
 	}
 	
 }

@@ -1,5 +1,7 @@
+2003-07-03 Bogdan Gheorghe
+	Updated copyright notices.
+	
 2003-06-25 Bogdan Gheorghe
-
 	Added new Indexer framework:
 	
 	* index/org/eclipse/cdt/internal/core/index/IDocument.java

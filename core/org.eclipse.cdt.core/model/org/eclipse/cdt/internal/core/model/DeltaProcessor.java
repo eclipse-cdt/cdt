@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -454,11 +455,16 @@ public class DeltaProcessor {
 	
 		if (indexManager == null)
 			return;
-
+		
 	    switch (element.getElementType()) {
 			case ICElement.C_PROJECT :
 					this.indexManager.indexAll(element.getCProject().getProject());
 					break;
+	
+			case ICElement.C_UNIT:
+				IFile file = (IFile) delta.getResource();
+				indexManager.addSource(file, file.getProject().getProject().getFullPath());
+				break;						
 	    }
 		
 	}
@@ -466,7 +472,6 @@ public class DeltaProcessor {
 	protected void updateIndexRemoveResource(ICElement element, IResourceDelta delta) {
 		//CModelManager.getDefault().getIndexManager().removeResource(delta.getResource());
 	
-	/*
 		if (indexManager == null)
 						return;
 
@@ -475,13 +480,15 @@ public class DeltaProcessor {
 						this.indexManager.removeIndexFamily(element.getCProject().getProject().getFullPath());
 						// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
 						break;
-						// NB: Update of index if project is opened, closed, or its java nature is added or removed
+						// NB: Update of index if project is opened, closed, or its c nature is added or removed
 						//     is done in updateCurrentDeltaAndIndex
 						
+			case ICElement.C_UNIT:
+						IFile file = (IFile) delta.getResource();
+						indexManager.remove(file.getFullPath().toString(), file.getProject().getProject().getFullPath());
+						break;				
 		}
-		*/
-	}
 	
 
 	}
-
+}

@@ -10,7 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
+import org.eclipse.core.runtime.IPath;
+
 public class UnknownTypeInfo extends TypeInfo {
+    
+    public UnknownTypeInfo(String name, IPath path) {
+		this(new QualifiedTypeName(name));
+		if (path != null) {
+		    addReference(new TypeReference(path, null));
+		}
+    }
 
 	public UnknownTypeInfo(IQualifiedTypeName typeName) {
 		super(0, typeName);

@@ -47,12 +47,4 @@ public interface ICDIExpression extends ICDIObject {
 	 */
 	ICDIValue getValue(ICDIStackFrame context) throws CDIException;
 
-	/**
-	 * Return the type of this expression
-	 * 
-	 * @param context frame context
-	 * @return
-	 * @throws CDIException
-	 */
-	ICDIType getType(ICDIStackFrame context) throws CDIException;
 }

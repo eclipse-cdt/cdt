@@ -80,6 +80,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	protected DeltaProcessor fDeltaProcessor = new DeltaProcessor();
 
+	protected ResolverProcessor fResolverProcessor = new ResolverProcessor();
+
 	/**
 	 * Queue of deltas created explicily by the C Model that
 	 * have yet to be fired.
@@ -738,21 +740,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * @see org.eclipse.cdt.core.filetype.IResolverChangeListener#resolverChanged(org.eclipse.cdt.core.filetype.ResolverChangeEvent)
 	 */
 	public void resolverChanged(ResolverChangeEvent[] events) {
-		// TODO Auto-generated method stub
-//		boolean isProjectSpecific = false;
-//		ICElement element = null;
-//		ResolverDelta[] deltas = event.getDeltas();
-//		for (int i = 0; i < deltas.length; i++) {
-//			ResolverDelta delta = deltas[i];
-//			int type = delta.getElementType();
-//			if (type == ResolverDelta.ELEMENT_PROJECT) {
-//				IProject p = delta.getProject();
-//				element = create(p);
-//			} else if (type == ResolverDelta.ELEMENT_WORKSPACE) {
-//				element = getCModel();
-//			}
-//			System.out.println(delta);
-//		}
+		fResolverProcessor.processResolverChanges(events);
 	}
 
 	public void fire(int eventType) {

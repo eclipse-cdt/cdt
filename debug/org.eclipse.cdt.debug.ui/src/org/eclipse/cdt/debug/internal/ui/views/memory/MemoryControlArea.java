@@ -6,9 +6,13 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
+import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
-import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -29,11 +33,17 @@ public class MemoryControlArea extends Composite
 {
 	private MemoryPresentation fPresentation;
 	private int fIndex = 0;
-	private IFormattedMemoryRetrieval fInput = null;
-	private IFormattedMemoryBlock fMemoryBlock = null;
+	private ICMemoryManager fMemoryManager = null;
 
 	private Text fAddressText;
 	private MemoryText fMemoryText;
+	
+	private int fFormat = ICMemoryManager.MEMORY_FORMAT_HEX;
+	private int fWordSize = ICMemoryManager.MEMORY_SIZE_BYTE;
+	private int fNumberOfRows = 40;
+	private int fNumberOfColumns = 16;
+	private char fPaddingChar = '.';
+
 	/**
 	 * Constructor for MemoryControlArea.
 	 * @param parent
@@ -50,7 +60,7 @@ public class MemoryControlArea extends Composite
 										  GridData.GRAB_VERTICAL );
 		setLayout( layout );
 		setLayoutData( gridData );
-		fIndex = index;
+		setIndex( index );
 		fPresentation = createPresentation();
 		fAddressText = createAddressText( this );
 		fMemoryText = createMemoryText( this, style, fPresentation );
@@ -104,7 +114,23 @@ public class MemoryControlArea extends Composite
 
 	protected void handleAddressEnter()
 	{
-//		String address = fAddressText.getText().trim();
+		if ( getMemoryManager() != null )
+		{
+			String address = fAddressText.getText().trim();
+			try
+			{
+				removeBlock();
+				if ( address.length() > 0 )
+				{
+					createBlock( address );
+				}
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( "Unable to get memory block.", e.getStatus() );
+			}
+			refresh();
+		}
 	}
 
 	public void propertyChange( PropertyChangeEvent event )
@@ -140,19 +166,35 @@ public class MemoryControlArea extends Composite
 		}
 	}
 	
-	public void setInput( IFormattedMemoryRetrieval input )
+	public void setInput( Object input )
 	{
-		fInput = input;
-//		fMemoryBlock = CDebugUIPlugin.getDefault().getBlock( fInput, fIndex );
-		fPresentation.setMemoryBlock( fMemoryBlock );
-		refresh();		
+		setMemoryManager( ( input instanceof ICMemoryManager ) ? (ICMemoryManager)input : null );
+		getPresentation().setMemoryBlock( getMemoryBlock() );
+		setAddressTextState();
+		refresh();
 	}
 	
 	private void refresh()
 	{
-		fAddressText.setText( fPresentation.getStartAddress() );
+		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" );
 		fMemoryText.refresh();
 	}
+	
+	protected void setMemoryManager( ICMemoryManager mm )
+	{
+		fMemoryManager = mm;
+	}
+
+	protected ICMemoryManager getMemoryManager()
+	{
+		return fMemoryManager;
+	}
+	
+	protected IFormattedMemoryBlock getMemoryBlock()
+	{
+		return ( getMemoryManager() != null ) ? getMemoryManager().getBlock( getIndex() ) : null;
+	}
+
 /*	
 	private void updatePresentation( PropertyChangeEvent event )
 	{
@@ -178,4 +220,99 @@ public class MemoryControlArea extends Composite
 		}
 	}
 */
+
+	protected int getIndex()
+	{
+		return fIndex;
+	}
+
+	protected void setIndex( int index )
+	{
+		fIndex = index;
+	}
+
+	private void createBlock( String address ) throws DebugException
+	{
+		if ( getMemoryManager() != null )
+		{
+			getMemoryManager().setBlockAt( getIndex(), 
+										   CDebugModel.createFormattedMemoryBlock( (IDebugTarget)getMemoryManager().getAdapter( IDebugTarget.class ),
+										   										   address,
+																				   getFormat(),
+																				   getWordSize(),
+																				   getNumberOfRows(),
+																				   getNumberOfColumns(),
+																				   getPaddingChar() ) );
+			getPresentation().setMemoryBlock( getMemoryBlock() );
+		}
+	}
+	
+	private void removeBlock() throws DebugException
+	{
+		if ( getMemoryManager() != null )
+		{
+			getMemoryManager().removeBlock( getIndex() );
+			getPresentation().setMemoryBlock( null );
+		}
+	}
+
+	public int getFormat()
+	{
+		return fFormat;
+	}
+
+	public int getNumberOfColumns()
+	{
+		return fNumberOfColumns;
+	}
+
+	public int getNumberOfRows()
+	{
+		return fNumberOfRows;
+	}
+
+	public char getPaddingChar()
+	{
+		return fPaddingChar;
+	}
+
+	public int getWordSize()
+	{
+		return fWordSize;
+	}
+
+	public void setFormat(int format)
+	{
+		fFormat = format;
+	}
+
+	public void setNumberOfColumns( int numberOfColumns )
+	{
+		fNumberOfColumns = numberOfColumns;
+	}
+
+	public void setNumberOfRows( int numberOfRows )
+	{
+		fNumberOfRows = numberOfRows;
+	}
+
+	public void setPaddingChar( char paddingChar )
+	{
+		fPaddingChar = paddingChar;
+	}
+
+	public void setWordSize( int wordSize )
+	{
+		fWordSize = wordSize;
+	}
+	
+	private void enableAddressText( boolean enable )
+	{
+		fAddressText.setEnabled( enable );
+	}
+	
+	protected void setAddressTextState()
+	{
+		enableAddressText( getMemoryManager() != null );
+	}
 }

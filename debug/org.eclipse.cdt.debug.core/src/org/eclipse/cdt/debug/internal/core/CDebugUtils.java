@@ -77,4 +77,31 @@ public class CDebugUtils
 		sb.append( addressString );
 		return sb.toString();
 	}
+
+	public static char[] getByteText( byte b )
+	{
+		return new char[]{ charFromByte( (byte)((b >>> 4) & 0x0f) ), 
+						   charFromByte( (byte)(b & 0x0f) ) };
+	}
+
+	public static char charFromByte( byte value )
+	{
+		if ( value >= 0x0 && value <= 0x9 )
+			return (char)(value + '0');
+		if ( value >= 0xa && value <= 0xf )
+			return (char)(value - 0xa + 'a');
+		return '0';
+	}
+	
+	public static char bytesToChar( byte[] bytes )
+	{
+		try
+		{
+			return (char)Short.parseShort( new String( bytes ), 16 );
+		}
+		catch( RuntimeException e )
+		{
+		}
+		return 0;
+	} 
 }

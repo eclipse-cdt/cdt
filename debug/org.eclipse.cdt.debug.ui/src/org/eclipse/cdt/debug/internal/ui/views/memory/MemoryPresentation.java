@@ -63,7 +63,7 @@ public class MemoryPresentation
 	public String getText()
 	{
 		fAddressZones.clear();
-		IFormattedMemoryBlockRow[] rows = fBlock.getRows();
+		IFormattedMemoryBlockRow[] rows = ( getMemoryBlock() != null ) ? getMemoryBlock().getRows() : new IFormattedMemoryBlockRow[0];
 		String text = new String();
 		for ( int i = 0; i < rows.length; ++i )
 		{
@@ -111,6 +111,11 @@ public class MemoryPresentation
 	public String getStartAddress()
 	{
 		return ( fBlock != null ) ? getAddressString( fBlock.getStartAddress() ) : ""; 
+	}
+
+	public String getAddressExpression()
+	{
+		return ( fBlock != null ) ? fBlock.getAddressExpression() : "";
 	}
 
 	private String getInterval( int length )

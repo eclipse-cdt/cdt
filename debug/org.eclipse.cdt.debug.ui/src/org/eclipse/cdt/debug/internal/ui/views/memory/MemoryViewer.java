@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
-import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
+import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -64,7 +64,7 @@ public class MemoryViewer extends ContentViewer
 				tabItem.setControl( fMemoryControlAreas[i] );			
 			}
 			fTabFolder.setSelection( 0 );				
-		}		
+		}
 		return fControl;
 	}
 
@@ -100,10 +100,7 @@ public class MemoryViewer extends ContentViewer
 	
 	protected void inputChanged( Object input, Object oldInput )
 	{
-		if ( input instanceof IFormattedMemoryRetrieval )
-		{
-			for ( int i = 0; i < fMemoryControlAreas.length; ++i )
-				fMemoryControlAreas[i].setInput( (IFormattedMemoryRetrieval)input );
-		}
+		for ( int i = 0; i < fMemoryControlAreas.length; ++i )
+			fMemoryControlAreas[i].setInput( (ICMemoryManager)input );
 	}
 }

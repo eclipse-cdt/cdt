@@ -5,14 +5,13 @@
  */
 package org.eclipse.cdt.debug.internal.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
+import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IMemoryBlock;
 
 /**
  * Enter type comment.
@@ -21,7 +20,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  */
 public class CMemoryManager implements ICMemoryManager
 {
-	private List fBlocks;
+	private IFormattedMemoryBlock[] fBlocks = new IFormattedMemoryBlock[4];
 	private CDebugTarget fDebugTarget;
 
 	/**
@@ -29,45 +28,43 @@ public class CMemoryManager implements ICMemoryManager
 	 */
 	public CMemoryManager( CDebugTarget target )
 	{
-		fBlocks = new ArrayList( 4 );
+		Arrays.fill( fBlocks, null );
 		setDebugTarget( target );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#addBlock(IMemoryBlock)
+	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#removeBlock(IFormattedMemoryBlock)
 	 */
-	public void addBlock( IMemoryBlock memoryBlock ) throws DebugException
-	{
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#removeBlock(IMemoryBlock)
-	 */
-	public void removeBlock( IMemoryBlock memoryBlock ) throws DebugException
+	public synchronized void removeBlock( IFormattedMemoryBlock memoryBlock ) throws DebugException
 	{
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#removeAllBlocks()
 	 */
-	public void removeAllBlocks() throws DebugException
+	public synchronized void removeAllBlocks() throws DebugException
 	{
+		for ( int i = 0; i < fBlocks.length; ++i )
+		{
+			fBlocks[i].dispose();
+			fBlocks[i] = null;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#getBlock(int)
 	 */
-	public IMemoryBlock getBlock( int index )
+	public IFormattedMemoryBlock getBlock( int index )
 	{
-		return null;
+		return ( index >= 0 && index < fBlocks.length ) ? fBlocks[index] : null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#getBlocks()
 	 */
-	public IMemoryBlock[] getBlocks()
+	public IFormattedMemoryBlock[] getBlocks()
 	{
-		return null;
+		return fBlocks;
 	}
 
 	/* (non-Javadoc)
@@ -102,5 +99,39 @@ public class CMemoryManager implements ICMemoryManager
 	
 	public void dispose()
 	{
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#removeBlock(int)
+	 */
+	public synchronized void removeBlock( int index ) throws DebugException
+	{
+		IFormattedMemoryBlock block = getBlock( index );
+		if ( block != null )
+		{
+			block.dispose();
+		}
+		setBlockAt( index, null );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#setBlockAt(int, IFormattedMemoryBlock)
+	 */
+	public synchronized void setBlockAt( int index, IFormattedMemoryBlock memoryBlock ) throws DebugException
+	{
+		IFormattedMemoryBlock block = getBlock( index );
+		if ( block != null )
+		{
+			block.dispose();
+		}
+		fBlocks[index] = memoryBlock;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICMemoryManager#getSupportedFormats()
+	 */
+	public int[] getSupportedFormats() throws DebugException
+	{
+		return new int[0];
 	}
 }

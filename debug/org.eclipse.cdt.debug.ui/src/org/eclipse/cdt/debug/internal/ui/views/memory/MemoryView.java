@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
+import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -12,7 +13,6 @@ import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
@@ -64,6 +64,8 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	protected void createActions()
 	{
+		// set initial content here, as viewer has to be set
+		setInitialContent();
 	}
 
 	/* (non-Javadoc)
@@ -94,6 +96,10 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	public void selectionChanged( IWorkbenchPart part, ISelection selection )
 	{
+		if ( selection instanceof IStructuredSelection ) 
+		{
+			setViewerInput( (IStructuredSelection)selection );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -126,28 +132,23 @@ public class MemoryView extends AbstractDebugEventHandlerView
 
 	protected void setViewerInput( IStructuredSelection ssel )
 	{
-		IMemoryBlockRetrieval memoryBlockRetrieval = null;
-		if ( ssel.size() == 1 )
+		ICMemoryManager mm = null;
+		if ( ssel != null && ssel.size() == 1 )
 		{
 			Object input = ssel.getFirstElement();
 			if ( input instanceof IDebugElement )
 			{
-				memoryBlockRetrieval = (IMemoryBlockRetrieval)((IDebugElement)input).getDebugTarget();
+				mm = (ICMemoryManager)((IDebugElement)input).getDebugTarget().getAdapter( ICMemoryManager.class );
 			}
 		}
 
 		Object current = getViewer().getInput();
-		if ( current == null && memoryBlockRetrieval == null )
-		{
-			return;
-		}
-
-		if ( current != null && current.equals( memoryBlockRetrieval ) )
+		if ( current != null && current.equals( mm ) )
 		{
 			return;
 		}
 		showViewer();
-		getViewer().setInput( memoryBlockRetrieval );
+		getViewer().setInput( mm );
 	}
 	
 	private IContentProvider createContentProvider()
@@ -174,4 +175,21 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	{
 		return new MemoryViewEventHandler( this );
 	}	
+
+	/**
+	 * Initializes the viewer input on creation
+	 */
+	protected void setInitialContent()
+	{
+		ISelection selection =
+			getSite().getPage().getSelection( IDebugUIConstants.ID_DEBUG_VIEW );
+		if ( selection instanceof IStructuredSelection && !selection.isEmpty() )
+		{
+			setViewerInput( (IStructuredSelection)selection );
+		}
+		else
+		{
+			setViewerInput( null );
+		}
+	}
 }

@@ -294,7 +294,7 @@ public class CDebugModel
 
 	public static ICWatchpoint watchpointExists( IResource resource, boolean write, boolean read, String expression ) throws CoreException
 	{
-			String modelId = getPluginIdentifier();
+		String modelId = getPluginIdentifier();
 		String markerType = CWatchpoint.getMarkerType();
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
@@ -359,7 +359,7 @@ public class CDebugModel
 	}
 
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, 
-																	long startAddress,
+																	String startAddress,
 																    int format,
 																    int wordSize,
 																    int numberOfRows,
@@ -375,6 +375,7 @@ public class CDebugModel
 																	   .createMemoryBlock( startAddress, wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, 
 												  cdiMemoryBlock,
+												  startAddress,
 												  format,
 												  wordSize,
 												  numberOfRows,
@@ -394,7 +395,7 @@ public class CDebugModel
 	}
 
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, 
-																	long startAddress,
+																	String startAddress,
 																    int format,
 																    int wordSize,
 																    int numberOfRows,
@@ -409,6 +410,7 @@ public class CDebugModel
 																	   .createMemoryBlock( startAddress, wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, 
 												  cdiMemoryBlock,
+												  startAddress,
 												  format,
 												  wordSize,
 												  numberOfRows,

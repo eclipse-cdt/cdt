@@ -18,6 +18,13 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 public interface IFormattedMemoryBlock extends IMemoryBlock
 {
 	/**
+	 * Returns the address expression specified to obtain this memory block.
+	 * 
+	 * @return the address expression
+	 */
+	public String getAddressExpression();
+
+	/**
 	 * Returns the format of the memory words of this block.
 	 * 
 	 * @return The format of the memory words of this block
@@ -79,4 +86,5 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 				   int numberOfRows,
 				   int numberOfColumns,
 				   char paddingChar ) throws DebugException;
+	void dispose();
 }

@@ -5,9 +5,14 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -17,13 +22,56 @@ import org.eclipse.debug.core.DebugException;
  */
 public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMemoryBlock
 {
+	class CFormattedMemoryBlockRow implements IFormattedMemoryBlockRow
+	{
+		private long fAddress;
+		private String[] fData;
+		private String fAscii;
+
+		/**
+		 * Constructor for CFormattedMemoryBlockRow.
+		 */
+		public CFormattedMemoryBlockRow( long address, String[] data, String ascii )
+		{
+			fAddress = address;
+			fData = data;
+			fAscii = ascii;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow#getAddress()
+		 */
+		public long getAddress()
+		{
+			return fAddress;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow#getASCII()
+		 */
+		public String getASCII()
+		{
+			return fAscii;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow#getData()
+		 */
+		public String[] getData()
+		{
+			return fData;
+		}
+	}
+
+	private String fAddressExpression;
 	private ICDIMemoryBlock fCDIMemoryBlock;
 	private int fFormat;
 	private int fWordSize;
 	private int fNumberOfRows;
 	private int fNumberOfColumns;
 	private boolean fDisplayAscii = true;
-	private char fPaddingChar = 0;
+	private char fPaddingChar = '.';
+	private List fRows = null;
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -31,6 +79,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public CFormattedMemoryBlock( CDebugTarget target,
 								  ICDIMemoryBlock cdiMemoryBlock,
+								  String addressExpression,
 								  int format,
 						  		  int wordSize,
 						  		  int numberOfRows,
@@ -38,6 +87,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	{
 		super( target );
 		fCDIMemoryBlock = cdiMemoryBlock;
+		fAddressExpression = addressExpression;
 		fFormat = format;
 		fWordSize = wordSize;
 		fNumberOfRows = numberOfRows;
@@ -52,6 +102,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public CFormattedMemoryBlock( CDebugTarget target,
 								  ICDIMemoryBlock cdiMemoryBlock,
+								  String addressExpression,
 								  int format,
 						  		  int wordSize,
 						  		  int numberOfRows,
@@ -60,12 +111,13 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	{
 		super( target );
 		fCDIMemoryBlock = cdiMemoryBlock;
+		fAddressExpression = addressExpression;
 		fFormat = format;
 		fWordSize = wordSize;
 		fNumberOfRows = numberOfRows;
 		fNumberOfColumns = numberOfColumns;
 		fDisplayAscii = true;
-		fPaddingChar = paddingChar;
+		fPaddingChar = paddingChar;		
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +125,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public int getFormat()
 	{
-		return 0;
+		return fFormat;
 	}
 
 	/* (non-Javadoc)
@@ -81,7 +133,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public int getWordSize()
 	{
-		return 0;
+		return fWordSize;
 	}
 
 	/* (non-Javadoc)
@@ -89,7 +141,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public int getNumberOfRows()
 	{
-		return 0;
+		return fNumberOfRows;
 	}
 
 	/* (non-Javadoc)
@@ -97,7 +149,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public int getNumberOfColumns()
 	{
-		return 0;
+		return fNumberOfColumns;
 	}
 
 	/* (non-Javadoc)
@@ -105,7 +157,7 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public boolean displayASCII()
 	{
-		return false;
+		return fDisplayAscii;
 	}
 
 	/* (non-Javadoc)
@@ -113,7 +165,28 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public IFormattedMemoryBlockRow[] getRows()
 	{
-		return null;
+		if ( fRows == null )
+		{
+			fRows = new ArrayList();
+			try
+			{
+				int offset = 0;
+				byte[] bytes = getBytes();
+				while( offset < bytes.length )
+				{
+					int length = Math.min( fWordSize * fNumberOfColumns, bytes.length - offset );
+					fRows.add( new CFormattedMemoryBlockRow( getStartAddress() + offset, 
+															 createData( bytes, offset, length ),
+															 createAscii( bytes, offset, length ) ) );
+					offset += length;
+				}
+				
+			}
+			catch( DebugException e )
+			{
+			}
+		}
+		return (IFormattedMemoryBlockRow[])fRows.toArray( new IFormattedMemoryBlockRow[fRows.size()] );
 	}
 
 	/* (non-Javadoc)
@@ -174,6 +247,10 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public long getStartAddress()
 	{
+		if ( fCDIMemoryBlock != null )
+		{
+			return fCDIMemoryBlock.getStartAddress();
+		}
 		return 0;
 	}
 
@@ -182,6 +259,10 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public long getLength()
 	{
+		if ( fCDIMemoryBlock != null )
+		{
+			return fCDIMemoryBlock.getLength();
+		}
 		return 0;
 	}
 
@@ -190,7 +271,18 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public byte[] getBytes() throws DebugException
 	{
-		return null;
+		if ( fCDIMemoryBlock != null )
+		{
+			try
+			{
+				return fCDIMemoryBlock.getBytes();
+			}
+			catch( CDIException e )
+			{
+				targetRequestFailed( e.getMessage(), null );
+			}
+		}
+		return new byte[0];
 	}
 
 	/* (non-Javadoc)
@@ -213,7 +305,51 @@ public class CFormattedMemoryBlock extends CDebugElement implements IFormattedMe
 	 */
 	public char getPaddingCharacter()
 	{
-		return 0;
+		return fPaddingChar;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#dispose()
+	 */
+	public void dispose()
+	{
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#getAddressExpression()
+	 */
+	public String getAddressExpression()
+	{
+		return fAddressExpression;
+	}
+	
+	private String[] createData( byte[] bytes, int offset, int length )
+	{
+		List data = new ArrayList( length / getWordSize() );
+		for ( int i = offset; i < offset + length; i += getWordSize() )
+		{
+			data.add( createDataItem( bytes, i, Math.min( length + offset - i, getWordSize() ) ) );
+		}
+		return (String[])data.toArray( new String[data.size()] );
+	}
+
+	private String createDataItem( byte[] bytes, int offset, int length )
+	{
+		StringBuffer sb = new StringBuffer( length * 2 );
+		for ( int i = offset; i < length + offset; ++i )
+		{
+			sb.append( CDebugUtils.getByteText( bytes[i] ) );
+		}
+		return sb.toString();
+	}
+	
+	private String createAscii( byte[] bytes, int offset, int length )
+	{
+		StringBuffer sb = new StringBuffer( length );
+		for ( int i = offset; i < offset + length; ++i )
+		{
+			sb.append( ( Character.isISOControl( (char)bytes[i] ) || bytes[i] < 0 ) ? getPaddingCharacter() : (char)bytes[i] );
+		}
+		return sb.toString();
+	}
 }

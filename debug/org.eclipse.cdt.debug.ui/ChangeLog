@@ -1,4 +1,9 @@
 2004-06-21 Mikhail Khodjaiants
+	Added transparency to the icons.
+	* icons/full/cview16/signals_view.gif
+	* icons/full/eview16/signals_view.gif
+
+2004-06-21 Mikhail Khodjaiants
 	String externalization.
 
 2004-06-16 Mikhail Khodjaiants

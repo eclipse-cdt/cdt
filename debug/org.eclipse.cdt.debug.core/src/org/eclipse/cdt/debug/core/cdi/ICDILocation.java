@@ -66,4 +66,10 @@ public interface ICDILocation
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICDIInstruction[] getInstructions( int maxCount ) throws CDIException;
+	
+	/**
+	 * Return true if the both location refers to the same
+	 * place.
+	 */
+	boolean equals(ICDILocation location);
 }

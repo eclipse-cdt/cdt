@@ -163,11 +163,9 @@ public abstract class CVariable extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred retrieving value.", new String[] { e.toString() } ), e );
-			// execution will not reach this line, as
-			// #targetRequestFailed will throw an exception			
-			return null;
+			targetRequestFailed( e.toString(), null );
 		}
+		return null;
 	}
 
 	/**

@@ -12,10 +12,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -79,7 +84,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( "Operation failed. Reason: ", e );
+			logError( e );
 		}
 		return typeName;
 	}
@@ -97,8 +102,8 @@ public class CValue extends CDebugElement implements ICValue
 			}
 			catch( CDIException e )
 			{
-				// change this
-				requestFailed( "", e );
+				logError( e );
+				fValueString = e.getMessage();
 			}
 		}
 		return fValueString;
@@ -160,7 +165,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( "Operation failed. Reason: ", e );
+			targetRequestFailed( e.getMessage(), null );
 		}
 		return false;
 	}
@@ -175,25 +180,27 @@ public class CValue extends CDebugElement implements ICValue
 	
 	protected List getCDIVariables() throws DebugException
 	{
+		ICDIVariable[] vars = null;
 		try
 		{
 			ICDIValue value = getUnderlyingValue();
 			if ( value != null )
 			{
-				ICDIVariable[] vars = value.getVariables();
-				//Should throw an exception
+				vars = value.getVariables();
+				// Quick fix. 
+				// getVariables should return an empty array instead of null.
 				if ( vars == null )
 				{
 					vars = new ICDIVariable[0];
 				}
-				return Arrays.asList( vars );
 			}
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( "Operation failed. Reason: ", e );
+			vars = new ICDIVariable[0];
+			infoMessage( e );
 		}
-		return Collections.EMPTY_LIST;
+		return Arrays.asList( vars );
 	}
 	
 	protected void calculateType( String stringValue )
@@ -241,7 +248,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( "Operation failed. Reason: ", e );
+			targetRequestFailed( e.getMessage(), null );
 		}
 		return result;
 	}

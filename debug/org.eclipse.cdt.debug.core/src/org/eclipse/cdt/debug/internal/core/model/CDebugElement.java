@@ -11,6 +11,8 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -261,5 +263,15 @@ public class CDebugElement extends PlatformObject
 											  code, 
 											  message, 
 											  exception ) );
+	}
+	
+	protected void infoMessage( Throwable e )
+	{
+		IStatus newStatus = new Status( IStatus.INFO, 
+										CDebugCorePlugin.getUniqueIdentifier(), 
+										ICDebugInternalConstants.STATUS_CODE_INFO, 
+										e.getMessage(),
+										null );
+		CDebugUtils.info( newStatus, getDebugTarget() );
 	}
 }

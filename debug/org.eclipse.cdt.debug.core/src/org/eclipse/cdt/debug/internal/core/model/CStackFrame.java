@@ -572,7 +572,7 @@ public class CStackFrame extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred retrieving local variables", new String[] { e.toString() } ), e );
+			targetRequestFailed( e.toString(), null );
 		}
 		return list;
 	} 
@@ -591,7 +591,7 @@ public class CStackFrame extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred retrieving arguments", new String[] { e.toString() } ), e );
+			targetRequestFailed( e.toString(), null );
 		}
 		return list;
 	}

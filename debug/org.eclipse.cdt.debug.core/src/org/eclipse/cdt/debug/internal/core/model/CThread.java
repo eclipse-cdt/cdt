@@ -246,11 +246,9 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			requestFailed( MessageFormat.format( "{0} occurred retrieving stack frames.", new String[] { e.toString() } ), e );
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
-			return null;
+			targetRequestFailed( e.getMessage(), null );
 		}
+		return new ICDIStackFrame[0];
 	}
 
 	/**

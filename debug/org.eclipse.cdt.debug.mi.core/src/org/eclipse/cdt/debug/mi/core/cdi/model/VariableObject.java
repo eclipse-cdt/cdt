@@ -9,7 +9,11 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIVoidType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
@@ -132,6 +136,20 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			}
 		}
 		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#isEdiTable()
+	 */
+	public boolean isEditable() throws CDIException {
+		ICDIType t = getType();
+		if (t instanceof  ICDIArrayType ||
+		    t instanceof ICDIStructType ||
+		    t instanceof ICDIVoidType ||
+		    t instanceof ICDIFunctionType) {
+			return false;
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)

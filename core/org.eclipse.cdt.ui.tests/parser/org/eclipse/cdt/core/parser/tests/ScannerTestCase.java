@@ -1356,4 +1356,28 @@ public class ScannerTestCase extends BaseScannerTest
 		validateDefinition("G", "a '\"'");
 		validateDefinition("H", "a '\\'//b'\"/*bo\\o*/\" b");
 	}
+	
+	public void testBug38065() throws Exception
+	{
+		initializeScanner( "Foo\\\nBar" );
+		
+		validateIdentifier("FooBar");
+		validateEOF();
+		
+		try {
+			initializeScanner( "Foo\\Bar" );
+			
+			validateIdentifier("Foo");
+			validateIdentifier("Bar");
+			validateEOF();
+			
+		} catch (ScannerException se) {
+			// if Scanner.throwExceptionOnBadCharacterRead == true
+			// we might end up with valid ScannerException "Invalid character ..."
+			// for '\'
+			assertTrue(se.getMessage().equals("Invalid character '\\' read @ offset 5 of file TEXT"));
+		}
+	}
+
+	
 }

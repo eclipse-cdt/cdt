@@ -2,6 +2,9 @@
 	Begin implementation of functions for template specializations: deduceTemplateArgument,
 	classTemplateSpecializationToFunctionTemplate, transformFunctionTemplateForOrdering
 	
+2003-06-06 Victor Mozgin
+	Fixed Bug 38065 - Scanner skipped backslashes inside the code
+
 2003-06-05 John Camelon
 	Fix Bug 38380  "Include" class public methods fails JUnit tests 
 

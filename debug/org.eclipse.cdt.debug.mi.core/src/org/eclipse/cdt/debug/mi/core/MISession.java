@@ -52,7 +52,8 @@ public class MISession extends Observable {
 	// hold the type of the session(post-mortem, attach etc ..)
 	int sessionType;
 
-	Process miProcess;
+	Process sessionProcess;
+	Process gdbProcess;
 	InputStream inChannel;
 	OutputStream outChannel;
 
@@ -79,6 +80,7 @@ public class MISession extends Observable {
 	MIInferior inferior;
 	
 	int cmdCount = 1;
+
 	
 	/**
 	 * Create the gdb session.
@@ -90,7 +92,7 @@ public class MISession extends Observable {
 	 */
 	public MISession(Process process, PTY pty, int timeout, int type) throws MIException {
 
-		miProcess = process;
+		gdbProcess = process;
 		inChannel = process.getInputStream();
 		outChannel = process.getOutputStream();
 
@@ -295,10 +297,21 @@ public class MISession extends Observable {
 	}
 
 	/**
-	 * Return the "gdb/mi" Process.
+	 * Return the "gdb" Process.
 	 */
-	public Process getMIProcess() {
-		return miProcess;
+	public Process getGDBProcess() {
+		return gdbProcess;
+	}
+	
+	/**
+	 * Return a "fake" Process that will
+	 * encapsulate the call input/output of gdb.
+	 */
+	public Process getSessionProcess() {
+		if (sessionProcess == null) {
+			sessionProcess = new SessionProcess(this);
+		}
+		return sessionProcess;
 	}
 
 	/**
@@ -346,8 +359,8 @@ public class MISession extends Observable {
 		// Make sure gdb is killed.
 		// FIX: the destroy() must be call before closing gdb streams
 		// on windows if the order is not follow the close() will hang.
-		if (miProcess != null) {
-			miProcess.destroy();
+		if (gdbProcess != null) {
+			gdbProcess.destroy();
 		}
 
 		// Close the input GDB prompt

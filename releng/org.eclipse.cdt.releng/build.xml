@@ -2,7 +2,7 @@
 
 	<target name="build" depends="zips,test,updateSite"/>
 	<target name="nightly" depends="build,upload,mail"/>
-	<target name="integration" depends="zips,test,wswbmap,mail"/>
+	<target name="integration" depends="nightly,wswbmap"/>
 	<target name="milestone" depends="nightly,milestoneSite"/>
 	
 	<target name="init">
@@ -18,7 +18,7 @@
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="siteurl" value="http://update.eclipse.org/tools/cdt/updates/builds/2.0"/>
-		<property name="remotedir" value="/home/www/tools/cdt/updates/builds/2.0"/>
+		<property name="remotedir" value="download.eclipse.org:/home/www/tools/cdt/updates/builds/2.0"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
 		<property name="sitedir" value="${buildDirectory}/build.site"/>
 		<property name="siteversion" value="2.0.0"/>
@@ -160,28 +160,17 @@
 	</target>
 	
 	<target name="upload" depends="init" unless="hasErrors">
-		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
-			remotedir="${remotedir}" action="put" verbose="yes">
+		<scp todir="${cdtuser}:${cdtpasswd}@${remotedir}">
 			<fileset dir="${sitedir}"/>
-		</ftp>
+		</scp>
 	</target>
 	
 	<target name="wswbmap" depends="init" unless="hasErrors">
-		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test/JUNIT.XSL"
-			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
-			out="${zipsdir}/index.html"/>
 		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
 		<replace file="cdt-map.txt" token="@buildId@" value="${buildId}"/>
-		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
-			remotedir="/home/www/tools/cdt/wswb" action="put" verbose="yes">
+		<scp todir="${cdtuser}:${cdtpasswd}@download.eclipse.org:/home/www/tools/cdt/wswb">
 			<fileset file="cdt-map.txt"/>
-		</ftp>
-		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
-			remotedir="/home/www/tools/cdt/wswb/${buildId}" action="mkdir" verbose="yes"/>
-		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
-			remotedir="/home/www/tools/cdt/wswb/${buildId}" action="put" verbose="yes">
-			<fileset dir="${zipsdir}"/>
-		</ftp>
+		</scp>
 	</target>
 
 	<target name="mail" depends="init">

@@ -10,6 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
@@ -56,12 +59,19 @@ public class GCCScannerExtension implements IScannerExtension {
 		}
 	}
 
+	private static final Set directives;
+	static
+	{
+		directives = new HashSet();
+		directives.add( "#include_next" ); //$NON-NLS-1$
+		directives.add( "#warning"); //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#canHandlePreprocessorDirective(java.lang.String)
 	 */
 	public boolean canHandlePreprocessorDirective(String directive) {
-		if( directive.equals("#include_next")) return true; //$NON-NLS-1$
-		return false;
+		return directives.contains( directive );
 	}
 
 	/* (non-Javadoc)
@@ -70,7 +80,17 @@ public class GCCScannerExtension implements IScannerExtension {
 	public void handlePreprocessorDirective(String directive, String restOfLine) {
 		if( directive.equals("#include_next") ) //$NON-NLS-1$
 		{
+			scannerData.getLogService().traceLog( "GCCScannerExtension handling #include_next directive" ); //$NON-NLS-1$
 			// figure out the name of the current file and its path
+			IScannerContext context = scannerData.getContextStack().getCurrentContext();
+			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
+			{
+				//handle appropriate error
+			}
+//			String fullInclusionPath = context.getFilename();
+//			IASTInclusion inclusion = context.getExtension();
+			
+			
 			// search through include paths 
 		}
 	}

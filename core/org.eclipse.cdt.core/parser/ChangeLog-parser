@@ -1,3 +1,6 @@
+2004-03-11 John Camelon
+	Refactoring of Scanner to allow reuse in GCCScannerExtension
+
 2004-03-10 John Camelon
 	Further performance improvements in Scanner.  
 

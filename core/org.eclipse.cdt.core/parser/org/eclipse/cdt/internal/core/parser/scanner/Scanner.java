@@ -104,7 +104,7 @@ public class Scanner implements IScanner {
 			throw new ScannerException( problem );
 	}
 
-	private Scanner( Reader reader, String filename, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
+	Scanner( Reader reader, String filename, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
 	{
 		String [] incs = (String [])includePaths.toArray(STRING_ARRAY);
     	scannerData = new ScannerData( this, log, requestor, mode, filename, reader, language, new ScannerInfo( definitions, incs ), new ContextStack( this, log ) );
@@ -534,56 +534,6 @@ public class Scanner implements IScanner {
 		return buffer.toString();
 	}
 
-	protected CodeReader createReaderDuple( String path, String fileName )
-	{
-		File pathFile = new File(path);
-		//TODO assert pathFile.isDirectory();	
-		StringBuffer newPathBuffer = new StringBuffer( pathFile.getPath() );
-		newPathBuffer.append( File.separatorChar );
-		newPathBuffer.append( fileName );
-		//remove ".." and "." segments
-		String finalPath = reconcilePath( newPathBuffer.toString() );
-		Reader r = scannerData.getClientRequestor().createReader( finalPath );
-		if( r != null )
-			return new CodeReader( finalPath, r );
-		return null;		
-
-	}
-	
-	/**
-	 * @param string
-	 * @return
-	 */
-	private String reconcilePath(String originalPath ) {
-		if( originalPath == null ) return null;
-		String [] segments = originalPath.split( "[/\\\\]" ); //$NON-NLS-1$
-		if( segments.length == 1 ) return originalPath;
-		Vector results = new Vector(); 
-		for( int i = 0; i < segments.length; ++i )
-		{
-			String segment = segments[i];
-			if( segment.equals( ".") ) continue; //$NON-NLS-1$
-			if( segment.equals("..") ) //$NON-NLS-1$
-			{
-				if( results.size() > 0 ) 
-					results.removeElementAt( results.size() - 1 );
-			}
-			else
-				results.add( segment );
-		}
-		StringBuffer buffer = new StringBuffer(); 
-		Iterator i = results.iterator();
-		while( i.hasNext() )
-		{
-			buffer.append( (String)i.next() );
-			if( i.hasNext() )
-				buffer.append( File.separatorChar );
-		}
-		scannerData.getLogService().traceLog( "Path has been reduced to " + buffer.toString()); //$NON-NLS-1$
-		return buffer.toString();
-	}
-
-	
 	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
 
 		CodeReader duple = null;
@@ -597,7 +547,7 @@ public class Scanner implements IScanner {
 				while (iter.hasNext()) {
 		
 					String path = (String)iter.next();
-					duple = createReaderDuple( path, fileName );
+					duple = ScannerUtility.createReaderDuple( path, fileName, scannerData.getClientRequestor() );
 					if( duple != null )
 						break totalLoop;
 				}
@@ -608,7 +558,7 @@ public class Scanner implements IScanner {
 			}
 			else // local inclusion
 			{
-				duple = createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName );
+				duple = ScannerUtility.createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor() );
 				if( duple != null )
 					break totalLoop;
 				useIncludePaths = true;
@@ -763,8 +713,6 @@ public class Scanner implements IScanner {
 		tokenizingMacroReplacementList = mr;
 	}
 	
-	private static final IScannerInfo EMPTY_INFO = new ScannerInfo();
-	
 	public int getCharacter() throws ScannerException
 	{
 		if( ! initialContextInitialized )
@@ -773,7 +721,7 @@ public class Scanner implements IScanner {
 		return getChar();
 	}
 	
-	private int getChar() throws ScannerException
+	int getChar() throws ScannerException
 	{
 		return getChar( false );
 	}
@@ -928,7 +876,7 @@ public class Scanner implements IScanner {
         return c;
     }
 
-	private void ungetChar(int c) throws ScannerException{
+	void ungetChar(int c) throws ScannerException{
 		scannerData.getContextStack().getCurrentContext().pushUndo(c);
 		try
 		{
@@ -2455,81 +2403,18 @@ public class Scanner implements IScanner {
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
 		String includeLine = getRestOfPreprocessorLine();
 		int endLine = scannerData.getContextStack().getCurrentLineNumber();
-		StringBuffer fileName = new StringBuffer();
-		boolean useIncludePath = true;
-		int startOffset = baseOffset;
-		int endOffset = baseOffset; 
-			
-		if (! includeLine.equals("")) { //$NON-NLS-1$
-			Scanner helperScanner = new Scanner(
-										new StringReader(includeLine), 
-										null, 
-										scannerData.getDefinitions(), scannerData.getIncludePathNames(),
-										NULL_REQUESTOR,
-										scannerData.getParserMode(),
-										scannerData.getLanguage(), NULL_LOG_SERVICE, (IScannerExtension)(scannerExtension.clone()) );
-			helperScanner.setForInclusion( true );
-			IToken t = null;
-			
-			potentialErrorLine.append( includeLine );
-			try {
-				t = helperScanner.nextToken(false);
-			} catch (EndOfFileException eof) {
-				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );				
-				return;
-			} 
-
-			try {
-				if (t.getType() == IToken.tSTRING) {
-					fileName.append(t.getImage());
-					startOffset = baseOffset + t.getOffset();
-					endOffset = baseOffset + t.getEndOffset();
-					useIncludePath = false;
-					
-					// This should throw EOF
-					t = helperScanner.nextToken(false);
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );					
-					return;
-				} else if (t.getType() == IToken.tLT) {
-					
-					try {
-											
-						t = helperScanner.nextToken(false);
-						startOffset = baseOffset + t.getOffset();
-						
-						while (t.getType() != IToken.tGT) {
-							fileName.append(t.getImage());
-							helperScanner.skipOverWhitespace();
-							int c = helperScanner.getChar();
-							if (c == '\\') fileName.append('\\'); else helperScanner.ungetChar(c);
-							t = helperScanner.nextToken(false);
-						}
-						
-						endOffset = baseOffset + t.getEndOffset();
-						
-					} catch (EndOfFileException eof) {
-						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
-						return;
-					}
-					
-					// This should throw EOF
-					t = helperScanner.nextToken(false);
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
-	
-					return;
-					
-				} else 
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
-			}
-			catch( EndOfFileException eof )
-			{
-				// good
-			} 
-			
-		} else 
+		potentialErrorLine.append( includeLine );
+		
+		ScannerUtility.InclusionDirective directive = null;
+		try
+		{
+			directive = ScannerUtility.parseInclusionDirective( scannerData, scannerExtension, includeLine, baseOffset );
+		}
+		catch( ScannerUtility.InclusionParseException ipe )
+		{
 			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
-
-		String f = fileName.toString();
+			return;
+		}
 		
 		if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
 		{ 
@@ -2540,13 +2425,13 @@ public class Scanner implements IScanner {
                 {
                     i =
                     	scannerData.getASTFactory().createInclusion(
-                            f,
+                            directive.getFilename(),
                             "", //$NON-NLS-1$
-                            !useIncludePath,
+                            !directive.useIncludePaths(),
                             beginningOffset,
                             startLine,
-                            startOffset,
-                            startOffset + f.length(), nameLine, endOffset, endLine);
+                            directive.getStartOffset(),
+                            directive.getStartOffset() + directive.getFilename().length(), nameLine, directive.getEndOffset(), endLine);
                 }
                 catch (Exception e)
                 {
@@ -2560,7 +2445,7 @@ public class Scanner implements IScanner {
 			}
 		}
 		else
-			handleInclusion(f.trim(), useIncludePath, beginningOffset, startLine, startOffset, nameLine, endOffset, endLine); 
+			handleInclusion(directive.getFilename().trim(), directive.useIncludePaths(), beginningOffset, startLine, directive.getStartOffset(), nameLine, directive.getEndOffset(), endLine); 
 	}
 
 	protected static final Hashtable EMPTY_MAP = new Hashtable();

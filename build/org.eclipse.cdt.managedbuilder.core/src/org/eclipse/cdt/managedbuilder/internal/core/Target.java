@@ -112,26 +112,35 @@ public class Target extends BuildObject implements ITarget {
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
 			targetOSList = new ArrayList();
-			StringTokenizer tokens = new StringTokenizer(os, ","); //$NON-NLS-1$
-			while (tokens.hasMoreTokens()) {
-				targetOSList.add(tokens.nextToken().trim());
+			String[] osTokens = os.split(","); //$NON-NLS-1$
+			for (int i = 0; i < osTokens.length; ++i) {
+				targetOSList.add(osTokens[i].trim());
 			}
 		}
 		
+		// Get the comma-separated list of valid Architectures
+		String arch = element.getAttribute(ARCH_LIST);
+		if (arch != null) {
+			targetArchList = new ArrayList();
+			String[] archTokens = arch.split(","); //$NON-NLS-1$
+			for (int j = 0; j < archTokens.length; ++j) {
+				targetArchList.add(archTokens[j].trim());
+			}
+		}
 		// Load any tool references we might have
 		IManagedConfigElement[] toolRefs = element.getChildren(IConfiguration.TOOLREF_ELEMENT_NAME);
-		for (int i=0; i < toolRefs.length; ++i) {
-			new ToolReference(this, toolRefs[i]);
+		for (int k = 0; k < toolRefs.length; ++k) {
+			new ToolReference(this, toolRefs[k]);
 		}
 		// Then load any tools defined for the target
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
-		for (int j = 0; j < tools.length; ++j) {
-			new Tool(this, tools[j]);
+		for (int m = 0; m < tools.length; ++m) {
+			new Tool(this, tools[m]);
 		}
 		// Then load the configurations which may have tool references
 		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
-		for (int k = 0; k < configs.length; ++k) {
-			new Configuration(this, configs[k]);
+		for (int n = 0; n < configs.length; ++n) {
+			new Configuration(this, configs[n]);
 		}
 	}
 	

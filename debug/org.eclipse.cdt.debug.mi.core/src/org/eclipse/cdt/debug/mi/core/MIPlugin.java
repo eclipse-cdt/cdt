@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
@@ -75,28 +76,28 @@ public class MIPlugin extends Plugin {
 		try {
 			pty = new PTY();
 			String ttyName = pty.getSlaveName();
-			args = new String[] {gdb, "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
+			args = new String[] {gdb, "-q", "-nw", "-tty", ttyName, "-i", "mi1", program};
 		} catch (IOException e) {
 			//e.printStackTrace();
 			pty = null;
-			args = new String[] {"gdb", "-q", "-nw", "-i", "mi", program};
+			args = new String[] {"gdb", "-q", "-nw", "-i", "mi1", program};
 		}
 
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, pty);
-		/*
+		// For windows we need to start the inferior in a new console window
+		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
 		try {
 			CommandFactory factory = session.getCommandFactory();
-			MIBreakInsert bkpt= factory.createMIBreakInsert(true, false, null, 0, "main");
-			session.postCommand(bkpt);
-			MIInfo info = bkpt.getMIInfo();
+			MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
+			session.postCommand(set);
+			MIInfo info = set.getMIInfo();
 			if (info == null) {
 				throw new IOException("No answer");
 			}
 		} catch (MIException e) {
-			throw new IOException("Failed to attach");
+			//throw new IOException("Failed to attach");
 		}
-		*/
 		return new CSession(session, false);
 	}
 
@@ -111,7 +112,7 @@ public class MIPlugin extends Plugin {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
-		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi", program, core};
+		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", program, core};
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb);
 		return new CSession(session);
@@ -128,7 +129,7 @@ public class MIPlugin extends Plugin {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
-		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi", program};
+		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", program};
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb);
 		try {

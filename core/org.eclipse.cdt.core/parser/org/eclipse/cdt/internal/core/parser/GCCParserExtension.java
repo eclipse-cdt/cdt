@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
@@ -32,7 +33,6 @@ import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.Parser.Flags;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 
 
 /**

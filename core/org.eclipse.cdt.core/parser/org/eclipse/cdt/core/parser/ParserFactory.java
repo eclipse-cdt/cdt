@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFac
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 
@@ -133,9 +132,9 @@ public class ParserFactory {
 		return defaultLogService;
 	}
 	
-	public static Set getAllKeywords( ParserLanguage language )
+	public static Set getKeywordSet( KeywordSetKey key, ParserLanguage language )
 	{
-		return KeywordSets.getKeywords( KeywordSetKey.ALL, language ); 
+		return KeywordSets.getKeywords( key, language ); 
 	}
 	
 	private static IParserLogService defaultLogService = new DefaultLogService();

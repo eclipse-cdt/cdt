@@ -13,10 +13,10 @@ package org.eclipse.cdt.internal.core.parser;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IFilenameProvider;
+import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 
 /**
  * @author jcamelon

@@ -549,6 +549,9 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 	}
 
 	private boolean canMove(List selected) {
+		if (selected.size() == 0) {
+			return false;
+		}
 		for (int i = 0; i < selected.size(); i++) {
 			Object element = selected.get(i);
 			if (! (element instanceof CPElement))

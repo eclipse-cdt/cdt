@@ -848,6 +848,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		String expectedCleanCmd = "del /myworld";
 		String expectedParserId = "org.eclipse.cdt.core.PE";
 		String[] expectedOSList = {"win32"};
+		String[] expectedArchList = {"all"};
 		assertTrue(target.isTestTarget());
 		if (target.getArtifactName().equals("ManagedBuildTest")) {
 			assertEquals(target.getArtifactExtension(), newExt);
@@ -858,6 +859,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals("make", target.getMakeCommand());
 		assertEquals(expectedParserId, target.getBinaryParserId());
 		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
+		assertTrue(Arrays.equals(expectedArchList, target.getTargetArchList()));
 		// This target defines no errors parsers.
 		assertNull(target.getErrorParserIds());
 		assertTrue(Arrays.equals(target.getErrorParserList(), CCorePlugin.getDefault().getAllErrorParsersIDs()));
@@ -1096,9 +1098,12 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals("nmake", target.getMakeCommand());
 		// Make sure we get the proper binary parser
 		assertEquals("org.eclipse.cdt.core.ELF", target.getBinaryParserId());
-		// Make sure the list is inherited
+		// Make sure the os list is inherited
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
+		// Make sure the arch list is inherited
+		String[] expectedArchList = {"x86", "ppc"}; 
+		assertTrue(Arrays.equals(expectedArchList, target.getTargetArchList()));
 
 		// Get the 5 configurations (3 from test, 1 from test sub and 1 from this)
 		IConfiguration[] configs = target.getConfigurations();
@@ -1232,6 +1237,9 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals("org.eclipse.cdt.core.PE", target.getBinaryParserId());
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
+		// Make sure the list is overridden
+		String[] expectedArchList = {"x86", "ppc"};
+		assertTrue(Arrays.equals(expectedArchList, target.getTargetArchList()));
 
 		// Make sure this is a test target
 		assertTrue(target.isTestTarget());

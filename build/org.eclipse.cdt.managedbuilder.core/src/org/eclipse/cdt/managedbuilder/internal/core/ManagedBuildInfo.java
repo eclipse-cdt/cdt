@@ -931,6 +931,24 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setDefaultConfiguration(java.lang.String)
+	 */
+	public boolean setDefaultConfiguration(String configName) {
+		if (configName != null) {
+			// Look for the configuration with the same name as the argument
+			IConfiguration[] configs = getDefaultTarget().getConfigurations();
+			for (int index = configs.length - 1; index >= 0; --index) {
+				IConfiguration config = configs[index];
+				if (configName.equalsIgnoreCase(config.getName())) {
+					setDefaultConfiguration(config);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultTarget(org.eclipse.cdt.core.build.managed.ITarget)
 	 */
 	public void setDefaultTarget(ITarget target) {
@@ -1024,4 +1042,5 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 		}
 	}
+
 }

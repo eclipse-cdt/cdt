@@ -774,7 +774,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return false;
 	}
 
-	private static synchronized ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
+	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
+		// I am sick of NPEs
+		if (resource == null) return null;
+
 		// Make sure the extension information is loaded first
 		try {
 			loadExtensions();

@@ -518,7 +518,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// There are 2 exceptions; the project does not exist or it is not open
 			// and neither conditions apply if we are building for it ....
 		}
-
+		
 		// Write out the all target first in case someone just runs make
 		// 	all: targ_<target_name> 
 		String defaultTarget = "all:"; //$NON-NLS-1$
@@ -534,12 +534,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 * deps:
 		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) [clean all | all]> 
 		 */
-		Vector managedProjectOutputs = new Vector();
-		if (refdProjects.length > 0) { 
-			buffer.append("dependents:" + NEWLINE); //$NON-NLS-1$
+		Vector managedProjectOutputs = new Vector(refdProjects.length);
+		if (refdProjects.length > 0) {
+			boolean addDeps = true;
 			if (refdProjects != null) {
 				for (int i = 0; i < refdProjects.length; i++) {
 					IProject dep = refdProjects[i];
+					if (!dep.exists()) continue;
+					if (addDeps) {
+						buffer.append("dependents:" + NEWLINE); //$NON-NLS-1						
+						addDeps = false;
+					}
 					String buildDir = dep.getLocation().toString();
 					String depTargets = targets;
 					if (ManagedBuildManager.manages(dep)) {

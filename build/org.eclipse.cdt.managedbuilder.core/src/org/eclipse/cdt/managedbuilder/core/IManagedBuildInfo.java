@@ -259,6 +259,12 @@ public interface IManagedBuildInfo {
 	public void setDefaultConfiguration(IConfiguration configuration);
 	
 	/**
+	 * @param configuration
+	 * @return
+	 */
+	public boolean setDefaultConfiguration(String configName);
+	
+	/**
 	 * Set the primary target for the receiver.
 	 * 
 	 * @param target

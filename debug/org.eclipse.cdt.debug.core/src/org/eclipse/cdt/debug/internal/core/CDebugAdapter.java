@@ -85,7 +85,7 @@ public class CDebugAdapter implements ICDIDebugger {
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		String message = InternalDebugCoreMessages.getString("CDebugAdapter.1");
+		String message = InternalDebugCoreMessages.getString("CDebugAdapter.1"); //$NON-NLS-1$
 		return MessageFormat.format(format, new String[]{message, timestamp}); //$NON-NLS-1$
 	}
 

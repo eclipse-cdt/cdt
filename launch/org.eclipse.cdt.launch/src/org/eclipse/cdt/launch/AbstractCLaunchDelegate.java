@@ -745,10 +745,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		} catch (IOException e) {
 		}
 		Throwable exception = new FileNotFoundException(LaunchMessages.getFormattedString(
-				"AbstractCLaunchDelegate.PROGRAM_PATH_not_binary", exePath.toOSString()));
+				"AbstractCLaunchDelegate.PROGRAM_PATH_not_binary", exePath.toOSString())); //$NON-NLS-1$
 		int code = ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY;
 		MultiStatus status = new MultiStatus(getPluginID(), code, LaunchMessages
-				.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable"), exception);
+				.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable"), exception); //$NON-NLS-1$
 		status.add(new Status(IStatus.ERROR, getPluginID(), code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
 				exception));
 		throw new CoreException(status);

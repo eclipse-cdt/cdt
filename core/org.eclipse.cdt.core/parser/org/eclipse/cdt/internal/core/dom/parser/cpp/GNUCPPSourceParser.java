@@ -74,6 +74,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -1832,8 +1834,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
    private static final int DEFAULT_POINTEROPS_LIST_SIZE        = 4;
    private static final int DEFAULT_SIZE_EXCEPTIONS_LIST        = 2;
    private static final int DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE = 4;
-   private IASTNode         mostRelevantScopeNode;
-
    /**
     * This is the standard cosntructor that we expect the Parser to be
     * instantiated with.
@@ -4806,8 +4806,32 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                .getArrayExpression() instanceof IASTFieldReference))
             return true;
       }
+      //A & B = C;
+      if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
+          IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
+                  .getExpression();
+          if (exp.getOperator() == IASTBinaryExpression.op_assign) {
+              IASTExpression lhs = exp.getOperand1();
+              if (lhs instanceof IASTBinaryExpression
+                      && ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_binaryAnd) {
+
+                  return true;
+              }
+          }
+      }
+
       return super
             .resolveOtherAmbiguitiesAsDeclaration(ds, expressionStatement);
    }
+   
+   /* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#queryIsTypeName(org.eclipse.cdt.core.dom.ast.IASTName)
+ */
+protected boolean queryIsTypeName(IASTName name) {
+    IBinding b = CPPSemantics.findTypeBinding( mostRelevantScopeNode, name );
+    if( b == null ) return false;
+    if( b instanceof IType ) return true;
+    return false;
+}
 
 }

@@ -1976,4 +1976,25 @@ public class CVisitor {
 		visitTranslationUnit( tu, action );
 		return action.getReferences();
 	}
+
+    /**
+     * @param startingPoint
+     * @param name
+     * @return
+     */
+    public static IBinding findTypeBinding(IASTNode startingPoint, IASTName name) {
+        if( startingPoint instanceof IASTTranslationUnit )
+        {
+            IASTDeclaration [] declarations = ((IASTTranslationUnit)startingPoint).getDeclarations();
+            if( declarations.length > 0 )
+               return findBinding( declarations[declarations.length - 1], name, COMPLETE | INCLUDE_BLOCK_ITEM  );
+        }
+        if( startingPoint instanceof IASTCompoundStatement )
+        {
+            IASTStatement [] statements = ((IASTCompoundStatement)startingPoint).getStatements();
+            if( statements.length > 0 )
+                return findBinding( statements[ statements.length - 1 ], name, COMPLETE | INCLUDE_BLOCK_ITEM );
+        }
+        return null;
+    }
 }

@@ -35,12 +35,12 @@ public class CEnumeration implements IEnumeration {
 
     private IASTName [] declarations = null;
     private IASTName definition = null;
-    public CEnumeration( IASTName enum ){
-        ASTNodeProperty prop = enum.getPropertyInParent();
+    public CEnumeration( IASTName enumeration ){
+        ASTNodeProperty prop = enumeration.getPropertyInParent();
         if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME )
-        	declarations = new IASTName[] { enum };
+        	declarations = new IASTName[] { enumeration };
         else
-            definition = enum;
+            definition = enumeration;
 	}
 	
     public void addDeclaration( IASTName decl ){

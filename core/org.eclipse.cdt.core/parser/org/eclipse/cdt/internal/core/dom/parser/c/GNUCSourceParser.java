@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -65,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -72,6 +72,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
@@ -548,6 +550,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
       }
 
       translationUnit.setLocationResolver(scanner.getLocationResolver());
+      mostRelevantScopeNode = translationUnit;
 
       int lastBacktrack = -1;
       while (true) {
@@ -2532,5 +2535,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
       return pd;
    }
+   
+   /* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#queryIsTypeName(org.eclipse.cdt.core.dom.ast.IASTName)
+ */
+protected boolean queryIsTypeName(IASTName name) {
+    //TODO fix me
+    IBinding b = CVisitor.findTypeBinding( mostRelevantScopeNode, name );
+    if( b == null ) return false;
+    if( b instanceof ITypedef ) return true;
+    return false;
+}
 
 }

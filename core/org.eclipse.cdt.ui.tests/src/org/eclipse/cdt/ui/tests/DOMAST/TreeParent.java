@@ -15,7 +15,6 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap;
 
 /**
  * @author dsteffle
@@ -34,14 +33,10 @@ public class TreeParent extends TreeObject {
 			int treeObjOffset = 0;
 			int childObjOffset = 0;
 			if( treeObj.getNode() instanceof ASTNode )
-				treeObjOffset = ((ASTNode)treeObj.getNode()).getOffset();
-			else if( treeObj.getNode() instanceof LocationMap.ScannerASTNode )
-				treeObjOffset = ((LocationMap.ScannerASTNode)child.getNode()).getOffset();
+				treeObjOffset = ((ASTNode)treeObj.getNode()).getOffset();			
 			
 			if( child.getNode() instanceof ASTNode )
 				childObjOffset = ((ASTNode)child.getNode()).getOffset();
-			else if( child.getNode() instanceof LocationMap.ScannerASTNode )
-				childObjOffset = ((LocationMap.ScannerASTNode)child.getNode()).getOffset();
 			
 			if ( treeObjOffset < childObjOffset ){ 
 				index = i+1;

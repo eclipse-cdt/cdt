@@ -12,7 +12,7 @@
 /*
  * Created on Jun 8, 2004
  */
-package org.eclipse.cdt.internal.core.parser.ast.expression;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.List;
 
@@ -46,8 +46,6 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#overrideExpressionFactory()
 	 */
 	public boolean overrideCreateExpressionMethod() {
-		if( mode == ParserMode.EXPRESSION_PARSE )
-			return true;
 		return false;
 	}
 	/**

@@ -8,23 +8,32 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
 
-package org.eclipse.cdt.internal.core.parser.ast.expression;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
+
 
 /**
  * @author jcamelon
  *
  */
-public class ASTEmptyExpression extends ASTExpression implements IASTExpression {
+public class ASTLiteralExpression extends ASTExpression {
+
+	private final char[] literal;
 
 	/**
 	 * @param kind
+	 * @param literal
 	 */
-	public ASTEmptyExpression(Kind kind) {
-		super(kind);
-		// TODO Auto-generated constructor stub
+	public ASTLiteralExpression(Kind kind, char[] literal) {
+		super( kind );
+		this.literal =literal;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getLiteralString()
+	 */
+	public String getLiteralString() {
+		return String.valueOf( literal );
 	}
 	
 	public String toString(){

@@ -11,7 +11,7 @@
 /*
  * Created on Jun 7, 2004
  */
-package org.eclipse.cdt.internal.core.parser.ast.expression;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;

@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
@@ -41,8 +40,6 @@ public class ParserFactory {
 	{
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory(extensionFactory.createASTExtension( mode ));
-		else if( mode == ParserMode.EXPRESSION_PARSE )
-			return new ExpressionParseASTFactory( extensionFactory.createASTExtension( mode ));
 		else
 			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtension( mode )); 
 	}

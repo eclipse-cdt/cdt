@@ -8,32 +8,37 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
 
-package org.eclipse.cdt.internal.core.parser.ast.expression;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTUnaryExpression extends ASTExpression implements IASTExpression {
+public class ASTTypeIdExpression extends ASTExpression
+		implements
+			IASTExpression {
 
-	private final IASTExpression lhs;
+	private final IASTTypeId typeId;
 
 	/**
 	 * @param kind
-	 * @param lhs
+	 * @param typeId
 	 */
-	public ASTUnaryExpression(Kind kind, IASTExpression lhs) {
-		super(kind);
-		this.lhs = lhs;
+	public ASTTypeIdExpression(Kind kind, IASTTypeId typeId) {
+		super( kind );
+		this.typeId = typeId;
 	}
+	
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getLHSExpression()
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getTypeId()
 	 */
-	public IASTExpression getLHSExpression() {
-		return lhs;
+	public IASTTypeId getTypeId() {
+		return typeId;
 	}
 	
 	public String toString(){

@@ -13,62 +13,64 @@
 #endif
 
 
-char *pfind( const char *name )
+char *pfind(const char *name)
 {
-    char *tok;
+	char *tok;
 	char *sp;
-    char *path = getenv( "PATH" );
-	char FullPath[PATH_MAX+1];
+	char *path;
+	char fullpath[PATH_MAX+1];
 
-    if( name == NULL )
-    {
-        fprintf( stderr, "pfind(): Null argument.\n" );
-        return NULL;
-    }
+	if (name == NULL) {
+		fprintf(stderr, "pfind(): Null argument.\n");
+		return NULL;
+	}
 
-    if( path == NULL || strlen( path ) <= 0 )
-    {
-        fprintf( stderr, "Unable to get $PATH.\n" );
-        return NULL;
-    }
+	/* For absolute namer or name with a path, check if it is an executable.  */
+	if (name[0] == '/' || name[0] == '.') {
+		if (access(name, X_OK | R_OK) == 0) {
+			return strdup(name);
+		}
+		return NULL;
+	}
 
-    // The value return by getenv() is readonly */
-    path = strdup( path );
+	/* Search in the PATH environment.  */
+	path = getenv("PATH");
+	if (path == NULL || strlen(path) <= 0) {
+		fprintf(stderr, "Unable to get $PATH.\n");
+		return NULL;
+	}
 
-    tok = strtok_r( path, ":", &sp );
-    while( tok != NULL )
-    {
-        //strcpy( FullPath, tok );
-        //strcat( FullPath, "/" );
-        //strcat( FullPath, name );
-		snprintf(FullPath, sizeof(FullPath) - 1, "%s/%s", tok, name);
+	// The value return by getenv() is readonly */
+	path = strdup(path);
 
-        if( access( FullPath, X_OK | R_OK ) == 0 )
-        {
-            free( path );
-            return strdup(FullPath);
-        }
+	tok = strtok_r(path, ":", &sp);
+	while (tok != NULL) {
+		snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
 
-        tok = strtok_r( NULL, ":", &sp );
-    }
+		if (access(fullpath, X_OK | R_OK) == 0) {
+			free(path);
+			return strdup(fullpath);
+		}
 
-    free( path );
-    return NULL;
+		tok = strtok_r(NULL, ":", &sp);
+	}
+
+	free(path);
+	return NULL;
 }
 
 #ifdef BUILD_WITH_MAIN
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
-   int i;
-   char *fullpath;
+	int i;
+	char *fullpath;
 
-   for( i=1; i<argc; i++ )
-   {
-      fullpath = pfind( argv[i] );
-      if( fullpath == NULL )
-        printf( "Unable to find %s in $PATH.\n", argv[i] );
-      else 
-        printf( "Found %s @ %s.\n", argv[i], fullpath );
-   }
+	for (i = 1; i<argc; i++) {
+		fullpath = pfind(argv[i]);
+		if (fullpath == NULL)
+			printf("Unable to find %s in $PATH.\n", argv[i]);
+		else 
+			printf( "Found %s @ %s.\n", argv[i], fullpath );
+	}
 }
 #endif

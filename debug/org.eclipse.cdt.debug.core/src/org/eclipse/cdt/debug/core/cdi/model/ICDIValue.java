@@ -32,6 +32,12 @@ public interface ICDIValue extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String getValueString() throws CDIException;
+
+	/**
+	 * Return the number of children.
+	 * @return int children count
+	 */
+	int getChildrenNumber() throws CDIException;
 	
 	/**
 	 * @return true if value is a container like structure.

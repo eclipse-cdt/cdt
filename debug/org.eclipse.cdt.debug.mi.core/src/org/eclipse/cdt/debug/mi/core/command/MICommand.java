@@ -76,7 +76,12 @@ public class MICommand extends Command
 		String command =  getToken() + getOperation(); 
 		if (options != null && options.length > 0) {
 			for (int i = 0; i < options.length; i++) {
-				command += " " + options[i];
+				if (options[i].indexOf('\t') != -1 ||
+					options[i].indexOf(' ') != -1) {
+					command += " \"" + options[i] + "\"";
+				} else {
+					command += " " + options[i];
+				}
 			}
 		}
 		if (parameters != null && parameters.length > 0) {
@@ -87,7 +92,7 @@ public class MICommand extends Command
 				// According to the MI documentation '-' is not permitted
 				//(parameters[i].indexOf('-') != -1 || parameters[i].indexof(\n)
 				if (parameters[i].indexOf('\t') != -1 ||
-				    parameters[i].indexOf('\"') != -1||
+				    parameters[i].indexOf('\"') != -1 ||
 				    parameters[i].indexOf(' ') != -1) {
 					command += " \"" + parameters[i] + "\"";
 				} else {

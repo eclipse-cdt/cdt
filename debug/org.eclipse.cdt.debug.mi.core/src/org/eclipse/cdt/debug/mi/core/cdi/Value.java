@@ -64,11 +64,19 @@ public class Value extends CObject implements ICDIValue {
 		}
 		return result;
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
+	 */	
+	public int getChildrenNumber() throws CDIException {
+		return variable.getMIVar().getNumChild();
+	}
 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
 	public boolean hasChildren() throws CDIException {
+	/*
 		int number = 0;
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -85,7 +93,8 @@ public class Value extends CObject implements ICDIValue {
 			throw new CDIException(e.getMessage());
 		}
 		return (number > 0);
-		
+	*/
+		return (getChildrenNumber() > 0);	
 	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()

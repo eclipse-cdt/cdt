@@ -8,11 +8,18 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 
-public class CoreFileConfiguration implements ICDIConfiguration {
+public class CoreFileConfiguration extends CObject implements ICDITargetConfiguration {
+
+	/**
+	 * @param t
+	 */
+	public CoreFileConfiguration(Target t) {
+		super(t);
+	}
 
 	public boolean supportsTerminate() {
 		return true;

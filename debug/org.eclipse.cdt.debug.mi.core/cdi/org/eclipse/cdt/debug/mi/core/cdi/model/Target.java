@@ -29,6 +29,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
@@ -75,6 +76,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 public class Target extends SessionObject implements ICDITarget {
 
 	MISession miSession;
+	ICDITargetConfiguration fConfiguration;
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
@@ -942,6 +944,24 @@ public class Target extends SessionObject implements ICDITarget {
 	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
 		RegisterManager regMgr = ((Session)getSession()).getRegisterManager();
 		return regMgr.getRegisterGroups(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getConfiguration()
+	 */
+	public ICDITargetConfiguration getConfiguration() {
+		if (fConfiguration != null) {
+			if (miSession.isProgramSession()) {
+				fConfiguration = new TargetConfiguration(this);
+			}  else if (miSession.isAttachSession()){
+				fConfiguration = new TargetConfiguration(this);
+			} else if (miSession.isCoreSession()) {
+				fConfiguration = new CoreFileConfiguration(this);
+			} else {
+				fConfiguration = new TargetConfiguration(this);				
+			}
+		}
+		return fConfiguration;
 	}
 
 }

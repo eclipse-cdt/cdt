@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
@@ -44,11 +44,11 @@ public class Session implements ICDISession, ICDISessionObject {
 	SharedLibraryManager sharedLibraryManager;
 	SignalManager signalManager;
 	SourceManager sourceManager;
-	ICDIConfiguration configuration;
+	ICDISessionConfiguration configuration;
 
 	public Session(MISession miSession, boolean attach) {
 		commonSetup();
-		setConfiguration(new Configuration(miSession, attach));
+		//setConfiguration(new SessionConfiguration(this));
 
 		Target target = new Target(this, miSession);
 		addTargets(new Target[] { target });
@@ -56,19 +56,15 @@ public class Session implements ICDISession, ICDISessionObject {
 
 	public Session(MISession miSession) {
 		commonSetup();
-		setConfiguration(new CoreFileConfiguration());
+		//setConfiguration(new CoreFileConfiguration());
 
 		Target target = new Target(this, miSession);
 		addTargets(new Target[] { target });
 	}
 
-	public Session() {
-		commonSetup();
-		setConfiguration(new CoreFileConfiguration());
-	}
-
 	private void commonSetup() {
 		props = new Properties();
+		setConfiguration(new SessionConfiguration(this));
 
 		processManager = new ProcessManager(this);
 		breakpointManager = new BreakpointManager(this);
@@ -165,11 +161,11 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getConfiguration()
 	 */
-	public ICDIConfiguration getConfiguration() {
+	public ICDISessionConfiguration getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(ICDIConfiguration conf) {
+	public void setConfiguration(ICDISessionConfiguration conf) {
 		configuration = conf;
 	}
 

@@ -1,4 +1,11 @@
 2004-11-02 Alain Magloire
+	Refactor ICDIConfiguratio --> ICDISessionConfiguration and ICDITargetConfiguration
+	* cdi/org/eclipse/cdt/debug/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/SessionConfiguration.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/TargetConfiguration.java
+
+2004-11-02 Alain Magloire
 	Tentative fix for PR 77435
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
 

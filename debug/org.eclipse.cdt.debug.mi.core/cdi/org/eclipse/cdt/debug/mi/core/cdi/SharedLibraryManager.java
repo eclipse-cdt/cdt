@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -92,8 +92,7 @@ public class SharedLibraryManager extends Manager {
 
 	public List updateState(Target target) throws CDIException {
 		MISession miSession = target.getMISession();
-		Session session = (Session)getSession();
-		ICDIConfiguration conf = session.getConfiguration();
+		ICDITargetConfiguration conf = target.getConfiguration();
 		if (!conf.supportsSharedLibrary()) {
 			return Collections.EMPTY_LIST; // Bail out early;
 		}

@@ -8,22 +8,19 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.mi.core.MIInferior;
 import org.eclipse.cdt.debug.mi.core.MIProcess;
 import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  */
-public class Configuration implements ICDIConfiguration {
-	protected boolean fAttached;
-	MISession miSession;
+public class TargetConfiguration extends CObject implements ICDITargetConfiguration {
 	
-	public Configuration(MISession s, boolean attached) {
-		fAttached = attached;
-		miSession = s;
+	public TargetConfiguration(Target target) {
+		super(target);
 	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsBreakpoints()
@@ -36,7 +33,8 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsDisconnect()
 	 */
 	public boolean supportsDisconnect() {
-		return fAttached ? true :false;
+		MISession miSession = ((Target)getTarget()).getMISession();
+		return miSession.isAttachSession() ? true : false;
 	}
 
 	/**
@@ -92,7 +90,8 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsRestart()
 	 */
 	public boolean supportsRestart() {
-		return fAttached ? false : true;
+		MISession miSession = ((Target)getTarget()).getMISession();
+		return miSession.isAttachSession() ? false : true;
 	}
 
 	/**
@@ -125,12 +124,14 @@ public class Configuration implements ICDIConfiguration {
 			os = System.getProperty("os.name", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (SecurityException e) {
 		}
+		Target target = (Target)getTarget();
+		MISession miSession = target.getMISession();
 		MIProcess gdb = miSession.getGDBProcess();
 		MIInferior inferior = miSession.getMIInferior();
 		if (gdb.canInterrupt(inferior)) {
 			// If we attached sending a control-c,
 			// seems to alays work.
-			if (fAttached) {
+			if (miSession.isAttachSession()) {
 				return true;
 			}
 

@@ -31,7 +31,7 @@ public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 
 			launcher.execute(
 				new Path("cygpath"),
-				new String[] { paths[i] },
+				new String[] { "-u", paths[i] },
 				new String[0],
 				new Path("."));
 			if (launcher.waitAndRead(output, output) != CommandLauncher.OK)

@@ -5,6 +5,9 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
@@ -33,13 +36,16 @@ public class Thread extends CObject implements ICDIThread {
 	static ICDIStackFrame[] noStack = new ICDIStackFrame[0];
 	int id;
 	ICDIStackFrame currentFrame;
+	List currentFrames;
 	int stackdepth = 0;
-	
+
+	final static int STACKFRAME_DEFAULT_DEPTH = 200;
+
 	public Thread(ICDITarget target, int threadId) {
 		super(target);
 		id = threadId;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -47,6 +53,7 @@ public class Thread extends CObject implements ICDIThread {
 	public void clearState() {
 		stackdepth = 0;
 		currentFrame = null;
+		currentFrames = null;
 	}
 
 	public String toString() {
@@ -74,44 +81,50 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
 	public ICDIStackFrame[] getStackFrames() throws CDIException {
-		int depth = 0;
-		ICDIStackFrame[] stacks = noStack;
-		Session session = (Session)getTarget().getSession();
-		Target currentTarget = (Target)session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		currentTarget.setCurrentThread(this, false);
-		try {
-			MISession mi = session.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			MIStackListFrames frames = factory.createMIStackListFrames();
-			depth = getStackFrameCount();
-			mi.postCommand(frames);
-			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
+
+		// get the frames depth
+		int depth = getStackFrameCount();
+
+		// refresh if we have nothing or if we have just a subset get everything.
+		if (currentFrames == null || currentFrames.size() < depth) {
+			currentFrames = new ArrayList();
+			Session session = (Session) getTarget().getSession();
+			Target currentTarget = (Target) session.getCurrentTarget();
+			ICDIThread currentThread = currentTarget.getCurrentThread();
+			currentTarget.setCurrentThread(this, false);
+			try {
+				MISession mi = session.getMISession();
+				CommandFactory factory = mi.getCommandFactory();
+				MIStackListFrames frames = factory.createMIStackListFrames();
+				mi.postCommand(frames);
+				MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				MIFrame[] miFrames = info.getMIFrames();
+				for (int i = 0; i < miFrames.length; i++) {
+					currentFrames.add(new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel()));
+				}
+			} catch (MIException e) {
+				//throw new CDIException(e.getMessage());
+				//System.out.println(e);
+			} catch (CDIException e) {
+				//throw e;
+				//System.out.println(e);
+			} finally {
+				currentTarget.setCurrentThread(currentThread, false);
 			}
-			MIFrame[] miFrames = info.getMIFrames();
-			stacks = new StackFrame[miFrames.length];
-			for (int i = 0; i < stacks.length; i++) {
-				stacks[i] = new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel());
-			}
-		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
-			//System.out.println(e);
-		} catch (CDIException e) {
-			//throw e;
-			//System.out.println(e);
-		} finally {
-			currentTarget.setCurrentThread(currentThread, false);
-		}
-		if (currentFrame == null) {
-			for (int i = 0; i < stacks.length; i++) {
-				if (stacks[i].getLevel() == depth) {
-					currentFrame = stacks[i];
+			// assign the currentFrame if it was not done yet.
+			if (currentFrame == null) {
+				for (int i = 0; i < currentFrames.size(); i++) {
+					ICDIStackFrame stack = (ICDIStackFrame) currentFrames.get(i);
+					if (stack.getLevel() == depth) {
+						currentFrame = stack;
+					}
 				}
 			}
 		}
-		return stacks;
+		return (ICDIStackFrame[]) currentFrames.toArray(noStack);
 	}
 
 	/**
@@ -119,8 +132,8 @@ public class Thread extends CObject implements ICDIThread {
 	 */
 	public int getStackFrameCount() throws CDIException {
 		if (stackdepth == 0) {
-			Session session = (Session)(getTarget().getSession());
-			Target currentTarget = (Target)session.getCurrentTarget();
+			Session session = (Session) (getTarget().getSession());
+			Target currentTarget = (Target) session.getCurrentTarget();
 			ICDIThread currentThread = currentTarget.getCurrentThread();
 			currentTarget.setCurrentThread(this, false);
 			try {
@@ -162,44 +175,57 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
 	public ICDIStackFrame[] getStackFrames(int low, int high) throws CDIException {
-		ICDIStackFrame[] stacks = noStack;
-		Session session = (Session)getTarget().getSession();
-		Target currentTarget = (Target)session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		currentTarget.setCurrentThread(this, false);
-		try {
-			MISession mi = session.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			MIStackListFrames frames = factory.createMIStackListFrames(low, high);
-			int depth = getStackFrameCount();
-			mi.postCommand(frames);
-			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
+		if (currentFrames == null || currentFrames.size() < high) {
+			currentFrames = new ArrayList();
+			Session session = (Session) getTarget().getSession();
+			Target currentTarget = (Target) session.getCurrentTarget();
+			ICDIThread currentThread = currentTarget.getCurrentThread();
+			currentTarget.setCurrentThread(this, false);
+			try {
+				int depth = getStackFrameCount();
+				int upperBound;
+				// try to get the largest subset.
+				// if what the user asks is smaller then the depth
+				// try to cache things by getting the min(depth,STACKFRAME_DEFAULT_DEPTH)
+				// else give fetch the entire thing.
+				if (high < depth) {
+					upperBound = Math.min(depth, STACKFRAME_DEFAULT_DEPTH);
+				} else {
+					upperBound = depth;
+				}
+				MISession mi = session.getMISession();
+				CommandFactory factory = mi.getCommandFactory();
+				MIStackListFrames frames = factory.createMIStackListFrames(0, upperBound);
+				mi.postCommand(frames);
+				MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				MIFrame[] miFrames = info.getMIFrames();
+				for (int i = 0; i < miFrames.length; i++) {
+					currentFrames.add(new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel()));
+				}
+			} catch (MIException e) {
+				//throw new CDIException(e.getMessage());
+				//System.out.println(e);
+			} catch (CDIException e) {
+				//throw e;
+				//System.out.println(e);
+			} finally {
+				currentTarget.setCurrentThread(currentThread, false);
 			}
-			MIFrame[] miFrames = info.getMIFrames();
-			stacks = new StackFrame[miFrames.length];
-			for (int i = 0; i < stacks.length; i++) {
-				stacks[i] = new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel());
-			}
-		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
-			//System.out.println(e);
-		} catch (CDIException e) {
-			//throw e;
-			//System.out.println(e);
-		} finally {
-			currentTarget.setCurrentThread(currentThread, false);
-		}
-		if (currentFrame == null) {
-			for (int i = 0; i < stacks.length; i++) {
-				StackFrame f = (StackFrame)stacks[i];
-				if (f.getMIFrame().getLevel() == 0) {
-					currentFrame = stacks[i];
+			// take time to assign the currentFrame, if it is in the set
+			if (currentFrame == null) {
+				for (int i = 0; i < currentFrames.size(); i++) {
+					StackFrame f = (StackFrame) currentFrames.get(i);
+					if (f.getMIFrame().getLevel() == 0) {
+						currentFrame =f;
+					}
 				}
 			}
 		}
-		return stacks;
+		List list = currentFrames.subList(low, high);
+		return (ICDIStackFrame[])list.toArray(noStack);
 	}
 
 	/**
@@ -217,7 +243,7 @@ public class Thread extends CObject implements ICDIThread {
 		if (stackframe != null) {
 			frameLevel = stackframe.getLevel();
 		}
-		
+
 		// Check to see if we are already at this level
 		ICDIStackFrame current = getCurrentStackFrame();
 		if (current != null && current.getLevel() == frameLevel) {
@@ -226,15 +252,15 @@ public class Thread extends CObject implements ICDIThread {
 		}
 
 		try {
-			Session session = (Session)getTarget().getSession();
+			Session session = (Session) getTarget().getSession();
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
 			// See comment in StackFrame constructor.
-			int miLevel = getStackFrameCount() - frameLevel;		
+			int miLevel = getStackFrameCount() - frameLevel;
 			MIStackSelectFrame frame = factory.createMIStackSelectFrame(miLevel);
 			// Set ourself as the current thread first.
-			((Target)getTarget()).setCurrentThread(this, doUpdate);
+			 ((Target) getTarget()).setCurrentThread(this, doUpdate);
 			mi.postCommand(frame);
 			MIInfo info = frame.getMIInfo();
 			if (info == null) {
@@ -242,14 +268,14 @@ public class Thread extends CObject implements ICDIThread {
 			}
 			currentFrame = stackframe;
 			// Resetting stackframe may change the value of
-			// some variables like registers.  Call an update()
+			// some variables like registers. Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
-				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
+				RegisterManager regMgr = (RegisterManager) session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
 					regMgr.update();
 				}
-				VariableManager varMgr = (VariableManager)session.getVariableManager();
+				VariableManager varMgr = (VariableManager) session.getVariableManager();
 				if (varMgr.isAutoUpdate()) {
 					varMgr.update();
 				}

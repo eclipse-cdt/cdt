@@ -1,3 +1,10 @@
+2004-12-22 Alain Magloire
+
+	Cache the stackframes when we become suspended, to reduce
+	the chat between gdb.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java
+
 2003-12-22 Mikhail Khodjaiants
 	Fix for bug 49282 terminate the gdb session if the termination of the inferior fails.
 

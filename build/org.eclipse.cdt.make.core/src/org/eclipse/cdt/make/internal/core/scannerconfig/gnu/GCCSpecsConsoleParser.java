@@ -31,16 +31,11 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private final String INCLUDE = "#include"; //$NON-NLS-1$
 	private final String DEFINE = "#define"; //$NON-NLS-1$
 
-	private final int STATE_BEGIN = 0;
-	private final int STATE_SPECS_STARTED = 1;
-	private final int STATE_INCLUDES_STARTED = 2;
-	private final int STATE_ADDITIONAL_DEFINES_STARTED = 3;
-
 	private IProject fProject = null;
 	private IScannerInfoConsoleParserUtility fUtil = null;
 	private IScannerInfoCollector fCollector = null;
 	
-	private int state = STATE_BEGIN;
+	private boolean expectingIncludes = false;
 	private List symbols = new ArrayList();
 	private List includes = new ArrayList();
 
@@ -59,65 +54,38 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	public boolean processLine(String line) {
 		boolean rc = false;
 		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line:", TraceUtil.EOL, line);	//$NON-NLS-1$ //$NON-NLS-2$
-		// Known patterns:
-		// (a) gcc|g++ ... -Dxxx -Iyyy ...
-		switch (state) {
-			case STATE_BEGIN:
-				if (line.startsWith("Reading specs from")) {	//$NON-NLS-1$
-					state = STATE_SPECS_STARTED;
+
+		// contribution of -dD option
+		if (line.startsWith(DEFINE)) {
+			String[] defineParts = line.split("\\s+", 3); //$NON-NLS-1$
+			if (defineParts[0].equals(DEFINE)) {
+				String symbol = null;
+				switch (defineParts.length) {
+					case 2:
+						symbol = defineParts[1];
+						break;
+					case 3:
+						symbol = defineParts[1] + "=" + defineParts[2];
+						break;
 				}
-				break;
-			case STATE_SPECS_STARTED: 
-				if (line.indexOf("-D") != -1) {	//$NON-NLS-1$
-					// line contains -Ds, extract them
-					String[] tokens = line.split("\\s+");//$NON-NLS-1$
-					for (int i = 0; i < tokens.length; ++i) {
-						if (tokens[i].startsWith("-D")) {	//$NON-NLS-1$
-							String symbol = tokens[i].substring(2);
-							if (!symbols.contains(symbol))
-								symbols.add(symbol);
-						}
-					}
+				if (symbol != null && !symbols.contains(symbol)) { //$NON-NLS-1$
+					symbols.add(symbol);
 				}
-				// now get all the includes
-				if (line.startsWith(INCLUDE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
-					state = STATE_INCLUDES_STARTED;
-				}
-				break;
-			case STATE_INCLUDES_STARTED:
-				if (line.startsWith(INCLUDE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
-					state = STATE_INCLUDES_STARTED;
-				}
-				else if (line.startsWith("End of search list.")) {	//$NON-NLS-1$
-					state = STATE_ADDITIONAL_DEFINES_STARTED;
-				}
-				else {
-					if (!includes.contains(line))
-						includes.add(line);
-				}
-				break;
-			case STATE_ADDITIONAL_DEFINES_STARTED:
-				if (line.startsWith(DEFINE)) {
-					String[] defineParts = line.split("\\s+", 3); //$NON-NLS-1$
-					if (defineParts[0].equals(DEFINE)) {
-						String symbol = null;
-						switch (defineParts.length) {
-							case 2:
-								symbol = defineParts[1];
-								break;
-							case 3:
-								symbol = defineParts[1] + "=" + defineParts[2];
-								break;
-						}
-						if (symbol != null && !symbols.contains(symbol)) { //$NON-NLS-1$
-							symbols.add(symbol);
-						}
-					}
-				}
-				break;
+			}
+		}
+		// now get all the includes
+		else if (line.startsWith(INCLUDE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
+			expectingIncludes = true;
+		}
+		else if (line.startsWith("End of search list.")) {	//$NON-NLS-1$
+			expectingIncludes = false;
+		}
+		else if (expectingIncludes) {
+			if (!includes.contains(line))
+				includes.add(line);
 		}
 			
-		return rc;
+	return rc;
 	}
 
 	/* (non-Javadoc)

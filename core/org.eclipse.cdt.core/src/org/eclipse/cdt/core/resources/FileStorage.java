@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core;
+package org.eclipse.cdt.core.resources;
 
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.

@@ -1,3 +1,14 @@
+2005-02-15 Alain Magloire
+	Fix PR 82856
+	* model/org/eclipse/cdt/core/model/IDeclaration.java
+	* model/org/eclipse/cdt/core/model/IMacro.java
+	* model/org/eclipse/cdt/core/model/IMember.java
+	* model/org/eclipse/cdt/core/model/IMethod.java
+	* model/org/eclipse/cdt/core/model/INamespace.java
+	* model/org/eclipse/cdt/core/model/IStructure.java
+	* model/org/eclipse/cdt/core/model/IVariable.java
+	* model/org/eclipse/cdt/core/model/IVariableDeclaration.java
+
 2005-02-14 Alain Magloire
 	Part of 79596
 	* model/org/eclipse/cdt/core/model/CoreModel.java

@@ -529,10 +529,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          		expr.setName(exprName);
          		exprName.setParent(expr);
          		exprName.setPropertyInParent(IASTIdExpression.ID_NAME);
-         		
-				createCompletionNode(token);
-         		completionNode.addName(exprName);
-         		
+
          		// Now the declaration statement
          		IASTDeclarationStatement declStmt = createDeclarationStatement();
          		declStmt.setParent(result);
@@ -549,7 +546,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          		declSpec.setName(declSpecName);
          		declSpecName.setParent(declSpec);
          		declSpecName.setPropertyInParent(IASTNamedTypeSpecifier.NAME);
-         		completionNode.addName(declSpecName);
          	}
         }
         

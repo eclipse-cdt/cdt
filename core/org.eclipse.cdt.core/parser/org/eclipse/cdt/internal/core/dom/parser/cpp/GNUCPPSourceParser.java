@@ -4365,6 +4365,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       mostRelevantScopeNode = translationUnit;
       while (true) {
          try {
+			if (LT(1) == IToken.tEOC)
+				break;
             int checkOffset = LA(1).hashCode();
             IASTDeclaration declaration = declaration();
             translationUnit.addDeclaration(declaration);

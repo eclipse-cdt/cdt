@@ -119,16 +119,24 @@ public class Configuration implements ICDIConfiguration {
 			os = System.getProperty("os.name", "");
 		} catch (SecurityException e) {
 		}
-		// FIXME: bug in gdb whe using -tty sending a control-c
-		// to gdb does not work.
-		if (os.equals("SunOS")) {
-			return false;
-		}
 		Process gdb = miSession.getMIProcess();
 		if (gdb instanceof Spawner) {
+			// If we attached sending a control-c, seems to work.
+			if (fAttached) {
+				return true;
+			}
+
+			// If we have a pty, sending a control-c will work
+			// except for solaris.
 			MIInferior inferior = miSession.getMIInferior();
 			if (inferior.getPTY() != null) {
-				return true;
+				// FIXME: bug in Solaris gdb when using -tty, sending a control-c
+				// does not work.
+				if (os.equals("SunOS")) {
+					return false;
+				} else {
+					return true;
+				}
 			}
 		}
 		return false;

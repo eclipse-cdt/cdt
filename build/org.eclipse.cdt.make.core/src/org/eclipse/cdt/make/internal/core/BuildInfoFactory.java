@@ -255,9 +255,9 @@ public class BuildInfoFactory {
 				return;
 			}
 			ICommand builder = MakeProjectNature.getBuildSpec(project, builderID);
-			args.put(name, value);
 			builder.setArguments(args);
 			project.setDescription(project.getDescription(), null);
+			args.put(name, value);
 		}
 
 		public String getString(String name) {

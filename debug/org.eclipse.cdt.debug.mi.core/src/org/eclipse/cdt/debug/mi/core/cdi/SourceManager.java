@@ -9,14 +9,18 @@ import java.io.File;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIDataDisassemble;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowDirectories;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
+import org.eclipse.cdt.debug.mi.core.output.MIAsm;
+import org.eclipse.cdt.debug.mi.core.output.MIDataDisassembleInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowDirectoriesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
 
@@ -111,6 +115,55 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		try {
 			mi.postCommand(solib);
 			solib.getMIInfo();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, int, int)
+	 */
+	public ICDIInstruction[] getInstructions(String filename, int linenum, int lines) throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIDataDisassemble dis = factory.createMIDataDisassemble(filename, linenum, lines, false);
+		try {
+			mi.postCommand(dis);
+			MIDataDisassembleInfo info = dis.getMIDataDisassembleInfo();
+			MIAsm[] asm = info.getMIAsms();
+			Instruction[] instructions = new Instruction[asm.length];
+			for (int i = 0; i < instructions.length; i++) {
+				instructions[i] = new Instruction(getCSession().getCTarget(), asm[i]);
+			}
+			return instructions;
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, int)
+	 */
+	public ICDIInstruction[] getInstructions(String filename, int linenum) throws CDIException {
+		return getInstructions(filename, linenum, -1);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, String)
+	 */
+	public ICDIInstruction[] getInstructions(String sa, String ea) throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, false);
+		try {
+			mi.postCommand(dis);
+			MIDataDisassembleInfo info = dis.getMIDataDisassembleInfo();
+			MIAsm[] asm = info.getMIAsms();
+			Instruction[] instructions = new Instruction[asm.length];
+			for (int i = 0; i < instructions.length; i++) {
+				instructions[i] = new Instruction(getCSession().getCTarget(), asm[i]);
+			}
+			return instructions;
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}

@@ -553,6 +553,12 @@
             id="org.eclipse.cdt.ui.preferences.TemplatePreferencePage">
       </page>
       <page
+            name="%CodeFormatterPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage">
+      </page>
+      <page
             name="%CPluginBuildConsolePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"

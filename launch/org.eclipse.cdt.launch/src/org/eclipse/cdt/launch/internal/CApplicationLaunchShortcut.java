@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
  */
@@ -211,12 +212,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		};
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), provider);
 		dialog.setElements(debugConfigs);
-		dialog.setTitle("Launch Debug Configuration Selection"); //$NON-NLS-1$
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage("Choose a debug configuration to debug"); //$NON-NLS-1$
-		} else {
-			dialog.setMessage("Choose a configuration to run"); //$NON-NLS-1$
-		}
+		dialog.setTitle(getDebugConfigDialogTitleString(debugConfigs, mode)); 
+		dialog.setMessage(getDebugConfigDialogMessageString(debugConfigs, mode)); 
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		provider.dispose();
@@ -225,6 +222,19 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		}
 		return null;
 	}
+
+	protected String getDebugConfigDialogTitleString(ICDebugConfiguration [] configList, String mode) {
+		return "Launch Debug Configuration Selection"; //$NON-NLS-1$
+	}
+	
+	protected String getDebugConfigDialogMessageString(ICDebugConfiguration [] configList, String mode) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			return "Choose a debug configuration to debug"; //$NON-NLS-1$
+		} else {
+			return "Choose a configuration to run"; //$NON-NLS-1$
+		}
+	}
+
 
 	/**
 	 * Show a selection dialog that allows the user to choose one of the specified
@@ -235,12 +245,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle("Launch Configuration Selection"); //$NON-NLS-1$
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage("Choose a launch configuration to debug"); //$NON-NLS-1$
-		} else {
-			dialog.setMessage("Choose a launch configuration to run"); //$NON-NLS-1$
-		}
+		dialog.setTitle(getLaunchSelectionDialogTitleString(configList, mode)); 
+		dialog.setMessage(getLaunchSelectionDialogMessageString(configList, mode)); 
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
@@ -250,38 +256,74 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		return null;
 	}
 
+	protected String getLaunchSelectionDialogTitleString(List configList, String mode) {
+		return "Launch Configuration Selection"; //$NON-NLS-1$
+	}
+	
+	protected String getLaunchSelectionDialogMessageString(List binList, String mode) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			return "Choose a launch configuration to debug"; //$NON-NLS-1$
+		} else {
+			return "Choose a launch configuration to run"; //$NON-NLS-1$
+		}
+	}
+
 	/**
 	 * Prompts the user to select a  binary
 	 * 
 	 * @return the selected binary or <code>null</code> if none.
 	 */
 	protected IBinary chooseBinary(List binList, String mode) {
-		ILabelProvider provider = new CElementLabelProvider() {
+		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
 					StringBuffer name = new StringBuffer();
-					name.append(bin.getPath().toString());
-					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
+					name.append(bin.getPath().lastSegment());
 					return name.toString();
 				}
 				return super.getText(element);
 			}
 		};
 
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), provider);
+		ILabelProvider qualifierLabelProvider = new CElementLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IBinary) {
+					IBinary bin = (IBinary)element;
+					StringBuffer name = new StringBuffer();
+					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be"));
+					name.append(" - ");
+					name.append(bin.getPath().toString());
+					return name.toString();
+				}
+				return super.getText(element);
+			}
+		};
+		
+		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
 		dialog.setElements(binList.toArray());
-		dialog.setTitle("C Local Application"); //$NON-NLS-1$
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage("Choose a local application to debug"); //$NON-NLS-1$
-		} else {
-			dialog.setMessage("Choose a local application to run"); //$NON-NLS-1$
-		}
+		dialog.setTitle(getBinarySelectionDialogTitleString(binList, mode)); //$NON-NLS-1$
+		dialog.setMessage(getBinarySelectionDialogMessageString(binList, mode)); //$NON-NLS-1$
+		dialog.setUpperListLabel("Binaries:");
+		dialog.setLowerListLabel("Qualifier:");
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			return (IBinary) dialog.getFirstResult();
 		}
+
 		return null;
+	}
+	
+	protected String getBinarySelectionDialogTitleString(List binList, String mode) {
+		return "C Local Application"; //$NON-NLS-1$
+	}
+	
+	protected String getBinarySelectionDialogMessageString(List binList, String mode) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			return "Choose a local application to debug"; //$NON-NLS-1$
+		} else {
+			return "Choose a local application to run"; //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -330,11 +372,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), "C Local Application Launcher", e.getMessage());
+				MessageDialog.openError(getShell(), "Application Launcher", e.getMessage());
 				return;
 			}
 			if (results.size() == 0) {
-				MessageDialog.openError(getShell(), "C Local Application Launcher", "Launch failed no binaries");
+				MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no binaries");
 			} else {
 				IBinary bin = chooseBinary(results, mode);
 				if (bin != null) {
@@ -342,7 +384,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				}
 			}
 		} else {
-			MessageDialog.openError(getShell(), "C Local Application Launcher", "Launch failed no project selected");
+			MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no project selected");
 		}
 	}
 

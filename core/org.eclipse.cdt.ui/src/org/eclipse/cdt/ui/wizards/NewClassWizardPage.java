@@ -1099,11 +1099,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		ITypeInfo[] elementsFound = findClassElementsInProject();
 		QualifiedTypeName typeName = new QualifiedTypeName(getNewClassName());
 		if (foundInList(elementsFound, typeName)) {
-			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
 		}
-//		if(foundInList(getNewClassName(), getContainerPath(linkedResourceGroupForHeader), elementsFound)){
-//			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
-//		}
 		return status;
 	}
 	/**

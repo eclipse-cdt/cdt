@@ -1,3 +1,6 @@
+2004-06-25 Chris Wiebe
+	Fix for PR# 49849: [New Class Wizard] Able to add a new C++ Class with the same name (at same location) from  New C++ Class Wizard
+	
 2004-06-24 Bogdan Gheorghe
 	Fix for 66695: [Indexer] Manually add an include path to a file/folder is ignored
 	Changed CompletionEngine getScannerInfo to get the info from a resource instead of 

@@ -20,6 +20,8 @@ public interface IMakeTargetManager {
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
 
 	IMakeTarget[] getTargets(IContainer container) throws CoreException;
+	IMakeTarget findTarget(IContainer container, String name);
+
 	IProject[]    getTargetBuilderProjects() throws CoreException;
 
 	String getBuilderID(String targetBuilderID);

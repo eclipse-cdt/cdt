@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,14 +41,15 @@ public class ProjectTargets {
 		this.project = project;
 	}
 
-	public ProjectTargets(IProject project, InputStream input) throws CoreException {
+	public ProjectTargets(IProject project, InputStream input) {
+		this(project);
+		
 		Document document = null;
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			document = parser.parse(input);
 		} catch (Exception e) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Error reading target file", e));
+			MakeCorePlugin.log(e);
 		}
 		Node node = document.getFirstChild();
 		if (node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
@@ -80,7 +82,11 @@ public class ProjectTargets {
 					if (option != null) {
 						target.setBuildArguments(option);
 					}
-					add(target);
+					try {
+						add(target);
+					} catch (CoreException e) {
+						MakeCorePlugin.log(e);
+					}
 				}
 			}
 		}
@@ -106,6 +112,20 @@ public class ProjectTargets {
 			return (IMakeTarget[]) list.toArray(new IMakeTarget[list.size()]);
 		}
 		return new IMakeTarget[0];
+	}
+	
+	public IMakeTarget findTarget(IContainer container, String name) {
+		ArrayList list = (ArrayList) targetMap.get(container);
+		if (list != null) {
+			Iterator targets = list.iterator();
+			while( targets.hasNext()) {
+				IMakeTarget target = (IMakeTarget)targets.next();
+				if ( target.getName().equals(name) ) {
+					return target;
+				}
+			}		
+		}
+		return null;
 	}
 
 	public void add(MakeTarget target) throws CoreException {

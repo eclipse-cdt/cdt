@@ -84,6 +84,20 @@ public class MakeTarget implements IMakeTarget {
 		return container;
 	}
 
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof MakeTarget) {
+			MakeTarget other = (MakeTarget) obj;
+			return container.equals(other.getContainer()) && name.equals(other.getName());
+		}
+		return false;
+	}
+
+	public int hashCode() {
+		return container.hashCode() * 17 + name.hashCode();
+	}
+
 	public void build(IProgressMonitor monitor) throws CoreException {
 		IProject project = container.getProject();
 		String builderID = MakeCorePlugin.getDefault().getTargetManager().getBuilderID(targetBuilderID);

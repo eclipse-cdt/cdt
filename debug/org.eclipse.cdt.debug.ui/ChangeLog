@@ -1,3 +1,7 @@
+2003-02-28 Mikhail Khodjaiants
+	Check if page exists before adding a listener.
+	* AbstractListenerActionDelegate.java
+
 2003-02-21 Mikhail Khodjaiants
 	Implementing the 'Attach Source' editor.
 	* plugin.properties

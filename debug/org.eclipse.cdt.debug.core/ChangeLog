@@ -1,3 +1,7 @@
+2004-11-26 Mikhail Khodjaiants
+	Fix for bug 79583: Deffered breakpoints and shared library events.
+	* CSharedLibraryManager.java
+
 2004-11-25 Mikhail Khodjaiants
 	Fix for bug 79452: Unable to set a breakpoint on a class method.
 	* CDebugUtils.java: cleanup.

@@ -56,7 +56,7 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	/**
 	 * update one Block.
 	 */
-	public void update(MemoryBlock block, List aList) throws CDIException {
+	public Long[] update(MemoryBlock block, List aList) throws CDIException {
 		MemoryBlock newBlock = cloneBlock(block);
 		Long[] array = compareBlocks(block, newBlock);
 		// Update the block MIDataReadMemoryInfo.
@@ -69,6 +69,7 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 				mi.fireEvent(new MIMemoryChangedEvent(array));
 			}
 		}
+		return array;
 	}
 
 	/**

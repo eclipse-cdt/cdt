@@ -257,6 +257,22 @@ public class CommandFactory {
 		return new MIInfoSharedLibrary();
 	}
 
+	public MISharedLibrary createMISharedLibrary() {
+		return new MISharedLibrary();
+	}
+
+	public MISharedLibrary createMISharedLibrary(String name) {
+		return new MISharedLibrary(name);
+	}
+
+	public MIWhatis createMIWhatis(String name) {
+		return new MIWhatis(name);
+	}
+
+	public MIPType createMIPType(String name) {
+		return new MIPType(name);
+	}
+
 	public MIVarCreate createMIVarCreate(String expression) {
 		return new MIVarCreate(expression);
 	}

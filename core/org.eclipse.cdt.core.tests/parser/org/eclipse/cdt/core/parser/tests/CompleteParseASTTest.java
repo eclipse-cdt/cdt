@@ -148,7 +148,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
 		IASTVariable v = (IASTVariable)declarations.next();
 		assertEquals( v.getName(), "x"); //$NON-NLS-1$
-		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA ); 
+		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA );
+		assertAllReferences( 1, createTaskList( new Task( classA )));
 	}
     
 	public void testNestedClassReferenceVariable() throws Exception
@@ -241,8 +242,10 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	{
 		Iterator declarations = parse( "class A { public: \n class B { }; }; const A::B &  foo( A * myParam );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		Iterator classDecls = getDeclarations(classA);
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)classDecls.next()).getTypeSpecifier();
 		IASTFunction function = (IASTFunction)declarations.next(); 
-		assertEquals( callback.getReferences().size(), 3 ); 
+		assertAllReferences( 3, createTaskList( new Task( classA ,2), new Task(classB)));
 	}
 	
 	public void testSimpleMethod() throws Exception
@@ -457,11 +460,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTField fieldA = (IASTField)s.next(); 
 		IASTMethod methodA = (IASTMethod)s.next(); 
 		assertFalse( s.hasNext() );
-		assertEquals( callback.getReferences().size(), 2 );
-		IASTFieldReference reference1 = (IASTFieldReference)callback.getReferences().get(0);
-		IASTVariableReference reference2 = (IASTVariableReference)callback.getReferences().get(1);
-		assertEquals( reference1.getReferencedElement(), fieldA );
-		assertEquals( reference2.getReferencedElement(), variableX ); 
+		assertAllReferences( 2, createTaskList( new Task( fieldA), new Task( variableX )));
 	}
 	
 	public void testArrayModExpression() throws Exception
@@ -535,26 +534,18 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	
 	public void testQualifiedNameReferences() throws Exception
 	{
-		try { // This is to prove that there are no exceptions
 			// Used to cause AST Semantic exception
 			Iterator i = parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ).getDeclarations(); //$NON-NLS-1$
 			IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 			Iterator j = getDeclarations(classA);
 			IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)j.next()).getTypeSpecifier();
 			Iterator k = getDeclarations(classB);
-			IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)k.next()).getTypeSpecifier();
-			
+			IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)k.next()).getTypeSpecifier();			
 			// Note : this used to be considered a function, not a method
 			IASTMethod method = (IASTMethod)i.next(); 
 			
-			assertEquals( callback.getReferences().size(), 3 );
-			Iterator references = callback.getReferences().iterator();
-			assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classA );
-			assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classB );
-			assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classC );
-		}catch (Exception e){
-			fail();
-		}
+			assertAllReferences( 3, createTaskList( new Task( classA ), new Task( classB ), new Task( classC )));
+		
 	}
 
 	public void testIsConstructor() throws Exception

@@ -261,6 +261,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 		public Iterator getNewPlacementExpressions();
 		public Iterator getNewTypeIdExpressions();
 		public Iterator getNewInitializerExpressions();
+		public void freeReferences( IReferenceManager manager );
 	}
 	
 	
@@ -277,5 +278,10 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 	public long evaluateExpression() throws ASTExpressionEvaluationException;
 	public void reconcileReferences() throws ASTNotImplementedException;
 	public void purgeReferences() throws ASTNotImplementedException;
+	/**
+	 * @param manager TODO
+	 * 
+	 */
+	public void freeReferences(IReferenceManager manager);
 	
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -40,23 +41,23 @@ public class ASTArrayModifier implements IASTArrayModifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     	if( expression != null )
-    		expression.acceptElement( requestor );
+    		expression.acceptElement( requestor, manager );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor)
+    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor)
+    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
 }

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
@@ -132,7 +133,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
         try
         {
@@ -145,15 +146,15 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         {
             /* do nothing */
         }
-        methodCallbacks(requestor);
+        methodCallbacks(requestor, manager);
     }
-    protected void methodCallbacks(ISourceElementRequestor requestor)
+    protected void methodCallbacks(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-        functionCallbacks(requestor);
-        processConstructorChain(requestor);
+        functionCallbacks(requestor, manager);
+        processConstructorChain(requestor, manager);
     }
     
-    protected void processConstructorChain(ISourceElementRequestor requestor)
+    protected void processConstructorChain(ISourceElementRequestor requestor, IReferenceManager manager)
     {
         if( constructorChain != null )
         {
@@ -161,14 +162,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         	while( i.hasNext() )
         	{
         		IASTConstructorMemberInitializer c = (IASTConstructorMemberInitializer)i.next();
-        		c.acceptElement(requestor);
+        		c.acceptElement(requestor, manager);
         	}
         }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor)
+    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
 		try
         {
@@ -178,12 +179,12 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         {
             /* do nothing */
         }
-		methodCallbacks( requestor );
+		methodCallbacks( requestor, manager );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor)
+    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
         try
         {

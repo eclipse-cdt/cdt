@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
@@ -146,4 +148,14 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
     {
 		return symbol.getTypeInfo().checkBit( TypeInfo.isImaginary );		        
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#releaseReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void releaseReferences(IReferenceManager referenceManager) {
+		if( refs == null || refs.isEmpty() ) return;
+		for( int i = 0; i < refs.size(); ++i )
+			referenceManager.returnReference( (ASTReference)refs.get(i));
+		
+	}
 }

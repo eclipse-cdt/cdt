@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -136,4 +137,11 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
     {
         return imaginary;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#releaseReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void releaseReferences(IReferenceManager referenceManager) {
+		// DO NOTHING
+	}
 }

@@ -119,7 +119,7 @@ public class ContextStack {
 			throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );
 		
 		TraceUtil.outputTrace(log, "Scanner::ContextStack: entering inclusion ", null, context.getContextName(), null, null ); //$NON-NLS-1$
-		context.getExtension().enterScope( requestor );	
+		context.getExtension().enterScope( requestor, null );	
 		cs_push(context);
 		lastFileContext++;
     }
@@ -153,7 +153,7 @@ public class ContextStack {
 		if( context.getKind() == IScannerContext.ContextKind.INCLUSION )
 		{
 			TraceUtil.outputTrace(log, "Scanner::ContextStack: ending inclusion ", null, context.getContextName(), null, null); //$NON-NLS-1$
-			((ScannerContextInclusion)context).getExtension().exitScope( requestor );
+			((ScannerContextInclusion)context).getExtension().exitScope( requestor, null );
 			lastFileContext--;
 		}
 		cs_pop();

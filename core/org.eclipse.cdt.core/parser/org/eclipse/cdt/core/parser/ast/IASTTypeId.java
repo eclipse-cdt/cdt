@@ -36,5 +36,9 @@ public interface IASTTypeId extends ISourceElementCallbackDelegate
 	
 	
 	public String  getFullSignature(); 
-	public ISymbol getTypeSymbol() throws ASTNotImplementedException; 
+	public ISymbol getTypeSymbol() throws ASTNotImplementedException;
+	/**
+	 * @param manager
+	 */
+	public void freeReferences(IReferenceManager manager); 
 }

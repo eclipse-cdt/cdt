@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTEnumeratorReference;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -57,21 +58,29 @@ import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.CompleteParser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTTypedefReference;
 
 /**
  * @author jcamelon
@@ -170,21 +179,21 @@ public class CompleteParseBaseTest extends TestCase
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
          */
-        public void acceptElement(ISourceElementRequestor requestor)
+        public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
         {
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
          */
-        public void enterScope(ISourceElementRequestor requestor)
+        public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
         {
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
          */
-        public void exitScope(ISourceElementRequestor requestor)
+        public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
         {           
         }
     	
@@ -315,9 +324,9 @@ public class CompleteParseBaseTest extends TestCase
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
          */
-        public void enterCompilationUnit(IASTCompilationUnit compilationUnit)
+        public void enterCompilationUnit(IASTCompilationUnit cu)
         {
-            pushScope( compilationUnit );
+            pushScope( cu );
             this.compilationUnit = getCurrentScope();
         }
     
@@ -494,7 +503,7 @@ public class CompleteParseBaseTest extends TestCase
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
          */
-        public void exitCompilationUnit(IASTCompilationUnit compilationUnit)
+        public void exitCompilationUnit(IASTCompilationUnit cu )
         {
         }
     
@@ -610,7 +619,41 @@ public class CompleteParseBaseTest extends TestCase
         
         protected void processReference(IASTReference reference)
         {
-            references.add( reference );
+        	ISourceElementCallbackDelegate referencedElement = reference.getReferencedElement();
+        	IASTReference r = null;
+    		if (referencedElement instanceof IASTTypedefDeclaration)
+    			r = new ASTTypedefReference(reference.getOffset(),
+    					(IASTTypedefDeclaration) referencedElement);
+    		if (referencedElement instanceof IASTEnumerationSpecifier)
+    			r = new ReferenceCache.ASTEnumerationReference(reference.getOffset(),
+    					(IASTEnumerationSpecifier) referencedElement);
+    		if (referencedElement instanceof IASTTemplateParameter)
+    			r = new ReferenceCache.ASTTemplateParameterReference(reference.getOffset(),
+    					(IASTTemplateParameter) referencedElement);
+    		if (referencedElement instanceof IASTParameterDeclaration)
+    			r = new ReferenceCache.ASTParameterReference(reference.getOffset(),
+    					(IASTParameterDeclaration) referencedElement);
+    		if (referencedElement instanceof IASTTypeSpecifier)
+    			r = new ReferenceCache.ASTClassReference(reference.getOffset(),
+    					(IASTTypeSpecifier) referencedElement);
+    		if (referencedElement instanceof IASTNamespaceDefinition)
+    			r = new ReferenceCache.ASTNamespaceReference(reference.getOffset(),
+    					(IASTNamespaceDefinition) referencedElement);
+    		if (referencedElement instanceof IASTFunction)
+    			r = new ReferenceCache.ASTFunctionReference(reference.getOffset(),
+    					(IASTFunction) referencedElement);
+    		if (referencedElement instanceof IASTMethod)
+    			r = new ReferenceCache.ASTMethodReference(reference.getOffset(), (IASTMethod) referencedElement);
+    		if (referencedElement instanceof IASTField)
+    			r = new ReferenceCache.ASTFieldReference(reference.getOffset(), (IASTField) referencedElement);
+    		if (referencedElement instanceof IASTVariable)
+    			r = new ReferenceCache.ASTVariableReference(reference.getOffset(),
+    					(IASTVariable) referencedElement);
+    		if (referencedElement instanceof IASTEnumerator)
+    			r = new ReferenceCache.ASTEnumeratorReference(reference.getOffset(),
+    					(IASTEnumerator) referencedElement);
+    		if( r != null )
+    			references.add( r );
 //            System.out.println( "Callback received Reference to " + reference.getName() + " @ offset " + reference.getOffset() );
         }
     
@@ -757,6 +800,7 @@ public class CompleteParseBaseTest extends TestCase
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
+    	assertTrue( ((CompleteParser)parser).validateCaches());
         return callback.getCompilationUnit();
     }
         
@@ -772,6 +816,7 @@ public class CompleteParseBaseTest extends TestCase
     		IASTReference r = (IASTReference)allReferences.next();
     		if( r.getReferencedElement() == element )
     		{
+    			assertEquals( r.getName(), ((IASTOffsetableNamedElement)element).getName() );
     			if( ! matches.add( r ) && ! allowDuplicates )
     				fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
     		}

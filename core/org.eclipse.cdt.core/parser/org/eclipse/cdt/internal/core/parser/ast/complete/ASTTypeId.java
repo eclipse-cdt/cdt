@@ -17,7 +17,9 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
@@ -183,36 +185,54 @@ public class ASTTypeId implements IASTTypeId
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-   		ASTReferenceStore.processReferences(references, requestor);
+   		manager.processReferences(references, requestor);
    		references = null;
+   		if( tokenDuple != null )
+   			tokenDuple.acceptElement( requestor, manager );
+   		
     	Iterator arrayMods = getArrayModifiers();
     	while( arrayMods.hasNext() )
     	{
-    		((IASTArrayModifier)arrayMods.next()).acceptElement(requestor);
+    		((IASTArrayModifier)arrayMods.next()).acceptElement(requestor, manager);
     	}
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor)
+    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor)
+    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
     /**
      * @param list
      */
-    public void addReferences(List list)
+    public void addReferences(List list, ReferenceCache cache)
     {
-        references.addAll( list );
+    	for( int i = 0; i < list.size(); ++i )
+    		references.add( list.get(i) );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager manager) {
+  		if( tokenDuple != null )
+   			tokenDuple.freeReferences( manager );
+   		
+		if( references.isEmpty() ) return;
+		for( int i =0; i < references.size(); ++i)
+			manager.returnReference( (IASTReference) references.get(i));
+		
+	}
+
 
 }

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 /**
@@ -167,7 +168,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
      
      
-	public void acceptElement( ISourceElementRequestor requestor )
+	public void acceptElement( ISourceElementRequestor requestor, IReferenceManager manager )
 	{
 		try
         {
@@ -182,7 +183,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         }
 	}
 	
-	public void enterScope( ISourceElementRequestor requestor )
+	public void enterScope( ISourceElementRequestor requestor, IReferenceManager manager )
 	{
 		try
         {
@@ -194,7 +195,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         }
 	}
 	
-	public void exitScope( ISourceElementRequestor requestor )
+	public void exitScope( ISourceElementRequestor requestor, IReferenceManager manager )
 	{
 		try
         {

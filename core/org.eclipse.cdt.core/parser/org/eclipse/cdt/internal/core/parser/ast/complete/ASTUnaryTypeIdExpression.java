@@ -15,12 +15,20 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
  *
  */
 public class ASTUnaryTypeIdExpression extends ASTUnaryExpression {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager manager) {
+		super.freeReferences(manager);
+		typeId.freeReferences(manager);
+	}
 	private final IASTTypeId typeId;
 
 	/**
@@ -44,9 +52,9 @@ public class ASTUnaryTypeIdExpression extends ASTUnaryExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression#processCallbacks()
 	 */
-	protected void processCallbacks( ISourceElementRequestor requestor ) {
-		super.processCallbacks(requestor);
-		typeId.acceptElement( requestor );
+	protected void processCallbacks( ISourceElementRequestor requestor, IReferenceManager manager ) {
+		super.processCallbacks(requestor, manager);
+		typeId.acceptElement( requestor, manager );
 	}
 
 }

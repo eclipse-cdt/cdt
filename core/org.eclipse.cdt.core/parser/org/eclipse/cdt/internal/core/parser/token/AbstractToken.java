@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.parser.token;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 
 /**
@@ -306,5 +308,19 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 		String [] qualifiedName = new String[1];
 		qualifiedName[0] = getImage();
 		return qualifiedName;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager manager) {
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#acceptElement(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager) {
 	}
 }

@@ -928,12 +928,12 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testBug64753() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template < class _T > void foo () {  \n" );
-		writer.write( "   if( 1 ) {                         \n" );
-		writer.write( "      _T p1, p2;                     \n" );
-		writer.write( "      int n = p1 - p2;               \n" );
-		writer.write( "   }                                 \n" );
-		writer.write( "}                                    \n" );
+		writer.write( "template < class _T > void foo () {  \n" ); //$NON-NLS-1$
+		writer.write( "   if( 1 ) {                         \n" ); //$NON-NLS-1$
+		writer.write( "      _T p1, p2;                     \n" ); //$NON-NLS-1$
+		writer.write( "      int n = p1 - p2;               \n" ); //$NON-NLS-1$
+		writer.write( "   }                                 \n" ); //$NON-NLS-1$
+		writer.write( "}                                    \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -942,13 +942,13 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testBug64919() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write("class Foo{};                                                   ");
-		writer.write("class Bar{};                                                   ");
-		writer.write("template <class T, class U> class A {};                        ");
-		writer.write("template < class X > class A < X, X > : public A< X, Bar>      ");
-		writer.write("{   typedef int TYPE;   };                                     ");
-		writer.write("template < class X > class A < X, Foo > : public A< X, X >     ");
-		writer.write("{   void f ( TYPE );  };                                       ");
+		writer.write("class Foo{};                                                   "); //$NON-NLS-1$
+		writer.write("class Bar{};                                                   "); //$NON-NLS-1$
+		writer.write("template <class T, class U> class A {};                        "); //$NON-NLS-1$
+		writer.write("template < class X > class A < X, X > : public A< X, Bar>      "); //$NON-NLS-1$
+		writer.write("{   typedef int TYPE;   };                                     "); //$NON-NLS-1$
+		writer.write("template < class X > class A < X, Foo > : public A< X, X >     "); //$NON-NLS-1$
+		writer.write("{   void f ( TYPE );  };                                       "); //$NON-NLS-1$
 
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		

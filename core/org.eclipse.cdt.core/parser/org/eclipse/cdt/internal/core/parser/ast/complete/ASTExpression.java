@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
@@ -65,7 +66,7 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
 		try
         {
@@ -75,10 +76,10 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
         {
         	// will not get thrown
         }
-        ASTReferenceStore.processReferences( references, requestor );
+        manager.processReferences( references, requestor );
         references = null;
     
-		processCallbacks(requestor);
+		processCallbacks(requestor, manager);
 			
 		try
 		{
@@ -92,21 +93,22 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     
     /**
      * @param requestor TODO
+     * @param manager TODO
 	 * 
 	 */
-	protected void processCallbacks(ISourceElementRequestor requestor) {
+	protected void processCallbacks(ISourceElementRequestor requestor, IReferenceManager manager) {
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor)
+    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor)
+    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
  
@@ -172,37 +174,41 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
 		ExpressionResult result = getResultType();
 		TypeInfo type = (result != null ) ? result.getResult() : null;
-		IContainerSymbol symbol = null;
-		
+		IContainerSymbol containerSymbol = null;
 		if( type != null ){
 			type = type.getFinalType(true);
 			if( type.isType( TypeInfo.t_type ) && 
 				type.getTypeSymbol() != null   && type.getTypeSymbol() instanceof IContainerSymbol )
 			{
-				symbol = (IContainerSymbol) type.getTypeSymbol();
+				containerSymbol = (IContainerSymbol) type.getTypeSymbol();
 			}
 			type.release();
 		}
 				
-		return symbol;
+		return containerSymbol;
 	}
 	
 	public boolean shouldFilterLookupResult( ISymbol symbol ){
 		ExpressionResult result = getResultType();
 		TypeInfo type = ( result != null ) ? result.getResult() : null;
-		boolean shouldFilter = false;
 		if( type != null ){
-			type = type.getFinalType(false);
+			boolean answer = false;
+			type = type.getFinalType(true);
 			if( type.checkBit( TypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( TypeInfo.isConst ) )
-				shouldFilter = true;
+			{
+				
+				answer = true;
+			}
 			
 			if( type.checkBit( TypeInfo.isVolatile ) && !symbol.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
-				shouldFilter = true;
-			
+			{
+				answer = true;
+			}
 			type.release();
+			return answer;
 		}
 		
-		return shouldFilter;
+		return false;
 	}
 	
 	/**
@@ -278,5 +284,12 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	 */
 	public IASTExpression findNewDescriptor(ITokenDuple finalDuple) {
 		return null;
+	}
+	
+	public void freeReferences( IReferenceManager manager )
+	{
+		if( references == null || references.isEmpty() ) return;
+		for (int i = 0; i < references.size(); ++i)
+			manager.returnReference( (IASTReference) references.get(i));
 	}
 }

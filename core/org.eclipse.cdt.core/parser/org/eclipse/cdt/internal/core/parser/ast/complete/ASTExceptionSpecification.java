@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
@@ -24,15 +23,12 @@ import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 public class ASTExceptionSpecification implements IASTExceptionSpecification
 {
 	private final List typeIds;
-	private List references;  
     /**
      * @param newTypeIds
-     * @param references
      */
-    public ASTExceptionSpecification(List newTypeIds, List references)
+    public ASTExceptionSpecification(List newTypeIds)
     {
         this.typeIds = newTypeIds;
-        this.references = references;
     }
 
     /* (non-Javadoc)
@@ -42,28 +38,5 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
     {
         if( typeIds == null ) return EmptyIterator.EMPTY_ITERATOR;
         return typeIds.iterator();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void acceptElement(ISourceElementRequestor requestor)
-    {
-    	ASTReferenceStore.processReferences( references, requestor );
-    	references = null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void enterScope(ISourceElementRequestor requestor)
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
-     */
-    public void exitScope(ISourceElementRequestor requestor)
-    {
     }
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
@@ -166,15 +167,16 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor)
+    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-    	ASTReferenceStore.processReferences( references, requestor );
+    	manager.processReferences( references, requestor );
     	references = null;
         try
         {
@@ -188,18 +190,18 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         while( i.hasNext() )
         {
         	IASTBaseSpecifier baseSpec = (IASTBaseSpecifier)i.next();
-        	baseSpec.acceptElement(requestor);
+        	baseSpec.acceptElement(requestor, manager);
         }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor)
+    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     	Iterator i = resolvedCrossReferences.iterator();
     	while( i.hasNext() )
     	{
-    		((IASTReference)i.next()).acceptElement( requestor );
+    		((IASTReference)i.next()).acceptElement( requestor, manager );
     	}
         try
         {
@@ -327,8 +329,16 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	/**
 	 * @param references2
 	 */
-	public void setExtraReferences(List references) {
-		resolvedCrossReferences.addAll( references );
+	public void setExtraReferences(List references, ReferenceCache cache ) {
+		if( references != null && !references.isEmpty())
+		{
+			for( int i = 0; i < references.size(); ++i )
+			{
+				IASTReference r = (IASTReference)references.get(i);
+				resolvedCrossReferences.add( cache.getReference(r.getOffset(), r.getReferencedElement()));	
+			}
+		}
+		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getFriends()

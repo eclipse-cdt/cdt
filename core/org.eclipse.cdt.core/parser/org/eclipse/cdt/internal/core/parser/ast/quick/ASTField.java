@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -62,7 +63,7 @@ public class ASTField extends ASTVariable implements IASTField
         return visibility;
     }
     
-	public void acceptElement( ISourceElementRequestor requestor )
+	public void acceptElement( ISourceElementRequestor requestor, IReferenceManager manager )
 	{
 		try
         {
@@ -74,11 +75,11 @@ public class ASTField extends ASTVariable implements IASTField
         }	
 	}
 	
-	public void enterScope( ISourceElementRequestor requestor )
+	public void enterScope( ISourceElementRequestor requestor, IReferenceManager manager )
 	{
 	}
 	
-	public void exitScope( ISourceElementRequestor requestor )
+	public void exitScope( ISourceElementRequestor requestor, IReferenceManager manager )
 	{
 	}
     

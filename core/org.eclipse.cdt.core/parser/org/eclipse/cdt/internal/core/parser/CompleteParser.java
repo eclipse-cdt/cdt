@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
+import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 
 /**
  * @author jcamelon
@@ -74,4 +75,13 @@ public class CompleteParser extends Parser {
 		astFactory.setLogger(log);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#validateCaches()
+	 */
+	public boolean validateCaches() {
+		if( super.validateCaches() && astFactory instanceof CompleteParseASTFactory)
+			return ((CompleteParseASTFactory)astFactory).validateCaches();
+		return false;
+	}
 }

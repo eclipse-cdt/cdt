@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
  * @author jcamelon
@@ -25,45 +27,48 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#getNewInitializerExpressions()
 	 */
 	public Iterator getNewInitializerExpressions() {
-		// TODO Auto-generated method stub
-		return null;
+		return EmptyIterator.EMPTY_ITERATOR;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#getNewPlacementExpressions()
 	 */
 	public Iterator getNewPlacementExpressions() {
-		// TODO Auto-generated method stub
-		return null;
+		return EmptyIterator.EMPTY_ITERATOR;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#getTypeIdExpressions()
 	 */
 	public Iterator getNewTypeIdExpressions() {
-		// TODO Auto-generated method stub
-		return null;
+		return EmptyIterator.EMPTY_ITERATOR;
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor)
+    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor)
+    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager manager) {
+	}
 
 }

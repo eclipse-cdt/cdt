@@ -82,7 +82,7 @@ public final class Scanner implements IScanner, IScannerData {
 	private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 	private final static String SCRATCH = "<scratch>"; //$NON-NLS-1$
 	private final List workingCopies;
-	private final ContextStack contextStack;
+	protected final ContextStack contextStack;
 	private IASTFactory astFactory = null;
 	private final ISourceElementRequestor requestor;
 	private final ParserMode parserMode;
@@ -150,7 +150,6 @@ public final class Scanner implements IScanner, IScannerData {
 		this.scannerExtension = extension;
 		this.definitions = definitions;
 		this.includePathNames = includePaths;
-		this.astFactory = ParserFactory.createASTFactory( this, parserMode, language );
 		setupBuiltInMacros();
 	}
 	
@@ -609,7 +608,7 @@ public final class Scanner implements IScanner, IScannerData {
             try
             {
                 inclusion =
-                	astFactory.createInclusion(
+                	getASTFactory().createInclusion(
                         fileName,
                         duple.getFilename(),
                         !useIncludePaths,
@@ -743,9 +742,9 @@ public final class Scanner implements IScanner, IScannerData {
 	// these are scanner configuration aspects that we perhaps want to tweak
 	// eventually, these should be configurable by the client, but for now
 	// we can just leave it internal
-	private boolean enableDigraphReplacement = true;
-	private boolean enableTrigraphReplacement = true;
-	private boolean enableTrigraphReplacementInStrings = true;
+//	private boolean enableDigraphReplacement = true;
+//	private boolean enableTrigraphReplacement = true;
+//	private boolean enableTrigraphReplacementInStrings = true;
 	private boolean throwExceptionOnBadCharacterRead = false; 
 	private boolean atEOF = false;
 
@@ -2664,7 +2663,7 @@ public final class Scanner implements IScanner, IScannerData {
 				IASTInclusion i = null;
                 try
                 {
-                    i = astFactory.createInclusion(
+                    i = getASTFactory().createInclusion(
                             directive.getFilename(),
                             "", //$NON-NLS-1$
                             !directive.useIncludePaths(),
@@ -2679,8 +2678,8 @@ public final class Scanner implements IScanner, IScannerData {
                 }
                 if( i != null )
                 {
-					i.enterScope( requestor );
-					i.exitScope( requestor );
+					i.enterScope( requestor, null );
+					i.exitScope( requestor, null );
                 }					 
 			}
 		}
@@ -2963,7 +2962,7 @@ public final class Scanner implements IScanner, IScannerData {
 		
 		try
         {
-			astFactory.createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor ).acceptElement( requestor );
+			getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor ).acceptElement( requestor, null );
         }
         catch (Exception e)
         {
@@ -3418,6 +3417,8 @@ public final class Scanner implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
 	 */
 	public IASTFactory getASTFactory() {
+		if( astFactory == null )
+			astFactory = ParserFactory.createASTFactory( this, parserMode, language );
 		return astFactory;
 	}
 

@@ -53,5 +53,9 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 	public boolean    isComplex(); 
 	public boolean    isImaginary();
 	
-	public IASTTypeSpecifier getTypeSpecifier() throws ASTNotImplementedException;   
+	public IASTTypeSpecifier getTypeSpecifier() throws ASTNotImplementedException;
+	/**
+	 * @param referenceManager
+	 */
+	public void releaseReferences(IReferenceManager referenceManager);   
 }

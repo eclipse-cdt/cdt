@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -70,8 +71,17 @@ public class ASTUnaryExpression extends ASTExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression#processCallbacks()
 	 */
-	protected void processCallbacks( ISourceElementRequestor requestor ) {
-		super.processCallbacks(requestor);
-		lhs.acceptElement( requestor );
+	protected void processCallbacks( ISourceElementRequestor requestor, IReferenceManager manager ) {
+		super.processCallbacks(requestor, manager);
+		lhs.acceptElement( requestor, manager );
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager manager) {
+		super.freeReferences(manager);
+		lhs.freeReferences(manager);
 	}
 }

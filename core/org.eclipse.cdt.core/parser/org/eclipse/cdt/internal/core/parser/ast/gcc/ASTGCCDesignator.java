@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.gcc;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCDesignator;
 import org.eclipse.cdt.internal.core.parser.ast.ASTDesignator;
 
@@ -46,10 +47,10 @@ public class ASTGCCDesignator extends ASTDesignator
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor)
+    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-    	super.acceptElement( requestor );
+    	super.acceptElement( requestor, manager );
         if( secondExpression != null )
-        	secondExpression.acceptElement(requestor);
+        	secondExpression.acceptElement(requestor, manager);
     }
 }

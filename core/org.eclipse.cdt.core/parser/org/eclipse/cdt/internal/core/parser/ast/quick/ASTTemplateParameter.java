@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -91,18 +92,18 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void acceptElement(ISourceElementRequestor requestor) {
+	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void enterScope(ISourceElementRequestor requestor) {
+	public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager) {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void exitScope(ISourceElementRequestor requestor) {
+	public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager) {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind[], org.eclipse.cdt.core.parser.ast.IASTNode)

@@ -351,6 +351,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
     	}
     	
         if( failed ) {
+        	if( expression != null )
+        		expression.freeReferences(astFactory.getReferenceManager());
         	throw backtrack;
         }
         
@@ -1401,6 +1403,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                }
 	                catch (ASTSemanticException e)
 	                {
+	                	firstExpression.freeReferences(astFactory.getReferenceManager());
 	                    throw backtrack;
 	                } catch (Exception e)
 	                {
@@ -1483,6 +1486,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        	catch( BacktrackException bte )
 				{
 	        		backup( mark );
+	        		if( typeId != null )
+	        			typeId.freeReferences(astFactory.getReferenceManager());
 	        		throw bte;
 				}
 	        	mark = null; // clean up mark so that we can garbage collect
@@ -2970,5 +2975,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	public String getFilenameForIndex(int index) {
 		return scanner.getFilenameForIndex(index);
+	}
+	
+	public boolean validateCaches()
+	{
+		return true;
 	}
 }

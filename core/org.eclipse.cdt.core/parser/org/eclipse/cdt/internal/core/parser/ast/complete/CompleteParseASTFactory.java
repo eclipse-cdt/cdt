@@ -21,6 +21,7 @@ import java.util.Stack;
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.IFilenameProvider;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -67,6 +68,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
@@ -117,6 +119,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     private final static IProblemFactory problemFactory = new ASTProblemFactory();
 	private final IFilenameProvider fileProvider;
 	private final ParserMode mode;
+	private final ReferenceCache cache = new ReferenceCache();
 	
     static 
     {
@@ -150,7 +153,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Overrides an existing reference if it has the same name and offset
 	 */
 	protected void addReference(List references, IASTReference reference){
-		if( references == null || reference == null ) return;
+		if( reference == null )
+			return;
+		if( references == null )
+		{
+			cache.returnReference( reference );
+			return;
+		}
 		Iterator i = references.iterator();
 		while (i.hasNext()){
 			IASTReference ref = (IASTReference)i.next();
@@ -158,6 +167,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				if( (ref.getName().equals(reference.getName()))
 				&& (ref.getOffset() == reference.getOffset())
 				){
+					cache.returnReference( ref );
 					i.remove();
 					break; 
 				}
@@ -179,7 +189,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			else
 				j = exp.getReferences().iterator();
 			while( j.hasNext() ){
-				addReference( references, (IASTReference) j.next() );
+				IASTReference r = (IASTReference) j.next();
+				addReference( references, cache.getReference(r.getOffset(), r.getReferencedElement()));
 			}
 		}
 	}
@@ -326,7 +337,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 	if( references != null )
                 		addReference( references, createReference( result, image, name.getStartOffset() ));
 					if( args != null && references != null )
+					{
 						addTemplateIdReferences( references, templateArgLists[0] );
+						name.freeReferences( cache );
+					}
                 }
 				else
 				{	
@@ -393,7 +407,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		                	if( references != null )
 		                		addReference( references, createReference( result, image, offset ));
 							if( references != null && templateArgLists != null && templateArgLists[idx] != null )
+							{
 								addTemplateIdReferences( references, templateArgLists[idx] );
+								name.freeReferences(cache);
+							}
 						}
 						else
 							break;
@@ -892,6 +909,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	 
         //Its possible that the parent is not an IContainerSymbol if its a template parameter or some kinds of template instances
 		ISymbol symbol = lookupQualifiedName( classSymbol, parentClassName, references, true );
+		List [] templateArgumentLists = parentClassName.getTemplateIdArgLists();
+		if( templateArgumentLists != null )
+		{
+			for( int i = 0; i < templateArgumentLists.length; ++i )
+				addTemplateIdReferences( references, templateArgumentLists[i]);
+		}
+		parentClassName.freeReferences(cache);
 		classSymbol.addParent( symbol, isVirtual, visibility, parentClassName.getFirstToken().getOffset(), references );
 		 
     }
@@ -917,24 +941,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 //    	assert (symbol != null ) : "createReference cannot be called on null symbol ";
     	if( symbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ||
 		    symbol.getASTExtension().getPrimaryDeclaration() instanceof IASTTypedefDeclaration )
-			return new ASTTypedefReference( offset, referenceElementName, (IASTTypedefDeclaration)declaration);
+			return cache.getReference( offset, declaration);
         else if( symbol.getType() == TypeInfo.t_namespace )
-        	return new ASTNamespaceReference( offset, referenceElementName, (IASTNamespaceDefinition)declaration);
+        	return cache.getReference( offset, declaration);
         else if( symbol.getType() == TypeInfo.t_class || 
 				 symbol.getType() == TypeInfo.t_struct || 
 				 symbol.getType() == TypeInfo.t_union ) 
-			return new ASTClassReference( offset, referenceElementName, (IASTTypeSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
+			return cache.getReference( offset, (ISourceElementCallbackDelegate)symbol.getASTExtension().getPrimaryDeclaration() );
 		else if( symbol.getType() == TypeInfo.t_enumeration )
-			return new ASTEnumerationReference( offset, referenceElementName,  (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
+			return cache.getReference( offset, (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
 		else if( symbol.getType() == TypeInfo.t_enumerator )
-			return new ASTEnumeratorReference( offset, referenceElementName, (IASTEnumerator)declaration );
+			return cache.getReference( offset, declaration );
 		else if(( symbol.getType() == TypeInfo.t_function ) || (symbol.getType() == TypeInfo.t_constructor))
 		{
 			ASTNode referenced = (definition != null) ? definition : declaration;
 			if( referenced instanceof IASTMethod )
 			
-				return new ASTMethodReference( offset, referenceElementName, (IASTMethod)referenced ); 
-			return new ASTFunctionReference( offset, referenceElementName, (IASTFunction)referenced );
+				return cache.getReference( offset, (IASTMethod)referenced ); 
+			return cache.getReference( offset, (IASTFunction)referenced );
 		}
 		else if( ( symbol.getType() == TypeInfo.t_type ) || 
 				( symbol.getType() == TypeInfo.t_bool )||
@@ -952,7 +976,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				symbol.getContainingSymbol().getType() == TypeInfo.t_struct || 
 				symbol.getContainingSymbol().getType() == TypeInfo.t_union )
 			{
-				return new ASTFieldReference( offset, referenceElementName, (IASTField)(definition != null ? definition : declaration ));
+				return cache.getReference( offset, (definition != null ? definition : declaration ));
 			}
 			else if( ( 	symbol.getContainingSymbol().getType() == TypeInfo.t_function || 
 						symbol.getContainingSymbol().getType() == TypeInfo.t_constructor ) && 
@@ -960,17 +984,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList() != null && 
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList().contains( symbol ) )
 			{
-				return new ASTParameterReference( offset, referenceElementName, (IASTParameterDeclaration)declaration );
+				return cache.getReference( offset, declaration );
 			}
 			else
 			{
 				ASTNode s = (definition != null) ? definition : declaration;
 				if(s instanceof IASTVariable)
-					return new ASTVariableReference( offset, referenceElementName, (IASTVariable)s);
+					return cache.getReference( offset, (IASTVariable)s);
 				else if (s instanceof IASTParameterDeclaration)
-					return new ASTParameterReference( offset, referenceElementName, (IASTParameterDeclaration)s);
+					return cache.getReference( offset, (IASTParameterDeclaration)s);
 				else if (s instanceof IASTTemplateParameter )
-					return new ASTTemplateParameterReference( offset, referenceElementName, (IASTTemplateParameter)s );
+					return cache.getReference( offset, (IASTTemplateParameter)s );
 			}
 		}
 //		assert false : "Unreachable code : createReference()";
@@ -1116,10 +1140,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			i = ((ASTTypeId)typeId).getReferences().iterator();
 			while( i.hasNext() )
 			{
-				ASTReference ref = (ASTReference) i.next();
+				ReferenceCache.ASTReference ref = (ReferenceCache.ASTReference) i.next();
 				if( ref.getName().equals( duple.toString() ) &&
 					ref.getOffset() == duple.getStartOffset() )
 				{
+					cache.returnReference( ref );
 					i.remove();
 				}
 			}
@@ -1801,7 +1826,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
         if( expression != null )
         {
-        	references.addAll( ((ASTExpression)expression).getReferences() );
+        	List eRefs = ((ASTExpression)expression).getReferences();
+        	if( eRefs != null && !eRefs.isEmpty())
+        	{
+        		for( int i = 0; i < eRefs.size(); ++i )
+        		{
+        			IASTReference r = (IASTReference)eRefs.get(i);
+        			references.add( cache.getReference( r.getOffset(), r.getReferencedElement() ));
+        		}
+        	}
         	if( expression.getLHSExpression() != null )
         		getExpressionReferences( expression.getLHSExpression(), references );
         	if( expression.getRHSExpression() != null )
@@ -1821,22 +1854,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     public IASTExceptionSpecification createExceptionSpecification(IASTScope scope, List typeIds) throws ASTSemanticException
     {
-    	List references = new ArrayList(); 
     	List newTypeIds = new ArrayList(); 
         if( typeIds != null )
         {
         	Iterator iter =typeIds.iterator();
         	while( iter.hasNext() )
-        	{
-        		IASTTypeId duple = (IASTTypeId)iter.next();
-        		if( duple != null )
-        		{
-        			lookupQualifiedName( scopeToSymbol( scope ), ((ASTTypeId)duple).getTokenDuple(), references, false  );
-        			newTypeIds.add( duple.toString() );
-        		}
-        	}
+        		newTypeIds.add( ((IASTTypeId)iter.next()).toString() );
+        	
         }
-        return new ASTExceptionSpecification( newTypeIds, references );
+        return new ASTExceptionSpecification( newTypeIds );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createConstructorMemberInitializer(org.eclipse.cdt.core.parser.ITokenDuple, org.eclipse.cdt.core.parser.ast.IASTExpression)
@@ -1959,7 +1985,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					{	
                     	addReference( references, createReference( typeSymbol, image, offset ));
                     	if( argLists != null && argLists[idx] != null )
+                    	{
 							addTemplateIdReferences( references, argLists[idx] );
+							typeName.freeReferences(cache);
+                    	}
 					}
 					else
                     	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image, -1, -1, current.getLineNumber() );
@@ -2230,8 +2259,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    {
 	    	ASTElaboratedTypeSpecifier elab = (ASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier();
 	    	xrefSymbol = elab.getSymbol();
-	    	newReferences = new ArrayList(); 
-	    	newReferences.addAll( elab.getReferences() );
+	    	List elabReferences = elab.getReferences();
+			newReferences = new ArrayList(elabReferences.size());
+			for( int i = 0; i < elabReferences.size(); ++i )
+			{
+				IASTReference r = (IASTReference)elabReferences.get(i);
+				newReferences.add( cache.getReference(r.getOffset(), r.getReferencedElement()));
+			}
 	    	if( xrefSymbol != null )
 	    		addReference( newReferences, createReference( xrefSymbol, elab.getName(), elab.getNameOffset()) );  
 	    }
@@ -2260,7 +2294,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    else
 			symbol.setReturnType( paramSymbol );
 			
-		if( newReferences != null )
+		if( newReferences != null && !newReferences.isEmpty())
 			references.addAll( newReferences );
 		
 		if( absDecl instanceof ASTParameterDeclaration )
@@ -2513,7 +2547,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					((ASTConstructorMemberInitializer)initializer).requiresNameResolution() ) 
 				{
 					ASTConstructorMemberInitializer realInitializer = ((ASTConstructorMemberInitializer)initializer);
-					IDerivableContainerSymbol container = (IDerivableContainerSymbol) symbol.getContainingSymbol(); 
+					IDerivableContainerSymbol container = (IDerivableContainerSymbol) symbol.getContainingSymbol();
 					lookupQualifiedName(container, initializer.getName(), TypeInfo.t_any, null, realInitializer.getNameOffset(), realInitializer.getReferences(), false, LookupType.QUALIFIED);
 					// TODO try and resolve parameter references now in the expression list
 				}
@@ -2742,7 +2776,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
         	symbolToBeCloned = ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
         	if( references != null )
-        		references.addAll( ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getReferences() );
+        	{
+        		List absRefs = ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getReferences();
+        		for( int i = 0; i < absRefs.size(); ++i )
+        		{
+        			IASTReference r = (IASTReference) absRefs.get(i);
+        			references.add( cache.getReference( r.getOffset(), r.getReferencedElement() ));
+        		}
+        	}
         }
         else if( abstractDeclaration.getTypeSpecifier() instanceof ASTClassSpecifier )  
         {
@@ -3012,7 +3053,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	List references = new ArrayList();
 		if( mapping.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
 	    {
-			references.addAll( ((ASTSimpleTypeSpecifier)mapping.getTypeSpecifier()).getReferences() );
+			List mappingReferences = ((ASTSimpleTypeSpecifier)mapping.getTypeSpecifier()).getReferences();
+			if( mappingReferences != null && !mappingReferences.isEmpty() )
+			{
+				for( int i = 0; i < mappingReferences.size(); ++i )
+				{
+					IASTReference r = (IASTReference) mappingReferences.get(i);
+					references.add( cache.getReference(r.getOffset(), r.getReferencedElement()));
+				}
+			}
 		}
     	
     	try
@@ -3231,13 +3280,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 	public IASTScope getDeclaratorScope(IASTScope scope, ITokenDuple duple){
 		if( duple != null && duple.getSegmentCount() > 1){
-			List refs = new ArrayList();
 			
 			IContainerSymbol ownerScope = scopeToSymbol( scope );
 			ISymbol symbol;
 			
 			try {
-				symbol = lookupQualifiedName( ownerScope, duple.getLeadingSegments(), refs, false, LookupType.FORDEFINITION );
+				symbol = lookupQualifiedName( ownerScope, duple.getLeadingSegments(), null, false, LookupType.FORDEFINITION );
 			} catch (ASTSemanticException e) {
 				return scope;
 			}
@@ -3355,16 +3403,29 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			ISymbol typeSymbol = lookupQualifiedName( scopeToSymbol(scope), typeId.getTokenDuple(), refs, true );
 			if( typeSymbol == null || typeSymbol.getType() == TypeInfo.t_type )
+			{
+				freeReferences( refs );
 				handleProblem( scope, IProblem.SEMANTIC_INVALID_TYPE, id.getTypeOrClassName() );
+			}
             result.setTypeSymbol( typeSymbol );
-            typeId.addReferences( refs );
+            typeId.addReferences( refs, cache );
 		}		
 		
 		setPointerOperators( result, id.getPointerOperators(), id.getArrayModifiers() );
 		return result;
 	}
 
-    /* (non-Javadoc)
+    /**
+	 * @param refs
+	 */
+	private void freeReferences(List refs) {
+		if( refs == null || refs.isEmpty() ) return;
+		for( int i =0; i < refs.size(); ++i)
+			cache.returnReference((IASTReference) refs.get(i));
+		
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#signalEndOfClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
      */
     public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier)
@@ -3396,8 +3457,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			{
         	}
         	
-        	if( s != null )
-        		references.addAll( subReferences );
+        	if( s != null && subReferences != null && !subReferences.isEmpty())
+        		for( int j = 0; j < subReferences.size(); ++j )
+        		{
+        			IASTReference r = (IASTReference) subReferences.get(j);
+        			references.add( cache.getReference( r.getOffset(), r.getReferencedElement()));
+        		}
+
         	
         	
         }
@@ -3405,7 +3471,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         astImplementation.setProcessingUnresolvedReferences( false );
         
         if( ! references.isEmpty() )
-        	astImplementation.setExtraReferences( references );
+        	astImplementation.setExtraReferences( references, cache );
         
     }
 
@@ -3534,30 +3600,38 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 */
 	public boolean validateIndirectMemberOperation(IASTNode node) {
 		List pointerOps = null;
+		TypeInfo typeInfo = null;
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
-			TypeInfo info = symbol.getTypeInfo().getFinalType( true );
-			pointerOps = info.getPtrOperators();
-			info.release();
+			typeInfo = symbol.getTypeInfo().getFinalType(true);
+			pointerOps = typeInfo.getPtrOperators();
+			typeInfo.release();
 		}
 		else if( node instanceof ASTExpression )
 		{
 			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
-			if( typeSymbol != null ){
-				TypeInfo info = typeSymbol.getTypeInfo().getFinalType( true );
-				pointerOps = info.getPtrOperators();
-				info.release();
+			if( typeSymbol != null )
+			{
+				typeInfo = typeSymbol.getTypeInfo().getFinalType(true);
+				pointerOps = typeInfo.getPtrOperators();
 			}
 		}
 		else
 			return false;
 		
-		
-		if( pointerOps == null || pointerOps.isEmpty() ) return false;
-		TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
-		if( lastOperator.getType() == TypeInfo.PtrOp.t_array || lastOperator.getType() == TypeInfo.PtrOp.t_pointer ) return true;
-		return false;
+		try
+		{
+			if( pointerOps == null || pointerOps.isEmpty() ) return false;
+			TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
+			if( lastOperator.getType() == TypeInfo.PtrOp.t_array || lastOperator.getType() == TypeInfo.PtrOp.t_pointer ) return true;
+			return false;
+		}
+		finally
+		{
+			if( typeInfo != null )
+				typeInfo.release();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -3568,15 +3642,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
-			TypeInfo info = symbol.getTypeInfo().getFinalType( true );
-			pointerOps = info.getPtrOperators();
-			info.release();
+			TypeInfo typeInfo = symbol.getTypeInfo().getFinalType(true);
+			pointerOps = typeInfo.getPtrOperators();
+			typeInfo.release();
 		}
 		else if( node instanceof ASTExpression )
 		{
 			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
 			if( typeSymbol != null )
+			{
 				pointerOps = typeSymbol.getPtrOperators();
+			}
 		}
 		else
 			return false;
@@ -3592,6 +3668,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 */
 	public void constructExpressions(boolean flag) {
 		//ignore
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getReferenceManager()
+	 */
+	public IReferenceManager getReferenceManager() {
+		return cache;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean validateCaches() {
+		return cache.isBalanced();
 	}
 
 }

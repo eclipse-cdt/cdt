@@ -226,9 +226,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	public Object internalGetParent(Object element) {
 		if (element instanceof IResource) {
 			IResource parent= ((IResource)element).getParent();
-			ICElement cParent= CoreModel.getDefault().create(parent);
-			if (cParent != null && cParent.exists()) {
-				return cParent;
+			if (parent != null && parent.isAccessible()) {
+				ICElement cParent= CoreModel.getDefault().create(parent);
+				if (cParent != null && cParent.exists()) {
+					return cParent;
+				}
 			}
 			return parent;
 		}

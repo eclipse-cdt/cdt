@@ -12,8 +12,9 @@ import org.eclipse.cdt.internal.corext.template.Templates;
 import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContextType;
 import org.eclipse.cdt.internal.corext.template.c.ICompilationUnit;
-import org.eclipse.cdt.internal.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+
 import java.util.ArrayList;
 
 import org.eclipse.jface.text.IDocument;

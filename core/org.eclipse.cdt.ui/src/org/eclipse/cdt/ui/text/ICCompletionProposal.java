@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.ui.text;
 
 /*******************************************************************************
  * Copyright (c) 2000, 2002 International Business Machines Corp. and others.
@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-/*
+/**
  * CompletionProposal with a relevance value.
  * The relevance value is used to sort the completion proposals. Proposals with higher relevance
  * should be listed before proposals with lower relevance.

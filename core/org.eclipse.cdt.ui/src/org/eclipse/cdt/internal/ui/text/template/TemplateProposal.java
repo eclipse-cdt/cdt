@@ -10,10 +10,10 @@ import org.eclipse.cdt.internal.corext.template.TemplateBuffer;
 import org.eclipse.cdt.internal.corext.template.TemplateContext;
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplatePosition;
-import org.eclipse.cdt.internal.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionUI;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.swt.graphics.Image;

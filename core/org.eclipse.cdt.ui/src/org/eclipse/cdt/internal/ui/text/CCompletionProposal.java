@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.ui.text.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;

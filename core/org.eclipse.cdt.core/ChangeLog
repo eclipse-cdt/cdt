@@ -1,3 +1,7 @@
+2003-11-27 Hoda Amer
+	Content Assist work : Added an ICompletionRequestor interface
+	and a CompletionRequestorAdaptor classe.
+	
 2003-11-20 Alain Magloire
 
 	The profiler need to get the line number of the offset within

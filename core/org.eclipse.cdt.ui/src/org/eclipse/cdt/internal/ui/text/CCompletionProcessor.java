@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.contentassist.CompletionEngine;
 import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.text.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -73,7 +75,10 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
 
-	BasicSearchResultCollector  resultCollector = null;
+	BasicSearchResultCollector  searchResultCollector = null;
+	ResultCollector resultCollector = null;
+	CompletionEngine completionEngine = null;
+	
 	SearchEngine searchEngine = null;
 	CSearchResultLabelProvider labelProvider = null;
 	
@@ -82,7 +87,9 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	
 		// Needed for search
 		labelProvider = new CSearchResultLabelProvider();
-		resultCollector = new BasicSearchResultCollector ();
+		searchResultCollector = new BasicSearchResultCollector ();
+		resultCollector = new ResultCollector();
+		completionEngine = new CompletionEngine(resultCollector);
 		searchEngine = new SearchEngine();
 		
 		//Determine if this is a C or a C++ file for the context completion       +        //This is _totally_ ugly and likely belongs in the main editor class.
@@ -457,36 +464,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 	
-	private int calculateRelevance (BasicSearchMatch element){
-		
-		int type = element.getElementType();
-			
-		switch (type){
-			case ICElement.C_FIELD:
-				return 9;
-			case ICElement.C_VARIABLE:
-			case ICElement.C_VARIABLE_DECLARATION:
-				return 8;
-			case ICElement.C_METHOD:
-			case ICElement.C_METHOD_DECLARATION:
-				return 7;
-			case ICElement.C_FUNCTION:
-			case ICElement.C_FUNCTION_DECLARATION:
-				return 6;
-			case ICElement.C_CLASS:
-				return 5;
-			case ICElement.C_STRUCT:
-				return 4;
-			case ICElement.C_UNION:
-				return 3;
-			case ICElement.C_MACRO:
-				return 2;			
-			case ICElement.C_ENUMERATION:
-				return 1;
-			default :
-				return 0;
-		}
-	}
+
 	private void addProposalsFromModel (IRegion region, String frag, ICElement currentScope, ArrayList completions) {
 		List elementsFound = new LinkedList();
 		String prefix = frag + "*";
@@ -529,8 +507,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false ));
-		searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
-		elementsFound.addAll(resultCollector.getSearchResults());
+		searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
+		elementsFound.addAll(searchResultCollector.getSearchResults());
 
 		if((currentScope instanceof IMethod) || (currentScope instanceof IMethodDeclaration) ){
 			// add the methods and fields of the parent class
@@ -571,57 +549,131 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 						
 		}
 
+		int completionStart = region.getOffset();
+		int completionLength = region.getLength();
 		Iterator i = elementsFound.iterator();
 		while (i.hasNext()){
-			CCompletionProposal proposal;
-			String replaceString = "";
-			String displayString = "";
-			Image image = null;
-			StringBuffer infoString = new StringBuffer();
+			ASTAccessVisibility visibility;
 			
 			BasicSearchMatch match = (BasicSearchMatch)i.next();
-
-			//Make sure we replace with the appropriate string for functions and methods
-			FunctionPrototypeSummary fproto = getPrototype(match);
-			if(fproto != null) {						
-				replaceString = fproto.getName() + "()";
-				displayString = fproto.getPrototypeString(true);
-			} else {
-				replaceString = 
-				displayString = match.getName();;
+			int type = match.getElementType();
+			switch (type){
+				case ICElement.C_FIELD:
+					switch (match.getVisibility()){
+						case ICElement.CPP_PUBLIC:
+							visibility = ASTAccessVisibility.PUBLIC;
+						break;
+						case ICElement.CPP_PROTECTED:
+							visibility = ASTAccessVisibility.PROTECTED;
+						break;
+						default:
+							visibility = ASTAccessVisibility.PRIVATE;
+						break;
+					};
+					resultCollector.acceptField(
+						match.getName(), 
+						null, 
+						visibility, 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeTypeRelevance(type));
+				break;
+				
+				case ICElement.C_VARIABLE:
+				case ICElement.C_VARIABLE_DECLARATION:
+					resultCollector.acceptVariable(
+						match.getName(), 
+						null, 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeTypeRelevance(type));
+				break;
+				case ICElement.C_METHOD:
+				case ICElement.C_METHOD_DECLARATION:
+				switch (match.getVisibility()){
+					case ICElement.CPP_PUBLIC:
+						visibility = ASTAccessVisibility.PUBLIC;
+					break;
+					case ICElement.CPP_PROTECTED:
+						visibility = ASTAccessVisibility.PROTECTED;
+					break;
+					default:
+						visibility = ASTAccessVisibility.PRIVATE;
+					break;
+				};
+				resultCollector.acceptMethod(
+					match.getName(), 
+					null,
+					match.getReturnType(), 
+					visibility, 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;				
+				case ICElement.C_FUNCTION:
+				case ICElement.C_FUNCTION_DECLARATION:
+				resultCollector.acceptFunction(
+					match.getName(), 
+					null,
+					match.getReturnType(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;
+				case ICElement.C_CLASS:
+				resultCollector.acceptClass(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;
+				case ICElement.C_STRUCT:
+				resultCollector.acceptStruct(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;
+				case ICElement.C_UNION:
+				resultCollector.acceptUnion(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;
+				case ICElement.C_NAMESPACE:
+				resultCollector.acceptNamespace(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));				
+				break;
+				case ICElement.C_MACRO:
+				resultCollector.acceptMacro(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;
+				case ICElement.C_ENUMERATION:
+				resultCollector.acceptEnumeration(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));				
+				break;
+				case ICElement.C_ENUMERATOR:
+				resultCollector.acceptEnumerator(
+					match.getName(), 
+					completionStart, 
+					completionLength, 
+					completionEngine.computeTypeRelevance(type));
+				break;
+				default :
+				break;				
 			}
-
-			image = labelProvider.getImage(match);
-			infoString.append(displayString);
-			if(match.getParentName().length() > 0) {
-				infoString.append(" - Parent: ");
-				infoString.append(match.getParentName());
-			}							 
-			
-			proposal = new CCompletionProposal(
-												replaceString, // Replacement string
-											   	region.getOffset(), 
-											   	region.getLength(),
-											   	image,
-											   	displayString, // Display string
-											   	calculateRelevance(match)
-											  );
-			completions.add(proposal);
-
-			// No summary information available yet
-			// context information is available for methods only
-			if(fproto != null){
-				String fargs = fproto.getArguments();
-				if(fargs != null && fargs.length() > 0) {
-					proposal.setContextInformation(new ContextInformation(replaceString, fargs));
-				}
-			}
-			
-			// The info string could be populated with documentation info.
-			// For now, it has the name and the parent's name if available.
-			if(!displayString.equals(infoString.toString()))
-				proposal.setAdditionalProposalInfo(infoString.toString());
 		}
+		completions.addAll(resultCollector.getCompletions());
 	}
 
 }

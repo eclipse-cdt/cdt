@@ -24,11 +24,15 @@ public interface IASTNode {
 
 		public static final LookupKind ALL = new LookupKind( 0 );
 		public static final LookupKind STRUCTURES = new LookupKind( 1 );
-		public static final LookupKind FUNCTIONS = new LookupKind( 2 );
-		public static final LookupKind LOCAL_VARIABLES = new LookupKind( 3 );
-		public static final LookupKind METHODS = new LookupKind( 4 );
-		public static final LookupKind FIELDS = new LookupKind( 5 );
-		public static final LookupKind NAMESPACES = new LookupKind( 6 ); 
+		public static final LookupKind STRUCS = new LookupKind( 2 );
+		public static final LookupKind UNIONS = new LookupKind( 3 );
+		public static final LookupKind CLASSES = new LookupKind( 4 );
+		public static final LookupKind FUNCTIONS = new LookupKind( 5 );
+		public static final LookupKind VARIABLES = new LookupKind( 6 );
+		public static final LookupKind LOCAL_VARIABLES = new LookupKind( 7 );
+		public static final LookupKind METHODS = new LookupKind( 8 );
+		public static final LookupKind FIELDS = new LookupKind( 9 );
+		public static final LookupKind NAMESPACES = new LookupKind( 10 ); 
 
 		/**
 		 * @param enumValue

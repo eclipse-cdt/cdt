@@ -285,74 +285,63 @@ public class CElementImageProvider {
 					
 			case ICElement.C_STRUCT:
 			case ICElement.C_TEMPLATE_STRUCT:
-				return CPluginImages.DESC_OBJS_STRUCT;
+				return getStructImageDescriptor();
 				
 			case ICElement.C_CLASS:
 			case ICElement.C_TEMPLATE_CLASS:
-				return CPluginImages.DESC_OBJS_CLASS;
+				return getClassImageDescriptor();
 				
 			case ICElement.C_UNION:
 			case ICElement.C_TEMPLATE_UNION:
-				return CPluginImages.DESC_OBJS_UNION;
+				return getUnionImageDescriptor();
 
 			case ICElement.C_TYPEDEF:
-				return CPluginImages.DESC_OBJS_TYPEDEF;
+				return getTypedefImageDescriptor();
 
 			case ICElement.C_ENUMERATION:
-				return CPluginImages.DESC_OBJS_ENUMERATION;
+				return getEnumerationImageDescriptor();
 
 			case ICElement.C_ENUMERATOR:
-				return CPluginImages.DESC_OBJS_ENUMERATOR;
+				return getEnumeratorImageDescriptor();
 
 			case ICElement.C_FIELD:
 			{
-			IField  field = (IField)celement;
-			ASTAccessVisibility visibility = field.getVisibility();
-			
-				if (visibility == ASTAccessVisibility.PUBLIC)
-					return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
-				if( visibility == ASTAccessVisibility.PROTECTED)
-					return CPluginImages.DESC_OBJS_PROTECTED_FIELD;
-				if( visibility == ASTAccessVisibility.PRIVATE)
-					return CPluginImages.DESC_OBJS_PRIVATE_FIELD;
+				IField  field = (IField)celement;
+				ASTAccessVisibility visibility = field.getVisibility();
+				return getFieldImageDescriptor(visibility);
 			}
 			
-			case ICElement.C_VARIABLE:
-			case ICElement.C_TEMPLATE_VARIABLE:
-				return CPluginImages.DESC_OBJS_FIELD;
-
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
 			{
 				IMethodDeclaration  md= (IMethodDeclaration)celement;
-				ASTAccessVisibility visibility =md.getVisibility(); 
-				if( visibility == ASTAccessVisibility.PUBLIC)
-						return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
-				if( visibility == ASTAccessVisibility.PROTECTED)
-						return CPluginImages.DESC_OBJS_PROTECTED_METHOD;
-				if( visibility ==  ASTAccessVisibility.PRIVATE)
-						return CPluginImages.DESC_OBJS_PRIVATE_METHOD;
-				}
+				ASTAccessVisibility visibility =md.getVisibility();
+				return getMethodImageDescriptor(visibility); 
+			}
+
+			case ICElement.C_VARIABLE:
+			case ICElement.C_TEMPLATE_VARIABLE:
+				return getVariableImageDescriptor();
 				
 			case ICElement.C_FUNCTION:
-				return CPluginImages.DESC_OBJS_FUNCTION;
+				return getFunctionImageDescriptor();
 		
 			case ICElement.C_VARIABLE_DECLARATION:
-				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
+			return getVariableDeclarationImageDescriptor();
 			
 			case ICElement.C_FUNCTION_DECLARATION:
 			case ICElement.C_TEMPLATE_FUNCTION:
-				return CPluginImages.DESC_OBJS_DECLARARION;
+				return getFunctionDeclarationImageDescriptor();
 
 			case ICElement.C_INCLUDE:
-				return CPluginImages.DESC_OBJS_INCLUDE;
+				return getIncludeImageDescriptor();
 
 			case ICElement.C_MACRO:
-				return CPluginImages.DESC_OBJS_MACRO;
+				return getMacroImageDescriptor();
 				
 			case ICElement.C_NAMESPACE:
-				return CPluginImages.DESC_OBJS_CONTAINER;
+				return getNamespaceImageDescriptor();
 										
 		}
 		return null;
@@ -403,4 +392,75 @@ public class CElementImageProvider {
 	public void dispose() {
 	}
 	
+	public static ImageDescriptor getStructImageDescriptor(){
+		return CPluginImages.DESC_OBJS_STRUCT;	
+	}
+	
+	public static ImageDescriptor getClassImageDescriptor(){
+		return CPluginImages.DESC_OBJS_CLASS;	
+	}
+	
+	public static ImageDescriptor getUnionImageDescriptor(){
+		return CPluginImages.DESC_OBJS_UNION;	
+	}
+	
+	public static ImageDescriptor getTypedefImageDescriptor(){
+		return CPluginImages.DESC_OBJS_TYPEDEF;	
+	}
+	
+	public static ImageDescriptor getEnumerationImageDescriptor(){
+		return CPluginImages.DESC_OBJS_ENUMERATION;	
+	}
+	
+	public static ImageDescriptor getEnumeratorImageDescriptor(){
+		return CPluginImages.DESC_OBJS_ENUMERATOR;	
+	}
+	
+	public static ImageDescriptor getFieldImageDescriptor(ASTAccessVisibility visibility) {
+		if (visibility == ASTAccessVisibility.PUBLIC)
+			return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+		if( visibility == ASTAccessVisibility.PROTECTED)
+			return CPluginImages.DESC_OBJS_PROTECTED_FIELD;
+		
+		return CPluginImages.DESC_OBJS_PRIVATE_FIELD;			
+	}
+	
+	public static ImageDescriptor getMethodImageDescriptor(ASTAccessVisibility visibility) {
+		if( visibility == ASTAccessVisibility.PUBLIC)
+			return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+		if( visibility == ASTAccessVisibility.PROTECTED)
+			return CPluginImages.DESC_OBJS_PROTECTED_METHOD;
+		
+		return CPluginImages.DESC_OBJS_PRIVATE_METHOD;
+				
+	}
+		
+	public static ImageDescriptor getVariableImageDescriptor(){
+		return CPluginImages.DESC_OBJS_FIELD;	
+	}
+	
+	public static ImageDescriptor getFunctionImageDescriptor(){
+		return CPluginImages.DESC_OBJS_FUNCTION;
+	}
+	
+	public static ImageDescriptor getVariableDeclarationImageDescriptor(){
+		return CPluginImages.DESC_OBJS_VAR_DECLARARION;	
+	}
+	
+	public static ImageDescriptor getFunctionDeclarationImageDescriptor(){
+		return CPluginImages.DESC_OBJS_DECLARARION;	
+	}
+	
+	public static ImageDescriptor getIncludeImageDescriptor(){
+		return CPluginImages.DESC_OBJS_INCLUDE;	
+	}
+	
+	public static ImageDescriptor getMacroImageDescriptor(){
+		return CPluginImages.DESC_OBJS_MACRO;	
+	}
+	
+	public static ImageDescriptor getNamespaceImageDescriptor(){
+		return CPluginImages.DESC_OBJS_CONTAINER;	
+	}
+
 }

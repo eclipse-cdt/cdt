@@ -1,3 +1,8 @@
+2003-11-27 Hoda Amer
+	Content Assist work : Added a ResultCollector class
+	and moved the ICCompletionProposal from an internal package 
+	to an external one.
+	
 2003-11-14 David Inglis
 	Fixed bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=46685
 

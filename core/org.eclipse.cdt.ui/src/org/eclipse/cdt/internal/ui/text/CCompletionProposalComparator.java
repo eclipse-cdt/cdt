@@ -7,6 +7,8 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Comparator;
 
+import org.eclipse.cdt.ui.text.*;
+
 public class CCompletionProposalComparator implements Comparator {
 
 	private boolean fOrderAlphabetically;

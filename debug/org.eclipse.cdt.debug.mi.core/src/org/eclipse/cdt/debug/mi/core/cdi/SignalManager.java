@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Signal;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIHandle;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSignals;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
@@ -44,6 +45,9 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 		try {
 			mi.postCommand(sigs);
 			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
 			miSigs =  info.getMISignals();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -60,6 +64,9 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 		try {
 			mi.postCommand(sigs);
 			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
 			MISignal[] miSigs =  info.getMISignals();
 			if (miSigs.length > 0) {
 				sig = miSigs[0];
@@ -105,6 +112,32 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 			}
 		}
 		return sig;
+	}
+
+	public void handle(ICDISignal sig, boolean isIgnore, boolean isStop) throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		StringBuffer buffer = new StringBuffer(sig.getName());
+		buffer.append(" ");
+		if (isIgnore) {
+			buffer.append("ignore");
+		} else {
+			buffer.append("noignore");
+		}
+		buffer.append(" ");
+		if (isStop) {
+			buffer.append("stop");
+		} else  {
+			buffer.append("nostop");
+		}
+		MIHandle handle = factory.createMIHandle(buffer.toString());
+		try {
+			mi.postCommand(handle);
+			handle.getMIInfo();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 	/**

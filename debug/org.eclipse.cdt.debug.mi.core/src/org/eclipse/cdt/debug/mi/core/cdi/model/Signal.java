@@ -19,6 +19,7 @@ public class Signal extends CObject implements ICDISignal {
 
 	public Signal(SignalManager m, MISignal s) {
 		super(m.getSession().getCurrentTarget());
+		mgr = m;
 		sig = s;
 	}
 		
@@ -44,6 +45,7 @@ public class Signal extends CObject implements ICDISignal {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalReceived#handle()
 	 */
 	public void handle(boolean ignore, boolean stop) throws CDIException {
+		mgr.handle(this, ignore, stop);
 	}
 
 	/**

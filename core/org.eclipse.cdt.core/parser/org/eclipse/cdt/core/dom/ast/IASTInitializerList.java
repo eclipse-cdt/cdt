@@ -19,10 +19,13 @@ import java.util.List;
  */
 public interface IASTInitializerList extends IASTInitializer {
 
+    public ASTNodeProperty NESTED_INITIALIZER = new ASTNodeProperty( "Nested Initializer" ); //$NON-NLS-1$
 	/**
 	 * Get the list of initializers.
 	 * 
 	 * @return
 	 */
 	public List getInitializers();
+	
+	public void addInitializer( IASTInitializer initializer );
 }

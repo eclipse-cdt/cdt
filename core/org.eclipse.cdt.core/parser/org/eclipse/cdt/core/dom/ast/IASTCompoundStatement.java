@@ -19,11 +19,15 @@ import java.util.List;
  */
 public interface IASTCompoundStatement extends IASTStatement {
 
-	/**
+	ASTNodeProperty NESTED_STATEMENT = new ASTNodeProperty( "Nested Statement" ); //$NON-NLS-1$
+
+    /**
 	 * Gets the statements in this block.
 	 * 
 	 * @return List of IASTStatement
 	 */
 	public List getStatements();
+	
+	public void addStatement( IASTStatement statement );
 	
 }

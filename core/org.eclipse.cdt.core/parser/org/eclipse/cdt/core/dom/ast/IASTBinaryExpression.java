@@ -15,6 +15,10 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTBinaryExpression extends IASTExpression {
 
+    public static final ASTNodeProperty OPERAND_ONE = new ASTNodeProperty( "Operand 1"); //$NON-NLS-1$
+    public static final ASTNodeProperty OPERAND_TWO = new ASTNodeProperty( "Operand 2"); //$NON-NLS-1$
+    
+    public void setOperator( int op );
 	public int getOperator();
 	public static final int op_multiply = 1;
 	public static final int op_divide = 2;
@@ -46,5 +50,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_last = op_binaryOrAssign;
 	
 	public IASTExpression getOperand1();
+	public void setOperand1( IASTExpression expression );
 	public IASTExpression getOperand2();
+	public void setOperand2( IASTExpression expression );
 }

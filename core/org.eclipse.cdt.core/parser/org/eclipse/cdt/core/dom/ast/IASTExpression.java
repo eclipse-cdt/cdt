@@ -15,6 +15,6 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTExpression {
+public interface IASTExpression extends IASTNode {
 
 }

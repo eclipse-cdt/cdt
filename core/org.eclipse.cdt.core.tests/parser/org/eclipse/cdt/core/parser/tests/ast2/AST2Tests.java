@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
@@ -170,8 +171,8 @@ public class AST2Tests extends TestCase {
 		assertEquals("z", name_z.toString()); //$NON-NLS-1$
 
 		// = x + y
-		IASTBinaryExpression init_z = (IASTBinaryExpression) declor_z
-				.getInitializer();
+		IASTInitializerExpression initializer = (IASTInitializerExpression) declor_z.getInitializer();
+		IASTBinaryExpression init_z = (IASTBinaryExpression) initializer.getExpression();
 		assertEquals(IASTBinaryExpression.op_plus, init_z.getOperator());
 		IASTIdExpression ref_x = (IASTIdExpression) init_z.getOperand1();
 		IASTName name_ref_x = ref_x.getName();

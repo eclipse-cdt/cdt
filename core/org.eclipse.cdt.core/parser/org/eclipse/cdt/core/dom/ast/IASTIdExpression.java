@@ -17,6 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTIdExpression extends IASTExpression {
 
+    public static final ASTNodeProperty ID_NAME = new ASTNodeProperty( "IdExpression Name");  //$NON-NLS-1$
 	/**
 	 * Returns the name used in the expression.
 	 * 
@@ -24,4 +25,5 @@ public interface IASTIdExpression extends IASTExpression {
 	 */
 	public IASTName getName();
 	
+	public void setName( IASTName name );
 }

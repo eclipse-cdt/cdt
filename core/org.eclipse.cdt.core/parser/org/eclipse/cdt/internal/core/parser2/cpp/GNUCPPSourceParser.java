@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -36,7 +39,8 @@ import org.eclipse.cdt.internal.core.parser2.IDeclarator;
 import org.eclipse.cdt.internal.core.parser2.IDeclaratorOwner;
 import org.eclipse.cdt.internal.core.parser2.IParameterCollection;
 import org.eclipse.cdt.internal.core.parser2.ParameterCollection;
-import org.eclipse.cdt.internal.core.parser2.TypeId;
+import org.eclipse.cdt.internal.core.parser2.c.CASTBinaryExpression;
+import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatement;
 
 /**
  * This is our implementation of the IParser interface, serving as a
@@ -150,7 +154,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return last;
     }
 
-    protected List templateArgumentList(Object scope)
+    protected List templateArgumentList()
             throws EndOfFileException, BacktrackException {
         IToken start = LA(1);
         int startingOffset = start.getOffset();
@@ -171,7 +175,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IToken mark = mark();
 
             try {
-                Object typeId = typeId(scope, false);
+                Object typeId = typeId(false);
 
                 expression = null; /*
                                     * astFactory.createExpression(scope,
@@ -192,7 +196,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     IToken la = LA(1);
                     int so = la.getOffset();
                     int ln = la.getLineNumber();
-                    expression = assignmentExpression(scope);
+                    expression = assignmentExpression();
 
                     //					if ( ( expression == null ) ||
                     // expression.getExpressionKind() ==
@@ -208,7 +212,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             if (!completedArg) {
                 try {
-                    ITokenDuple nameDuple = name(scope);
+                    ITokenDuple nameDuple = name();
                     expression = null; /*
                                         * astFactory.createExpression(scope,
                                         * IASTExpression.Kind.ID_EXPRESSION,
@@ -261,7 +265,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IToken templateId(Object scope) throws EndOfFileException,
             BacktrackException {
-        ITokenDuple duple = name(scope);
+        ITokenDuple duple = name();
         //IToken last = consumeTemplateParameters(duple.getLastToken());
         return duple.getLastToken();//last;
     }
@@ -276,7 +280,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected ITokenDuple name(Object scope) throws BacktrackException,
+    protected ITokenDuple name() throws BacktrackException,
             EndOfFileException {
 
         TemplateParameterManager argumentList = TemplateParameterManager
@@ -300,7 +304,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             switch (LT(1)) {
             case IToken.tIDENTIFIER:
                 last = consume(IToken.tIDENTIFIER);
-                last = consumeTemplateArguments(scope, last, argumentList);
+                last = consumeTemplateArguments(last, argumentList);
                 if (last.getType() == IToken.tGT)
                     hasTemplateId = true;
                 break;
@@ -329,7 +333,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             .getLineNumber(), l.getFilename());
                 case IToken.tIDENTIFIER:
                     last = consume();
-                    last = consumeTemplateArguments(scope, last, argumentList);
+                    last = consumeTemplateArguments(last, argumentList);
                     if (last.getType() == IToken.tGT)
                         hasTemplateId = true;
                 }
@@ -346,15 +350,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
-     * @param scope
      * @param last
      * @param argumentList
      * @return @throws
      *         EndOfFileException
      * @throws BacktrackException
      */
-    protected IToken consumeTemplateArguments(Object scope, IToken last,
-            TemplateParameterManager argumentList) throws EndOfFileException,
+    protected IToken consumeTemplateArguments(IToken last, TemplateParameterManager argumentList) throws EndOfFileException,
             BacktrackException {
 //        if (language != ParserLanguage.CPP)
 //            return last;
@@ -362,7 +364,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IToken secondMark = mark();
             consume(IToken.tLT);
             try {
-                List list = templateArgumentList(scope);
+                List list = templateArgumentList();
                 argumentList.addSegment(list);
                 last = consume(IToken.tGT);
             } catch (BacktrackException bt) {
@@ -445,7 +447,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 .getFilename());
         } else {
             // must be a conversion function
-            typeId(d.getDeclarationWrapper().getScope(), true);
+            typeId(true);
             toSend = lastToken;
         }
 
@@ -457,8 +459,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         try {
-            toSend = consumeTemplateArguments(d.getDeclarationWrapper()
-                    .getScope(), toSend, templateArgs);
+            toSend = consumeTemplateArguments(toSend, templateArgs);
             if (toSend.getType() == IToken.tGT) {
                 hasTemplateId = true;
             }
@@ -501,7 +502,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ITokenDuple nameDuple = null;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON) {
                 try {
-                    nameDuple = name(d.getScope());
+                    nameDuple = name();
                 } catch (BacktrackException bt) {
                     backup(mark);
                     return null;
@@ -541,13 +542,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object assignmentExpression(Object scope)
+    protected IASTExpression assignmentExpression()
             throws EndOfFileException, BacktrackException {
         if (LT(1) == IToken.t_throw) {
-            return throwExpression(scope);
+            return throwExpression();
         }
 
-        Object conditionalExpression = conditionalExpression(scope);
+        IASTExpression conditionalExpression = conditionalExpression();
         // if the condition not taken, try assignment operators
         if (conditionalExpression != null) //&&
                                            // conditionalExpression.getExpressionKind()
@@ -557,48 +558,37 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return conditionalExpression;
         switch (LT(1)) {
         case IToken.tASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tSTARASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tDIVASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tMODASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tPLUSASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tMINUSASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tSHIFTRASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tSHIFTLASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tAMPERASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tXORASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         case IToken.tBITORASSIGN:
-            return assignmentOperatorExpression(scope,
-                    null, //IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR,
+            return assignmentOperatorExpression(null,
                     conditionalExpression);
         }
         return conditionalExpression;
@@ -608,11 +598,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object throwExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression throwExpression() throws EndOfFileException,
             BacktrackException {
         IToken throwToken = consume(IToken.t_throw);
-        Object throwExpression = null;
-        throwExpression = expression(scope);
+        IASTExpression throwExpression = null;
+        throwExpression = expression();
 
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         try {
@@ -641,14 +631,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object relationalExpression(Object scope)
+    protected IASTExpression relationalExpression()
             throws BacktrackException, EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
         int line = la.getLineNumber();
         char[] fn = la.getFilename();
 
-        Object firstExpression = shiftExpression(scope);
+        IASTExpression firstExpression = shiftExpression();
         for (;;) {
             switch (LT(1)) {
             case IToken.tGT:
@@ -661,7 +651,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tGTEQUAL:
                 IToken mark = mark();
                 int t = consume().getType();
-                Object secondExpression = shiftExpression(scope);
+                Object secondExpression = shiftExpression();
                 if (LA(1) == mark.getNext()) {
                     // we did not consume anything
                     // this is most likely an error
@@ -716,12 +706,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         break;
                     }
                     IToken next = LA(1);
-                    Object se = shiftExpression(scope);
+                    Object se = shiftExpression();
                     if (next == LA(1)) {
                         backup(m);
                         return firstExpression;
                     }
-                    Object resultExpression = null;
+                    IASTExpression resultExpression = null;
                     //try {
                     resultExpression = null; /*
                                               * astFactory.createExpression(
@@ -743,20 +733,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object multiplicativeExpression(Object scope)
+    protected IASTExpression multiplicativeExpression()
             throws BacktrackException, EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
         int line = la.getLineNumber();
         char[] fn = la.getFilename();
-        Object firstExpression = pmExpression(scope);
+        IASTExpression firstExpression = pmExpression();
         for (;;) {
             switch (LT(1)) {
             case IToken.tSTAR:
             case IToken.tDIV:
             case IToken.tMOD:
                 IToken t = consume();
-                Object secondExpression = pmExpression(scope);
+            	IASTExpression secondExpression = pmExpression();
                 Object expressionKind = null;
                 switch (t.getType()) {
                 case IToken.tSTAR:
@@ -797,20 +787,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object pmExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression pmExpression() throws EndOfFileException,
             BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
         int line = la.getLineNumber();
         char[] fn = la.getFilename();
 
-        Object firstExpression = castExpression(scope);
+        IASTExpression firstExpression = castExpression();
         for (;;) {
             switch (LT(1)) {
             case IToken.tDOTSTAR:
             case IToken.tARROWSTAR:
                 IToken t = consume();
-                Object secondExpression = castExpression(scope);
+                Object secondExpression = castExpression();
                 int endOffset = (lastToken != null) ? lastToken.getEndOffset()
                         : 0;
                 try {
@@ -839,7 +829,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * castExpression : unaryExpression | "(" typeId ")" castExpression
      */
-    protected Object castExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression castExpression() throws EndOfFileException,
             BacktrackException {
         // TO DO: we need proper symbol checkint to ensure type name
         if (LT(1) == IToken.tLPAREN) {
@@ -857,7 +847,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // If this isn't a type name, then we shouldn't be here
             try {
                 try {
-                    typeId = typeId(scope, false);
+                    typeId = typeId(false);
                     consume(IToken.tRPAREN);
                 } catch (BacktrackException bte) {
                     backup(mark);
@@ -870,7 +860,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     templateIdScopes.pop();
                     popped = true;
                 }
-                Object castExpression = castExpression(scope);
+                Object castExpression = castExpression();
                 //				if( castExpression != null &&
                 // castExpression.getExpressionKind() ==
                 // IASTExpression.Kind.PRIMARY_EMPTY )
@@ -902,14 +892,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
             }
         }
-        return unaryExpression(scope);
+        return unaryExpression();
 
     }
 
     /**
      * @throws BacktrackException
      */
-    protected Object typeId(Object scope, boolean skipArrayModifiers)
+    protected Object typeId(boolean skipArrayModifiers)
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
         ITokenDuple name = null;
@@ -922,7 +912,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         Object kind = null;
         do {
             try {
-                name = name(scope);
+                name = name();
                 kind = null; //IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
                 encountered = true;
                 break;
@@ -967,7 +957,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     if (encounteredType)
                         break simpleMods;
                     encounteredType = true;
-                    name = name(scope);
+                    name = name();
                     kind = null; //IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
                     encountered = true;
                     break;
@@ -1063,7 +1053,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     || LT(1) == IToken.t_union) {
                 consume();
                 try {
-                    name = name(scope);
+                    name = name();
                     kind = null; //IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
                     encountered = true;
                 } catch (BacktrackException b) {
@@ -1079,7 +1069,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
                     mark.getFilename());
 
-        TypeId id = getTypeIdInstance(scope);
+//        TypeId id = getTypeIdInstance();
         IToken last = lastToken;
         IToken temp = last;
 
@@ -1087,12 +1077,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         //lastToken = consumeTemplateParameters( last );
         //if( lastToken == null ) lastToken = last;
 
-        temp = consumePointerOperators(id);
+        temp = consumePointerOperators(null);
         if (temp != null)
             last = temp;
 
         if (!skipArrayModifiers) {
-            temp = consumeArrayModifiers(id, scope);
+            temp = consumeArrayModifiers(null);
             if (temp != null)
                 last = temp;
         }
@@ -1126,7 +1116,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object deleteExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression deleteExpression() throws EndOfFileException,
             BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -1146,7 +1136,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tRBRACKET);
             vectored = true;
         }
-        Object castExpression = castExpression(scope);
+        Object castExpression = castExpression();
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         try {
             return null; /*
@@ -1166,7 +1156,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     /**
      * Pazse a new-expression.
-     * 
      * @param expression
      * 
      * @throws BacktrackException
@@ -1179,7 +1168,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * directnewdeclarator [ constantexpression ] newinitializer: (
      * expressionlist? )
      */
-    protected Object newExpression(Object scope) throws BacktrackException,
+    protected IASTExpression newExpression() throws BacktrackException,
             EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -1208,7 +1197,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 // Try to consume placement list
                 // Note: since expressionList and expression are the same...
                 backtrackMarker = mark();
-                newPlacementExpressions.add(expression(scope));
+                newPlacementExpressions.add(expression());
                 consume(IToken.tRPAREN);
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.pop();
@@ -1229,7 +1218,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 // CASE: new (typeid-not-looking-as-placement) ...
                 // the first expression in () is not a placement
                 // - then it has to be typeId
-                typeId = typeId(scope, true);
+                typeId = typeId(true);
                 consume(IToken.tRPAREN);
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.pop();
@@ -1251,7 +1240,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         // - then it has to be typeId
                         try {
                             backtrackMarker = mark();
-                            typeId = typeId(scope, true);
+                            typeId = typeId(true);
                         } catch (BacktrackException e) {
                             // Hmmm, so it wasn't typeId after all... Then it is
                             // CASE: new (typeid-looking-as-placement)
@@ -1267,7 +1256,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     // The problem is, the first expression might as well be a
                     // typeid
                     try {
-                        typeId = typeId(scope, true);
+                        typeId = typeId(true);
                         consume(IToken.tRPAREN);
                         if (templateIdScopes.size() > 0) {
                             templateIdScopes.pop();
@@ -1327,7 +1316,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // CASE: new typeid ...
             // new parameters do not start with '('
             // i.e it has to be a plain typeId
-            typeId = typeId(scope, true);
+            typeId = typeId(true);
         }
         while (LT(1) == IToken.tLBRACKET) {
             // array new
@@ -1337,7 +1326,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 templateIdScopes.push(IToken.tLBRACKET);
             }
 
-            newTypeIdExpressions.add(assignmentExpression(scope));
+            newTypeIdExpressions.add(assignmentExpression());
             consume(IToken.tRBRACKET);
 
             if (templateIdScopes.size() > 0) {
@@ -1355,7 +1344,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // empty new Initializer
             //if the next token is the RPAREN, then we have an Empty expression
             // in our list.
-            newInitializerExpressions.add(expression(scope));
+            newInitializerExpressions.add(expression());
 
             consume(IToken.tRPAREN);
             if (templateIdScopes.size() > 0) {
@@ -1385,7 +1374,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object unaryExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression unaryExpression() throws EndOfFileException,
             BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -1394,36 +1383,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         switch (LT(1)) {
         case IToken.tSTAR:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
         case IToken.tAMPER:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
         case IToken.tPLUS:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
         case IToken.tMINUS:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
         case IToken.tNOT:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
         case IToken.tCOMPL:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
         case IToken.tINCR:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_INCREMENT);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_INCREMENT);
         case IToken.tDECR:
             consume();
-            return unaryOperatorCastExpression(scope,
-                    null );//IASTExpression.Kind.UNARY_DECREMENT);
+            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_DECREMENT);
         case IToken.t_sizeof:
             consume(IToken.t_sizeof);
             IToken mark = LA(1);
@@ -1432,14 +1413,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tLPAREN) {
                 try {
                     consume(IToken.tLPAREN);
-                    d = typeId(scope, false);
+                    d = typeId(false);
                     consume(IToken.tRPAREN);
                 } catch (BacktrackException bt) {
                     backup(mark);
-                    unaryExpression = unaryExpression(scope);
+                    unaryExpression = unaryExpression();
                 }
             } else {
-                unaryExpression = unaryExpression(scope);
+                unaryExpression = unaryExpression();
             }
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
             if (unaryExpression == null)
@@ -1469,30 +1450,30 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 throwBacktrack(startingOffset, endOffset, line, fn);
             }
         case IToken.t_new:
-            return newExpression(scope);
+            return newExpression();
         case IToken.t_delete:
-            return deleteExpression(scope);
+            return deleteExpression();
         case IToken.tCOLONCOLON:
                 switch (LT(2)) {
                 case IToken.t_new:
-                    return newExpression(scope);
+                    return newExpression();
                 case IToken.t_delete:
-                    return deleteExpression(scope);
+                    return deleteExpression();
                 default:
-                    return postfixExpression(scope);
+                    return postfixExpression();
                 }
         default:
             if (LT(1) == IGCCToken.t_typeof && supportTypeOfUnaries) {
-                Object unary = unaryTypeofExpression(scope);
+                IASTExpression unary = unaryTypeofExpression();
                 if (unary != null)
                     return unary;
             }
             if (LT(1) == IGCCToken.t___alignof__ && supportAlignOfUnaries) {
-                Object align = unaryAlignofExpression(scope);
+                IASTExpression align = unaryAlignofExpression();
                 if (align != null)
                     return align;
             }
-            return postfixExpression(scope);
+            return postfixExpression();
         }
     }
 
@@ -1500,13 +1481,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object postfixExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression postfixExpression() throws EndOfFileException,
             BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
         int line = la.getLineNumber();
         char[] fn = la.getFilename();
-        Object firstExpression = null;
+        IASTExpression firstExpression = null;
         boolean isTemplate = false;
 
         switch (LT(1)) {
@@ -1518,13 +1499,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume(IToken.t_template);
                 templateTokenConsumed = true;
             }
-            ITokenDuple nestedName = name(scope);
+            ITokenDuple nestedName = name();
 
             consume(IToken.tLPAREN);
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
             }
-            Object expressionList = expression(scope);
+            Object expressionList = expression();
             int endOffset = consume(IToken.tRPAREN).getEndOffset();
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.pop();
@@ -1548,60 +1529,46 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             break;
         // simple-type-specifier ( assignment-expression , .. )
         case IToken.t_char:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR);
             break;
         case IToken.t_wchar_t:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART);
             break;
         case IToken.t_bool:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL);
             break;
         case IToken.t_short:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT);
             break;
         case IToken.t_int:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT);
             break;
         case IToken.t_long:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG);
             break;
         case IToken.t_signed:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED);
             break;
         case IToken.t_unsigned:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED);
             break;
         case IToken.t_float:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT);
             break;
         case IToken.t_double:
-            firstExpression = simpleTypeConstructorExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE);
+            firstExpression = simpleTypeConstructorExpression(null );//IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE);
             break;
         case IToken.t_dynamic_cast:
-            firstExpression = specialCastExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_DYNAMIC_CAST);
+            firstExpression = specialCastExpression(null );//IASTExpression.Kind.POSTFIX_DYNAMIC_CAST);
             break;
         case IToken.t_static_cast:
-            firstExpression = specialCastExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_STATIC_CAST);
+            firstExpression = specialCastExpression(null );//IASTExpression.Kind.POSTFIX_STATIC_CAST);
             break;
         case IToken.t_reinterpret_cast:
-            firstExpression = specialCastExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_REINTERPRET_CAST);
+            firstExpression = specialCastExpression(null );//IASTExpression.Kind.POSTFIX_REINTERPRET_CAST);
             break;
         case IToken.t_const_cast:
-            firstExpression = specialCastExpression(scope,
-                    null );//IASTExpression.Kind.POSTFIX_CONST_CAST);
+            firstExpression = specialCastExpression(null );//IASTExpression.Kind.POSTFIX_CONST_CAST);
             break;
         case IToken.t_typeid:
             consume();
@@ -1613,10 +1580,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             Object lhs = null;
             Object typeId = null;
             try {
-                typeId = typeId(scope, false);
+                typeId = typeId(false);
             } catch (BacktrackException b) {
                 isTypeId = false;
-                lhs = expression(scope);
+                lhs = expression();
             }
             endOffset = consume(IToken.tRPAREN).getEndOffset();
             if (templateIdScopes.size() > 0) {
@@ -1639,9 +1606,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             break;
         default:
-            firstExpression = primaryExpression(scope);
+            firstExpression = primaryExpression();
         }
-        Object secondExpression = null;
+        IASTExpression secondExpression = null;
         for (;;) {
             switch (LT(1)) {
             case IToken.tLBRACKET:
@@ -1650,7 +1617,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.push(IToken.tLBRACKET);
                 }
-                secondExpression = expression(scope);
+                secondExpression = expression();
                 int endOffset = consume(IToken.tRBRACKET).getEndOffset();
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.pop();
@@ -1677,7 +1644,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.push(IToken.tLPAREN);
                 }
-                secondExpression = expression(scope);
+                secondExpression = expression();
                 endOffset = consume(IToken.tRPAREN).getEndOffset();
                 if (templateIdScopes.size() > 0) {
                     templateIdScopes.pop();
@@ -1741,7 +1708,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 Object memberCompletionKind = null; /*(isTemplate ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
                         : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION); */
 
-                secondExpression = primaryExpression(scope);
+                secondExpression = primaryExpression();
                 endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
 
                 //					if (secondExpression != null
@@ -1777,7 +1744,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 Object arrowCompletionKind = /*(isTemplate ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
                         : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION); */ null;
 
-                secondExpression = primaryExpression(scope);
+                secondExpression = primaryExpression();
                 endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
                 //					if (secondExpression != null
                 //							&& secondExpression.getExpressionKind() == Kind.ID_EXPRESSION
@@ -1805,7 +1772,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    protected Object simpleTypeConstructorExpression(Object scope, Object type)
+    protected IASTExpression simpleTypeConstructorExpression(Object type)
             throws EndOfFileException, BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -1814,7 +1781,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         la = null;
         consume();
         consume(IToken.tLPAREN);
-        Object inside = expression(scope);
+        IASTExpression inside = expression();
         int endOffset = consume(IToken.tRPAREN).getEndOffset();
         try {
             return null; /*
@@ -1835,7 +1802,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param expression
      * @throws BacktrackException
      */
-    protected Object primaryExpression(Object scope) throws EndOfFileException,
+    protected IASTExpression primaryExpression() throws EndOfFileException,
             BacktrackException {
         IToken t = null;
         switch (LT(1)) {
@@ -1942,7 +1909,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.push(IToken.tLPAREN);
             }
-            Object lhs = expression(scope);
+            IASTExpression lhs = expression();
             int endOffset = consume(IToken.tRPAREN).getEndOffset();
             if (templateIdScopes.size() > 0) {
                 templateIdScopes.pop();
@@ -1968,12 +1935,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             int startingOffset = LA(1).getOffset();
             int line = LA(1).getLineNumber();
             try {
-                duple = name(scope);
+                duple = name();
             } catch (BacktrackException bt) {
                 IToken mark = mark();
-                Declarator d = new Declarator(new DeclarationWrapper(scope,
-                        mark.getOffset(), mark.getLineNumber(), null, mark
-                                .getFilename()));
+//                Declarator d = new Declarator(new DeclarationWrapper(scope,
+//                        mark.getOffset(), mark.getLineNumber(), null, mark
+//                                .getFilename()));
 
                 if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER) {
                     IToken start = consume();
@@ -1987,16 +1954,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             end = consumeTemplateParameters(end);
                     }
                     if (LT(1) == IToken.t_operator)
-                        operatorId(d, start, null);
+                        operatorId(null /*d*/, start, null);
                     else {
                         backup(mark);
                         throwBacktrack(startingOffset, end.getEndOffset(), end
                                 .getLineNumber(), t.getFilename());
                     }
                 } else if (LT(1) == IToken.t_operator)
-                    operatorId(d, null, null);
+                    operatorId(/*d*/null, null, null);
 
-                duple = d.getNameDuple();
+                duple = null; /*d.getNameDuple();*/
             }
 
             endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
@@ -2014,31 +1981,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         .getFilename());
             }
         default:
+            
             IToken la = LA(1);
             startingOffset = la.getOffset();
             line = la.getLineNumber();
             char[] fn = la.getFilename();
-
-            Object empty = null;
-            try {
-                empty = null; /*
-                               * astFactory.createExpression(scope,
-                               * IASTExpression.Kind.PRIMARY_EMPTY, null, null,
-                               * null, null, null, EMPTY_STRING, null); } catch
-                               * (ASTSemanticException e9) { throwBacktrack(
-                               * e9.getProblem() ); return null;
-                               */
-            } catch (Exception e) {
-                logException("primaryExpression_9::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, 0, line, fn);
-            }
-            return empty;
+            throwBacktrack(startingOffset, startingOffset, line, fn);
+            return null;
         }
 
     }
 
-    protected Object specialCastExpression(Object scope,
-            Object kind) throws EndOfFileException,
+    protected IASTExpression specialCastExpression(Object kind) throws EndOfFileException,
             BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -2048,10 +2002,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         consume();
         consume(IToken.tLT);
-        Object typeID = typeId(scope, false);
+        Object typeID = typeId(false);
         consume(IToken.tGT);
         consume(IToken.tLPAREN);
-        Object lhs = expression(scope);
+        Object lhs = expression();
         int endOffset = consume(IToken.tRPAREN).getEndOffset();
         try {
             return null; /*
@@ -2118,7 +2072,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ITokenDuple duple = null;
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
-                duple = name(scope);
+                duple = name();
             else
                 throwBacktrack(firstToken.getOffset(), endOffset, firstToken
                         .getLineNumber(), firstToken.getFilename());
@@ -2157,7 +2111,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ITokenDuple name = null;
         if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON) {
             //	optional :: and nested classes handled in name
-            name = name(scope);
+            name = name();
         } else {
             throwBacktrack(firstToken.getOffset(),
                     (lastToken != null) ? lastToken.getEndOffset() : 0,
@@ -2477,7 +2431,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         if (LT(1) == IToken.tASSIGN) // optional = type-id
                         {
                             consume(IToken.tASSIGN);
-                            typeId = typeId(parameterScope, false); // type-id
+                            typeId = typeId(false); // type-id
                         }
                     }
 
@@ -2535,7 +2489,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     if (LT(1) == IToken.tASSIGN) // optional = type-id
                     {
                         consume(IToken.tASSIGN);
-                        optionalTypeId = typeId(parameterScope, false);
+                        optionalTypeId = typeId(false);
 
                     }
                 }
@@ -2701,7 +2655,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IProblem secondFailure = null;
         try {
             return simpleDeclaration(SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
-                    scope, ownerTemplate, false);
+                    ownerTemplate, false);
             // try it first with the original strategy
         } catch (BacktrackException bt) {
             if (simpleDeclarationMark == null)
@@ -2712,8 +2666,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             try {
                 return simpleDeclaration(
-                        SimpleDeclarationStrategy.TRY_FUNCTION, scope,
-                        ownerTemplate, false);
+                        SimpleDeclarationStrategy.TRY_FUNCTION, ownerTemplate,
+                        false);
             } catch (BacktrackException bt2) {
                 if (simpleDeclarationMark == null) {
                     if (firstFailure != null && (bt2.getProblem() == null))
@@ -2727,8 +2681,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
                 try {
                     return simpleDeclaration(
-                            SimpleDeclarationStrategy.TRY_VARIABLE, scope,
-                            ownerTemplate, false);
+                            SimpleDeclarationStrategy.TRY_VARIABLE, ownerTemplate,
+                            false);
                 } catch (BacktrackException b3) {
                     backup(simpleDeclarationMark); //TODO - necessary?
 
@@ -2837,7 +2791,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 return null;
             }
 
-            ITokenDuple duple = name(scope);
+            ITokenDuple duple = name();
             IToken semi = consume(IToken.tSEMI);
 
             Object alias = null;
@@ -2877,7 +2831,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * Notes: - append functionDefinition stuff to end of this rule
      * 
      * To do: - work in functionTryBlock
-     * 
      * @param container
      *            IParserCallback object which serves as the owner scope for
      *            this declaration.
@@ -2890,7 +2843,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request a backtrack
      */
     protected Object simpleDeclaration(SimpleDeclarationStrategy strategy,
-            Object scope, Object ownerTemplate, boolean fromCatchHandler)
+            Object ownerTemplate, boolean fromCatchHandler)
             throws BacktrackException, EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
@@ -2899,7 +2852,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         if (firstToken.getType() == IToken.tLBRACE)
             throwBacktrack(firstToken.getOffset(), firstToken.getEndOffset(),
                     firstToken.getLineNumber(), firstToken.getFilename());
-        DeclarationWrapper sdw = new DeclarationWrapper(scope, firstToken
+        DeclarationWrapper sdw = new DeclarationWrapper(null, firstToken
                 .getOffset(), firstToken.getLineNumber(), ownerTemplate, fn);
         firstToken = null; // necessary for scalability
 
@@ -2989,10 +2942,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
 
             if( hasFunctionBody )
-                handleFunctionBody(null );
+                handleFunctionBody( );
             
             if (hasFunctionTryBlock)
-              catchHandlerSequence(scope);
+              catchHandlerSequence();
 
 //            try {
 //                l = sdw.createASTNodes();
@@ -3108,13 +3061,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tLBRACE)
                 break;
 
-            ITokenDuple duple = name(scope);
+            ITokenDuple duple = name();
 
             consume(IToken.tLPAREN);
             Object expressionList = null;
 
             if (LT(1) != IToken.tRPAREN)
-                expressionList = expression(scope);
+                expressionList = expression();
 
             IToken rparen = consume(IToken.tRPAREN);
 
@@ -3468,7 +3421,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_typename:
                 sdw.setTypenamed(true);
                 consume(IToken.t_typename);
-                ITokenDuple duple = name(sdw.getScope());
+                ITokenDuple duple = name();
                 sdw.setTypeName(duple);
                 sdw
                         .setSimpleType(null);//IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME);
@@ -3497,7 +3450,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     return;
                 }
 
-                ITokenDuple d = name(sdw.getScope());
+                ITokenDuple d = name();
                 sdw.setTypeName(d);
                 sdw
                         .setSimpleType(null);//IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME);
@@ -3529,7 +3482,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     IToken start = LA(1);
-                    Object expression = unaryTypeofExpression(sdw.getScope());
+                    Object expression = unaryTypeofExpression();
                     if (expression != null) {
                         flags.setEncounteredTypename(true);
                         if (typeNameBegin == null)
@@ -3577,7 +3530,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     t.getFilename());
         }
 
-        ITokenDuple d = name(sdw.getScope());
+        ITokenDuple d = name();
         Object elaboratedTypeSpec = null;
         final boolean isForewardDecl = (LT(1) == IToken.tSEMI);
 
@@ -3659,7 +3612,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // initializer in constructor
             consume(IToken.tLPAREN); // EAT IT!
             Object astExpression = null;
-            astExpression = expression(scope);
+            astExpression = expression();
             consume(IToken.tRPAREN);
             d.setConstructorExpression(astExpression);
         }
@@ -3720,7 +3673,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int line = la.getLineNumber();
         la = null;
 
-        Object assignmentExpression = assignmentExpression(scope);
+        Object assignmentExpression = assignmentExpression();
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         try {
             return null;
@@ -3791,7 +3744,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             ITokenDuple queryName = null;
                             try {
                                 try {
-                                    queryName = name(parameterScope);
+                                    queryName = name();
                                     failed = true;
                                 } catch (Exception e) {
                                     int endOffset = (lastToken != null) ? lastToken
@@ -3881,7 +3834,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 break;
                             default:
                                 try {
-                                    exceptionTypeId = typeId(scope, false);
+                                    exceptionTypeId = typeId(false);
                                     exceptionSpecIds.add(exceptionTypeId);
                                     //											exceptionTypeId
                                     //													.acceptElement(
@@ -3941,11 +3894,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     }
                     break;
                 case IToken.tLBRACKET:
-                    consumeArrayModifiers(d, sdw.getScope());
+                    consumeArrayModifiers(d);
                     continue;
                 case IToken.tCOLON:
                     consume(IToken.tCOLON);
-                    Object exp = constantExpression(scope);
+                    Object exp = constantExpression();
                     d.setBitFieldExpression(exp);
                 default:
                     break;
@@ -3970,8 +3923,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 operatorId(d, null, null);
             else {
                 try {
-                    ITokenDuple duple = name(d.getDeclarationWrapper()
-                            .getScope());
+                    ITokenDuple duple = name();
                     d.setName(duple);
 
                 } catch (BacktrackException bt) {
@@ -3988,9 +3940,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         IToken end = null;
 
                         if (start.getType() == IToken.tIDENTIFIER) {
-                            end = consumeTemplateArguments(d
-                                    .getDeclarationWrapper().getScope(), end,
-                                    argumentList);
+                            end = consumeTemplateArguments(end, argumentList);
                             if (end != null && end.getType() == IToken.tGT)
                                 hasTemplateId = true;
                         }
@@ -3999,9 +3949,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 || LT(1) == IToken.tIDENTIFIER) {
                             end = consume();
                             if (end.getType() == IToken.tIDENTIFIER) {
-                                end = consumeTemplateArguments(d
-                                        .getDeclarationWrapper().getScope(),
-                                        end, argumentList);
+                                end = consumeTemplateArguments(end,
+                                        argumentList);
                                 if (end.getType() == IToken.tGT)
                                     hasTemplateId = true;
                             }
@@ -4068,7 +4017,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
-            duple = name(sdw.getScope());
+            duple = name();
         if (duple != null && !duple.isIdentifier())
             nameType = null; //ClassNameType.TEMPLATE;
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {
@@ -4210,7 +4159,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tCOLONCOLON:
             case IToken.tIDENTIFIER:
                 //to get templates right we need to use the class as the scope
-                nameDuple = name(astClassSpec);
+                nameDuple = name();
                 break;
             case IToken.tCOMMA:
                 //because we are using the class as the scope to get the name, we need to postpone adding the base 
@@ -4270,37 +4219,37 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IASTStatement statement(Object scope) throws EndOfFileException,
+    protected IASTStatement statement() throws EndOfFileException,
             BacktrackException {
 
         switch (LT(1)) {
         case IToken.t_case:
             consume(IToken.t_case);
-            constantExpression(scope);
+            constantExpression();
             cleanupLastToken();
             consume(IToken.tCOLON);
-            statement(scope);
+            statement();
             cleanupLastToken();
             return null;
         case IToken.t_default:
             consume(IToken.t_default);
             consume(IToken.tCOLON);
-            statement(scope);
+            statement();
             cleanupLastToken();
             return null;
         case IToken.tLBRACE:
-            compoundStatement(scope, true);
+            compoundStatement();
             cleanupLastToken();
             return null;
         case IToken.t_if:
             consume(IToken.t_if);
             consume(IToken.tLPAREN);
-            condition(scope);
+            condition();
             consume(IToken.tRPAREN);
             if (LT(1) != IToken.tLBRACE)
-                singleStatementScope(scope);
+                singleStatementScope();
             else
-                statement(scope);
+                statement();
             if (LT(1) == IToken.t_else) {
                 consume(IToken.t_else);
                 if (LT(1) == IToken.t_if) {
@@ -4309,56 +4258,56 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     cleanupLastToken();
                     return null;
                 } else if (LT(1) != IToken.tLBRACE)
-                    singleStatementScope(scope);
+                    singleStatementScope();
                 else
-                    statement(scope);
+                    statement();
             }
             cleanupLastToken();
             return null;
         case IToken.t_switch:
             consume();
             consume(IToken.tLPAREN);
-            condition(scope);
+            condition();
             consume(IToken.tRPAREN);
-            statement(scope);
+            statement();
             cleanupLastToken();
             return null;
         case IToken.t_while:
             consume(IToken.t_while);
             consume(IToken.tLPAREN);
-            condition(scope);
+            condition();
             consume(IToken.tRPAREN);
             if (LT(1) != IToken.tLBRACE)
-                singleStatementScope(scope);
+                singleStatementScope();
             else
-                statement(scope);
+                statement();
             cleanupLastToken();
             return null;
         case IToken.t_do:
             consume(IToken.t_do);
             if (LT(1) != IToken.tLBRACE)
-                singleStatementScope(scope);
+                singleStatementScope();
             else
-                statement(scope);
+                statement();
             consume(IToken.t_while);
             consume(IToken.tLPAREN);
-            condition(scope);
+            condition();
             consume(IToken.tRPAREN);
             cleanupLastToken();
             return null;
         case IToken.t_for:
             consume();
             consume(IToken.tLPAREN);
-            forInitStatement(scope);
+            forInitStatement();
             if (LT(1) != IToken.tSEMI)
-                condition(scope);
+                condition();
             consume(IToken.tSEMI);
             if (LT(1) != IToken.tRPAREN) {
-                expression(scope);
+                expression();
                 cleanupLastToken();
             }
             consume(IToken.tRPAREN);
-            statement(scope);
+            statement();
             cleanupLastToken();
             return null;
         case IToken.t_break:
@@ -4374,7 +4323,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_return:
             consume();
             if (LT(1) != IToken.tSEMI) {
-                expression(scope);
+                expression();
                 cleanupLastToken();
             }
             consume(IToken.tSEMI);
@@ -4388,8 +4337,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return null;
         case IToken.t_try:
             consume();
-            compoundStatement(scope, true);
-            catchHandlerSequence(scope);
+            compoundStatement();
+            catchHandlerSequence();
             cleanupLastToken();
             return null;
         case IToken.tSEMI:
@@ -4404,7 +4353,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     && LT(2) == IToken.tCOLON) {
                 consume(IToken.tIDENTIFIER);
                 consume(IToken.tCOLON);
-                statement(scope);
+                statement();
                 cleanupLastToken();
                 return null;
             }
@@ -4415,7 +4364,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IToken mark = mark();
             Object expressionStatement = null;
             try {
-                expressionStatement = expression(scope);
+                expressionStatement = expression();
                 consume(IToken.tSEMI);
                 cleanupLastToken();
                 return null;
@@ -4426,13 +4375,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             // declarationStatement
-            declaration(scope, null);
+            declaration(null, null);
             return null;
         }
 
     }
 
-    protected void catchHandlerSequence(Object scope)
+    protected void catchHandlerSequence()
             throws EndOfFileException, BacktrackException {
         if (LT(1) != IToken.t_catch) {
             IToken la = LA(1);
@@ -4447,10 +4396,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     consume(IToken.tELLIPSIS);
                 else
                     simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE,
-                            scope, null, true);
+                            null, true);
                 consume(IToken.tRPAREN);
 
-                catchBlockCompoundStatement(scope);
+                catchBlockCompoundStatement();
             } catch (BacktrackException bte) {
                 failParse(bte);
                 failParseWithErrorHandling();
@@ -4458,7 +4407,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
     }
 
-    protected void catchBlockCompoundStatement(Object scope)
+    protected void catchBlockCompoundStatement()
             throws BacktrackException, EndOfFileException {
         if (mode == ParserMode.QUICK_PARSE
                 || mode == ParserMode.STRUCTURAL_PARSE)
@@ -4466,28 +4415,28 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         else if (mode == ParserMode.COMPLETION_PARSE
                 || mode == ParserMode.SELECTION_PARSE) {
             if (scanner.isOnTopContext())
-                compoundStatement(scope, true);
+                compoundStatement();
             else
                 skipOverCompoundStatement();
         } else if (mode == ParserMode.COMPLETE_PARSE)
-            compoundStatement(scope, true);
+            compoundStatement();
     }
 
     /**
      * @throws BacktrackException
      */
-    protected void forInitStatement(Object scope) throws BacktrackException,
+    protected void forInitStatement() throws BacktrackException,
             EndOfFileException {
         IToken mark = mark();
         try {
-            expression(scope);
+            expression();
             consume(IToken.tSEMI);
             //			e.acceptElement(requestor);
 
         } catch (BacktrackException bt) {
             backup(mark);
             try {
-                simpleDeclarationStrategyUnion(scope, null);
+                simpleDeclarationStrategyUnion(null, null);
             } catch (BacktrackException b) {
                 failParse(b);
                 throwBacktrack(b);
@@ -4565,7 +4514,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         //        compilationUnit.exitScope( requestor );
     }
 
-    protected IToken consumeArrayModifiers(IDeclarator d, Object scope) throws EndOfFileException, BacktrackException {
+    protected IToken consumeArrayModifiers(IDeclarator d) throws EndOfFileException, BacktrackException {
         int startingOffset = LA(1).getOffset();
         IToken last = null;
         while (LT(1) == IToken.tLBRACKET) {
@@ -4573,7 +4522,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
             Object exp = null;
             if (LT(1) != IToken.tRBRACKET) {
-                exp = constantExpression(scope);
+                exp = constantExpression();
             }
             last = consume(IToken.tRBRACKET);
             Object arrayMod = null;
@@ -4594,6 +4543,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTTranslationUnit getTranslationUnit() {
         return (IASTTranslationUnit) translationUnit;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createCompoundStatement()
+     */
+    protected IASTCompoundStatement createCompoundStatement() {
+        return new CASTCompoundStatement();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createBinaryExpression()
+     */
+    protected IASTBinaryExpression createBinaryExpression()  {
+        return new CASTBinaryExpression();
     }
 
 }

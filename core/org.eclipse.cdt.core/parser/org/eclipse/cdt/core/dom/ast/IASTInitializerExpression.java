@@ -17,10 +17,13 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTInitializerExpression extends IASTInitializer {
 
+    public ASTNodeProperty INITIALIZER_EXPRESSION = new ASTNodeProperty( "Initializer Expression"); //$NON-NLS-1$
 	/**
 	 * Get the expression for the initializer.
 	 * 
 	 * @return
 	 */
 	public IASTExpression getExpression();
+	
+	public void setExpression( IASTExpression expression );
 }

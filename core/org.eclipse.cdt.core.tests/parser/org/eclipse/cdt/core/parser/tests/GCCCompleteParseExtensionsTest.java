@@ -266,4 +266,15 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
 	    
 	    parse( writer.toString() );
 	}
+	
+	public void testBug74190_g_return_if_fail() throws Exception {
+	    Writer writer = new StringWriter();
+	    writer.write( "void f() {                     \n"); //$NON-NLS-1$
+	    writer.write( "    (void)({ if( ( ({ 0; }) ) ) \n"); //$NON-NLS-1$
+	    writer.write( "            { }                \n"); //$NON-NLS-1$
+	    writer.write( "           });                 \n"); //$NON-NLS-1$
+	    writer.write( "}                              \n"); //$NON-NLS-1$
+	    
+	    parse( writer.toString() );
+	}
 }

@@ -568,7 +568,7 @@ public class CDebugModel
 		{
 			try
 			{
-				ICDIVariableObject vo = ((CDebugTarget)target).getCDISession().getVariableManager().getVariableObject( fileName.lastSegment(), null, name );
+				ICDIVariableObject vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
 				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable( vo );
 				return new CExpression( (CDebugTarget)target, cdiVariable );
 			}

@@ -8,6 +8,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
+import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -17,7 +18,7 @@ import org.eclipse.debug.core.model.IValue;
  * 
  * @since: Oct 2, 2002
  */
-public class CGlobalVariable extends CModificationVariable
+public class CGlobalVariable extends CModificationVariable implements ICGlobalVariable
 {
 	/**
 	 * Constructor for CGlobalVariable.
@@ -37,6 +38,8 @@ public class CGlobalVariable extends CModificationVariable
 	 */
 	public IValue getValue() throws DebugException
 	{
+		if ( !isEnabled() )
+			return fDisabledValue;
 		if ( fValue == null )
 		{
 			ICDIValue cdiValue = getCurrentValue();
@@ -89,5 +92,26 @@ public class CGlobalVariable extends CModificationVariable
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.CVariable#dispose()
+	 */
+	public void dispose() {
+		if ( getShadow() != null )
+			getShadow().dispose();
+		try {
+			getCDISession().getVariableManager().destroyVariable( getCDIVariable() );
+		}
+		catch( CDIException e ) {
+		}
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
+	 */
+	public boolean canEnableDisable() {
+		return true;
 	}
 }

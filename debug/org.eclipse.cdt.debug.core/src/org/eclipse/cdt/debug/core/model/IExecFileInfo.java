@@ -22,5 +22,5 @@ public interface IExecFileInfo {
 
 	public boolean isLittleEndian();
 
-	public IGlobalVariable[] getGlobals() throws DebugException;
+	public IGlobalVariableDescriptor[] getGlobals() throws DebugException;
 }

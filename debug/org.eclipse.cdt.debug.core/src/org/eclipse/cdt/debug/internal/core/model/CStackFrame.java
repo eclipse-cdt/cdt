@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
+import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -95,8 +97,12 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		List list = getVariables0();
-		return (IVariable[])list.toArray( new IVariable[list.size()] );
+		ICGlobalVariable[] globals = getGlobals();
+		List vars = getVariables0();
+		List all = new ArrayList( globals.length + vars.size() );
+		all.addAll( Arrays.asList( globals ) );
+		all.addAll( vars );
+		return (IVariable[])all.toArray( new IVariable[all.size()] );
 	}
 
 	protected synchronized List getVariables0() throws DebugException {
@@ -711,5 +717,13 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	public IValue evaluateExpression( String expression ) throws DebugException {
 		CExpressionTarget target = (CExpressionTarget)getDebugTarget().getAdapter( CExpressionTarget.class );
 		return (target != null) ? target.evaluateExpression( expression ) : null;
+	}
+
+	private ICGlobalVariable[] getGlobals() {
+		CGlobalVariableManager gvm = ((CDebugTarget)getDebugTarget()).getGlobalVariableManager();
+		if ( gvm != null ) {
+			return gvm.getGlobals();
+		}
+		return new ICGlobalVariable[0];
 	}
 }

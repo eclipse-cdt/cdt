@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
@@ -66,7 +67,7 @@ import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
-import org.eclipse.cdt.debug.core.model.IGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
@@ -75,6 +76,7 @@ import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
 import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
+import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
 import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
@@ -250,6 +252,8 @@ public class CDebugTarget extends CDebugElement
 
 	private CExpressionTarget fExpressionTarget;
 
+	private CGlobalVariableManager fGlobalVariableManager;
+
 	/**
 	 * The suspension thread.
 	 */
@@ -302,6 +306,7 @@ public class CDebugTarget extends CDebugElement
 		setSignalManager( new CSignalManager( this ) );
 		setRegisterManager( new CRegisterManager( this ) );
 		setBreakpointManager( new CBreakpointManager( this ) );
+		setGlobalVariableManager( new CGlobalVariableManager( this ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
@@ -997,6 +1002,8 @@ public class CDebugTarget extends CDebugElement
 			return getRegisterManager();
 		if ( adapter.equals( CExpressionTarget.class ) )
 			return getExpressionTarget();
+		if ( adapter.equals( ICGlobalVariableManager.class ) )
+			return getGlobalVariableManager();
 		if ( adapter.equals( ICDISession.class ) )
 			return getCDISession();
 		return super.getAdapter( adapter );
@@ -1226,6 +1233,7 @@ public class CDebugTarget extends CDebugElement
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+		disposeGlobalVariableManager();
 		disposeMemoryManager();
 		disposeSharedLibraryManager();
 		disposeSignalManager();
@@ -1988,7 +1996,7 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IExecFileInfo#getGlobals()
 	 */
-	public IGlobalVariable[] getGlobals() throws DebugException
+	public IGlobalVariableDescriptor[] getGlobals() throws DebugException
 	{
 		ArrayList list = new ArrayList();
 		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
@@ -1999,7 +2007,7 @@ public class CDebugTarget extends CDebugElement
 				list.addAll( getCFileGlobals( (IParent)cFile ) );
 			}
 		}
-		return (IGlobalVariable[])list.toArray( new IGlobalVariable[list.size()] );
+		return (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );
 	}
 
 	private List getCFileGlobals( IParent file ) throws DebugException
@@ -2027,9 +2035,9 @@ public class CDebugTarget extends CDebugElement
 		return list;
 	}
 
-	private IGlobalVariable createGlobalVariable( final org.eclipse.cdt.core.model.IVariable var )
+	private IGlobalVariableDescriptor createGlobalVariable( final org.eclipse.cdt.core.model.IVariable var )
 	{
-		return new IGlobalVariable()
+		return new IGlobalVariableDescriptor()
 				  {
 				  	  public String getName()
 				  	  {
@@ -2082,6 +2090,10 @@ public class CDebugTarget extends CDebugElement
 	protected void disposeRegisterManager()
 	{
 		fRegisterManager.dispose();
+	}
+
+	protected void disposeGlobalVariableManager() {
+		fGlobalVariableManager.dispose();
 	}
 
 	/**
@@ -2487,5 +2499,13 @@ public class CDebugTarget extends CDebugElement
 			fExpressionTarget = new CExpressionTarget( this );
 		}
 		return fExpressionTarget;
+	}
+
+	protected CGlobalVariableManager getGlobalVariableManager() {
+		return fGlobalVariableManager;
+	}
+
+	private void setGlobalVariableManager( CGlobalVariableManager globalVariableManager ) {
+		fGlobalVariableManager = globalVariableManager;
 	}
 }

@@ -350,7 +350,7 @@ public abstract class CVariable extends CDebugElement
 	 * Temporary solution to avoid NPE in VariablesView. 
 	 * This is fixed in the Eclipse 2.1.1 Maintenance Build.
 	 */
-	static private IValue fDisabledValue = new IValue()
+	static protected IValue fDisabledValue = new IValue()
 												{
 													public String getReferenceTypeName() throws DebugException
 													{
@@ -559,7 +559,7 @@ public abstract class CVariable extends CDebugElement
 		return ( fValue instanceof CValue ) ? ((CValue)fValue).getUnderlyingValue() : null;
 	}
 	
-	protected void dispose()
+	public void dispose()
 	{
 		if ( fValue != null )
 		{
@@ -807,7 +807,7 @@ public abstract class CVariable extends CDebugElement
 		return ( fOriginal != null ) ? fOriginal.getCDIVariable() : null;
 	}
 
-	private InternalVariable getShadow()
+	protected InternalVariable getShadow()
 	{
 		return fShadow;
 	}

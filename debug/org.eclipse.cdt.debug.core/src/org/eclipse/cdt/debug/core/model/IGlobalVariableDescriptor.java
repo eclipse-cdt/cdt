@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @since: Nov 4, 2002
  */
-public interface IGlobalVariable
+public interface IGlobalVariableDescriptor
 {
 	String getName();
 	IPath getPath();

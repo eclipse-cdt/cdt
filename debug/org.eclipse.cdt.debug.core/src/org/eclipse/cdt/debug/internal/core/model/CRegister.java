@@ -69,12 +69,4 @@ public class CRegister extends CGlobalVariable implements IRegister
 	{
 		return true;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
-	 */
-	public boolean canEnableDisable()
-	{
-		return false;
-	}
 }

@@ -1,23 +1,24 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- * 
- */
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.CDebugModel;
+import java.util.Arrays;
+import java.util.List;
+import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
-import org.eclipse.cdt.debug.core.model.IGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -40,354 +41,256 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
- * Enter type comment.
- * 
- * @since: Nov 4, 2002
+ * A delegate for the "Add Globals" action.
  */
-public class AddGlobalsActionDelegate extends ActionDelegate
-									  implements IViewActionDelegate, 
-												 ISelectionListener,
-												 IPartListener
-{
-	protected class Global
-	{
-		private String fName;
-		private IPath fPath;
+public class AddGlobalsActionDelegate extends ActionDelegate implements IViewActionDelegate, ISelectionListener, IPartListener {
 
-		/**
-		 * Constructor for Global.
-		 */
-		public Global( String name, IPath path )
-		{
-			fName = name;
-			fPath = path;
-		}
+	private IGlobalVariableDescriptor[] fGlobals;
 
-		public String getName()
-		{
-			return fName;
-		}
-		
-		public IPath getPath()
-		{
-			return fPath;
-		}
-	}
-
-	private Global[] fGlobals;
 	private IViewPart fView = null;
+
 	private IAction fAction;
+
 	private IStructuredSelection fSelection;
+
 	private IStatus fStatus = null;
 
-	/**
-	 * Constructor for AddGlobalsActionDelegate.
-	 */
-	public AddGlobalsActionDelegate()
-	{
-		super();
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
 	 */
-	public void init( IViewPart view )
-	{
+	public void init( IViewPart view ) {
 		fView = view;
 		view.getSite().getPage().addPartListener( this );
 		view.getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection )
-	{
-		if ( part != null && part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
-		{
-			if ( selection instanceof IStructuredSelection )
-			{
+	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
+		if ( part != null && part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) ) {
+			if ( selection instanceof IStructuredSelection ) {
 				setSelection( (IStructuredSelection)selection );
 			}
-			else
-			{
+			else {
 				setSelection( null );
 			}
 			update( getAction() );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
-	public void run( IAction action )
-	{
+	public void run( IAction action ) {
 		final IStructuredSelection selection = getSelection();
 		if ( selection != null && selection.size() != 1 )
 			return;
-		BusyIndicator.showWhile( Display.getCurrent(), 
-								 new Runnable() 
-								 	 {
-										 public void run() 
-										 {
-											 try 
-											 {
-												 doAction( selection.getFirstElement() );
-												 setStatus( null );
-											 } 
-											 catch( DebugException e ) 
-											 {
-												setStatus( e.getStatus() );
-											 }
-										 }
-									 } );
-		if ( getStatus() != null && !getStatus().isOK() ) 
-		{
-			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
-			if ( window != null ) 
-			{
+		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+
+			public void run() {
+				try {
+					doAction( selection.getFirstElement() );
+					setStatus( null );
+				}
+				catch( DebugException e ) {
+					setStatus( e.getStatus() );
+				}
+			}
+		} );
+		if ( getStatus() != null && !getStatus().isOK() ) {
+			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
+			if ( window != null ) {
 				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), getStatus() );
-			} 
-			else 
-			{
+			}
+			else {
 				CDebugUIPlugin.log( getStatus() );
 			}
-		}		
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
+	public void selectionChanged( IAction action, ISelection selection ) {
 		setAction( action );
-		if ( getView() != null )
-		{
+		if ( getView() != null ) {
 			update( action );
 		}
 	}
 
-	protected void update( IAction action )
-	{
-		if ( action != null )
-		{
+	protected void update( IAction action ) {
+		if ( action != null ) {
 			action.setEnabled( getEnableStateForSelection( getSelection() ) );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
-	public void partActivated( IWorkbenchPart part )
-	{
+	public void partActivated( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
-	public void partBroughtToTop( IWorkbenchPart part )
-	{
+	public void partBroughtToTop( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
-	public void partClosed( IWorkbenchPart part )
-	{
-		if ( part.equals( getView() ) )
-		{
+	public void partClosed( IWorkbenchPart part ) {
+		if ( part.equals( getView() ) ) {
 			dispose();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
-	public void partDeactivated( IWorkbenchPart part )
-	{
+	public void partDeactivated( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
-	public void partOpened( IWorkbenchPart part )
-	{
+	public void partOpened( IWorkbenchPart part ) {
 	}
-	
-	protected IViewPart getView()
-	{
+
+	protected IViewPart getView() {
 		return fView;
 	}
 
-	protected void setView( IViewPart viewPart )
-	{
+	protected void setView( IViewPart viewPart ) {
 		fView = viewPart;
 	}
-	
-	protected void setAction( IAction action )
-	{
+
+	protected void setAction( IAction action ) {
 		fAction = action;
 	}
 
-	protected IAction getAction()
-	{
+	protected IAction getAction() {
 		return fAction;
 	}
 
-	private void setSelection( IStructuredSelection selection )
-	{
+	private void setSelection( IStructuredSelection selection ) {
 		fSelection = selection;
 	}
 
-	private IStructuredSelection getSelection()
-	{
+	private IStructuredSelection getSelection() {
 		return fSelection;
 	}
 
-	public void dispose()
-	{
-		if ( getView() != null ) 
-		{
+	public void dispose() {
+		if ( getView() != null ) {
 			getView().getViewSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 			getView().getViewSite().getPage().removePartListener( this );
-		}	
+		}
 	}
 
-	protected boolean getEnableStateForSelection( IStructuredSelection selection )
-	{
-		if ( selection == null || selection.size() != 1 )
-		{
+	protected boolean getEnableStateForSelection( IStructuredSelection selection ) {
+		if ( selection == null || selection.size() != 1 ) {
 			return false;
 		}
 		Object element = selection.getFirstElement();
-		return ( element != null && 
-				 element instanceof IDebugElement && 
-				 ((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class ) != null );
+		return (element != null && element instanceof IDebugElement && ((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class ) != null);
 	}
 
-	private ListSelectionDialog createDialog()
-	{
-		return new ListSelectionDialog( getView().getSite().getShell(), 
-										fGlobals,
-										new IStructuredContentProvider()
-											{
-												public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) 
-												{
-												}
-										 
-												public void dispose() 
-												{
-												}
-										
-												public Object[] getElements( Object parent ) 
-												{
-													 return getGlobals();
-												}
-											},
-										new LabelProvider() 
-										{
-											public String getText( Object element ) 
-											{
-												if ( element instanceof Global )
-												{
-													String path = ""; //$NON-NLS-1$
-													if ( ((Global)element).getPath() != null )
-													{
-														path = ((Global)element).getPath().toString();
-														int index = path.lastIndexOf( '/' );
-													 	if ( index != -1 )
-													 		path = path.substring( index + 1 );
-													}
-													return ( path.length() > 0 ? ( '\'' + path + "\'::" ) : "" ) + ((Global)element).getName(); //$NON-NLS-1$ //$NON-NLS-2$
-												}
-												return null;				
-											}
-										},
-										CDebugUIPlugin.getResourceString("internal.ui.actions.AddGlobalsActionDelegate.Select_Variables") ); //$NON-NLS-1$
+	private ListSelectionDialog createDialog() {
+		return new ListSelectionDialog( getView().getSite().getShell(), fGlobals, new IStructuredContentProvider() {
+
+			public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
+			}
+
+			public void dispose() {
+			}
+
+			public Object[] getElements( Object parent ) {
+				return getGlobals();
+			}
+		}, new LabelProvider() {
+
+			public String getText( Object element ) {
+				if ( element instanceof IGlobalVariableDescriptor ) {
+					String path = ""; //$NON-NLS-1$
+					if ( ((IGlobalVariableDescriptor)element).getPath() != null ) {
+						path = ((IGlobalVariableDescriptor)element).getPath().toString();
+						int index = path.lastIndexOf( '/' );
+						if ( index != -1 )
+							path = path.substring( index + 1 );
+					}
+					return (path.length() > 0 ? ('\'' + path + "\'::") : "") + ((IGlobalVariableDescriptor)element).getName(); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				return null;
+			}
+		}, CDebugUIPlugin.getResourceString( "internal.ui.actions.AddGlobalsActionDelegate.Select_Variables" ) ); //$NON-NLS-1$
 	}
-	
-	protected Global[] getGlobals()
-	{
+
+	protected IGlobalVariableDescriptor[] getGlobals() {
 		return fGlobals;
 	}
 
-	protected void doAction( Object element ) throws DebugException
-	{
+	protected void doAction( Object element ) throws DebugException {
 		if ( getView() == null )
 			return;
-		if ( element != null && element instanceof IDebugElement )
-		{
+		if ( element != null && element instanceof IDebugElement ) {
 			IExecFileInfo info = (IExecFileInfo)((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class );
-			if ( info != null )
-			{
-				IGlobalVariable[] globalVars = info.getGlobals();
-				fGlobals = new Global[globalVars.length];
-				for ( int i = 0; i < globalVars.length; ++i )
-				{
-					fGlobals[i] = new Global( globalVars[i].getName(), globalVars[i].getPath() );
-				}
+			ICGlobalVariableManager gvm = (ICGlobalVariableManager)((IDebugElement)element).getDebugTarget().getAdapter( ICGlobalVariableManager.class );
+			if ( info != null && gvm != null ) {
+				fGlobals = info.getGlobals();
 				ListSelectionDialog dlg = createDialog();
-				if ( dlg.open() == Window.OK )
-				{
-					MultiStatus ms = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null ); 
-					Object[] selections = dlg.getResult();
-					for ( int i = 0; i < selections.length; ++i )
-					{
-						try
-						{
-							createExpression( ((IDebugElement)element).getDebugTarget(), (Global)selections[i]  );
-						}
-						catch( DebugException e )
-						{
-							ms.merge( e.getStatus() );
-						}
-					}
-					if ( !ms.isOK() )
-					{
-						throw new DebugException( ms );
-					}
+				if ( dlg.open() == Window.OK ) {
+					List list = Arrays.asList( dlg.getResult() );
+					IGlobalVariableDescriptor[] selections = (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );
+					gvm.addGlobals( selections );
 				}
 			}
 		}
-	}
-
-	protected String getStatusMessage()
-	{
-		return CDebugUIPlugin.getResourceString("internal.ui.actions.AddGlobalsActionDelegate.Exceptions_occurred_attempting_to_add_global_variables."); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
-	protected String getErrorDialogMessage()
-	{
-		return CDebugUIPlugin.getResourceString("internal.ui.actions.AddGlobalsActionDelegate.Add_global_variables_failed"); //$NON-NLS-1$
+	protected String getErrorDialogMessage() {
+		return CDebugUIPlugin.getResourceString( "internal.ui.actions.AddGlobalsActionDelegate.Add_global_variables_failed" ); //$NON-NLS-1$
 	}
-	
-	protected void setStatus( IStatus status )
-	{
+
+	protected void setStatus( IStatus status ) {
 		fStatus = status;
 	}
-	
-	protected IStatus getStatus()
-	{
+
+	protected IStatus getStatus() {
 		return fStatus;
 	}
 
-	private void createExpression( IDebugTarget target, Global global ) throws DebugException
-	{
-		IExpression expression = CDebugModel.createExpressionForGlobalVariable( target, global.getPath(), global.getName() );
-		DebugPlugin.getDefault().getExpressionManager().addExpression( expression );
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
-	public void init( IAction action )
-	{
+	public void init( IAction action ) {
 		super.init( action );
 		Object element = DebugUITools.getDebugContext();
-		setSelection( (element != null ) ? new StructuredSelection( element ) : new StructuredSelection() );
+		setSelection( (element != null) ? new StructuredSelection( element ) : new StructuredSelection() );
 		update( action );
 	}
 }

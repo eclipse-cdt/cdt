@@ -410,25 +410,6 @@
             id="org.eclipse.cdt.debug.ui.breakpointview.popupMenu">
       </viewerContribution>
       <viewerContribution
-            targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.debug.ui.expressionView.popupMenu">
-         <action
-               label="%AddGlobalsAction.label"
-               icon="icons/full/clcl16/watch_globals.gif"
-               helpContextId="add_globals_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
-               menubarPath="expressionGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </viewerContribution>
-      <viewerContribution
             targetID="#ASMEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.AsmEditorRulerActions">
 <!--
@@ -752,7 +733,7 @@
                helpContextId="restore_default_type_action_context"
                tooltip="%RestoreDefaultTypeAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate"
-               menubarPath="additions"
+               menubarPath="variableGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate">
             <enablement>
@@ -768,7 +749,7 @@
                helpContextId="cast_to_type_action_context"
                tooltip="%CastToTypeAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate"
-               menubarPath="additions"
+               menubarPath="variableGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate">
             <enablement>
@@ -784,7 +765,7 @@
                helpContextId="cast_to_array_action_context"
                tooltip="%CastToArrayAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate"
-               menubarPath="additions"
+               menubarPath="variableGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate">
             <enablement>
@@ -818,6 +799,50 @@
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView"
             id="org.eclipse.debug.ui.variablesView.popupMenu">
+         <action
+               helpContextId="remove_all_globals_action_context"
+               enablesFor="*"
+               label="%RemoveAllGlobalsAction.label"
+               tooltip="%RemoveAllGlobalsAction.tooltip"
+               icon="icons/full/elcl16/rem_all_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+         <action
+               helpContextId="remove_globals_action_context"
+               enablesFor="+"
+               label="%RemoveGlobalsAction.label"
+               tooltip="%RemoveGlobalsAction.tooltip"
+               icon="icons/full/elcl16/rem_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+         <action
+               helpContextId="add_globals_action_context"
+               enablesFor="1"
+               label="%AddGlobalsAction.label"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
+               icon="icons/full/clcl16/watch_globals.gif"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
          <action
                label="%DisableVariablesAction.label"
                icon="icons/full/clcl16/disabled_co.gif"
@@ -935,24 +960,57 @@
          </action>
       </viewContribution>
       <viewContribution
-            targetID="org.eclipse.debug.ui.ExpressionView"
-            id="org.eclipse.debug.ui.expressionsView.toolbar">
+            targetID="org.eclipse.debug.ui.VariableView"
+            id="org.eclipse.debug.ui.variablesView.toolbar">
          <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
-               toolbarPath="expressionGroup"
-               hoverIcon="icons/full/clcl16/watch_globals.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
-               disabledIcon="icons/full/dlcl16/watch_globals.gif"
-               enablesFor="1"
-               icon="icons/full/elcl16/watch_globals.gif"
-               helpContextId="add_globals_action_context"
-               label="%AddGlobalsAction.label"
-               tooltip="%AddGlobalsAction.tooltip">
+               helpContextId="remove_all_globals_action_context"
+               disabledIcon="icons/full/dlcl16/rem_all_co.gif"
+               hoverIcon="icons/full/elcl16/rem_all_co.gif"
+               enablesFor="*"
+               toolbarPath="additions"
+               label="%RemoveAllGlobalsAction.label"
+               tooltip="%RemoveAllGlobalsAction.tooltip"
+               icon="icons/full/elcl16/rem_all_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate">
             <enablement>
                <pluginState
                      value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+         <action
+               helpContextId="remove_globals_action_context"
+               disabledIcon="icons/full/dlcl16/rem_co.gif"
+               hoverIcon="icons/full/elcl16/rem_co.gif"
+               enablesFor="+"
+               toolbarPath="additions"
+               label="%RemoveGlobalsAction.label"
+               tooltip="%RemoveGlobalsAction.tooltip"
+               icon="icons/full/elcl16/rem_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+         <action
+               helpContextId="add_globals_action_context"
+               disabledIcon="icons/full/dlcl16/watch_globals.gif"
+               hoverIcon="icons/full/clcl16/watch_globals.gif"
+               enablesFor="1"
+               toolbarPath="additions"
+               label="%AddGlobalsAction.label"
+               tooltip="%AddGlobalsAction.tooltip"
+               icon="icons/full/elcl16/watch_globals.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
             </enablement>
          </action>
       </viewContribution>

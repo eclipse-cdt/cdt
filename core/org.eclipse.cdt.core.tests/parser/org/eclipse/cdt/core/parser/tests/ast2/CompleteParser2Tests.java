@@ -100,7 +100,22 @@ public class CompleteParser2Tests extends TestCase {
         }
         public int size() { return nameList.size(); } 
     }
-
+    static protected class CNameCollector extends CVisitor.CBaseVisitorAction {
+        {
+            processNames = true;
+        }
+        public List nameList = new ArrayList();
+        public int processName( IASTName name ){
+            nameList.add( name );
+            return PROCESS_CONTINUE;
+        }
+        public IASTName getName( int idx ){
+            if( idx < 0 || idx >= nameList.size() )
+                return null;
+            return (IASTName) nameList.get( idx );
+        }
+        public int size() { return nameList.size(); } 
+    }
     protected void assertInstances( CPPNameCollector nameCollector, IBinding binding, int num ) throws Exception {
         int count = 0;
         for( int i = 0; i < nameCollector.size(); i++ )
@@ -109,7 +124,14 @@ public class CompleteParser2Tests extends TestCase {
         
         assertEquals( count, num );
     }
-    
+    protected void assertInstances( CNameCollector nameCollector, IBinding binding, int num ) throws Exception {
+        int count = 0;
+        for( int i = 0; i < nameCollector.size(); i++ )
+            if( nameCollector.getName( i ).resolveBinding() == binding )
+                count++;
+        
+        assertEquals( count, num );
+    }
     protected IASTTranslationUnit parse(String code, boolean expectedToPass,
             ParserLanguage lang) throws Exception {
         return parse(code, expectedToPass, lang, false);
@@ -1654,7 +1676,21 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write("   ::s outer = { 42 };"); //$NON-NLS-1$
 		writer.write("}"); //$NON-NLS-1$
 		
-		parse( writer.toString() );
+		IASTTranslationUnit tu = parse( writer.toString() );
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+
+		assertEquals( col.size(), 11 );
+		
+		ICPPClassType s = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPClassType s2 = (ICPPClassType) col.getName(3).resolveBinding();
+		
+		ICPPClassType ref1 = (ICPPClassType) col.getName(5).resolveBinding();
+		ICPPClassType ref2 = (ICPPClassType) col.getName( 9 ).resolveBinding();
+		
+		assertSame( s, ref2 );
+		assertSame( s2, ref1 );
 	}
 	
 	public void testBug57754() throws Exception
@@ -1685,7 +1721,16 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "class G2 { int j; };"); //$NON-NLS-1$
 		writer.write( "typedef G2 AltG2;"); //$NON-NLS-1$
 		writer.write( "class AltG3 : AltG2 {  int x;};"); //$NON-NLS-1$
-		parse( writer.toString() );
+		IASTTranslationUnit tu = parse( writer.toString() );
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 7 );
+		ICPPClassType G2 = (ICPPClassType) col.getName(0).resolveBinding();
+		ITypedef alt = (ITypedef) col.getName(3).resolveBinding();
+				
+		assertInstances( col, G2, 2 );
+		assertInstances( col, alt, 2 );
 	}
 	
 	public void testBug46246() throws Exception
@@ -1698,7 +1743,16 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "struct A a1;               "); //$NON-NLS-1$
 		writer.write( "struct B b1;               "); //$NON-NLS-1$
 		
-		parse( writer.toString(), true, ParserLanguage.C );
+		IASTTranslationUnit tu = parse( writer.toString(), true, ParserLanguage.C );
+		CNameCollector col = new CNameCollector();
+		CVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 9 );
+		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
+		ICompositeType B = (ICompositeType) col.getName(1).resolveBinding();
+				
+		assertInstances( col, A, 2 );
+		assertInstances( col, B, 2 );
 	}
 	
 	public void testBug45235() throws Exception

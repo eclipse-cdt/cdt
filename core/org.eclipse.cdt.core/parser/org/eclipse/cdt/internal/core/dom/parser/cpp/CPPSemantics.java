@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -289,16 +290,13 @@ public class CPPSemantics {
 		}
 	}
 	static protected IBinding resolveBinding( IASTName name ){
-	    if( name.toCharArray().length == 0 ){
+	    if( name.toCharArray().length == 2 && CharArrayUtils.equals( name.toCharArray(), Keywords.cpCOLONCOLON ) ){
 	    	IASTNode node = name.getParent();
 	    	if( node instanceof ICPPASTQualifiedName ){
 	    		ICPPASTQualifiedName qname = (ICPPASTQualifiedName) node;
 	    		if( qname.getNames()[0] == name ){
 	    			//translation unit
-	    			while( ! (node instanceof ICPPASTTranslationUnit ) ){
-	    				node = node.getParent();
-	    			}
-	    			return ((ICPPASTTranslationUnit) node).resolveBinding();
+	    			return ((ICPPASTTranslationUnit)node.getTranslationUnit()).resolveBinding();
 	    		}
 	    	}
 	    	return null;	    	
@@ -479,8 +477,16 @@ public class CPPSemantics {
 		int size = bases.length;
 		for( int i = 0; i < size; i++ )
 		{
-			ICPPClassType binding = (ICPPClassType) bases[i].getName().resolveBinding();
-			ICPPClassScope parent = (ICPPClassScope) binding.getCompositeScope();
+			ICPPClassType cls = null;
+			IBinding binding = bases[i].getName().resolveBinding();
+			while( binding instanceof ITypedef && ((ITypedef)binding).getType() instanceof IBinding ){
+				binding = (IBinding) ((ITypedef)binding).getType();
+			}
+			if( binding instanceof ICPPClassType )
+				cls = (ICPPClassType) binding;
+			else 
+				continue;
+			ICPPClassScope parent = (ICPPClassScope) cls.getCompositeScope();
 			
 			if( parent == null )
 				continue;

@@ -41,27 +41,36 @@ public class TxThread extends Thread {
 				}
 
 				if (cmd != null) {
-					// Move to the RxQueue only if RxThread is alive.
-					Thread rx = session.getRxThread();
-					if (rx != null && rx.isAlive()) {
-						CommandQueue rxQueue = session.getRxQueue();
-						rxQueue.addCommand(cmd);
+					String str = cmd.toString();
+					// if string is empty consider as a noop
+					if (str.length() > 0) {
+						// Move to the RxQueue only if RxThread is alive.
+						Thread rx = session.getRxThread();
+						if (rx != null && rx.isAlive()) {
+							CommandQueue rxQueue = session.getRxQueue();
+							rxQueue.addCommand(cmd);
+						} else {
+							// The RxThread is not running
+							synchronized (cmd) {
+								cmd.notifyAll();
+							}
+						}
+					
+						// Process the Command line to recognise patterns we may need to fire event.
+						if (cmd instanceof CLICommand) {
+							cli.process((CLICommand)cmd);
+						}
+				
+						// shove in the pipe
+						if (out != null) {
+							out.write(str.getBytes());
+							out.flush();
+						}
 					} else {
+						// String is empty consider as a noop
 						synchronized (cmd) {
 							cmd.notifyAll();
 						}
-					}
-					
-					// May need to fire event.
-					if (cmd instanceof CLICommand) {
-						cli.process((CLICommand)cmd);
-					}
-				
-					// shove in the pipe
-					String str = cmd.toString();
-					if (out != null && str.length() > 0) {
-						out.write(str.getBytes());
-						out.flush();
 					}
 				}
 			}

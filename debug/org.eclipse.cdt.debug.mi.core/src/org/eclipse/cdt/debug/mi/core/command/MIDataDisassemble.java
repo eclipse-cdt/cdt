@@ -87,6 +87,10 @@ public class MIDataDisassemble extends MICommand
 		setParameters(new String[]{mixed});	
 	}
 
+	public MIDataDisassembleInfo getMIDataDisassembleInfo() throws MIException {
+		return (MIDataDisassembleInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

@@ -1,4 +1,18 @@
 2004-06-03 Alain Magloire
+	Again the problem:
+	Eclipse filename association with editors is done strictly via
+	the plugin.xml(and Preference Page).
+	The CDT is ship with a sensible default i.e. *.c, *.h, *.cpp etc ..
+	We use an hack in EditorUtility.getEditorID(...)
+	To change this behaviour for the CView and the 
+	COutliner.
+	
+	Added support for DoubleClick to open a header
+	in the outliner.
+
+	Related PRs: 64834, 44363
+
+2004-06-03 Alain Magloire
 
 	Patch from Sam Rob, fix for 64783
 	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferencePage.java

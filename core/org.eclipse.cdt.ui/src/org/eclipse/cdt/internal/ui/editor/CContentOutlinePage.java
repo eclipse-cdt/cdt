@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
@@ -25,6 +26,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -162,7 +165,17 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		Control control= treeViewer.getControl();
 		Menu menu= manager.createContextMenu(control);
 		control.setMenu(menu);
-		
+	
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+			 */
+			public void doubleClick(DoubleClickEvent event) {
+				if (fOpenIncludeAction != null) {
+					fOpenIncludeAction.run();
+				}
+			}
+		});
 		// register global actions
 		IPageSite site= getSite();
 		site.registerContextMenu(fContextMenuId, manager, treeViewer);

@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.ui.util;
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -30,7 +32,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -88,10 +89,10 @@ public class EditorUtility {
 		}
                 
 		IEditorInput input = getEditorInput(inputElement);
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput= (IFileEditorInput) input;
-			return openInEditor(fileInput.getFile(), activate);
-		}
+		//if (input instanceof IFileEditorInput) {
+		//	IFileEditorInput fileInput= (IFileEditorInput) input;
+		//	return openInEditor(fileInput.getFile(), activate);
+		//}
                 
 		if (input != null) {
 			return openInEditor(input, getEditorID(input, inputElement), activate);
@@ -109,17 +110,17 @@ public class EditorUtility {
 		}
 	}
 
-	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
-		if (file != null) {
-			IWorkbenchPage p= CUIPlugin.getActivePage();
-			if (p != null) {
-				IEditorPart editorPart = IDE.openEditor(p, file, activate);
-				initializeHighlightRange(editorPart);
-				return editorPart;
-			}
-		}
-		return null;
-	}
+//	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
+//		if (file != null) {
+//			IWorkbenchPage p= CUIPlugin.getActivePage();
+//			if (p != null) {
+//				IEditorPart editorPart = IDE.openEditor(p, file, activate);
+//				initializeHighlightRange(editorPart);
+//				return editorPart;
+//			}
+//		}
+//		return null;
+//	}
 
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
 		if (input != null) {
@@ -248,41 +249,6 @@ public class EditorUtility {
 //		return getTranslationUnit(element.getParent());
 //	}
 
-
-//	public static IEditorPart openInEditor (IFile file) throws PartInitException {
-//		IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
-//		if (window != null) {
-//			IWorkbenchPage p= window.getActivePage();
-//			if (p != null) {
-//				return p.openEditor(file);
-//			}
-//		}
-//		return null;
-//	}
-//
-//
-//	public static IEditorPart openInEditor (IPath path) throws PartInitException {
-//		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-//		if (f == null) {
-//			IStorage s = new FileStorage(path);
-//			return openInEditor(s, path.lastSegment());
-//		}
-//		return openInEditor(f);
-//	}
-//
-//	public static IEditorPart openInEditor (IStorage store, String name) throws PartInitException {
-//		IEditorInput ei = new ExternalEditorInput(store);
-//		IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
-//		if (window != null) {
-//			IWorkbenchPage p = window.getActivePage();
-//			if (p != null) {
-//				return p.openEditor(ei, getEditorID(name));
-//			}
-//		}
-//		return null;
-//	}
-//
-
 	public static String getEditorID(String name) {
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		if (registry != null) {
@@ -297,7 +263,42 @@ public class EditorUtility {
 	}
 
 	public static String getEditorID(IEditorInput input, Object inputObject) {
-		return getEditorID(input.getName());
+		String ID =  getEditorID(input.getName());
+
+		if (!"org.eclipse.ui.DefaultTextEditor".equals(ID)) { // $NON-NLS-1$
+			return ID;
+		}
+
+		// TODO:FIXME:HACK etc ...
+		// Unfortunately unless specifying all of possible headers in the plugin.xml
+		// and it is not possible(for example filenames: iostream, cstdlib, etc ...
+		// We try this hack here.  This is to be remove when the Eclipse Platform
+		// implement there contentious IContentType
+
+		ITranslationUnit tunit = null;
+
+		if (input instanceof IFileEditorInput) {
+			IFileEditorInput editorInput = (IFileEditorInput)input;
+			IFile file = editorInput.getFile();
+			ICElement celement = CoreModel.getDefault().create(file);
+			if (celement instanceof ITranslationUnit) {
+				tunit = (ITranslationUnit)celement;
+			}
+		} else if (input instanceof ITranslationUnitEditorInput) {
+			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput)input;
+			tunit = editorInput.getTranslationUnit();
+		}
+
+		// Choose an a file base on the extension.
+		if (tunit != null) {
+			if (tunit.isCLanguage()) {
+				return getEditorID("No_ExIsTeNt_FiLe.c");//$NON-NLS-1$
+			} else if (tunit.isCXXLanguage()) {
+				return getEditorID("No_ExIsTeNt_FiLe.cpp");//$NON-NLS-1$
+			}
+		}
+
+		return ID;
 	}
 
 	/**

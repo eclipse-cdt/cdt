@@ -41,6 +41,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 
 public class CModelManager implements IResourceChangeListener {
 
@@ -753,6 +754,10 @@ public class CModelManager implements IResourceChangeListener {
 				runners[i].interrupt();
 			}
 		}
+	}
+	
+	public IndexManager getIndexManager() {
+		return this.fDeltaProcessor.indexManager;
 	}
 	
 }

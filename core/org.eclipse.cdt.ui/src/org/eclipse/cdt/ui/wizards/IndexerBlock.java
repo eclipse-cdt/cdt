@@ -7,6 +7,7 @@ package org.eclipse.cdt.ui.wizards;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IndexModel;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class IndexerBlock implements IWizardTab {
 	private Button indexerSwitch;
+	private Button indexerSwitch2;
 	IProject project;
 	IValidation page;
 
@@ -39,8 +41,13 @@ public class IndexerBlock implements IWizardTab {
 
 		indexerSwitch = new Button(composite, SWT.CHECK | SWT.RIGHT);
 		indexerSwitch.setAlignment(SWT.LEFT);
-		indexerSwitch.setText("Enable indexing service for this project");
+		indexerSwitch.setText("Enable CTAGS indexing service for this project");
 		indexerSwitch.setSelection(indexer.isEnabled(project));
+		
+		indexerSwitch2 = new Button(composite, SWT.CHECK | SWT.RIGHT);
+		indexerSwitch2.setAlignment(SWT.LEFT);
+		indexerSwitch2.setText("Enable NEW indexing service for this project");
+		indexerSwitch2.setSelection(false);
 		return composite;
 	}
 
@@ -50,6 +57,9 @@ public class IndexerBlock implements IWizardTab {
 	public void doRun(IProject project, IProgressMonitor monitor) {
 		IndexModel indexer = CCorePlugin.getDefault().getIndexModel();			
 		indexer.setEnabled(project, indexerSwitch.getSelection());
+		
+		IndexManager newIndexer = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		newIndexer.setEnabled(project, indexerSwitch2.getSelection());
 	}
 
 
@@ -79,12 +89,21 @@ public class IndexerBlock implements IWizardTab {
 	 */
 	public void setVisible(boolean visible) {
 		IndexModel indexer = CCorePlugin.getDefault().getIndexModel();			
-
+		IndexManager newIndexer = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		
 		if (indexerSwitch != null) {
 			//indexerSwitch.setAlignment(SWT.LEFT);
 			//indexerSwitch.setText("Enable indexing service for this project");
 			indexerSwitch.setSelection(indexer.isEnabled(project));
 		}
+		
+		if (indexerSwitch2 != null) {
+			//indexerSwitch.setAlignment(SWT.LEFT);
+			//indexerSwitch.setText("Enable indexing service for this project");
+			indexerSwitch2.setSelection(newIndexer.isEnabled(project));
+		}
+		
+		
 	}
 
 }

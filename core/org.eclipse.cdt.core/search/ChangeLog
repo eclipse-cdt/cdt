@@ -1,0 +1,10 @@
+2003-06-25	Bogdan Gheorghe
+
+Modified:
+	
+	* search/org/eclipse/cdt/core/search/ICSearchConstants.java
+	* search/org/eclipse/cdt/internal/core/search/Utils.java
+	 - moved to index/org/eclipse/cdt/internal/core/search/Utils.java
+	* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
+	* search/org/eclipse/cdt/internal/core/search/processing/IJob.java
+	* search/org/eclipse/cdt/internal/core/search/processing/JobManager.java

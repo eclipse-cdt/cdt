@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+
 /**
  * This class is used by <code>CModelManager</code> to convert
  * <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
@@ -31,6 +33,8 @@ public class DeltaProcessor {
 	 * The <code>CElementDelta</code> corresponding to the <code>IResourceDelta</code> being translated.
 	 */
 	protected CElementDelta fCurrentDelta;
+	
+	protected IndexManager indexManager = new IndexManager();
 
 	/* The C element that was last created (see createElement(IResource). 
 	 * This is used as a stack of C elements (using getParent() to pop it, and 
@@ -333,6 +337,7 @@ public class DeltaProcessor {
 			// get the workspace delta, and start processing there.
 			IResourceDelta[] deltas = changes.getAffectedChildren();
 			ICElementDelta[] translatedDeltas = new CElementDelta[deltas.length];
+			System.out.println("delta.length: " + deltas.length);
 			for (int i = 0; i < deltas.length; i++) {
 				IResourceDelta delta = deltas[i];
 				fCurrentDelta = new CElementDelta(root);
@@ -446,9 +451,37 @@ public class DeltaProcessor {
 
 	protected void updateIndexAddResource(ICElement element, IResourceDelta delta) {
 		//CModelManager.getDefault().getIndexManager().addResource(delta.getResource());
+	
+		if (indexManager == null)
+			return;
+
+	    switch (element.getElementType()) {
+			case ICElement.C_PROJECT :
+					this.indexManager.indexAll(element.getCProject().getProject());
+					break;
+	    }
+		
 	}
 
 	protected void updateIndexRemoveResource(ICElement element, IResourceDelta delta) {
 		//CModelManager.getDefault().getIndexManager().removeResource(delta.getResource());
+	
+	/*
+		if (indexManager == null)
+						return;
+
+		switch (element.getElementType()) {
+			case ICElement.C_PROJECT :
+						this.indexManager.removeIndexFamily(element.getCProject().getProject().getFullPath());
+						// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
+						break;
+						// NB: Update of index if project is opened, closed, or its java nature is added or removed
+						//     is done in updateCurrentDeltaAndIndex
+						
+		}
+		*/
 	}
-}
+	
+
+	}
+

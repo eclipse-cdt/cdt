@@ -52,15 +52,15 @@ public abstract class CSearchPattern
 			case ICSearchConstants.TYPE:
 				pattern = createTypePattern( patternString, limitTo, matchMode, caseSensitive );
 				break;
-			case ICSearchConstants.METHOD:
-				pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
-				break;
+			//case ICSearchConstants.METHOD:
+			//	pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
+			//	break;
 			case ICSearchConstants.CONSTRUCTOR:
 				pattern = createConstructorPattern( patternString, limitTo, matchMode, caseSensitive );
 				break;
-			case ICSearchConstants.FIELD:
-				pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
-				break;
+			//case ICSearchConstants.FIELD:
+			//	pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
+			//	break;
 		}
 		
 		return pattern;

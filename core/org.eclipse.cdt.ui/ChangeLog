@@ -13,6 +13,14 @@
 	Began structuring expressions and declarators in Parser for ISourceElementRequestor.  
 	Updated other packages to use new interfaces.  
 
+2003-06-25 Bogdan Gheorghe
+	Added a new checkbox to the Indexer tab of the C/C++ Project Settings
+	to allow the new indexer to be turned on or off. 
+	* src/org/eclipse/cdt/ui/wizards/IndexerBlock.java
+	
+	Modified the CSearchPage to work with the new CSearchConstants
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	
 2003-06-24 Thomas Fletcher
 
 	- Proposals will now include additional help information with them

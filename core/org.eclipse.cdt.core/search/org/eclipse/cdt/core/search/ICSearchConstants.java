@@ -9,15 +9,24 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 /*
- * Created on Jun 11, 2003
+ * Created on May 31, 2003
  */
 package org.eclipse.cdt.core.search;
 
 /**
- * @author aniefer
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * @author bgheorgh
+ */
+import org.eclipse.cdt.internal.core.search.processing.*;
+
+
+/**
+ * <p>
+ * This interface defines the constants used by the search engine.
+ * </p>
+ * <p>
+ * This interface declares constants only; it is not intended to be implemented.
+ * </p>
+ * @see org.eclipse.cdt.core.search.SearchEngine
  */
 public interface ICSearchConstants {
 	/**
@@ -34,37 +43,56 @@ public interface ICSearchConstants {
 	int TYPE= 0;
 
 	/**
-	 * The searched element is a method.
+	 * The searched element is a function.
 	 */
-	int METHOD= 1;
+	int FUNCTION= 1;
 
 	/**
-	 * The searched element is a package.
-	 */
-	//int PACKAGE= 2;
-
+	* The searched element is a namespace.
+    */
+	int NAMESPACE= 2;
+	
 	/**
 	 * The searched element is a constructor.
 	 */
-	int CONSTRUCTOR= 2;
+	int CONSTRUCTOR= 3;
 
 	/**
-	 * The searched element is a field.
+	 * The searched element is a member.
+     */
+	int MEMBER= 4;
+	
+	/**
+	 * The searched element is a variable.
+	 * More selective than using TYPE
 	 */
-	int FIELD= 3;
+	int VAR= 5;
 
 	/**
 	 * The searched element is a class. 
 	 * More selective than using TYPE
 	 */
-	int CLASS= 4;
+	int CLASS= 6;
 
 	/**
-	 * The searched element is an interface.
+	 * The searched element is a struct.
 	 * More selective than using TYPE
 	 */
-	int INTERFACE= 5;
+	int STRUCT= 7;
 
+	/**
+	 * The searched element is a enum.
+	 * More selective than using TYPE
+	 */
+	int ENUM= 8;
+	
+	/**
+	 * The searched element is a union.
+	 * More selective than using TYPE
+	 */
+	int UNION= 9;
+	
+	
 	/* Nature of match */
 	
 	/**
@@ -81,7 +109,7 @@ public interface ICSearchConstants {
 	 * rather exclusively search for classes implementing an interface, or interfaces 
 	 * extending an interface.
 	 */
-	int IMPLEMENTORS= 1;
+	int DEFINITIONS= 1;
 
 	/**
 	 * The search result is a reference.
@@ -100,23 +128,6 @@ public interface ICSearchConstants {
 	 */
 	int ALL_OCCURRENCES= 3;
 
-	/**
-	 * When searching for field matches, it will exclusively find read accesses, as
-	 * opposed to write accesses. Note that some expressions are considered both
-	 * as field read/write accesses: for example, x++; x+= 1;
-	 * 
-	 * @since 2.0
-	 */
-	int READ_ACCESSES = 4;
-	
-	/**
-	 * When searching for field matches, it will exclusively find write accesses, as
-	 * opposed to read accesses. Note that some expressions are considered both
-	 * as field read/write accesses: for example,  x++; x+= 1;
-	 * 
-	 * @since 2.0
-	 */
-	int WRITE_ACCESSES = 5;
 	
 	/* Syntactic match modes */
 	
@@ -156,17 +167,17 @@ public interface ICSearchConstants {
 	 * has not finished indexing the workspace. Results will more likely
 	 * not contain all the matches.
 	 */
-	//int FORCE_IMMEDIATE_SEARCH = IJob.ForceImmediate;
+	int FORCE_IMMEDIATE_SEARCH = IJob.ForceImmediate;
 	/**
 	 * The search operation throws an <code>org.eclipse.core.runtime.OperationCanceledException</code>
 	 * if the underlying indexer has not finished indexing the workspace.
 	 */
-	//int CANCEL_IF_NOT_READY_TO_SEARCH = IJob.CancelIfNotReady;
+	int CANCEL_IF_NOT_READY_TO_SEARCH = IJob.CancelIfNotReady;
 	/**
 	 * The search operation waits for the underlying indexer to finish indexing 
 	 * the workspace before starting the search.
 	 */
-	//int WAIT_UNTIL_READY_TO_SEARCH = IJob.WaitUntilReady;
+	int WAIT_UNTIL_READY_TO_SEARCH = IJob.WaitUntilReady;
 	
-	
+
 }

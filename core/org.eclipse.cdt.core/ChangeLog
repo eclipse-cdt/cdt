@@ -9,6 +9,17 @@
 	Added new constant for comma-separated lists
 	* src/org/eclipse/cdt/core/resources/IBuildInfo.java
 
+2003-06-25 Bogdan Gheorghe
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	Start the new indexer thread on startup
+	* src/org/eclipse/cdt/core/model/CoreModel.java
+	Added some methods to access the IndexManager
+	* src/org/eclipse/cdt/internal/core/model/CModelManager.java
+	Added some methods to access the IndexManager
+	* src/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	Added IndexManager member
+
 2003-06-24 Alain Magloire
 
 	Patch form ando@park.ruru.ne.jp, to deal

@@ -9,19 +9,17 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 /*
- * Created on Jun 13, 2003
+ * Created on May 30, 2003
  */
 package org.eclipse.cdt.internal.core.search.processing;
 
+/**
+ * @author bgheorgh
+ */
 import org.eclipse.core.runtime.IProgressMonitor;
 
-/**
- * @author aniefer
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public interface IJob {
+	
 	/* Waiting policies */
 	int ForceImmediate = 1;
 	int CancelIfNotReady = 2;
@@ -32,7 +30,7 @@ public interface IJob {
 	boolean COMPLETE = true;
 
 	/**
-	 * Answer true if the job belongs to a given family (tag)
+	 * True if job belongs to the passed in jobFamily
 	 */
 	public boolean belongsTo(String jobFamily);
 	/**
@@ -48,4 +46,5 @@ public interface IJob {
 	 * Answer whether the job is ready to run.
 	 */
 	public boolean isReadyToRun();
+	
 }

@@ -139,7 +139,10 @@ public class CCorePlugin extends Plugin {
 		// Fired up the indexer. It should delay itself for 10 seconds
 		fIndexModel = IndexModel.getDefault();
 		fIndexModel.startup();
-
+		
+		//Fired up the new indexer
+		fCoreModel.startIndexing();
+		
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
 		

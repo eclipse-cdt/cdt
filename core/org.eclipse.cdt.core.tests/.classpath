@@ -6,6 +6,7 @@
     <classpathentry kind="src" path="parser/"/>
     <classpathentry kind="src" path="resources/"/>
     <classpathentry kind="src" path="suite/"/>
+    <classpathentry kind="src" path="indexer"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>

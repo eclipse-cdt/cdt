@@ -161,8 +161,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		};
 
 		fSearchFor[   TYPE    ].addSelectionListener(cElementInitializer);
-		fSearchFor[  METHOD   ].addSelectionListener(cElementInitializer);
-		fSearchFor[   FIELD   ].addSelectionListener(cElementInitializer);
+		fSearchFor[  FUNCTION   ].addSelectionListener(cElementInitializer);
+		fSearchFor[   MEMBER   ].addSelectionListener(cElementInitializer);
 		fSearchFor[CONSTRUCTOR].addSelectionListener(cElementInitializer);
 		//fSearchFor[  PACKAGE  ].addSelectionListener(cElementInitializer);
 
@@ -283,34 +283,34 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	}
 	private void setLimitTo(int searchFor) {
 		fLimitTo[ DECLARATIONS    ].setEnabled( true );
-		fLimitTo[ IMPLEMENTORS    ].setEnabled( false);
+		//fLimitTo[ IMPLEMENTORS    ].setEnabled( false);
 		fLimitTo[ REFERENCES      ].setEnabled( true );			
 		fLimitTo[ ALL_OCCURRENCES ].setEnabled( true );
-		fLimitTo[ READ_ACCESSES   ].setEnabled( false);
-		fLimitTo[ WRITE_ACCESSES  ].setEnabled( false);
+		//fLimitTo[ READ_ACCESSES   ].setEnabled( false);
+		//fLimitTo[ WRITE_ACCESSES  ].setEnabled( false);
 		
-		if (!(searchFor == TYPE || searchFor == INTERFACE) && fLimitTo[IMPLEMENTORS].getSelection()) {
-			fLimitTo[ IMPLEMENTORS ].setSelection(false);
-			fLimitTo[ REFERENCES   ].setSelection(true);
-		}
-
-		if (!(searchFor == FIELD) && (getLimitTo() == READ_ACCESSES || getLimitTo() == WRITE_ACCESSES)) {
-			fLimitTo[ getLimitTo()].setSelection(false);
-			fLimitTo[ REFERENCES  ].setSelection(true);
-		}
-
-		switch (searchFor) {
-			case TYPE:
-			case INTERFACE:
-				fLimitTo[ IMPLEMENTORS ].setEnabled(true);
-				break;
-			case FIELD:
-				fLimitTo[ READ_ACCESSES  ].setEnabled(true);
-				fLimitTo[ WRITE_ACCESSES ].setEnabled(true);
-				break;
-			default :
-				break;
-		}
+//		if (!(searchFor == TYPE || searchFor == INTERFACE) && fLimitTo[IMPLEMENTORS].getSelection()) {
+//			fLimitTo[ IMPLEMENTORS ].setSelection(false);
+//			fLimitTo[ REFERENCES   ].setSelection(true);
+//		}
+//
+//		if (!(searchFor == FIELD) && (getLimitTo() == READ_ACCESSES || getLimitTo() == WRITE_ACCESSES)) {
+//			fLimitTo[ getLimitTo()].setSelection(false);
+//			fLimitTo[ REFERENCES  ].setSelection(true);
+//		}
+//
+//		switch (searchFor) {
+//			case TYPE:
+//			case INTERFACE:
+//				fLimitTo[ IMPLEMENTORS ].setEnabled(true);
+//				break;
+//			case FIELD:
+//				fLimitTo[ READ_ACCESSES  ].setEnabled(true);
+//				fLimitTo[ WRITE_ACCESSES ].setEnabled(true);
+//				break;
+//			default :
+//				break;
+//		}
 	}
 	
 	private Control createSearchFor(Composite parent) {

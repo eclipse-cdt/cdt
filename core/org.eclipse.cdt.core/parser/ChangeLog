@@ -1,3 +1,8 @@
+2003-06-13 John Camelon
+	Added Class/Base infrastructure to public interfaces & requestor callback. 
+	Moved many internal interfaces to external packages. 
+	Organized imports.  
+
 2003-06-13 Victor Mozgin
 	Renamed NullParserCallback into NullSourceElementRequester.
 	NullSourceElementRequester now dummy-implements both IParserCallback and ISourceElementRequester.

@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.Token;
 
 
@@ -37,14 +38,14 @@ public class Name {
 		Token t = nameStart;
 		StringBuffer buffer = new StringBuffer(); 
 		buffer.append( t.getImage() ); 
-		if( t.getType() == Token.t_operator )
+		if( t.getType() == IToken.t_operator )
 			buffer.append( " " );
 
 		while (t != nameEnd) {
 			t = t.getNext();
 				
 			buffer.append( t.getImage() );
-			if (t.getType() == Token.t_operator) buffer.append( " " );			
+			if (t.getType() == IToken.t_operator) buffer.append( " " );			
 		}
 		
 		return buffer.toString();
@@ -57,7 +58,7 @@ public class Name {
 	/**
 	 * @return
 	 */
-	public Token getNameStart() {
+	public IToken getNameStart() {
 		return nameStart;
 	}
 

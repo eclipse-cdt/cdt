@@ -14,8 +14,7 @@ import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructor;
-import org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -46,10 +45,7 @@ public interface ISourceElementRequestor {
 	public void acceptUsingDeclaration( IASTUsingDeclaration usageDeclaration );
 	public void acceptASMDefinition( IASTASMDefinition asmDefinition );
 	public void acceptTypedef( IASTTypedef typedef );
-
-	public void enterEnumSpecifier( IASTEnumSpecifier enumSpec );
-	public void acceptEnumerator( IASTEnumerator enumerator );
-	public void exitEnumSpecifier( IASTEnumSpecifier enumSpec );
+	public void acceptEnumerationSpecifier( IASTEnumerationSpecifier enumeration );
 
 	public void enterFunctionBody( IASTFunction function );
 	public void exitFunctionBody( IASTFunction function );
@@ -70,6 +66,8 @@ public interface ISourceElementRequestor {
 	public void acceptField( IASTField field );
 	public void acceptConstructor( IASTConstructor constructor );
 
+	public void acceptClassReference( IASTClassSpecifier classSpecifier, int referenceOffset );
+	
 	public void exitTemplateDeclaration( IASTTemplateDeclaration declaration );
 	public void exitTemplateSpecialization( IASTTemplateSpecialization specialization );
 	public void exitTemplateExplicitInstantiation( IASTTemplateInstantiation instantiation );

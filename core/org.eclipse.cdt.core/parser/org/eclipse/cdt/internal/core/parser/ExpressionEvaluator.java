@@ -14,6 +14,8 @@ import java.util.EmptyStackException;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserCallback;
+import org.eclipse.cdt.core.parser.IToken;
 
 
 public class ExpressionEvaluator implements IParserCallback {
@@ -34,61 +36,61 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#expressionOperator(Token)
 	 */
-	public void expressionOperator(Object expression, Token operator) {
+	public void expressionOperator(Object expression, IToken operator) {
 		
 		int second = popInt(); 
 		int first; 
 		switch (operator.getType()) {
 			
-			case Token.tPLUS:
+			case IToken.tPLUS:
 				first = popInt(); 
 				stack.push(new Integer(first + second));
 				break;
-			case Token.tMINUS:
+			case IToken.tMINUS:
 				first = popInt(); 
 				stack.push(new Integer(first - second));
 				break;
-			case Token.tSTAR:
+			case IToken.tSTAR:
 				first = popInt(); 			
 				stack.push(new Integer(first * second));
 				break;
-			case Token.tDIV:
+			case IToken.tDIV:
 				first = popInt(); 
 				stack.push(new Integer(first / second));
 				break;
-			case Token.tLT:
+			case IToken.tLT:
 				first = popInt(); 			
 				stack.push(new Integer(first < second ? 1 : 0));
 				break;
-			case Token.tLTEQUAL:
+			case IToken.tLTEQUAL:
 				first = popInt(); 			
 				stack.push(new Integer(first <= second ? 1 : 0));
 				break;
-			case Token.tGT:
+			case IToken.tGT:
 				first = popInt(); 			
 				stack.push(new Integer(first > second  ? 1 : 0));
 				break;
-			case Token.tGTEQUAL:
+			case IToken.tGTEQUAL:
 				first = popInt(); 			
 				stack.push(new Integer(first >= second  ? 1 : 0));
 				break;
-			case Token.tEQUAL:
+			case IToken.tEQUAL:
 				first = popInt(); 			
 				stack.push(new Integer(first == second  ? 1 : 0));
 				break;
-			case Token.tNOTEQUAL:
+			case IToken.tNOTEQUAL:
 				first = popInt(); 			
 				stack.push(new Integer(first != second  ? 1 : 0));
 				break;
-			case Token.tAND:
+			case IToken.tAND:
 				first = popInt(); 			
 				stack.push( new Integer( ( ( first != 0 ) && ( second != 0 ) ) ? 1 : 0  ) ); 
 				break; 
-			case Token.tOR:
+			case IToken.tOR:
 				first = popInt(); 			
 				stack.push( new Integer( ( ( first != 0 ) || ( second != 0 ) ) ? 1 : 0  ) ); 
 				break;
-			case Token.tNOT: 
+			case IToken.tNOT: 
 				stack.push( new Integer( ( second == 0 ) ? 1 : 0 ) ); 
 				break;
 			default:
@@ -99,9 +101,9 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#expressionTerminal(Token)
 	 */
-	public void expressionTerminal(Object expression, Token terminal) {
+	public void expressionTerminal(Object expression, IToken terminal) {
 		switch (terminal.getType()) {
-			case Token.tINTEGER:
+			case IToken.tINTEGER:
 				stack.push(new Integer(terminal.getImage()));
 				break;
 			default:
@@ -143,13 +145,13 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationBegin(java.lang.Object)
 	 */
-	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
+	public Object simpleDeclarationBegin(Object Container, IToken firstToken) {
 		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationEnd(java.lang.Object)
 	 */
-	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
+	public void simpleDeclarationEnd(Object declaration, IToken lastToken) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#parameterDeclarationBegin(java.lang.Object)
@@ -165,7 +167,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void simpleDeclSpecifier(Object Container, Token specifier) {
+	public void simpleDeclSpecifier(Object Container, IToken specifier) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorBegin(java.lang.Object)
@@ -213,7 +215,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public Object classSpecifierBegin(Object container, Token classKey) {
+	public Object classSpecifierBegin(Object container, IToken classKey) {
 		return null;
 	}
 	/**
@@ -224,7 +226,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierEnd(java.lang.Object)
 	 */
-	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
+	public void classSpecifierEnd(Object classSpecifier, IToken closingBrace) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierBegin(java.lang.Object)
@@ -242,7 +244,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 */
 	public void baseSpecifierVisibility(
 		Object baseSpecifier,
-		Token visibility) {
+		IToken visibility) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierVirtual(java.lang.Object, boolean)
@@ -275,7 +277,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
 	 */
-	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+	public Object elaboratedTypeSpecifierBegin(Object container, IToken classKey) {
 		return null;
 	}
 
@@ -308,7 +310,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+	public void classMemberVisibility(Object classSpecifier, IToken visibility) {
 	}
 
 	/* (non-Javadoc)
@@ -336,20 +338,20 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorType(Object ptrOperator, Token type) {
+	public void pointerOperatorType(Object ptrOperator, IToken type) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+	public void pointerOperatorCVModifier(Object ptrOperator, IToken modifier) {
 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void declaratorCVModifier(Object declarator, Token modifier) {
+	public void declaratorCVModifier(Object declarator, IToken modifier) {
 	}
 
 	/* (non-Javadoc)
@@ -382,7 +384,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
-	public Object namespaceDefinitionBegin(Object container, Token namespace) {
+	public Object namespaceDefinitionBegin(Object container, IToken namespace) {
 		
 		return null;
 	}
@@ -404,7 +406,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
-	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
+	public void namespaceDefinitionEnd(Object namespace, IToken closingBrace) {
 		
 		
 	}
@@ -484,7 +486,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
-	public Object enumSpecifierBegin(Object container, Token enumKey) {
+	public Object enumSpecifierBegin(Object container, IToken enumKey) {
 		return null;
 	}
 
@@ -505,7 +507,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
-	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
+	public void enumSpecifierEnd(Object enumSpec, IToken closingBrace) {
 		
 		
 	}
@@ -527,7 +529,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
-	public void enumeratorEnd(Object enumDefn, Token lastToken) {
+	public void enumeratorEnd(Object enumDefn, IToken lastToken) {
 		
 		
 	}
@@ -624,7 +626,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
-	public Object templateDeclarationBegin(Object container, Token exported) {
+	public Object templateDeclarationBegin(Object container, IToken exported) {
 		return null;
 	}
 
@@ -637,13 +639,13 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
 	 */
-	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
+	public void templateDeclarationEnd(Object templateDecl, IToken lastToken) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public Object templateTypeParameterBegin(Object templDecl, Token kind) {
+	public Object templateTypeParameterBegin(Object templDecl, IToken kind) {
 		return null;
 	}
 
@@ -706,14 +708,14 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void nameBegin(Token firstToken) {
+	public void nameBegin(IToken firstToken) {
 		currName = new Name(firstToken);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void nameEnd(Token lastToken) {
+	public void nameEnd(IToken lastToken) {
 		currName.setEnd(lastToken);
 	}
 

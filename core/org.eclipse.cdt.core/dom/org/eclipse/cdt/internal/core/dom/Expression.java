@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.Name;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author jcamelon
@@ -26,7 +26,7 @@ public class Expression {
 
 	private List tokens = new ArrayList(); 
 	
-	public void add( Token t )
+	public void add( IToken t )
 	{
 		tokens.add( t ); 
 	}

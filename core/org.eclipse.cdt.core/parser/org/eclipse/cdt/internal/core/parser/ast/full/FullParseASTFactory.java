@@ -12,15 +12,20 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ast.AccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
-import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
@@ -42,10 +47,10 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		TokenDuple duple)
 		throws Backtrack {
 		Iterator iter = duple.iterator();
-		Token t1 = (Token)iter.next();
+		IToken t1 = (IToken)iter.next();
 		IContainerSymbol symbol = null; 
 		
-		if( t1.getType() == Token.tCOLONCOLON )
+		if( t1.getType() == IToken.tCOLONCOLON )
 			symbol = pst.getCompilationUnit();
 		else
 		{
@@ -61,8 +66,8 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		
 		while( iter.hasNext() )
 		{
-			Token t = (Token)iter.next(); 
-			if( t.getType() == Token.tCOLONCOLON ) continue; 
+			IToken t = (IToken)iter.next(); 
+			if( t.getType() == IToken.tCOLONCOLON ) continue; 
 			try
 			{
 				symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
@@ -143,6 +148,22 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, TokenDuple name) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ClassKind, org.eclipse.cdt.core.parser.ast.ClassNameType, org.eclipse.cdt.core.parser.ast.AccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
+	 */
+	public IASTClassSpecifier createClassSpecifier(IASTScope scope, String name, ClassKind kind, ClassNameType type, AccessVisibility access, IASTTemplateDeclaration ownerTemplateDeclaration, int startingOffset, int nameOffset) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addBaseSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, boolean, org.eclipse.cdt.core.parser.ast.AccessVisibility, java.lang.String)
+	 */
+	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, AccessVisibility visibility, String string) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -3,6 +3,8 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.parser.ScannerException;
+
 /**
  * @author jcamelon
  *

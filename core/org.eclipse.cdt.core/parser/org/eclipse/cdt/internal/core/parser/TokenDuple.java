@@ -12,29 +12,31 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.IToken;
+
 /**
  * @author jcamelon
  *
  */
 public class TokenDuple {
 
-	public TokenDuple( Token first, Token last )
+	public TokenDuple( IToken first, IToken last )
 	{
 		firstToken = first; 
 		lastToken = last; 
 	}
-	private final Token firstToken, lastToken; 
+	private final IToken firstToken, lastToken; 
 	/**
 	 * @return
 	 */
-	public Token getFirstToken() {
+	public IToken getFirstToken() {
 		return firstToken;
 	}
 
 	/**
 	 * @return
 	 */
-	public Token getLastToken() {
+	public IToken getLastToken() {
 		return lastToken;
 	}
 	
@@ -45,7 +47,7 @@ public class TokenDuple {
 	
 	private class TokenIterator implements Iterator
 	{
-		private Token iter = TokenDuple.this.firstToken;
+		private IToken iter = TokenDuple.this.firstToken;
 
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
@@ -58,7 +60,7 @@ public class TokenDuple {
 		 * @see java.util.Iterator#next()
 		 */
 		public Object next() {
-			Token temp = iter;
+			IToken temp = iter;
 			iter = iter.getNext();
 			return temp;
 		}
@@ -75,7 +77,7 @@ public class TokenDuple {
 	public String toString() 
 	{
 		StringBuffer buff = new StringBuffer(); 
-		Token iter = firstToken; 
+		IToken iter = firstToken; 
 		for( ; ; )
 		{
 			buff.append( iter.getImage() );
@@ -84,4 +86,10 @@ public class TokenDuple {
 		}
 		return buff.toString();
 	}
+	
+	public boolean isIdentifier()
+	{
+		return ( firstToken == lastToken );
+	}
+	
 }

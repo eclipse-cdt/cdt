@@ -2,14 +2,15 @@ package org.eclipse.cdt.internal.core.dom;
 
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructor;
-import org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -24,9 +25,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedef;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Name;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * This is the parser callback that creates objects in the DOM.
@@ -59,21 +58,21 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classBegin(java.lang.String, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public Object classSpecifierBegin(Object container, Token classKey) {
+	public Object classSpecifierBegin(Object container, IToken classKey) {
 		TypeSpecifier.IOwner decl = (TypeSpecifier.IOwner)container;
 		
 		int kind = ClassKey.t_struct;
 		int visibility = AccessSpecifier.v_public; 
 		
 		switch (classKey.getType()) {
-			case Token.t_class:
+			case IToken.t_class:
 				kind = ClassKey.t_class;
 				visibility = AccessSpecifier.v_private; 
 				break;
-			case Token.t_struct:
+			case IToken.t_struct:
 				kind = ClassKey.t_struct;
 				break;
-			case Token.t_union:
+			case IToken.t_union:
 				kind = ClassKey.t_union;
 				break;			
 		}
@@ -98,7 +97,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classEnd()
 	 */
-	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
+	public void classSpecifierEnd(Object classSpecifier, IToken closingBrace) {
 		ClassSpecifier c = (ClassSpecifier)classSpecifier;
 		c.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - c.getStartingOffset() );
 		domScopes.pop();
@@ -144,7 +143,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclSpecifier(Object Container, Token specifier) {
+	public void simpleDeclSpecifier(Object Container, IToken specifier) {
 		DeclSpecifier.IContainer decl = (DeclSpecifier.IContainer)Container;
 		DeclSpecifier declSpec = decl.getDeclSpecifier(); 
 		declSpec.setType( specifier );
@@ -155,7 +154,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionOperator(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionOperator(Object expression, Token operator){
+	public void expressionOperator(Object expression, IToken operator){
 		Expression e = (Expression)expression;
 		e.add( operator ); 
 	}
@@ -163,7 +162,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionTerminal(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionTerminal(Object expression, Token terminal){
+	public void expressionTerminal(Object expression, IToken terminal){
 		Expression e = (Expression)expression;
 		e.add( terminal );
 	}
@@ -216,7 +215,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public Object simpleDeclarationBegin(Object container, Token firstToken) {
+	public Object simpleDeclarationBegin(Object container, IToken firstToken) {
 		SimpleDeclaration decl = new SimpleDeclaration( getCurrentDOMScope() );
 		if( getCurrentDOMScope() instanceof IAccessable )
 			decl.setAccessSpecifier(new AccessSpecifier( ((IAccessable)getCurrentDOMScope()).getVisibility() ));
@@ -227,7 +226,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
+	public void simpleDeclarationEnd(Object declaration, IToken lastToken) {
 		SimpleDeclaration decl = (SimpleDeclaration)declaration;
 		IOffsetable offsetable = (IOffsetable)decl;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
@@ -252,14 +251,14 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void nameBegin(Token firstToken) {
+	public void nameBegin(IToken firstToken) {
 		currName = new Name(firstToken);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void nameEnd(Token lastToken) {
+	public void nameEnd(IToken lastToken) {
 		currName.setEnd(lastToken);
 	}
 
@@ -281,18 +280,18 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 		bs.setVirtual( virtual );
 	}
 
-	public void baseSpecifierVisibility( Object baseSpecifier, Token visibility )
+	public void baseSpecifierVisibility( Object baseSpecifier, IToken visibility )
 	{
 		int access = AccessSpecifier.v_public;  
-		switch( visibility.type )
+		switch( visibility.getType() )
 		{
-		case Token.t_public:
+		case IToken.t_public:
 			access = AccessSpecifier.v_public; 
 			break; 
-		case Token.t_protected:
+		case IToken.t_protected:
 			access = AccessSpecifier.v_protected;		 
 			break;
-		case Token.t_private:
+		case IToken.t_private:
 			access = AccessSpecifier.v_private;
 			break; 		
 		default: 
@@ -353,20 +352,20 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
 	 */
-	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+	public Object elaboratedTypeSpecifierBegin(Object container, IToken classKey) {
 		int kind = ClassKey.t_struct;
 		
 		switch (classKey.getType()) {
-			case Token.t_class:
+			case IToken.t_class:
 				kind = ClassKey.t_class;
 				break;
-			case Token.t_struct:
+			case IToken.t_struct:
 				kind = ClassKey.t_struct;
 				break;
-			case Token.t_union:
+			case IToken.t_union:
 				kind = ClassKey.t_union;
 				break;
-			case Token.t_enum:
+			case IToken.t_enum:
 				kind = ClassKey.t_enum; 
 				break;
 		}
@@ -409,17 +408,17 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+	public void classMemberVisibility(Object classSpecifier, IToken visibility) {
 		ClassSpecifier spec = (ClassSpecifier)classSpecifier;
 		switch( visibility.getType() )
 		{
-			case Token.t_public:
+			case IToken.t_public:
 				spec.setVisibility( AccessSpecifier.v_public );
 				break;
-			case Token.t_protected:
+			case IToken.t_protected:
 				spec.setVisibility( AccessSpecifier.v_protected );
 				break;
-			case Token.t_private:
+			case IToken.t_private:
 				spec.setVisibility( AccessSpecifier.v_private );
 				break;
 		}
@@ -453,14 +452,14 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorType(Object ptrOperator, Token type) {
+	public void pointerOperatorType(Object ptrOperator, IToken type) {
 		PointerOperator ptrOp = (PointerOperator)ptrOperator;
 		switch( type.getType() )
 		{
-			case Token.tSTAR:
+			case IToken.tSTAR:
 				ptrOp.setType( PointerOperator.t_pointer );
 				break;
-			case Token.tAMPER:
+			case IToken.tAMPER:
 				ptrOp.setType( PointerOperator.t_reference );
 				break;
 			default:
@@ -471,14 +470,14 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+	public void pointerOperatorCVModifier(Object ptrOperator, IToken modifier) {
 		PointerOperator ptrOp = (PointerOperator)ptrOperator;
 		switch( modifier.getType() )
 		{
-			case Token.t_const:
+			case IToken.t_const:
 				ptrOp.setConst(true);
 				break; 
-			case Token.t_volatile:
+			case IToken.t_volatile:
 				ptrOp.setVolatile( true );
 				break;
 			default:
@@ -489,14 +488,14 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void declaratorCVModifier(Object declarator, Token modifier) {
+	public void declaratorCVModifier(Object declarator, IToken modifier) {
 		Declarator decl = (Declarator)declarator;
 		switch( modifier.getType() )
 		{
-			case Token.t_const:
+			case IToken.t_const:
 				decl.setConst(true);
 				break; 
-			case Token.t_volatile:
+			case IToken.t_volatile:
 				decl.setVolatile( true );
 				break;
 			default:
@@ -544,7 +543,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
-	public Object namespaceDefinitionBegin(Object container, Token namespace) {
+	public Object namespaceDefinitionBegin(Object container, IToken namespace) {
 //		IScope ownerScope = (IScope)container;
 //		NamespaceDefinition namespaceDef = new NamespaceDefinition(ownerScope);
 //		namespaceDef.setStartToken(namespace);
@@ -570,7 +569,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
-	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
+	public void namespaceDefinitionEnd(Object namespace, IToken closingBrace) {
 //		NamespaceDefinition ns = (NamespaceDefinition)namespace; 
 //		ns.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - ns.getStartingOffset() );
 //		ns.getOwnerScope().addDeclaration(ns);
@@ -662,7 +661,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
-	public Object enumSpecifierBegin(Object container, Token enumKey) {
+	public Object enumSpecifierBegin(Object container, IToken enumKey) {
 		TypeSpecifier.IOwner decl = (TypeSpecifier.IOwner)container;
 		EnumerationSpecifier es = new EnumerationSpecifier( decl );
 		es.setStartToken(enumKey);
@@ -690,7 +689,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
-	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
+	public void enumSpecifierEnd(Object enumSpec, IToken closingBrace) {
 		IOffsetable offsetable = (IOffsetable)enumSpec;
 		offsetable.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - offsetable.getStartingOffset());
 	}
@@ -717,7 +716,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
-	public void enumeratorEnd(Object enumDefn, Token lastToken) {
+	public void enumeratorEnd(Object enumDefn, IToken lastToken) {
 		IOffsetable offsetable = (IOffsetable)enumDefn;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
 	}
@@ -838,7 +837,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
-	public Object templateDeclarationBegin(Object container, Token exported) {
+	public Object templateDeclarationBegin(Object container, IToken exported) {
 		TemplateDeclaration d = new TemplateDeclaration( (IScope)getCurrentDOMScope(), exported );
 		if( getCurrentDOMScope() instanceof IAccessable )
 			d.setVisibility( ((IAccessable)container).getVisibility() );
@@ -857,7 +856,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
 	 */
-	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
+	public void templateDeclarationEnd(Object templateDecl, IToken lastToken) {
 		TemplateDeclaration decl = (TemplateDeclaration)domScopes.pop();
 		decl.setLastToken(lastToken);
 		decl.getOwnerScope().addDeclaration(decl);
@@ -867,18 +866,18 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public Object templateTypeParameterBegin(Object templDecl, Token kind) {
+	public Object templateTypeParameterBegin(Object templDecl, IToken kind) {
 		TemplateParameterList list = (TemplateParameterList)templDecl;
 		int k; 
 		switch( kind.getType() )
 		{
-			case Token.t_class:
+			case IToken.t_class:
 				k = TemplateParameter.k_class;
 				break;
-			case Token.t_typename:
+			case IToken.t_typename:
 				k= TemplateParameter.k_typename;
 				break;
-			case Token.t_template:
+			case IToken.t_template:
 				k= TemplateParameter.k_template;
 				break;
 			default:
@@ -1048,30 +1047,6 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 */
 	public void acceptTypedef(IASTTypedef typedef) {
 		// TODO Auto-generated method stub
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterEnumSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier)
-	 */
-	public void enterEnumSpecifier(IASTEnumSpecifier enumSpec) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerator)
-	 */
-	public void acceptEnumerator(IASTEnumerator enumerator) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitEnumSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier)
-	 */
-	public void exitEnumSpecifier(IASTEnumSpecifier enumSpec) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -1271,5 +1246,20 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	private IScope getCurrentDOMScope()
 	{
 		return domScopes.peek(); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier)
+	 */
+	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration) {
+		// TODO Auto-generated method stub		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptClassReference(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, int)
+	 */
+	public void acceptClassReference(IASTClassSpecifier classSpecifier, int referenceOffset) {
+		// TODO Auto-generated method stub
+		
 	}
 }

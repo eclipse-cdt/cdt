@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.core.parser;
 import java.io.IOException;
 import java.io.Reader;
 

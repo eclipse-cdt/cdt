@@ -19,7 +19,9 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.parser.IScannerContext;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 
 /**

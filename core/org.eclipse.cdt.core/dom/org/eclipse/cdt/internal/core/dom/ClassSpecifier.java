@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.Name;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable, IAccessable {
 
@@ -13,7 +13,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	private ClassKey key = new ClassKey();
 	private int startingOffset = 0, totalLength = 0;
 	private int topLine = 0, bottomLine = 0; 
-	private Token classKeyToken = null;
+	private IToken classKeyToken = null;
 
 	public int getClassKey() { return key.getClassKey(); }
 
@@ -88,7 +88,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	 * Returns the classKeyToken.
 	 * @return Token
 	 */
-	public Token getClassKeyToken() {
+	public IToken getClassKeyToken() {
 		return classKeyToken;
 	}
 
@@ -96,7 +96,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	 * Sets the classKeyToken.
 	 * @param classKeyToken The classKeyToken to set
 	 */
-	public void setClassKeyToken(Token classKeyToken) {
+	public void setClassKeyToken(IToken classKeyToken) {
 		this.classKeyToken = classKeyToken;
 	}
 

@@ -1,14 +1,15 @@
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructor;
-import org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -23,8 +24,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedef;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.internal.core.parser.IParserCallback;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 
 public class NullSourceElementRequestor implements ISourceElementRequestor, IParserCallback {
@@ -77,24 +76,6 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedef(org.eclipse.cdt.core.parser.ast.IASTTypedef)
      */
     public void acceptTypedef(IASTTypedef typedef) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterEnumSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier)
-     */
-    public void enterEnumSpecifier(IASTEnumSpecifier enumSpec) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerator)
-     */
-    public void acceptEnumerator(IASTEnumerator enumerator) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitEnumSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier)
-     */
-    public void exitEnumSpecifier(IASTEnumSpecifier enumSpec) {
     }
 
     /* (non-Javadoc)
@@ -274,14 +255,14 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationBegin(java.lang.Object)
 	 */
-	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
+	public Object simpleDeclarationBegin(Object Container, IToken firstToken) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void simpleDeclSpecifier(Object Container, Token specifier) {
+	public void simpleDeclSpecifier(Object Container, IToken specifier) {
 	}
 
 	/* (non-Javadoc)
@@ -294,7 +275,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationEnd(java.lang.Object)
 	 */
-	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
+	public void simpleDeclarationEnd(Object declaration, IToken lastToken) {
 	}
 
 	/* (non-Javadoc)
@@ -313,13 +294,13 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void nameBegin(Token firstToken) {
+	public void nameBegin(IToken firstToken) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void nameEnd(Token lastToken) {
+	public void nameEnd(IToken lastToken) {
 	}
 
 	/* (non-Javadoc)
@@ -345,7 +326,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void declaratorCVModifier(Object declarator, Token modifier) {
+	public void declaratorCVModifier(Object declarator, IToken modifier) {
 	}
 
 	/* (non-Javadoc)
@@ -383,7 +364,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorType(Object ptrOperator, Token type) {
+	public void pointerOperatorType(Object ptrOperator, IToken type) {
 	}
 
 	/* (non-Javadoc)
@@ -395,7 +376,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+	public void pointerOperatorCVModifier(Object ptrOperator, IToken modifier) {
 	}
 
 	/* (non-Javadoc)
@@ -433,7 +414,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public Object classSpecifierBegin(Object container, Token classKey) {
+	public Object classSpecifierBegin(Object container, IToken classKey) {
 		return null;
 	}
 
@@ -452,13 +433,13 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+	public void classMemberVisibility(Object classSpecifier, IToken visibility) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierEnd(java.lang.Object)
 	 */
-	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
+	public void classSpecifierEnd(Object classSpecifier, IToken closingBrace) {
 	}
 
 	/* (non-Javadoc)
@@ -477,7 +458,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void baseSpecifierVisibility(Object baseSpecifier, Token visibility) {
+	public void baseSpecifierVisibility(Object baseSpecifier, IToken visibility) {
 	}
 
 	/* (non-Javadoc)
@@ -502,13 +483,13 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionOperator(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void expressionOperator(Object expression, Token operator) {
+	public void expressionOperator(Object expression, IToken operator) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionTerminal(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void expressionTerminal(Object expression, Token terminal) {
+	public void expressionTerminal(Object expression, IToken terminal) {
 	}
 
 	/* (non-Javadoc)
@@ -526,7 +507,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+	public Object elaboratedTypeSpecifierBegin(Object container, IToken classKey) {
 		return null;
 	}
 
@@ -551,7 +532,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
-	public Object namespaceDefinitionBegin(Object container, Token namespace) {
+	public Object namespaceDefinitionBegin(Object container, IToken namespace) {
 		return null;
 	}
 
@@ -570,7 +551,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
-	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
+	public void namespaceDefinitionEnd(Object namespace, IToken closingBrace) {
 	}
 
 	/* (non-Javadoc)
@@ -647,7 +628,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
-	public Object enumSpecifierBegin(Object container, Token enumKey) {
+	public Object enumSpecifierBegin(Object container, IToken enumKey) {
 		return null;
 	}
 
@@ -666,7 +647,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
-	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
+	public void enumSpecifierEnd(Object enumSpec, IToken closingBrace) {
 	}
 
 	/* (non-Javadoc)
@@ -685,7 +666,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
-	public void enumeratorEnd(Object enumDefn, Token lastToken) {
+	public void enumeratorEnd(Object enumDefn, IToken lastToken) {
 	}
 
 	/* (non-Javadoc)
@@ -780,7 +761,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
-	public Object templateDeclarationBegin(Object container, Token exported) {
+	public Object templateDeclarationBegin(Object container, IToken exported) {
 		return null;
 	}
 
@@ -793,13 +774,13 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
 	 */
-	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
+	public void templateDeclarationEnd(Object templateDecl, IToken lastToken) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public Object templateTypeParameterBegin(Object templDecl, Token kind) {
+	public Object templateTypeParameterBegin(Object templDecl, IToken kind) {
 		return null;
 	}
 
@@ -875,5 +856,21 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierType(java.lang.Object, java.lang.Object)
 	 */
 	public void simpleDeclSpecifierType(Object declaration, Object type) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier)
+	 */
+	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptClassReference(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, int)
+	 */
+	public void acceptClassReference(IASTClassSpecifier classSpecifier, int referenceOffset) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -10,9 +10,11 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import org.eclipse.cdt.core.parser.IToken;
+
 public class ParserException extends Exception {
 
-	public ParserException(Token t) {
+	public ParserException(IToken t) {
 	}
 	
 	public ParserException( String msg ) 

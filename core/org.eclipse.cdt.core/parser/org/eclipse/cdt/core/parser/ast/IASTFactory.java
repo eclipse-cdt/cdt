@@ -48,4 +48,18 @@ public interface IASTFactory {
 	
 	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec);
 	
+	public IASTClassSpecifier createClassSpecifier( IASTScope scope,
+		String name,  
+		ClassKind kind, 
+		ClassNameType type, 
+		AccessVisibility access, 
+		IASTTemplateDeclaration ownerTemplateDeclaration, int startingOffset, int nameOffset );
+	/**
+	 * @param astClassSpec
+	 * @param isVirtual
+	 * @param visibility
+	 * @param string
+	 */
+	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, AccessVisibility visibility, String string);
+	
 }

@@ -4,11 +4,7 @@ import java.io.Reader;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.parser.IMacroDescriptor;
-import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author jcamelon
@@ -29,7 +25,7 @@ public interface IScanner {
 	public void addIncludePath(String includePath); 
 	public void overwriteIncludePath( List newIncludePaths );
 	
-	public Token nextToken() throws ScannerException, Parser.EndOfFile;
+	public IToken nextToken() throws ScannerException, Parser.EndOfFile;
 	public int getLineNumberForOffset(int offset) throws NoSuchMethodException; 
 	public void setCppNature( boolean value );
 	public void mapLineNumbers( boolean value );

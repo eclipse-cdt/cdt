@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.parser;
 
+import org.eclipse.cdt.core.parser.IToken;
+
 
 
 /**
@@ -12,44 +14,44 @@ package org.eclipse.cdt.internal.core.parser;
  */
 public class Name {
 
-	private Token nameStart, nameEnd;
+	private IToken nameStart, nameEnd;
 	
-	public Name(Token nameStart) {
+	public Name(IToken nameStart) {
 		this.nameStart = nameStart;
 	}
 
-	public Name(Token nameStart, Token nameEnd) {
+	public Name(IToken nameStart, IToken nameEnd) {
 		this( nameStart ); 
 		setEnd( nameEnd );
 	}
 
 	
-	public void setEnd(Token nameEnd) {
+	public void setEnd(IToken nameEnd) {
 		this.nameEnd = nameEnd;
 	}
 	
 	public int getStartOffset()
 	{
-		return nameStart.offset;
+		return nameStart.getOffset();
 	}
 	
 	public int getEndOffset()
 	{
-		return nameEnd.offset;
+		return nameEnd.getOffset();
 	}
 
 	public String toString() {
-		Token t = nameStart;
+		IToken t = nameStart;
 		StringBuffer buffer = new StringBuffer(); 
 		buffer.append( t.getImage() ); 
-		if( t.getType() == Token.t_operator )
+		if( t.getType() == IToken.t_operator )
 			buffer.append( " " );
 
 		while (t != nameEnd) {
 			t = t.getNext();
 				
 			buffer.append( t.getImage() );	
-			if (t.getType() == Token.t_operator) buffer.append( " " );					
+			if (t.getType() == IToken.t_operator) buffer.append( " " );					
 		}
 		
 		return buffer.toString();
@@ -62,7 +64,7 @@ public class Name {
 	/**
 	 * @return
 	 */
-	public Token getNameStart() {
+	public IToken getNameStart() {
 		return nameStart;
 	}
 	

@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IToken;
+
 public class MacroDescriptor implements IMacroDescriptor {
 
 	public MacroDescriptor()
@@ -89,7 +92,7 @@ public class MacroDescriptor implements IMacroDescriptor {
 		current = 0; 
 		while( iter.hasNext() )
 		{
-			buffer.append( "Token #" + current++ + " is " + ((Token)iter.next()).toString() + "\n" ); 
+			buffer.append( "Token #" + current++ + " is " + ((IToken)iter.next()).toString() + "\n" ); 
 		}
 		
 		return buffer.toString(); 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.core.parser;
 
 public class ScannerException extends Exception {
 

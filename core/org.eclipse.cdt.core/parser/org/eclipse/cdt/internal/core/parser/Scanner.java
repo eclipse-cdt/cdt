@@ -24,12 +24,18 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerContext;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
+
 
 /**
  * @author jcamelon
@@ -474,7 +480,7 @@ public class Scanner implements IScanner {
 
 	
 
-	public Token nextToken() throws ScannerException, Parser.EndOfFile {
+	public IToken nextToken() throws ScannerException, Parser.EndOfFile {
 		return nextToken( true ); 
 	}
 
@@ -559,7 +565,7 @@ public class Scanner implements IScanner {
 
 				if (c != NOCHAR ) 
 				{
-					int type = wideString ? Token.tLSTRING : Token.tSTRING;
+					int type = wideString ? IToken.tLSTRING : IToken.tSTRING;
 					
 					//If the next token is going to be a string as well, we need to concatenate
 					//it with this token.
@@ -618,7 +624,7 @@ public class Scanner implements IScanner {
 				String ident = buff.toString();
 
 				if (ident.equals(DEFINED)) 
-					return newToken(Token.tINTEGER, handleDefinedMacro());
+					return newToken(IToken.tINTEGER, handleDefinedMacro());
 				
 				Object mapping = definitions.get(ident);
 
@@ -637,7 +643,7 @@ public class Scanner implements IScanner {
 				else
 					tokenTypeObject = cKeywords.get(ident);
 					
-				int tokenType = Token.tIDENTIFIER;
+				int tokenType = IToken.tIDENTIFIER;
 				if (tokenTypeObject != null)
 					tokenType = ((Integer) tokenTypeObject).intValue();
 
@@ -693,15 +699,15 @@ public class Scanner implements IScanner {
 					//if pasting, there could actually be a float here instead of just a .
 					if( buff.toString().equals( "." ) ){
 						if( c == '*' ){
-							return newToken( Token.tDOTSTAR, ".*", contextStack.getCurrentContext() );
+							return newToken( IToken.tDOTSTAR, ".*", contextStack.getCurrentContext() );
 						} else if( c == '.' ){
 							if( getChar() == '.' )
-								return newToken( Token.tELIPSE, "..." );
+								return newToken( IToken.tELIPSE, "..." );
 							else
 								throw new ScannerException( "Invalid floating point @ offset " + contextStack.getCurrentContext().getOffset() ); 
 						} else {
 							ungetChar( c );
-							return newToken( Token.tDOT, ".", contextStack.getCurrentContext() );
+							return newToken( IToken.tDOT, ".", contextStack.getCurrentContext() );
 						}
 					}
 				} else if (c == 'x') {
@@ -806,9 +812,9 @@ public class Scanner implements IScanner {
 				String result = buff.toString(); 
 				
 				if( floatingPoint && result.equals(".") )
-					tokenType = Token.tDOT;
+					tokenType = IToken.tDOT;
 				else
-					tokenType = floatingPoint ? Token.tFLOATINGPT : Token.tINTEGER; 
+					tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER; 
 				
 				return newToken(
 					tokenType,
@@ -1022,11 +1028,11 @@ public class Scanner implements IScanner {
 							c = next;
 							next = getChar( true );
 							if( next == '\'' )
-								return newToken( Token.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
+								return newToken( IToken.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
 							else if( throwExceptionOnBadCharacterRead )
 								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
 						} else if( next == '\'' )
-							return newToken( Token.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
+							return newToken( IToken.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
 						else
 							if( throwExceptionOnBadCharacterRead )
 								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
@@ -1035,51 +1041,51 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case ':' :
 								return newToken(
-									Token.tCOLONCOLON,
+									IToken.tCOLONCOLON,
 									"::",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tCOLON,
+									IToken.tCOLON,
 									":",
 									contextStack.getCurrentContext());
 						}
 					case ';' :
-						return newToken(Token.tSEMI, ";", contextStack.getCurrentContext());
+						return newToken(IToken.tSEMI, ";", contextStack.getCurrentContext());
 					case ',' :
-						return newToken(Token.tCOMMA, ",", contextStack.getCurrentContext());
+						return newToken(IToken.tCOMMA, ",", contextStack.getCurrentContext());
 					case '?' :
-						return newToken(Token.tQUESTION, "?", contextStack.getCurrentContext());
+						return newToken(IToken.tQUESTION, "?", contextStack.getCurrentContext());
 					case '(' :
-						return newToken(Token.tLPAREN, "(", contextStack.getCurrentContext());
+						return newToken(IToken.tLPAREN, "(", contextStack.getCurrentContext());
 					case ')' :
-						return newToken(Token.tRPAREN, ")", contextStack.getCurrentContext());
+						return newToken(IToken.tRPAREN, ")", contextStack.getCurrentContext());
 					case '[' :
-						return newToken(Token.tLBRACKET, "[", contextStack.getCurrentContext());
+						return newToken(IToken.tLBRACKET, "[", contextStack.getCurrentContext());
 					case ']' :
-						return newToken(Token.tRBRACKET, "]", contextStack.getCurrentContext());
+						return newToken(IToken.tRBRACKET, "]", contextStack.getCurrentContext());
 					case '{' :
-						return newToken(Token.tLBRACE, "{", contextStack.getCurrentContext());
+						return newToken(IToken.tLBRACE, "{", contextStack.getCurrentContext());
 					case '}' :
-						return newToken(Token.tRBRACE, "}", contextStack.getCurrentContext());
+						return newToken(IToken.tRBRACE, "}", contextStack.getCurrentContext());
 					case '+' :
 						c = getChar();
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tPLUSASSIGN,
+									IToken.tPLUSASSIGN,
 									"+=",
 									contextStack.getCurrentContext());
 							case '+' :
 								return newToken(
-									Token.tINCR,
+									IToken.tINCR,
 									"++",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tPLUS,
+									IToken.tPLUS,
 									"+",
 									contextStack.getCurrentContext());
 						}
@@ -1088,12 +1094,12 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tMINUSASSIGN,
+									IToken.tMINUSASSIGN,
 									"-=",
 									contextStack.getCurrentContext());
 							case '-' :
 								return newToken(
-									Token.tDECR,
+									IToken.tDECR,
 									"--",
 									contextStack.getCurrentContext());
 							case '>' :
@@ -1101,20 +1107,20 @@ public class Scanner implements IScanner {
 								switch (c) {
 									case '*' :
 										return newToken(
-											Token.tARROWSTAR,
+											IToken.tARROWSTAR,
 											"->*",
 											contextStack.getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
-											Token.tARROW,
+											IToken.tARROW,
 											"->",
 											contextStack.getCurrentContext());
 								}
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tMINUS,
+									IToken.tMINUS,
 									"-",
 									contextStack.getCurrentContext());
 						}
@@ -1123,13 +1129,13 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tSTARASSIGN,
+									IToken.tSTARASSIGN,
 									"*=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tSTAR,
+									IToken.tSTAR,
 									"*",
 									contextStack.getCurrentContext());
 						}
@@ -1138,13 +1144,13 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tMODASSIGN,
+									IToken.tMODASSIGN,
 									"%=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tMOD,
+									IToken.tMOD,
 									"%",
 									contextStack.getCurrentContext());
 						}
@@ -1153,13 +1159,13 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tXORASSIGN,
+									IToken.tXORASSIGN,
 									"^=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tXOR,
+									IToken.tXOR,
 									"^",
 									contextStack.getCurrentContext());
 						}
@@ -1168,18 +1174,18 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tAMPERASSIGN,
+									IToken.tAMPERASSIGN,
 									"&=",
 									contextStack.getCurrentContext());
 							case '&' :
 								return newToken(
-									Token.tAND,
+									IToken.tAND,
 									"&&",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tAMPER,
+									IToken.tAMPER,
 									"&",
 									contextStack.getCurrentContext());
 						}
@@ -1188,35 +1194,35 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tBITORASSIGN,
+									IToken.tBITORASSIGN,
 									"|=",
 									contextStack.getCurrentContext());
 							case '|' :
 								return newToken(
-									Token.tOR,
+									IToken.tOR,
 									"||",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tBITOR,
+									IToken.tBITOR,
 									"|",
 									contextStack.getCurrentContext());
 						}
 					case '~' :
-						return newToken(Token.tCOMPL, "~", contextStack.getCurrentContext());
+						return newToken(IToken.tCOMPL, "~", contextStack.getCurrentContext());
 					case '!' :
 						c = getChar();
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tNOTEQUAL,
+									IToken.tNOTEQUAL,
 									"!=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tNOT,
+									IToken.tNOT,
 									"!",
 									contextStack.getCurrentContext());
 						}
@@ -1225,13 +1231,13 @@ public class Scanner implements IScanner {
 						switch (c) {
 							case '=' :
 								return newToken(
-									Token.tEQUAL,
+									IToken.tEQUAL,
 									"==",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tASSIGN,
+									IToken.tASSIGN,
 									"=",
 									contextStack.getCurrentContext());
 						}
@@ -1243,24 +1249,24 @@ public class Scanner implements IScanner {
 								switch (c) {
 									case '=' :
 										return newToken(
-											Token.tSHIFTLASSIGN,
+											IToken.tSHIFTLASSIGN,
 											"<<=",
 											contextStack.getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
-											Token.tSHIFTL,
+											IToken.tSHIFTL,
 											"<<",
 											contextStack.getCurrentContext());
 								}
 							case '=' :
 								return newToken(
-									Token.tLTEQUAL,
+									IToken.tLTEQUAL,
 									"<=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
-								return newToken(Token.tLT, "<", contextStack.getCurrentContext());
+								return newToken(IToken.tLT, "<", contextStack.getCurrentContext());
 						}
 					case '>' :
 						c = getChar();
@@ -1270,24 +1276,24 @@ public class Scanner implements IScanner {
 								switch (c) {
 									case '=' :
 										return newToken(
-											Token.tSHIFTRASSIGN,
+											IToken.tSHIFTRASSIGN,
 											">>=",
 											contextStack.getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
-											Token.tSHIFTR,
+											IToken.tSHIFTR,
 											">>",
 											contextStack.getCurrentContext());
 								}
 							case '=' :
 								return newToken(
-									Token.tGTEQUAL,
+									IToken.tGTEQUAL,
 									">=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
-								return newToken(Token.tGT, ">", contextStack.getCurrentContext());
+								return newToken(IToken.tGT, ">", contextStack.getCurrentContext());
 						}
 					case '.' :
 						c = getChar();
@@ -1297,7 +1303,7 @@ public class Scanner implements IScanner {
 								switch (c) {
 									case '.' :
 										return newToken(
-											Token.tELIPSE,
+											IToken.tELIPSE,
 											"...",
 											contextStack.getCurrentContext());
 									default :
@@ -1306,13 +1312,13 @@ public class Scanner implements IScanner {
 								break;
 							case '*' :
 								return newToken(
-									Token.tDOTSTAR,
+									IToken.tDOTSTAR,
 									".*",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tDOT,
+									IToken.tDOT,
 									".",
 									contextStack.getCurrentContext());
 						}
@@ -1331,13 +1337,13 @@ public class Scanner implements IScanner {
 								continue;
 							case '=' :
 								return newToken(
-									Token.tDIVASSIGN,
+									IToken.tDIVASSIGN,
 									"/=",
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
-									Token.tDIV,
+									IToken.tDIV,
 									"/",
 									contextStack.getCurrentContext());
 						}
@@ -1371,7 +1377,7 @@ public class Scanner implements IScanner {
     // the static instance we always use
     protected static endOfMacroTokenException endOfMacroToken = new endOfMacroTokenException();
     
-    protected Token nextTokenForStringizing() throws ScannerException, Parser.EndOfFile
+    protected IToken nextTokenForStringizing() throws ScannerException, Parser.EndOfFile
     {     
         int c = getChar();
         StringBuffer tokenImage = new StringBuffer();
@@ -1407,7 +1413,7 @@ public class Scanner implements IScanner {
 
                 if (c != NOCHAR ) 
                 {
-                    return newToken( Token.tSTRING, buff.toString(), contextStack.getCurrentContext());
+                    return newToken( IToken.tSTRING, buff.toString(), contextStack.getCurrentContext());
     
                 } else {
                     if (throwExceptionOnUnboundedString)
@@ -1425,23 +1431,23 @@ public class Scanner implements IScanner {
                             c = next;
                             next = getChar( true );
                             if( next == '\'' )
-                                return newToken( Token.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
+                                return newToken( IToken.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
                             else if( throwExceptionOnBadCharacterRead )
                                 throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
                         } else if( next == '\'' )
-                            return newToken( Token.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
+                            return newToken( IToken.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
                         else
                             if( throwExceptionOnBadCharacterRead )
                                 throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
                     case ',' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(Token.tCOMMA, ",", contextStack.getCurrentContext());
+                        return newToken(IToken.tCOMMA, ",", contextStack.getCurrentContext());
                     case '(' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(Token.tLPAREN, "(", contextStack.getCurrentContext());
+                        return newToken(IToken.tLPAREN, "(", contextStack.getCurrentContext());
                     case ')' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(Token.tRPAREN, ")", contextStack.getCurrentContext());
+                        return newToken(IToken.tRPAREN, ")", contextStack.getCurrentContext());
                     case '/' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
                         c = getChar();
@@ -1472,7 +1478,7 @@ public class Scanner implements IScanner {
         
         // return completed token
         if (tokenImage.length() > 0) {
-            return newToken(Token.tIDENTIFIER, tokenImage.toString(), contextStack.getCurrentContext());
+            return newToken(IToken.tIDENTIFIER, tokenImage.toString(), contextStack.getCurrentContext());
         }
         
         // we're done
@@ -1481,80 +1487,80 @@ public class Scanner implements IScanner {
 
 
 	static {
-		cppKeywords.put("and", new Integer(Token.t_and));
-		cppKeywords.put("and_eq", new Integer(Token.t_and_eq));
-		cppKeywords.put("asm", new Integer(Token.t_asm));
-		cppKeywords.put("auto", new Integer(Token.t_auto));
-		cppKeywords.put("bitand", new Integer(Token.t_bitand));
-		cppKeywords.put("bitor", new Integer(Token.t_bitor));
-		cppKeywords.put("bool", new Integer(Token.t_bool));
-		cppKeywords.put("break", new Integer(Token.t_break));
-		cppKeywords.put("case", new Integer(Token.t_case));
-		cppKeywords.put("catch", new Integer(Token.t_catch));
-		cppKeywords.put("char", new Integer(Token.t_char));
-		cppKeywords.put("class", new Integer(Token.t_class));
-		cppKeywords.put("compl", new Integer(Token.t_compl));
-		cppKeywords.put("const", new Integer(Token.t_const));
-		cppKeywords.put("const_cast", new Integer(Token.t_const_cast));
-		cppKeywords.put("continue", new Integer(Token.t_continue));
-		cppKeywords.put("default", new Integer(Token.t_default));
-		cppKeywords.put("delete", new Integer(Token.t_delete));
-		cppKeywords.put("do", new Integer(Token.t_do));
-		cppKeywords.put("double", new Integer(Token.t_double));
-		cppKeywords.put("dynamic_cast", new Integer(Token.t_dynamic_cast));
-		cppKeywords.put("else", new Integer(Token.t_else));
-		cppKeywords.put("enum", new Integer(Token.t_enum));
-		cppKeywords.put("explicit", new Integer(Token.t_explicit));
-		cppKeywords.put("export", new Integer(Token.t_export));
-		cppKeywords.put("extern", new Integer(Token.t_extern));
-		cppKeywords.put("false", new Integer(Token.t_false));
-		cppKeywords.put("float", new Integer(Token.t_float));
-		cppKeywords.put("for", new Integer(Token.t_for));
-		cppKeywords.put("friend", new Integer(Token.t_friend));
-		cppKeywords.put("goto", new Integer(Token.t_goto));
-		cppKeywords.put("if", new Integer(Token.t_if));
-		cppKeywords.put("inline", new Integer(Token.t_inline));
-		cppKeywords.put("int", new Integer(Token.t_int));
-		cppKeywords.put("long", new Integer(Token.t_long));
-		cppKeywords.put("mutable", new Integer(Token.t_mutable));
-		cppKeywords.put("namespace", new Integer(Token.t_namespace));
-		cppKeywords.put("new", new Integer(Token.t_new));
-		cppKeywords.put("not", new Integer(Token.t_not));
-		cppKeywords.put("not_eq", new Integer(Token.t_not_eq));
-		cppKeywords.put("operator", new Integer(Token.t_operator));
-		cppKeywords.put("or", new Integer(Token.t_or));
-		cppKeywords.put("or_eq", new Integer(Token.t_or_eq));
-		cppKeywords.put("private", new Integer(Token.t_private));
-		cppKeywords.put("protected", new Integer(Token.t_protected));
-		cppKeywords.put("public", new Integer(Token.t_public));
-		cppKeywords.put("register", new Integer(Token.t_register));
-		cppKeywords.put("reinterpret_cast", new Integer(Token.t_reinterpret_cast));
-		cppKeywords.put("return", new Integer(Token.t_return));
-		cppKeywords.put("short", new Integer(Token.t_short));
-		cppKeywords.put("signed", new Integer(Token.t_signed));
-		cppKeywords.put("sizeof", new Integer(Token.t_sizeof));
-		cppKeywords.put("static", new Integer(Token.t_static));
-		cppKeywords.put("static_cast", new Integer(Token.t_static_cast));
-		cppKeywords.put("struct", new Integer(Token.t_struct));
-		cppKeywords.put("switch", new Integer(Token.t_switch));
-		cppKeywords.put("template", new Integer(Token.t_template));
-		cppKeywords.put("this", new Integer(Token.t_this));
-		cppKeywords.put("throw", new Integer(Token.t_throw));
-		cppKeywords.put("true", new Integer(Token.t_true));
-		cppKeywords.put("try", new Integer(Token.t_try));
-		cppKeywords.put("typedef", new Integer(Token.t_typedef));
-		cppKeywords.put("typeid", new Integer(Token.t_typeid));
-		cppKeywords.put("typename", new Integer(Token.t_typename));
-		cppKeywords.put("union", new Integer(Token.t_union));
-		cppKeywords.put("unsigned", new Integer(Token.t_unsigned));
-		cppKeywords.put("using", new Integer(Token.t_using));
-		cppKeywords.put("virtual", new Integer(Token.t_virtual));
-		cppKeywords.put("void", new Integer(Token.t_void));
-		cppKeywords.put("volatile", new Integer(Token.t_volatile));
-		cppKeywords.put("wchar_t", new Integer(Token.t_wchar_t));
-		cppKeywords.put("while", new Integer(Token.t_while));
-		cppKeywords.put("xor", new Integer(Token.t_xor));
-		cppKeywords.put("xor_eq", new Integer(Token.t_xor_eq));
+		cppKeywords.put("and", new Integer(IToken.t_and));
+		cppKeywords.put("and_eq", new Integer(IToken.t_and_eq));
+		cppKeywords.put("asm", new Integer(IToken.t_asm));
+		cppKeywords.put("auto", new Integer(IToken.t_auto));
+		cppKeywords.put("bitand", new Integer(IToken.t_bitand));
+		cppKeywords.put("bitor", new Integer(IToken.t_bitor));
+		cppKeywords.put("bool", new Integer(IToken.t_bool));
+		cppKeywords.put("break", new Integer(IToken.t_break));
+		cppKeywords.put("case", new Integer(IToken.t_case));
+		cppKeywords.put("catch", new Integer(IToken.t_catch));
+		cppKeywords.put("char", new Integer(IToken.t_char));
+		cppKeywords.put("class", new Integer(IToken.t_class));
+		cppKeywords.put("compl", new Integer(IToken.t_compl));
+		cppKeywords.put("const", new Integer(IToken.t_const));
+		cppKeywords.put("const_cast", new Integer(IToken.t_const_cast));
+		cppKeywords.put("continue", new Integer(IToken.t_continue));
+		cppKeywords.put("default", new Integer(IToken.t_default));
+		cppKeywords.put("delete", new Integer(IToken.t_delete));
+		cppKeywords.put("do", new Integer(IToken.t_do));
+		cppKeywords.put("double", new Integer(IToken.t_double));
+		cppKeywords.put("dynamic_cast", new Integer(IToken.t_dynamic_cast));
+		cppKeywords.put("else", new Integer(IToken.t_else));
+		cppKeywords.put("enum", new Integer(IToken.t_enum));
+		cppKeywords.put("explicit", new Integer(IToken.t_explicit));
+		cppKeywords.put("export", new Integer(IToken.t_export));
+		cppKeywords.put("extern", new Integer(IToken.t_extern));
+		cppKeywords.put("false", new Integer(IToken.t_false));
+		cppKeywords.put("float", new Integer(IToken.t_float));
+		cppKeywords.put("for", new Integer(IToken.t_for));
+		cppKeywords.put("friend", new Integer(IToken.t_friend));
+		cppKeywords.put("goto", new Integer(IToken.t_goto));
+		cppKeywords.put("if", new Integer(IToken.t_if));
+		cppKeywords.put("inline", new Integer(IToken.t_inline));
+		cppKeywords.put("int", new Integer(IToken.t_int));
+		cppKeywords.put("long", new Integer(IToken.t_long));
+		cppKeywords.put("mutable", new Integer(IToken.t_mutable));
+		cppKeywords.put("namespace", new Integer(IToken.t_namespace));
+		cppKeywords.put("new", new Integer(IToken.t_new));
+		cppKeywords.put("not", new Integer(IToken.t_not));
+		cppKeywords.put("not_eq", new Integer(IToken.t_not_eq));
+		cppKeywords.put("operator", new Integer(IToken.t_operator));
+		cppKeywords.put("or", new Integer(IToken.t_or));
+		cppKeywords.put("or_eq", new Integer(IToken.t_or_eq));
+		cppKeywords.put("private", new Integer(IToken.t_private));
+		cppKeywords.put("protected", new Integer(IToken.t_protected));
+		cppKeywords.put("public", new Integer(IToken.t_public));
+		cppKeywords.put("register", new Integer(IToken.t_register));
+		cppKeywords.put("reinterpret_cast", new Integer(IToken.t_reinterpret_cast));
+		cppKeywords.put("return", new Integer(IToken.t_return));
+		cppKeywords.put("short", new Integer(IToken.t_short));
+		cppKeywords.put("signed", new Integer(IToken.t_signed));
+		cppKeywords.put("sizeof", new Integer(IToken.t_sizeof));
+		cppKeywords.put("static", new Integer(IToken.t_static));
+		cppKeywords.put("static_cast", new Integer(IToken.t_static_cast));
+		cppKeywords.put("struct", new Integer(IToken.t_struct));
+		cppKeywords.put("switch", new Integer(IToken.t_switch));
+		cppKeywords.put("template", new Integer(IToken.t_template));
+		cppKeywords.put("this", new Integer(IToken.t_this));
+		cppKeywords.put("throw", new Integer(IToken.t_throw));
+		cppKeywords.put("true", new Integer(IToken.t_true));
+		cppKeywords.put("try", new Integer(IToken.t_try));
+		cppKeywords.put("typedef", new Integer(IToken.t_typedef));
+		cppKeywords.put("typeid", new Integer(IToken.t_typeid));
+		cppKeywords.put("typename", new Integer(IToken.t_typename));
+		cppKeywords.put("union", new Integer(IToken.t_union));
+		cppKeywords.put("unsigned", new Integer(IToken.t_unsigned));
+		cppKeywords.put("using", new Integer(IToken.t_using));
+		cppKeywords.put("virtual", new Integer(IToken.t_virtual));
+		cppKeywords.put("void", new Integer(IToken.t_void));
+		cppKeywords.put("volatile", new Integer(IToken.t_volatile));
+		cppKeywords.put("wchar_t", new Integer(IToken.t_wchar_t));
+		cppKeywords.put("while", new Integer(IToken.t_while));
+		cppKeywords.put("xor", new Integer(IToken.t_xor));
+		cppKeywords.put("xor_eq", new Integer(IToken.t_xor_eq));
 
 		ppDirectives.put("#define", new Integer(PreprocessorDirectives.DEFINE));
 		ppDirectives.put("#undef",new Integer(PreprocessorDirectives.UNDEFINE));
@@ -1572,44 +1578,44 @@ public class Scanner implements IScanner {
 		ppDirectives.put("#elif", new Integer(PreprocessorDirectives.ELIF));
 		ppDirectives.put("#", new Integer(PreprocessorDirectives.BLANK));
 
-		cKeywords.put("auto", new Integer(Token.t_auto));
-		cKeywords.put("break", new Integer(Token.t_break));
-		cKeywords.put("case", new Integer(Token.t_case));
-		cKeywords.put("char", new Integer(Token.t_char));
-		cKeywords.put("const", new Integer(Token.t_const));
-		cKeywords.put("continue", new Integer(Token.t_continue));
-		cKeywords.put("default", new Integer(Token.t_default));
-		cKeywords.put("delete", new Integer(Token.t_delete));
-		cKeywords.put("do", new Integer(Token.t_do));
-		cKeywords.put("double", new Integer(Token.t_double));
-		cKeywords.put("else", new Integer(Token.t_else));
-		cKeywords.put("enum", new Integer(Token.t_enum));
-		cKeywords.put("extern", new Integer(Token.t_extern));
-		cKeywords.put("float", new Integer(Token.t_float));
-		cKeywords.put("for", new Integer(Token.t_for));
-		cKeywords.put("goto", new Integer(Token.t_goto));
-		cKeywords.put("if", new Integer(Token.t_if));
-		cKeywords.put("inline", new Integer(Token.t_inline));
-		cKeywords.put("int", new Integer(Token.t_int));
-		cKeywords.put("long", new Integer(Token.t_long));
-		cKeywords.put("register", new Integer(Token.t_register));
-		cKeywords.put("restrict", new Integer(Token.t_restrict));
-		cKeywords.put("return", new Integer(Token.t_return));
-		cKeywords.put("short", new Integer(Token.t_short));
-		cKeywords.put("signed", new Integer(Token.t_signed));
-		cKeywords.put("sizeof", new Integer(Token.t_sizeof));
-		cKeywords.put("static", new Integer(Token.t_static));
-		cKeywords.put("struct", new Integer(Token.t_struct));
-		cKeywords.put("switch", new Integer(Token.t_switch));
-		cKeywords.put("typedef", new Integer(Token.t_typedef));
-		cKeywords.put("union", new Integer(Token.t_union));
-		cKeywords.put("unsigned", new Integer(Token.t_unsigned));
-		cKeywords.put("void", new Integer(Token.t_void));
-		cKeywords.put("volatile", new Integer(Token.t_volatile));
-		cKeywords.put("while", new Integer(Token.t_while));
-		cKeywords.put("_Bool", new Integer(Token.t__Bool));
-		cKeywords.put("_Complex", new Integer(Token.t__Complex));
-		cKeywords.put("_Imaginary", new Integer(Token.t__Imaginary));
+		cKeywords.put("auto", new Integer(IToken.t_auto));
+		cKeywords.put("break", new Integer(IToken.t_break));
+		cKeywords.put("case", new Integer(IToken.t_case));
+		cKeywords.put("char", new Integer(IToken.t_char));
+		cKeywords.put("const", new Integer(IToken.t_const));
+		cKeywords.put("continue", new Integer(IToken.t_continue));
+		cKeywords.put("default", new Integer(IToken.t_default));
+		cKeywords.put("delete", new Integer(IToken.t_delete));
+		cKeywords.put("do", new Integer(IToken.t_do));
+		cKeywords.put("double", new Integer(IToken.t_double));
+		cKeywords.put("else", new Integer(IToken.t_else));
+		cKeywords.put("enum", new Integer(IToken.t_enum));
+		cKeywords.put("extern", new Integer(IToken.t_extern));
+		cKeywords.put("float", new Integer(IToken.t_float));
+		cKeywords.put("for", new Integer(IToken.t_for));
+		cKeywords.put("goto", new Integer(IToken.t_goto));
+		cKeywords.put("if", new Integer(IToken.t_if));
+		cKeywords.put("inline", new Integer(IToken.t_inline));
+		cKeywords.put("int", new Integer(IToken.t_int));
+		cKeywords.put("long", new Integer(IToken.t_long));
+		cKeywords.put("register", new Integer(IToken.t_register));
+		cKeywords.put("restrict", new Integer(IToken.t_restrict));
+		cKeywords.put("return", new Integer(IToken.t_return));
+		cKeywords.put("short", new Integer(IToken.t_short));
+		cKeywords.put("signed", new Integer(IToken.t_signed));
+		cKeywords.put("sizeof", new Integer(IToken.t_sizeof));
+		cKeywords.put("static", new Integer(IToken.t_static));
+		cKeywords.put("struct", new Integer(IToken.t_struct));
+		cKeywords.put("switch", new Integer(IToken.t_switch));
+		cKeywords.put("typedef", new Integer(IToken.t_typedef));
+		cKeywords.put("union", new Integer(IToken.t_union));
+		cKeywords.put("unsigned", new Integer(IToken.t_unsigned));
+		cKeywords.put("void", new Integer(IToken.t_void));
+		cKeywords.put("volatile", new Integer(IToken.t_volatile));
+		cKeywords.put("while", new Integer(IToken.t_while));
+		cKeywords.put("_Bool", new Integer(IToken.t__Bool));
+		cKeywords.put("_Complex", new Integer(IToken.t__Complex));
+		cKeywords.put("_Imaginary", new Integer(IToken.t__Imaginary));
 
 	}
 
@@ -1986,12 +1992,12 @@ public class Scanner implements IScanner {
         
         try {
             while (true) {
-                t = forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false);
-                if (t.type == Token.tLPAREN) {
+                t = (Token)(forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
+                if (t.type == IToken.tLPAREN) {
                     nParen++;
-                } else if (t.type == Token.tRPAREN) {
+                } else if (t.type == IToken.tRPAREN) {
                     nParen--;
-                } else if (t.type == Token.tCOMMA && nParen == 0) {
+                } else if (t.type == IToken.tCOMMA && nParen == 0) {
                     parameterValues.add(str);
                     str = "";
                     space = false;
@@ -2002,9 +2008,9 @@ public class Scanner implements IScanner {
                     str += ' ';
 
                 switch (t.type) {
-                    case Token.tSTRING :  str += '\"' + t.image + '\"'; break;
-                    case Token.tLSTRING : str += "L\"" + t.image + '\"'; break;
-                    case Token.tCHAR :    str += '\'' + t.image + '\'';  break;
+                    case IToken.tSTRING :  str += '\"' + t.image + '\"'; break;
+                    case IToken.tLSTRING : str += "L\"" + t.image + '\"'; break;
+                    case IToken.tCHAR :    str += '\'' + t.image + '\'';  break;
                     default :             str += t.image; break;
                 }
                 space = true;
@@ -2065,7 +2071,7 @@ public class Scanner implements IScanner {
 
 				for (int i = 0; i < numberOfTokens; ++i) {
 					t = (Token) tokens.get(i);
-					if (t.type == Token.tIDENTIFIER) {
+					if (t.type == IToken.tIDENTIFIER) {
 						String identifierName = t.image;
 
 						// is this identifier in the parameterNames
@@ -2115,9 +2121,9 @@ public class Scanner implements IScanner {
 					} else {
 						switch( t.type )
 						{
-							case Token.tSTRING:  buffer.append('\"' + t.image + '\"');  break;
-							case Token.tLSTRING: buffer.append("L\"" + t.image + '\"');	break;
-							case Token.tCHAR:	 buffer.append('\'' + t.image + '\''); 	break;
+							case IToken.tSTRING:  buffer.append('\"' + t.image + '\"');  break;
+							case IToken.tLSTRING: buffer.append("L\"" + t.image + '\"');	break;
+							case IToken.tCHAR:	 buffer.append('\'' + t.image + '\''); 	break;
 							default:			 buffer.append(t.image);				break;
 						}
 					}
@@ -2126,7 +2132,7 @@ public class Scanner implements IScanner {
 					
 					if( i != numberOfTokens - 1)
 					{
-						Token t2 = (Token) tokens.get(i+1);
+						IToken t2 = (IToken) tokens.get(i+1);
 						if( t2.getType() == tPOUNDPOUND )
 							pastingNext = true;  
 					}

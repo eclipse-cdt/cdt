@@ -2,8 +2,8 @@ package org.eclipse.cdt.internal.core.dom;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.Name;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author jcamelon
@@ -168,81 +168,81 @@ public class DeclSpecifier {
 	public static final int t_double = 6;
 	public static final int t_void = 7;
 
-	public void setType(Token token) {
+	public void setType(IToken token) {
 		switch (token.getType()) {
-			case Token.t_typename:
+			case IToken.t_typename:
 				setTypename(true);
 				break;
-			case Token.t_auto :
+			case IToken.t_auto :
 				setAuto(true);
 				break;
-			case Token.t_register :
+			case IToken.t_register :
 				setRegister(true);
 				break;
-			case Token.t_static :
+			case IToken.t_static :
 				setStatic(true);
 				break;
-			case Token.t_extern :
+			case IToken.t_extern :
 				setExtern(true);
 				break;
-			case Token.t_mutable :
+			case IToken.t_mutable :
 				setMutable(true);
 				break;
-			case Token.t_inline :
+			case IToken.t_inline :
 				setInline(true);
 				break;
-			case Token.t_virtual :
+			case IToken.t_virtual :
 				setVirtual(true);
 				break;
-			case Token.t_explicit :
+			case IToken.t_explicit :
 				setExplicit(true);
 				break;
-			case Token.t_typedef :
+			case IToken.t_typedef :
 				setTypedef(true);
 				break;
-			case Token.t_friend :
+			case IToken.t_friend :
 				setFriend(true);
 				break;
-			case Token.t_const :
+			case IToken.t_const :
 				setConst(true);
 				break;
-			case Token.t_volatile :
+			case IToken.t_volatile :
 				setVolatile(true);
 				break;
-			case Token.t_char :
+			case IToken.t_char :
 				setType(DeclSpecifier.t_char);
 				break;
-			case Token.t_wchar_t :
+			case IToken.t_wchar_t :
 				setType(DeclSpecifier.t_wchar_t);
 				break;
-			case Token.t_bool :
+			case IToken.t_bool :
 				setType(DeclSpecifier.t_bool);
 				break;
-			case Token.t_short :
+			case IToken.t_short :
 				setShort(true);
 				break;
-			case Token.t_int :
+			case IToken.t_int :
 				setType(DeclSpecifier.t_int);
 				break;
-			case Token.t_long :
+			case IToken.t_long :
 				setLong(true);
 				break;
-			case Token.t_signed :
+			case IToken.t_signed :
 				setUnsigned(false);
 				break;
-			case Token.t_unsigned :
+			case IToken.t_unsigned :
 				setUnsigned(true);
 				break;
-			case Token.t_float :
+			case IToken.t_float :
 				setType(DeclSpecifier.t_float);
 				break;
-			case Token.t_double :
+			case IToken.t_double :
 				setType(DeclSpecifier.t_double);
 				break;
-			case Token.t_void :
+			case IToken.t_void :
 				setType(DeclSpecifier.t_void);
 				break;
-			case Token.tIDENTIFIER :
+			case IToken.tIDENTIFIER :
 				setType(DeclSpecifier.t_type);
 				break;
 		}

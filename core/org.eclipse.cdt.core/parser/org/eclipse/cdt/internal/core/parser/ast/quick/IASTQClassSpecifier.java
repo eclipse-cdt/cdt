@@ -8,12 +8,16 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
+
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTEnumSpecifier {
+public interface IASTQClassSpecifier extends IASTClassSpecifier {
 
+	public void addBaseClass( IASTBaseSpecifier baseSpecifier );
 }

@@ -10,12 +10,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class Location implements ICDILocation {
 
@@ -29,8 +23,10 @@ public class Location implements ICDILocation {
 	}
 
 	public Location(String f, String fnct, int l, long a) {
-		file = f;
-		function = fnct;
+		if (f != null)
+			file = f;
+		if (fnct != null)
+			function = fnct;
 		line = l;
 		addr = a;  
 	}
@@ -80,12 +76,21 @@ public class Location implements ICDILocation {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#equals(ICDILocation)
 	 */
 	public boolean equals(ICDILocation location) {
-		if (location instanceof Location) {
-			Location loc = (Location)location;
-			return addr == loc.getAddress() &&
-				file.equals(loc.getFile()) &&
-				function.equals(loc.getFunction()) &&
-				line == loc.getLineNumber();
+		String ofile = location.getFile();
+		if (ofile == null) {
+			ofile = "";
+		}
+		String ofunction = location.getFunction();
+		if (ofunction == null) {
+			ofunction = "";
+		}
+
+		if (file.equals(ofile) && line == location.getLineNumber()) {
+			return true;
+		}
+
+		if (file.equals(ofile) && function.equals(ofunction)) {
+			return true;
 		}
 		return super.equals(location);
 	}

@@ -20,6 +20,8 @@ public class GLDErrorParser implements IErrorParser {
 		// 2-
 		// Something went wrong check if it is "ld" the linkeer bay cheching
 		// the last letter for "ld"
+		// An example might be (not all are warnings):
+		// ntox86-ld: warning: libcpp.so.2, needed by C:/temp//libdisplay.so, may conflict with libcpp.so.3
 		int firstColon= line.indexOf(':');
 		if (firstColon != -1) {
 			String buf= line.substring(0, firstColon);
@@ -46,12 +48,20 @@ public class GLDErrorParser implements IErrorParser {
 				} 
 				eoParser.generateMarker(file, 0, desc, IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
 			} else if (buf.endsWith("ld")){
+				// By default treat the condition as fatal/error, unless marked as a warning
+				int errorType = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
+				desc = desc.trim();
+				if(desc.startsWith("warning") || desc.startsWith("Warning")) {
+					errorType = IMarkerGenerator.SEVERITY_WARNING;
+				}
+
 				String fileName = line.substring(0, firstColon);
 				IFile file = eoParser.findFilePath(fileName);
 				if (file == null) {
 					desc = fileName + " " + desc;
 				} 
-				eoParser.generateMarker(file, 0, desc, IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
+				
+				eoParser.generateMarker(file, 0, desc, errorType, null);
 			}
 		}
 		return false;

@@ -96,54 +96,38 @@ public interface ICElementDelta {
 	public int F_CLOSED = 0x0080;
 
 	/**
-	 * A pathEntry Source changed for this resource.
+	 * A source entry added for this resource.
 	 */
 	public int F_ADDED_PATHENTRY_SOURCE =   0x0100;
 
 	/**
-	 * A pathEntry Macro was added for this resource.
+	 * A source entry was remove for this resource.
 	 */
-	public int F_ADDED_PATHENTRY_MACRO =    0x0200;
+	public int F_REMOVED_PATHENTRY_SOURCE =   0x0200;
 
 	/**
-	 * A pathEntry Include was added for this resourc.
+	 * A pathEntry Macro was added for this resource
 	 */
-	public int F_ADDED_PATHENTRY_INCLUDE =  0x0400;
+	public int F_CHANGED_PATHENTRY_MACRO =    0x0400;
 
 	/**
-	 * A pathEntry Library was added for this resourc.
+	 * A pathEntry Include was added for this resource
 	 */
-	public int F_ADDED_PATHENTRY_LIBRARY =  0x0800;
+	public int F_CHANGED_PATHENTRY_INCLUDE =  0x0800;
 
+	/**
+	 * A pathEntry Library was added for this resource
+	 */
+	public int F_ADDED_PATHENTRY_LIBRARY =  0x01000;
+
+	/**
+	 * A pathEntry Library was added for this resource
+	 */
+	public int F_REMOVED_PATHENTRY_LIBRARY =  0x02000;
 	/**
 	 * A pathEntry Project was added to the project.
 	 */
-	public int F_ADDED_PATHENTRY_PROJECT =  0x01000;
-
-	/**
-	 * A pathEtnry Source was remove for this resource.
-	 */
-	public int F_REMOVED_PATHENTRY_SOURCE = 0x02000;
-
-	/**
-	 * A pathEtnry Macro was remove for this resource.
-	 */
-	public int F_REMOVED_PATHENTRY_MACRO = 0x04000;
-
-	/**
-	 * A pathEtnry Include was remove for this resource.
-	 */
-	public int F_REMOVED_PATHENTRY_INCLUDE = 0x08000;
-
-	/**
-	 * A pathEtnry Library was remove for this resource.
-	 */
-	public int F_REMOVED_PATHENTRY_LIBRARY = 0x010000;
-
-	/**
-	 * A pathEtnry Project was remove for this resource.
-	 */
-	public int F_REMOVED_PATHENTRY_PROJECT = 0x020000;
+	public int F_CHANGED_PATHENTRY_PROJECT =  0x04000;
 
 	//public int F_PATHENTRY_REORDER = 0x040000;
 	//public int F_SUPER_TYPES = 0x080000;

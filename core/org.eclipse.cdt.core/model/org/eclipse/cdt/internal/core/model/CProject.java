@@ -101,26 +101,39 @@ public class CProject extends CContainer implements ICProject {
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 				ILibraryEntry entry = (ILibraryEntry) entries[i];
-				ILibraryReference lib = null;
-				if (binParser != null) {
-					IBinaryFile bin;
-					try {
-						bin = binParser.getBinary(entry.getPath());
-						if (bin.getType() == IBinaryFile.ARCHIVE) {
-							lib = new LibraryReferenceArchive(this, entry, (IBinaryArchive)bin);
-						} else {
-							lib = new LibraryReferenceShared(this, entry, bin);
-						}
-					} catch (IOException e1) {
-						lib = new LibraryReference(this, entry);
-					}
-				}
+				ILibraryReference lib = getLibraryReference(this, binParser, entry);
 				if (lib != null) {
 					list.add(lib);
 				}
 			}
 		}
 		return (ILibraryReference[]) list.toArray(new ILibraryReference[0]);
+	}
+
+	public static ILibraryReference getLibraryReference(ICProject cproject, IBinaryParser binParser, ILibraryEntry entry) {
+		if (binParser == null) {
+			try {
+				binParser = CCorePlugin.getDefault().getBinaryParser(cproject.getProject());
+			} catch (CoreException e) {
+			}
+		}
+		ILibraryReference lib = null;
+		if (binParser != null) {
+			IBinaryFile bin;
+			try {
+				bin = binParser.getBinary(entry.getPath());
+				if (bin.getType() == IBinaryFile.ARCHIVE) {
+					lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);
+				} else {
+					lib = new LibraryReferenceShared(cproject, entry, bin);
+				}
+			} catch (IOException e1) {
+			}
+		}
+		if (lib == null) {
+			lib = new LibraryReference(cproject, entry);
+		}
+		return lib;
 	}
 
 	/**

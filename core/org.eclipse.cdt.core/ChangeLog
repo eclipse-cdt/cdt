@@ -1,3 +1,13 @@
+2004-02-26 Alain Magloire
+
+	To catch with the documentation change to ICElementDelta
+	field flags
+
+	* model/org/eclipse/cdt/core/model/ICElementDelta.java
+	* model/org/eclipse/cdt/internal/core/model/CElementDelta.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	
 2004-02-25 Alain Magloire
 
 	Path from Chris Wiebe to deal with PR 52128

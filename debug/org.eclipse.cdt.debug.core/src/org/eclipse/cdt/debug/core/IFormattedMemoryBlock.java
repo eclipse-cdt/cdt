@@ -85,6 +85,18 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	 */
 	IFormattedMemoryBlockRow[] getRows();
 
+
+	/**
+	 * Sets the value of data item in this block at the specified
+	 * index within this block to the spcified value.
+	 * The index is zero based.
+	 * 
+	 * @param index the index of item to change
+	 * @param newValue the new value
+	 * @throws DebugException if this method fails.  Reasons include:
+	 */
+	void setItemValue( int index, String newValue ) throws DebugException;
+
 	char getPaddingCharacter();
 
 	long nextRowAddress();

@@ -1,3 +1,7 @@
+2002-10-27 Mikhail Khodjaiants
+	* IFormattedMemoryBlock.java: added the 'setItemValue' method.
+	* CFormattedMemoryBlock.java: implementation of the 'setItemValue' method.
+
 2002-10-16 Alain Magloire
 
 	* src/.../core/cdi/model/ICDIMemoryBlock.java (refresh):

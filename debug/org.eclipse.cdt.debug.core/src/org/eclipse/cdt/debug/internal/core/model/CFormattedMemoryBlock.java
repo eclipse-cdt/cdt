@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -83,6 +84,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private char fPaddingChar = '.';
 	private List fRows = null;
 	private Long[] fChangedAddresses = new Long[0];
+	private HashSet fDirtyBytes;
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -96,16 +98,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 						  		  int numberOfRows,
 						  		  int numberOfColumns )
 	{
-		super( target );
-		fCDIMemoryBlock = cdiMemoryBlock;
-		fAddressExpression = addressExpression;
-		fFormat = format;
-		fWordSize = wordSize;
-		fNumberOfRows = numberOfRows;
-		fNumberOfColumns = numberOfColumns;
-		fDisplayAscii = false;
-		fPaddingChar = 0;
-		getCDISession().getEventManager().addEventListener( this );
+		this( target, cdiMemoryBlock, addressExpression, format, wordSize, numberOfRows, numberOfColumns, '\0' );
 	}
 
 	/**
@@ -130,6 +123,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		fNumberOfColumns = numberOfColumns;
 		fDisplayAscii = true;
 		fPaddingChar = paddingChar;		
+		fDirtyBytes = new HashSet();
 		getCDISession().getEventManager().addEventListener( this );
 	}
 
@@ -353,6 +347,8 @@ public class CFormattedMemoryBlock extends CDebugElement
 			fCDIMemoryBlock = null;
 		}
 		getCDISession().getEventManager().removeEventListener( this );
+		fDirtyBytes.clear();
+		fDirtyBytes = null;
 	}
 
 	/* (non-Javadoc)
@@ -439,7 +435,8 @@ public class CFormattedMemoryBlock extends CDebugElement
 	
 	private void handleChangedEvent( ICDIMemoryChangedEvent event )
 	{
-		resetRows();		
+		resetRows();
+		resetDirtyBytes();		
 		setChangedAddresses( event.getAddresses() );
 		fireChangeEvent( DebugEvent.CONTENT );
 	}
@@ -473,5 +470,17 @@ public class CFormattedMemoryBlock extends CDebugElement
 	public void setFrozen( boolean frozen )
 	{
 		getCDIMemoryBlock().setFrozen( frozen );
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#setItemValue(int, String)
+	 */
+	public void setItemValue( int index, String newValue ) throws DebugException
+	{
+	}
+	
+	private void resetDirtyBytes()
+	{
+		fDirtyBytes.clear();
 	}
 }

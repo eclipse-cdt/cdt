@@ -75,9 +75,18 @@ public interface IWorkingCopy extends ITranslationUnit{
 	 * getSharedWorkingCopy(IProgressMonitor, IBufferFactory)</code>. 
 	 * A REMOVED CElementDelta is then reported on this working copy.
 	 */
-	
 	void destroy();
-	
+
+	/**
+	 * Returns the original element the specified working copy element was created from,
+	 * or <code>null</code> if this is not a working copy element.
+	 * 
+	 * @param workingCopyElement the specified working copy element
+	 * @return the original element the specified working copy element was created from,
+	 * or <code>null</code> if this is not a working copy element
+	 */
+	ICElement getOriginal(ICElement workingCopyElement);
+
 	/**
 	 * Returns the original element this working copy was created from,
 	 * or <code>null</code> if this is not a working copy.

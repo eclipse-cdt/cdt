@@ -1,3 +1,9 @@
+2004-09-01 Alain Magloire
+
+	Provide IWorkingCopy.getOriginal(ICElement)
+	* model/org/eclipse/cdt/core/model/IWorkingCopy.java
+	* model/org/eclipse/cdt/internal/core/model/WorkinCopy.java
+
 2004-08-31 Alain Magloire
 
 	Fix for 72198

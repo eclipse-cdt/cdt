@@ -13,12 +13,15 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
@@ -161,6 +164,59 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public boolean equals(Object o) {
 		return this == o; 
 	}
+
+	/**
+	 * Returns the original element the specified working copy element was created from,
+	 * or <code>null</code> if this is not a working copy element.
+	 * 
+	 * @param workingCopyElement the specified working copy element
+	 * @return the original element the specified working copy element was created from,
+	 * or <code>null</code> if this is not a working copy element
+	 */
+	public ICElement getOriginal(ICElement workingCopyElement) {
+		// It has to come from the same workingCopy, meaning ours.
+		if (workingCopyElement instanceof ISourceReference) {
+			ITranslationUnit wunit = ((ISourceReference)workingCopyElement).getTranslationUnit();
+			if (!wunit.equals(this)) {
+				return null;
+			}
+		} else {
+			return null;
+		}
+		ITranslationUnit tu = getOriginalElement();
+		if (tu == null) {
+			return null; // oops !!
+		}
+
+		// look for it.
+		ICElement element = workingCopyElement;
+		ArrayList children = new ArrayList();
+		while (element != null && element.getElementType() != ICElement.C_UNIT) {
+			children.add(element);
+			element = element.getParent();
+		}
+		ICElement current = tu;
+		for (int i = children.size()-1; i >= 0; i--) {
+			ICElement child = (ICElement)children.get(i);
+			if (current instanceof IParent) {
+				try {
+					ICElement[] celems = ((IParent)current).getChildren();
+					current = null;
+					for (int j = 0; j < celems.length; ++j) {
+						if (celems[j].getElementName().equals(child.getElementName()) &&
+								celems[j].getElementType() == child.getElementType()) {
+							current = celems[j];
+							break;
+						}
+					}
+				} catch (CModelException e) {
+					current = null;
+				}
+			}
+		}
+		return current;
+	}
+	
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()

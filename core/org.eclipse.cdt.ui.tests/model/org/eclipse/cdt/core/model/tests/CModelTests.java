@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.cdt.testplugin.*;
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -85,30 +86,7 @@ public class CModelTests extends TestCase {
         junit.textui.TestRunner.run(suite());
     }
 
-    /***
-     * Very simple sanity tests to make sure the get*Nature* functions
-     * are returning sane values
-     */
-   public void testGetNatureId(){
-        assertTrue("GetCNatureId returns correct value", CoreModel.getDefault().getCNatureId().equals(CoreModel.C_NATURE_ID));
-        assertTrue("GetCNatureName returns correct value", CoreModel.getDefault().getCNatureName().equals(CoreModel.C_NATURE_NAME));
-
-        assertTrue("GetCCNatureId returns correct value", CoreModel.getDefault().getCCNatureId().equals(CoreModel.CC_NATURE_ID));
-        assertTrue("GetCCNatureName returns correct value", CoreModel.getDefault().getCCNatureName().equals(CoreModel.CC_NATURE_NAME));
-
-        /***
-         * The following tests are here to make sure the names/ids of the 
-         * natures do not change over time. Changing them would likely break
-         * backwards compatibility, so if it happens, we should know about it.
-         */
-        assertTrue("C_NATURE_NAME is constant", CoreModel.C_NATURE_NAME.equals("cnature"));
-        assertTrue("C_NATURE_ID is constant", CoreModel.C_NATURE_ID.equals("org.eclipse.cdt.core.cnature"));
-        assertTrue("CC_NATURE_NAME is constant", CoreModel.CC_NATURE_NAME.equals("ccnature"));
-        assertTrue("CC_NATURE_ID is constant", CoreModel.CC_NATURE_ID.equals("org.eclipse.cdt.core.ccnature"));
-
-
-    }
-
+   
     /***
      * The follow are a simple set of tests to make usre the HasC/CCNature calls
      * seem to be sane.
@@ -127,11 +105,13 @@ public class CModelTests extends TestCase {
             fail("Unable to create project");
         assertTrue("hasCNature works", CoreModel.hasCNature(testProject.getProject()));
         assertTrue("hasCCNature works without ccnature", !(CoreModel.hasCCNature(testProject.getProject())));
-        CoreModel.addCCNature(testProject.getProject(), monitor);
+   
+   
+        CCProjectNature.addCCNature(testProject.getProject(), monitor);
         assertTrue("hasCCNature works", (CoreModel.hasCCNature(testProject.getProject())));
         
-        CoreModel.removeCCNature(testProject.getProject(), monitor);
-        CoreModel.removeCNature(testProject.getProject(), monitor);                
+        CCProjectNature.removeCCNature(testProject.getProject(), monitor);
+        CCProjectNature.removeCNature(testProject.getProject(), monitor);                
         assertTrue("hasCNature works without cnature", !CoreModel.hasCNature(testProject.getProject()));
         assertTrue("hasCCNature works without ccnature or cnature", !(CoreModel.hasCCNature(testProject.getProject())));
 

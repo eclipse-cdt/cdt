@@ -67,6 +67,9 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_MAKEFILE_COMMAND = NAME_PREFIX + "command_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_COMMAND = createManaged(OBJ, IMG_OBJS_MAKEFILE_COMMAND);
 
+	public static final String IMG_OBJS_MAKEFILE_INCLUDE = NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAKEFILE_INCLUDE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INCLUDE);
+
 	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
 
 	private static ImageDescriptor createManaged(String prefix, String name) {

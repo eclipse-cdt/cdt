@@ -58,12 +58,12 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
-			MakefilePartitionScanner.MAKEFILE_COMMENT,//MakefileEditor.MAKE_COMMENT,
-			MakefilePartitionScanner.MAKEFILE_IF_BLOCK,//MakefileEditor.MAKE_KEYWORD,
+			MakefilePartitionScanner.MAKEFILE_COMMENT,
+			MakefilePartitionScanner.MAKEFILE_IF_BLOCK,
 			MakefilePartitionScanner.MAKEFILE_DEF_BLOCK,
 			MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK,
-			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT, //MakefileEditor.MAKE_MACRO_VAR,
-		};//MakefileEditor.MAKE_META_DATA };
+			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT,
+		};
 
 	}
 

@@ -17,6 +17,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
@@ -39,40 +40,6 @@ public class MakefileEditor extends TextEditor {
 		}
 		return page;
 	}
-
-//	public IMakefile getMakefile() {
-//		IDocument document = getDocumentProvider().getDocument(getEditorInput());
-//		if (makefile == null) {
-//			makefile = new GNUMakefile();
-//			try {
-//				String content = document.get();
-//				Reader r = new StringReader(content);
-//				makefile.parse(r);
-//			} catch (IOException e) {
-//			}
-//			IEditorInput input = getEditorInput();
-//			if (makefile instanceof GNUMakefile) {
-//				GNUMakefile gnu = (GNUMakefile)makefile;
-//				if (input instanceof IFileEditorInput) {
-//					IFile file = ((IFileEditorInput)input).getFile();
-//					String[] dirs = gnu.getIncludeDirectories();
-//					String[] includes = new String[dirs.length + 1];
-//					System.arraycopy(dirs, 0, includes, 0, dirs.length);
-//					String cwd = file.getLocation().removeLastSegments(1).toOSString();
-//					includes[dirs.length] = cwd;
-//					gnu.setIncludeDirectories(includes);
-//				}
-//			}
-//		} else if (isDirty()) {
-//			try {
-//				String content = document.get();
-//				Reader r = new StringReader(content);
-//				makefile.parse(r);
-//			} catch (IOException e) {
-//			}
-//		}
-//		return makefile;
-//	}
 
 	public MakefileEditor() {
 		super();
@@ -129,6 +96,16 @@ public class MakefileEditor extends TextEditor {
 		a = new TextOperationAction(bundle, "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
 		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistTip", a); //$NON-NLS-1$
+
+		a = new TextOperationAction(bundle, "Comment.", this, ITextOperationTarget.PREFIX); //$NON-NLS-1$
+		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.COMMENT);
+		setAction("Comment", a); //$NON-NLS-1$
+		markAsStateDependentAction("Comment", true); //$NON-NLS-1$
+ 
+		a = new TextOperationAction(bundle, "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX); //$NON-NLS-1$
+		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.UNCOMMENT);
+		setAction("Uncomment", a); //$NON-NLS-1$
+		markAsStateDependentAction("Uncomment", true); //$NON-NLS-1$ 
 
 	}
 

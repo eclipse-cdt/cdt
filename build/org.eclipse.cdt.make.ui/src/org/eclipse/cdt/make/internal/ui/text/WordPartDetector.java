@@ -59,6 +59,6 @@ public class WordPartDetector {
 	}
 
 	boolean isMakefileLetter(char c) {
-		return Character.isLetterOrDigit(c) || c == '_';
+		return Character.isLetterOrDigit(c) || c == '_' || c == '.';
 	}
 }

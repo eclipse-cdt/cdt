@@ -13,16 +13,19 @@ package org.eclipse.cdt.make.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.makefile.IBadDirective;
 import org.eclipse.cdt.make.core.makefile.ICommand;
 import org.eclipse.cdt.make.core.makefile.IComment;
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IEmptyLine;
 import org.eclipse.cdt.make.core.makefile.IInferenceRule;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IParent;
 import org.eclipse.cdt.make.core.makefile.IRule;
-import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
+import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
+import org.eclipse.cdt.make.core.makefile.gnu.ITerminal;
 import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -54,6 +57,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		protected boolean showMacroDefinition = true;
 		protected boolean showTargetRule = true;
 		protected boolean showInferenceRule = true;
+		protected boolean showIncludeChildren = false;
 
 		protected IMakefile makefile;
 		protected IMakefile nullMakefile = new NullMakefile();
@@ -63,8 +67,8 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		*/
 		public Object[] getChildren(Object element) {
 			if (element == fInput) {
-				return getElements(element);
-			} else if (element instanceof IParent) {
+				return getElements(makefile);
+			} else if (element instanceof IDirective) {
 				return getElements(element);
 			}
 			return new Object[0];
@@ -74,8 +78,11 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object element) {
-			if (element instanceof IDirective)
+			if (element instanceof IMakefile) {
 				return fInput;
+			} else if (element instanceof IDirective) {
+				return ((IDirective)element).getParent();
+			}
 			return fInput;
 		}
 
@@ -86,6 +93,10 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			if (element == fInput) {
 				return true;
 			} else if (element instanceof IParent) {
+				// Do not drill down in includes.
+				if (element instanceof IInclude && !showIncludeChildren) {
+					return false;
+				}
 				return true;
 			}
 			return false;
@@ -95,27 +106,30 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			IDirective[] statements;
+			IDirective[] directives;
 			if (inputElement == fInput) {
-				statements = makefile.getStatements();
+				directives = makefile.getDirectives();
+			} else if (inputElement instanceof IRule) {
+				directives = ((IRule)inputElement).getCommands();
 			} else if (inputElement instanceof IParent) {
-				statements = ((IParent)inputElement).getStatements();
+				directives = ((IParent)inputElement).getDirectives();
 			} else {
-				statements = new IDirective[0];
+				directives = new IDirective[0];
 			}
-			List list = new ArrayList(statements.length);
-			for (int i = 0; i < statements.length; i++) {
-				if (showMacroDefinition && statements[i] instanceof IMacroDefinition) {
-					list.add(statements[i]);
-				} else if (showInferenceRule && statements[i] instanceof IInferenceRule) {
-					list.add(statements[i]);
-				} else if (showTargetRule && statements[i] instanceof ITargetRule) {
-					list.add(statements[i]);
+			List list = new ArrayList(directives.length);
+			for (int i = 0; i < directives.length; i++) {
+				if (showMacroDefinition && directives[i] instanceof IMacroDefinition) {
+					list.add(directives[i]);
+				} else if (showInferenceRule && directives[i] instanceof IInferenceRule) {
+					list.add(directives[i]);
+				} else if (showTargetRule && directives[i] instanceof ITargetRule) {
+					list.add(directives[i]);
 				} else {
-					boolean irrelevant = (statements[i] instanceof IComment ||
-						statements[i] instanceof IEmptyLine); 
+					boolean irrelevant = (directives[i] instanceof IComment ||
+						directives[i] instanceof IEmptyLine ||
+						directives[i] instanceof ITerminal); 
 					if (!irrelevant) {
-						list.add(statements[i]);
+						list.add(directives[i]);
 					}
 				}
 			}
@@ -142,14 +156,6 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 				if (makefile == null) {
 					makefile = nullMakefile;
 				}
-//				IDocument document= fDocumentProvider.getDocument(newInput);
-//				makefile = fEditor.getMakefile();
-//				try {
-//					String content = document.get();
-//					Reader r = new StringReader(content);
-//					makefile.parse(r);
-//				} catch (IOException e) {
-//				}
 			}
 		}
 
@@ -167,10 +173,14 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_INFERENCE_RULE);
 			} else if (element instanceof IMacroDefinition) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_MACRO);
-			} else if (element instanceof IParent) {
-				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_RELATION);
 			} else if (element instanceof ICommand) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_COMMAND);
+			} else if (element instanceof IInclude) {
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_INCLUDE);
+			} else if (element instanceof IBadDirective) {
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ERROR);
+			} else if (element instanceof IParent) {
+				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_RELATION);
 			}
 			return super.getImage(element);
 		}
@@ -189,8 +199,8 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			}
 			if (name != null) {
 				name = name.trim();
-				if (name.length() > 20) {
-					name = name.substring(0, 20) + "..."; //$NON-NLS-1$
+				if (name.length() > 25) {
+					name = name.substring(0, 25) + " ..."; //$NON-NLS-1$
 				}
 			}
 			return name;

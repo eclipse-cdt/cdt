@@ -19,4 +19,8 @@ public class MIConst extends MIValue {
 	public String getString() {
 		return cstring;
 	}
+
+	public String toString() {
+		return getString();
+	}
 }

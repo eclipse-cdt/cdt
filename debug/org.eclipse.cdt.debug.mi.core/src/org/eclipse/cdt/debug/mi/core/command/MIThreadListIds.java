@@ -6,6 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
+
 /**
  * 
  *    -thread-list-ids
@@ -18,5 +23,17 @@ public class MIThreadListIds extends MICommand
 {
 	public MIThreadListIds() {
 		super("-thread-list-ids");
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIThreadListIdsInfo(out);
+			if (info.isError()) {
+				throw new MIException(info.getErrorMsg());
+			}
+		}
+		return info;
 	}
 }

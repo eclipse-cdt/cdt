@@ -11,7 +11,7 @@ public class MIResultRecord {
 	public final static String EXIT ="exit";
 
 	static final MIResult[] nullResults = new MIResult[0];
-	MIResult[] results = null;
+	MIResult[] results = nullResults;
 	String resultClass = "";
 	int token = -1;
 
@@ -34,13 +34,19 @@ public class MIResultRecord {
 	}
 
 	public MIResult[] getMIResults() {
-		if (results == null) {
-			return nullResults;
-		}
 		return results;
 	}
 
 	public void setMIResults(MIResult[] res) {
 		results = res;
+	}
+
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(token).append('^').append(resultClass);
+		for (int i = 0; i < results.length; i++) {
+			buffer.append(',').append(results[i].toString());
+		}
+		return buffer.toString();
 	}
 }

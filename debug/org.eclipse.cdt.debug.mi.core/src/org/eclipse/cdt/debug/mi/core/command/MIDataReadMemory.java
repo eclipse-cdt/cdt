@@ -6,6 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+
 /**
  * 
  *    -data-read-memory [ -o BYTE-OFFSET ]
@@ -54,13 +59,25 @@ public class MIDataReadMemory extends MICommand
 		if (offset != 0) {
 			setOptions(new String[]{"-o", Integer.toString(offset)});
 		}
-		if (asChar != null) {
-			setParameters(new String[]{wordFormat, Integer.toString(wordSize),
+		if (asChar == null) {
+			setParameters(new String[]{address, wordFormat, Integer.toString(wordSize),
 					Integer.toString(rows), Integer.toString(cols)});
 		} else {
-			setParameters(new String[]{wordFormat, Integer.toString(wordSize),
+			setParameters(new String[]{address, wordFormat, Integer.toString(wordSize),
 					Integer.toString(rows), Integer.toString(cols),
 					asChar.toString()});
 		}
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIDataReadMemoryInfo(out);
+			if (info.isError()) {
+				throw new MIException(info.getErrorMsg());
+			}
+		}
+		return info;
 	}
 }

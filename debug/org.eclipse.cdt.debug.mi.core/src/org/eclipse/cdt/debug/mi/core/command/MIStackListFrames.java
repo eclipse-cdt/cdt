@@ -6,6 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
+
 /**
  * 
  *     -stack-list-frames [ LOW-FRAME HIGH-FRAME ]
@@ -42,6 +47,19 @@ public class MIStackListFrames extends MICommand
 	}
 
 	public MIStackListFrames(int low, int high) {
-		super("-stack-list-frames", new String[]{Integer.toString(low), Integer.toString(high)});
+		super("-stack-list-frames", new String[]{Integer.toString(low),
+			Integer.toString(high)});
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIStackListFramesInfo(out);
+			if (info.isError()) {
+				throw new MIException(info.getErrorMsg());
+			}
+		}
+		return info;
 	}
 }

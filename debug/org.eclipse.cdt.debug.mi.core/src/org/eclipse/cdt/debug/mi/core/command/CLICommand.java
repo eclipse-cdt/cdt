@@ -12,37 +12,22 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 /**
  * 
  * Represents a CLI command.
- * 
- * @author Mikhail Khodjaiants
- * @since Jul 11, 2002
  */
 public class CLICommand extends Command
 {
-	int token = -1;
-	MIOutput miOutput = null;
-	
+
+	String operation = "";
+
+	public CLICommand(String oper) {
+		operation = oper;
+	}
+
 	/**
 	 * Returns the text representation of this command.
 	 * 
 	 * @return the text representation of this command
 	 */
-	public int getToken() {
-		return token;
-	}
-	
-	public void setToken(int t) {
-		token = t;
-	}
-	
 	public String toString(){
-		return "";
-	}
-
-	public void setMIOutput(MIOutput mi) {
-		miOutput = mi;
-	}
-
-	public MIInfo getInfo () {
-		return null;
+		return operation;
 	}
 }

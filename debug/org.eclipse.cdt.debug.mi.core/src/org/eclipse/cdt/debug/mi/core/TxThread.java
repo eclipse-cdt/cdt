@@ -43,7 +43,8 @@ public class TxThread extends Thread {
 				cmd.setToken(token);
 				//System.out.println("Tx " + cmd.toString());
 				try {
-					out.write(cmd.toString().getBytes());
+					String str = cmd.toString();
+					out.write(str.getBytes());
 					out.flush();
 				} catch (IOException e) {
 					//e.printStackTrace();

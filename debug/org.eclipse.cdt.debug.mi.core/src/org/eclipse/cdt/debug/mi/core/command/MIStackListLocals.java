@@ -6,6 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
+
 /**
  * 
  *     -stack-list-locals PRINT-VALUES
@@ -24,5 +29,17 @@ public class MIStackListLocals extends MICommand
 		} else {
 			setParameters(new String[]{"0"});
 		}
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIStackListLocalsInfo(out);
+			if (info.isError()) {
+				throw new MIException(info.getErrorMsg());
+			}
+		}
+		return info;
 	}
 }

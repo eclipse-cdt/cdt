@@ -39,11 +39,12 @@ public class RxThread extends Thread {
 			while (true) {
 				String line;
 				while ((line = reader.readLine()) != null) {
-					if (line.equals("(gdb)")) {
+					if (line.startsWith("(gdb)")) {
 						processMIOutput(buffer.toString());
 						buffer = new StringBuffer();
+					} else {
+						buffer.append(line).append('\n');
 					}
-					buffer.append(line).append('\n');
 				}
 			}
 		} catch (IOException e) {
@@ -62,8 +63,10 @@ public class RxThread extends Thread {
 				int id = rr.geToken();
 				Command cmd = rxQueue.removeCommand(id);
 				if (cmd != null) {
-					cmd.setMIOutput(response);
-					cmd.notifyAll();
+					synchronized (cmd) {
+						cmd.setMIOutput(response);
+						cmd.notifyAll();
+					}
 				}
 			}
 

@@ -12,9 +12,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 /**
  * 
  * Represents a MI command.
- * 
- * @author Mikhail Khodjaiants
- * @since Jul 11, 2002
  */
 public class MICommand extends Command
 {
@@ -22,8 +19,6 @@ public class MICommand extends Command
 	String[] options = empty;
 	String[] parameters = empty;
 	String operation = "";
-	int token = -1;
-	MIOutput miOutput = null;
 
 	public MICommand(String oper) {
 		this.operation = oper;
@@ -78,7 +73,7 @@ public class MICommand extends Command
 	}
 
 	public String toString() {
-		String command =  getToken() + "-" + getOperation(); 
+		String command =  getToken() + getOperation(); 
 		if (options != null && options.length > 0) {
 			for (int i = 0; i < options.length; i++) {
 				command += " " + options[i];
@@ -95,30 +90,10 @@ public class MICommand extends Command
 				    parameters[i].indexOf(' ') != -1) {
 					command += " \"" + parameters[i] + "\"";
 				} else {
-					command += " \"" + parameters[i] + "\"";
+					command += " " + parameters[i];
 				}
 			}
 		}
 		return command + "\n";
-	}
-
-	public int getToken() {
-		return token;
-	}
-
-	public void setToken(int t) {
-		token = t;
-	}
-
-	public MIOutput getMIOutput() {
-		return miOutput;
-	}
-
-	public void setMIOutput(MIOutput mi) {
-		miOutput = mi;
-	}
-	
-	public MIInfo getInfo () {
-		return null;
 	}
 }

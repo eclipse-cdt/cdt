@@ -3,6 +3,7 @@ package org.eclipse.cdt.debug.mi.core;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
@@ -32,7 +33,7 @@ public class MISession {
 	/**
 	 * The constructor.
 	 */
-	MISession(InputStream i, OutputStream o) {
+	public MISession(InputStream i, OutputStream o) {
 		inChannel = i;
 		outChannel= o;
 		factory = new CommandFactory();
@@ -94,6 +95,20 @@ public class MISession {
 		parser = p;
 	}
 
+	/**
+	 * 
+	 */
+	public void postCommand(Command cmd) {
+		txQueue.addCommand(cmd);
+		synchronized (cmd) {
+			try {
+				// FIXME: missing the predicate
+				cmd.wait();
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
 	Queue getTxQueue() {
 		return txQueue;
 	}

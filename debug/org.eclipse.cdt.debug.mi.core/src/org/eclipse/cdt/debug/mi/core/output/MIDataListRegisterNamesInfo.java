@@ -5,11 +5,11 @@ import java.util.List;
 
 /**
  */
-public class MIDataListRegistersNamesInfo extends MIInfo {
+public class MIDataListRegisterNamesInfo extends MIInfo {
 
 	String[] names;
 
-	public MIDataListRegistersNamesInfo(MIOutput rr) {
+	public MIDataListRegisterNamesInfo(MIOutput rr) {
 		super(rr);
 	}
 

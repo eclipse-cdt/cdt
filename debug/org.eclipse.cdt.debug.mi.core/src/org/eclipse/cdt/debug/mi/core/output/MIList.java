@@ -7,13 +7,10 @@ public class MIList extends MIValue {
 	final static MIResult[] nullResults = new MIResult[0];
 	final static MIValue[] nullValues = new MIValue[0];
 
-	MIResult[] results;
-	MIValue[] values;
+	MIResult[] results = nullResults;;
+	MIValue[] values = nullValues;
 
 	public MIResult[] getMIResults() {
-		if (results == null) {
-			return nullResults;
-		}
 		return results;
 	}
 
@@ -22,13 +19,23 @@ public class MIList extends MIValue {
 	}
 
 	public MIValue[] getMIValues() {
-		if (values == null) {
-			return nullValues;
-		}
 		return values;
 	}
 
 	public void setMIValues(MIValue[] vals) {
 		values = vals;
+	}
+
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append('[');
+		for (int i = 0; i < results.length; i++) {
+			buffer.append(results[i].toString());
+		}
+		for (int i = 0; i < values.length; i++) {
+			buffer.append(values[i].toString());
+		}
+		buffer.append(']');
+		return buffer.toString();
 	}
 }

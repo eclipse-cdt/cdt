@@ -82,7 +82,7 @@ public class MIBreakPoint {
 				enabled = str.equals("y");
 			} else if (var.equals("addr")) {
 				try {
-					address = Long.parseLong(str);
+					address = Long.decode(str).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func")) {

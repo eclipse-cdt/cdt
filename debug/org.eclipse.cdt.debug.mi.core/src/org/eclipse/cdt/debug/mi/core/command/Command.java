@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
@@ -18,18 +19,43 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public abstract class Command
 {
+	int token = 0;
+	MIOutput output;
+
 	/**
 	 * Returns the identifier of this request.
 	 * 
 	 * @return the identifier of this request
 	 */
-	public abstract int getToken();
+	public int getToken() {
+		return token;
+	}
 	
-	public abstract void setToken(int token);
+	public void setToken(int token) {
+		this.token = token;
+	}
 
-	public abstract String toString();
+	public MIOutput getMIOutput() {
+		return output;
+	}
 
-	public abstract void setMIOutput(MIOutput mi);
+	public void setMIOutput(MIOutput mi) {
+		output = mi;
+	}
 
-	public abstract MIInfo getInfo();
+	/**
+	 * Parse the MIOutput generate after posting the command.
+	 */
+	public MIInfo getMIInfo () throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIInfo(out);
+			if (info.isError()) {
+				String s = info.getErrorMsg();
+				throw new MIException(s);
+			}
+		}
+		return info;
+	}
 }

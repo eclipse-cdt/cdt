@@ -6,26 +6,52 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIThreadSelectInfo extends MIInfo {
 
-	public class Frame {
-		public class Arg {
-			String name;
-			String value;
-		}
-		int level;
-		String function;
-		Arg[] args;
-	}
-		
-		 
+	int threadId;
+	MIFrame frame;
+
 	public MIThreadSelectInfo(MIOutput out) {
 		super(out);
 	}
 
-	public String getNewThreadId() {
-		return "";
+	public int getNewThreadId() {
+		if (frame == null) {
+			parse();
+		}
+		return threadId;
 	}
 
-	public Frame getFrame() {
-		return null;
+	public MIFrame getFrame() {
+		if (frame == null) {
+			parse();
+		}
+		return frame;
+	}
+
+	void parse() {
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results =  rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("new-thread-ids")) {
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIConst) {
+							String str = ((MIConst)value).getString();
+							try {
+								threadId = Integer.parseInt(str);
+							} catch (NumberFormatException e) {
+							}
+						}
+					} else if (var.equals("frame")) {
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MITuple) {
+							frame = new MIFrame((MITuple)value);
+						}
+					}
+				}
+			}
+		}
 	}
 }

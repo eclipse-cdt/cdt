@@ -6,6 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
+
 /**
  * 
  *     -stack-info-depth [ MAX-DEPTH ]
@@ -22,5 +27,17 @@ public class MIStackInfoDepth extends MICommand
 
 	public MIStackInfoDepth(int maxDepth) {
 		super("-stack-info-depth", new String[]{Integer.toString(maxDepth)});
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIStackInfoDepthInfo(out);
+			if (info.isError()) {
+				throw new MIException(info.getErrorMsg());
+			}
+		}
+		return info;
 	}
 }

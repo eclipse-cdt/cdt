@@ -8,7 +8,7 @@ public abstract class MIAsyncRecord extends MIOOBRecord {
 
 	MIResult[] results = null;
 	String asynClass = "";
-	int token = -1;
+	int token = 0;
 
 	public int getToken() {
 		return token;
@@ -35,5 +35,28 @@ public abstract class MIAsyncRecord extends MIOOBRecord {
 
 	public void setMIResults(MIResult[] res) {
 		results = res;
+	}
+
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		if (token != 0) {
+			buffer.append(token);
+		}
+		if (this instanceof MIExecAsyncOutput) {
+			buffer.append('*');
+		} else if (this instanceof MIStatusAsyncOutput) {
+			buffer.append('+');
+		} else if (this instanceof MINotifyAsyncOutput) {
+			buffer.append('=');
+		}
+		buffer.append(asynClass);
+		if (results != null) {
+			for (int i = 0; i < results.length; i++) {
+				buffer.append(',');
+				buffer.append(results.toString());
+			}
+		}
+		buffer.append('\n');
+		return buffer.toString();
 	}
 }

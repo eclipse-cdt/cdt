@@ -13,4 +13,15 @@ public abstract class MIStreamRecord extends MIOOBRecord {
 	public void setCString(String str) {
 		cstring = str;
 	} 
+
+	public String toString() {
+		if (this instanceof MIConsoleStreamOutput) {
+			return "~\"" + cstring + "\"\n";
+		} else if (this instanceof MITargetStreamOutput) {
+			return "@\"" + cstring + "\"\n";
+		} else if (this instanceof MILogStreamOutput) {
+			return "&\"" + cstring + "\"\n";
+		}
+		return  "\"" + cstring + "\"\n";
+	}
 }

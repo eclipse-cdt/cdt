@@ -173,7 +173,7 @@ public class CProject extends Openable implements ICProject {
 			for (int i = 0; i < binConfigs.length; i++) {
 				IBinaryFile bin;
 				try {
-					bin = binConfigs[i].getBinaryParser().getBinary(entry.getPath());
+					bin = binConfigs[i].getBinaryParser().getBinary(entry.getFullLibraryPath());
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
 							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);

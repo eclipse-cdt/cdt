@@ -268,7 +268,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		return fCPathList;
 	}
 
-	protected IPathEntry[] getRawClasspath() {
+	protected IPathEntry[] getRawPathEntries() {
 		IPathEntry[] currEntries = new IPathEntry[fCPathList.size()];
 		for (int i = 0; i < currEntries.length; i++) {
 			CPElement curr = (CPElement) fCPathList.get(i);

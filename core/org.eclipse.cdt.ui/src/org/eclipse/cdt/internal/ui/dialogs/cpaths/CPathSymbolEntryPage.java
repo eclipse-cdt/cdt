@@ -156,7 +156,7 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 			title = CPathEntryMessages.getString("SymbolEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
 			elem = existing.getPathEntry();
 		}
-		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, (ICElement)getSelection().get(0), getRawClasspath(),
+		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, (ICElement)getSelection().get(0), getRawPathEntries(),
 				IPathEntry.CDT_MACRO);
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {

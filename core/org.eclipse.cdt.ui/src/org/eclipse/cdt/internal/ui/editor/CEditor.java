@@ -85,6 +85,7 @@ import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -763,7 +764,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			if (getTextWidget() == null) {
 				return;
 			}
-
+			switch (operation) {
+				case CONTENTASSIST_PROPOSALS:
+					String msg= fContentAssistant.showPossibleCompletions();
+					setStatusLineErrorMessage(msg);
+					return;
+			}
 			super.doOperation(operation);
 		}
 
@@ -921,4 +927,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
                 sourceViewer.invalidateTextPresentation();
         }
     }
+    
+    /**
+     * Sets the given message as error message to this editor's status line.
+     * 
+     * @param msg message to be set
+     */
+    protected void setStatusLineErrorMessage(String msg) {
+    	IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+    	if (statusLine != null)
+    		statusLine.setMessage(true, msg, null);	
+    }    
 }

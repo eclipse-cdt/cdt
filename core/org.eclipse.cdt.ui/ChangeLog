@@ -1,4 +1,7 @@
-2003-12-20 Hoda Amer
+2003-12-31 Hoda Amer
+	Displayed "No Completions Found" message in status bar
+	 
+2003-12-30 Hoda Amer
 	- Fix for bug#44359: Content Assist: foo(void) does not require args to be filled
 	- Fix for bug#44378: Content Assist: easy keyboard exit of argument-providing mode
 	

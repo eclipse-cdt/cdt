@@ -18,7 +18,9 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -89,9 +91,27 @@ public class ASTUtil {
 		type.append(getArrayQualifiers(declaration));
 		
 		type.append(getPointerToFunctionType(declaration));
+		if (declaration instanceof IASTParameterDeclaration)
+			type.append(getInitializerClause((IASTParameterDeclaration)declaration));
 		return type.toString();
 	}
 	    
+	public static String getInitializerClause(IASTParameterDeclaration declaration){
+		StringBuffer initializer = new StringBuffer();
+		if(declaration != null){
+			IASTInitializerClause clause = declaration.getDefaultValue();
+			if(clause != null){
+				IASTExpression expression = clause.getAssigmentExpression();
+				if(expression != null){
+					String literal = expression.getLiteralString();
+					if(literal.length() > 0)
+						initializer.append("=");
+						initializer.append(literal);
+				}
+			}
+		}
+		return initializer.toString();
+	}
 	public static String getPointerToFunctionType(IASTAbstractDeclaration declaration){
 		StringBuffer type = new StringBuffer();
 		ASTPointerOperator po = declaration.getPointerToFunctionOperator();

@@ -1,3 +1,6 @@
+2003-12-31 Hoda Amer
+	- Changed ASTUtil.getType to include parameter initializer clause in returned string.
+	
 2003-12-22 Hoda Amer
 	Content Assist Work : Returned the results size of the IASTNode lookup
 	to help in determining the scope relevance

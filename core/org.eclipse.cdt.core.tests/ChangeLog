@@ -1,3 +1,7 @@
+2003-12-09 Andrew Niefer
+	added ParserSymbolTableTests.testVisibilityDetermination() 
+	added ParserSymbolTableTests.testPrefixFiltering
+
 2003-12-09 Hoda Amer
 	Modified the Completion Proposal test to include case sensitivity 
 	in the order of proposals.

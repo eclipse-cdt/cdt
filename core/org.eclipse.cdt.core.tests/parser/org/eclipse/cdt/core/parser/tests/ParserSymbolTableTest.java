@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,16 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTClassSpecifier;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTField;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
@@ -29,6 +40,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateInstance;
+import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.OperatorExpression;
@@ -3010,7 +3022,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol anotherVar = table.newSymbol( "anotherVar", TypeInfo.t_int );
 		foo.addSymbol( anotherVar );
 		
-		List results = foo.prefixLookup( TypeInfo.t_any, "a", false );
+		List results = foo.prefixLookup( null, "a", false );
 		assertTrue( results != null );
 		assertEquals( results.size(), 2 );
 		
@@ -3044,7 +3056,7 @@ public class ParserSymbolTableTest extends TestCase {
 		D.addSymbol( aField );
 		D.addSymbol( aMethod );
 		
-		List results = D.prefixLookup( TypeInfo.t_any, "a", true );
+		List results = D.prefixLookup( null, "a", true );
 		
 		assertTrue( results != null );
 		assertEquals( results.size(), 2 );
@@ -3096,7 +3108,7 @@ public class ParserSymbolTableTest extends TestCase {
 		B.addSymbol( af2 );
 		
 		
-		List results = B.prefixLookup( TypeInfo.t_any, "a", true );
+		List results = B.prefixLookup( null, "a", true );
 		
 		assertTrue( results != null );
 		assertEquals( results.size(), 3 );
@@ -3161,7 +3173,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f.addUsingDirective( V );
 		f.addUsingDirective( W );
 		
-		List results = f.prefixLookup( TypeInfo.t_any, "a", false );
+		List results = f.prefixLookup( null, "a", false );
 		
 		assertTrue( results != null );
 		assertEquals( results.size(), 1 );
@@ -3195,5 +3207,131 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( null, A.qualifiedLookup( "i" ) );
 		assertEquals( i, g.lookup( "i" ) );
 	}
+	
+	/**
+	 * class A { public: static int i; };
+	 * class B : private A {};
+	 * class C : public B, public A {};
+	 * 
+	 * @throws Exception
+	 */
+	public void testVisibilityDetermination() throws Exception{
+		newTable();
+		
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_int );
+		
+		table.getCompilationUnit().addSymbol( A );
+		A.addSymbol( i );
+
+		IASTCompilationUnit compUnit = new ASTCompilationUnit(table.getCompilationUnit() );
+		ISymbolASTExtension cuExtension = new StandardSymbolExtension( table.getCompilationUnit(), (ASTSymbol) compUnit );
+		table.getCompilationUnit().setASTExtension( cuExtension );
+		
+		IASTClassSpecifier clsSpec = new ASTClassSpecifier( A, ASTClassKind.CLASS, ClassNameType.IDENTIFIER, ASTAccessVisibility.PUBLIC, 0, 0, 0, new ArrayList( ) ); 
+		ISymbolASTExtension clsExtension = new StandardSymbolExtension( A, (ASTSymbol) clsSpec );
+		A.setASTExtension( clsExtension );
+		
+		IASTField field = new ASTField(i, null, null, null, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PUBLIC );
+		ISymbolASTExtension extension = new StandardSymbolExtension( i, (ASTSymbol) field );
+		i.setASTExtension( extension );
+	
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		B.addParent( A, false, ASTAccessVisibility.PRIVATE, 0, null );
+		table.getCompilationUnit().addSymbol( B );
+		
+		IDerivableContainerSymbol C = table.newDerivableContainerSymbol( "C", TypeInfo.t_class );
+		C.addParent( B );
+		C.addParent( A );
+		table.getCompilationUnit().addSymbol( C );
+		
+		assertTrue( table.getCompilationUnit().isVisible( i, A ) );
+		assertFalse( table.getCompilationUnit().isVisible( i, B ) );
+		assertTrue( table.getCompilationUnit().isVisible(i, C ) );
+	}
+	
+	/**
+	 * struct a1{};
+	 * void aFoo() {}
+	 * int aa;
+	 * class A2{
+	 *    struct a3 {};
+	 *    int a3;
+	 *    void aF();
+	 *    void f() {
+	 *       int aLocal;
+	 *       A(CTRL+SPACE)
+	 *    };
+	 * };
+	 * @throws Exception
+	 */
+	public void testPrefixFiltering() throws Exception{
+		newTable();
+		IDerivableContainerSymbol a1 = table.newDerivableContainerSymbol( "a1", TypeInfo.t_struct );
+		table.getCompilationUnit().addSymbol( a1 );
+		
+		IParameterizedSymbol aFoo = table.newParameterizedSymbol( "aFoo", TypeInfo.t_function );
+		table.getCompilationUnit().addSymbol( aFoo );
+		
+		ISymbol aa = table.newSymbol( "aa", TypeInfo.t_int );
+		table.getCompilationUnit().addSymbol( aa );
+		
+		IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A2", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( A2 );
+		
+		IDerivableContainerSymbol a3 = table.newDerivableContainerSymbol( "a3", TypeInfo.t_struct );
+		A2.addSymbol( a3 );
+		
+		ISymbol a3_int = table.newSymbol( "a3", TypeInfo.t_int );
+		A2.addSymbol( a3_int );
+		
+		IParameterizedSymbol aF = table.newParameterizedSymbol( "aF", TypeInfo.t_function );
+		A2.addSymbol( aF );
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		A2.addSymbol( f );
+		
+		ISymbol aLocal = table.newSymbol( "aLocal", TypeInfo.t_int );
+		f.addSymbol( aLocal );
+		
+		List results = f.prefixLookup( new TypeFilter( LookupKind.STRUCTURES ), "A", false );
+		
+		assertEquals( results.size(), 3 );
+		
+		assertTrue( results.contains( a1 ) );
+		assertTrue( results.contains( A2 ) );
+		assertTrue( results.contains( a3 ) );
+		
+		results = f.prefixLookup( null, "a", false );
+		assertEquals( results.size(), 7 );
+		assertTrue( results.contains( aF ) );
+		assertTrue( results.contains( A2 ) );
+		assertTrue( results.contains( a3_int ) );
+		assertTrue( results.contains( a1 ) );
+		assertTrue( results.contains( aFoo ) );
+		assertTrue( results.contains( aa ) );
+		assertTrue( results.contains( aLocal ) );
+		
+		results = f.prefixLookup( new TypeFilter( LookupKind.FUNCTIONS ), "a", false );
+		assertEquals( results.size(), 1 );
+		assertTrue( results.contains( aFoo ) );
+		
+		results = f.prefixLookup( new TypeFilter( LookupKind.METHODS ), "a", false );
+		assertEquals( results.size(), 1 );
+		assertTrue( results.contains( aF ) );
+		
+		results = f.prefixLookup( new TypeFilter( LookupKind.LOCAL_VARIABLES ), "a", false );
+		assertEquals( results.size(), 1 );
+		assertTrue( results.contains( aLocal ) );
+		
+		results = f.prefixLookup( new TypeFilter( LookupKind.VARIABLES ), "a", false );
+		assertEquals( results.size(), 1 );
+		assertTrue( results.contains( aa ) );
+		
+		results = f.prefixLookup( new TypeFilter( LookupKind.FIELDS), "a", false );
+		assertEquals( results.size(), 1 );
+		assertTrue( results.contains( a3_int ) );
+	};
+	
 }
 

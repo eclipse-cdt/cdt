@@ -25,6 +25,9 @@ import java.util.Set;
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.IASTMember;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
@@ -90,9 +93,9 @@ public class ParserSymbolTable {
 	 */
 	static protected void lookup( LookupData data, IContainerSymbol inSymbol ) throws ParserSymbolTableException
 	{
-		if( data.type != TypeInfo.t_any && data.type.compareTo(TypeInfo.t_class) < 0 && data.upperType.compareTo(TypeInfo.t_union) > 0 ){
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
-		}
+//		if( data.type != TypeInfo.t_any && data.type.compareTo(TypeInfo.t_class) < 0 && data.upperType.compareTo(TypeInfo.t_union) > 0 ){
+//			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
+//		}
 		
 		//handle namespace aliases
 		if( inSymbol.isType( TypeInfo.t_namespace ) ){
@@ -352,22 +355,26 @@ public class ParserSymbolTable {
 	
 	private static boolean nameMatches( LookupData data, String name ){
 		if( data.mode == LookupMode.PREFIX ){
-			return name.startsWith( data.name );
+			return name.regionMatches( true, 0, data.name, 0, data.name.length() );
 		} else {
 			return name.equals( data.name );
 		}
 	}
-	private static boolean checkType( LookupData data, ISymbol symbol, TypeInfo.eType type, TypeInfo.eType upperType ){
+	private static boolean checkType( LookupData data, ISymbol symbol ) { //, TypeInfo.eType type, TypeInfo.eType upperType ){
+		if( data.filter == null ){
+			return true;
+		}
+		
 		if( data.templateInstance != null && symbol.isTemplateMember() ){
 			if( symbol.isType( TypeInfo.t_type ) ){
 				symbol = symbol.getTypeSymbol();
 			}
 			if( symbol.isType( TypeInfo.t_undef ) && symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
 				TypeInfo info = (TypeInfo) data.templateInstance.getArgumentMap().get( symbol );
-				return info.isType( type, upperType );
+				return data.filter.shouldAccept( symbol, info );
 			}	
 		} 
-		return symbol.isType( type, upperType );
+		return data.filter.shouldAccept( symbol );
 	}
 	
 	private static Object collectSymbol(LookupData data, Object object ) throws ParserSymbolTableException {
@@ -385,7 +392,7 @@ public class ParserSymbolTable {
 		IContainerSymbol cls = null;
 		
 		while( symbol != null ){
-			if( checkType( data, symbol, data.type, data.upperType ) ){
+			if( checkType( data, symbol ) ){//, data.type, data.upperType ) ){
 				if( symbol.isTemplateMember() && data.templateInstance != null )
 					foundSymbol = new TemplateInstance( symbol.getSymbolTable(), symbol, data.templateInstance.getArgumentMap() );
 				else
@@ -1110,7 +1117,7 @@ public class ParserSymbolTable {
 	 * 
 	 * TBD: Consider rewriting iteratively for performance.
 	 */
-	static private int hasBaseClass( ISymbol obj, ISymbol base ) throws ParserSymbolTableException {
+	static protected int hasBaseClass( ISymbol obj, ISymbol base ) throws ParserSymbolTableException {
 		return hasBaseClass( obj, base, false );
 	}
 	
@@ -2242,9 +2249,8 @@ public class ParserSymbolTable {
 		public List parameters;			//parameter info for resolving functions
 		public HashSet associated;				//associated namespaces for argument dependant lookup
 		public ISymbol stopAt;					//stop looking along the stack once we hit this declaration
-				 
-		public TypeInfo.eType type = TypeInfo.t_any;
-		public TypeInfo.eType upperType = TypeInfo.t_undef;
+		public TypeFilter filter = null;
+		
 		public boolean qualified = false;
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
@@ -2257,7 +2263,12 @@ public class ParserSymbolTable {
 		
 		public LookupData( String n, TypeInfo.eType t, ISymbol i ){
 			name = n;
-			type = t;
+			filter = new TypeFilter( t );
+			templateInstance = i;
+		}
+		public LookupData( String n, TypeFilter f, ISymbol i ){
+			name = n;
+			filter = ( f != null ) ? f : new TypeFilter( TypeInfo.t_any );
 			templateInstance = i;
 		}
 	}
@@ -2372,4 +2383,69 @@ public class ParserSymbolTable {
 		}
 	}
 
+	/**
+	 * The visibility of the symbol is modified by the visibility of the base classes
+	 * @param symbol
+	 * @param qualifyingSymbol
+	 * @return
+	 */
+	public static ASTAccessVisibility getVisibility(ISymbol symbol, IContainerSymbol qualifyingSymbol) throws ParserSymbolTableException {
+		
+		IContainerSymbol container = symbol.getContainingSymbol();
+		if( qualifyingSymbol == null || container.equals( qualifyingSymbol ) ){
+			ISymbolASTExtension extension = symbol.getASTExtension();
+			IASTNode node = extension != null ? extension.getPrimaryDeclaration() : null;
+			if( node != null && node instanceof IASTMember ){
+				return ((IASTMember)node).getVisiblity();
+			} else {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
+			}
+		}
+		
+		if( ! (qualifyingSymbol instanceof IDerivableContainerSymbol) ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );	
+		}
+		
+		List parents = ((IDerivableContainerSymbol) qualifyingSymbol).getParents();
+		Iterator iter = parents.iterator();
+		IParentSymbol parent = null;
+		ASTAccessVisibility symbolAccess = null;
+		ASTAccessVisibility parentAccess = null;
+		
+		while( iter.hasNext() ){
+			parent = (IParentSymbol) iter.next();
+			
+			if( container == parent.getParent() ){
+				parentAccess = parent.getAccess();
+				symbolAccess = ((IASTMember)symbol.getASTExtension().getPrimaryDeclaration()).getVisiblity();
+				
+				return ( parentAccess.getEnumValue() > symbolAccess.getEnumValue() ) ? parentAccess : symbolAccess;					
+			}
+		}
+		
+		iter = parents.iterator();
+		
+		//if static or an enumerator, the symbol could be visible through more than one path through the heirarchy,
+		//so we need to check all paths
+		boolean checkAllPaths = ( symbol.isType( TypeInfo.t_enumerator ) || symbol.getTypeInfo().checkBit( TypeInfo.isStatic ) );
+		ASTAccessVisibility resultingAccess = null;
+		while( iter.hasNext() ){
+			parent = (IParentSymbol) iter.next();
+			parentAccess = parent.getAccess();
+			symbolAccess = getVisibility( symbol, (IContainerSymbol) parent.getParent() );
+			
+			if( symbolAccess != null ){
+				symbolAccess = ( parentAccess.getEnumValue() > symbolAccess.getEnumValue() ) ? parentAccess : symbolAccess; 
+				if( checkAllPaths ){
+					if( resultingAccess != null )
+						resultingAccess = ( resultingAccess.getEnumValue() > symbolAccess.getEnumValue() ) ? symbolAccess : resultingAccess;
+					else
+						resultingAccess = symbolAccess;
+				} else {
+					return symbolAccess;
+				}
+			}
+		}
+		return resultingAccess;
+	}
 }

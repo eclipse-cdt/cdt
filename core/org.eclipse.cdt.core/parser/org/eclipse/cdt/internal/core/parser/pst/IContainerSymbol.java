@@ -39,7 +39,7 @@ public interface IContainerSymbol extends ISymbol {
 			
 	public Map getContainedSymbols();
 	
-	public List prefixLookup( TypeInfo.eType type, String prefix, boolean qualified ) throws ParserSymbolTableException;
+	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException;
 	
 	public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException; 
 	public ISymbol lookup( String name ) throws ParserSymbolTableException;
@@ -53,4 +53,6 @@ public interface IContainerSymbol extends ISymbol {
 	public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
 	public TemplateInstance templateLookup( String name, List arguments ) throws ParserSymbolTableException;
 	public TemplateInstance instantiate( List arguments ) throws ParserSymbolTableException;
+	
+	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol );
 }

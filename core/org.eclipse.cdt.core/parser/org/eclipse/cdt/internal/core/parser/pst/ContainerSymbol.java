@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.IASTMember;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Command;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
 
@@ -378,8 +381,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ISymbol foundSymbol = null;
 	
 		LookupData data = new LookupData( name, TypeInfo.t_namespace, getTemplateInstance() );
-		data.upperType = TypeInfo.t_union;
-	
+		data.filter.addFilteredType( TypeInfo.t_class );
+		data.filter.addFilteredType( TypeInfo.t_struct );
+		data.filter.addFilteredType( TypeInfo.t_union );
+		
 		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	
 		if( data.foundItems != null ){
@@ -571,8 +576,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 
-	public List prefixLookup( TypeInfo.eType type, String prefix, boolean qualified ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( prefix, type, getTemplateInstance() );
+	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( prefix, filter, getTemplateInstance() );
 		data.qualified = qualified;
 		data.mode = ParserSymbolTable.LookupMode.PREFIX;
 		
@@ -605,6 +610,45 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			
 			return list;
 		}
+	}
+	
+	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol ){
+		ISymbolASTExtension extension = symbol.getASTExtension();
+		IASTNode node = extension.getPrimaryDeclaration();
+		
+		if( node instanceof IASTMember ){
+			ASTAccessVisibility visibility;
+			try {
+				visibility = ParserSymbolTable.getVisibility( symbol, qualifyingSymbol );
+			} catch (ParserSymbolTableException e) {
+				return false;
+			}
+			if( visibility == ASTAccessVisibility.PUBLIC ){
+				return true;
+			}
+			
+			IContainerSymbol container = getContainingSymbol();
+			IContainerSymbol symbolContainer = ( qualifyingSymbol != null ) ? qualifyingSymbol : symbol.getContainingSymbol();
+			
+			if( !symbolContainer.isType( TypeInfo.t_class, TypeInfo.t_union ) ||
+				symbolContainer.equals( container ) )
+			{
+				return true;
+			}
+			
+			//TODO: friendship
+			if( visibility == ASTAccessVisibility.PROTECTED )
+			{
+				try {
+					return ( ParserSymbolTable.hasBaseClass( container, symbolContainer ) >= 0 );
+				} catch (ParserSymbolTableException e) {
+					return false;
+				}
+			} else { //PRIVATE
+				return false; 
+			}
+		}
+		return true;
 	}
 	
 	/* (non-Javadoc)

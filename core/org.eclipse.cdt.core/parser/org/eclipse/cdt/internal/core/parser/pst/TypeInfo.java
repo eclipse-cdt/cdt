@@ -102,19 +102,20 @@ public class TypeInfo {
 	public static final TypeInfo.eType t_enumeration = new TypeInfo.eType(  6 );
 	public static final TypeInfo.eType t_constructor = new TypeInfo.eType(  7 );
 	public static final TypeInfo.eType t_function    = new TypeInfo.eType(  8 );
-	public static final TypeInfo.eType t_bool        = new TypeInfo.eType(  9 );
-	public static final TypeInfo.eType t_char        = new TypeInfo.eType( 10 );
-	public static final TypeInfo.eType t_wchar_t     = new TypeInfo.eType( 11 );
-	public static final TypeInfo.eType t_int         = new TypeInfo.eType( 12 );
-	public static final TypeInfo.eType t_float       = new TypeInfo.eType( 13 );
-	public static final TypeInfo.eType t_double      = new TypeInfo.eType( 14 );
-	public static final TypeInfo.eType t_void        = new TypeInfo.eType( 15 );
-	public static final TypeInfo.eType t_enumerator  = new TypeInfo.eType( 16 );
-	public static final TypeInfo.eType t_block       = new TypeInfo.eType( 17 );
-	public static final TypeInfo.eType t_template    = new TypeInfo.eType( 18 );
-	public static final TypeInfo.eType t_asm         = new TypeInfo.eType( 19 );
-	public static final TypeInfo.eType t_linkage     = new TypeInfo.eType( 20 );
-	public static final TypeInfo.eType t__Bool       = new TypeInfo.eType( 21 ); 
+    public static final TypeInfo.eType t__Bool       = new TypeInfo.eType(  9 ); 
+	public static final TypeInfo.eType t_bool        = new TypeInfo.eType( 10 );
+	public static final TypeInfo.eType t_char        = new TypeInfo.eType( 11 );
+	public static final TypeInfo.eType t_wchar_t     = new TypeInfo.eType( 12 );
+	public static final TypeInfo.eType t_int         = new TypeInfo.eType( 13 );
+	public static final TypeInfo.eType t_float       = new TypeInfo.eType( 14 );
+	public static final TypeInfo.eType t_double      = new TypeInfo.eType( 15 );
+	public static final TypeInfo.eType t_void        = new TypeInfo.eType( 16 );
+	public static final TypeInfo.eType t_enumerator  = new TypeInfo.eType( 17 );
+	public static final TypeInfo.eType t_block       = new TypeInfo.eType( 18 );
+	public static final TypeInfo.eType t_template    = new TypeInfo.eType( 19 );
+	public static final TypeInfo.eType t_asm         = new TypeInfo.eType( 20 );
+	public static final TypeInfo.eType t_linkage     = new TypeInfo.eType( 21 );
+	
 	//public static final eType t_templateParameter = new eType( 18 );
 	
 	public static class eType implements Comparable{

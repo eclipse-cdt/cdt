@@ -68,6 +68,13 @@ public class GDBTypeParser {
 			dataType += " " + token;
 		}
 
+		// Hack for GDB, the typename can be something like
+		// class A : public B, C { ... } *
+		// We are only interreste in "class A"
+		int column = dataType.indexOf(':');
+		if (column > 0) {
+			dataType = dataType.substring(0, column);
+		}
 		genericType = new GDBType(dataType);
 
 		// Start the recursive parser.
@@ -173,7 +180,7 @@ public class GDBTypeParser {
 
 	// check if the character is an alphabet
 	boolean isCIdentifierStart(int c) {
-		if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
+		if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == ':' || c == ',') {
 			return true;
 		}
 		return false;
@@ -181,6 +188,8 @@ public class GDBTypeParser {
 
 	// check is the character is alpha numeric
 	// [a-zA-Z0-9]
+	// GDB hack accept ':' ',' part of the GDB hacks
+	// when doing ptype gdb returns "class A : public C { ..}"
 	boolean isCIdentifierPart(int c) {
 		if ((c >= '0' && c <= 9) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
 			return true;

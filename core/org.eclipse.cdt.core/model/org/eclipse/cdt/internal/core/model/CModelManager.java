@@ -109,6 +109,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	protected Map elementsOutOfSynchWithBuffers = new HashMap(11);
 
+	/*
+     * Temporary cache of newly opened elements
+     */
+    private ThreadLocal temporaryCache = new ThreadLocal();
+
 	/**
 	 * Infos cache.
 	 */
@@ -986,29 +991,71 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 *  Returns the info for the element.
 	 */
-	public Object getInfo(ICElement element) {
+	public synchronized Object getInfo(ICElement element) {
+		HashMap tempCache = (HashMap)this.temporaryCache.get();
+		if (tempCache != null) {
+			Object result = tempCache.get(element);
+			if (result != null) {
+				return result;
+			}
+		}
 		return this.cache.getInfo(element);
 	}
+
 	/**
 	 *  Returns the info for this element without
 	 *  disturbing the cache ordering.
 	 */
-	protected Object peekAtInfo(ICElement element) {
+	protected synchronized Object peekAtInfo(ICElement element) {
+		HashMap tempCache = (HashMap)this.temporaryCache.get();
+		if (tempCache != null) {
+			Object result = tempCache.get(element);
+			if (result != null) {
+				return result;
+			}
+		}
 		return this.cache.peekAtInfo(element);
 	}
 
 	/**
 	 * Puts the info for a C Model Element
 	 */
-	protected void putInfo(ICElement element, Object info) {
+	protected synchronized void putInfo(ICElement element, Object info) {
 		this.cache.putInfo(element, info);
 	}
 	
 	/** 
 	 * Removes the info of this model element.
 	 */
-	protected void removeInfo(ICElement element) {
+	protected synchronized void removeInfo(ICElement element) {
 		this.cache.removeInfo(element);
+	}
+
+	/*
+	 * Returns the temporary cache for newly opened elements for the current thread.
+	 * Creates it if not already created.
+	 */
+	public HashMap getTemporaryCache() {
+		HashMap result = (HashMap)this.temporaryCache.get();
+		if (result == null) {
+			result = new HashMap();
+			this.temporaryCache.set(result);
+		}
+		return result;
+	}
+
+	/*
+	 * Returns whether there is a temporary cache for the current thread.
+	 */
+	public boolean hasTemporaryCache() {
+		return this.temporaryCache.get() != null;
+	}
+
+	/*
+	 * Resets the temporary cache for newly created elements to null.
+	 */
+	public void resetTemporaryCache() {
+		this.temporaryCache.set(null);
 	}
 
 	/**

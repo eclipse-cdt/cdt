@@ -233,18 +233,16 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 	
 	public CElementInfo getElementInfo () throws CModelException {
-		CModelManager manager;
-		synchronized(manager = CModelManager.getDefault()){
-			Object info = manager.getInfo(this);
+		CModelManager manager = CModelManager.getDefault();
+		Object info = manager.getInfo(this);
+		if (info == null) {
+			openHierarchy();
+			info= manager.getInfo(this);
 			if (info == null) {
-				openHierarchy();
-				info= manager.getInfo(this);
-				if (info == null) {
-					throw newNotPresentException();
-				}
+				throw newNotPresentException();
 			}
-			return (CElementInfo)info;
 		}
+		return (CElementInfo)info;
 	}
 
 	public String toString() {

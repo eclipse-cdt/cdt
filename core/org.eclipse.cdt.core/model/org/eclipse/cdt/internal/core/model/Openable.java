@@ -66,13 +66,12 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * removing the current infos, generating new infos, and then placing
 	 * the new infos into the C Model cache tables.
 	 */
-	protected void buildStructure(OpenableInfo info, IProgressMonitor monitor) throws CModelException {
+	protected void buildStructure(OpenableInfo info, HashMap newElements, IProgressMonitor monitor) throws CModelException {
 
 		if (monitor != null && monitor.isCanceled()) return;
 	
 		// remove existing (old) infos
 		removeInfo();
-		HashMap newElements = new HashMap(11);
 		info.setIsStructureKnown(generateInfos(info, monitor, newElements, getResource()));
 		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
 		for (Iterator iter = newElements.keySet().iterator(); iter.hasNext();) {
@@ -122,9 +121,6 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * the structure of this element.
 	 */
 	protected abstract boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException;
-	//protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
-	//	return false;
-	//}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#getBuffer()
@@ -231,7 +227,16 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	
 	public void makeConsistent(IProgressMonitor pm, boolean forced) throws CModelException {
 		if (!isConsistent() || forced) {
-			buildStructure((OpenableInfo)getElementInfo(), pm);
+			CModelManager manager = CModelManager.getDefault();
+			boolean hadTemporaryCache = manager.hasTemporaryCache();
+			try {
+				HashMap newElements = manager.getTemporaryCache();
+				buildStructure((OpenableInfo)getElementInfo(), newElements, pm);
+			} finally {
+				if (!hadTemporaryCache) {
+					manager.resetTemporaryCache();
+				}				
+			}
 		}
 	}
 
@@ -273,8 +278,10 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * <code>isOpen()</code>).
 	 */
 	protected void openWhenClosed(IProgressMonitor pm) throws CModelException {
+		CModelManager manager = CModelManager.getDefault();
+		boolean hadTemporaryCache = manager.hasTemporaryCache();
 		try {
-			
+			HashMap newElements = manager.getTemporaryCache();
 			// 1) Parent must be open - open the parent if necessary
 			openParent(pm);
 
@@ -286,14 +293,22 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 			} 
 
 			// 3) build the structure of the openable
-			buildStructure(info, pm);
-		
+			buildStructure(info, newElements, pm);
+
+			//if (!hadTemporaryCache) {
+			//	manager.putInfos(this, newElements);
+			//}
+
 			// if any problems occuring openning the element, ensure that it's info
 			// does not remain in the cache	(some elements, pre-cache their info
 			// as they are being opened).
 		} catch (CModelException e) {
 			CModelManager.getDefault().removeInfo(this);
 			throw e;
+		} finally {
+			if (!hadTemporaryCache) {
+				manager.resetTemporaryCache();
+			}
 		}
 	}
 

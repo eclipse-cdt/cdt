@@ -1,3 +1,12 @@
+2002-11-20 Alain Magloire
+
+	Move the Index property page in the C/C++ project category.
+	* src/.../internal/ui/preferences/CIndexerManager.java: Removed.
+	* src/.../internal/ui/preferences/CProjectPropertyPage.java (indexerBlock):
+	Add the indexer block to the CProjectPropertyPage tab.
+	* src/.../ui/wizard/IndexerBlock.java: New file implementing
+	the indexer TabItem.
+
 2002-11-20 David Inglis
 	* src/.../internal/ui/cview/CView.java
 	Added support for label decorators

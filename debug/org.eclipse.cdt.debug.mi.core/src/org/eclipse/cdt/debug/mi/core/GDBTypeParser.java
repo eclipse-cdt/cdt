@@ -342,8 +342,6 @@ public class GDBTypeParser {
 		while (namp-- > 0) {
 			insertingChild(GDBType.REFERENCE);
 		}
-		//dirdcl();
-
 	}
 
 	// parse a direct declarator

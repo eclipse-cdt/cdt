@@ -10,8 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -75,4 +79,61 @@ public class CompleteParseProblemTest extends CompleteParseBaseTest {
 
 	}
 
+	public void testBug68931() throws Exception
+	{
+	    String code = "void foo(){ SomeUnknownType t; } "; //$NON-NLS-1$
+	    parse( code, false );
+	    
+	    int start = code.indexOf( "SomeUnknownType" ); //$NON-NLS-1$
+	    int end = start + 15;
+	    
+	    assertFalse( callback.problems.isEmpty() );
+	    assertEquals( callback.problems.size(), 1 );
+		IProblem p = (IProblem) callback.problems.get( 0 );
+		assertTrue( p.checkCategory( IProblem.SEMANTICS_RELATED ));
+		assertEquals( p.getSourceStart(), start );
+		assertEquals( p.getSourceEnd(), end );
+		assertEquals( p.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );   
+	}
+	
+	public void testBug69744() throws Exception
+	{
+	    String code = "int f() {  try { } catch( foo bar ) {} catch ( ... ) {} }  int i;"; //$NON-NLS-1$
+	    
+	    Iterator i = parse( code, false ).getDeclarations();
+	    
+	    int start = code.indexOf( "foo" ); //$NON-NLS-1$
+	    int end = start + 3;
+	    
+	    assertEquals( callback.problems.size(), 1 );
+	    IProblem p = (IProblem) callback.problems.get( 0 );
+	    
+	    assertEquals( p.getSourceStart(), start );
+	    assertEquals( p.getSourceEnd(), end );
+	    assertEquals( p.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );
+	    
+	    IASTFunction f = (IASTFunction) i.next();
+	    IASTVariable varI = (IASTVariable) i.next();
+	}
+	
+	public void testBug69745() throws Exception
+	{
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "namespace NS{ template < class T > int foo(){};  }   \n" ); //$NON-NLS-1$
+	    buffer.append( "void f() { using NS::foo;  using NS::foo<int>;   }   \n" ); //$NON-NLS-1$
+	    
+	    String code = buffer.toString();
+	    
+	    parse( code, false );
+	    
+	    int start = code.indexOf( "using NS::foo<int>;" ); //$NON-NLS-1$
+	    int end = start + "using NS::foo<int>;".length(); //$NON-NLS-1$
+	    
+	    assertEquals( callback.problems.size(), 1 );
+	    IProblem p = (IProblem) callback.problems.get( 0 );
+	    
+	    assertEquals( p.getSourceStart(), start );
+	    assertEquals( p.getSourceEnd(), end );
+	    assertEquals( p.getID(), IProblem.SEMANTIC_INVALID_USING );
+	}
 }

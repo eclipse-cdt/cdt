@@ -12,12 +12,11 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -27,19 +26,15 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
  */
 public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymbol {
 	
-	protected TemplateSymbol ( ParserSymbolTable table, String name ){
-		super( table, name, TypeInfo.t_template );
-	}
-	
-	protected TemplateSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super( table, name, obj );
+	protected TemplateSymbol ( ParserSymbolTable table, char[] name ){
+		super( table, name, ITypeInfo.t_template );
 	}
 	
 	public Object clone(){
 		TemplateSymbol copy = (TemplateSymbol)super.clone();
 
-		copy._defnParameterMap = ( _defnParameterMap != Collections.EMPTY_MAP ) ? (Map)((HashMap) _defnParameterMap).clone() : _defnParameterMap;
-		copy._instantiations = ( _instantiations != Collections.EMPTY_MAP ) ? (Map)((HashMap) _instantiations).clone() : _instantiations;
+		copy._defnParameterMap = ( _defnParameterMap != ObjectMap.EMPTY_MAP ) ? (ObjectMap)_defnParameterMap.clone() : _defnParameterMap;
+		copy._instantiations = ( _instantiations != ObjectMap.EMPTY_MAP ) ? (ObjectMap)_instantiations.clone() : _instantiations;
 		
 		return copy;	
 	}
@@ -57,9 +52,9 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#instantiate(java.util.List)
 	 */
 	public ISymbol instantiate( List arguments ) throws ParserSymbolTableException{
-		if( getType() != TypeInfo.t_template &&
-				( getType() != TypeInfo.t_templateParameter || 
-						getTypeInfo().getTemplateParameterType() != TypeInfo.t_template ) )
+		if( getType() != ITypeInfo.t_template &&
+				( getType() != ITypeInfo.t_templateParameter || 
+						getTypeInfo().getTemplateParameterType() != ITypeInfo.t_template ) )
 		{
 			return null;
 		}
@@ -82,9 +77,9 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			return null;				
 		}
 
-		HashMap map = new HashMap();
+		ObjectMap map = new ObjectMap( numParams );
 		ISymbol param = null;
-		TypeInfo arg = null;
+		ITypeInfo arg = null;
 		List actualArgs = new ArrayList( numParams );
 		
 		ISymbol templatedSymbol = template.getTemplatedSymbol();
@@ -98,27 +93,27 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			param = TemplateEngine.translateParameterForDefinition ( templatedSymbol, param, getDefinitionParameterMap() );
 			
 			if( i < numArgs ){
-				arg = (TypeInfo) arguments.get(i);
+				arg = (ITypeInfo) arguments.get(i);
 				//If the argument is a template parameter, we can't instantiate yet, defer for later
-				if( arg.isType( TypeInfo.t_type ) ){
+				if( arg.isType( ITypeInfo.t_type ) ){
 					if( arg.getTypeSymbol() == null ) 
 						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
-					else if( arg.getTypeSymbol().isType( TypeInfo.t_templateParameter ) )
+					else if( arg.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) )
 						return deferredInstance( arguments );
 				}
 			} else {
 				Object obj = param.getTypeInfo().getDefault();
-				if( obj != null && obj instanceof TypeInfo ){
-					arg = (TypeInfo) obj;
-					if( arg.isType( TypeInfo.t_type ) && arg.getTypeSymbol().isType( TypeInfo.t_templateParameter ) ){
+				if( obj != null && obj instanceof ITypeInfo ){
+					arg = (ITypeInfo) obj;
+					if( arg.isType( ITypeInfo.t_type ) && arg.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) ){
 						if( map.containsKey( arg.getTypeSymbol() ) ){
-							arg = (TypeInfo) map.get( arg.getTypeSymbol() );
+							arg = (ITypeInfo) map.get( arg.getTypeSymbol() );
 						} else {
 							throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
 						}
-					} else if( arg.isType( TypeInfo.t_type ) && arg.getTypeSymbol() instanceof IDeferredTemplateInstance ){
+					} else if( arg.isType( ITypeInfo.t_type ) && arg.getTypeSymbol() instanceof IDeferredTemplateInstance ){
 						IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) arg.getTypeSymbol();
-						arg = new TypeInfo( arg );
+						arg = TypeInfoProvider.newTypeInfo( arg );
 						arg.setTypeSymbol( deferred.instantiate( this, map ) );
 					}
 				} else {
@@ -138,7 +133,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		if( instance != null ){
 			return instance;
 		} 
-		if( template.isType( TypeInfo.t_templateParameter ) ){
+		if( template.isType( ITypeInfo.t_templateParameter ) ){
 			//template template parameter.  must defer instantiation
 			return deferredInstance( arguments );
 		} 
@@ -163,7 +158,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		return instance;		
 	}
 	
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() ){
 			return null;
 		}
@@ -177,8 +172,8 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		for( int i = 0; i < size; i++ ){
 			param = (ISymbol) parameters.get(i);
 			Object obj = param.getTypeInfo().getDefault();
-			if( obj instanceof TypeInfo ){
-				param.getTypeInfo().setDefault( TemplateEngine.instantiateTypeInfo( (TypeInfo) obj, template, argMap ) );
+			if( obj instanceof ITypeInfo ){
+				param.getTypeInfo().setDefault( TemplateEngine.instantiateTypeInfo( (ITypeInfo) obj, template, argMap ) );
 			}
 		}	
 		
@@ -190,7 +185,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	}
 	
 	public void addTemplateParameter( ISymbol param ) throws ParserSymbolTableException {
-		if( isType( TypeInfo.t_template ) || getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
+		if( isType( ITypeInfo.t_template ) || getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ){
 			if( !isAllowableTemplateParameter( param ) ){
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateParameter );
 			}
@@ -201,17 +196,19 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	}
 	
 	private boolean isAllowableTemplateParameter( ISymbol param ) {
-		if( !param.isType( TypeInfo.t_templateParameter ) )
+		if( !param.isType( ITypeInfo.t_templateParameter ) )
 			return false;
 		
-		if(  !getName().equals( ParserSymbolTable.EMPTY_NAME ) && param.getName().equals( getName() ) ){
+		if( !CharArrayUtils.equals( getName(), ParserSymbolTable.EMPTY_NAME_ARRAY ) &&
+		     CharArrayUtils.equals( param.getName(), getName() ) ) 
+		{
 			return false;
 		}
 		
-		if( param.getTypeInfo().getTemplateParameterType() != TypeInfo.t_typeName &&
-			param.getTypeInfo().getTemplateParameterType() != TypeInfo.t_template )
+		if( param.getTypeInfo().getTemplateParameterType() != ITypeInfo.t_typeName &&
+			param.getTypeInfo().getTemplateParameterType() != ITypeInfo.t_template )
 		{
-			TypeInfo info = param.getTypeInfo();
+			ITypeInfo info = param.getTypeInfo();
 			//a non-type template parameter shall have one of the following:
 			//integral or enumeration type
 			//pointer to object or pointer to function
@@ -221,13 +218,13 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			//14.1-7
 			//A non-type template-parameter shall not be declared to have floating point, class or void type
 			if( info.getPtrOperators().size() == 0 )
-				if( info.getTemplateParameterType() == TypeInfo.t_float        ||
-					info.getTemplateParameterType() == TypeInfo.t_double       ||
-					info.getTemplateParameterType() == TypeInfo.t_class        ||
-					info.getTemplateParameterType() == TypeInfo.t_struct       ||
-					info.getTemplateParameterType() == TypeInfo.t_union        ||
-					info.getTemplateParameterType() == TypeInfo.t_enumeration  ||
-					info.getTemplateParameterType() == TypeInfo.t_void         )
+				if( info.getTemplateParameterType() == ITypeInfo.t_float        ||
+					info.getTemplateParameterType() == ITypeInfo.t_double       ||
+					info.getTemplateParameterType() == ITypeInfo.t_class        ||
+					info.getTemplateParameterType() == ITypeInfo.t_struct       ||
+					info.getTemplateParameterType() == ITypeInfo.t_union        ||
+					info.getTemplateParameterType() == ITypeInfo.t_enumeration  ||
+					info.getTemplateParameterType() == ITypeInfo.t_void         )
 				{
 					return false;
 				}
@@ -238,12 +235,12 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	private void modifyTemplateParameter( ISymbol param ){
 		List ptrs = param.getPtrOperators();
 		if( ptrs.size() > 0 ){
-			PtrOp op = (PtrOp) ptrs.get( 0 );
-			if( op.getType() == PtrOp.t_array ){
-				op.setType( PtrOp.t_pointer );
+			ITypeInfo.PtrOp op = (ITypeInfo.PtrOp) ptrs.get( 0 );
+			if( op.getType() == ITypeInfo.PtrOp.t_array ){
+				op.setType( ITypeInfo.PtrOp.t_pointer );
 			}
-		} else if ( param.isType( TypeInfo.t_type ) && param.getTypeSymbol().isType( TypeInfo.t_function ) ){
-			param.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
+		} else if ( param.isType( ITypeInfo.t_type ) && param.getTypeSymbol().isType( ITypeInfo.t_function ) ){
+			param.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer ) );
 		}
 	}
 	
@@ -262,15 +259,14 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		
 		List actualArgs = TemplateEngine.verifyExplicitArguments( this, args, symbol );
 		
-		if( _explicitSpecializations == Collections.EMPTY_MAP )
-			_explicitSpecializations = new HashMap();
+		if( _explicitSpecializations == ObjectMap.EMPTY_MAP )
+			_explicitSpecializations = new ObjectMap(2);
 		
-		Map specs = null;
+		ObjectMap specs = null;
 		List key = null;
 		
-		Iterator iter = _explicitSpecializations.keySet().iterator();
-		while( iter.hasNext() ){
-			List list = (List) iter.next();
+		for( int i = 0; i < _explicitSpecializations.size(); i++ ){
+			List list = (List) _explicitSpecializations.keyAt( i );
 			if( list.equals( args ) ){
 				key = list;
 				break;
@@ -278,15 +274,15 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		
 		if( key != null ){
-			specs = (Map) _explicitSpecializations.get( key );
+			specs = (ObjectMap) _explicitSpecializations.get( key );
 		} else {
-			specs = new HashMap();
+			specs = new ObjectMap(2);
 			_explicitSpecializations.put( new ArrayList( actualArgs ), specs );
 		}
 		
 		ISymbol found = null;
 		try{
-			if( symbol.isType( TypeInfo.t_function ) || symbol.isType( TypeInfo.t_constructor ) ){
+			if( symbol.isType( ITypeInfo.t_function ) || symbol.isType( ITypeInfo.t_constructor ) ){
 				List params = ((IParameterizedSymbol) symbol).getParameterList();
 				int size = params.size();
 				List fnArgs = new ArrayList( size );
@@ -298,8 +294,9 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				found = getTemplatedSymbol().lookupMemberForDefinition( symbol.getName() );
 			}
 		} catch (ParserSymbolTableException e) {
+		    /* nothing */
 		}
-		if( found == null && getTemplatedSymbol().getName().equals( symbol.getName() ) ){
+		if( found == null && CharArrayUtils.equals( getTemplatedSymbol().getName(), symbol.getName() ) ){
 			found = getTemplatedSymbol();
 			
 			IContainerSymbol instance = findInstantiation( actualArgs );
@@ -311,8 +308,8 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		if( found != null ){
 			//in defining the explicit specialization for a member function, the factory would have set 
 			//the specialization as the definition of the original declaration, which it is not
-			if( found.getTypeInfo().isForwardDeclaration() && found.getTypeSymbol() == symbol )
-				found.setTypeSymbol( null );
+			if( found.isForwardDeclaration() && found.getForwardSymbol() == symbol )
+				found.setForwardSymbol( null );
 			
 			//TODO, once we can instantiate members as we need them instead of at the same time as the class
 			//then found should stay as the instance, for now though, we need the original (not 100% correct
@@ -351,22 +348,22 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	
 	public void addInstantiation( IContainerSymbol instance, List args ){
 		List key = new ArrayList( args );
-		if( _instantiations == Collections.EMPTY_MAP ){
-			_instantiations = new HashMap();
+		if( _instantiations == ObjectMap.EMPTY_MAP ){
+			_instantiations = new ObjectMap(2);
 		}
 		_instantiations.put( key, instance );
 	}
 	
 	public IContainerSymbol findInstantiation( List arguments ){
-		if( _instantiations == Collections.EMPTY_MAP ){
+		if( _instantiations == ObjectMap.EMPTY_MAP ){
 			return null;
 		}
 		
 		//TODO: we could optimize this by doing something other than a linear search.
-		Iterator iter = _instantiations.keySet().iterator();
+		int size = _instantiations.size();
 		List args = null;
-		while( iter.hasNext() ){
-			args = (List) iter.next();
+		for( int i = 0; i < size; i++ ){
+			args = (List) _instantiations.keyAt(i);
 			
 			if( args.equals( arguments ) ){
 				return (IContainerSymbol) _instantiations.get( args );
@@ -379,13 +376,13 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		if( instance == null || !instance.isTemplateInstance() )
 			return null;
 		
-		ITemplateSymbol template = (ITemplateSymbol) instance.getInstantiatedSymbol().getContainingSymbol();
-		if( template != this )
-			return null;
+//		ITemplateSymbol template = (ITemplateSymbol) instance.getInstantiatedSymbol().getContainingSymbol();
+//		if( template != this )
+//			return null;
 		
-		Iterator iter = _instantiations.keySet().iterator();
-		while( iter.hasNext() ){
-			List args = (List) iter.next();
+		int size = _instantiations.size();
+		for( int i = 0; i < size; i++){
+			List args = (List) _instantiations.keyAt( i );
 			if( _instantiations.get( args ) == instance ){
 				return args;
 			}
@@ -401,13 +398,13 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 	}
 	
-	public Map getDefinitionParameterMap(){
+	public ObjectMap getDefinitionParameterMap(){
 		return _defnParameterMap;
 	}
 	
-	protected void addToDefinitionParameterMap( ISymbol newSymbol, Map defnMap ){
-		if( _defnParameterMap == Collections.EMPTY_MAP )
-			_defnParameterMap = new HashMap();
+	protected void addToDefinitionParameterMap( ISymbol newSymbol, ObjectMap defnMap ){
+		if( _defnParameterMap == ObjectMap.EMPTY_MAP )
+			_defnParameterMap = new ObjectMap(2);
 		_defnParameterMap.put( newSymbol, defnMap );
 	}
 	
@@ -415,14 +412,14 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		return new DeferredTemplateInstance( getSymbolTable(), this, args );
 	}
 
-	public Map getExplicitSpecializations() {
+	public ObjectMap getExplicitSpecializations() {
 		return _explicitSpecializations;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol#registerDeferredInstatiation(org.eclipse.cdt.internal.core.parser.pst.ParameterizedSymbol, org.eclipse.cdt.internal.core.parser.pst.ISymbol, org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol.DeferredKind)
 	 */
-	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, Map argMap ) {
+	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, ObjectMap argMap ) {
 		if( _deferredInstantiations == Collections.EMPTY_LIST )
 			_deferredInstantiations = new ArrayList(8);
 		
@@ -452,12 +449,12 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				
 				if( kind == DeferredKind.PARENT ){
 					DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
-					d.instantiateDeferredParent( (ISymbol) objs[ 1 ], this, (Map) objs[3] );
+					d.instantiateDeferredParent( (ISymbol) objs[ 1 ], this, (ObjectMap) objs[3] );
 				} else if( kind == DeferredKind.RETURN_TYPE ){
 					ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
-					p.instantiateDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
+					p.instantiateDeferredReturnType( (ISymbol) objs[1], this, (ObjectMap) objs[3] );
 				} else if( kind == DeferredKind.TYPE_SYMBOL ){
-					TemplateEngine.instantiateDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
+					TemplateEngine.instantiateDeferredTypeInfo( (ITypeInfo) objs[0], this, (ObjectMap) objs[3] );
 				}
 				numProcessed++;
 			}
@@ -480,21 +477,21 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			
 			if( kind == DeferredKind.PARENT ){
 				DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
-				d.discardDeferredParent( (IDeferredTemplateInstance) objs[1], this, (Map) objs[3] );
+				d.discardDeferredParent( (IDeferredTemplateInstance) objs[1], this, (ObjectMap) objs[3] );
 			} else if( kind == DeferredKind.RETURN_TYPE ){
 				ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
-				p.discardDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
+				p.discardDeferredReturnType( (ISymbol) objs[1], this, (ObjectMap) objs[3] );
 			} else if( kind == DeferredKind.TYPE_SYMBOL ){
-				TemplateEngine.discardDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
+				TemplateEngine.discardDeferredTypeInfo( (ITypeInfo) objs[0], this, (ObjectMap) objs[3] );
 			}
 		}
 		_deferredInstantiations.clear();
 	}
 	
 	private		List  _specializations         = Collections.EMPTY_LIST;	//template specializations
-	private     Map	  _explicitSpecializations = Collections.EMPTY_MAP;		//explicit specializations
-	private		Map	  _defnParameterMap        = Collections.EMPTY_MAP;		//members could be defined with different template parameter names
-	private 	Map	  _instantiations          = Collections.EMPTY_MAP;
+	private     ObjectMap _explicitSpecializations = ObjectMap.EMPTY_MAP;		//explicit specializations
+	private		ObjectMap _defnParameterMap    = ObjectMap.EMPTY_MAP;		//members could be defined with different template parameter names
+	private 	ObjectMap _instantiations      = ObjectMap.EMPTY_MAP;
 	private     List  _deferredInstantiations  = Collections.EMPTY_LIST;	//used to avoid recursive loop
 	private     boolean _processingDeferred = false;
 		

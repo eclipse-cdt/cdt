@@ -30,7 +30,7 @@ public class ParseError extends Error {
 		// semantic context cannot be provided in this case
 		public static final ParseErrorKind OFFSET_RANGE_NOT_NAME = new ParseErrorKind( 2 );
 
-		public static final ParseErrorKind TIMEOUT = new ParseErrorKind( 3 );
+		public static final ParseErrorKind TIMEOUT_OR_CANCELLED = new ParseErrorKind( 3 );
 		
 		/**
 		 * @param enumValue

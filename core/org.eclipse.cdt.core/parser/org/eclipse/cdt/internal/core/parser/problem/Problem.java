@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  */
 public class Problem implements IProblem {
 
-	private final String arg;
+	private final char[] arg;
 	private final int id;
 	private final int sourceStart;
 	private final int sourceEnd;
@@ -35,7 +35,7 @@ public class Problem implements IProblem {
 	
 	private String message = null;
 
-	public Problem( int id, int start, int end, int line, char [] file, String arg, boolean warn, boolean error )
+	public Problem( int id, int start, int end, int line, char [] file, char[] arg, boolean warn, boolean error )
 	{
 		this.id = id;
 		this.sourceStart = start;
@@ -215,12 +215,13 @@ public class Problem implements IProblem {
 			msg = "";  //$NON-NLS-1$
 		
 		if( arg != null ){
-			msg = MessageFormat.format( msg, new Object [] { arg } );
+			msg = MessageFormat.format( msg, new Object [] { new String(arg) } );
 		}
 		
 		Object [] args = { msg, new String( originatingFileName ), new Integer( lineNumber ) };
 		
 		message = ParserMessages.getFormattedString( PROBLEM_PATTERN, args ); 
+		
 		return message; 
 	}
 
@@ -236,7 +237,7 @@ public class Problem implements IProblem {
 	 * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
 	 */
 	public String getArguments() {
-		return arg;
+		return String.valueOf(arg);
 	}
 
 }

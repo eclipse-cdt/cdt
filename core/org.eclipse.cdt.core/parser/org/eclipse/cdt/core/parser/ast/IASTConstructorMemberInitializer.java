@@ -20,5 +20,6 @@ public interface IASTConstructorMemberInitializer extends ISourceElementCallback
 {
 	public IASTExpression getExpressionList(); 
 	public String getName();
+	public char[] getNameCharArray();
 	
 }

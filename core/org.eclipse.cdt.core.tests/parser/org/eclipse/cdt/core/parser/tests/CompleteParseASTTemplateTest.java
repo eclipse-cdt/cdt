@@ -532,7 +532,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		Writer writer = new StringWriter();
 		writer.write( "template< class T > class A{                      \n" ); //$NON-NLS-1$
 		writer.write( "   typedef T * PT;                                \n" ); //$NON-NLS-1$
-		writer.write( "   static T member;                               \n" ); //$NON-NLS-1$
+		writer.write( "   static T * member;                             \n" ); //$NON-NLS-1$
 		writer.write( "};                                                \n" ); //$NON-NLS-1$
 		writer.write( "template< class T> A<T>::PT A<T>::member = null;  \n" ); //$NON-NLS-1$
 		

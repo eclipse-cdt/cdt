@@ -20,6 +20,8 @@ public interface IToken {
 	// getters
 	public int getType();
 	public String getImage();
+	public char [] getCharImage();
+	public char [] getFilename();
 	public int getOffset();
 	public int getLength();
 	public int getEndOffset();
@@ -29,7 +31,8 @@ public interface IToken {
 	public IToken getNext();
 	
 	// setters
-	public void setImage( String i ); 
+	public void setImage( String i );
+	public void setImage( char [] i );
 	public void setNext(IToken t);
 	public void setType(int i);	
 

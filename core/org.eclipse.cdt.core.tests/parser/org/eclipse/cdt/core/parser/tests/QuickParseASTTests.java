@@ -14,8 +14,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -1714,7 +1712,7 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug39553() throws Exception	
 	{
-		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC"); //$NON-NLS-1$ //$NON-NLS-2$
+		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue( quickParseCallback.getInclusions().hasNext() );
 	}
 	
@@ -2030,54 +2028,54 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue( function.takesVarArgs() );
 	}
 	
-	public void testBug44370() throws Exception
-	{
-		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); //$NON-NLS-1$
-		Iterator macros = quickParseCallback.getMacros();
-		assertNotNull(macros);
-		assertTrue( macros.hasNext());
-		IASTMacro swap = (IASTMacro) macros.next();
-		assertFalse( macros.hasNext() );
-		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
-		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
-		String [] params = swap.getParameters();
-		assertEquals( params.length, 2 );
-		assertEquals( params[0], "x"); //$NON-NLS-1$
-		assertEquals( params[1], "y"); //$NON-NLS-1$
-		String completeSignature = swap.getCompleteSignature().trim();
-		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
-		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
-		IToken [] tokens = swap.getTokenizedExpansion();
-		validateToken( tokens[0], IToken.tLBRACE);
-		validateIdentifier( tokens[1], "x"); //$NON-NLS-1$
-		validateToken( tokens[2], IToken.tBITORASSIGN );
-		validateIdentifier( tokens[3], "y"); //$NON-NLS-1$
-		validateToken( tokens[4], IToken.tSEMI );
-		validateIdentifier( tokens[5], "y"); //$NON-NLS-1$
-		validateToken( tokens[6], IToken.tBITORASSIGN );
-		validateIdentifier( tokens[7], "x"); //$NON-NLS-1$
-		validateToken( tokens[8], IToken.tSEMI );
-		validateIdentifier( tokens[9], "x"); //$NON-NLS-1$
-		validateToken( tokens[10], IToken.tBITORASSIGN );
-		validateIdentifier( tokens[11], "y"); //$NON-NLS-1$
-		validateToken( tokens[12], IToken.tSEMI );
-		validateToken( tokens[13], IToken.tRBRACE );
-	}
-	/**
-	 * @param token
-	 * @param string
-	 */
-	private void validateIdentifier(IToken token, String identifierName ) {
-		validateToken( token, IToken.tIDENTIFIER);
-		assertEquals( token.getImage(), identifierName  );
-	}
-	/**
-	 * @param token
-	 * @param i
-	 */
-	private void validateToken(IToken token, int signal) {
-		assertEquals( token.getType(), signal );
-	}
+//	public void testBug44370() throws Exception
+//	{
+//		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); //$NON-NLS-1$
+//		Iterator macros = quickParseCallback.getMacros();
+//		assertNotNull(macros);
+//		assertTrue( macros.hasNext());
+//		IASTMacro swap = (IASTMacro) macros.next();
+//		assertFalse( macros.hasNext() );
+//		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
+//		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
+//		String [] params = swap.getParameters();
+//		assertEquals( params.length, 2 );
+//		assertEquals( params[0], "x"); //$NON-NLS-1$
+//		assertEquals( params[1], "y"); //$NON-NLS-1$
+//		String completeSignature = swap.getCompleteSignature().trim();
+//		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+//		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+//		IToken [] tokens = swap.getTokenizedExpansion();
+//		validateToken( tokens[0], IToken.tLBRACE);
+//		validateIdentifier( tokens[1], "x"); //$NON-NLS-1$
+//		validateToken( tokens[2], IToken.tBITORASSIGN );
+//		validateIdentifier( tokens[3], "y"); //$NON-NLS-1$
+//		validateToken( tokens[4], IToken.tSEMI );
+//		validateIdentifier( tokens[5], "y"); //$NON-NLS-1$
+//		validateToken( tokens[6], IToken.tBITORASSIGN );
+//		validateIdentifier( tokens[7], "x"); //$NON-NLS-1$
+//		validateToken( tokens[8], IToken.tSEMI );
+//		validateIdentifier( tokens[9], "x"); //$NON-NLS-1$
+//		validateToken( tokens[10], IToken.tBITORASSIGN );
+//		validateIdentifier( tokens[11], "y"); //$NON-NLS-1$
+//		validateToken( tokens[12], IToken.tSEMI );
+//		validateToken( tokens[13], IToken.tRBRACE );
+//	}
+//	/**
+//	 * @param token
+//	 * @param string
+//	 */
+//	private void validateIdentifier(IToken token, String identifierName ) {
+//		validateToken( token, IToken.tIDENTIFIER);
+//		assertEquals( token.getImage(), identifierName  );
+//	}
+//	/**
+//	 * @param token
+//	 * @param i
+//	 */
+//	private void validateToken(IToken token, int signal) {
+//		assertEquals( token.getType(), signal );
+//	}
 	
 	public void testBug47752() throws Exception
 	{
@@ -2128,19 +2126,8 @@ public class QuickParseASTTests extends BaseASTTest
     {
         parse("#ident \"@(#)filename.c   1.3 90/02/12\""); //$NON-NLS-1$
     }
+        
     
-    public void testBug39694() throws Exception
-    {
-        IASTVariable variable = (IASTVariable)parse("int ab$cd = 1;").getDeclarations().next(); //$NON-NLS-1$
-        assertEquals( variable.getName(), "ab$cd"); //$NON-NLS-1$
-    }
-    
-    
-    public void testBug39704A() throws Exception
-    {
-        IASTVariable foo = (IASTVariable) assertSoleDeclaration("__declspec (dllimport) int foo;"); //$NON-NLS-1$
-        assertEquals( foo.getName(), "foo"); //$NON-NLS-1$
-    }    
 
 
     public void testBug39704B() throws Exception
@@ -2154,11 +2141,7 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( f.getName(), "func2"); //$NON-NLS-1$
     }
     
-    public void testBug39704D() throws Exception
-    {
-        IASTFunction func1 = (IASTFunction) assertSoleDeclaration("__declspec(dllexport) int func1 (int a) {}"); //$NON-NLS-1$
-        assertEquals( func1.getName(), "func1"); //$NON-NLS-1$
-    }
+
     
 	public void testBug45235() throws Exception
 	{
@@ -2174,43 +2157,6 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue( forewardDecl.isFriendDeclaration() );
 		assertTrue( f.isFriend() );
 	}
-
-    public void testBug39695() throws Exception
-    {
-        parse("int a = __alignof__ (int);"); //$NON-NLS-1$
-    }
-    
-    public void testBug39684() throws Exception
-    {
-        parse("typeof(foo(1)) bar () { return foo(1); }"); //$NON-NLS-1$
-    }
-    
-    public void testBug39703() throws Exception
-    {
-        Writer code = new StringWriter();
-        code.write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n"); //$NON-NLS-1$
-        code.write("__extension__ struct G {\n"); //$NON-NLS-1$
-        code.write("  struct { char z; };\n"); //$NON-NLS-1$
-        code.write("  char g;\n"); //$NON-NLS-1$
-        code.write("};\n"); //$NON-NLS-1$
-       	IASTAbstractTypeSpecifierDeclaration abs = (IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString());
-       	IASTClassSpecifier G = ((IASTClassSpecifier)abs.getTypeSpecifier());
-       	assertEquals( G.getName(), "G" ); //$NON-NLS-1$
-       	assertEquals( G.getClassKind(), ASTClassKind.STRUCT );
-       	Iterator i = G.getDeclarations();
-       	assertEquals( ((IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier()).getName(), "" ); //$NON-NLS-1$
-       	assertEquals( ((IASTField)i.next()).getName(), "g" ); //$NON-NLS-1$
-       	assertFalse( i.hasNext() );
-    }
-
-    public void testBug39698A() throws Exception
-    {
-        parse("int c = a <? b;"); //$NON-NLS-1$
-    }
-    public void testBug39698B() throws Exception
-    {
-    	parse("int c = a >? b;"); //$NON-NLS-1$
-    }
     
     public void testBug59179() throws Exception
     {

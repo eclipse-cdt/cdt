@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTLinkageSpecification;
@@ -111,6 +112,13 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 */
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) {
 		addElement(typedef);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsingDirective(org.eclipse.cdt.core.parser.ast.IASTUsingDirective)
+	 */
+	public void acceptUsingDirective(IASTUsingDirective usageDirective) {
+		addElement(usageDirective);
 	}
 
 	/* (non-Javadoc)

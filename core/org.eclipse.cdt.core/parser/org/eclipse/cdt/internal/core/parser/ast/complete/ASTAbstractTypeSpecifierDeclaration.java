@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
-import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 
@@ -30,11 +29,12 @@ public class ASTAbstractTypeSpecifierDeclaration
 	private final IASTTypeSpecifier typeSpec;
     private final IASTTemplate ownerTemplate;
     private final boolean isFriendDeclaration;
-    private Offsets offsets = new Offsets();
+    
     /**
      * @param ownerScope
+     * @param filename
      */
-    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend )
+    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend, char[] filename )
     {
         super(ownerScope);
         this.typeSpec = typeSpecifier;
@@ -42,6 +42,7 @@ public class ASTAbstractTypeSpecifierDeclaration
         this.isFriendDeclaration = isFriend;
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setEndingOffsetAndLineNumber(endingOffset, endingLine);
+        fn = filename;
     }
 
     /* (non-Javadoc)
@@ -93,56 +94,63 @@ public class ASTAbstractTypeSpecifierDeclaration
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-		offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
-     */
-    public int getStartingOffset()
-    {
-        return offsets.getStartingOffset();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
-     */
-    public int getEndingOffset()
-    {
-        return offsets.getEndingOffset();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
-     */
-    public int getStartingLine() {
-    	return offsets.getStartingLine();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
-     */
-    public int getEndingLine() {
-    	return offsets.getEndingLine();
-    }
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration#isFriendDeclaration()
 	 */
 	public boolean isFriendDeclaration() {
 		return isFriendDeclaration;
 	}
     
+	
+	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset;
+	private final char[] fn;
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public final int getStartingLine() {
+    	return startingLineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public final int getEndingLine() {
+    	return endingLineNumber;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
+     */
+    public final void setStartingOffsetAndLineNumber(int offset, int lineNumber)
+    {
+    	startingOffset = offset;
+    	startingLineNumber = lineNumber;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+     */
+    public final void setEndingOffsetAndLineNumber(int offset, int lineNumber)
+    {
+    	endingOffset = offset;
+    	endingLineNumber = lineNumber;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
+     */
+    public final int getStartingOffset()
+    {
+        return startingOffset;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
+     */
+    public final int getEndingOffset()
+    {
+        return endingOffset;
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 }

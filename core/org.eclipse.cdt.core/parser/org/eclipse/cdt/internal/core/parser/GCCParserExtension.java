@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.parser.Parser.Flags;
  */
 public class GCCParserExtension implements IParserExtension {
 
-	private static final String EMPTY_STRING = "";//$NON-NLS-1$
+	private static final char[] EMPTY_STRING = "".toCharArray();//$NON-NLS-1$
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#isValidCVModifier(org.eclipse.cdt.core.parser.ParserLanguage, int)
 	 */

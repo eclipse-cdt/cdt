@@ -109,16 +109,18 @@ public class DeclarationWrapper implements IDeclaratorOwner
         
     /**
      * @param scope
+     * @param filename TODO
      */
     public DeclarationWrapper(
         IASTScope scope,
         int startingOffset,
-        int startingLine, IASTTemplate templateDeclaration)
+        int startingLine, IASTTemplate templateDeclaration, char[] filename)
     {
         this.scope = scope;
         this.startingOffset = startingOffset;
         this.startingLine = startingLine;
         this.templateDeclaration = templateDeclaration;
+        this.fn = filename;
     }
     /**
      * @param b
@@ -317,6 +319,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return declarators.iterator();
     }
+    private List getDeclaratorsList(){
+        return declarators;
+    }
     /**
      * @return
      */
@@ -333,6 +338,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
     }
     private IASTFactory astFactory = null;
 	private int endLine;
+
+	private final char[] fn;
     /**
      * @param requestor
      */
@@ -393,10 +400,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
         {
 
         	Declarator d = declarator.getOwnedDeclarator();
-        	Iterator i = d.getPointerOperators().iterator();
+        	List ptrOps = d.getPointerOperators();
         	boolean isWithinClass = scope instanceof IASTClassSpecifier;
 			boolean isFunction = (declarator.getParameters().size() != 0); 
-        	if( !i.hasNext() )
+        	if( ptrOps.size() == 0 )
         	{
                 
 				if (isTypedef())
@@ -423,27 +430,27 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
                         convertedParms,
-                        (ASTPointerOperator)i.next());
+                        (ASTPointerOperator)ptrOps.get( 0 ));
             
         	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? TokenFactory.createTokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
         	
         	if( isTypedef() )
-				return astFactory.createTypedef(scope, nameDuple.toString(), abs,
+				return astFactory.createTypedef(scope, nameDuple.toCharArray(), abs,
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
-								.getNameLine());
+								.getNameLine(), fn);
         	
         	if( isWithinClass )
-        		return astFactory.createField( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
+        		return astFactory.createField( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), fn );
         	 
-        	return astFactory.createVariable( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );        	
+        	return astFactory.createVariable( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), fn );        	
         	
         }
        	throw new BacktrackException();
 
     }
-    
-    /**
+
+	/**
      * @param declarator
      * @return
      */
@@ -456,7 +463,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 						declarator.getArrayModifiers(), null, null),
 				startingOffset, getStartingLine(), declarator
 						.getNameStartOffset(), declarator.getNameEndOffset(),
-				declarator.getNameLine());
+				declarator.getNameLine(), fn);
     }
     /**
      * @param declarator
@@ -534,7 +541,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 isStatic(),
                 startingOffset,
                 getStartingLine(),
-            	declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
+            	declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), fn);
     }
 
     private List createParameterList(List currentParameters) throws ASTSemanticException
@@ -544,10 +551,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
         for( int i = 0; i < currentParameters.size(); ++i )
         {
             DeclarationWrapper wrapper = (DeclarationWrapper)currentParameters.get(i);
-            Iterator j = wrapper.getDeclarators();
-            while (j.hasNext())
+            List decls = wrapper.getDeclaratorsList();
+            for( int j = 0; j < decls.size(); j++ )
             {
-                Declarator declarator = (Declarator)j.next();
+                Declarator declarator = (Declarator)decls.get(j);
 
                 result.add(
                     astFactory.createParameterDeclaration(
@@ -556,7 +563,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         wrapper.getTypeSpecifier(),
                         declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
-                        null, null, declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
+                        null, null, declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine(), wrapper.fn ));
             }
         }
         return result;
@@ -583,7 +590,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             isRegister(),
             isStatic(),
             getStartingOffset(),
-            getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression());
+            getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), fn);
 
     }        
     

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 
 
 /**
@@ -24,15 +25,20 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
  */
 public abstract class AbstractToken implements IToken, ITokenDuple {
 
-	public AbstractToken( int type, int lineNumber )
+	private final char[] filename;
+
+	public AbstractToken( int type, int lineNumber, char [] filename )
 	{
 		setType( type );
 		this.lineNumber = lineNumber;
+		this.filename = filename;
 	}
 
-	public AbstractToken( int type )
+	public AbstractToken( int type, char [] filename, int lineNumber  )
 	{
 		setType( type );
+		this.filename = filename;
+		this.lineNumber = lineNumber;
 	}
 	
 	public String toString() {
@@ -53,6 +59,13 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 		return lineNumber;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#getFilename()
+	 */
+	public char[] getFilename() {
+		return filename;
+	}
+	
 	public int getEndOffset() { return getOffset() + getLength(); }
 
 	protected int type;
@@ -68,7 +81,7 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 			return false;
 		if( ((IToken)other).getType() != getType() ) 
 			return false;
-		if( !(((IToken)other).getImage().equals( getImage() ))) 
+		if( !CharArrayUtils.equals( ((IToken)other).getCharImage(), getCharImage() ) ) 
 			return false;
 		return true;
 	}
@@ -182,8 +195,8 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#extractNameFromTemplateId()
 	 */
-	public String extractNameFromTemplateId(){
-		return getImage();
+	public char[] extractNameFromTemplateId(){
+		return getCharImage();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#findLastTokenType(int)

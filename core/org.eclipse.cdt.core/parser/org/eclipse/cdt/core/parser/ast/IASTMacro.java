@@ -10,14 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTMacro extends IASTOffsetableNamedElement, ISourceElementCallbackDelegate, IMacroDescriptor {
+public interface IASTMacro extends IASTOffsetableNamedElement, ISourceElementCallbackDelegate{
 	
 
 }

@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -313,5 +314,56 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		String code = writer.toString();
 		int startIndex = code.indexOf( "X anA"); //$NON-NLS-1$
 		parse( code, startIndex, startIndex + 1 );
+	}
+
+	public void testBug60407() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct ZZZ { int x, y, z; };\n" ); //$NON-NLS-1$
+		writer.write( "typedef struct ZZZ _FILE;\n" ); //$NON-NLS-1$
+		writer.write( "typedef _FILE FILE;\n" ); //$NON-NLS-1$
+		writer.write( "static void static_function(FILE * lcd){}\n" ); //$NON-NLS-1$
+		writer.write( "int	main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( "FILE * file = 0;\n" ); //$NON-NLS-1$
+		writer.write( "static_function( file );\n" ); //$NON-NLS-1$
+		writer.write( "return 0;\n" );	 //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "static_function( file )"); //$NON-NLS-1$
+		parse( code, startIndex, startIndex + "static_function".length() ); //$NON-NLS-1$
+	}
+	
+	public void testBug61800() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class B {};\n"); //$NON-NLS-1$
+		writer.write( "class ABCDEF {\n"); //$NON-NLS-1$
+		writer.write( " static B stInt; };\n"); //$NON-NLS-1$
+		writer.write( "B ABCDEF::stInt = 5;\n"); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "::stInt") + 2; //$NON-NLS-1$
+
+		IASTNode node = parse( code, startIndex, startIndex+ 5 );
+		assertTrue( node instanceof IASTField );
+		assertEquals( ((IASTField)node).getName(), "stInt" ); //$NON-NLS-1$
+	}
+	
+	public void testBug68739() throws Exception
+	{
+	    Writer writer = new StringWriter();
+	    writer.write( "int fprintf( int *, const char *, ... );               \n" ); //$NON-NLS-1$
+	    writer.write( "void boo( int * lcd ) {                                \n" ); //$NON-NLS-1$
+	    writer.write( "  /**/fprintf( lcd, \"%c%s 0x%x\", ' ', \"bbb\", 2 );  \n" ); //$NON-NLS-1$
+	    writer.write( "}                                                      \n" ); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+		int startIndex = code.indexOf( "/**/fprintf") + 4; //$NON-NLS-1$
+
+		IASTNode node = parse( code, startIndex, startIndex+ 7 );
+		
+		assertTrue( node instanceof IASTFunction );
+		assertEquals( ((IASTFunction)node).getName(), "fprintf" ); //$NON-NLS-1$
+
+	    
 	}
 }

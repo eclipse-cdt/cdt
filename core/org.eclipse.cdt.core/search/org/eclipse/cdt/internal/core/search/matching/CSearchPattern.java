@@ -65,6 +65,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	
 	protected static class Requestor extends NullSourceElementRequestor
 	{
+	    public int badCharacterOffset = -1;
 		public Requestor( ParserMode mode )
 		{
 			super( mode );
@@ -72,12 +73,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		public boolean acceptProblem( IProblem problem )
 		{
-			if( problem.getID() == IProblem.SCANNER_BAD_CHARACTER ) return false;
+			if( problem.getID() == IProblem.SCANNER_BAD_CHARACTER ){
+			    badCharacterOffset = problem.getSourceStart();
+			    return false;
+			}
 			return super.acceptProblem( problem );
 		}
 	}
 	
-	private static Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 	/**
 	 * @param matchMode
 	 * @param caseSensitive
@@ -176,7 +179,9 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		
 		char [] patternArray = patternString.toCharArray();
+		
 		IScanner scanner = null;
+		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		try {
 			scanner =
 				ParserFactory.createScanner(
@@ -189,7 +194,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		} catch (ParserFactoryError e) {
 
 		}
-		LinkedList list = scanForNames( scanner, null, patternArray );
+		LinkedList list = scanForNames( scanner, callback, null, patternArray );
 		
 		char [] name = (char []) list.removeLast();
 		char [][] qualifications = new char [0][];
@@ -247,6 +252,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		
 		char [] patternArray = patternString.toCharArray();
+		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		IScanner scanner=null;
 		try {
 			scanner =
@@ -259,7 +265,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		} catch (ParserFactoryError e) {
 
 		}
-		LinkedList list = scanForNames( scanner, null, patternArray );
+		LinkedList list = scanForNames( scanner, callback, null, patternArray );
 		
 		char [] name = (char []) list.removeLast();
 		char [][] qualifications = new char[0][];
@@ -289,6 +295,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
 		char [] nameArray = nameString.toCharArray();
 		IScanner scanner=null;
+		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		try {
 			scanner =
 				ParserFactory.createScanner(
@@ -300,7 +307,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		} catch (ParserFactoryError e) {
 		}
 		
-		LinkedList names = scanForNames( scanner, null, nameArray );
+		LinkedList names = scanForNames( scanner, callback, null, nameArray );
 
 		LinkedList params = scanForParameters( paramString );
 		
@@ -340,6 +347,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char [] patternArray = patternString.toCharArray();
 		
 		IScanner scanner =null;
+		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		try {
 			scanner =
 				ParserFactory.createScanner(
@@ -380,7 +388,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			}
 		}
 			
-		LinkedList list = scanForNames( scanner, token, patternArray );
+		LinkedList list = scanForNames( scanner, callback, token, patternArray );
 		
 		char[] name = (char [])list.removeLast();
 		char [][] qualifications = new char[0][];
@@ -393,6 +401,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char [] patternArray = patternString.toCharArray();
 		
 		IScanner scanner =null;
+		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		try {
 			scanner =
 				ParserFactory.createScanner(
@@ -406,7 +415,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		searchFor = DERIVED;
 		
-		LinkedList list = scanForNames( scanner, null, patternArray );
+		LinkedList list = scanForNames( scanner, callback, null, patternArray );
 		
 		char[] name = (char [])list.removeLast();
 		char [][] qualifications = new char[0][];
@@ -418,6 +427,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		char [] patternArray = patternString.toCharArray();
 		IScanner scanner =null;
+		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		try {
 			scanner =
 				ParserFactory.createScanner(
@@ -431,7 +441,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		searchFor = FRIEND;
 		
-		LinkedList list = scanForNames( scanner, null, patternArray );
+		LinkedList list = scanForNames( scanner, callback, null, patternArray );
 		
 		char[] name = (char [])list.removeLast();
 		char [][] qualifications = new char[0][];
@@ -452,6 +462,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		String functionString = "void f " + paramString + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 				
 		IScanner scanner=null;
+		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();
 		try {
 			scanner =
 				ParserFactory.createScanner(
@@ -462,7 +473,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					callback,new NullLogService(), null);
 		} catch (ParserFactoryError e1) {
 		}
-		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();			   
+					   
 		IParser parser=null;
 		try {
 			parser =
@@ -508,7 +519,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		return list;
 	}
 		
-	static private LinkedList scanForNames( IScanner scanner, IToken unusedToken, char[] pattern ){
+	static private LinkedList scanForNames( IScanner scanner, Requestor callback, IToken unusedToken, char[] pattern ){
 		LinkedList list = new LinkedList();
 		
 		String name  = new String(""); //$NON-NLS-1$
@@ -517,9 +528,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
 			IToken prev = null;
-			
-			scanner.setThrowExceptionOnBadCharacterRead( true );
-			
+
 			boolean encounteredWild = false;
 			boolean lastTokenWasOperator = false;
 			
@@ -579,19 +588,17 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 				
 				token = null;
 				while( token == null ){
-					try{
-						token = scanner.nextToken();
-					} catch ( ScannerException e ){
-						if( e.getProblem().getID() == IProblem.SCANNER_BAD_CHARACTER ){
-							//TODO : This may not be \\, it could be another bad character
-							if( !encounteredWild && !lastTokenWasOperator && prev.getType() != IToken.tARROW ) name += " "; //$NON-NLS-1$
-							name += "\\"; //$NON-NLS-1$
-							idx++;
-							encounteredWild = true;
-							lastTokenWasOperator = false;
-							prev = null;
-						}
-					}
+				    token = scanner.nextToken();
+				    if( callback.badCharacterOffset != -1 && token.getOffset() > callback.badCharacterOffset ){
+				        //TODO : This may not be \\, it could be another bad character
+						if( !encounteredWild && !lastTokenWasOperator && prev.getType() != IToken.tARROW ) name += " "; //$NON-NLS-1$
+						name += "\\"; //$NON-NLS-1$
+						idx++;
+						encounteredWild = true;
+						lastTokenWasOperator = false;
+						prev = null;
+						callback.badCharacterOffset = -1;
+				    }
 				}
 			}
 		} catch (EndOfFileException e) {	

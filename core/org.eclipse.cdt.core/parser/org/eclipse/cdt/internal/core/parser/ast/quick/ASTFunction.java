@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
-import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
  * @author jcamelon
@@ -34,9 +33,10 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 {
 	/**
      * @param scope
+	 * @param filename
      */
-    public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, 
-    			boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs, int nameLine )
+    public ASTFunction(IASTScope scope, char[] name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, 
+    			boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs, int nameLine, char[] filename )
     {
         super(ownerTemplate != null ? null : scope  );
         this.name = name; 
@@ -49,25 +49,33 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         this.ownerTemplateDeclaration = ownerTemplate;
 		if( ownerTemplate != null )
 			ownerTemplate.setOwnedDeclaration( this );
-        offsets.setStartingOffsetAndLineNumber( startOffset, startLine );
-        offsets.setNameOffset( nameOffset );
+        setStartingOffsetAndLineNumber( startOffset, startLine );
+        setNameOffset( nameOffset );
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         this.hasFunctionTryBlock = hasFunctionTryBlock;
         this.varArgs = hasVarArgs;
+        fn = filename;
     }
     
     private boolean previouslyDeclared;
     private boolean hasFunctionBody = false;
     private final IASTQualifiedNameElement qualifiedName; 
     private final IASTTemplate ownerTemplateDeclaration;
-    private NamedOffsets offsets = new NamedOffsets();
     private List  declarations = new ArrayList(); 
     private final IASTExceptionSpecification exceptionSpec;
-    private final String name;
+    private final char[] name;
     private final List parms;
     private final IASTAbstractDeclaration returnType;
     private final boolean isInline, isFriend, isStatic; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isInline()
@@ -95,7 +103,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      */
     public String getName()
     {
-        return name;
+        return String.valueOf(name);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getReturnType()
@@ -120,53 +128,11 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
-     */
-    public int getNameOffset()
-    {
-        return offsets.getNameOffset();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
-     */
-    public void setNameOffset(int o)
-    {
-        offsets.setNameOffset( o );
-    }
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration#getOwnerTemplateDeclaration()
      */
     public IASTTemplate getOwnerTemplateDeclaration()
     {
         return ownerTemplateDeclaration;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
-     */
-    public int getStartingOffset()
-    {
-        return offsets.getStartingOffset();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
-     */
-    public int getEndingOffset()
-    {
-        return offsets.getEndingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
@@ -255,21 +221,6 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
         return previouslyDeclared;
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
-	 */
-	public int getNameEndOffset()
-	{
-		return offsets.getNameEndOffset();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
-	 */
-	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
-	{
-		offsets.setNameEndOffsetAndLineNumber(offset, lineNumber);
-	}
-	
 	private boolean hasFunctionTryBlock = false;
 	private final boolean varArgs;
 	/* (non-Javadoc)
@@ -295,28 +246,100 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
-	 */
-	public int getStartingLine() {
-		return offsets.getStartingLine();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
-	 */
-	public int getEndingLine() {
-		return offsets.getEndingLine();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
-	 */
-	public int getNameLineNumber() {
-		return offsets.getNameLineNumber();
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getContainingFunction()
 	 */
 	public IASTFunction getContainingFunction() {
 		return this;
 	}
+	
+	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset, nameStartOffset, nameEndOffset, nameLineNumber;
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public final int getStartingLine() {
+    	return startingLineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public final int getEndingLine() {
+    	return endingLineNumber;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+     */
+    public final int getNameLineNumber() {
+    	return nameLineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
+     */
+    public final void setStartingOffsetAndLineNumber(int offset, int lineNumber)
+    {
+    	startingOffset = offset;
+    	startingLineNumber = lineNumber;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+     */
+    public final void setEndingOffsetAndLineNumber(int offset, int lineNumber)
+    {
+    	endingOffset = offset;
+    	endingLineNumber = lineNumber;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
+     */
+    public final int getStartingOffset()
+    {
+        return startingOffset;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
+     */
+    public final int getEndingOffset()
+    {
+        return endingOffset;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
+     */
+    public final int getNameOffset()
+    {
+    	return nameStartOffset;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+     */
+    public final void setNameOffset(int o)
+    {
+        nameStartOffset = o;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+     */
+    public final int getNameEndOffset()
+    {
+        return nameEndOffset;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
+     */
+    public final void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
+    {
+    	nameEndOffset = offset;
+    	nameLineNumber = lineNumber;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
+    }
 }

@@ -125,12 +125,12 @@ public final class Scanner implements IScanner, IScannerData {
 				getCurrentOffset(), 
 				contextStack.getCurrentLineNumber(), 
 				getCurrentFile().toCharArray(), 
-				argument, 
+				argument != null ? argument.toCharArray() : EMPTY_STRING_CHAR_ARRAY, 
 				warning, 
 				error );
 		
 		// trace log
-		TraceUtil.outputTrace(log, "Scanner problem encountered: ", problem, null, null, null ); //$NON-NLS-1$
+		TraceUtil.outputTrace(log, "Scanner problem encountered: ", problem ); //$NON-NLS-1$
 		
 		if( (! requestor.acceptProblem( problem )) && extra )
 			throw new ScannerException( problem );
@@ -168,7 +168,7 @@ public final class Scanner implements IScanner, IScannerData {
     	this.contextStack = new ContextStack( this, log );
     	this.workingCopies = workingCopies;
     	this.scannerExtension = extension;
-		this.astFactory = ParserFactory.createASTFactory( this, parserMode, language );
+		this.astFactory = ParserFactory.createASTFactory( parserMode, language );
 		
 		if (reader.isFile())
 			fileCache.put(reader.filename, reader);
@@ -630,13 +630,13 @@ public final class Scanner implements IScanner, IScannerData {
             {
                 inclusion =
                 	getASTFactory().createInclusion(
-                        fileName,
+                        fileName.toCharArray(),
                         duple.filename,
                         !useIncludePaths,
                         beginOffset,
                         startLine,
                         nameOffset,
-                        nameOffset + fileName.length(), nameLine, endOffset, endLine);
+                        nameOffset + fileName.length(), nameLine, endOffset, endLine, getCurrentFilename());
             }
             catch (Exception e)
             {
@@ -769,6 +769,7 @@ public final class Scanner implements IScanner, IScannerData {
 
 	private boolean tokenizingMacroReplacementList = false;
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final char[] EMPTY_STRING_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	private Map tempMap = new HashMap(); //$NON-NLS-1$
 	public void setTokenizingMacroReplacementList( boolean mr ){
 		tokenizingMacroReplacementList = mr;
@@ -2593,59 +2594,10 @@ public final class Scanner implements IScanner, IScannerData {
 		}
 	}
 	
-	protected boolean evaluateExpressionOld(String expression, int beginningOffset )
-		throws ScannerException {
 
-		IExpressionParser parser = null;
-		strbuff.startString();
-		strbuff.append(expression);
-		strbuff.append(';');
-		   
-		IScanner trial = new Scanner(
-				new CodeReader(strbuff.toString().toCharArray()), 
-				definitions,
-				includePathNames,
-				NULL_REQUESTOR,
-				ParserMode.QUICK_PARSE, 
-				language,
-				NULL_LOG_SERVICE,
-				scannerExtension );
-		
-        parser = InternalParserUtil.createExpressionParser(trial, language, NULL_LOG_SERVICE);
-		try {
-			IASTExpression exp = parser.expression(null, null, null);
-			return (exp.evaluateExpression() != 0);
-		} catch( BacktrackException backtrack  )
-		{
-			if( parserMode == ParserMode.QUICK_PARSE )
-				return false;
-			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
-		}
-		catch (ASTExpressionEvaluationException e) {
-			if( parserMode == ParserMode.QUICK_PARSE )
-				return false;			
-			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
-		} catch (EndOfFileException e) {
-			if( parserMode == ParserMode.QUICK_PARSE )
-				return false;
-			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
-		}
-		return true; 
-	
-	}
 	protected boolean evaluateExpression(String expression, int beginningOffset )
 		throws ScannerException {
-
-//		boolean old_e = evaluateExpressionOld(expression, beginningOffset);
-		boolean new_e = evaluateExpressionNew(expression, beginningOffset);
-
-//		if (old_e != new_e) {
-//			System.out.println("Ouch " + expression + " New: " + new_e + " Old: " + old_e);
-//		}
-//		if (true)
-			return new_e;
-//		else 
-//			return old_e;
+		return evaluateExpressionNew(expression, beginningOffset);
 	}
 
 	
@@ -2829,13 +2781,13 @@ public final class Scanner implements IScanner, IScannerData {
                 try
                 {
                     i = getASTFactory().createInclusion(
-                            directive.getFilename(),
-                            "", //$NON-NLS-1$
+                            directive.getFilename().toCharArray(),
+                            EMPTY_STRING_CHAR_ARRAY, //$NON-NLS-1$
                             !directive.useIncludePaths(),
                             beginningOffset,
                             startLine,
                             directive.getStartOffset(),
-                            directive.getStartOffset() + directive.getFilename().length(), nameLine, directive.getEndOffset(), endLine);
+                            directive.getStartOffset() + directive.getFilename().length(), nameLine, directive.getEndOffset(), endLine, getCurrentFilename());
                 }
                 catch (Exception e)
                 {
@@ -3139,7 +3091,7 @@ public final class Scanner implements IScanner, IScannerData {
 		
 		try
         {
-			getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor ).acceptElement( requestor, null );
+			getASTFactory().createMacro( key.toCharArray(), beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor, getCurrentFilename() ).acceptElement( requestor, null );
         }
         catch (Exception e)
         {
@@ -3603,7 +3555,7 @@ public final class Scanner implements IScanner, IScannerData {
 	 */
 	public IASTFactory getASTFactory() {
 		if( astFactory == null )
-			astFactory = ParserFactory.createASTFactory( this, parserMode, language );
+			astFactory = ParserFactory.createASTFactory(  parserMode, language );
 		return astFactory;
 	}
 

@@ -1,3 +1,25 @@
+2004-07-30 Alain Magloire
+
+	In the StrutureParseCallback add the
+		IASTUsingDirective
+		IASTUsingDeclaration
+	part of the return declarations
+	* org/eclipse/cdt/internal/core/parser/ast/StructuralParseCallback.java
+
+2004-07-07 Andrew Niefer
+	Symbol Table Refactoring:
+		- TypeInfo._typeDeclaration is no longer used for forward declarations, instead BasicSymbol._instantiatedSymbol
+		  has been renamed to _symbolDef and is used for forwarding and also for its original template purpose.
+		- TypeInfo._operatorExpressions has been removed.  You now apply operator expressions directly to the TypeInfo 
+		  with TypeInfo.applyOperatorExpression.  
+		- a new interface ITypeInfo has been created.  This interface should now be used instead of TypeInfo.
+		- the old TypeInfo has been separated into BasicTypeInfo, TypeInfo, and TemplateParameterTypeInfo, as well as dynamic
+		  overrides of these classes.
+		- all construction of TypeInfo objects should now be done through TypeInfoProvider.newTypeInfo( ... ) functions
+		  to ensure the object obtain has the needed fields.
+	The sum total of these changes is a reduction of memory used while parsing the combination of stdio.h, 
+	iostream, and windows.h by about 4 Megs.
+
 2004-06-22 Alain Magloire
 
 	Part of PR 68246.

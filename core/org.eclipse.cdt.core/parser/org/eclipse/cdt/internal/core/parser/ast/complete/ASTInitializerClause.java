@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +66,9 @@ public class ASTInitializerClause implements IASTInitializerClause
 		return initializerClauses.iterator();
 	}
 
+	public List getInitializersList(){
+	    return ( initializerClauses != null ) ? initializerClauses : Collections.EMPTY_LIST;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getAssigmentExpression()
 	 */
@@ -77,9 +81,10 @@ public class ASTInitializerClause implements IASTInitializerClause
 	 */
 	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
 	{
-		Iterator i = getInitializers(); 
-		while( i.hasNext() )
-			((IASTInitializerClause)i.next()).acceptElement(requestor, manager);
+		List initializers = getInitializersList();
+		int size = initializers.size();
+		for( int i = 0; i < size; i++ )
+			((IASTInitializerClause)initializers.get(i)).acceptElement(requestor, manager);
     	
 		if( assignmentExpression != null )
 			assignmentExpression.acceptElement( requestor, manager );
@@ -107,6 +112,10 @@ public class ASTInitializerClause implements IASTInitializerClause
 	public Iterator getDesignators()
 	{
 		return designators.iterator();
+	}
+	
+	public List getDesignatorList(){
+	    return designators;
 	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#setOwnerDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)

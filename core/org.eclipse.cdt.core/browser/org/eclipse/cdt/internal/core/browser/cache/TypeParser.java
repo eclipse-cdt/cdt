@@ -114,6 +114,7 @@ public class TypeParser implements ISourceElementRequestor {
 	private final SimpleStack fResourceStack = new SimpleStack();
 	private ITypeInfo fTypeToFind;
 	private boolean fFoundType;
+	IParser fParser = null;
 
 	public TypeParser(ITypeCache typeCache, IWorkingCopyProvider provider) {
 		fTypeCache = typeCache;
@@ -425,8 +426,8 @@ public class TypeParser implements ISourceElementRequestor {
 			fProgressMonitor = progressMonitor;
 			IScanner scanner = ParserFactory.createScanner(reader, scanInfo,
 					ParserMode.STRUCTURAL_PARSE, language, this, ParserUtil.getScannerLogService(), null);
-			IParser parser = ParserFactory.createParser(scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService());
-			parser.parse();
+			fParser = ParserFactory.createParser(scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService());
+			fParser.parse();
 		} catch (ParserFactoryError e) {
 			CCorePlugin.log(e);
 		} catch (ParseError e) {
@@ -438,6 +439,7 @@ public class TypeParser implements ISourceElementRequestor {
 			CCorePlugin.log(e);
 		} finally {
 			fProgressMonitor = null;
+			fParser = null;
 		}
 	}
 
@@ -639,11 +641,13 @@ public class TypeParser implements ISourceElementRequestor {
 				String[] enclosingNames = getEnclosingNames(offsetable);
 				QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
 				if (qualifiedName.equals(fTypeToFind.getQualifiedTypeName())) {
-					fFoundType = true;
-
 					// add types to cache
 					addType(type, name, enclosingNames, fResourceStack.bottom(), fResourceStack.top(), offset, end - offset);
 					fProgressMonitor.worked(1);
+					
+					fFoundType = true;
+					//terminate the parser
+					fParser.cancel();
 				}
 			}
 		} else {
@@ -735,15 +739,5 @@ public class TypeParser implements ISourceElementRequestor {
 	 */
 	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath, workingCopies);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
-	 */
-	public boolean parserTimeout() {
-		if (fFoundType || fProgressMonitor.isCanceled())
-			return true;
-
-		return false;
 	}
 }

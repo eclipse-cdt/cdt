@@ -11,9 +11,6 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -30,11 +27,10 @@ import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -56,8 +52,6 @@ public class SelectionParser extends ContextualParser {
 	private ITokenDuple greaterContextDuple = null;
 	private boolean pastPointOfSelection = false;
 	private IASTNode contextNode = null;
-	private static final int DEFAULT_MAP_SIZE = 512;
-	private static final float DEFAULT_FLOAT_SIZE = 0.75f;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
@@ -69,13 +63,13 @@ public class SelectionParser extends ContextualParser {
 			boolean change = false;
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 			{
-				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getCharImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				firstTokenOfDuple = value;
 				change = true;
 			}
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
 			{
-				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getCharImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				change = true;
 				lastTokenOfDuple = value;
 			}
@@ -169,20 +163,7 @@ public class SelectionParser extends ContextualParser {
 		IASTNode node = lookupNode(finalDuple);
 		if( node == null ) return null;
 		if( !(node instanceof IASTOffsetableNamedElement )) return null;
-		Integer lookupResult = ((Integer)nodeTable.get(node));
-		int indexValue = ( lookupResult != null ) ? lookupResult.intValue() : -1;
-		
-		if( indexValue == -1 && node instanceof IASTParameterDeclaration )
-		{
-			try {
-				IASTFunction f = ((IASTParameterDeclaration)node).getOwnerFunctionDeclaration();
-				lookupResult = ((Integer)nodeTable.get(f)); 
-				indexValue = ( lookupResult != null ) ? lookupResult.intValue() : -1;
-			} catch (ASTNotImplementedException e) {
-			}
-		
-		}
-		return new SelectionParseResult( (IASTOffsetableNamedElement) node, getFilenameForIndex(indexValue) ); 
+		return new SelectionParseResult( (IASTOffsetableNamedElement) node, new String( ((IASTOffsetableElement)node).getFilename() )); 
 	}
 
 
@@ -268,12 +249,13 @@ public class SelectionParser extends ContextualParser {
 				return;
 			}
 			int tokensFound = 0;
-			Iterator i = tokenDuple.iterator();
-			while( i.hasNext() )
+
+			for( IToken token = tokenDuple.getFirstToken(); token != null; token = token.getNext() )
 			{
-				IToken token = (IToken) i.next();
 				if( token == firstTokenOfDuple ) ++tokensFound;
 				if( token == lastTokenOfDuple ) ++tokensFound;
+				if( token == tokenDuple.getLastToken() )
+					break;
 			}
 			if( tokensFound == 2 )
 			{
@@ -295,7 +277,6 @@ public class SelectionParser extends ContextualParser {
 		else
 		{
 			contextNode = declaration;
-			handleOffsetableNamedElement((IASTOffsetableNamedElement) declaration);
 			throw new EndOfFileException();
 		}
 	}
@@ -313,15 +294,7 @@ public class SelectionParser extends ContextualParser {
 		}
 		
 	}
-	
-	protected Map nodeTable = new Hashtable( DEFAULT_MAP_SIZE, DEFAULT_FLOAT_SIZE );
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNode(org.eclipse.cdt.core.parser.ast.IASTNode)
-	 */
-	protected void handleOffsetableNamedElement(IASTOffsetableNamedElement node) {
-		if( node != null )
-			nodeTable.put( node, new Integer( getCurrentFileIndex()) );
-	}
+
 	
 	public static class SelectionParseResult implements ISelectionParseResult 
 	{
@@ -359,7 +332,6 @@ public class SelectionParser extends ContextualParser {
 		else
 		{
 			contextNode = enumerator;
-			handleOffsetableNamedElement(enumerator);
 			throw new EndOfFileException();
 		}
 	}
@@ -373,7 +345,6 @@ public class SelectionParser extends ContextualParser {
 		else
 		{
 			contextNode = classSpecifier;
-			handleOffsetableNamedElement( classSpecifier );
 			throw new EndOfFileException();
 		}
 	}
@@ -384,7 +355,6 @@ public class SelectionParser extends ContextualParser {
 		else
 		{
 			contextNode = enumeration;
-			handleOffsetableNamedElement( enumeration );
 			throw new EndOfFileException();
 		}
 	}

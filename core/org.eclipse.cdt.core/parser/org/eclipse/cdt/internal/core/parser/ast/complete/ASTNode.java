@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -74,7 +74,7 @@ public class ASTNode implements IASTNode {
 			filter.addAcceptedType( LookupKind.ALL );
 		}
 		
-		List lookupResults = performPrefixLookup(prefix, thisContainer, qualification, filter, parameters);
+		List lookupResults = performPrefixLookup(prefix.toCharArray(), thisContainer, qualification, filter, parameters);
 		
 		if(lookupResults == null)
 			return null;
@@ -111,7 +111,7 @@ public class ASTNode implements IASTNode {
 	 * @return
 	 * @throws LookupError
 	 */
-	protected List performPrefixLookup(String prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
+	protected List performPrefixLookup(char[] prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
 		List results = null;
 		try {
 			if( qualification != null ){
@@ -145,7 +145,7 @@ public class ASTNode implements IASTNode {
 		if( parameterExpression == null )
 			return null;
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		ASTExpression exp = (ASTExpression) parameterExpression;
 		while( exp != null ){
 			params.add( exp.getResultType().getResult() );

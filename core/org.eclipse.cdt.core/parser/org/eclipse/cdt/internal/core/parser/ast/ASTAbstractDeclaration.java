@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,6 +72,10 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     	if( pointerOperators == null ) return EmptyIterator.EMPTY_ITERATOR;
         return pointerOperators.iterator();
     }
+    public List getPointerOperatorsList(){
+        if( pointerOperators == null ) return Collections.EMPTY_LIST;
+        return pointerOperators;
+    }
     
     public int getNumPointerOperators(){
     	if( pointerOperators == null )
@@ -85,6 +90,11 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     {
 		if( arrayModifiers == null ) return EmptyIterator.EMPTY_ITERATOR;
         return arrayModifiers.iterator();
+    }
+    
+    public List getArrayModifiersList(){
+        if( arrayModifiers == null ) return Collections.EMPTY_LIST;
+        return arrayModifiers;
     }
     
     public int getNumArrayModifiers(){
@@ -119,9 +129,10 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-    	Iterator arrayMods = getArrayModifiers();
-    	while( arrayMods.hasNext() )
-    		((IASTArrayModifier)arrayMods.next()).acceptElement(requestor, manager);
+    	List arrayMods = getArrayModifiersList();
+    	int size = arrayMods.size();
+    	for( int i = 0; i< size; i++ )
+    		((IASTArrayModifier)arrayMods.get(i)).acceptElement(requestor, manager);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

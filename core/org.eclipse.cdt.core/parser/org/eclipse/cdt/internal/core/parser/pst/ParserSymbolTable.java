@@ -15,15 +15,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -31,7 +24,11 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArraySet;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
  * @author aniefer
@@ -41,64 +38,63 @@ public class ParserSymbolTable {
 
 	public static final int    TYPE_LOOP_THRESHOLD = 50;
 	public static final int    TEMPLATE_LOOP_THRESHOLD = 10;
-	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
-	public static final String THIS = "this";	//$NON-NLS-1$
+	public static final char[] EMPTY_NAME_ARRAY = new char[0]; //$NON-NLS-1$
+	public static final char[] THIS = new char[] {'t','h','i','s'};	//$NON-NLS-1$
+	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  //$NON-NLS-1$
 	
 	/**
 	 * Constructor for ParserSymbolTable.
 	 */
 	public ParserSymbolTable( ParserLanguage language, ParserMode mode ) {
 		super();
-		_compilationUnit = newContainerSymbol( EMPTY_NAME, TypeInfo.t_namespace );
+		_compilationUnit = newContainerSymbol( EMPTY_NAME_ARRAY, ITypeInfo.t_namespace );
 		_language = language;
 		_mode = mode;
+		_typeInfoProvider = new TypeInfoProvider();
 	}
 
 	public IContainerSymbol getCompilationUnit(){
 		return _compilationUnit;
 	}
 	
-	public IContainerSymbol newContainerSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public IContainerSymbol newContainerSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ContainerSymbol( this, name );
 	}
-	public IContainerSymbol newContainerSymbol( String name, TypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
+	public IContainerSymbol newContainerSymbol( char[] name, ITypeInfo.eType type ){
+	    if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ContainerSymbol( this, name, type );
 	}
 	
-	public ISymbol newSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public ISymbol newSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new BasicSymbol( this, name );
 	}
-	public ISymbol newSymbol( String name, TypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
+	public ISymbol newSymbol( char[] name, ITypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new BasicSymbol( this, name, type );
 	}
-	
-	public IDerivableContainerSymbol newDerivableContainerSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
-		return new DerivableContainerSymbol( this, name );
+	public IDerivableContainerSymbol newDerivableContainerSymbol( char[] name ){
+		return new DerivableContainerSymbol( this, name != null ? name : EMPTY_NAME_ARRAY );
 	}
-	public IDerivableContainerSymbol newDerivableContainerSymbol( String name, TypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
-		return new DerivableContainerSymbol( this, name, type );
+	public IDerivableContainerSymbol newDerivableContainerSymbol( char[] name, ITypeInfo.eType type ){
+		return new DerivableContainerSymbol( this, name != null ? name : EMPTY_NAME_ARRAY, type );
 	}
-	public IParameterizedSymbol newParameterizedSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public IParameterizedSymbol newParameterizedSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ParameterizedSymbol( this, name );
 	}
-	public IParameterizedSymbol newParameterizedSymbol( String name, TypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
+	public IParameterizedSymbol newParameterizedSymbol( char[] name, ITypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ParameterizedSymbol( this, name, type );
 	}
-	public ITemplateSymbol newTemplateSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public ITemplateSymbol newTemplateSymbol( char[] name ){
+	    if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new TemplateSymbol( this, name );
 	}
 	
-	public ISpecializedSymbol newSpecializedSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public ISpecializedSymbol newSpecializedSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new SpecializedSymbol( this, name );
 	}
 	
@@ -116,9 +112,9 @@ public class ParserSymbolTable {
 	static protected void lookup( LookupData data, IContainerSymbol inSymbol ) throws ParserSymbolTableException
 	{
 		//handle namespace aliases
-		if( inSymbol.isType( TypeInfo.t_namespace ) ){
-			ISymbol symbol = inSymbol.getTypeSymbol();
-			if( symbol != null && symbol.isType( TypeInfo.t_namespace ) ){
+		if( inSymbol.isType( ITypeInfo.t_namespace ) ){
+			ISymbol symbol = inSymbol.getForwardSymbol();
+			if( symbol != null && symbol.isType( ITypeInfo.t_namespace ) ){
 				inSymbol = (IContainerSymbol) symbol;
 			}
 		}
@@ -126,7 +122,7 @@ public class ParserSymbolTable {
 		ArrayList transitives = null;	//list of transitive using directives
 		
 		//if this name define in this scope?
-		Map map = null;
+		CharArrayObjectMap map = null;
 		if( !data.usingDirectivesOnly ){
 			map = lookupInContained( data, inSymbol );
 			if( data.foundItems == null || data.foundItems.isEmpty() ){
@@ -247,10 +243,10 @@ public class ParserSymbolTable {
 			temp = (IContainerSymbol) directives.get(i);
 
 			//namespaces are searched at most once
-			if( !data.visited.contains( temp ) ){
-				data.visited.add( temp );
+			if( !data.visited.containsKey( temp ) ){
+				data.visited.put( temp );
 				
-				Map map = lookupInContained( data, temp );
+				CharArrayObjectMap map = lookupInContained( data, temp );
 				foundSomething = ( map != null && !map.isEmpty() );
 				if( foundSomething ){
 					if( data.foundItems == null )
@@ -277,15 +273,15 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @param map2
 	 */
-	private static void mergeResults( LookupData data, Map resultMap, Map map ) throws ParserSymbolTableException {
+	private static void mergeResults( LookupData data, CharArrayObjectMap resultMap, CharArrayObjectMap map ) throws ParserSymbolTableException {
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
 		
-		Iterator keyIterator = map.keySet().iterator();
-		Object key = null;
-		while( keyIterator.hasNext() ){
-			key = keyIterator.next();
+		char[] key = null;
+		int size = map.size();
+		for( int i = 0; i < size; i++ ){
+		    key = map.keyAt( i );
 			if( resultMap.containsKey( key ) ){
 				List list = new ArrayList();
 				Object obj = resultMap.get( key );
@@ -312,8 +308,8 @@ public class ParserSymbolTable {
 	 * 
 	 * Look for data.name in our collection _containedDeclarations
 	 */
-	protected static Map lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
-		Map found = null;
+	protected static CharArrayObjectMap lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
+		CharArrayObjectMap found = null;
 		
 		Object obj = null;
 	
@@ -322,41 +318,37 @@ public class ParserSymbolTable {
 			data.getAssociated().remove( lookIn );
 		}
 		
-		Map declarations = lookIn.getContainedSymbols();
+		CharArrayObjectMap declarations = lookIn.getContainedSymbols();
 		
-		Iterator iterator = null;
-		if( data.isPrefixLookup() && declarations != Collections.EMPTY_MAP ){
-			if( declarations instanceof SortedMap ){
-				iterator = ((SortedMap)declarations).tailMap( data.name.toLowerCase() ).keySet().iterator();
-			} else {
-				throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
-			}
+		int numKeys = -1;
+		int idx = 0;
+		if( data.isPrefixLookup() && declarations != CharArrayObjectMap.EMPTY_MAP ){
+		    numKeys = declarations.size();
 		}
 		
-		String name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
+		char[] name = ( numKeys > 0 ) ? (char[]) declarations.keyAt( idx++ ) : data.name;
 		
 		while( name != null ) {
 			if( nameMatches( data, name ) ){
-				obj = ( !declarations.isEmpty() ) ? declarations.get( name ) : null;
+				obj = ( declarations.size() > 0 ) ? declarations.get( name ) : null;
 				if( obj != null ){
 					obj = collectSymbol( data, obj );
 					
 					if( obj != null ){
-						if( found == null )
-							found = new LinkedHashMap();
+						if( found == null ){
+						    found = new CharArrayObjectMap( 2 );
+						}
 						found.put( name, obj );
 					}
 				}
-			} else {
-				break;
 			}
-						
-			if( iterator != null && iterator.hasNext() ){
-				name = (String) iterator.next();
-			} else {
-				name = null;
-			}
+			if( idx < numKeys )
+			    name = declarations.keyAt( idx++ );
+			else 
+			    name = null;
 		} 
+		if( found != null && data.isPrefixLookup() )
+		    found.sort( ContainerSymbol.comparator );
 		
 		if( found != null && !data.isPrefixLookup() ){
 			return found;
@@ -386,79 +378,79 @@ public class ParserSymbolTable {
 	 * @param found
 	 * @throws ParserSymbolTableException
 	 */
-	private static Map lookupInParameters(LookupData data, IContainerSymbol lookIn, Map found) throws ParserSymbolTableException {
+	private static CharArrayObjectMap lookupInParameters(LookupData data, IContainerSymbol lookIn, CharArrayObjectMap found) throws ParserSymbolTableException {
 		Object obj;
-		Iterator iterator;
-		String name;
+		char[] name;
 		
 		if( lookIn instanceof ITemplateSymbol && !((ITemplateSymbol)lookIn).getDefinitionParameterMap().isEmpty() ){
 			ITemplateSymbol template = (ITemplateSymbol) lookIn;
 			if( data.templateMember != null && template.getDefinitionParameterMap().containsKey( data.templateMember ) ){
-				Map map = (Map) template.getDefinitionParameterMap().get( data.templateMember );
-				iterator = map.keySet().iterator();
-				while( iterator.hasNext() ){
-					ISymbol symbol = (ISymbol) iterator.next();
+			    ObjectMap map = (ObjectMap) template.getDefinitionParameterMap().get( data.templateMember );
+				for( int i = 0; i < map.size(); i++ ){
+					ISymbol symbol = (ISymbol) map.keyAt(i);
 					if( nameMatches( data, symbol.getName() ) ){
 						obj = collectSymbol( data, symbol );
 						if( obj != null ){
-							if( found == null )
-								found = new LinkedHashMap();
+						    if( found == null ){
+						        found = new CharArrayObjectMap(2);
+							}
 							found.put( symbol.getName(), obj );
 						}
 					}
 				}
+				if( found != null && data.isPrefixLookup() )
+				    found.sort( ContainerSymbol.comparator );
+				
 				return found;
 			}
 			
 		}
-		Map parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
-		if( parameters != Collections.EMPTY_MAP ){
-			iterator = null;
-			if( data.isPrefixLookup() ){
-				if( parameters instanceof SortedMap ){
-					iterator = ((SortedMap) parameters).tailMap( data.name.toLowerCase() ).keySet().iterator();
-				} else {
-					throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
-				}
-			}
+		CharArrayObjectMap parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
+		if( parameters != CharArrayObjectMap.EMPTY_MAP ){
+			int numKeys = -1;
+			int idx = 0;
 			
-			name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
+			if( data.isPrefixLookup() && parameters != CharArrayObjectMap.EMPTY_MAP ){
+			    numKeys = parameters.size();
+			}
+			name = ( numKeys > 0 ) ? (char[]) parameters.keyAt( idx++ ) : data.name;
 			while( name != null ){
 				if( nameMatches( data, name ) ){
 					obj = parameters.get( name );
 					obj = collectSymbol( data, obj );
 					if( obj != null ){
-						if( found == null )
-							found = new LinkedHashMap();
+					    if( found == null ){
+					        found = new CharArrayObjectMap( 2 );
+						}
 						found.put( name, obj );
 					}
-				} else {
-					break;
 				}
 				
-				if( iterator != null && iterator.hasNext() ){
-					name = (String) iterator.next();
-				} else {
+				if( idx < numKeys )
+				    name = parameters.keyAt( idx++ );
+				else 
 					name = null;
-				}
 			}
 		}
+		if( found != null && data.isPrefixLookup() )
+		    found.sort( ContainerSymbol.comparator );
+
 		return found;
 	}
 
-	private static boolean nameMatches( LookupData data, String name ){
+	private static boolean nameMatches( LookupData data, char[] name ){
 		if( data.isPrefixLookup() ){
-			return name.regionMatches( true, 0, data.name, 0, data.name.length() );
+			return CharArrayUtils.equals( name, 0, data.name.length, data.name, true);
 		} 
-		return name.equals( data.name );
+		return CharArrayUtils.equals( name, data.name );
 	}
-	private static boolean checkType( LookupData data, ISymbol symbol ) { //, TypeInfo.eType type, TypeInfo.eType upperType ){
+	private static boolean checkType( LookupData data, ISymbol symbol ) {
 		if( data.getFilter() == null ){
 			return true;
 		}
 		
 		TypeInfoProvider provider = symbol.getSymbolTable().getTypeInfoProvider();
-		TypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo(), provider );
+		ITypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo(), provider );
 		boolean accept = data.getFilter().shouldAccept( symbol, typeInfo ) || data.getFilter().shouldAccept( symbol );
 		provider.returnTypeInfo( typeInfo );
 		
@@ -476,8 +468,8 @@ public class ParserSymbolTable {
 		int objListSize = ( objList != null ) ? objList.size() : 0;
 		ISymbol symbol = ( objList != null ) ? (ISymbol) objList.get( 0 ) : (ISymbol) object;
 	
-		Set functionSet = new HashSet();
-		Set templateFunctionSet = new HashSet();
+		ObjectSet functionSet = ObjectSet.EMPTY_SET;
+		ObjectSet templateFunctionSet = ObjectSet.EMPTY_SET;
 		
 		ISymbol obj	= null;
 		IContainerSymbol cls = null;
@@ -491,28 +483,32 @@ public class ParserSymbolTable {
 			if( ( data.returnInvisibleSymbols || !symbol.getIsInvisible() ) && checkType( data, symbol ) ){
 				foundSymbol = symbol;
 				
-				if( foundSymbol.isType( TypeInfo.t_function ) ){
-					if( foundSymbol.isForwardDeclaration() && foundSymbol.getTypeSymbol() != null &&
-						foundSymbol.getTypeSymbol().getContainingSymbol() == foundSymbol.getContainingSymbol() )
+				if( foundSymbol.isType( ITypeInfo.t_function ) ){
+					if( foundSymbol.isForwardDeclaration() && foundSymbol.getForwardSymbol() != null &&
+						foundSymbol.getForwardSymbol().getContainingSymbol() == foundSymbol.getContainingSymbol() )
 					{
-						foundSymbol = foundSymbol.getTypeSymbol();
+						foundSymbol = foundSymbol.getForwardSymbol();
 					}
-					if( foundSymbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
-						templateFunctionSet.add( foundSymbol );
+					if( foundSymbol.getContainingSymbol().isType( ITypeInfo.t_template ) ){
+					    if( templateFunctionSet == ObjectSet.EMPTY_SET )
+					        templateFunctionSet = new ObjectSet( 2 );
+						templateFunctionSet.put( foundSymbol );
 					} else {
-						functionSet.add( foundSymbol );	
+					    if( functionSet == ObjectSet.EMPTY_SET )
+					        functionSet = new ObjectSet( 2 );
+						functionSet.put( foundSymbol );	
 					}
 					
 				} else {
 					//if this is a class-name, other stuff hides it
-					if( foundSymbol.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
+					if( foundSymbol.isType( ITypeInfo.t_class, ITypeInfo.t_enumeration ) ){
 						if( cls == null ){
 							cls = (IContainerSymbol) foundSymbol;
 						} else {
-							if( cls.getTypeInfo().isForwardDeclaration() && cls.getTypeSymbol() == foundSymbol ){
+							if( cls.isForwardDeclaration() && cls.getForwardSymbol() == foundSymbol ){
 								//cls is a forward declaration of decl, we want decl.
 								cls = (IContainerSymbol) foundSymbol;
-							} else if( foundSymbol.getTypeInfo().isForwardDeclaration() && foundSymbol.getTypeSymbol() == cls ){
+							} else if( foundSymbol.isForwardDeclaration() && foundSymbol.getForwardSymbol() == cls ){
 								//decl is a forward declaration of cls, we already have what we want (cls)
 							} else {
 								if( data.isPrefixLookup() ){
@@ -527,7 +523,11 @@ public class ParserSymbolTable {
 						if( obj == null ){
 							obj = foundSymbol;	
 						} else {
-							if( data.isPrefixLookup() ){
+						    if( obj.isForwardDeclaration() && obj.getForwardSymbol() == foundSymbol )
+						        obj = foundSymbol;
+						    else if( foundSymbol.isForwardDeclaration() && foundSymbol.getForwardSymbol() == obj ){
+						        //we already have what we want.
+						    } else if( data.isPrefixLookup() ){
 								data.addAmbiguity( foundSymbol.getName() );
 							} else {
 								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
@@ -555,24 +555,19 @@ public class ParserSymbolTable {
 				ambiguous = true;	
 			}
 			
-			Iterator fnIter = null;
 			IParameterizedSymbol fn = null;
-			if( !templateFunctionSet.isEmpty() ){
-				fnIter = templateFunctionSet.iterator();
-			
-				for( int i = numTemplateFunctions; i > 0; i-- ){
-					fn = (IParameterizedSymbol) fnIter.next();
+			if( numTemplateFunctions > 0 ){			    
+			    for( int i = 0; i < numTemplateFunctions; i++ ){
+					fn = (IParameterizedSymbol) templateFunctionSet.keyAt( i );
 					if( cls.getContainingSymbol()!= fn.getContainingSymbol()){
 						ambiguous = true;
 						break;
 					}
 				}
 			}
-			if( !functionSet.isEmpty() ){
-				fnIter = functionSet.iterator();
-				
-				for( int i = numFunctions; i > 0; i-- ){
-					fn = (IParameterizedSymbol) fnIter.next();
+			if( numFunctions > 0 ){
+				for( int i = 0; i < numFunctions; i++ ){
+					fn = (IParameterizedSymbol) functionSet.keyAt( i );
 					if( cls.getContainingSymbol()!= fn.getContainingSymbol()){
 						ambiguous = true;
 						break;
@@ -584,10 +579,15 @@ public class ParserSymbolTable {
 		if( numTemplateFunctions > 0 ){
 			if( data.getParameters() != null && ( !data.exactFunctionsOnly || data.getTemplateParameters() != null ) ){
 				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.getParameters(), data.getTemplateParameters() );
-				if( fns != null )
+				if( fns != null ){
+				    if( functionSet == ObjectSet.EMPTY_SET )
+				        functionSet = new ObjectSet( fns.size() );
 					functionSet.addAll( fns );
+				}
 				numFunctions = functionSet.size();
 			} else {
+			    if( functionSet == ObjectSet.EMPTY_SET )
+			        functionSet = new ObjectSet( templateFunctionSet.size() );
 				functionSet.addAll( templateFunctionSet );
 				numFunctions += numTemplateFunctions;
 			}
@@ -600,7 +600,7 @@ public class ParserSymbolTable {
 				return obj;
 			}
 		} else if( numFunctions > 0 ) {
-			return new ArrayList( functionSet );
+			return functionSet.toList();
 		}
 		
 		if( ambiguous ){
@@ -620,7 +620,7 @@ public class ParserSymbolTable {
 	 * @return Declaration
 	 * @throws ParserSymbolTableException
 	 */
-	private static Map lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
+	private static CharArrayObjectMap lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
 		IDerivableContainerSymbol container = null;
 
 		if( lookIn instanceof IDerivableContainerSymbol ){
@@ -631,9 +631,9 @@ public class ParserSymbolTable {
 		
 		List scopes = container.getParents();
 
-		Map temp = null;
-		Map symbol = null;
-		Map inherited = null;
+		CharArrayObjectMap temp = null;
+		CharArrayObjectMap symbol = null;
+		CharArrayObjectMap inherited = null;
 		
 		IDerivableContainerSymbol.IParentSymbol wrapper = null;
 		
@@ -642,9 +642,9 @@ public class ParserSymbolTable {
 				
 		//use data to detect circular inheritance
 		if( data.inheritanceChain == null )
-			data.inheritanceChain = new HashSet();
+			data.inheritanceChain = new ObjectSet( 2 );
 		
-		data.inheritanceChain.add( container );
+		data.inheritanceChain.put( container );
 			
 		int size = scopes.size();
 		for( int i = 0; i < size; i++ )
@@ -654,9 +654,9 @@ public class ParserSymbolTable {
 			if( parent == null )
 				continue;
 
-			if( !wrapper.isVirtual() || !data.visited.contains( parent ) ){
+			if( !wrapper.isVirtual() || !data.visited.containsKey( parent ) ){
 				if( wrapper.isVirtual() ){
-					data.visited.add( parent );
+					data.visited.put( parent );
 				}
 
 				if( parent instanceof IDeferredTemplateInstance ){
@@ -667,7 +667,7 @@ public class ParserSymbolTable {
 
 				//if the inheritanceChain already contains the parent, then that 
 				//is circular inheritance
-				if( ! data.inheritanceChain.contains( parent ) ){
+				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
 					if( parent instanceof IDerivableContainerSymbol ){
 						temp = lookupInContained( data, (IDerivableContainerSymbol) parent );
@@ -691,10 +691,11 @@ public class ParserSymbolTable {
 				if( symbol == null || symbol.isEmpty() ){
 					symbol = temp;
 				} else if ( temp != null && !temp.isEmpty() ) {
-					Iterator iter = temp.keySet().iterator();
-					Object key = null;
-					while( iter.hasNext() ){
-						key = iter.next();
+					char[] key = null;
+					int tempSize = temp.size();
+					for( int ii = 0; ii < tempSize; ii++ ){
+					    key = temp.keyAt( ii );
+					
 						if( symbol.containsKey( key ) ){
 							Object obj = symbol.get( key );
 							List objList = ( obj instanceof List ) ? (List)obj : null;
@@ -738,8 +739,8 @@ public class ParserSymbolTable {
 			ISymbol symbol = ( objList != null ) ? (ISymbol) objList.get(0) : ( ISymbol )obj1;
 			int idx = 1;
 			while( symbol != null ) {
-				TypeInfo type = ((ISymbol)obj1).getTypeInfo();
-				if( !type.checkBit( TypeInfo.isStatic ) && !type.isType( TypeInfo.t_enumerator ) ){
+				ITypeInfo type = ((ISymbol)obj1).getTypeInfo();
+				if( !type.checkBit( ITypeInfo.isStatic ) && !type.isType( ITypeInfo.t_enumerator ) ){
 					return false;
 				}
 				
@@ -760,15 +761,15 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @throws ParserSymbolTableException
 	 */
-	private static void mergeInheritedResults( Map resultMap, Map map ){
+	private static void mergeInheritedResults( CharArrayObjectMap resultMap, CharArrayObjectMap map ){
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
 		
-		Iterator keyIterator = map.keySet().iterator();
-		Object key = null;
-		while( keyIterator.hasNext() ){
-			key = keyIterator.next();
+		char[] key = null;
+		int size = map.size();
+		for( int i = 0; i < size; i++ ){
+		    key = map.keyAt( i );
 			if( !resultMap.containsKey( key ) ){
 				resultMap.put( key, map.get( key ) );
 			}
@@ -788,10 +789,10 @@ public class ParserSymbolTable {
 	 * it finds the name to be a function name"
 	 */
 	protected static boolean isValidOverload( ISymbol origSymbol, ISymbol newSymbol ){
-		TypeInfo.eType origType = origSymbol.getType();
-		TypeInfo.eType newType  = newSymbol.getType();
+		ITypeInfo.eType origType = origSymbol.getType();
+		ITypeInfo.eType newType  = newSymbol.getType();
 		
-		if( origType == TypeInfo.t_template ){
+		if( origType == ITypeInfo.t_template ){
 			ITemplateSymbol template = (ITemplateSymbol) origSymbol;
 			origSymbol = template.getTemplatedSymbol();
 			if( origSymbol == null )
@@ -799,7 +800,7 @@ public class ParserSymbolTable {
 			origType = origSymbol.getType();
 		}
 		
-		if( newType == TypeInfo.t_template ){
+		if( newType == ITypeInfo.t_template ){
 			ITemplateSymbol template = (ITemplateSymbol) newSymbol;
 			newSymbol = template.getTemplatedSymbol();
 			if( newSymbol == null )
@@ -808,19 +809,19 @@ public class ParserSymbolTable {
 		}	
 		
 		//handle forward decls
-		if( origSymbol.getTypeInfo().isForwardDeclaration() ){
-			if( origSymbol.getTypeSymbol() == newSymbol )
+		if( origSymbol.isForwardDeclaration() ){
+			if( origSymbol.getForwardSymbol() == newSymbol )
 				return true;
 			
 			//friend class declarations
 			if( origSymbol.getIsInvisible() && origSymbol.isType( newSymbol.getType() ) ){
-				origSymbol.getTypeInfo().setTypeSymbol(  newSymbol );
+				origSymbol.setForwardSymbol(  newSymbol );
 				return true;
 			}
 		}
 				
-		if( (origType.compareTo(TypeInfo.t_class) >= 0 && origType.compareTo(TypeInfo.t_enumeration) <= 0) && //class name or enumeration ...
-			( newType == TypeInfo.t_type || (newType.compareTo( TypeInfo.t_function ) >= 0 /*&& newType <= TypeInfo.typeMask*/) ) ){
+		if( (origType.compareTo(ITypeInfo.t_class) >= 0 && origType.compareTo(ITypeInfo.t_enumeration) <= 0) && //class name or enumeration ...
+			( newType == ITypeInfo.t_type || (newType.compareTo( ITypeInfo.t_function ) >= 0 /*&& newType <= TypeInfo.typeMask*/) ) ){
 				
 			return true;
 		}
@@ -835,7 +836,7 @@ public class ParserSymbolTable {
 		if( origList.size() == 1 ){
 			return isValidOverload( (ISymbol)origList.get(0), newSymbol );
 		} else if ( origList.size() > 1 ){
-			if( newSymbol.isType( TypeInfo.t_template ) ){
+			if( newSymbol.isType( ITypeInfo.t_template ) ){
 				ITemplateSymbol template = (ITemplateSymbol) newSymbol;
 				newSymbol = (ISymbol) template.getContainedSymbols().get( template.getName() );	
 			}
@@ -843,14 +844,14 @@ public class ParserSymbolTable {
 			//the first thing can be a class-name or enumeration name, but the rest
 			//must be functions.  So make sure the newDecl is a function before even
 			//considering the list
-			if( newSymbol.getType() != TypeInfo.t_function && newSymbol.getType() != TypeInfo.t_constructor ){
+			if( newSymbol.getType() != ITypeInfo.t_function && newSymbol.getType() != ITypeInfo.t_constructor ){
 				return false;
 			}
 			
 			//Iterator iter = origList.iterator();
 			ISymbol symbol = (ISymbol) origList.get(0);
 			int numSymbols = origList.size();
-			if( symbol.isType( TypeInfo.t_template ) ){
+			if( symbol.isType( ITypeInfo.t_template ) ){
 				IParameterizedSymbol template = (IParameterizedSymbol) symbol;
 				symbol = (ISymbol) template.getContainedSymbols().get( template.getName() );	
 			}
@@ -859,7 +860,7 @@ public class ParserSymbolTable {
 			int idx = 1;
 			while( valid && idx < numSymbols ){
 				symbol = (ISymbol) origList.get(idx++);
-				if( symbol.isType( TypeInfo.t_template ) ){
+				if( symbol.isType( ITypeInfo.t_template ) ){
 					ITemplateSymbol template = (ITemplateSymbol) symbol;
 					symbol = template.getTemplatedSymbol();	
 				}
@@ -874,21 +875,21 @@ public class ParserSymbolTable {
 	}
 	
 	private static boolean isValidFunctionOverload( IParameterizedSymbol origSymbol, IParameterizedSymbol newSymbol ){
-		if( ( !origSymbol.isType( TypeInfo.t_function ) && !origSymbol.isType( TypeInfo.t_constructor ) ) || 
-			( ! newSymbol.isType( TypeInfo.t_function ) && ! newSymbol.isType( TypeInfo.t_constructor ) ) ){
+		if( ( !origSymbol.isType( ITypeInfo.t_function ) && !origSymbol.isType( ITypeInfo.t_constructor ) ) || 
+			( ! newSymbol.isType( ITypeInfo.t_function ) && ! newSymbol.isType( ITypeInfo.t_constructor ) ) ){
 			return false;
 		}
 		
 		//handle forward decls
-		if( origSymbol.getTypeInfo().isForwardDeclaration() &&
-			origSymbol.getTypeSymbol() == newSymbol )
+		if( origSymbol.isForwardDeclaration() &&
+			origSymbol.getForwardSymbol() == newSymbol )
 		{
 			return true;
 		}
 		if( origSymbol.hasSameParameters( newSymbol ) ){
 			//functions with the same name and same parameter types cannot be overloaded if any of them
 			//is static
-			if( origSymbol.getTypeInfo().checkBit( TypeInfo.isStatic ) || newSymbol.getTypeInfo().checkBit( TypeInfo.isStatic ) ){
+			if( origSymbol.getTypeInfo().checkBit( ITypeInfo.isStatic ) || newSymbol.getTypeInfo().checkBit( ITypeInfo.isStatic ) ){
 				return false;
 			}
 			
@@ -940,12 +941,12 @@ public class ParserSymbolTable {
 			functionList.addAll( (List) object );
 		} else {
 			ISymbol symbol = (ISymbol) object;
-			if( symbol.isType( TypeInfo.t_function ) ){
+			if( symbol.isType( ITypeInfo.t_function ) ){
 				functionList = new ArrayList(1);
 				functionList.add( symbol );
 			} else {
 				if( symbol.isTemplateMember() && !symbol.isTemplateInstance() && 
-					!symbol.isType( TypeInfo.t_templateParameter ) && symbol.getContainingSymbol().isType( TypeInfo.t_template ))
+					!symbol.isType( ITypeInfo.t_templateParameter ) && symbol.getContainingSymbol().isType( ITypeInfo.t_template ))
 				{
 					resolvedSymbol = symbol.getContainingSymbol();
 					if( resolvedSymbol instanceof ISpecializedSymbol ){
@@ -1004,9 +1005,9 @@ public class ParserSymbolTable {
 			} else if ( numFns == 2 ){
 				for (int i = 0; i < numFns; i++) {
 					IParameterizedSymbol fn = (IParameterizedSymbol) functions.get(i);
-					if( fn.getTypeInfo().isForwardDeclaration() && fn.getTypeSymbol() != null ){
-						if( functions.contains( fn.getTypeSymbol() ) ){
-							return (IParameterizedSymbol) fn.getTypeSymbol();
+					if( fn.isForwardDeclaration() && fn.getForwardSymbol() != null ){
+						if( functions.contains( fn.getForwardSymbol() ) ){
+							return (IParameterizedSymbol) fn.getForwardSymbol();
 						}
 					}
 				}
@@ -1021,9 +1022,9 @@ public class ParserSymbolTable {
 		Cost [] bestFnCost = null;				//the cost of the best function
 		Cost [] currFnCost = null;				//the cost for the current function
 				
-		TypeInfo source = null;					//parameter we are called with
-		TypeInfo target = null;					//function's parameter
-		TypeInfo voidInfo = null;				//used to compare f() and f(void)
+		ITypeInfo source = null;				//parameter we are called with
+		ITypeInfo target = null;				//function's parameter
+		ITypeInfo voidInfo = null;				//used to compare f() and f(void)
 		
 		int comparison;
 		Cost cost = null;						//the cost of converting source to target
@@ -1043,8 +1044,8 @@ public class ParserSymbolTable {
 		if( numSourceParams == 0 ){
 			//f() is the same as f( void )
 			sourceParameters = new ArrayList(1);
-			voidInfo = infoProvider.getTypeInfo();
-			voidInfo.setType( TypeInfo.t_void );
+			voidInfo = infoProvider.getTypeInfo( ITypeInfo.t_void );
+			voidInfo.setType( ITypeInfo.t_void );
 			sourceParameters.add( voidInfo );
 			numSourceParams = 1;
 		} else {
@@ -1056,10 +1057,10 @@ public class ParserSymbolTable {
 				currFn = (IParameterizedSymbol) functions.get( fnIdx );
 				
 				if( bestFn != null ){
-					if( bestFn.isForwardDeclaration() && bestFn.getTypeSymbol() == currFn ){
+					if( bestFn.isForwardDeclaration() && bestFn.getForwardSymbol() == currFn ){
 						bestFn = currFn;
 						continue;
-					} else if( currFn.isForwardDeclaration() && currFn.getTypeSymbol() == bestFn ){
+					} else if( currFn.isForwardDeclaration() && currFn.getForwardSymbol() == bestFn ){
 						continue;
 					}
 				}
@@ -1069,7 +1070,7 @@ public class ParserSymbolTable {
 					//the only way we get here and have no parameters, is if we are looking
 					//for a function that takes void parameters ie f( void )
 					targetParameters = new ArrayList(1);
-					targetParameters.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) ); //$NON-NLS-1$
+					targetParameters.add( currFn.getSymbolTable().newSymbol( EMPTY_NAME_ARRAY, ITypeInfo.t_void ) ); //$NON-NLS-1$
 				} else {
 					targetParameters = currFn.getParameterList();
 				}
@@ -1083,7 +1084,7 @@ public class ParserSymbolTable {
 				boolean varArgs = false;
 				
 				for( int j = 0; j < numSourceParams; j++ ){
-					source = (TypeInfo) sourceParameters.get(j);
+					source = (ITypeInfo) sourceParameters.get(j);
 					
 					if( j < numTargetParams )
 						target = ((ISymbol)targetParameters.get(j)).getTypeInfo();
@@ -1093,7 +1094,7 @@ public class ParserSymbolTable {
 					if( varArgs ){
 						cost = new Cost( infoProvider, source, null );
 						cost.rank = Cost.ELLIPSIS_CONVERSION;
-					} else if ( target.getHasDefault() && source.isType( TypeInfo.t_void ) && !source.hasPtrOperators() ){
+					} else if ( target.getHasDefault() && source.isType( ITypeInfo.t_void ) && !source.hasPtrOperators() ){
 						//source is just void, ie no parameter, if target had a default, then use that
 						cost = new Cost( infoProvider, source, target );
 						cost.rank = Cost.IDENTITY_RANK;
@@ -1258,12 +1259,12 @@ public class ParserSymbolTable {
 			return function.getParameterList().isEmpty();
 		}
 		//create a new function that has params as its parameters, then use IParameterizedSymbol.hasSameParameters
-		IParameterizedSymbol tempFn = function.getSymbolTable().newParameterizedSymbol( EMPTY_NAME, TypeInfo.t_function );
+		IParameterizedSymbol tempFn = function.getSymbolTable().newParameterizedSymbol( EMPTY_NAME_ARRAY, ITypeInfo.t_function );
 		
 		int size = params.size();
 		for( int i = 0; i < size; i++ ){
-			ISymbol param = function.getSymbolTable().newSymbol( EMPTY_NAME );
-			param.setTypeInfo( (TypeInfo) params.get(i) );
+			ISymbol param = function.getSymbolTable().newSymbol( EMPTY_NAME_ARRAY );
+			param.setTypeInfo( (ITypeInfo) params.get(i) );
 			tempFn.addParameter( param );
 		}
 		
@@ -1289,7 +1290,7 @@ public class ParserSymbolTable {
 			//sanity check
 			if( obj instanceof IParameterizedSymbol ){
 				function = (IParameterizedSymbol) obj;
-				if( !function.isType( TypeInfo.t_function) && !function.isType( TypeInfo.t_constructor ) ){
+				if( !function.isType( ITypeInfo.t_function) && !function.isType( ITypeInfo.t_constructor ) ){
 					functions.remove( i-- );
 					size--;
 					continue;
@@ -1314,12 +1315,12 @@ public class ParserSymbolTable {
 			//check for void
 			else if( numParameters == 0 && num == 1 ){
 				ISymbol param = (ISymbol)function.getParameterList().get(0);
-				if( param.isType( TypeInfo.t_void ) )
+				if( param.isType( ITypeInfo.t_void ) )
 					continue;
 			}
 			else if( numParameters == 1 && num == 0 ){
-				TypeInfo paramType = (TypeInfo) data.getParameters().get(0);
-				if( paramType.isType( TypeInfo.t_void ) )
+				ITypeInfo paramType = (ITypeInfo) data.getParameters().get(0);
+				if( paramType.isType( ITypeInfo.t_void ) )
 					continue;
 			}
 			
@@ -1341,7 +1342,7 @@ public class ParserSymbolTable {
 					continue;
 				}
 				List params = function.getParameterList();
-				TypeInfo param;
+				ITypeInfo param;
 				for( int j = num - 1; j > ( numParameters - num); j-- ){
 					param = ((ISymbol)params.get(j)).getTypeInfo();
 					if( !param.getHasDefault() ){
@@ -1377,7 +1378,7 @@ public class ParserSymbolTable {
 			temp = ((IUsingDirectiveSymbol) directives.get(i)).getNamespace();
 		
 			//namespaces are searched at most once
-			if( !data.visited.contains( temp ) ){
+			if( !data.visited.containsKey( temp ) ){
 				enclosing = getClosestEnclosingDeclaration( symbol, temp );
 						
 				//the data.usingDirectives is a map from enclosing declaration to 
@@ -1390,7 +1391,7 @@ public class ParserSymbolTable {
 					list = new ArrayList(4);
 					list.add( temp );
 					if( data.usingDirectives == null ){
-						data.usingDirectives = new HashMap();
+						data.usingDirectives = new ObjectMap(2);
 					}
 					data.usingDirectives.put( enclosing, list );
 				} else {
@@ -1488,7 +1489,7 @@ public class ParserSymbolTable {
 		return -1;
 	}
 
-	static protected void getAssociatedScopes( ISymbol symbol, HashSet associated ){
+	static protected void getAssociatedScopes( ISymbol symbol, ObjectSet associated ){
 		if( symbol == null ){
 			return;
 		}
@@ -1497,19 +1498,19 @@ public class ParserSymbolTable {
 		//namespaces in which its associated classes are defined	
 		//if( symbol.getType() == TypeInfo.t_class ){
 		if( symbol instanceof IDerivableContainerSymbol ){
-			associated.add( symbol );
-			associated.add( symbol.getContainingSymbol() );
+			associated.put( symbol );
+			associated.put( symbol.getContainingSymbol() );
 			getBaseClassesAndContainingNamespaces( (IDerivableContainerSymbol) symbol, associated );
 		} 
 		//if T is a union or enumeration type, its associated namespace is the namespace in 
 		//which it is defined. if it is a class member, its associated class is the member's
 		//class
-		else if( symbol.getType() == TypeInfo.t_union || symbol.getType() == TypeInfo.t_enumeration ){
-			associated.add( symbol.getContainingSymbol() );
+		else if( symbol.getType() == ITypeInfo.t_union || symbol.getType() == ITypeInfo.t_enumeration ){
+			associated.put( symbol.getContainingSymbol() );
 		}
 	}
 	
-	static private void getBaseClassesAndContainingNamespaces( IDerivableContainerSymbol obj, HashSet classes ){
+	static private void getBaseClassesAndContainingNamespaces( IDerivableContainerSymbol obj, ObjectSet classes ){
 		if( obj.getParents() != null ){
 			if( classes == null ){
 				return;
@@ -1525,9 +1526,9 @@ public class ParserSymbolTable {
 				base = wrapper.getParent();
 				//TODO: what about IDeferredTemplateInstance parents?
 				if( base instanceof IDerivableContainerSymbol ){
-					classes.add( base );
-					if( base.getContainingSymbol().getType() == TypeInfo.t_namespace ){
-						classes.add( base.getContainingSymbol());
+					classes.put( base );
+					if( base.getContainingSymbol().getType() == ITypeInfo.t_namespace ){
+						classes.put( base.getContainingSymbol());
 					}
 					
 					getBaseClassesAndContainingNamespaces( (IDerivableContainerSymbol) base, classes );	
@@ -1541,11 +1542,11 @@ public class ParserSymbolTable {
 		boolean okToAdd = false;
 			
 		//7.3.3-5  A using-declaration shall not name a template-id
-		if( obj.isTemplateMember() && obj.getContainingSymbol().isType( TypeInfo.t_template ) ){
+		if( obj.isTemplateInstance() && obj.getInstantiatedSymbol().getContainingSymbol().isType( ITypeInfo.t_template ) ){
 			okToAdd = false;
 		}
 		//7.3.3-4
-		else if( context.isType( TypeInfo.t_class, TypeInfo.t_struct ) ){
+		else if( context.isType( ITypeInfo.t_class, ITypeInfo.t_struct ) ){
 			IContainerSymbol container = obj.getContainingSymbol();
 			
 			try{
@@ -1553,7 +1554,7 @@ public class ParserSymbolTable {
 				if( obj.getContainingSymbol().getType() == context.getType() ){
 					okToAdd = ( hasBaseClass( context, container ) > 0 );		
 				} 
-				else if ( obj.getContainingSymbol().getType() == TypeInfo.t_union ) {
+				else if ( obj.getContainingSymbol().getType() == ITypeInfo.t_union ) {
 					// TODO : must be an _anonymous_ union
 					container = container.getContainingSymbol();
 					okToAdd = ( container instanceof IDerivableContainerSymbol ) 
@@ -1561,7 +1562,7 @@ public class ParserSymbolTable {
 							  : false; 
 				}
 				//an enumerator for an enumeration
-				else if ( obj.getType() == TypeInfo.t_enumerator ){
+				else if ( obj.getType() == ITypeInfo.t_enumerator ){
 					container = container.getContainingSymbol();
 					okToAdd = ( container instanceof IDerivableContainerSymbol ) 
 							  ? ( hasBaseClass( context, container ) > 0 )
@@ -1577,20 +1578,15 @@ public class ParserSymbolTable {
 		return okToAdd;
 	}
 
-	static private Cost lvalue_to_rvalue( TypeInfoProvider provider, TypeInfo source, TypeInfo target ){
+	static private Cost lvalue_to_rvalue( TypeInfoProvider provider, ITypeInfo source, ITypeInfo target ){
 
 		//lvalues will have type t_type
-		if( source.isType( TypeInfo.t_type ) ){
+		if( source.isType( ITypeInfo.t_type ) ){
 			source = getFlatTypeInfo( source, null );
 		}
-		
-		if( target.isType( TypeInfo.t_type ) ){
-			ISymbol symbol = target.getTypeSymbol();
-			if( symbol != null && symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null ){
-				target = new TypeInfo( target );
-				target.setType( TypeInfo.t_type );
-				target.setTypeSymbol( symbol.getTypeSymbol() );
-			}
+
+		if( target.isType( ITypeInfo.t_type ) ){
+			target = getFlatTypeInfo( target, null );
 		}
 		
 		Cost cost = new Cost( provider, source, target );
@@ -1601,19 +1597,19 @@ public class ParserSymbolTable {
 			return cost;
 		}
 		
-		TypeInfo.PtrOp op = null;
+		ITypeInfo.PtrOp op = null;
 		
 		if( cost.getSource().hasPtrOperators() ){
 			List sourcePtrs = cost.getSource().getPtrOperators();
-			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)sourcePtrs.get( 0 );
-			if( ptr.getType() == TypeInfo.PtrOp.t_reference ){
+			ITypeInfo.PtrOp ptr = (ITypeInfo.PtrOp)sourcePtrs.get( 0 );
+			if( ptr.getType() == ITypeInfo.PtrOp.t_reference ){
 				sourcePtrs.remove( 0 );
 			}
 			int size = sourcePtrs.size();
 			for( int i = 0; i < size; i++ ){
-				op = (TypeInfo.PtrOp) sourcePtrs.get( 0 );
-				if( op.getType() == TypeInfo.PtrOp.t_array ){
-					op.setType( TypeInfo.PtrOp.t_pointer );		
+				op = (ITypeInfo.PtrOp) sourcePtrs.get( 0 );
+				if( op.getType() == ITypeInfo.PtrOp.t_array ){
+					op.setType( ITypeInfo.PtrOp.t_pointer );		
 				}
 			}
 		}
@@ -1621,17 +1617,17 @@ public class ParserSymbolTable {
 		if( cost.getTarget().hasPtrOperators() ){
 			List targetPtrs = cost.getTarget().getPtrOperators();
 			//ListIterator iterator = targetPtrs.listIterator();
-			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)targetPtrs.get(0);
+			ITypeInfo.PtrOp ptr = (ITypeInfo.PtrOp)targetPtrs.get(0);
 
-			if( ptr.getType() == TypeInfo.PtrOp.t_reference ){
+			if( ptr.getType() == ITypeInfo.PtrOp.t_reference ){
 				targetPtrs.remove(0);
 				cost.targetHadReference = true;
 			}
 			int size = targetPtrs.size();
 			for( int i = 0; i < size; i++ ){
-				op = (TypeInfo.PtrOp) targetPtrs.get(0);
-				if( op.getType() == TypeInfo.PtrOp.t_array ){
-					op.setType( TypeInfo.PtrOp.t_pointer );		
+				op = (ITypeInfo.PtrOp) targetPtrs.get(0);
+				if( op.getType() == ITypeInfo.PtrOp.t_array ){
+					op.setType( ITypeInfo.PtrOp.t_pointer );		
 				}
 			}
 		}
@@ -1651,20 +1647,20 @@ public class ParserSymbolTable {
 		int size = sourcePtrs.size();
 		int size2 = targetPtrs.size();
 		
-		TypeInfo.PtrOp op1 = null, op2 = null;
+		ITypeInfo.PtrOp op1 = null, op2 = null;
 		boolean canConvert = true;
 
 		if( size != size2 ){
 			canConvert = false;
 		} else if( size > 0 ){
-			op1 = (TypeInfo.PtrOp) sourcePtrs.get(0);
-			op2 = (TypeInfo.PtrOp) targetPtrs.get(0);
+			op1 = (ITypeInfo.PtrOp) sourcePtrs.get(0);
+			op2 = (ITypeInfo.PtrOp) targetPtrs.get(0);
 
 			boolean constInEveryCV2k = true;
 			
 			for( int j= 1; j < size; j++ ){
-				op1 = (TypeInfo.PtrOp) sourcePtrs.get(j);
-				op2 = (TypeInfo.PtrOp) targetPtrs.get(j);
+				op1 = (ITypeInfo.PtrOp) sourcePtrs.get(j);
+				op2 = (ITypeInfo.PtrOp) targetPtrs.get(j);
 				
 				//pointer types must be similar
 				if( op1.getType() != op2.getType() ){
@@ -1689,8 +1685,8 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( ( cost.getSource().checkBit( TypeInfo.isConst ) && !cost.getTarget().checkBit( TypeInfo.isConst ) ) ||
-			( cost.getSource().checkBit( TypeInfo.isVolatile ) && !cost.getTarget().checkBit( TypeInfo.isVolatile ) ) )
+		if( ( cost.getSource().checkBit( ITypeInfo.isConst ) && !cost.getTarget().checkBit( ITypeInfo.isConst ) ) ||
+			( cost.getSource().checkBit( ITypeInfo.isVolatile ) && !cost.getTarget().checkBit( ITypeInfo.isVolatile ) ) )
 		{
 			canConvert = false;
 		}
@@ -1718,23 +1714,23 @@ public class ParserSymbolTable {
 	 * 4.6 float can be promoted to double
 	 */
 	static private void promotion( Cost cost ){
-		TypeInfo src = cost.getSource();
-		TypeInfo trg = cost.getTarget();
+		ITypeInfo src = cost.getSource();
+		ITypeInfo trg = cost.getTarget();
 		 
-		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned | TypeInfo.isLongLong | TypeInfo.isSigned;
+		int mask = ITypeInfo.isShort | ITypeInfo.isLong | ITypeInfo.isUnsigned | ITypeInfo.isLongLong | ITypeInfo.isSigned;
 		
-		if( (src.isType( TypeInfo.t__Bool, TypeInfo.t_float ) || src.isType( TypeInfo.t_enumeration )) &&
-			(trg.isType( TypeInfo.t_int ) || trg.isType( TypeInfo.t_double )) )
+		if( src.isType( ITypeInfo.t__Bool, ITypeInfo.t_float ) &&
+			(trg.isType( ITypeInfo.t_int ) || trg.isType( ITypeInfo.t_double )) )
 		{
-			if( src.getType() == trg.getType() && (( src.getTypeInfo() & mask) == (trg.getTypeInfo() & mask)) ){
+			if( src.getType() == trg.getType() && (( src.getTypeBits() & mask) == (trg.getTypeBits() & mask)) ){
 				//same, no promotion needed
 				return;	
 			}
 			
-			if( src.isType( TypeInfo.t_float ) ){ 
-				cost.promotion = trg.isType( TypeInfo.t_double ) ? 1 : 0;
+			if( src.isType( ITypeInfo.t_float ) ){ 
+				cost.promotion = trg.isType( ITypeInfo.t_double ) ? 1 : 0;
 			} else {
-				cost.promotion = ( trg.isType( TypeInfo.t_int ) && trg.canHold( src ) ) ? 1 : 0;
+				cost.promotion = ( trg.isType( ITypeInfo.t_int ) && trg.canHold( src ) ) ? 1 : 0;
 			}
 			
 		} else {
@@ -1752,8 +1748,8 @@ public class ParserSymbolTable {
 	 * 
 	 */
 	static private void conversion( Cost cost ){
-		TypeInfo src = cost.getSource();
-		TypeInfo trg = cost.getTarget();
+		ITypeInfo src = cost.getSource();
+		ITypeInfo trg = cost.getTarget();
 		
 		int temp = -1;
 		
@@ -1764,17 +1760,17 @@ public class ParserSymbolTable {
 			return;
 		} 
 		if( src.hasPtrOperators() && src.getPtrOperators().size() == 1 ){
-			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)src.getPtrOperators().get(0);
-			ISymbol srcDecl = src.isType( TypeInfo.t_type ) ? src.getTypeSymbol() : null;
-			ISymbol trgDecl = trg.isType( TypeInfo.t_type ) ? trg.getTypeSymbol() : null;
-			if( ptr.getType() == TypeInfo.PtrOp.t_pointer ){
-				if( srcDecl == null || (trgDecl == null && !trg.isType( TypeInfo.t_void )) ){
+			ITypeInfo.PtrOp ptr = (ITypeInfo.PtrOp)src.getPtrOperators().get(0);
+			ISymbol srcDecl = src.isType( ITypeInfo.t_type ) ? src.getTypeSymbol() : null;
+			ISymbol trgDecl = trg.isType( ITypeInfo.t_type ) ? trg.getTypeSymbol() : null;
+			if( ptr.getType() == ITypeInfo.PtrOp.t_pointer ){
+				if( srcDecl == null || (trgDecl == null && !trg.isType( ITypeInfo.t_void )) ){
 					return;	
 				}
 				
 				//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 				//converted to an rvalue of type "pointer to cv void"
-				if( trg.isType( TypeInfo.t_void ) ){
+				if( trg.isType( ITypeInfo.t_void ) ){
 					cost.rank = Cost.CONVERSION_RANK;
 					cost.conversion = 1;
 					cost.detail = 2;
@@ -1796,7 +1792,7 @@ public class ParserSymbolTable {
 					cost.detail = 1;
 					return;
 				}
-			} else if( ptr.getType() == TypeInfo.PtrOp.t_memberPointer ){
+			} else if( ptr.getType() == ITypeInfo.PtrOp.t_memberPointer ){
 				//4.11-2 An rvalue of type "pointer to member of B of type cv T", where B is a class type, 
 				//can be converted to an rvalue of type "pointer to member of D of type cv T" where D is a
 				//derived class of B
@@ -1804,8 +1800,8 @@ public class ParserSymbolTable {
 					return;	
 				}
 
-				TypeInfo.PtrOp srcPtr =  trg.hasPtrOperators() ? (TypeInfo.PtrOp)trg.getPtrOperators().get(0) : null;
-				if( trgDecl.isType( srcDecl.getType() ) && srcPtr != null && srcPtr.getType() == TypeInfo.PtrOp.t_memberPointer ){
+				ITypeInfo.PtrOp srcPtr =  trg.hasPtrOperators() ? (ITypeInfo.PtrOp)trg.getPtrOperators().get(0) : null;
+				if( trgDecl.isType( srcDecl.getType() ) && srcPtr != null && srcPtr.getType() == ITypeInfo.PtrOp.t_memberPointer ){
 					try {
 						temp = hasBaseClass( ptr.getMemberOf(), srcPtr.getMemberOf() );
 					} catch (ParserSymbolTableException e) {
@@ -1820,12 +1816,12 @@ public class ParserSymbolTable {
 		} else if( !src.hasPtrOperators() ) {
 			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
-			if( src.isType( TypeInfo.t__Bool, TypeInfo.t_int ) ||
-				src.isType( TypeInfo.t_float, TypeInfo.t_double ) ||
-				src.isType( TypeInfo.t_enumeration ) )
+			if( src.isType( ITypeInfo.t__Bool, ITypeInfo.t_int ) ||	src.isType( ITypeInfo.t_float, ITypeInfo.t_double ) ||
+				src.isType( ITypeInfo.t_enumeration ) || ( src.isType( ITypeInfo.t_type ) && src.getTypeSymbol() != null 
+				                                           && src.getTypeSymbol().isType( ITypeInfo.t_enumeration ) ) )
 			{
-				if( trg.isType( TypeInfo.t__Bool, TypeInfo.t_int ) ||
-					trg.isType( TypeInfo.t_float, TypeInfo.t_double ) )
+				if( trg.isType( ITypeInfo.t__Bool, ITypeInfo.t_int ) ||
+					trg.isType( ITypeInfo.t_float, ITypeInfo.t_double ) )
 				{
 					cost.rank = Cost.CONVERSION_RANK;
 					cost.conversion = 1;	
@@ -1835,11 +1831,11 @@ public class ParserSymbolTable {
 	}
 	
 	static private void derivedToBaseConversion( Cost cost ) throws ParserSymbolTableException{
-		TypeInfo src = cost.getSource();
-		TypeInfo trg = cost.getTarget();
+		ITypeInfo src = cost.getSource();
+		ITypeInfo trg = cost.getTarget();
 		
-		ISymbol srcDecl = src.isType( TypeInfo.t_type ) ? src.getTypeSymbol() : null;
-		ISymbol trgDecl = trg.isType( TypeInfo.t_type ) ? trg.getTypeSymbol() : null;
+		ISymbol srcDecl = src.isType( ITypeInfo.t_type ) ? src.getTypeSymbol() : null;
+		ISymbol trgDecl = trg.isType( ITypeInfo.t_type ) ? trg.getTypeSymbol() : null;
 		
 		if( !src.hasSamePtrs( trg ) || srcDecl == null || trgDecl == null || !cost.targetHadReference ){
 			return;
@@ -1853,7 +1849,7 @@ public class ParserSymbolTable {
 		}
 	}
 	
-	protected Cost checkStandardConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException{
+	protected Cost checkStandardConversionSequence( ITypeInfo source, ITypeInfo target ) throws ParserSymbolTableException{
 		Cost cost = lvalue_to_rvalue( getTypeInfoProvider(), source, target );
 		
 		if( cost.getSource() == null || cost.getTarget() == null ){
@@ -1873,7 +1869,7 @@ public class ParserSymbolTable {
 		}
 		
 		//was the qualification conversion enough?
-		if( cost.getSource().isType( TypeInfo.t_type ) && cost.getTarget().isType( TypeInfo.t_type ) ){
+		if( cost.getSource().isType( ITypeInfo.t_type ) && cost.getTarget().isType( ITypeInfo.t_type ) ){
 			if( cost.getTarget().hasSamePtrs( cost.getSource() ) ){
 				ISymbol srcSymbol = cost.getSource().getTypeSymbol();
 				ISymbol trgSymbol = cost.getTarget().getTypeSymbol();
@@ -1885,7 +1881,7 @@ public class ParserSymbolTable {
 				}
 			}
 		} else if( cost.getSource().getType() == cost.getTarget().getType() && 
-				  (cost.getSource().getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) == (cost.getTarget().getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) )
+				  (cost.getSource().getTypeBits() & ~ITypeInfo.isConst & ~ITypeInfo.isVolatile) == (cost.getTarget().getTypeBits() & ~ITypeInfo.isConst & ~ITypeInfo.isVolatile) )
 		{
 			return cost;
 		}
@@ -1909,7 +1905,7 @@ public class ParserSymbolTable {
 		return cost;	
 	}
 	
-	private Cost checkUserDefinedConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
+	private Cost checkUserDefinedConversionSequence( ITypeInfo source, ITypeInfo target ) throws ParserSymbolTableException {
 		Cost cost = null;
 		Cost constructorCost = null;
 		Cost conversionCost = null;
@@ -1920,13 +1916,13 @@ public class ParserSymbolTable {
 		IParameterizedSymbol conversion = null;
 		
 		//constructors
-		if( target.getType() == TypeInfo.t_type ){
+		if( target.getType() == ITypeInfo.t_type ){
 			targetDecl = target.getTypeSymbol();
 			if( targetDecl == null ){
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			}
-			if( targetDecl.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
-				LookupData data = new LookupData( EMPTY_NAME){
+			if( targetDecl.isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
+				LookupData data = new LookupData( EMPTY_NAME_ARRAY ){
 					public List getParameters() { return parameters; }
 					public TypeFilter getFilter() { return CONSTRUCTOR_FILTER; }
 					private List parameters = new ArrayList( 1 );
@@ -1943,24 +1939,26 @@ public class ParserSymbolTable {
 					ArrayList constructors = new ArrayList( container.getConstructors() );
 					constructor = resolveFunction( data, constructors );
 				}
-				if( constructor != null && constructor.getTypeInfo().checkBit( TypeInfo.isExplicit ) ){
+				if( constructor != null && constructor.getTypeInfo().checkBit( ITypeInfo.isExplicit ) ){
 					constructor = null;
 				}
 				
 			}
 		}
 		
+		TypeInfoProvider provider = getTypeInfoProvider();
 		//conversion operators
-		if( source.getType() == TypeInfo.t_type ){
-			source = getFlatTypeInfo( source, getTypeInfoProvider() );
+		if( source.getType() == ITypeInfo.t_type ){
+			source = getFlatTypeInfo( source, provider );
 			sourceDecl = ( source != null ) ? source.getTypeSymbol() : null;
-			getTypeInfoProvider().returnTypeInfo( source );
+			provider.returnTypeInfo( source );
 			
 			if( sourceDecl != null && (sourceDecl instanceof IContainerSymbol) ){
-				String name = target.toString();
+				char[] name = target.toCharArray();
 				
-				if( !name.equals(EMPTY_NAME) ){
-					LookupData data = new LookupData( "operator " + name ){ //$NON-NLS-1$
+				if( !CharArrayUtils.equals( name, EMPTY_NAME_ARRAY) ){
+				    
+					LookupData data = new LookupData( CharArrayUtils.concat( OPERATOR_, name )){ //$NON-NLS-1$
 						public List getParameters() { return Collections.EMPTY_LIST; }
 						public TypeFilter getFilter() { return FUNCTION_FILTER; }
 					};
@@ -1973,18 +1971,16 @@ public class ParserSymbolTable {
 		
 		try {
 			if( constructor != null ){
-				TypeInfo info = getTypeInfoProvider().getTypeInfo();
-				info.setType( TypeInfo.t_type );
+				ITypeInfo info = provider.getTypeInfo( ITypeInfo.t_type );
 				info.setTypeSymbol( constructor.getContainingSymbol() );
 				constructorCost = checkStandardConversionSequence( info, target );
-				getTypeInfoProvider().returnTypeInfo( info );
+				provider.returnTypeInfo( info );
 			}
 			if( conversion != null ){
-				TypeInfo info = getTypeInfoProvider().getTypeInfo();
-				info.setType( target.getType() );
+				ITypeInfo info = provider.getTypeInfo( target.getType() );
 				info.setTypeSymbol( target.getTypeSymbol() );
 				conversionCost = checkStandardConversionSequence( info, target );
-				getTypeInfoProvider().returnTypeInfo( info );
+				provider.returnTypeInfo( info );
 			}
 			
 			//if both are valid, then the conversion is ambiguous
@@ -2007,9 +2003,9 @@ public class ParserSymbolTable {
 			}
 		} finally {
 			if( constructorCost != null && constructorCost != cost )
-				constructorCost.release( getTypeInfoProvider() );
+				constructorCost.release( provider );
 			if( conversionCost != null && conversionCost != cost )
-				conversionCost.release( getTypeInfoProvider() );			
+				conversionCost.release( provider );			
 		}
 		return cost;
 	}
@@ -2026,9 +2022,9 @@ public class ParserSymbolTable {
 	 * - If neither can be converted, further checking must be done (return null)
 	 * - If exactly one conversion is possible, that conversion is applied ( return the other TypeInfo )
 	 */
-	public TypeInfo getConditionalOperand( TypeInfo secondOp, TypeInfo thirdOp ) throws ParserSymbolTableException{
+	public ITypeInfo getConditionalOperand( ITypeInfo secondOp, ITypeInfo thirdOp ) throws ParserSymbolTableException{
 		Cost thirdCost = null, secondCost = null;
-		TypeInfo temp = null;
+		ITypeInfo temp = null;
 		TypeInfoProvider provider = getTypeInfoProvider();
 		try{
 			//can secondOp convert to thirdOp ?
@@ -2086,24 +2082,28 @@ public class ParserSymbolTable {
 	 * The top level TypeInfo represents modifications to the object and the
 	 * remaining TypeInfo's represent the object.
 	 */
-	static protected TypeInfo getFlatTypeInfo( TypeInfo topInfo, TypeInfoProvider infoProvider ){
-		TypeInfo returnInfo = null;
-		TypeInfo info = null;
+	static protected ITypeInfo getFlatTypeInfo( ITypeInfo topInfo, TypeInfoProvider infoProvider ){
+		ITypeInfo returnInfo = null;
+		ITypeInfo info = null;
 		
-		if( topInfo.getType() == TypeInfo.t_type && topInfo.getTypeSymbol() != null ){
-			if( infoProvider != null ) returnInfo = infoProvider.getTypeInfo();
-			else returnInfo = new TypeInfo();
+		if( topInfo.getType() == ITypeInfo.t_type && topInfo.getTypeSymbol() != null ){
+			if( infoProvider != null ) returnInfo = infoProvider.getTypeInfo( ITypeInfo.t_type );
+			else returnInfo = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type );
 			
-			returnInfo.setTypeInfo( topInfo.getTypeInfo() );
+			returnInfo.setTypeBits( topInfo.getTypeBits() );
 			ISymbol typeSymbol = topInfo.getTypeSymbol();
 			
 			info = typeSymbol.getTypeInfo();
 			int j = 0;
-			while( info.getTypeSymbol() != null && ( info.getType() == TypeInfo.t_type || info.isForwardDeclaration() ) ){
-				typeSymbol = info.getTypeSymbol();
+			while( (info.getTypeSymbol() != null && ( info.isType( ITypeInfo.t_type ) || info.isType( ITypeInfo.t_enumerator ) ) ) ||
+				   (typeSymbol != null && typeSymbol.isForwardDeclaration() && typeSymbol.getForwardSymbol() != null ) ){
+			    
+				typeSymbol = (info.isType( ITypeInfo.t_type) || info.isType(ITypeInfo.t_enumerator)) 
+							 ? info.getTypeSymbol() 
+							 : typeSymbol.getForwardSymbol();
 				
 				returnInfo.addPtrOperator( info.getPtrOperators() );	
-				returnInfo.setTypeInfo( ( returnInfo.getTypeInfo() | info.getTypeInfo() ) & ~TypeInfo.isTypedef & ~TypeInfo.isForward );
+				returnInfo.setTypeBits( ( returnInfo.getTypeBits() | info.getTypeBits() ) & ~ITypeInfo.isTypedef & ~ITypeInfo.isForward );
 				info = typeSymbol.getTypeInfo();
 				if( ++j > TYPE_LOOP_THRESHOLD ){
 					if( infoProvider != null )
@@ -2112,48 +2112,36 @@ public class ParserSymbolTable {
 				}
 			}
 			
-			if( info.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) || info.isType( TypeInfo.t_function ) ){
-				returnInfo.setType( TypeInfo.t_type );
+			if( info.isType( ITypeInfo.t_class, ITypeInfo.t_enumeration ) || info.isType( ITypeInfo.t_function ) ){
+				returnInfo.setType( ITypeInfo.t_type );
 				returnInfo.setTypeSymbol( typeSymbol );
 			} else {
-				returnInfo.setTypeInfo( ( returnInfo.getTypeInfo() | info.getTypeInfo() ) & ~TypeInfo.isTypedef & ~TypeInfo.isForward );
+				returnInfo.setTypeBits( ( returnInfo.getTypeBits() | info.getTypeBits() ) & ~ITypeInfo.isTypedef & ~ITypeInfo.isForward );
 				returnInfo.setType( info.getType() );
 				returnInfo.setTypeSymbol( null );
 				returnInfo.addPtrOperator( info.getPtrOperators() );
 			}
-			if( returnInfo.isType( TypeInfo.t_templateParameter ) ){
+			if( returnInfo.isType( ITypeInfo.t_templateParameter ) ){
 				returnInfo.setTypeSymbol( typeSymbol );
 			}
-			returnInfo.applyOperatorExpressions( topInfo.getOperatorExpressions() );
 			
 			if( topInfo.hasPtrOperators() ){
-				TypeInfo.PtrOp topPtr = (PtrOp) topInfo.getPtrOperators().get(0);
-				TypeInfo.PtrOp ptr = new PtrOp( topPtr.getType(), topPtr.isConst(), topPtr.isVolatile() );
-				returnInfo.addPtrOperator( ptr );
+				returnInfo.addPtrOperator( topInfo.getPtrOperators() );
 			}
 		} else {
 			if( infoProvider != null ){
-				returnInfo = infoProvider.getTypeInfo();
+				returnInfo = infoProvider.getTypeInfo( topInfo.getType() );
 				returnInfo.copy( topInfo );
 			} else			
-				returnInfo = new TypeInfo( topInfo );
-			returnInfo.applyOperatorExpressions( topInfo.getOperatorExpressions() );
-			returnInfo.getOperatorExpressions().clear();
+				returnInfo = TypeInfoProvider.newTypeInfo( topInfo );
 		}
 		
 		return returnInfo;	
 	}
 
-	/**
-	 * @return
-	 */
-	public TypeInfoProvider getTypeInfoProvider() {
-		return _provider;
-	}
-
-	private TypeInfoProvider _provider = new TypeInfoProvider();
 	private IContainerSymbol _compilationUnit;
 	private ParserLanguage   _language;
+	private TypeInfoProvider _typeInfoProvider;
 	private ParserMode		 _mode;
 	
 	public void setLanguage( ParserLanguage language ){
@@ -2166,6 +2154,10 @@ public class ParserSymbolTable {
 	
 	public ParserMode getParserMode(){
 		return _mode;
+	}
+	
+	public TypeInfoProvider getTypeInfoProvider(){
+	    return _typeInfoProvider;
 	}
 	
 //	protected void pushCommand( Command command ){
@@ -2219,14 +2211,14 @@ public class ParserSymbolTable {
 	
 	static protected class LookupData
 	{
-		protected static final TypeFilter ANY_FILTER = new TypeFilter( TypeInfo.t_any );
-		protected static final TypeFilter CONSTRUCTOR_FILTER = new TypeFilter( TypeInfo.t_constructor );
-		protected static final TypeFilter FUNCTION_FILTER = new TypeFilter( TypeInfo.t_function );
+		protected static final TypeFilter ANY_FILTER = new TypeFilter( ITypeInfo.t_any );
+		protected static final TypeFilter CONSTRUCTOR_FILTER = new TypeFilter( ITypeInfo.t_constructor );
+		protected static final TypeFilter FUNCTION_FILTER = new TypeFilter( ITypeInfo.t_function );
 		
-		public String name;
-		public Map usingDirectives; 
-		public Set visited = new HashSet();	//used to ensure we don't visit things more than once
-		public HashSet inheritanceChain;	//used to detect circular inheritance
+		public char[] name;
+		public ObjectMap usingDirectives; 
+		public ObjectSet visited = new ObjectSet(0);	//used to ensure we don't visit things more than once
+		public ObjectSet inheritanceChain;	//used to detect circular inheritance
 		public ISymbol templateMember;  	//to assit with template member defs
 		
 		public boolean qualified = false;
@@ -2236,19 +2228,19 @@ public class ParserSymbolTable {
 		public boolean exactFunctionsOnly = false;
 		public boolean returnInvisibleSymbols = false;
 		
-		public Map foundItems = null;
+		public CharArrayObjectMap foundItems = null;
 		
-		public LookupData( String n ){
+		public LookupData( char[] n ){
 			name = n;
 		}
 
 		//the following function are optionally overloaded by anonymous classes deriving from 
 		//this LookupData
 		public boolean isPrefixLookup(){ return false;}       //prefix lookup
-		public Set getAmbiguities()    { return null; }       
-		public void addAmbiguity(String n ) {	}
+		public CharArraySet getAmbiguities()    { return null; }       
+		public void addAmbiguity(char[] n ) { /*nothing*/ }
 		public List getParameters()    { return null; }       //parameter info for resolving functions
-		public HashSet getAssociated() { return null; }       //associated namespaces for argument dependant lookup
+		public ObjectSet getAssociated() { return null; }     //associated namespaces for argument dependant lookup
 		public ISymbol getStopAt()     { return null; }       //stop looking along the stack once we hit this declaration
 		public List getTemplateParameters() { return null; }  //template parameters
 		public TypeFilter getFilter() { return ANY_FILTER; }
@@ -2258,18 +2250,19 @@ public class ParserSymbolTable {
 	static protected class Cost
 	{
 		
-		public Cost( TypeInfoProvider provider, TypeInfo s, TypeInfo t ){
-			source = provider.getTypeInfo();
-			if( s != null )
+		public Cost( TypeInfoProvider provider, ITypeInfo s, ITypeInfo t ){
+		    if( s != null ){
+		        source = provider.getTypeInfo( s.getType() );
 				source.copy( s );
-			
-			target = provider.getTypeInfo();
-			if( t != null )
+		    }
+		    if( t != null ){
+		        target = provider.getTypeInfo( t.getType() );
 				target.copy( t );
+		    }
 		}
 		
-		private TypeInfo source;
-		private TypeInfo target;
+		private ITypeInfo source;
+		private ITypeInfo target;
 		
 		public boolean targetHadReference = false;
 		
@@ -2341,12 +2334,12 @@ public class ParserSymbolTable {
 					ListIterator iter1 = cost.getTarget().getPtrOperators().listIterator( size );
 					ListIterator iter2 = getTarget().getPtrOperators().listIterator( size2 );
 					
-					TypeInfo.PtrOp op1 = null, op2 = null;
+					ITypeInfo.PtrOp op1 = null, op2 = null;
 					
 					int subOrSuper = 0;
 					for( int i = ( size < size2 ) ? size : size2; i > 0; i-- ){
-						op1 = (TypeInfo.PtrOp)iter1.previous();
-						op2 = (TypeInfo.PtrOp)iter2.previous();
+						op1 = (ITypeInfo.PtrOp)iter1.previous();
+						op2 = (ITypeInfo.PtrOp)iter2.previous();
 						
 						if( subOrSuper == 0)
 							subOrSuper = op1.compareCVTo( op2 );
@@ -2375,14 +2368,14 @@ public class ParserSymbolTable {
 		/**
 		 * @return Returns the source.
 		 */
-		public TypeInfo getSource() {
+		public ITypeInfo getSource() {
 			return source;
 		}
 		
 		/**
 		 * @return Returns the target.
 		 */
-		public TypeInfo getTarget() {
+		public ITypeInfo getTarget() {
 			return target;
 		}
 	}
@@ -2428,7 +2421,7 @@ public class ParserSymbolTable {
 		
 		//if static or an enumerator, the symbol could be visible through more than one path through the heirarchy,
 		//so we need to check all paths
-		boolean checkAllPaths = ( symbol.isType( TypeInfo.t_enumerator ) || symbol.getTypeInfo().checkBit( TypeInfo.isStatic ) );
+		boolean checkAllPaths = ( symbol.isType( ITypeInfo.t_enumerator ) || symbol.getTypeInfo().checkBit( ITypeInfo.isStatic ) );
 		ASTAccessVisibility resultingAccess = null;
 		for( int i = 0; i < numParents; i++ ){
 			parent = (IParentSymbol) parents.get(i);
@@ -2459,63 +2452,5 @@ public class ParserSymbolTable {
 			}
 		}
 		return resultingAccess;
-	}
-	
-	public static class TypeInfoProvider
-	{
-		private final int POOL_SIZE = 16;
-		private final TypeInfo [] pool;
-		private final boolean [] free;
-		private int firstFreeHint = 0;
-
-		public TypeInfoProvider()
-		{
-			pool = new TypeInfo[ POOL_SIZE ];
-			free = new boolean[POOL_SIZE];
-			for( int i = 0; i < POOL_SIZE; i++ )
-			{
-				pool[i] = new TypeInfo();
-				free[i] = true;
-			}
-		}	
-
-		public TypeInfo getTypeInfo()
-		{
-			for( int i = firstFreeHint; i < POOL_SIZE; ++i )
-			{
-				if( free[i] )
-				{
-					free[i] = false;
-					firstFreeHint = i + 1;
-					return pool[i];
-				}
-			}
-			//if there is nothing free, just give them a new one
-			return new TypeInfo();
-		}
-		
-		public void returnTypeInfo( TypeInfo t )
-		{
-			for( int i = 0; i < POOL_SIZE; i++ ){
-				if( pool[i] == t ){
-					t.clear();
-					free[i] = true;
-					if( i < firstFreeHint ){
-						firstFreeHint = i;
-					}
-					return;
-				}
-			}
-			//else it was one allocated outside the pool
-		}
-		
-		public int numAllocated(){
-			int num = 0;
-			for( int i = 0; i < POOL_SIZE; i++ ){
-				if( !free[i] )
-					num++;
-			}
-			return num;
-		}
 	}
 }

@@ -12,7 +12,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -23,7 +24,7 @@ import java.util.Map;
 public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTemplateInstance {
 
 	public DeferredTemplateInstance( ParserSymbolTable table, ITemplateSymbol template, List args ){
-		super(table, ParserSymbolTable.EMPTY_NAME );
+		super(table, ParserSymbolTable.EMPTY_NAME_ARRAY );
 		_template = template;
 		_arguments = new ArrayList( args );
 		
@@ -47,18 +48,18 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		return _arguments;
 	}
 
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		List args = getArguments();
 		List newArgs = new ArrayList( args.size() );
 		int size = args.size();
 		for( int i = 0; i < size; i++ ){
-			TypeInfo arg = (TypeInfo) args.get(i);
+			ITypeInfo arg = (ITypeInfo) args.get(i);
 			newArgs.add( TemplateEngine.instantiateTypeInfo( arg, template, argMap ) );
 		}
 		
 		ITemplateSymbol deferredTemplate = getTemplate(); 
-		if( deferredTemplate.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( deferredTemplate ) ){
-			TypeInfo i = (TypeInfo) argMap.get( deferredTemplate );
+		if( deferredTemplate.isType( ITypeInfo.t_templateParameter ) && argMap.containsKey( deferredTemplate ) ){
+			ITypeInfo i = (ITypeInfo) argMap.get( deferredTemplate );
 			deferredTemplate = (ITemplateSymbol) i.getTypeSymbol();
 		}
 		
@@ -69,7 +70,7 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 			return instance;
 	}
 	
-	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
+	public boolean isType( ITypeInfo.eType type, ITypeInfo.eType upperType ){
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.isType( type, upperType );
@@ -77,21 +78,21 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		
 	}
 	
-	public TypeInfo.eType getType(){ 		
+	public ITypeInfo.eType getType(){ 		
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.getType();
 		return super.getType();
 	}
 	
-	public TypeInfo getTypeInfo(){
+	public ITypeInfo getTypeInfo(){
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.getTypeInfo();
 		return super.getTypeInfo();
 	}
 
-	public boolean isType( TypeInfo.eType type ){
+	public boolean isType( ITypeInfo.eType type ){
 		return _template.getTemplatedSymbol().isType( type ); 
 	}
 	

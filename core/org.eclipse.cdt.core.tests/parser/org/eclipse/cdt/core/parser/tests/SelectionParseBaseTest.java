@@ -58,6 +58,7 @@ public class SelectionParseBaseTest extends CompleteParseBaseTest {
 		{
 			assertNotNull( result );
 			String filename = result.getFilename();
+			assertNotNull( filename );
 			assertTrue( !filename.equals( "")); //$NON-NLS-1$
 			return (IASTNode) result.getOffsetableNamedElement();
 		}

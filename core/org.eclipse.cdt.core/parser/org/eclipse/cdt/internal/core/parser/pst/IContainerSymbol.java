@@ -15,8 +15,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -40,7 +40,7 @@ public interface IContainerSymbol extends ISymbol {
 	
 	public void addTemplateId( ISymbol symbol, List args ) throws ParserSymbolTableException;
 
-	public boolean removeSymbol( ISymbol symbol );
+//	public boolean removeSymbol( ISymbol symbol );
 	
 	public boolean hasUsingDirectives();
 	public List getUsingDirectives();
@@ -70,10 +70,10 @@ public interface IContainerSymbol extends ISymbol {
 	 *                            IDerivableContainerSymbol
 	 *             r_CircularInheritance if during lookup of the name, we come across a class with a circular inheritance tree
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration( String name ) throws ParserSymbolTableException;
-	public IUsingDeclarationSymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException;
+	public IUsingDeclarationSymbol addUsingDeclaration( char[] name ) throws ParserSymbolTableException;
+	public IUsingDeclarationSymbol addUsingDeclaration( char[] name, IContainerSymbol declContext ) throws ParserSymbolTableException;
 			
-	public Map getContainedSymbols();
+	public CharArrayObjectMap getContainedSymbols();
 	
 	/**
 	 * Lookup symbols matching the given prefix
@@ -87,7 +87,7 @@ public interface IContainerSymbol extends ISymbol {
 	 *                            IDerivableContainerSymbol
 	 *           r_CircularInheritance if during lookup, we come across a class with a circular inheritance tree
 	 */
-	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified, List paramList ) throws ParserSymbolTableException;
+	public List prefixLookup( TypeFilter filter, char[] prefix, boolean qualified, List paramList ) throws ParserSymbolTableException;
 	
 	/**
 	 * Lookups
@@ -98,16 +98,16 @@ public interface IContainerSymbol extends ISymbol {
 	 *                            IDerivableContainerSymbol
 	 *             r_CircularInheritance if during lookup of the name, we come across a class with a circular inheritance tree
 	 */
-	public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException; 
-	public ISymbol lookup( String name ) throws ParserSymbolTableException;
-	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException;
-	public IParameterizedSymbol lookupMethodForDefinition( String name, List parameters ) throws ParserSymbolTableException;
-	public IContainerSymbol lookupNestedNameSpecifier( String name ) throws ParserSymbolTableException;
-	public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException;
-	public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException;
-	public IParameterizedSymbol unqualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
-	public IParameterizedSymbol memberFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
-	public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
+	public ISymbol elaboratedLookup( ITypeInfo.eType type, char[] name ) throws ParserSymbolTableException; 
+	public ISymbol lookup( char[] name ) throws ParserSymbolTableException;
+	public ISymbol lookupMemberForDefinition( char[] name ) throws ParserSymbolTableException;
+	public IParameterizedSymbol lookupMethodForDefinition( char[] name, List parameters ) throws ParserSymbolTableException;
+	public IContainerSymbol lookupNestedNameSpecifier( char[] name ) throws ParserSymbolTableException;
+	public ISymbol qualifiedLookup( char[] name ) throws ParserSymbolTableException;
+	public ISymbol qualifiedLookup( char[] name, ITypeInfo.eType t ) throws ParserSymbolTableException;
+	public IParameterizedSymbol unqualifiedFunctionLookup( char[] name, List parameters ) throws ParserSymbolTableException;
+	public IParameterizedSymbol memberFunctionLookup( char[] name, List parameters ) throws ParserSymbolTableException;
+	public IParameterizedSymbol qualifiedFunctionLookup( char[] name, List parameters ) throws ParserSymbolTableException;
 	
 	/**
 	 * 
@@ -119,10 +119,10 @@ public interface IContainerSymbol extends ISymbol {
 	 *      r_Ambiguous if (14.5.4.1) more than one specialization can be used and none is more specializaed than all the others
 	 *      r_BadTemplateArgument if (14.3.1, 14.3.2) a template argument is invalid
 	 */
-	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException;
-	public ISymbol lookupFunctionTemplateId( String name, List parameters, List arguments, boolean forDefinition ) throws ParserSymbolTableException;
+	public ISymbol lookupTemplateId( char[] name, List arguments ) throws ParserSymbolTableException;
+	public ISymbol lookupFunctionTemplateId( char[] name, List parameters, List arguments, boolean forDefinition ) throws ParserSymbolTableException;
 	
-	public IContainerSymbol lookupTemplateIdForDefinition( String name, List arguments ) throws ParserSymbolTableException;
+	public IContainerSymbol lookupTemplateIdForDefinition( char[] name, List arguments ) throws ParserSymbolTableException;
 	
 	/**
 	 * 

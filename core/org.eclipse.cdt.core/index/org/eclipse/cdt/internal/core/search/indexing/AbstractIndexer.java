@@ -568,7 +568,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 		else {
 			//Definitions
-			return "noEnumtorDefs".toCharArray();
+			return "noEnumtorDefs".toCharArray(); //$NON-NLS-1$
 		}
 		
 		return bestPrefix( prefix, (char)0, enumeratorName, containingTypes, matchMode, isCaseSensitive );

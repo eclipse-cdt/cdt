@@ -18,22 +18,23 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
  */
 public class ImagedToken extends SimpleToken {
 
-	protected String image = null;
+	protected char [] image = null;
 	
 	/**
 	 * @param t
 	 * @param contextStack
 	 * @param i
 	 */
-	public ImagedToken(int t, ContextStack contextStack, String i) {
-		super(t, contextStack);
+	public ImagedToken(int t, ContextStack contextStack, char[] i, char [] f) {
+		super(t, contextStack, f );
 		setImage( i );
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public ImagedToken( int t, String i) {
-		super( t );
+	public ImagedToken( int t, char[] i, int endOffset, char [] f, int l ) {
+		super( t, 0, f, l );
 		setImage(i);
+		setOffsetAndLength( endOffset );
 	}
 	
 	
@@ -41,13 +42,23 @@ public class ImagedToken extends SimpleToken {
 	 * @see org.eclipse.cdt.internal.core.parser.token.AbstractToken#getImage()
 	 */
 	public final String getImage() {
+		if( image == null ) return null;
+		return new String( image );
+	}
+	
+	public final char[] getCharImage() {
 		return image;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IToken#setImage(java.lang.String)
 	 */
 	public void setImage(String i) {
-		image = i;
+		image = i.toCharArray();
+	}
+	
+	public void setImage( char [] image )
+	{
+		this.image = image;
 	}
 	
 	/**
@@ -55,7 +66,7 @@ public class ImagedToken extends SimpleToken {
 	 */
 	protected void setOffsetAndLength(IScannerContext context) {
 		if( getImage() == null ) return;
-		offset = context.getOffset() - getImage().length();		
+		offset = context.getOffset() - getCharImage().length;		
 		if( getType() == tSTRING || getType() == tCHAR )
 			offset--;
 		else if( getType() == tLSTRING || getType() == tLCHAR )
@@ -63,16 +74,8 @@ public class ImagedToken extends SimpleToken {
 	}
 	
 	public int getLength() {
-		switch( getType() )
-		{
-			case tSTRING:
-			case tCHAR:
-				return getImage().length() + 2;  // 'c' is 3 characters, not 1
-			case tLSTRING:
-			case tLCHAR:
-				return getImage().length() + 3;  // L"X" if 4 characters, not 1
-			default:
-				return getImage().length();
-		}
+		if( getCharImage() == null )
+			return 0;
+		return getCharImage().length;
 	}
 }

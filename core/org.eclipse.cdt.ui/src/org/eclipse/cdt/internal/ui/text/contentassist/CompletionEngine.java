@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -59,6 +58,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.IDebugLogConstants;
 import org.eclipse.cdt.internal.ui.util.Util;
@@ -170,6 +171,7 @@ public class CompletionEngine implements RelevanceConstants {
 		{
 			scanner = ParserFactory.createScanner( reader, scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService(), Arrays.asList(CUIPlugin.getSharedWorkingCopies()) );
 			parser  = ParserFactory.createParser( scanner, elementRequestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
+			elementRequestor.setParser(parser);
 		}
 		catch( ParserFactoryError pfe )
 		{
@@ -193,7 +195,7 @@ public class CompletionEngine implements RelevanceConstants {
 				
 				macroMap = scanner.getDefinitions();
 			} catch (ParseError e ) {
-				if(e.getErrorKind() == ParseError.ParseErrorKind.TIMEOUT){
+				if(e.getErrorKind() == ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED){
 					log("Timeout received !!!!!! "); //$NON-NLS-1$;
 					requestor.acceptError(new Problem(CUIMessages.getString("CEditor.contentassist.timeout"))); //$NON-NLS-1$;
 				}
@@ -465,11 +467,31 @@ public class CompletionEngine implements RelevanceConstants {
 			}
 			
 			if( value.equals( newPrefix ) ) {
-				IMacroDescriptor macroD = (IMacroDescriptor)macroMap.get(key);
-				if (macroD.getMacroType() == IMacroDescriptor.MacroType.FUNCTION_LIKE )
-					resultSet.add( macroD.getCompleteSignature() );
-				else 
-					resultSet.add( macroD.getName() );
+				Object macroD = macroMap.get(key);
+				if( macroD instanceof FunctionStyleMacro )
+				{
+					FunctionStyleMacro f = ((FunctionStyleMacro)macroD);
+					StringBuffer buffer = new StringBuffer( String.valueOf( f.name ));
+					buffer.append( "("); //$NON-NLS-1$
+					if( f.arglist != null )
+					{
+						for( int j = 0; j < f.arglist.length; ++j )
+						{
+							if( f.arglist[j] != null )
+								buffer.append( f.arglist[j]);
+							if( j != f.arglist.length -1 && f.arglist[j+1] != null )
+								buffer.append( ","); //$NON-NLS-1$
+						}
+					}
+					buffer.append( ")"); //$NON-NLS-1$
+					String result = buffer.toString();
+					resultSet.add( result );
+				}
+				else if (macroD instanceof ObjectStyleMacro  )
+				{
+					String v = String.valueOf( ((ObjectStyleMacro)macroD).name);
+					resultSet.add( v );
+				}
 			}
 			else if( key.compareTo( prefix ) > 0 )					
 				break;

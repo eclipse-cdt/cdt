@@ -25,9 +25,26 @@ public class ImagedExpansionToken extends ImagedToken implements IToken {
 	 * @param contextStack
 	 * @param i
 	 */
-	public ImagedExpansionToken(int t, ContextStack contextStack, String i) {
-		super(t, contextStack, i);
+	public ImagedExpansionToken(int t, ContextStack contextStack, char[] i, char [] f) {
+		super(t, contextStack, i, f);
 	}
+	
+	/**
+	 * @param t
+	 * @param contextStack
+	 * @param i
+	 * @param l
+	 */
+	public ImagedExpansionToken(int t, char[] i, int macroOffset, int macroLength, char [] f, int l) {
+		super(t, i, macroOffset, f, l );
+		setOffsetAndLength( macroOffset, macroLength );
+	}
+
+	protected void setOffsetAndLength(int macroOffset, int macroLength ) {
+		offset = macroOffset;
+		length = macroLength;
+	}
+
 	
 	protected int length;
 	

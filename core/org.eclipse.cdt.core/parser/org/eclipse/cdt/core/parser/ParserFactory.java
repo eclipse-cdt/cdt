@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.List;
 import java.util.Set;
 
@@ -30,8 +29,7 @@ import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
-import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 
@@ -40,17 +38,17 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  *
  */
 public class ParserFactory {
-
+	
 	private static IParserExtensionFactory extensionFactory = new ParserExtensionFactory( ExtensionDialect.GCC );
 	
-	public static IASTFactory createASTFactory( IFilenameProvider provider, ParserMode mode, ParserLanguage language )
+	public static IASTFactory createASTFactory( ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory(extensionFactory.createASTExtension( mode ));
 		else if( mode == ParserMode.EXPRESSION_PARSE )
 			return new ExpressionParseASTFactory( extensionFactory.createASTExtension( mode ));
 		else
-			return new CompleteParseASTFactory( provider, language, mode, extensionFactory.createASTExtension( mode )); 
+			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtension( mode )); 
 	}
 	
 	
@@ -102,19 +100,13 @@ public class ParserFactory {
     	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
-		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
-		return s; 
+		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
+		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
     }
     
     public static IScanner createScanner( String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError, IOException
 	{
     	return createScanner(new CodeReader(fileName), config, mode, language, requestor, log, workingCopies);
-	}
-    
-	public static ILineOffsetReconciler createLineOffsetReconciler( Reader input )
-	{
-		return new LineOffsetReconciler( input ); 
 	}
 	
 	public static IQuickParseCallback createQuickParseCallback()

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro.Expansion;
-
 /**
  * @author Doug Schaefer
  */
@@ -30,11 +28,11 @@ public class ExpressionEvaluator {
 	// The macros
 	CharArrayObjectMap definitions;
 
-	public long evaluate(char[] buffer, int pos, int length, CharArrayObjectMap definitions) {
+	public long evaluate(char[] buffer, int pos, int length, CharArrayObjectMap defs) {
 		bufferStack[++bufferStackPos] = buffer;
 		bufferPos[bufferStackPos] = pos;
 		bufferLimit[bufferStackPos] = pos + length;
-		this.definitions = definitions;
+		this.definitions = defs;
 		tokenType = 0;
 	
 		long r = 0;
@@ -67,11 +65,11 @@ public class ExpressionEvaluator {
 			if (LA() == tCOLON)
 				consume();
 			else
-				throw new EvalException("bad conditional expression");
+				throw new EvalException("bad conditional expression"); //$NON-NLS-1$
 			long r3 = conditionalExpression();
 			return r1 != 0 ? r2 : r3;
-		} else
-			return r1;
+		} 
+		return r1;
 	}
 	
 	private long logicalOrExpression() throws EvalException {
@@ -189,8 +187,10 @@ public class ExpressionEvaluator {
 			long r2 = unaryExpression();
 			if (t == tMULT)
 				r1 = r1 * r2;
-			else // t == tDIV;
+			else if( r2 != 0 )// t == tDIV;
 				r1 = r1 / r2;
+			else
+				throw new EvalException( "Divide by 0 encountered"); //$NON-NLS-1$
 		}
 		return r1;
 	}
@@ -219,10 +219,10 @@ public class ExpressionEvaluator {
 				if (LA() == tRPAREN) {
 					consume();
 					return r1;
-				} else
-					throw new EvalException("missing )");
+				} 
+				throw new EvalException("missing )"); //$NON-NLS-1$
 			default:
-				throw new EvalException("expression syntax error");
+				throw new EvalException("expression syntax error"); //$NON-NLS-1$
 
 		}
 	}
@@ -249,7 +249,7 @@ public class ExpressionEvaluator {
 		}
 
 		if (!((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z'))) {
-			throw new EvalException("illegal identifier in defined()");
+			throw new EvalException("illegal identifier in defined()"); //$NON-NLS-1$
 		}
 
 		// consume rest of identifier
@@ -260,8 +260,8 @@ public class ExpressionEvaluator {
 			if ((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
 				++idlen;
 				continue;
-			} else
-				break;
+			} 
+			break;
 		}
 		--bufferPos[bufferStackPos];
 		
@@ -270,7 +270,7 @@ public class ExpressionEvaluator {
 			skipWhiteSpace();
 			if (++bufferPos[bufferStackPos] < limit
 					&& buffer[bufferPos[bufferStackPos]] != ')')
-				throw new EvalException("missing ) on defined");
+				throw new EvalException("missing ) on defined"); //$NON-NLS-1$
 		}
 
 		// Set up the lookahead to whatever comes next
@@ -296,7 +296,7 @@ public class ExpressionEvaluator {
 		return value;
 	}
 	
-	private static char[] _defined = "defined".toCharArray();
+	private static char[] _defined = "defined".toCharArray(); //$NON-NLS-1$
 	
 	private void nextToken() throws EvalException {
 		contextLoop:
@@ -379,9 +379,8 @@ public class ExpressionEvaluator {
 									|| c == '_' || (c >= '0' && c <= '9')) {
 								++len;
 								continue;
-							} else {
-								break;
-							}
+							} 
+							break;
 						}
 
 						--bufferPos[bufferStackPos];
@@ -555,7 +554,7 @@ public class ExpressionEvaluator {
 							tokenType = tEQUAL;
 							return;
 						}
-						throw new EvalException("assignment not allowed");
+						throw new EvalException("assignment not allowed"); //$NON-NLS-1$
 					
 					case '<':
 						if (pos + 1 < limit) {
@@ -623,10 +622,8 @@ public class ExpressionEvaluator {
 				if (parens == 0)
 					// end of macro
 					break;
-				else {
-					--parens;
-					continue;
-				}
+				--parens;
+				continue;
 			} else if (c == ',') {
 				// empty arg
 				exp.definitions.put(arglist[currarg], emptyCharArray);

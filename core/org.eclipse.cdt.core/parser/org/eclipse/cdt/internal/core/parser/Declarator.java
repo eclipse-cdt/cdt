@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 public class Declarator implements IParameterCollection, IDeclaratorOwner, IDeclarator
 {
 	private static final int DEFAULT_ARRAYLIST_SIZE = 4;
-	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
+	private static final char[] EMPTY_STRING = new char[0];  //$NON-NLS-1$
 	
 	private final IDeclaratorOwner owner;
     private ITokenDuple pointerOperatorNameDuple = null;
@@ -79,10 +79,10 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @return
      */
-    public String getName()
+    public char[] getName()
     {
     	if( namedDuple == null ) return EMPTY_STRING;
-        return namedDuple.toString();
+        return namedDuple.toCharArray();
     }
 
     /**

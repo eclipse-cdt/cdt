@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.ast.ASTUtil;
 public class ASTIdExpression extends ASTExpression {
 	
 	private ITokenDuple idExpression;
-	private String idExpressionValue;
+	private char[] idExpressionValue;
 	/**
 	 * @param kind
 	 * @param references
@@ -30,13 +30,17 @@ public class ASTIdExpression extends ASTExpression {
 	public ASTIdExpression(Kind kind, List references, ITokenDuple idExpression) {
 		super(kind, references);
 		this.idExpression = idExpression;
-		idExpressionValue = idExpression.toString();
+		idExpressionValue = idExpression.toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getIdExpression()
 	 */
 	public String getIdExpression() {
+		return String.valueOf( idExpressionValue );
+	}
+	
+	public char[] getIdExpressionCharArray(){
 		return idExpressionValue;
 	}
 	

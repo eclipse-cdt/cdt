@@ -24,7 +24,7 @@ public class ASTScopedTypeSpecifier extends ASTQualifiedNamedElement implements 
 {
     private final IASTScope scope;
     
-    public ASTScopedTypeSpecifier( IASTScope scope, String name )
+    public ASTScopedTypeSpecifier( IASTScope scope, char[] name )
     {
     	super( scope, name );
     	this.scope = scope;

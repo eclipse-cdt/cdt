@@ -55,8 +55,11 @@ public class CompletionParser extends ContextualParser implements IParser {
 	 */
 	public IASTCompletionNode parse(int offset) {
 		scanner.setOffsetBoundary(offset);
+		//long startTime = System.currentTimeMillis();
 		translationUnit();
-		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ), getCompletionFunctionName(), getParameterListExpression() );
+		//long stopTime = System.currentTimeMillis();
+		//System.out.println("Completion Parse time: " + (stopTime - startTime) + "ms");
+		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ), String.valueOf(getCompletionFunctionName()), getParameterListExpression() );
 	}
 
 	/**
@@ -133,7 +136,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 		if( LT(1) != IToken.t_catch )
 		{
 			IToken la = LA(1);
-			throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber()); // error, need at least one of these
+			throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber(), la.getFilename()); // error, need at least one of these
 		}
 		while (LT(1) == IToken.t_catch)
 		{
@@ -164,7 +167,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
-		astFactory = ParserFactory.createASTFactory( this, ParserMode.COMPLETION_PARSE, language);
+		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETION_PARSE, language);
 		scanner.setASTFactory(astFactory);
 		astFactory.setLogger(log);
 	}

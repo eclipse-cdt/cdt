@@ -551,6 +551,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
 				node.getCompletionContext(), null );
 
+		assertNotNull( result );
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
 		assertEquals( field.getName(), "aPrivate" ); //$NON-NLS-1$
@@ -575,6 +576,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
 				node.getCompletionContext(), null );
 
+		assertNotNull( result );
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
 		assertEquals( field.getName(), "aPrivate" ); //$NON-NLS-1$
@@ -600,6 +602,8 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		                                                         new IASTNode.LookupKind[]{ IASTNode.LookupKind.THIS },
 																 node.getCompletionContext(), null );
 		
+		assertTrue( node.getCompletionScope() instanceof IASTMethod );
+		assertEquals( ((IASTMethod)node.getCompletionScope()).getName(), "d" ); //$NON-NLS-1$
 		assertEquals( result.getResultsSize(), 4 );
 		
 		Iterator iter = result.getNodes();
@@ -843,7 +847,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testBug59134() throws Exception
 	{
 		String code = "int main(){ siz }"; //$NON-NLS-1$
-		IASTCompletionNode node = parse( code, code.indexOf(" siz") ); //$NON-NLS-1$
+		IASTCompletionNode node = parse( code, code.indexOf("siz") ); //$NON-NLS-1$
 		assertNotNull( node );
 		Iterator keywords = node.getKeywords();
 		boolean passed = false;
@@ -1125,8 +1129,8 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		Writer writer = new StringWriter();
 		writer.write( "typedef int DWORD;\n" ); //$NON-NLS-1$
 		writer.write( "typedef char BYTE;\n"); //$NON-NLS-1$
-		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\n"); //$NON-NLS-1$
-		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\n"); //$NON-NLS-1$
+		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\\n"); //$NON-NLS-1$
 		writer.write( "((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))\n"); //$NON-NLS-1$
 		writer.write( "enum e {\n"); //$NON-NLS-1$
 		writer.write( "blah1 = 5,\n"); //$NON-NLS-1$

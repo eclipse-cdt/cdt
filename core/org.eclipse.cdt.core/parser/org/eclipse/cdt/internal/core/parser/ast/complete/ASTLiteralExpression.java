@@ -20,13 +20,13 @@ import org.eclipse.cdt.core.parser.ast.ASTUtil;
  */
 public class ASTLiteralExpression extends ASTExpression {
 	
-	private final String literal;
+	private final char[] literal;
 
 	/**
 	 * @param kind
 	 * @param references
 	 */
-	public ASTLiteralExpression(Kind kind, List references, String literal) {
+	public ASTLiteralExpression(Kind kind, List references, char[] literal) {
 		super(kind, references);
 		this.literal = literal;
 	}
@@ -35,7 +35,7 @@ public class ASTLiteralExpression extends ASTExpression {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getLiteralString()
 	 */
 	public String getLiteralString() {
-		return literal;
+		return String.valueOf( literal );	
 	}
 	
 	public String toString(){

@@ -14,14 +14,12 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -50,18 +48,14 @@ public class AutomatedTest extends AutomatedFramework {
 		
 		File file = null;
 		IParser parser = null;
-		ILineOffsetReconciler mapping = null; 
 		
 		try{
 			file = (File)fileList.removeFirst();
-			FileInputStream stream = new FileInputStream( file );
 
 			String filePath = file.getCanonicalPath();
 			ParserLanguage language = ((String)natures.get( filePath )).equalsIgnoreCase("cpp") ? ParserLanguage.CPP : ParserLanguage.C; //$NON-NLS-1$
 			parser = ParserFactory.createParser( ParserFactory.createScanner(filePath, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback, null, null ), nullCallback, ParserMode.QUICK_PARSE, language, null);
 						
-			mapping = ParserFactory.createLineOffsetReconciler( new InputStreamReader( stream ) );
-			
 			assertTrue( parser.parse() );
 		} 
 		catch( Throwable e )
@@ -69,10 +63,10 @@ public class AutomatedTest extends AutomatedFramework {
 			String output = null;
 			if( e instanceof AssertionFailedError ){
 				output = file.getCanonicalPath() + ": Parse failed on line "; //$NON-NLS-1$
-				output += mapping.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n"; //$NON-NLS-1$
+				output += parser.getLastErrorLine() + "\n"; //$NON-NLS-1$
 			} else {
 				output = file.getCanonicalPath() + ": " + e.getClass().toString(); //$NON-NLS-1$
-				output += " on line " + mapping.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+				output += " on line " + parser.getLastErrorLine() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if( report != null ){
 				report.write( output.getBytes() );
@@ -112,22 +106,21 @@ public class AutomatedTest extends AutomatedFramework {
 			String sourceInfo = properties.getProperty( "source", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 			if( sourceInfo.equals("") ) //$NON-NLS-1$
 				throw new FileNotFoundException();
-			else{
-				StringTokenizer tokenizer = new StringTokenizer( sourceInfo, "," ); //$NON-NLS-1$
-				String str = null, val = null;
-				try{
-					while( tokenizer.hasMoreTokens() ){
-						str = tokenizer.nextToken().trim();
-						val = tokenizer.nextToken().trim();
-						
-						testSources.put( str, val );
-					}
-				} catch ( NoSuchElementException e ){
-					//only way to get here is to have a missing val, assume cpp for that str
-					testSources.put( str, "cpp" ); //$NON-NLS-1$
+
+			StringTokenizer tokenizer = new StringTokenizer( sourceInfo, "," ); //$NON-NLS-1$
+			String str = null, val = null;
+			try{
+				while( tokenizer.hasMoreTokens() ){
+					str = tokenizer.nextToken().trim();
+					val = tokenizer.nextToken().trim();
+					
+					testSources.put( str, val );
 				}
-				
+			} catch ( NoSuchElementException e ){
+				//only way to get here is to have a missing val, assume cpp for that str
+				testSources.put( str, "cpp" ); //$NON-NLS-1$
 			}
+				
 		} catch ( FileNotFoundException e ){
 			testSources.put( resourcePath + "/defaultCpp", "cpp" ); //$NON-NLS-1$ //$NON-NLS-2$
 			testSources.put( resourcePath + "/defaultC", "c" ); //$NON-NLS-1$ //$NON-NLS-2$

@@ -37,6 +37,10 @@ public interface ITokenDuple {
 	
 	public abstract Iterator iterator();
 	public abstract String toString();
+	public char [] toCharArray();
+	
+	public char [] getFilename();
+		
 	public abstract boolean isIdentifier();
 	public abstract int length(); 
 	
@@ -53,7 +57,7 @@ public interface ITokenDuple {
 	 */
 	public abstract boolean syntaxOfName();
 	
-	public String extractNameFromTemplateId();
+	public char[] extractNameFromTemplateId();
 	/**
 	 * @param duple
 	 * @return

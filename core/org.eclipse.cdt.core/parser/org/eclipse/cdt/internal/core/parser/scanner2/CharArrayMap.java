@@ -35,7 +35,7 @@ public abstract class CharArrayMap {
 	}
 	
 	private int hash(char[] buffer, int start, int len) {
-		return CharArrayUtils.hash(buffer, start, len) & (keyTable.length - 1); 
+		return CharArrayUtils.hash(buffer, start, len) & (hashTable.length - 1); 
 	}
 	
 	private int hash(char[] buffer) {
@@ -80,34 +80,41 @@ public abstract class CharArrayMap {
 		int hash = hash(buffer, start, len);
 		
 		if (hashTable[hash] == 0) {
-			if (++currEntry >= keyTable.length)
+			if( (currEntry + 1) >= keyTable.length){
+			    //need to recompute hash for this add, recurse.
 				resize();
+				return add( buffer, start, len );
+			}
+			currEntry++;
 			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 			insert(currEntry, hash);
 			return currEntry;
-		} else {
-			// is the key already registered?
-			int i = hashTable[hash] - 1;
+		} 
+		// is the key already registered?
+		int i = hashTable[hash] - 1;
+		if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
+			// yup
+			return i;
+		
+		// follow the next chain
+		int last = i;
+		for (i = nextTable[i] - 1; i >= 0; i = nextTable[i] - 1) {
 			if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
-				// yup
+				// yup this time
 				return i;
-			
-			// follow the next chain
-			int last = i;
-			for (i = nextTable[i] - 1; i >= 0; i = nextTable[i] - 1) {
-				if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
-					// yup this time
-					return i;
-				last = i;
-			}
-			
-			// nope, add it in
-			if (++currEntry >= keyTable.length)
-				resize();
-			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
-			nextTable[last] = currEntry + 1;
-			return currEntry;
+			last = i;
 		}
+		
+		// nope, add it in
+		if (currEntry + 1 >= keyTable.length){
+		    //need to recompute hash for this add, recurse
+			resize();
+			return add( buffer, start, len );
+		}
+		currEntry++;
+		keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
+		nextTable[last] = currEntry + 1;
+		return currEntry;
 	}
 	
 	protected final int lookup(char[] buffer, int start, int len) {
@@ -170,9 +177,9 @@ public abstract class CharArrayMap {
 			System.out.print(i);
 			
 			for (int j = nextTable[i] - 1; j >= 0; j = nextTable[j] - 1)
-				System.out.print(" -> " + j);
+				System.out.print(" -> " + j); //$NON-NLS-1$
 			
-			System.out.println("");
+			System.out.println(""); //$NON-NLS-1$
 		}
 	}
 	

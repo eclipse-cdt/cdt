@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,11 +28,11 @@ import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author jcamelon
@@ -53,9 +54,10 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      * @param nameOffset
      * @param ownerTemplate
      * @param references
+     * @param filename
      */
     public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTTemplate ownerTemplate, 
-	List references, boolean previouslyDeclared, boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean hasFunctionTryBlock, boolean isFriend )
+	List references, boolean previouslyDeclared, boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean hasFunctionTryBlock, boolean isFriend, char [] filename )
     {
         super(
             symbol,
@@ -66,7 +68,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
             startOffset,
             startLine,
             nameOffset,
-            nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, isFriend );
+            nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, isFriend, filename );
         this.visibility = visibility; 
         this.isConstructor = isConstructor;
         this.isDestructor = isDestructor;
@@ -78,14 +80,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public boolean isVirtual()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isVirtual );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isVirtual );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isExplicit()
      */
     public boolean isExplicit()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isExplicit);
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isExplicit);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isConstructor()
@@ -106,14 +108,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public boolean isConst()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isConst);
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isConst);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVolatile()
      */
     public boolean isVolatile()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isVolatile );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isVolatile );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isPureVirtual()
@@ -158,10 +160,10 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     {
         if( constructorChain != null )
         {
-        	Iterator i = getConstructorChainInitializers(); 
-        	while( i.hasNext() )
+        	List initializers = getConstructorChainInitializersList();
+        	for( int i = 0; i < initializers.size(); i++ )
         	{
-        		IASTConstructorMemberInitializer c = (IASTConstructorMemberInitializer)i.next();
+        		IASTConstructorMemberInitializer c = (IASTConstructorMemberInitializer)initializers.get(i);
         		c.acceptElement(requestor, manager);
         	}
         }
@@ -204,6 +206,11 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 			return EmptyIterator.EMPTY_ITERATOR; 
         return constructorChain.iterator();
     }
+    public List getConstructorChainInitializersList(){
+        if( constructorChain == null)
+            return Collections.EMPTY_LIST;
+        return constructorChain;
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getOwnerClassSpecifier()
 	 */
@@ -224,7 +231,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 	 * @return
 	 * @throws LookupError
 	 */
-	protected List performPrefixLookup(String prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
+	protected List performPrefixLookup(char[] prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
 		if( filter.isLookingInThis() ){
 			try{
 				ISymbol thisPointer = thisContainer.lookup( ParserSymbolTable.THIS );

@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
-import java.util.Stack;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -29,18 +29,18 @@ public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
     /**
      * @param scope
      */
-    public ASTQualifiedNamedElement(IASTScope scope, String name )
+    public ASTQualifiedNamedElement(IASTScope scope, char[] name )
     {
-        Stack names = new Stack();
+        ArrayList names = new ArrayList(4);
 		IASTScope parent = scope;
         
-		names.push( name ); // push on our own name
+		names.add( name ); // push on our own name
 		while (parent != null)
 		{
 			if (parent instanceof IASTNamespaceDefinition
 				|| parent instanceof IASTClassSpecifier )
 			{
-				names.push(((IASTOffsetableNamedElement)parent).getName());
+				names.add( ((IASTOffsetableNamedElement)parent).getNameCharArray() );
 				if( parent instanceof IASTScopedElement  )
 					parent = ((IASTScopedElement)parent).getOwnerScope();				
 			}
@@ -55,10 +55,10 @@ public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
 		}
 		if (names.size() != 0)
 		{
-			qualifiedNames = new String[names.size()];
+			qualifiedNames = new char[names.size()][];
 			int counter = 0;
-			while (!names.empty())
-				qualifiedNames[counter++] = (String)names.pop();
+			for( int i = names.size() - 1; i >= 0; i-- )
+				qualifiedNames[counter++] = (char[])names.get(i);
 		}
 		else 
 			qualifiedNames = null;
@@ -67,9 +67,13 @@ public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
     
 	public String[] getFullyQualifiedName()
 	{
-		return qualifiedNames;
+	    String[] result = new String[qualifiedNames.length ];
+	    for( int i = 0; i < qualifiedNames.length; i++ ){
+	        result[i] = String.valueOf(qualifiedNames[i]);
+	    }
+		return result;
 	}
 
-    private final String[] qualifiedNames;
+    private final char[][] qualifiedNames;
 
 }

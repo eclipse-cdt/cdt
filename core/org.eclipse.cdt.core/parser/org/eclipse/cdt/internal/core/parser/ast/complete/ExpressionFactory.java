@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
  */
 public class ExpressionFactory {
 	
-	public static ASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor, List references )
+	public static ASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor, List references )
 	{
-		if( !literal.equals( "") && idExpression == null ) //$NON-NLS-1$
+		if( literal.length != 0 && idExpression == null ) //$NON-NLS-1$
 			return new ASTLiteralExpression( kind, references, literal );
 		
 		if( idExpression != null && lhs == null )

@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -23,7 +22,6 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -75,21 +73,19 @@ public class TortureTest extends FractionalAutomatedTest {
 			
 			if (sourceInfo.equals("")) //$NON-NLS-1$
 				throw new FileNotFoundException();
-			else {
-				StringTokenizer tokenizer = new StringTokenizer(sourceInfo, ","); //$NON-NLS-1$
-				String str = null, val = null;
-				try {
-					while (tokenizer.hasMoreTokens()) {
-						str = tokenizer.nextToken().trim();
-						val = tokenizer.nextToken().trim();
-					
-						testSources.put(str, val);
-					}
-				} catch (NoSuchElementException e){
-					//only way to get here is to have a missing val, assume cpp for that str
-					testSources.put(str, "cpp"); //$NON-NLS-1$
+
+			StringTokenizer tokenizer = new StringTokenizer(sourceInfo, ","); //$NON-NLS-1$
+			String str = null, val = null;
+			try {
+				while (tokenizer.hasMoreTokens()) {
+					str = tokenizer.nextToken().trim();
+					val = tokenizer.nextToken().trim();
+				
+					testSources.put(str, val);
 				}
-			
+			} catch (NoSuchElementException e){
+				//only way to get here is to have a missing val, assume cpp for that str
+				testSources.put(str, "cpp"); //$NON-NLS-1$
 			}
 		} catch (FileNotFoundException e){
 			testSources.put(resourcePath, "cpp"); //$NON-NLS-1$
@@ -106,14 +102,12 @@ public class TortureTest extends FractionalAutomatedTest {
 	}
 	
 	
-	static protected void reportException (Throwable e, String file, IParser parser, ILineOffsetReconciler mapping){
+	static protected void reportException (Throwable e, String file, IParser parser){
 		String output = null;
 		int lineNumber = -1;
 		
-		try {
-			lineNumber = mapping.getLineNumberForOffset(parser.getLastErrorOffset());
-		} catch (Exception ex) {}
-		
+		lineNumber = parser.getLastErrorLine();
+				
 		if (e instanceof AssertionFailedError) {
 			output = file + ": Parse failed on line "; //$NON-NLS-1$
 			output += lineNumber + "\n"; //$NON-NLS-1$
@@ -255,7 +249,7 @@ public class TortureTest extends FractionalAutomatedTest {
 				thread.stop();
 				reportHang(testCode, filePath);
 			} else if (thread.result != null) {
-				reportException(thread.result, filePath, thread.parser, thread.mapping);
+				reportException(thread.result, filePath, thread.parser);
 			}
 		} else {
 			// gcc probably didn't expect this test to pass.
@@ -269,7 +263,6 @@ public class TortureTest extends FractionalAutomatedTest {
 			
 	
 	static class ParseThread extends Thread {
-		public ILineOffsetReconciler mapping = null;
         public String 		code;
 		public boolean 		cppNature;
 		public String 		file;
@@ -284,8 +277,6 @@ public class TortureTest extends FractionalAutomatedTest {
 				parser = ParserFactory.createParser( 
 						ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), parserMode, language, nullCallback, new NullLogService(), null ), nullCallback, parserMode, language, null);
 		
-				mapping = ParserFactory.createLineOffsetReconciler( new StringReader( code ) );
-	            
 				assertTrue(parser.parse());
 			} 
 			catch( Throwable e )

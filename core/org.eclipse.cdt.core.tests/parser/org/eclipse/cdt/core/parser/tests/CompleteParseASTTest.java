@@ -18,9 +18,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
-import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -29,7 +27,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
@@ -46,8 +43,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
-import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 
@@ -1554,23 +1549,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTClassSpecifier B = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 	}	
-    public void testBug39695() throws Exception
-    {
-        Iterator i = parse("int a = __alignof__ (int);").getDeclarations(); //$NON-NLS-1$
-        IASTVariable a = (IASTVariable) i.next();
-        assertFalse( i.hasNext() );
-        IASTExpression exp = a.getInitializerClause().getAssigmentExpression();
-        assertEquals( exp.getExpressionKind(), IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID );
-        assertEquals( exp.toString(), "__alignof__(int)"); //$NON-NLS-1$
-    }
-    
-    public void testBug39684() throws Exception
-    {
-    	IASTFunction bar = (IASTFunction) parse("typeof(foo(1)) bar () { return foo(1); }").getDeclarations().next(); //$NON-NLS-1$
-    	
-    	IASTSimpleTypeSpecifier simpleTypeSpec = ((IASTSimpleTypeSpecifier)bar.getReturnType().getTypeSpecifier());
-		assertEquals( simpleTypeSpec.getType(), IASTGCCSimpleTypeSpecifier.Type.TYPEOF );
-    }
     
     public void testBug59302() throws Exception
 	{
@@ -1590,20 +1568,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	}
 	
     
-    public void testBug39698A() throws Exception
-    {
-        Iterator i = parse("int c = a <? b;").getDeclarations(); //$NON-NLS-1$
-        IASTVariable c = (IASTVariable) i.next();
-        IASTExpression exp = c.getInitializerClause().getAssigmentExpression();
-        assertEquals( ASTUtil.getExpressionString( exp ), "a <? b" ); //$NON-NLS-1$
-    }
-    public void testBug39698B() throws Exception
-    {
-    	Iterator i = parse("int c = a >? b;").getDeclarations(); //$NON-NLS-1$
-    	IASTVariable c = (IASTVariable) i.next();
-        IASTExpression exp = c.getInitializerClause().getAssigmentExpression();
-        assertEquals( ASTUtil.getExpressionString( exp ), "a >? b" ); //$NON-NLS-1$
-    }
 
     public void testULong() throws Exception
 	{
@@ -1888,8 +1852,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Writer writer = new StringWriter();
 		writer.write( "typedef int DWORD;\n" ); //$NON-NLS-1$
 		writer.write( "typedef char BYTE;\n"); //$NON-NLS-1$
-		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\n"); //$NON-NLS-1$
-		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\n"); //$NON-NLS-1$
+		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\\n"); //$NON-NLS-1$
 		writer.write( "((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))\n"); //$NON-NLS-1$
 		writer.write( "enum e {\n"); //$NON-NLS-1$
 		writer.write( "blah1 = 5,\n"); //$NON-NLS-1$
@@ -1975,12 +1939,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     
     public void testUnaryAmperCast() throws Exception{
     	Writer writer = new StringWriter();
-    	writer.write( "void f( char * );              \n ");
-    	writer.write( "void f( char   );              \n ");
-    	writer.write( "void main() {                  \n ");
-    	writer.write( "   char * t = new char [ 5 ];  \n ");
-    	writer.write( "   f( &t[1] );                 \n ");
-    	writer.write( "}                              \n ");
+    	writer.write( "void f( char * );              \r\n "); //$NON-NLS-1$
+    	writer.write( "void f( char   );              \n "); //$NON-NLS-1$
+    	writer.write( "void main() {                  \n "); //$NON-NLS-1$
+    	writer.write( "   char * t = new char [ 5 ];  \n "); //$NON-NLS-1$
+    	writer.write( "   f( &t[1] );                 \n "); //$NON-NLS-1$
+    	writer.write( "}                              \n "); //$NON-NLS-1$
     	
     	Iterator i = parse( writer.toString() ).getDeclarations();
     	IASTFunction f1 = (IASTFunction) i.next();
@@ -1994,10 +1958,10 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	
     public void testBug68235() throws Exception{
     	Writer writer = new StringWriter();
-    	writer.write( " struct xTag { int x; };               ");
-    	writer.write( " typedef xTag xType;                   ");
-    	writer.write( " typedef struct yTag { int x; } yType; ");
-    	writer.write( " class C1 { xType x; yType y; };       ");
+    	writer.write( " struct xTag { int x; };               "); //$NON-NLS-1$
+    	writer.write( " typedef xTag xType;                   "); //$NON-NLS-1$
+    	writer.write( " typedef struct yTag { int x; } yType; "); //$NON-NLS-1$
+    	writer.write( " class C1 { xType x; yType y; };       "); //$NON-NLS-1$
     	
     	Iterator i = parse( writer.toString() ).getDeclarations();
     	
@@ -2022,4 +1986,93 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	simple = (IASTSimpleTypeSpecifier) y.getAbstractDeclaration().getTypeSpecifier();
     	assertEquals( simple.getTypeSpecifier(), yType );
     }
+    
+    public void testBug60407() throws Exception
+    {
+    	Writer writer = new StringWriter();
+    	writer.write( "struct ZZZ { int x, y, z; };\r\n" ); //$NON-NLS-1$
+    	writer.write( "typedef struct ZZZ _FILE;\n" ); //$NON-NLS-1$
+    	writer.write( "typedef _FILE FILE;\n" ); //$NON-NLS-1$
+    	writer.write( "static void static_function(FILE * lcd){}\n" ); //$NON-NLS-1$
+    	writer.write( "int	main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+    	writer.write( "FILE * file = 0;\n" ); //$NON-NLS-1$
+    	writer.write( "static_function( file );\n" ); //$NON-NLS-1$
+    	writer.write( "return 0;\n" );	 //$NON-NLS-1$
+    	writer.write( "}\n" ); //$NON-NLS-1$
+    	parse( writer.toString() );
+    }
+    
+    public void testBug68623() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "class A {                         \n" ); //$NON-NLS-1$
+        writer.write( "   A();                           \n" ); //$NON-NLS-1$
+        writer.write( "   class sub{};                   \n" ); //$NON-NLS-1$
+        writer.write( "   sub * x;                       \n" ); //$NON-NLS-1$
+        writer.write( "};                                \n" ); //$NON-NLS-1$
+        writer.write( "A::A() : x( (sub *) 0 ) {}        \n" ); //$NON-NLS-1$
+        
+        parse( writer.toString() );
+        
+        writer = new StringWriter();
+        writer.write( "class A {                         \n" ); //$NON-NLS-1$
+        writer.write( "   A() : x (0) {}                 \n" ); //$NON-NLS-1$
+        writer.write( "   int x;                         \n" ); //$NON-NLS-1$
+        writer.write( "};                                \n" ); //$NON-NLS-1$
+        
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+        
+        i = A.getDeclarations();
+        IASTMethod constructor = (IASTMethod) i.next();
+        IASTField x = (IASTField) i.next();
+        
+        assertAllReferences( 1, createTaskList( new Task( x ) ) );
+    }
+    
+    public void testBug69798() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "enum Flags { FLAG1, FLAG2 };                          \n" ); //$NON-NLS-1$
+        writer.write( "int f() { int a, b;  b = ( a ? FLAG1 : 0 ) | FLAG2; } \n" ); //$NON-NLS-1$
+        
+        parse( writer.toString() );
+    }
+    
+    public void testBug69662() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "class A { operator float * (); };  \n" );
+        writer.write( "A::operator float * () { }         \n" );
+        
+        parse( writer.toString() );
+    }
+    
+    
+    public void testBug68528() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "namespace N526026\n" );
+    	writer.write( "{\n" );
+    	writer.write( "template <typename T>\n" );
+    	writer.write( "class T526026\n" );
+    	writer.write( "{\n" );
+    	writer.write( "typedef int diff;\n" );
+    	writer.write( "};\n" );
+    	writer.write( "\n" );
+    	writer.write( "template<typename T>\n" );
+    	writer.write( "inline T526026< T >\n" ); 
+    	writer.write( "operator+(typename T526026<T>::diff d, const T526026<T> & x )\n" ); 
+    	writer.write( "{ return T526026< T >(); }\n" );
+    	writer.write( "}\n" );
+    	parse( writer.toString(), false );
+	}
+    
+    public void testBug71094() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "using namespace DOESNOTEXIST;\n" ); 
+    	writer.write( "class A { int x; };\n" );
+    	Iterator i = parse( writer.toString(), false ).getDeclarations();
+    	assertTrue( i.hasNext() );
+    	assertTrue( i.next() instanceof IASTAbstractTypeSpecifierDeclaration );
+    	assertFalse( i.hasNext() );
+	}
 }

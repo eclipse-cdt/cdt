@@ -257,7 +257,54 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 			return false;
 		}
         
-        		
+		public boolean isBasicType(){
+		    if(this == PRIMARY_EMPTY
+    		|| this == THROWEXPRESSION
+    		|| this == POSTFIX_DOT_DESTRUCTOR
+    		|| this == POSTFIX_ARROW_DESTRUCTOR
+    		|| this == DELETE_CASTEXPRESSION
+    		|| this == DELETE_VECTORCASTEXPRESSION 
+    		|| this == PRIMARY_INTEGER_LITERAL
+    		|| this == POSTFIX_SIMPLETYPE_INT
+    		|| this == UNARY_SIZEOF_TYPEID
+    		|| this == UNARY_SIZEOF_UNARYEXPRESSION
+    		|| this == PRIMARY_CHAR_LITERAL
+    		|| this == POSTFIX_SIMPLETYPE_CHAR
+    		|| this == PRIMARY_STRING_LITERAL
+    		|| this == PRIMARY_FLOAT_LITERAL
+    		|| this == POSTFIX_SIMPLETYPE_FLOAT
+    		|| this == POSTFIX_SIMPLETYPE_DOUBLE
+    		|| this == POSTFIX_SIMPLETYPE_WCHART
+    		|| this == PRIMARY_BOOLEAN_LITERAL
+    		|| this == POSTFIX_SIMPLETYPE_BOOL
+    		|| this == RELATIONAL_GREATERTHAN
+    		|| this == RELATIONAL_GREATERTHANEQUALTO
+    		|| this == RELATIONAL_LESSTHAN
+    		|| this == RELATIONAL_LESSTHANEQUALTO 
+    		|| this == EQUALITY_EQUALS
+    		|| this == EQUALITY_NOTEQUALS 
+    		|| this == LOGICALANDEXPRESSION 
+    		|| this == LOGICALOREXPRESSION
+    		)
+		        return true;
+		    return false;
+		}
+        public boolean isPostfixSimpleType(){
+            if((this == POSTFIX_SIMPLETYPE_INT)
+            || (this == POSTFIX_SIMPLETYPE_SHORT)
+			|| (this == POSTFIX_SIMPLETYPE_DOUBLE)
+			|| (this == POSTFIX_SIMPLETYPE_FLOAT)
+			|| (this == POSTFIX_SIMPLETYPE_CHAR)
+			|| (this == POSTFIX_SIMPLETYPE_WCHART)
+			|| (this == POSTFIX_SIMPLETYPE_SIGNED)
+			|| (this == POSTFIX_SIMPLETYPE_UNSIGNED)
+			|| (this == POSTFIX_SIMPLETYPE_BOOL)
+			|| (this == POSTFIX_SIMPLETYPE_LONG) )
+       		{
+                return true;
+       		}
+            return false;
+        }
 	}
 	
 	public interface IASTNewExpressionDescriptor extends ISourceElementCallbackDelegate
@@ -275,7 +322,8 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 	public IASTExpression getRHSExpression();
 	public IASTExpression getThirdExpression();
 	public String getLiteralString(); 
-	public String     getIdExpression();
+	public String getIdExpression();
+	public char[] getIdExpressionCharArray();
 	public IASTTypeId getTypeId(); 	
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor(); 
 	

@@ -14,33 +14,25 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
-import java.util.Map;
 
-
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 {
 	
-	public BasicSymbol( ParserSymbolTable table, String name ){
+	public BasicSymbol( ParserSymbolTable table, char[] name ){
 		super( table );
 		_name = name;
-		_typeInfo = new TypeInfo();
-	}
+	}	
 	
-	public BasicSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super( table, obj );
-		_name   = name;
-		_typeInfo = new TypeInfo();
-	}
-	
-	public BasicSymbol( ParserSymbolTable table, String name, TypeInfo.eType typeInfo )
+	public BasicSymbol( ParserSymbolTable table, char[] name, ITypeInfo.eType typeInfo )
 	{
 		super( table );
 		_name = name;
-		_typeInfo = new TypeInfo( typeInfo, 0, null );
+		_typeInfo = TypeInfoProvider.newTypeInfo( typeInfo );
 	}
 		
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() &&  !getContainingSymbol().isTemplateMember() ){
 			return null;
 		}
@@ -51,8 +43,8 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		return newSymbol;	
 	}
 	
-	public String getName() { return _name; }
-	public void setName(String name) { _name = name; }
+	public char[] getName() { return _name; }
+	public void setName(char[] name) { _name = name; }
 
 
 	public void setContainingSymbol( IContainerSymbol scope ){ 
@@ -60,27 +52,27 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_depth = scope.getDepth() + 1; 
 	}
 
-	public void setType(TypeInfo.eType t){
+	public void setType(ITypeInfo.eType t){
 		getTypeInfo().setType( t );	 
 	}
 
-	public TypeInfo.eType getType(){ 
+	public ITypeInfo.eType getType(){ 
 		return getTypeInfo().getType(); 
 	}
 
-	public boolean isType( TypeInfo.eType type ){
-		return getTypeInfo().isType( type, TypeInfo.t_undef ); 
+	public boolean isType( ITypeInfo.eType type ){
+		return getTypeInfo().isType( type, ITypeInfo.t_undef ); 
 	}
 
-	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
+	public boolean isType( ITypeInfo.eType type, ITypeInfo.eType upperType ){
 		return getTypeInfo().isType( type, upperType );
 	}
 	
 	public ISymbol getTypeSymbol(){
 		ISymbol symbol = getTypeInfo().getTypeSymbol();
 		
-		if( symbol != null && symbol.getTypeInfo().isForwardDeclaration() && symbol.getTypeSymbol() != null ){
-			return symbol.getTypeSymbol();
+		if( symbol != null && symbol.isForwardDeclaration() && symbol.getForwardSymbol() != null ){
+			return symbol.getForwardSymbol();
 		}
 		
 		return symbol;
@@ -90,22 +82,27 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		getTypeInfo().setTypeSymbol( type ); 
 	}
 
-	public TypeInfo getTypeInfo(){
-		return _typeInfo; 
+	public ITypeInfo getTypeInfo(){
+		return ( _typeInfo != null ) ? _typeInfo : (_typeInfo = new TypeInfo()); 
 	}
 	
-	public void setTypeInfo( TypeInfo info ) {
+	public void setTypeInfo( ITypeInfo info ) {
 		_typeInfo = info;
 	}
 	
 	public boolean isForwardDeclaration(){
-		return getTypeInfo().isForwardDeclaration();
+		return _isForwardDeclaration;
 	}
 	
 	public void setIsForwardDeclaration( boolean forward ){
-		getTypeInfo().setIsForwardDeclaration( forward );
+		_isForwardDeclaration = forward;
 	}
-	
+	public void setForwardSymbol( ISymbol forward ){
+		_symbolDef = forward;  
+	}
+	public ISymbol getForwardSymbol(){
+		return (_isForwardDeclaration || isType( ITypeInfo.t_namespace) ) ? _symbolDef : null;
+	}
 	/**
 	 * returns 0 if same, non zero otherwise
 	 */
@@ -118,10 +115,10 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		} else if( size == 0 ) 
 			return 0; 
 		else {
-			TypeInfo.PtrOp op1 = null, op2 = null;
+			ITypeInfo.PtrOp op1 = null, op2 = null;
 			for( int i = 0; i > size; i++ ){
-				op1 = (TypeInfo.PtrOp)symbol.getTypeInfo().getPtrOperators().get(i);
-				op2 = (TypeInfo.PtrOp)getTypeInfo().getPtrOperators().get(i);
+				op1 = (ITypeInfo.PtrOp)symbol.getTypeInfo().getPtrOperators().get(i);
+				op2 = (ITypeInfo.PtrOp)getTypeInfo().getPtrOperators().get(i);
 	
 				if( op1.compareCVTo( op2 ) != 0 ){
 					return -1;
@@ -135,7 +132,7 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 	public List getPtrOperators(){
 		return getTypeInfo().getPtrOperators();
 	}
-	public void addPtrOperator( TypeInfo.PtrOp ptrOp ){
+	public void addPtrOperator( ITypeInfo.PtrOp ptrOp ){
 		getTypeInfo().addPtrOperator( ptrOp );
 	}	
 	public void preparePtrOperatros(int numPtrOps) {
@@ -154,13 +151,14 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_isTemplateMember = isMember;
 	}
 	public boolean isTemplateInstance(){
-		return ( _instantiatedSymbol != null );
+		return ( _isTemplateInstance && _symbolDef != null );
 	}
 	public ISymbol getInstantiatedSymbol(){
-		return _instantiatedSymbol;
+		return _symbolDef;
 	}
 	public void setInstantiatedSymbol( ISymbol symbol ){
-		_instantiatedSymbol = symbol;
+	    _isTemplateInstance = true;
+		_symbolDef = symbol;
 	}
 	
 	public boolean getIsInvisible(){
@@ -170,14 +168,15 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_isInvisible = invisible ;
 	}
 	
-	private 	String 				_name;					//our name
-	private		TypeInfo			_typeInfo;				//our type info
+	private 	char[] 				_name;					//our name
+	private		ITypeInfo			_typeInfo;				//our type info
 	private		int 				_depth;					//how far down the scope stack we are
 	
 	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)
-	
 	private		boolean				_isTemplateMember = false;
-	private		ISymbol				_instantiatedSymbol = null;
+	private		boolean				_isForwardDeclaration = false;
+	private     boolean 			_isTemplateInstance = false;
+	private		ISymbol				_symbolDef = null;		//used for forward declarations and template instantiations
 	
 	
 	/* (non-Javadoc)
@@ -186,7 +185,7 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 	public Object clone() {
 		
 		BasicSymbol s = (BasicSymbol) super.clone();
-		s._typeInfo = new TypeInfo( s._typeInfo );
+		s._typeInfo = TypeInfoProvider.newTypeInfo( s._typeInfo );
 		return s;
 	}
 }

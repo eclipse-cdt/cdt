@@ -50,6 +50,9 @@ public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 		return newInitializerExpressions.iterator();
 	}
 
+	public List getNewInitializerExpressionsList(){
+	    return newInitializerExpressions;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)

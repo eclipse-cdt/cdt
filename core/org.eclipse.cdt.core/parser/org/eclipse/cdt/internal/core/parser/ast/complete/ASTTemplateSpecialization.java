@@ -21,10 +21,11 @@ import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
 public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements IASTTemplateSpecialization
 {
     /**
+     * @param filename
      * 
      */
-    public ASTTemplateSpecialization( ITemplateSymbol template, IASTScope scope  )
+    public ASTTemplateSpecialization( ITemplateSymbol template, IASTScope scope, char []filename  )
     {
-        super(template, scope, null);
+        super(template, scope, null, filename);
     }
 }

@@ -161,7 +161,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	public void handlePreprocessorDirective(IScannerData iscanner, String directive, String restOfLine) {
 		if( directive.equals(POUND_INCLUDE_NEXT) ) 
 		{
-			TraceUtil.outputTrace(iscanner.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null); //$NON-NLS-1$
+			TraceUtil.outputTrace(iscanner.getLogService(), "GCCScannerExtension handling #include_next directive" ); //$NON-NLS-1$
 			// figure out the name of the current file and its path
 			IScannerContext context = iscanner.getContextStack().getCurrentContext();
 			if( context == null || context.getKind() != IScannerContext.ContextKind.INCLUSION ) 

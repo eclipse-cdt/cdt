@@ -11,7 +11,8 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author jcamelon
@@ -31,29 +32,31 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 	 *     r_BadTemplateArgument if an argument does not match the corresponding parameter type
 	 *     r_Ambiguous if more than one specialization can be used but none is more specialized than all the others
 	 */
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException;
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException;
 
-	public void setName(String name);
-	public String getName();
+	public void setName(char[] name);
+	public char[] getName();
 	
 	public IContainerSymbol getContainingSymbol();
 	public void setContainingSymbol( IContainerSymbol containing );
 	
-	public boolean isType( TypeInfo.eType type );
-	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType );
-	public TypeInfo.eType getType();
-	public void setType(TypeInfo.eType t);
-	public TypeInfo getTypeInfo();
-	public void setTypeInfo( TypeInfo info );
+	public boolean isType( ITypeInfo.eType type );
+	public boolean isType( ITypeInfo.eType type, ITypeInfo.eType upperType );
+	public ITypeInfo.eType getType();
+	public void setType(ITypeInfo.eType t);
+	public ITypeInfo getTypeInfo();
+	public void setTypeInfo( ITypeInfo info );
 	public ISymbol getTypeSymbol();
 	public void setTypeSymbol( ISymbol type );
 
 	public boolean isForwardDeclaration();
 	public void setIsForwardDeclaration( boolean forward );
+	public void setForwardSymbol( ISymbol forward );
+	public ISymbol getForwardSymbol();
 	
 	public int compareCVQualifiersTo( ISymbol symbol );
 	public List getPtrOperators();
-	public void addPtrOperator( TypeInfo.PtrOp ptrOp );
+	public void addPtrOperator( ITypeInfo.PtrOp ptrOp );
 	
 	public boolean isTemplateInstance();
 	public ISymbol getInstantiatedSymbol();

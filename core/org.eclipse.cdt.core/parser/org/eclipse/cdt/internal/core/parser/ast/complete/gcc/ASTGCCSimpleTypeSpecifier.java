@@ -32,7 +32,7 @@ public class ASTGCCSimpleTypeSpecifier extends ASTSimpleTypeSpecifier implements
 	 * @param string
 	 * @param references
 	 */
-	public ASTGCCSimpleTypeSpecifier(ISymbol s, boolean b, String string, List references, IASTExpression typeOfExpression ) {
+	public ASTGCCSimpleTypeSpecifier(ISymbol s, boolean b, char[] string, List references, IASTExpression typeOfExpression ) {
 		super(s, b, string, references);
 		expression = typeOfExpression;
 	}

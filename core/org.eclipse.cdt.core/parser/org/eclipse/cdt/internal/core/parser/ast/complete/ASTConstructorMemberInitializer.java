@@ -26,13 +26,13 @@ public class ASTConstructorMemberInitializer
 {
     private final int nameOffset;
 	private final boolean requireNameResolution;
-	private final String name;
+	private final char[] name;
     private final IASTExpression expression;
     private List references;
     /**
      * 
      */
-    public ASTConstructorMemberInitializer( IASTExpression expression, String name, int nameOffset, List references, boolean requireNameResolution )
+    public ASTConstructorMemberInitializer( IASTExpression expression, char[] name, int nameOffset, List references, boolean requireNameResolution )
     {
     	this.expression = expression;
     	this.name = name;
@@ -52,6 +52,9 @@ public class ASTConstructorMemberInitializer
      */
     public String getName()
     {
+        return String.valueOf( name );
+    }
+    public char[] getNameCharArray(){
         return name;
     }
     /* (non-Javadoc)

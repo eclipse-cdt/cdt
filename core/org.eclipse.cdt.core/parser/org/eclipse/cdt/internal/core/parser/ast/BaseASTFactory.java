@@ -44,16 +44,16 @@ public class BaseASTFactory  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createMacro(java.lang.String, int, int, int)
 	 */
-	public IASTMacro createMacro(String name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IMacroDescriptor info) {
-		IASTMacro m = new ASTMacro( name, info, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine );
+	public IASTMacro createMacro(char[] name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IMacroDescriptor info, char[] fn) {
+		IASTMacro m = new ASTMacro( name, info, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn );
 		return m;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createInclusion(java.lang.String, java.lang.String, boolean)
 	 */
-	public IASTInclusion createInclusion(String name, String fileName, boolean local, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine) {
-		IASTInclusion inclusion = new ASTInclusion( name, fileName, local, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine );
+	public IASTInclusion createInclusion(char[] name, char[] fileName, boolean local, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn) {
+		IASTInclusion inclusion = new ASTInclusion( name, fileName, local, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn );
 		return inclusion;
 	}
 
@@ -72,7 +72,7 @@ public class BaseASTFactory  {
     	if( extension.overrideCreateDesignatorMethod( kind ))
     		return extension.createDesignator( kind, constantExpression, fieldIdentifier, extensionParms );
         return new ASTDesignator( kind, constantExpression, 
-        		fieldIdentifier == null ? "" : fieldIdentifier.getImage(),  //$NON-NLS-1$
+        		fieldIdentifier == null ? new char[0] : fieldIdentifier.getCharImage(),  //$NON-NLS-1$
         		fieldIdentifier == null ? -1 : fieldIdentifier.getOffset() );
     }
 
@@ -81,6 +81,7 @@ public class BaseASTFactory  {
 	}
 
 	protected final IASTFactoryExtension extension;
+    protected static final char[] EMPTY_STRING = new char[0];
 
 
 }

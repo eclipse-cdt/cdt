@@ -20,7 +20,7 @@ public abstract class BaseProblemFactory {
 
 	protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
 
-	public IProblem createProblem(int id, int start, int end, int line, char[] file, String arg, boolean warn, boolean error) {
+	public IProblem createProblem(int id, int start, int end, int line, char[] file, char[] arg, boolean warn, boolean error) {
 		return new Problem( id, start, end, line, file, arg, warn, error);
 	} 
 
@@ -29,7 +29,7 @@ public abstract class BaseProblemFactory {
 		return ( id & bitmask ) != 0; 
 	}
 	
-	protected IProblem createInternalProblem( int id, int start, int end, int line, char [] file, String arg, boolean warn, boolean error )
+	protected IProblem createInternalProblem( int id, int start, int end, int line, char [] file, char[] arg, boolean warn, boolean error )
 	{
 		return createProblem( id, start, end, line, file, arg, warn, error );
 	}

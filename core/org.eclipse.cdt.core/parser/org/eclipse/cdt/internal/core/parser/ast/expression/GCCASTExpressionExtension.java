@@ -59,8 +59,8 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 	 * @param newDescriptor
 	 * @return
 	 */
-	private static IASTExpression createExpression(IASTExpression.Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {			
-		if( !idExpression.equals( EMPTY_STRING ) && literal.equals( EMPTY_STRING ))
+	private static IASTExpression createExpression(IASTExpression.Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, char[] idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) {			
+		if( idExpression.length != 0 && literal.length == 0 )
 			return new ASTIdExpression( kind, idExpression )
 			{
 				public long evaluateExpression() throws ASTExpressionEvaluationException {
@@ -131,7 +131,7 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#createExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTTypeId, org.eclipse.cdt.core.parser.ITokenDuple, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor, java.util.List)
 	 */
-	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor, List references) {
-		return createExpression( kind, lhs, rhs, thirdExpression, typeId, (idExpression == null ) ? EMPTY_STRING : idExpression.toString(), literal, newDescriptor );
+	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor, List references) {
+		return createExpression( kind, lhs, rhs, thirdExpression, typeId, (idExpression == null ) ? EMPTY_STRING : idExpression.toCharArray(), literal, newDescriptor );
 	}
 }

@@ -15,22 +15,17 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefe
  */
 
 public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSymbol {
-	protected SpecializedSymbol( ParserSymbolTable table, String name ){
+	protected SpecializedSymbol( ParserSymbolTable table, char[] name ){
 		super( table, name );
-	}
-	
-	protected SpecializedSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super( table, name, obj );
 	}
 	
 	public Object clone(){
@@ -51,14 +46,13 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	}
 	
 	public ISymbol instantiate( List arguments ) throws ParserSymbolTableException{
-		Map argMap = new HashMap();
-		
 		List specArgs = getArgumentList();
 		if( specArgs.size() != arguments.size() ){
 			return null;
 		}
 		
 		List actualArgs = new ArrayList( specArgs.size() );
+		ObjectMap argMap = new ObjectMap( specArgs.size() );
 		
 		ISymbol templatedSymbol = getTemplatedSymbol();
 		while( templatedSymbol.isTemplateInstance() ){
@@ -67,16 +61,16 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		
 		int numSpecArgs = specArgs.size();
 		for( int i = 0; i < numSpecArgs; i++ ){
-			TypeInfo info = (TypeInfo) specArgs.get(i);
-			TypeInfo mappedInfo = (TypeInfo) arguments.get(i);
+			ITypeInfo info = (ITypeInfo) specArgs.get(i);
+			ITypeInfo mappedInfo = (ITypeInfo) arguments.get(i);
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
-			if( mappedInfo.isType( TypeInfo.t_type ) && mappedInfo.getTypeSymbol().isType( TypeInfo.t_templateParameter ) ){
+			if( mappedInfo.isType( ITypeInfo.t_type ) && mappedInfo.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) ){
 				return deferredInstance( arguments );
 			}
 			
 			actualArgs.add( mappedInfo );
-			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol().isType( TypeInfo.t_templateParameter )){
+			if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol().isType( ITypeInfo.t_templateParameter )){
 				ISymbol param = info.getTypeSymbol();
 				
 				param = TemplateEngine.translateParameterForDefinition ( templatedSymbol, param, getDefinitionParameterMap() );
@@ -105,8 +99,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		IContainerSymbol symbol = null;
 			
 		if( getContainedSymbols().size() == 1 ){
-			Iterator iter = getContainedSymbols().keySet().iterator();
-			symbol = (IContainerSymbol)getContainedSymbols().get( iter.next() );
+			symbol = (IContainerSymbol)getContainedSymbols().getAt( 0 );
 		}
 			
 		instance = (IContainerSymbol) symbol.instantiate( this, argMap );
@@ -141,7 +134,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addArgument(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
-	public void addArgument(TypeInfo arg) {
+	public void addArgument(ITypeInfo arg) {
 		if( _argumentList == Collections.EMPTY_LIST )
 			_argumentList = new ArrayList(4);
 		

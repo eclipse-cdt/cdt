@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.token;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -24,12 +23,21 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
  */
 public class TokenFactory {
 		
+	protected static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	public static IToken createToken( int tokenType, IScannerData scannerData )
 	{
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			return new SimpleExpansionToken( tokenType, scannerData.getContextStack() );
+			return new SimpleExpansionToken( tokenType, scannerData.getContextStack(), getCurrentFilename(scannerData) );
 		
-		return new SimpleToken(	tokenType, scannerData.getContextStack() );
+		return new SimpleToken(	tokenType, scannerData.getContextStack(), getCurrentFilename(scannerData) );
+	}
+
+	/**
+	 * @param scannerData
+	 * @return
+	 */
+	private static char[] getCurrentFilename(IScannerData scannerData) {
+		return scannerData.getContextStack().getInclusionFilename(scannerData.getContextStack().getMostRelevantFileContextIndex() ).toCharArray();
 	}
 
 	/**
@@ -40,14 +48,14 @@ public class TokenFactory {
 	 */
 	public static IToken createUniquelyImagedToken(int type, String image, IScannerData scannerData) {
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			return new ImagedExpansionToken( type, scannerData.getContextStack(), image );
+			return new ImagedExpansionToken( type, scannerData.getContextStack(), image.toCharArray(), getCurrentFilename(scannerData) );
 
-		return new ImagedToken(type, scannerData.getContextStack(), image );
+		return new ImagedToken(type, scannerData.getContextStack(), image.toCharArray(),  getCurrentFilename(scannerData));
 	}
 	
 	public static IToken createStandAloneToken( int type, String image )
 	{
-		return new ImagedToken( type, image);
+		return new ImagedToken( type, image.toCharArray(), 0, EMPTY_CHAR_ARRAY, 0);
 	}
 
 	public static ITokenDuple createTokenDuple( IToken first, IToken last )
@@ -73,12 +81,12 @@ public class TokenFactory {
 		return new TemplateTokenDuple( firstDuple, secondDuple );
 	}
 	
-	public static IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
+	public static IToken consumeTemplateIdArguments( IToken name, IToken last ){
 	    IToken token = name;
 	    
 	    if( token.getType() == IToken.tLT )
 	    {
-	    	if( ! iter.hasNext() )
+	    	if( token == last )
 	    		return token;
 	    		    	
 	    	BraceCounter scopes = BraceCounter.getCounter();
@@ -86,11 +94,11 @@ public class TokenFactory {
 			{		    	
 		        scopes.addValue( IToken.tLT );
 		        
-		        while (!scopes.isEmpty() && iter.hasNext() )
+		        while (!scopes.isEmpty() && token != last )
 		        {
 		        	int top;
 		        	
-		        	token = (IToken) iter.next();
+		        	token = token.getNext();
 		        	switch( token.getType() ){
 		        		case IToken.tGT:
 		        			if( scopes.getLast() == IToken.tLT ) {
@@ -234,7 +242,7 @@ public class TokenFactory {
 	 * @param last
 	 * @return
 	 */
-	public static String createStringRepresentation(IToken first, IToken last) {
-		return BasicTokenDuple.createStringRepresentation(first, last);
+	public static char[] createCharArrayRepresentation(IToken first, IToken last) {
+		return BasicTokenDuple.createCharArrayRepresentation(first, last);
 	}
 }

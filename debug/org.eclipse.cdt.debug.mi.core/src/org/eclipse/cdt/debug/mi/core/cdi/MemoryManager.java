@@ -5,54 +5,69 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
+import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIDataReadMemory;
+import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 
+	List blockList;
+
 	public MemoryManager(CSession session) {
 		super(session);
-	}
-	
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#addBlock(ICDIMemoryBlock)
-	 */
-	public void addBlock(ICDIMemoryBlock memoryBlock) throws CDIException {
+		blockList = new ArrayList();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlock(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
 	 */
-	public ICDIMemoryBlock getBlock(String id) throws CDIException {
-		return null;
+	public ICDIMemoryBlock createMemoryBlock(long address, int length)
+		throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		String addr = "0x" + Long.toHexString(address);
+		MIDataReadMemory mem = factory.createMIDataReadMemory(0, addr, MIFormat.HEXADECIMAL, 1, 1, length, null);
+		try {
+			mi.postCommand(mem);
+			MIDataReadMemoryInfo info = mem.getMIDataReadMemoryInfo();
+			MemoryBlock block = new MemoryBlock(getCSession().getCTarget(), info);
+			blockList.add(block);
+			return block;
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlocks()
 	 */
-	public ICDIMemoryBlock[] getBlocks() throws CDIException {
-		return null;
+	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
+		return (ICDIMemoryBlock[])blockList.toArray(new ICDIMemoryBlock[0]);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeAllBlocks()
 	 */
 	public void removeAllBlocks() throws CDIException {
+		blockList.clear();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeBlock(ICDIMemoryBlock)
 	 */
-	public void removeBlock(ICDIMemoryBlock memoryBlock) {
+	public void removeBlock(ICDIMemoryBlock memoryBlock) throws CDIException {
+		blockList.remove(memoryBlock);
 	}
 
 	/**
@@ -60,6 +75,9 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 */
 	public void removeBlocks(ICDIMemoryBlock[] memoryBlocks)
 		throws CDIException {
+		for (int i = 0; i < memoryBlocks.length; i++) {
+			removeBlock(memoryBlocks[i]);
+		}
 	}
 
 }

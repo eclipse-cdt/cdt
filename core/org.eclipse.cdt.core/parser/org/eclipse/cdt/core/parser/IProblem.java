@@ -356,6 +356,7 @@ public interface IProblem
 	/*
 	 * Parser Syntactic Problems
 	 */
+	public final static int SYNTAX_ERROR = SYNTAX_RELATED | 0x001;
 
 	/*
 	 * Parser Semantic Problems

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -59,6 +60,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
+import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
@@ -74,7 +76,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 {
     private static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
 	protected ISourceElementRequestor requestor = null;
-    
+    private IProblemFactory problemFactory = new ParserProblemFactory();
     /**
      * This is the standard cosntructor that we expect the Parser to be instantiated 
      * with.  
@@ -90,6 +92,36 @@ public abstract class Parser extends ExpressionParser implements IParser
     	requestor = callback;
     }
     
+    
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#failParse()
+	 */
+	protected void failParse() {
+		IToken referenceToken = null;
+		if( lastToken != null )
+			referenceToken = lastToken;
+		else
+			try
+			{
+				referenceToken = LA(1);
+			}
+			catch( EndOfFileException eof )
+			{
+				return;
+			}
+		IProblem problem = problemFactory.createProblem( 
+				IProblem.SYNTAX_ERROR, 
+				referenceToken.getOffset(), 
+				referenceToken.getOffset(), 
+				referenceToken.getLineNumber(), 
+				scanner.getCurrentFilename(), 
+				EMPTY_STRING, 
+				false, 
+				true );
+		requestor.acceptProblem( problem );
+		super.failParse();
+	}
     // counter that keeps track of the number of times Parser.parse() is called
     private static int parseCount = 0;
     

@@ -78,8 +78,13 @@ public class SpeedTest extends TestCase {
 		
 		String config = System.getProperty("speedTest.config"); 
 
-		if (config != null && config.equals("msvc"))
+		if (config == null)
+			return mingwScannerInfo(false);
+
+		if (config.equals("msvc"))
 			return msvcScannerInfo(false);
+		else if (config.equals("ydl"))
+			return ydlScannerInfo(false);
 		else
 			return mingwScannerInfo(false);
 	}
@@ -138,6 +143,36 @@ public class SpeedTest extends TestCase {
 			"c:/mingw/include/c++/3.2.3/backward",
 			"c:/mingw/include",
 			"c:/mingw/lib/gcc-lib/mingw32/3.2.3/include"
+		};
+
+		return new ScannerInfo( definitions, includePaths );
+	}
+
+	private IScannerInfo ydlScannerInfo(boolean quick) {
+		// TODO It would be easier and more flexible if we used discovery for this
+		if( quick )
+			return new ScannerInfo();
+		Map definitions = new Hashtable();
+		definitions.put("__GNUC__", "3");
+		definitions.put("__GNUC_MINOR__", "3");
+		definitions.put("__GNUC_PATCHLEVEL__", "3");
+		definitions.put("_GNU_SOURCE", "");
+		definitions.put("__unix__", "");
+		definitions.put("__gnu_linux__", "");
+		definitions.put("__linux__", "");
+		definitions.put("unix", "");
+		definitions.put("__unix", "");
+		definitions.put("linux", "");
+		definitions.put("__linux", "");
+		definitions.put("__GNUG__", "3");
+		
+		String [] includePaths = new String[] {
+			"/usr/include/g++",
+			"/usr/include/g++/powerpc-yellowdog-linux",
+			"/usr/include/g++/backward",
+			"/usr/local/include",
+			"/usr/lib/gcc-lib/powerpc-yellowdog-linux/3.3.3/include",
+			"/usr/include"
 		};
 
 		return new ScannerInfo( definitions, includePaths );

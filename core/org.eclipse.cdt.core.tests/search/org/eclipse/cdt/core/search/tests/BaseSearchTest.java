@@ -84,7 +84,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.setEnabled(testProject,true);
 		
-		resultCollector = new CSearchResultCollector( true );
+		resultCollector = new CSearchResultCollector();
 		resultCollector.setProgressMonitor( monitor );
 		
 		searchEngine = new SearchEngine();

@@ -13,6 +13,8 @@
  */
 package org.eclipse.cdt.core.search;
 
+import org.eclipse.core.resources.IResource;
+
 /**
  * @author aniefer
  *
@@ -21,4 +23,21 @@ package org.eclipse.cdt.core.search;
  */
 public interface IMatch {
 
+	int getElementType();
+
+	int getVisibility();
+
+	String getName();
+
+	String getParentName();
+
+	IResource getResource();
+
+	int getStartOffset();
+	
+	int getEndOffset();
+
+	boolean isStatic();
+	boolean isConst();
+	boolean isVolatile();
 }

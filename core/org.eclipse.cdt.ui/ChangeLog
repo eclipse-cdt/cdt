@@ -1,3 +1,10 @@
+2003-07-29 Andrew Niefer
+	- Refactoring Search Result Collecting:
+		* CSearchResultCollector now extends BasicSearchResultCollector
+		* CSearchResultLabelProvider moved to org.eclipse.cdt.ui
+		* CSearchResultLabelProvider modified to reflect changes to IMatch interface
+		* Deleted the class Match
+
 2003-07-28 Sean Evoy
 	In order to meet certain internal guidelines and to test the makefile 
 	generator, the build model replied to some answers with hard-coded information. 

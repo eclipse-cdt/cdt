@@ -13,15 +13,15 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.VariableDeclarationPattern;
-import org.eclipse.cdt.internal.ui.search.Match;
 
 /**
  * @author aniefer
@@ -95,7 +95,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 3 );
 	}
@@ -105,12 +105,12 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 1 );
 		
-		Match match = (Match) matches.iterator().next();
-		assertTrue( match.parent.equals( "NS::B" ) );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testNamespaceReferenceInClassBaseClause(){
@@ -118,7 +118,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 	}
 	
@@ -127,11 +127,11 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 		
-		Match match = (Match) matches.iterator().next();
-		assertTrue( match.parent.equals( "NS::B" ) );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testVariableDeclaration(){
@@ -139,11 +139,11 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 		
-		Match match = (Match) matches.iterator().next();
-		assertTrue( match.parent.equals( "" ) );		
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "" ) );		
 	}
 
 }

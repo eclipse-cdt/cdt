@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.search.ui.IGroupByKeyComputer;
@@ -34,13 +35,13 @@ public class GroupByKeyComputer implements IGroupByKeyComputer {
 			return null;
 		}
 		
-		Match match = null;
+		IMatch match = null;
 		
 		try {
-			match = (Match) marker.getAttribute(CSearchResultCollector.IMATCH);
+			match = (IMatch) marker.getAttribute(CSearchResultCollector.IMATCH);
 		} catch (CoreException e) {
 		}
 		
-		return match.parent;
+		return match.getParentName();
 	}
 }

@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
@@ -323,23 +324,17 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 															    : offsetableElement.getStartingOffset();
 				length = offsetableElement.getName().length();															  
 			}
-						
+				
+			IMatch match = null;		
 			if( currentResource != null ){
-				
-				resultCollector.accept( currentResource, 
-									    offset, 
-									    offset + length, 
-									    resultCollector.createMatch( node, currentScope ), 
-									    accuracyLevel );
-									    
+				match = resultCollector.createMatch( currentResource, offset, offset + length, node, currentScope );
 			} else if( currentPath != null ){
-				
-				resultCollector.accept( currentPath, 
-										offset, 
-										offset + length, 
-										resultCollector.createMatch( node, currentScope ), 
-										accuracyLevel );				
+				match = resultCollector.createMatch( currentPath, offset, offset + length, node, currentScope );
 			}
+			if( match != null ){
+				resultCollector.acceptMatch( match );
+			}
+		
 		} catch (CoreException e) {
 		}
 	}

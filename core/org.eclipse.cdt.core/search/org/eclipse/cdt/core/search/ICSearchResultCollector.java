@@ -15,9 +15,7 @@ package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -43,6 +41,12 @@ public interface ICSearchResultCollector {
 	 * Called before the actual search starts.
 	 */
 	public void aboutToStart();
+	
+	/**
+	 * Called when the search has ended.
+	 */
+	public void done();
+	
 	/**
 	 * Accepts the given search result.
 	 *
@@ -58,36 +62,18 @@ public interface ICSearchResultCollector {
 	 *  <code>EXACT_MATCH</code> or <code>POTENTIAL_MATCH</code>
 	 * @exception CoreException if this collector had a problem accepting the search result
 	 */
-	public void accept(
-		IResource resource,
-		int start,
-		int end,
-		IMatch enclosingObject,
-		int accuracy)
-		throws CoreException;
-		
-	/**
-	 * Called when the search has ended.
-	 */
-	public void done();
+	public IMatch createMatch( Object fileResource, int start, int end, 
+						ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException;
+	
+	public void acceptMatch( IMatch match ) throws CoreException;
+	
 	/**
 	 * Returns the progress monitor used to report progress.
 	 *
 	 * @return a progress monitor or null if no progress monitor is provided
 	 */
 	public IProgressMonitor getProgressMonitor();
-	/**
-	 * @param currentPath
-	 * @param start
-	 * @param end
-	 * @param object
-	 * @param accuracyLevel
-	 */
-	public void accept(IPath currentPath, 
-					   int start, 
-					   int end, 
-					   IMatch enclosingObject, 
-					   int accuracyLevel) throws CoreException;
+
 
 	/**
 	 * returns an IMatch object that contains any information the client cared
@@ -97,5 +83,5 @@ public interface ICSearchResultCollector {
 	 * @param node
 	 * @return
 	 */
-	public IMatch createMatch(ISourceElementCallbackDelegate node, IASTScope parent );
+	//public IMatch createMatch(ISourceElementCallbackDelegate node, IASTScope parent );
 }

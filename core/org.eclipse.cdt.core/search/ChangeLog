@@ -1,3 +1,11 @@
+2003-07-29 Andrew Niefer
+	Refactoring Search result collection:
+	- Modified ICSearchResultCollector
+	- Modified IMatch
+	- Modified MatchLocator to reflect changes in ICSearchResultCollector
+	- Created BasicSearchMatch implements IMatch
+	- Created BasicSearchResultCollector implements ICSearchResultCollector
+
 2003-07-28 Andrew Niefer
 	- added abstract CSearchPattern.resetIndexInfo fix bug with searching with globally 
 	  qualified names

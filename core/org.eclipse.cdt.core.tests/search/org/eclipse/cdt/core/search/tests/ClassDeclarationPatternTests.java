@@ -14,15 +14,16 @@
 package org.eclipse.cdt.core.search.tests;
 
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
-import org.eclipse.cdt.internal.ui.search.Match;
+//import org.eclipse.cdt.internal.ui.search.Match;
 
 
 /**
@@ -48,7 +49,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 	}
 	
@@ -65,7 +66,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 	}
 	
@@ -73,7 +74,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B", TYPE, DECLARATIONS, true );
 		
 		search( workspace, pattern, scope, resultCollector );
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		
 		/* Test should find 1 match */
 		assertTrue( matches != null );
@@ -82,13 +83,13 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		pattern = SearchEngine.createSearchPattern( "NS::NS2::a", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
-		matches = resultCollector.getMatches();
+		matches = resultCollector.getSearchResults();
 		assertTrue( matches != null );
 		
 		pattern = SearchEngine.createSearchPattern( "NS::B::A", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
-		matches = resultCollector.getMatches();
+		matches = resultCollector.getSearchResults();
 		assertTrue( matches != null );
 	}
 	
@@ -99,38 +100,38 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
 		pattern = SearchEngine.createSearchPattern( "NS::B::A", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches2 = resultCollector.getMatches();
+		List matches2 = resultCollector.getSearchResults();
 		assertTrue( matches2 != null );
 		assertEquals( matches2.size(), 1 );
 		
 		Iterator iter = matches.iterator();
 		Iterator iter2 = matches2.iterator();
 		
-		Match match = (Match)iter.next();
-		Match match2 = (Match)iter2.next();
+		IMatch match = (IMatch)iter.next();
+		IMatch match2 = (IMatch)iter2.next();
 		
 		//assertTrue( match.path.equals( match2.path ) );
-		assertEquals( match.start, match2.start );
-		assertEquals( match.end, match2.end );
+		assertEquals( match.getStartOffset(), match2.getStartOffset() );
+		assertEquals( match.getEndOffset(), match2.getEndOffset() );
 	}
 	
 	public void testWildcardQualification() {
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::*::A", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 0 );
 		
 		pattern = SearchEngine.createSearchPattern( "NS::*::A", TYPE, DECLARATIONS, false );
 		search( workspace, pattern, scope, resultCollector );
 		
-		matches = resultCollector.getMatches();
+		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 	}
 	
@@ -138,19 +139,19 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "struct A", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
 		pattern = SearchEngine.createSearchPattern( "union u", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
-		matches = resultCollector.getMatches();
+		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 
 		pattern = SearchEngine.createSearchPattern( "union ::*::u", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
-		matches = resultCollector.getMatches();
+		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 	}
 	
@@ -177,7 +178,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 1 );
 
@@ -186,7 +187,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		matches = resultCollector.getMatches();
+		matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 1 );		
 	}
@@ -196,7 +197,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 3 );
 	}
 	
@@ -205,22 +206,22 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		Match match = (Match) matches.iterator().next();
-		assertTrue( match.parent.equals( "NS::B" ) );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testTypeReferenceVisibleByUsingDirective(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::NS::NS2::a", STRUCT, REFERENCES, true );
 		
 		search( workspace, pattern, scope, resultCollector );
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		Match match = (Match) matches.iterator().next();
-		assertTrue( match.parent.equals( "NS::B" ) );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testEnumerationReferenceVisibleByInheritance(){
@@ -228,11 +229,11 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		Set matches = resultCollector.getMatches();
+		List matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 
-		Match match = (Match) matches.iterator().next();
-		assertTrue( match.parent.equals( "NS3::C" ) );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "NS3::C" ) );
 	}
 	
 }

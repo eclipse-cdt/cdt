@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.ui.*;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;

@@ -1,4 +1,8 @@
 2003-06-05 Mikhail Khodjaiants
+	Changed the presentation of arrays and array types.
+	* CDTDebugModelPresentation.java
+
+2003-06-05 Mikhail Khodjaiants
 	UI support of infinite values of the floating point types.
 	* CDTDebugModelPresentation.java
 

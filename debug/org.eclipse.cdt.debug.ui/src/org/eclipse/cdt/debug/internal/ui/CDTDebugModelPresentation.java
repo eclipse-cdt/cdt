@@ -548,6 +548,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 				if ( type != null && type.length() > 0 )
 				{
 					label.append( type );
+					if ( ((ICVariable)var).isArray() )
+					{
+						int[] dims = ((ICVariable)var).getArrayDimensions();
+						for ( int i = 0; i < dims.length; ++i )
+						{
+							label.append( '[' );					
+							label.append( dims[i] );					
+							label.append( ']' );					
+						}
+					}
 					label.append( ' ' );
 				}
 			}
@@ -555,17 +565,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			IValue value = var.getValue();
 			if ( value != null )
 			{
-				if ( ((ICVariable)var).isArray() )
-				{
-					int[] dims = ((ICVariable)var).getArrayDimensions();
-					for ( int i = 0; i < dims.length; ++i )
-					{
-						label.append( '[' );					
-						label.append( dims[i] );					
-						label.append( ']' );					
-					}
-				}
-				else if ( ((ICVariable)var).isCharacter() && value.getValueString() != null )
+				if ( ((ICVariable)var).isCharacter() && value.getValueString() != null )
 				{
 					String valueString = value.getValueString().trim();
 					if ( valueString.length() == 0 )
@@ -585,7 +585,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					label.append( "= " );
 					label.append( valueString );
 				}
-				else if ( !((ICVariable)var).isStructure() && value.getValueString() != null )
+				else if ( !((ICVariable)var).isArray() && !((ICVariable)var).isStructure() && value.getValueString() != null )
 				{
 					String valueString = value.getValueString().trim();
 					if ( valueString.length() > 0 )

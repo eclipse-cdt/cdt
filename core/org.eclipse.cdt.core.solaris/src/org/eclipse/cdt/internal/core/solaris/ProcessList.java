@@ -43,7 +43,8 @@ public class ProcessList implements IProcessList {
 			while ((lastline = psOutput.readLine()) != null) {
 				//The format of the output should be 
 				//PID space name
-		
+
+				lastline = lastline.trim();
 				int index = lastline.indexOf(' ');
 				if (index != -1) {
 					String pidString = lastline.substring(0, index).trim();

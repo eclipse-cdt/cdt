@@ -122,7 +122,7 @@ public class DeltaProcessor {
 	protected void addToParentInfo(Openable child) {
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
-			CElementInfo info = (CElementInfo)parent.getElementInfo();
+			CElementInfo info = parent.getElementInfo();
 			info.addChild(child);
 		}
 	}
@@ -168,6 +168,8 @@ public class DeltaProcessor {
 		if (element.getElementType() == ICElement.C_PROJECT) {
 			// treat project closing as removal
 			elementRemoved(element, delta);
+			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
+			rootInfo.setNonCResources(null);
 		} else {
 			fCurrentDelta.closed(element);
 		}
@@ -188,6 +190,9 @@ public class DeltaProcessor {
 			if (hasCNature(delta.getResource())) {
 				elementAdded(element, delta);
 			}
+			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
+			rootInfo.setNonCResources(null);
+
 		} else {
 			fCurrentDelta.opened(element);
 		}

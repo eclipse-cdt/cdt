@@ -70,7 +70,6 @@ public class MIInferior extends Process {
 				public void flush() throws IOException {
 					CLICommand cmd = new CLICommand(buf.toString()) {
 						public void setToken(int token) {
-							token = token;
 							// override to do nothing;
 						}
 					};

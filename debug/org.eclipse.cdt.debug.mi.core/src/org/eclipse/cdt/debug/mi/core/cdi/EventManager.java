@@ -44,7 +44,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		List cdiList = new ArrayList(1);
 
 		if (ignoreEventToken(miEvent.getToken())) {
-			miEvent = miEvent;
 			// Ignore the event if it is on the ignore list.
 		} else if (miEvent instanceof MIStoppedEvent) {
 			processSuspendedEvent((MIStoppedEvent)miEvent);

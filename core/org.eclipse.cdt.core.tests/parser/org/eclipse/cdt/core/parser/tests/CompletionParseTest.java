@@ -1066,4 +1066,24 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				foundStruct = true;
 		assertTrue( foundStruct );		
 	}
+	
+	public void testBug62721() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "int f() {\n" ); //$NON-NLS-1$
+		writer.write( "short blah;\n" ); //$NON-NLS-1$
+		writer.write( "int x = sizeof(bl" ); //$NON-NLS-1$
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "of(bl") + 3); //$NON-NLS-1$
+		assertNotNull( node );
+		assertEquals( node.getCompletionKind(), CompletionKind.SINGLE_NAME_REFERENCE );
+		assertNull( node.getCompletionContext() );
+		IASTNode.LookupKind [] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES;
+		IASTNode.ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), kinds, null, null );
+		assertEquals( result.getResultsSize(), 1 );
+		IASTNode blah = (IASTNode) result.getNodes().next();
+		assertTrue( blah instanceof IASTVariable );
+		assertEquals( ((IASTVariable)blah).getName(), "blah" ); //$NON-NLS-1$
+	}
 }

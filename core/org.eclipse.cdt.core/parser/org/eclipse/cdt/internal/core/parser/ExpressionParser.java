@@ -2032,7 +2032,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                try
 	                {
 	                    consume(IToken.tLPAREN);
-	                    d = typeId(scope, false, CompletionKind.TYPE_REFERENCE);
+	                    d = typeId(scope, false, CompletionKind.SINGLE_NAME_REFERENCE);
 	                    consume(IToken.tRPAREN);
 	                }
 	                catch (BacktrackException bt)

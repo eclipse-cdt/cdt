@@ -2054,4 +2054,16 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write( "}\n" ); //$NON-NLS-1$
 		parse( writer.toString() , false );
 	}
+    
+    public void testBug73428() throws Exception
+	{
+    	parse( "namespace {  }");//$NON-NLS-1$
+    	assertTrue( callback.problems.isEmpty() );
+    	parse( "namespace {  };");//$NON-NLS-1$
+    	assertTrue( callback.problems.isEmpty() );
+    	parse( "namespace {  int abc; };");//$NON-NLS-1$
+    	assertTrue( callback.problems.isEmpty() );
+    	parse( "namespace {  int abc; }");//$NON-NLS-1$
+    	assertTrue( callback.problems.isEmpty() );
+	}
 }

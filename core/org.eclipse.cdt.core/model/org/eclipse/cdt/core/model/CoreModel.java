@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -824,6 +825,14 @@ public class CoreModel {
 		//pathEntryManager.validatePathEntry(cproject, entries)
 	//	return null;
 	//}
+
+	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
+		return CCorePlugin.getDefault().getPathEntryStore(project);
+	}
+
+	public static void setPathEntryStore(IProject project, IPathEntryStore store) {
+		pathEntryManager.setPathEntryStore(project, store);
+	}
 
 	/**
 	 * Return the singleton.

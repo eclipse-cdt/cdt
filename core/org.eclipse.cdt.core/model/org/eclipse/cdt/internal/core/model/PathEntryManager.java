@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -375,27 +376,37 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return;
 		}
 		// trigger model refresh
-		boolean shouldFire = false;
-		CModelManager mgr = CModelManager.getDefault();
-		for (int i = 0; i < projectLength; i++) {
-			if (monitor != null && monitor.isCanceled()) {
-				return;
-			}
-			ICProject affectedProject = modifiedProjects[i];
-			if (affectedProject == null) {
-				continue; // was filtered out
-			}
-			IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
-			ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
-			if (deltas.length > 0) {
-				shouldFire = true;
-				for (int j = 0; j < deltas.length; j++) {
-					mgr.registerCModelDelta(deltas[j]);
+		try {
+			//final boolean canChangeResources = !ResourcesPlugin.getWorkspace().isTreeLocked();
+			CoreModel.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor progressMonitor) throws CoreException {
+
+					boolean shouldFire = false;
+					CModelManager mgr = CModelManager.getDefault();
+					for (int i = 0; i < projectLength; i++) {
+						if (progressMonitor != null && progressMonitor.isCanceled()) {
+							return;
+						}
+						ICProject affectedProject = modifiedProjects[i];
+						if (affectedProject == null) {
+							continue; // was filtered out
+						}
+						IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
+						ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
+						if (deltas.length > 0) {
+							shouldFire = true;
+							for (int j = 0; j < deltas.length; j++) {
+								mgr.registerCModelDelta(deltas[j]);
+							}
+						}
+					}
+					if (shouldFire) {
+						mgr.fire(ElementChangedEvent.POST_CHANGE);
+					}
 				}
-			}
-		}
-		if (shouldFire) {
-			mgr.fire(ElementChangedEvent.POST_CHANGE);
+			}, monitor);
+		} catch (CoreException e ) {
+			//
 		}
 	}
 
@@ -681,6 +692,21 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return containerIDs;
 	}
 
+	public void setPathEntryStore(IProject project, IPathEntryStore newStore) {
+		IPathEntryStore oldStore = null;
+		synchronized(this) {
+			oldStore = (IPathEntryStore)storeMap.remove(project);
+			if (newStore != null) {
+				storeMap.put(project, newStore);
+			}
+		}
+		if (oldStore != null) {
+			// remove are self before closing
+			oldStore.removePathEntryStoreListener(this);
+			oldStore.close();
+		}
+	}
+
 	private synchronized IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
 		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
 		if (store == null && create == true) {
@@ -689,13 +715,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			store.addPathEntryStoreListener(this);
 		}
 		return store;
-	}
-
-	private synchronized void removePathEntryStore(IProject project) {
-		IPathEntryStore store = (IPathEntryStore)storeMap.remove(project);
-		if (store!= null) {
-			store.removePathEntryStoreListener(this);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -712,7 +731,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
 		if (event.hasClosed()) {
-			removePathEntryStore(project);
+			setPathEntryStore(project, null);
 			containerRemove(cproject);
 		}
 		if (project.isAccessible()) {

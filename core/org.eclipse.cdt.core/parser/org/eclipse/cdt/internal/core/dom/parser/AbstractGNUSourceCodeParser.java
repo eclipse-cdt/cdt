@@ -1676,11 +1676,36 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         int startOffset;
         startOffset = consume(IToken.t_return).getOffset();
         IASTExpression result = null;
-        if (LT(1) != IToken.tSEMI) {
+		
+		// See if there is a return expression
+		switch (LT(1)) {
+		case IToken.tEOC:
+			// We're trying to start one
+			IASTName name = createName(LA(1));
+			IASTIdExpression idExpr = createIdExpression();
+			idExpr.setName(name);
+			name.setParent(idExpr);
+			name.setPropertyInParent(IASTIdExpression.ID_NAME);
+			result = idExpr;
+			break;
+		case IToken.tSEMI:
+			// None
+			break;
+		default:
+			// Yes
             result = expression();
-
+			break;
         }
-        int lastOffset = consume(IToken.tSEMI).getEndOffset();
+
+		int lastOffset = 0;
+		switch (LT(1)) {
+		case IToken.tSEMI:
+		case IToken.tEOC:
+	        lastOffset = consume().getEndOffset();
+			break;
+		default:
+			throwBacktrack(LA(1));
+		}
 
         IASTReturnStatement return_statement = createReturnStatement();
         ((ASTNode) return_statement).setOffsetAndLength(startOffset, lastOffset

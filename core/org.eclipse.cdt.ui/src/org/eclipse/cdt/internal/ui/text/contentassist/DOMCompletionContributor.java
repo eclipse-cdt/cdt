@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -229,6 +230,8 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				}
 			} else if (binding instanceof IVariable) {
 				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
+			} else if (binding instanceof ICPPNamespace) {
+				imageDescriptor = CElementImageProvider.getNamespaceImageDescriptor();
 			}
 		} catch (DOMException e) {
 		}

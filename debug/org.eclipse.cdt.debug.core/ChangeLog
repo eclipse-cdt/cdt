@@ -1,3 +1,8 @@
+2003-10-20 Mikhail Khodjaiants
+	Do not interrupt the initialization of all additional source locations 
+	if the initialization of one fails.
+	* CSourceLocator.java
+ 
 2003-10-17 Alain Magloire
 
 	ICDIBreakpointManager new method

@@ -36,12 +36,16 @@ Java_org_eclipse_cdt_utils_pty_PTYInputStream_read0(JNIEnv * env,
         status = -1;
     } else if (status == -1) {
         /* Error, toss an exception */
+	/* Ignore the error for now, the debugger will attempt
+	 * to close this multiple time.  */
+#if 0
         jclass exception = (*env)->FindClass(env, "java/io/IOException");
         if (exception == NULL) {
             /* Give up.  */
             return -1;
         }
         (*env)->ThrowNew(env, exception, "read error");
+#endif
     }
 
     return status;

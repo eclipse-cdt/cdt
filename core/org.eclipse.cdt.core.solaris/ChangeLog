@@ -1,0 +1,11 @@
+2002-10-15 Alain Magloire
+
+	Implement the ProcessList extension point for Solaris, by
+	spawning "ps -e -o pid,arg".  This is use when
+	attaching to a running process with gdb.
+	
+	* src/org/eclipse/cdt/internal/core/solaris:
+	New Source folder created.
+	* src/../internal/core/solaris/ProcessInfo.java
+	src/../internal/core/solaris/ProcessList.java:
+	New file implements IProcessFactory.

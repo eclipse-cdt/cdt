@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import java.util.Map;
-
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
@@ -55,7 +53,7 @@ public interface IProblem
 	 *
 	 * @return a map between parameter names and values.
 	 */
-	Map getArguments();
+	String getArguments();
 
 	/**
 	 * Answer the file name in which the problem was found.

@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -2138,9 +2139,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                         catch (BacktrackException e)
                                         {
                                             failParse();
-                                            log.traceLog(
-                                                "Unexpected Token =" //$NON-NLS-1$
-                                                    + image );
+                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null );
                                             consume();
                                             // eat this token anyway
                                             continue;

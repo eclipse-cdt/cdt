@@ -235,7 +235,9 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 				}
 				
 				//a function type is adjusted to become a pointer to function type
-				if( nfo.isType( TypeInfo.t_type ) && nfo.getTypeSymbol().isType( TypeInfo.t_function ) ){
+				if( nfo.isType( TypeInfo.t_type ) && nfo.getTypeSymbol() != null && 
+					nfo.getTypeSymbol().isType( TypeInfo.t_function ) )
+				{
 					if( nfo.getPtrOperators().size() == 0 ){
 						nfo.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 					}

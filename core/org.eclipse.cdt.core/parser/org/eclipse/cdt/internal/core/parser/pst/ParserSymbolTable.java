@@ -946,6 +946,9 @@ public class ParserSymbolTable {
 		}
 		if( resolvedSymbol != null && resolvedSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
 			ISymbol symbol = resolvedSymbol.getTypeSymbol();
+			if( symbol == null )
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
+			
 			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
 			
 			symbol = info.getTypeSymbol();
@@ -1815,6 +1818,9 @@ public class ParserSymbolTable {
 		//constructors
 		if( target.getType() == TypeInfo.t_type ){
 			targetDecl = target.getTypeSymbol();
+			if( targetDecl == null ){
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
+			}
 			if( targetDecl.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
 				LookupData data = new LookupData( EMPTY_NAME, TypeInfo.t_constructor);
 				data.parameters = new LinkedList();

@@ -12,11 +12,9 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.Enum;
@@ -95,6 +93,7 @@ import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 
 /**
@@ -323,7 +322,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						}
 					}
 					if ( throwOnError )
-						handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, firstSymbol.getImage() );
+						handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, firstSymbol.getImage(), -1, -1, firstSymbol.getLineNumber() );
 					return null;
 				}
                 break;
@@ -770,9 +769,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
     protected void handleProblem( int id, String attribute ) throws ASTSemanticException
 	{
-    	handleProblem( id, attribute, -1, -1, -1 );  //TODO make this right
+    	handleProblem( null, id, attribute, -1, -1, -1 );  //TODO make this right
     }
 
+    protected void handleProblem( IASTScope scope, int id, String attribute ) throws ASTSemanticException
+	{
+    	handleProblem( scope, id, attribute, -1, -1, -1 );
+	}
+    
+    protected void handleProblem( int id, String attribute, int startOffset, int endOffset, int lineNumber) throws ASTSemanticException {
+    	handleProblem( null, id, attribute, startOffset, endOffset, lineNumber );
+    }
+    
 	/**
 	 * @param id
 	 * @param attribute
@@ -781,24 +789,28 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * @param lineNumber
 	 * @throws ASTSemanticException
 	 */
-	protected void handleProblem(int id, String attribute, int startOffset, int endOffset, int lineNumber) throws ASTSemanticException {
-		Map arguments = new HashMap();
-		
-		if( attribute != null )
-		{
-			String attributes [] = problemFactory.getRequiredAttributesForId( id );
-			arguments.put( attributes[ 0 ], attribute );
-		}
-		
+	protected void handleProblem( IASTScope scope, int id, String attribute, int startOffset, int endOffset, int lineNumber) throws ASTSemanticException {			
 		IProblem p = problemFactory.createProblem( id, 
-				startOffset, endOffset, lineNumber, fileProvider.getCurrentFilename(), arguments, false, true );
+				startOffset, endOffset, lineNumber, fileProvider.getCurrentFilename(), attribute, false, true );
 		
-		StringBuffer logMessage = new StringBuffer( "CompleteParseASTFactory - IProblem : "); //$NON-NLS-1$
-		logMessage.append( p.getMessage() );
-		logService.traceLog( logMessage.toString() );
-		throw new ASTSemanticException(p);
+		TraceUtil.outputTrace(logService, "CompleteParseASTFactory - IProblem : ", p, null, null, null );
+		
+		if( shouldThrowException( scope, id ) ) 
+			throw new ASTSemanticException(p);
 	}
 
+	protected boolean shouldThrowException( IASTScope scope, int id ){
+		if( scope != null ){
+			IContainerSymbol symbol = scopeToSymbol( scope );
+			if( symbol.isTemplateMember() ){
+				if( id == IProblem.SEMANTIC_INVALID_CONVERSION_TYPE )
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	protected TypeInfo.eType classKindToTypeInfo(ASTClassKind kind)
     {
         TypeInfo.eType pstType = null;
@@ -987,26 +999,34 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTTypeId typeId,
         ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
     {
-    	StringBuffer logMessage = new StringBuffer(); 
-    	logMessage.append( "Entering createExpression with Kind=" ); //$NON-NLS-1$
-    	logMessage.append( kind.getKindName() );
     	if( idExpression != null )
     	{
-    		logMessage.append( " idexpression=" ); //$NON-NLS-1$
-    		logMessage.append( idExpression.toString()); //$NON-NLS-1$
+    		TraceUtil.outputTrace(
+    				logService,
+    				"Entering createExpression with Kind=",
+					null,
+					kind.getKindName(),
+					" idexpression=",
+					idExpression.toString()
+    				);
     	}
     	else if( literal != null && !literal.equals( "" )) //$NON-NLS-1$
     	{
-    		logMessage.append( " literal=" ); //$NON-NLS-1$
-    		logMessage.append( literal );
+       		TraceUtil.outputTrace(
+       				logService,
+    				"Entering createExpression with Kind=",
+					null,
+					kind.getKindName(),
+					" literal=",
+					literal
+    				);
     	}
     	
-    	logService.traceLog( logMessage.toString() );
     	List references = new ArrayList(); 
 		ISymbol symbol = getExpressionSymbol(scope, kind, lhs, rhs, idExpression, references );
         
         // Try to figure out the result that this expression evaluates to
-		ExpressionResult expressionResult = getExpressionResultType(kind, lhs, rhs, thirdExpression, typeId, literal, symbol);
+		ExpressionResult expressionResult = getExpressionResultType(scope, kind, lhs, rhs, thirdExpression, typeId, literal, symbol);
 			
 		// expression results could be empty, but should not be null
 //		assert expressionResult != null  : expressionResult; //throw new ASTSemanticException();
@@ -1146,7 +1166,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Apply the usual arithmetic conversions to find out the result of an expression 
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
-	protected TypeInfo usualArithmeticConversions(TypeInfo lhs, TypeInfo rhs) throws ASTSemanticException{
+	protected TypeInfo usualArithmeticConversions( IASTScope scope, TypeInfo lhs, TypeInfo rhs) throws ASTSemanticException{
 		
 		// if you have a variable of type basic type, then we need to go to the basic type first
 		while( (lhs.getType() == TypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
@@ -1159,7 +1179,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( !lhs.isType(TypeInfo.t__Bool, TypeInfo.t_enumerator ) && 
 			!rhs.isType(TypeInfo.t__Bool, TypeInfo.t_enumerator ) ) 
 		{
-			handleProblem( IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null ); 
+			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null ); 
 		}
 
 		TypeInfo info = new TypeInfo();
@@ -1233,6 +1253,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 	
 	protected ExpressionResult getExpressionResultType(
+			IASTScope scope, 
 			Kind kind, IASTExpression lhs,
 			IASTExpression rhs,
 			IASTExpression thirdExpression,
@@ -1368,13 +1389,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (kind == IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION){
 			ASTExpression left =(ASTExpression)lhs;
 			if(left == null)
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			info = left.getResultType().getResult();
 			if ((info != null) && (info.getTypeSymbol() != null)){
 				info.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
 			} else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1384,12 +1405,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (kind == IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION){
 			ASTExpression left =(ASTExpression)lhs;
 			if(left == null)
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
 			info = left.getResultType().getResult();
 			if ((info != null)&& (info.getTypeSymbol() != null)){
 				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 			}else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1398,12 +1419,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (kind == IASTExpression.Kind.POSTFIX_SUBSCRIPT){
 			ASTExpression left =(ASTExpression)lhs;
 			if(left == null)
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			info = left.getResultType().getResult();
 			if ((info != null) && (info.getTypeSymbol() != null)){
 				info.addOperatorExpression( TypeInfo.OperatorExpression.subscript );
 			}else {
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			}
 			result = new ExpressionResult(info);
 			return result;
@@ -1426,13 +1447,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		){
 			ASTExpression right =(ASTExpression)rhs;
 			if (right == null)
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			info = right.getResultType().getResult();
 			if ((info != null) && (symbol != null)){
 				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 				info.setTypeSymbol(symbol);
 			} else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1444,7 +1465,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				info.setType(TypeInfo.t_type);
 				info.setTypeSymbol(symbol);	
 			} else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1460,10 +1481,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				if((rightType != null) && (thirdType != null)){
 					info = conditionalExpressionConversions(rightType, thirdType);   
 				} else 
-					handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+					handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 				
 			} else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1499,10 +1520,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if((left != null ) && (right != null)){
 				TypeInfo leftType =left.getResultType().getResult();
 				TypeInfo rightType =right.getResultType().getResult();
-				info = usualArithmeticConversions(leftType, rightType);
+				info = usualArithmeticConversions( scope, leftType, rightType);
 			}
 			else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1537,7 +1558,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if(left != null){
 				info =left.getResultType().getResult();   
 			} else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1610,7 +1631,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				info.setType(TypeInfo.t_type);
 				info.setTypeSymbol(symbol);
 			} else 
-				handleProblem( IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
+				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			result = new ExpressionResult(info);
 			return result;
@@ -1766,7 +1787,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 							addTemplateIdReferences( references, argLists[idx] );
 					}
 					else
-                    	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image );
+                    	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image, -1, -1, current.getLineNumber() );
                 }
                 catch (ParserSymbolTableException e)
                 {
@@ -1877,6 +1898,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		Iterator p = parameters.iterator();
 		while (p.hasNext()){
 			ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+			if( param.getSymbol() == null )
+				handleProblem( IProblem.SEMANTICS_RELATED, param.getName(), param.getNameOffset(), param.getEndingOffset(), param.getStartingLine() );
 			functionParameters.add(param.getSymbol().getTypeInfo());
 		}
 		
@@ -2637,7 +2660,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			try {
 				template.addTemplateParameter( param.getSymbol() );
 			} catch (ParserSymbolTableException e) {
-				handleProblem( e.createProblemID(), "", startingOffset, -1, startingLine );  //$NON-NLS-1$
+				handleProblem( e.createProblemID(), param.getName(), startingOffset, -1, startingLine );
 			}
 		}
 		
@@ -2670,7 +2693,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     			try {
     				template.addTemplateParameter( param.getSymbol() );
     			} catch (ParserSymbolTableException e) {
-    				handleProblem( e.createProblemID(), "", param.getStartingOffset(), param.getEndingOffset(), param.getStartingLine() );  //$NON-NLS-1$
+    				handleProblem( e.createProblemID(), param.getName(), param.getStartingOffset(), param.getEndingOffset(), param.getStartingLine() );  //$NON-NLS-1$
     			}
     		}
     		symbol = template;
@@ -3053,7 +3076,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			ISymbol typeSymbol = lookupQualifiedName( scopeToSymbol(scope), typeId.getTokenDuple(), refs, true );
 			if( typeSymbol == null || typeSymbol.getType() == TypeInfo.t_type )
-				handleProblem( IProblem.SEMANTIC_INVALID_TYPE, id.getTypeOrClassName() );
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_TYPE, id.getTypeOrClassName() );
             result.setTypeSymbol( typeSymbol );
             typeId.addReferences( refs );
 		}		

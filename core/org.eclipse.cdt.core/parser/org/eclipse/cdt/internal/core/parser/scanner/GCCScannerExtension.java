@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
 
 /**
@@ -85,7 +86,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	public void handlePreprocessorDirective(String directive, String restOfLine) {
 		if( directive.equals("#include_next") ) //$NON-NLS-1$
 		{
-			scannerData.getLogService().traceLog( "GCCScannerExtension handling #include_next directive" ); //$NON-NLS-1$
+			TraceUtil.outputTrace(scannerData.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null);
 			// figure out the name of the current file and its path
 			IScannerContext context = scannerData.getContextStack().getCurrentContext();
 			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
@@ -123,7 +124,7 @@ public class GCCScannerExtension implements IScannerExtension {
 				try			
 				{
 					scannerData.getContextStack().updateContext(duple.getUnderlyingReader(), duple.getFilename(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
-					scannerData.getLogService().traceLog( "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
+					TraceUtil.outputTrace( scannerData.getLogService(), "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
 				}
 				catch (ContextException e1)
 				{

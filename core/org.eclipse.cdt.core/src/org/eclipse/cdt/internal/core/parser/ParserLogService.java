@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -46,4 +47,10 @@ public class ParserLogService implements IParserLogService
 		Util.log( message, ICLogConstants.CDT );
 	}
 
+	public boolean isTracing(){
+		if( CCorePlugin.getDefault() == null )
+			return false;
+		
+		return ( CCorePlugin.getDefault().isDebugging() && Util.isActive( topic ) ); 
+	}
 }

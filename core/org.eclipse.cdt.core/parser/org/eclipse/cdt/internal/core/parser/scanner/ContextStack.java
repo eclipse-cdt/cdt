@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext.ContextKind;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * @author aniefer
@@ -72,7 +73,7 @@ public class ContextStack {
 			if( !inclusions.add( context.getFilename() ) )
 				throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );
 			
-			log.traceLog( "Scanner::ContextStack: entering inclusion " +context.getFilename()); //$NON-NLS-1$
+			TraceUtil.outputTrace(log, "Scanner::ContextStack: entering inclusion ", null, context.getFilename(), null, null );
 			context.getExtension().enterScope( requestor );				
 
 		} else if( context.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
@@ -92,12 +93,12 @@ public class ContextStack {
 		try {
 			currentContext.getReader().close();
 		} catch (IOException ie) {
-			log.traceLog("ContextStack : Error closing reader "); //$NON-NLS-1$
+			TraceUtil.outputTrace( log, "ContextStack : Error closing reader "); //$NON-NLS-1$
 		}
 
 		if( currentContext.getKind() == IScannerContext.ContextKind.INCLUSION )
 		{
-			log.traceLog( "Scanner::ContextStack: ending inclusion " +currentContext.getFilename()); //$NON-NLS-1$
+			TraceUtil.outputTrace(log, "Scanner::ContextStack: ending inclusion ", null, currentContext.getFilename(), null, null);
 			inclusions.remove( currentContext.getFilename() );
 			currentContext.getExtension().exitScope( requestor );
 		} else if( currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION )

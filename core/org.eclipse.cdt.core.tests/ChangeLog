@@ -1,3 +1,6 @@
+2004-04-05 Andrew Niefer
+	Added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testTemplateParametersInExpressions
+
 2004-04-04 John Camelon
 	Added CompleteParseASTTest::testBug56516() && CompleteParseASTTests::testBug53786().  
 

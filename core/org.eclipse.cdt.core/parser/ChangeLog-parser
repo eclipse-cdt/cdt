@@ -1,3 +1,13 @@
+2004-04-05 Andrew Niefer
+	- performance improvements originally from Dave Daoust:
+		- create new TraceUtil to handle logging trace messages
+		- postpone building Problem message until it is asked for
+		- only ask for problem message if it will actually be traced
+	- added more problem strings for problems coming from the symbol table
+	- added CompleteParseASTFactory.shouldThrowException, so we can ignore certain problems
+	  encountered while parsing templates
+	- fix NPEs caused by bad type info objects
+
 2004-04-05 John Camelon
 	Fixed NPE in CompleteParseASTFactory::createUsingDeclaration().  
 

@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.Token;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * @author jcamelon
@@ -2469,7 +2470,7 @@ public class ExpressionParser implements IExpressionParser {
 	    }
 	    catch (ScannerException e)
 	    {
-	        log.traceLog( "ScannerException thrown : " + e.getProblem().getMessage() ); //$NON-NLS-1$
+	    	TraceUtil.outputTrace(log, "ScannerException thrown : ", e.getProblem(), null, null, null);
 			log.errorLog( "Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$h
 	        failParse(); 
 	        return fetchToken();

@@ -643,4 +643,17 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		
 		assertAllReferences( 2, createTaskList( new Task( A, 2 ) ) );
 	}
+	
+	public void testTemplateParametersInExpressions() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < typename _Tp > power( _Tp, unsigned int );     \n" );
+		writer.write( "template < typename _Tp > _Tp helper( _Tp __x, int _n )   \n" );
+		writer.write( "{ " );
+		writer.write( "   return n < 0 ? _Tp( 1 ) / power( __x, -__n )           \n" );
+		writer.write( "                : power( __x, __n );                      \n" );
+		writer.write( "} " );
+		
+		parse( writer.toString () );
+	}
 }

@@ -27,4 +27,7 @@ public class NullLogService implements IParserLogService {
 	public void errorLog(String message) {
 	}
 
+	public boolean isTracing(){
+		return false;
+	}
 }

@@ -32,5 +32,9 @@ public class DefaultLogService implements IParserLogService
 	{
 		// do nothing
 	}
+	
+	public boolean isTracing(){
+		return false;
+	}
 
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * @author jcamelon
@@ -41,15 +42,15 @@ public class SelectionParser extends ContextualParser {
 	protected void handleNewToken(IToken value) {
 		if( value != null && scanner.isOnTopContext() )
 		{
-			log.traceLog( "IToken provided w/offsets " + value.getOffset() + " & " + value.getEndOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
+			TraceUtil.outputTrace(log, "IToken provided w/offsets ", null, value.getOffset(), " & ", value.getEndOffset() );
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 			{
-				log.traceLog( "Offset Floor Hit w/token \"" + value.getImage() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getImage(), "\"", null );
 				firstTokenOfDuple = value;
 			}
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
 			{
-				log.traceLog( "Offset Ceiling Hit w/token \"" + value.getImage() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null );
 				lastTokenOfDuple = value;
 			}
 			if( scanner.isOnTopContext() && lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )

@@ -31,6 +31,8 @@ public final class TemplateEngine {
 		if( argMap == null ){
 			return info;
 		} else {
+			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() == null )
+				return info;
 			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
 				IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
 				TypeInfo newInfo = new TypeInfo( info );

@@ -10,8 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.problem;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.parser.IProblem;
 
 /**
@@ -20,7 +18,7 @@ import org.eclipse.cdt.core.parser.IProblem;
  */
 public interface IProblemFactory {
 
-	 public IProblem createProblem( int id, int start, int end, int line, char [] file, Map arguments, boolean warn, boolean error );
-	 public String []  getRequiredAttributesForId( int id );
+	 public IProblem createProblem( int id, int start, int end, int line, char [] file, String arg, boolean warn, boolean error );
+	 public String getRequiredAttributesForId( int id );
 	
 }

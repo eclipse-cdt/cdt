@@ -10,8 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.problem;
 
-import java.util.Map;
-
 import org.eclipse.cdt.core.parser.IProblem;
 
 
@@ -22,10 +20,8 @@ public abstract class BaseProblemFactory {
 
 	protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
 
-	public abstract String createMessage(int id, Map arguments, int lineNumber, char[] fileName ); 
-
-	public IProblem createProblem(int id, int start, int end, int line, char[] file, String message, Map arguments, boolean warn, boolean error) {
-		return new Problem( id, start, end, line, file, message, arguments, warn, error);
+	public IProblem createProblem(int id, int start, int end, int line, char[] file, String arg, boolean warn, boolean error) {
+		return new Problem( id, start, end, line, file, arg, warn, error);
 	} 
 
 	public boolean checkBitmask( int id, int bitmask )
@@ -33,9 +29,9 @@ public abstract class BaseProblemFactory {
 		return ( id & bitmask ) != 0; 
 	}
 	
-	protected IProblem createInternalProblem( int id, int start, int end, int line, char [] file, Map arguments, boolean warn, boolean error )
+	protected IProblem createInternalProblem( int id, int start, int end, int line, char [] file, String arg, boolean warn, boolean error )
 	{
-		return createProblem( id, start, end, line, file, createInternalMessage( id, arguments, line, file), arguments, warn, error );
+		return createProblem( id, start, end, line, file, arg, warn, error );
 	}
 
 	/**
@@ -45,18 +41,18 @@ public abstract class BaseProblemFactory {
 	 * @param file
 	 * @return
 	 */
-	private String createInternalMessage(int id, Map arguments, int line, char[] file)
+	private String createInternalMessage(int id, String arg, int line, char[] file)
 	{
-		if( checkBitmask( id, IProblem.INTERNAL_RELATED ))
-		{
-			StringBuffer buffer = new StringBuffer();
-			
-			switch( id )
-			{
-			}
-			 
-			return buffer.toString();
-		}
+//		if( checkBitmask( id, IProblem.INTERNAL_RELATED ))
+//		{
+//			StringBuffer buffer = new StringBuffer();
+//			
+//			switch( id )
+//			{
+//			}
+//			 
+//			return buffer.toString();
+//		}
 		return null;
 	}
 

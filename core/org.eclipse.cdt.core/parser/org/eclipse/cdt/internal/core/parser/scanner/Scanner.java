@@ -59,6 +59,7 @@ import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * @author jcamelon
@@ -86,19 +87,18 @@ public class Scanner implements IScanner {
 
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error, boolean extra ) throws ScannerException
 	{
-		Map arguments = new HashMap(); 
-		if( argument != null )
-		{
-			String attributes [] = scannerData.getProblemFactory().getRequiredAttributesForId( problemID );
-			arguments.put( attributes[ 0 ], argument );
-		}
-		
-		IProblem problem = scannerData.getProblemFactory().createProblem( problemID, beginningOffset, getCurrentOffset(), scannerData.getContextStack().getCurrentLineNumber(), getCurrentFile().toCharArray(), arguments, warning, error );
+		IProblem problem = scannerData.getProblemFactory().createProblem( 
+				problemID, 
+				beginningOffset, 
+				getCurrentOffset(), 
+				scannerData.getContextStack().getCurrentLineNumber(), 
+				getCurrentFile().toCharArray(), 
+				argument, 
+				warning, 
+				error );
 		
 		// trace log
-		StringBuffer logMessage = new StringBuffer( "Scanner problem encountered: "); //$NON-NLS-1$
-		logMessage.append( problem.getMessage() );
-		scannerData.getLogService().traceLog( logMessage.toString() );
+		TraceUtil.outputTrace(scannerData.getLogService(), "Scanner problem encountered: ", problem, null, null, null );
 		
 		if( (! scannerData.getClientRequestor().acceptProblem( problem )) && extra )
 			throw new ScannerException( problem );
@@ -153,8 +153,8 @@ public class Scanner implements IScanner {
 		} 
 		
 		
-		log.traceLog( "Scanner constructed with the following configuration:"); //$NON-NLS-1$
-		log.traceLog( "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
+		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
+		TraceUtil.outputTrace(log, "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
 
 		if( info.getDefinedSymbols() != null )
 		{
@@ -168,7 +168,7 @@ public class Scanner implements IScanner {
 				if( value instanceof String )
 				{	
 					addDefinition( symbolName, scannerExtension.initializeMacroValue((String) value));
-					log.traceLog( "\t\tNAME = " + symbolName + " VALUE = " + value.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
+					TraceUtil.outputTrace(log,  "\t\tNAME = ", symbolName, " VALUE = ", value.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
 					++numberOfSymbolsLogged;
 					
 				}
@@ -176,22 +176,22 @@ public class Scanner implements IScanner {
 					addDefinition( symbolName, (IMacroDescriptor)value);
 			}
 			if( numberOfSymbolsLogged == 0 )
-				log.traceLog( "\t\tNo definitions specified."); //$NON-NLS-1$
+				TraceUtil.outputTrace(log, "\t\tNo definitions specified."); //$NON-NLS-1$
 			
 		}
 		else 
-			log.traceLog( "\t\tNo definitions specified."); //$NON-NLS-1$
+			TraceUtil.outputTrace(log, "\t\tNo definitions specified."); //$NON-NLS-1$
 		
 		
-		log.traceLog( "\tInclude paths from IScannerInfo: "); //$NON-NLS-1$
+		TraceUtil.outputTrace( log, "\tInclude paths from IScannerInfo: "); //$NON-NLS-1$
 		if( info.getIncludePaths() != null )
 		{	
 			overwriteIncludePath( info.getIncludePaths() );
 			for( int i = 0; i < info.getIncludePaths().length; ++i )
-				log.traceLog( "\t\tPATH: " + info.getIncludePaths()[i]); //$NON-NLS-1$
+				TraceUtil.outputTrace( log, "\t\tPATH: ", info.getIncludePaths()[i], null, null); //$NON-NLS-1$
 		}
 		else 
-			log.traceLog("\t\tNo include paths specified."); //$NON-NLS-1$
+			TraceUtil.outputTrace(log, "\t\tNo include paths specified."); //$NON-NLS-1$
 		
 		setupBuiltInMacros();
     }
@@ -3019,9 +3019,7 @@ public class Scanner implements IScanner {
 
 		} 
 		else {
-			StringBuffer logMessage = new StringBuffer( "Unexpected type of MacroDescriptor stored in definitions table: " ); //$NON-NLS-1$
-			logMessage.append( expansion.getMacroType()  );
-			scannerData.getLogService().traceLog( logMessage.toString() ); 
+			TraceUtil.outputTrace(scannerData.getLogService(), "Unexpected type of MacroDescriptor stored in definitions table: ", null, expansion.getMacroType().toString(), null, null);
 		}
 
 	}

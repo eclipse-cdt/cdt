@@ -55,7 +55,7 @@ public class Token implements IToken {
 	
 	public String toString()
 	{
-		return "Token type=" + type + "  image =" + getImage() + " offset=" + offset; 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "Token=" + type + " \"" + getImage() + "\" " + filename + ":" + lineNumber + " offset=" + offset; 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public int type;

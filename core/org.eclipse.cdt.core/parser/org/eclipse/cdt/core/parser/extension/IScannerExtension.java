@@ -30,4 +30,5 @@ public interface IScannerExtension  {
 	public boolean isValidIdentifierStartCharacter(int c);
 	public boolean isValidIdentifierCharacter( int c );
 	public boolean isExtensionOperator(ParserLanguage language, char[] query);
+	public boolean isValidNumericLiteralSuffix(char c);
 }

@@ -1227,7 +1227,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					
 					// must be float suffix
 					++bufferPos[bufferStackPos];
-					break;
+					continue;
 
 				case 'p':
 				case 'P':
@@ -1290,6 +1290,8 @@ public class Scanner2 implements IScanner, IScannerData {
 					break;
 					
 				default:
+					if( scannerExtension.isValidNumericLiteralSuffix( buffer[pos] ))
+						continue;
 					// not part of our number
 			}
 			

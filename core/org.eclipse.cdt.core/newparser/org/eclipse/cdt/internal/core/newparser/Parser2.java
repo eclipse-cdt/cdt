@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
+import org.eclipse.cdt.internal.core.dom.*;
+
 /**
  * This is an attempt at a copyright clean parser.  The grammar is based
  * on the ISO C++ standard
@@ -13,6 +15,7 @@ public class Parser2 {
 	private IParserCallback callback;
 	private boolean quickParse = false;
 	private boolean parsePassed = true;
+	private DeclarativeRegion currRegion = new DeclarativeRegion();
 	
 	public Parser2(Scanner s, IParserCallback c, boolean quick) throws Exception {
 		callback = c;
@@ -54,18 +57,22 @@ public class Parser2 {
 			
 		return parsePassed;
 	}
-
-
 	
 	/**
 	 * translationUnit
 	 * : (declaration)*
 	 * 
 	 */
-	public void translationUnit() {
+	public TranslationUnit translationUnit() {
+		TranslationUnit translationUnit = new TranslationUnit();
 		Token lastBacktrack = null;
 		while (LT(1) != Token.tEOF) {
-			if (!declaration()) {
+			try {
+				Declaration declaration = declaration();
+				if (declaration != null)
+					// To do: once finished, this should never be null
+					translationUnit.addDeclaration(declaration);
+			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
 				
@@ -84,6 +91,8 @@ public class Parser2 {
 				}
 			}
 		}
+		
+		return translationUnit;
 	}
 	
 	/**
@@ -104,19 +113,19 @@ public class Parser2 {
 	 *   - explicitInstantiation and explicitSpecialization into
 	 *       templateDeclaration
 	 */
-	public boolean declaration() {
+	public Declaration declaration() throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_asm:
-				return true; // asmDefinition();
+				return null; // asmDefinition();
 			case Token.t_namespace:
-				return true; // namespaceDefinition();
+				return null; // namespaceDefinition();
 			case Token.t_using:
-				return true; // usingDeclaration();
+				return null; // usingDeclaration();
 			case Token.t_export:
 			case Token.t_template:
-				return true; // templateDeclaration();
+				return null; // templateDeclaration();
 			case Token.t_extern:
-				return true; // linkageSpecification();
+				return null; // linkageSpecification();
 			default:
 				return simpleDeclaration(); 
 		}
@@ -133,29 +142,39 @@ public class Parser2 {
 	 * To do:
 	 * - work in ctorInitializer and functionTryBlock
 	 */
-	public boolean simpleDeclaration() {
+	public SimpleDeclaration simpleDeclaration() throws Backtrack {
+		SimpleDeclaration simpleDeclaration = new SimpleDeclaration();
+		
 		while (declSpecifier());
 		
-		if (initDeclarator()) {
+		try {
+			initDeclarator();
+			
 			while (LT(1) == Token.tCOMMA) {
 				consume();
 				
-				if (!initDeclarator())
-					return false;
+				try {
+					initDeclarator();
+				} catch (Backtrack b) {
+					throw b;
+				}
 			}
+		} catch (Backtrack b) {
+			// allowed to be empty
 		}
 		
 		switch (LT(1)) {
 			case Token.tSEMI:
 				consume();
-				return true;
+				break;
 			case Token.tLBRACE:
-				return true; // functionBody();
+				// functionBody();
+				break;
 			default:
-				return false;
+				throw backtrack;
 		}
 		
-		
+		return simpleDeclaration;
 	}
 	
 	/**
@@ -175,7 +194,7 @@ public class Parser2 {
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public boolean declSpecifier() {
+	public boolean declSpecifier() throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_auto:
 			case Token.t_register:
@@ -206,10 +225,16 @@ public class Parser2 {
 				consume();
 				return name();
 			case Token.tCOLON:
+				// handle nested later:
+				return false;
 			case Token.tIDENTIFIER:
-				// To do: need a symbol table to look up this name and see if it is
-				// a type.  If not backtrack.  For now, backtrack.
-				return false; // name();
+				// handle nested later:
+				if (currRegion.getDeclaration(LA(1).getImage()) != null) {
+					consume();
+					return true;
+				}
+				else
+					return false;
 			case Token.t_class:
 			case Token.t_struct:
 			case Token.t_union:
@@ -272,7 +297,7 @@ public class Parser2 {
 	 * To Do:
 	 * - handle initializers
 	 */
-	public boolean initDeclarator() {
+	public boolean initDeclarator() throws Backtrack {
 		if (!declarator())
 			return false;
 			
@@ -360,10 +385,47 @@ public class Parser2 {
 		backup(mark);
 		return false;
 	}
-	
+
+	/**
+	 * classSpecifier
+	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
+	 */
 	public boolean classSpecifier() {
-		return false;
+		switch (LT(1)) {
+			case Token.t_class:
+			case Token.t_struct:
+			case Token.t_union:
+				consume();
+				break;
+			default:
+				return false;
+		}
+		
+		Declaration decl = new Declaration();
+		
+		// Right now, just handle the case where the class name is
+		// being declared
+		if (LT(1) == Token.tIDENTIFIER) {
+			currRegion.addDeclaration(consume().getImage(), decl);
+		} // else it's an anonymous class
+		
+		// If we don't get a "{", assume elaborated type
+		if (LT(1) != Token.tLBRACE)
+			return true;
+		else
+			consume();
+
+		if (!consume(Token.tRBRACE))
+			return false;
+
+		return true;
 	}
+	
+	// Backtracking
+	private static class Backtrack extends Exception {
+	}
+	
+	private static Backtrack backtrack = new Backtrack();
 	
 	// Token management
 	private Scanner scanner;

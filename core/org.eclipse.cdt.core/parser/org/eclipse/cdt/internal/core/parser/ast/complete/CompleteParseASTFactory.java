@@ -633,7 +633,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IProblem p = problemFactory.createProblem( id, 
 				startOffset, endOffset, lineNumber, fileProvider.getCurrentFilename(), arguments, false, true );
 		
-		StringBuffer logMessage = new StringBuffer( "CompleteParseASTFactory - IProblem : ");
+		StringBuffer logMessage = new StringBuffer( "CompleteParseASTFactory - IProblem : "); //$NON-NLS-1$
 		logMessage.append( p.getMessage() );
 		logService.traceLog( logMessage.toString() );
 		throw new ASTSemanticException(p);
@@ -817,16 +817,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
     {
     	StringBuffer logMessage = new StringBuffer(); 
-    	logMessage.append( "Entering createExpression with Kind=" );
+    	logMessage.append( "Entering createExpression with Kind=" ); //$NON-NLS-1$
     	logMessage.append( kind.getKindName() );
     	if( idExpression != null )
     	{
-    		logMessage.append( " idexpression=" );
-    		logMessage.append( "idExpression.toString()");
+    		logMessage.append( " idexpression=" ); //$NON-NLS-1$
+    		logMessage.append( "idExpression.toString()"); //$NON-NLS-1$
     	}
-    	else if( literal != null && !literal.equals( "" ))
+    	else if( literal != null && !literal.equals( "" )) //$NON-NLS-1$
     	{
-    		logMessage.append( " literal=" );
+    		logMessage.append( " literal=" ); //$NON-NLS-1$
     		logMessage.append( literal );
     	}
     	
@@ -878,7 +878,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			try{
 				symbol = startingScope.lookup("this"); //$NON-NLS-1$
 			}catch (ParserSymbolTableException e){
-				handleProblem( e.createProblemID(), "this");
+				handleProblem( e.createProblemID(), "this"); //$NON-NLS-1$
 			}
 		}
 		// lookup symbol if it is a function call

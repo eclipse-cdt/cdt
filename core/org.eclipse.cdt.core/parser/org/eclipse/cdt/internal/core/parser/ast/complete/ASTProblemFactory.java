@@ -10,10 +10,12 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.cdt.internal.core.parser.problem.BaseProblemFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 
@@ -29,26 +31,24 @@ public class ASTProblemFactory extends BaseProblemFactory implements IProblemFac
 	protected static final Map errorMessages;
 	static {
 		errorMessages = new HashMap();
-		errorMessages.put( new Integer( IProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED),"Attempt to introduce unique symbol failed : ");
-		errorMessages.put( new Integer( IProblem.SEMANTIC_NAME_NOT_FOUND), "Attempt to use symbol failed : ");
-		errorMessages.put( new Integer( IProblem.SEMANTIC_NAME_NOT_PROVIDED), "Name not provided.");
+		errorMessages.put( new Integer( IProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED),ParserMessages.getString("ASTProblemFactory.error.semantic.uniqueNamePredefined")); //$NON-NLS-1$
+		errorMessages.put( new Integer( IProblem.SEMANTIC_NAME_NOT_FOUND), ParserMessages.getString("ASTProblemFactory.error.semantic.nameNotFound")); //$NON-NLS-1$
+		errorMessages.put( new Integer( IProblem.SEMANTIC_NAME_NOT_PROVIDED), ParserMessages.getString("ASTProblemFactory.error.semantic.nameNotProvided")); //$NON-NLS-1$
 	
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.problem.BaseProblemFactory#createMessage(int, java.util.Map, int, char[])
 	 */
-	public String createMessage(int id, Map arguments, int lineNumber,
-			char[] fileName) {
-		StringBuffer buffer = new StringBuffer();
+	public String createMessage(int id, Map arguments, int lineNumber, char[] fileName) {
+		String message = (String) errorMessages.get( new Integer(id) );
+		String arg = null;
 
-		buffer.append(PROBLEM);
-		buffer.append(errorMessages.get(new Integer(id)));
 		switch (id)
 		{
 			case IProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED:
 			case IProblem.SEMANTIC_NAME_NOT_FOUND:
-				buffer.append(arguments.get(IProblem.A_SYMBOL_NAME));
+				arg = (String) arguments.get((IProblem.A_SYMBOL_NAME));
 				break;
 			case IProblem.SEMANTIC_NAME_NOT_PROVIDED:
 				break;
@@ -56,18 +56,12 @@ public class ASTProblemFactory extends BaseProblemFactory implements IProblemFac
 				return null;
 		}
 
-		if( fileName != null )
-		{
-			buffer.append( IN_FILE );
-			buffer.append(fileName);
+		if( arg != null ){
+			message = MessageFormat.format( message, new Object [] { arg } );
 		}
 		
-		if( lineNumber > 0 )
-		{
-			buffer.append( ON_LINE );
-			buffer.append(lineNumber);
-		}
-		return buffer.toString();
+		Object [] args = { message, new String( fileName ), new Integer( lineNumber ) };
+		return ParserMessages.getFormattedString( PROBLEM_PATTERN, args );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.problem.IProblemFactory#createProblem(int, int, int, int, char[], java.util.Map, boolean, boolean)

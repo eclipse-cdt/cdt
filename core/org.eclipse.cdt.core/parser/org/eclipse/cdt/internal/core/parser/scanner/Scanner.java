@@ -27,8 +27,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.parser.BacktrackException;
-import org.eclipse.cdt.core.parser.Directives;
+import org.eclipse.cdt.core.parser.BacktrackException;import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -67,7 +66,7 @@ import org.eclipse.cdt.internal.core.parser.token.Token;
 
 public class Scanner implements IScanner {
 
-	private final static String SCRATCH = "<scratch>";
+	private final static String SCRATCH = "<scratch>"; //$NON-NLS-1$
 	protected final IScannerData scannerData;
 
 	private boolean initialContextInitialized = false;
@@ -95,7 +94,7 @@ public class Scanner implements IScanner {
 		IProblem problem = scannerData.getProblemFactory().createProblem( problemID, beginningOffset, getCurrentOffset(), scannerData.getContextStack().getCurrentLineNumber(), getCurrentFile().toCharArray(), arguments, warning, error );
 		
 		// trace log
-		StringBuffer logMessage = new StringBuffer( "Scanner problem encountered: ");
+		StringBuffer logMessage = new StringBuffer( "Scanner problem encountered: "); //$NON-NLS-1$
 		logMessage.append( problem.getMessage() );
 		scannerData.getLogService().traceLog( logMessage.toString() );
 		
@@ -175,18 +174,18 @@ public class Scanner implements IScanner {
 		
 		scannerExtension.setupBuiltInMacros(scannerData.getLanguage());
 		if( getDefinition(__STDC__) == null )
-			addDefinition( __STDC__, new ObjectMacroDescriptor( __STDC__,  "1") );
+			addDefinition( __STDC__, new ObjectMacroDescriptor( __STDC__,  "1") ); //$NON-NLS-1$
 		
 		if( scannerData.getLanguage() == ParserLanguage.C )
 		{
 			if( getDefinition(__STDC_HOSTED__) == null )
-				addDefinition( __STDC_HOSTED__, new ObjectMacroDescriptor( __STDC_HOSTED__, "0"));
+				addDefinition( __STDC_HOSTED__, new ObjectMacroDescriptor( __STDC_HOSTED__, "0")); //$NON-NLS-1$
 			if( getDefinition( __STDC_VERSION__) == null )
-				addDefinition( __STDC_VERSION__, new ObjectMacroDescriptor( __STDC_VERSION__, "199001L"));
+				addDefinition( __STDC_VERSION__, new ObjectMacroDescriptor( __STDC_VERSION__, "199001L")); //$NON-NLS-1$
 		}
 		else
 			if( getDefinition( __CPLUSPLUS ) == null )
-					addDefinition( __CPLUSPLUS, new ObjectMacroDescriptor( __CPLUSPLUS, "199711L"));
+					addDefinition( __CPLUSPLUS, new ObjectMacroDescriptor( __CPLUSPLUS, "199711L")); //$NON-NLS-1$
 		
 		if( getDefinition(__FILE__) == null )
 			addDefinition(  __FILE__, 
@@ -211,29 +210,29 @@ public class Scanner implements IScanner {
 						
 						public String getMonth()
 						{
-							if( Calendar.MONTH == Calendar.JANUARY ) return  "Jan" ;
-							if( Calendar.MONTH == Calendar.FEBRUARY) return "Feb";
-							if( Calendar.MONTH == Calendar.MARCH) return "Mar";
-							if( Calendar.MONTH == Calendar.APRIL) return "Apr";
-							if( Calendar.MONTH == Calendar.MAY) return "May";
-							if( Calendar.MONTH == Calendar.JUNE) return "Jun";
-							if( Calendar.MONTH ==  Calendar.JULY) return "Jul";
-							if( Calendar.MONTH == Calendar.AUGUST) return "Aug";
-							if( Calendar.MONTH ==  Calendar.SEPTEMBER) return "Sep";
-							if( Calendar.MONTH ==  Calendar.OCTOBER) return "Oct";
-							if( Calendar.MONTH ==  Calendar.NOVEMBER) return "Nov";
-							if( Calendar.MONTH ==  Calendar.DECEMBER) return "Dec";
-							return "";
+							if( Calendar.MONTH == Calendar.JANUARY ) return  "Jan" ; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.FEBRUARY) return "Feb"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.MARCH) return "Mar"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.APRIL) return "Apr"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.MAY) return "May"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.JUNE) return "Jun"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.JULY) return "Jul"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.AUGUST) return "Aug"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.SEPTEMBER) return "Sep"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.OCTOBER) return "Oct"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.NOVEMBER) return "Nov"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.DECEMBER) return "Dec"; //$NON-NLS-1$
+							return ""; //$NON-NLS-1$
 						}
 						
 						public String execute() {
 							StringBuffer result = new StringBuffer();
 							result.append( getMonth() );
-							result.append(" ");
+							result.append(" "); //$NON-NLS-1$
 							if( Calendar.DAY_OF_MONTH < 10 )
-								result.append(" ");
+								result.append(" "); //$NON-NLS-1$
 							result.append(Calendar.DAY_OF_MONTH);
-							result.append(" ");
+							result.append(" "); //$NON-NLS-1$
 							result.append( Calendar.YEAR );
 							return result.toString();
 						}				
@@ -593,14 +592,14 @@ public class Scanner implements IScanner {
 	// constants
 	private static final int NOCHAR = -1;
 
-	private static final String TEXT = "<text>";
-	private static final String START = "<initial reader>";
-	private static final String EXPRESSION = "<expression>";
-	private static final String PASTING = "<pasting>";
+	private static final String TEXT = "<text>"; //$NON-NLS-1$
+	private static final String START = "<initial reader>"; //$NON-NLS-1$
+	private static final String EXPRESSION = "<expression>"; //$NON-NLS-1$
+	private static final String PASTING = "<pasting>"; //$NON-NLS-1$
 
-	private static final String DEFINED = "defined";
-	private static final String _PRAGMA = "_Pragma";
-	private static final String POUND_DEFINE = "#define ";
+	private static final String DEFINED = "defined"; //$NON-NLS-1$
+	private static final String _PRAGMA = "_Pragma"; //$NON-NLS-1$
+	private static final String POUND_DEFINE = "#define "; //$NON-NLS-1$
 
 	private IScannerContext lastContext = null;
 	 
@@ -668,39 +667,39 @@ public class Scanner implements IScanner {
 					c = getChar(insideString);
 					switch (c) {
 						case '(':
-							expandDefinition("??(", "[", baseOffset);
+							expandDefinition("??(", "[", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case ')':
-							expandDefinition("??)", "]", baseOffset);
+							expandDefinition("??)", "]", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '<':
-							expandDefinition("??<", "{", baseOffset);
+							expandDefinition("??<", "{", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '>':
-							expandDefinition("??>", "}", baseOffset);
+							expandDefinition("??>", "}", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '=':
-							expandDefinition("??=", "#", baseOffset);
+							expandDefinition("??=", "#", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '/':
-							expandDefinition("??/", "\\", baseOffset);
+							expandDefinition("??/", "\\", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '\'':
-							expandDefinition("??\'", "^", baseOffset);
+							expandDefinition("??\'", "^", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '!':
-							expandDefinition("??!", "|", baseOffset);
+							expandDefinition("??!", "|", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '-':
-							expandDefinition("??-", "~", baseOffset);
+							expandDefinition("??-", "~", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						default:
@@ -743,10 +742,10 @@ public class Scanner implements IScanner {
 				if (c == '<') {
 					c = getChar(false);
 					if (c == '%') {
-						expandDefinition("<%", "{", baseOffset);
+						expandDefinition("<%", "{", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else if (c == ':') {
-						expandDefinition("<:", "[", baseOffset);
+						expandDefinition("<:", "[", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -756,7 +755,7 @@ public class Scanner implements IScanner {
 				} else if (c == ':') {
 					c = getChar(false);
 					if (c == '>') {
-						expandDefinition(":>", "]", baseOffset);
+						expandDefinition(":>", "]", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -766,10 +765,10 @@ public class Scanner implements IScanner {
 				} else if (c == '%') {
 					c = getChar(false);
 					if (c == '>') {
-						expandDefinition("%>", "}", baseOffset);
+						expandDefinition("%>", "}", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else if (c == ':') {
-						expandDefinition("%:", "#", baseOffset);
+						expandDefinition("%:", "#", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -1115,17 +1114,17 @@ public class Scanner implements IScanner {
 				
 				if( ! firstCharZero && floatingPoint && !(c >= '0' && c <= '9') ){
 					//if pasting, there could actually be a float here instead of just a .
-					if( buff.toString().equals( "." ) ){
+					if( buff.toString().equals( "." ) ){ //$NON-NLS-1$
 						if( c == '*' ){
-							return newToken( IToken.tDOTSTAR, ".*", scannerData.getContextStack().getCurrentContext() );
+							return newToken( IToken.tDOTSTAR, ".*", scannerData.getContextStack().getCurrentContext() ); //$NON-NLS-1$
 						} else if( c == '.' ){
 							if( getChar() == '.' )
-								return newToken( IToken.tELLIPSIS, "...", scannerData.getContextStack().getCurrentContext() );
+								return newToken( IToken.tELLIPSIS, "...", scannerData.getContextStack().getCurrentContext() ); //$NON-NLS-1$
 							else
 								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
 						} else {
 							ungetChar( c );
-							return newToken( IToken.tDOT, ".", scannerData.getContextStack().getCurrentContext() );
+							return newToken( IToken.tDOT, ".", scannerData.getContextStack().getCurrentContext() ); //$NON-NLS-1$
 						}
 					}
 				} else if (c == 'x') {
@@ -1246,7 +1245,7 @@ public class Scanner implements IScanner {
 				int tokenType;
 				String result = buff.toString(); 
 				
-				if( floatingPoint && result.equals(".") )
+				if( floatingPoint && result.equals(".") ) //$NON-NLS-1$
 					tokenType = IToken.tDOT;
 				else
 					tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER; 
@@ -1272,12 +1271,12 @@ public class Scanner implements IScanner {
 				if( c == '#' )
 				{
 					if( skipped )
-						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true ); 
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true );  //$NON-NLS-1$
 					else 
-						return newToken( tPOUNDPOUND, "##" );
+						return newToken( tPOUNDPOUND, "##" ); //$NON-NLS-1$
 				} else if( tokenizingMacroReplacementList ) {
 					ungetChar( c ); 
-					return newToken( tPOUND, "#" );
+					return newToken( tPOUND, "#" ); //$NON-NLS-1$
 				}
 				
 				while (((c >= 'a') && (c <= 'z'))
@@ -1297,7 +1296,7 @@ public class Scanner implements IScanner {
 				if (directive == null) {
 					if( scannerExtension.canHandlePreprocessorDirective( token ) )
 						scannerExtension.handlePreprocessorDirective( token, getRestOfPreprocessorLine() );
-					StringBuffer buffer = new StringBuffer( "#");
+					StringBuffer buffer = new StringBuffer( "#"); //$NON-NLS-1$
 					buffer.append( token );
 					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
 				} else {
@@ -1354,8 +1353,8 @@ public class Scanner implements IScanner {
 							if( isLimitReached() )
 								handleCompletionOnExpression( expression );
 							
-							if (expression.trim().equals(""))
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#if", beginningOffset, false, true  );
+							if (expression.trim().equals("")) //$NON-NLS-1$
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#if", beginningOffset, false, true  ); //$NON-NLS-1$
 							
 							boolean expressionEvalResult = false;
 							
@@ -1389,9 +1388,9 @@ public class Scanner implements IScanner {
 							if( isLimitReached() )
 								handleInvalidCompletion();
 							
-							if( ! restOfLine.equals( "" )  )
+							if( ! restOfLine.equals( "" )  ) //$NON-NLS-1$
 							{	
-								StringBuffer buffer = new StringBuffer("#endif ");
+								StringBuffer buffer = new StringBuffer("#endif "); //$NON-NLS-1$
 								buffer.append( restOfLine );
 								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
 							}
@@ -1449,8 +1448,8 @@ public class Scanner implements IScanner {
 								handleCompletionOnExpression( elifExpression );
 							
 							
-							if (elifExpression.equals(""))
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  );
+							if (elifExpression.equals("")) //$NON-NLS-1$
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  ); //$NON-NLS-1$
 
 							boolean elsifResult = false;
 							if( scannerData.getBranchTracker().queryCurrentBranchForElif() )
@@ -1501,15 +1500,15 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.BLANK :
 							String remainderOfLine =
 								getRestOfPreprocessorLine().trim();
-							if (!remainderOfLine.equals("")) {
-								StringBuffer buffer = new StringBuffer( "# ");
+							if (!remainderOfLine.equals("")) { //$NON-NLS-1$
+								StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
 								buffer.append( remainderOfLine );
 								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true);
 							}
 							c = getChar();
 							continue;
 						default :
-							StringBuffer buffer = new StringBuffer( "# ");
+							StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
 							buffer.append( token );
 							handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
 					}
@@ -1524,51 +1523,51 @@ public class Scanner implements IScanner {
 							case ':' :
 								return newToken(
 									IToken.tCOLONCOLON,
-									"::",
+									"::", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tCOLON,
-									":",
+									":", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case ';' :
-						return newToken(IToken.tSEMI, ";", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tSEMI, ";", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case ',' :
-						return newToken(IToken.tCOMMA, ",", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tCOMMA, ",", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '?' :
-						return newToken(IToken.tQUESTION, "?", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tQUESTION, "?", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '(' :
-						return newToken(IToken.tLPAREN, "(", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tLPAREN, "(", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case ')' :
-						return newToken(IToken.tRPAREN, ")", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tRPAREN, ")", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '[' :
-						return newToken(IToken.tLBRACKET, "[", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tLBRACKET, "[", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case ']' :
-						return newToken(IToken.tRBRACKET, "]", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tRBRACKET, "]", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '{' :
-						return newToken(IToken.tLBRACE, "{", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tLBRACE, "{", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '}' :
-						return newToken(IToken.tRBRACE, "}", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tRBRACE, "}", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '+' :
 						c = getChar();
 						switch (c) {
 							case '=' :
 								return newToken(
 									IToken.tPLUSASSIGN,
-									"+=",
+									"+=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							case '+' :
 								return newToken(
 									IToken.tINCR,
-									"++",
+									"++", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tPLUS,
-									"+",
+									"+", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '-' :
@@ -1577,12 +1576,12 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tMINUSASSIGN,
-									"-=",
+									"-=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							case '-' :
 								return newToken(
 									IToken.tDECR,
-									"--",
+									"--", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							case '>' :
 								c = getChar();
@@ -1590,20 +1589,20 @@ public class Scanner implements IScanner {
 									case '*' :
 										return newToken(
 											IToken.tARROWSTAR,
-											"->*",
+											"->*", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
 											IToken.tARROW,
-											"->",
+											"->", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 								}
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tMINUS,
-									"-",
+									"-", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '*' :
@@ -1612,13 +1611,13 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tSTARASSIGN,
-									"*=",
+									"*=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tSTAR,
-									"*",
+									"*", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '%' :
@@ -1627,13 +1626,13 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tMODASSIGN,
-									"%=",
+									"%=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tMOD,
-									"%",
+									"%", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '^' :
@@ -1642,13 +1641,13 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tXORASSIGN,
-									"^=",
+									"^=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tXOR,
-									"^",
+									"^", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '&' :
@@ -1657,18 +1656,18 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tAMPERASSIGN,
-									"&=",
+									"&=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							case '&' :
 								return newToken(
 									IToken.tAND,
-									"&&",
+									"&&", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tAMPER,
-									"&",
+									"&", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '|' :
@@ -1677,35 +1676,35 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tBITORASSIGN,
-									"|=",
+									"|=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							case '|' :
 								return newToken(
 									IToken.tOR,
-									"||",
+									"||", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tBITOR,
-									"|",
+									"|", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '~' :
-						return newToken(IToken.tCOMPL, "~", scannerData.getContextStack().getCurrentContext());
+						return newToken(IToken.tCOMPL, "~", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 					case '!' :
 						c = getChar();
 						switch (c) {
 							case '=' :
 								return newToken(
 									IToken.tNOTEQUAL,
-									"!=",
+									"!=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tNOT,
-									"!",
+									"!", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '=' :
@@ -1714,13 +1713,13 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tEQUAL,
-									"==",
+									"==", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tASSIGN,
-									"=",
+									"=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					case '<' :
@@ -1732,25 +1731,25 @@ public class Scanner implements IScanner {
 									case '=' :
 										return newToken(
 											IToken.tSHIFTLASSIGN,
-											"<<=",
+											"<<=", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
 											IToken.tSHIFTL,
-											"<<",
+											"<<", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 								}
 							case '=' :
 								return newToken(
 									IToken.tLTEQUAL,
-									"<=",
+									"<=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								if( forInclusion )
 									temporarilyReplaceDefinitionsMap();
-								return newToken(IToken.tLT, "<", scannerData.getContextStack().getCurrentContext());
+								return newToken(IToken.tLT, "<", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 						}
 					case '>' :
 						c = getChar();
@@ -1761,25 +1760,25 @@ public class Scanner implements IScanner {
 									case '=' :
 										return newToken(
 											IToken.tSHIFTRASSIGN,
-											">>=",
+											">>=", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 									default :
 										ungetChar(c);
 										return newToken(
 											IToken.tSHIFTR,
-											">>",
+											">>", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 								}
 							case '=' :
 								return newToken(
 									IToken.tGTEQUAL,
-									">=",
+									">=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								if( forInclusion )
 									restoreDefinitionsMap();
-								return newToken(IToken.tGT, ">", scannerData.getContextStack().getCurrentContext());
+								return newToken(IToken.tGT, ">", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
 						}
 					case '.' :
 						c = getChar();
@@ -1790,7 +1789,7 @@ public class Scanner implements IScanner {
 									case '.' :
 										return newToken(
 											IToken.tELLIPSIS,
-											"...",
+											"...", //$NON-NLS-1$
 											scannerData.getContextStack().getCurrentContext());
 									default :
 										break;
@@ -1799,13 +1798,13 @@ public class Scanner implements IScanner {
 							case '*' :
 								return newToken(
 									IToken.tDOTSTAR,
-									".*",
+									".*", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tDOT,
-									".",
+									".", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 						break;
@@ -1823,13 +1822,13 @@ public class Scanner implements IScanner {
 							case '=' :
 								return newToken(
 									IToken.tDIVASSIGN,
-									"/=",
+									"/=", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 							default :
 								ungetChar(c);
 								return newToken(
 									IToken.tDIV,
-									"/",
+									"/", //$NON-NLS-1$
 									scannerData.getContextStack().getCurrentContext());
 						}
 					default :
@@ -1872,9 +1871,9 @@ public class Scanner implements IScanner {
 		int completionPoint = expression.length() + 2;
 		IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
 		
-		String prefix = "";
+		String prefix = ""; //$NON-NLS-1$
 		
-		if( ! expression.trim().equals(""))
+		if( ! expression.trim().equals("")) //$NON-NLS-1$
 		{	
 			IScanner subScanner = ParserFactory.createScanner( new StringReader(expression), SCRATCH, EMPTY_INFO, ParserMode.QUICK_PARSE, scannerData.getLanguage(), new NullSourceElementRequestor(), new NullLogService());
 			IToken lastToken = null;
@@ -1917,7 +1916,7 @@ public class Scanner implements IScanner {
 
 	protected void handleInvalidCompletion() throws EndOfFileException
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, "", KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) ));
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, "", KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) )); //$NON-NLS-1$
 	}
 	
 	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
@@ -1982,7 +1981,7 @@ public class Scanner implements IScanner {
 
     protected String getCurrentFile()
 	{
-		return scannerData.getContextStack().getMostRelevantFileContext() != null ? scannerData.getContextStack().getMostRelevantFileContext().getFilename() : "";
+		return scannerData.getContextStack().getMostRelevantFileContext() != null ? scannerData.getContextStack().getMostRelevantFileContext().getFilename() : ""; //$NON-NLS-1$
 	}
 
 
@@ -2043,13 +2042,13 @@ public class Scanner implements IScanner {
 	                    return processCharacterLiteral( c, false );
                     case ',' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(IToken.tCOMMA, ",", scannerData.getContextStack().getCurrentContext());
+                        return newToken(IToken.tCOMMA, ",", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
                     case '(' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(IToken.tLPAREN, "(", scannerData.getContextStack().getCurrentContext());
+                        return newToken(IToken.tLPAREN, "(", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
                     case ')' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(IToken.tRPAREN, ")", scannerData.getContextStack().getCurrentContext());
+                        return newToken(IToken.tRPAREN, ")", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
                     case '/' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
                         c = getChar();
@@ -2265,7 +2264,7 @@ public class Scanner implements IScanner {
 			
 		if( scannerData.getParserMode() == ParserMode.QUICK_PARSE )
 		{
-			if( expression.trim().equals( "0" ) )
+			if( expression.trim().equals( "0" ) ) //$NON-NLS-1$
 				return false; 
 			
 			return true; 
@@ -2309,7 +2308,7 @@ public class Scanner implements IScanner {
 	
 	protected void skipOverSinglelineComment() throws ScannerException, EndOfFileException {
 		
-		StringBuffer comment = new StringBuffer("//");
+		StringBuffer comment = new StringBuffer("//"); //$NON-NLS-1$
 		int c;
 		
 		loop:
@@ -2332,7 +2331,7 @@ public class Scanner implements IScanner {
 	protected boolean skipOverMultilineComment() throws ScannerException, EndOfFileException {
 		int state = 0;
 		boolean encounteredNewline = false;
-		StringBuffer comment = new StringBuffer("/*");
+		StringBuffer comment = new StringBuffer("/*"); //$NON-NLS-1$
 		// simple state machine to handle multi-line comments
 		// state 0 == no end of comment in site
 		// state 1 == encountered *, expecting /
@@ -2371,7 +2370,7 @@ public class Scanner implements IScanner {
 	}
 
 	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException, EndOfFileException {
-		StringBuffer potentialErrorLine = new StringBuffer( "#include ");
+		StringBuffer potentialErrorLine = new StringBuffer( "#include "); //$NON-NLS-1$
 		skipOverWhitespace();				
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
@@ -2382,7 +2381,7 @@ public class Scanner implements IScanner {
 		int startOffset = baseOffset;
 		int endOffset = baseOffset; 
 			
-		if (! includeLine.equals("")) {
+		if (! includeLine.equals("")) { //$NON-NLS-1$
 			Scanner helperScanner = new Scanner(
 										new StringReader(includeLine), 
 										null, 
@@ -2463,7 +2462,7 @@ public class Scanner implements IScanner {
                     i =
                     	scannerData.getASTFactory().createInclusion(
                             f,
-                            "",
+                            "", //$NON-NLS-1$
                             !useIncludePath,
                             beginningOffset,
                             startLine,
@@ -2515,7 +2514,7 @@ public class Scanner implements IScanner {
 	protected List tokenizeReplacementString( int beginning, String key, String replacementString, List parameterIdentifiers ) 
 	{
 		List macroReplacementTokens = new ArrayList();
-		if( replacementString.trim().equals( "" ) ) 
+		if( replacementString.trim().equals( "" ) )  //$NON-NLS-1$
 			return macroReplacementTokens;
 		IScanner helperScanner=null;
 		try {
@@ -2636,7 +2635,7 @@ public class Scanner implements IScanner {
 			String parameters = buffer.toString();
 
 			// replace StringTokenizer later -- not performant
-			StringTokenizer tokenizer = new StringTokenizer(parameters, ",");
+			StringTokenizer tokenizer = new StringTokenizer(parameters, ","); //$NON-NLS-1$
 			ArrayList parameterIdentifiers =
 				new ArrayList(tokenizer.countTokens());
 			while (tokenizer.hasMoreTokens()) {
@@ -2649,7 +2648,7 @@ public class Scanner implements IScanner {
 			String replacementString = getRestOfPreprocessorLine();
 			
 			
-			macroReplacementTokens = ( ! replacementString.equals( "" ) ) ? 
+			macroReplacementTokens = ( ! replacementString.equals( "" ) ) ?  //$NON-NLS-1$
 										tokenizeReplacementString( beginning, key, replacementString, parameterIdentifiers ) :
 										EMPTY_LIST;
 			
@@ -2657,7 +2656,7 @@ public class Scanner implements IScanner {
 			fullSignature.append( key );
 			fullSignature.append( '(');
 			fullSignature.append( parameters );
-			fullSignature.append( ") ");
+			fullSignature.append( ") "); //$NON-NLS-1$
 			fullSignature.append( replacementString );
 			descriptor = new FunctionMacroDescriptor(
 				key,
@@ -2672,8 +2671,8 @@ public class Scanner implements IScanner {
 		}
 		else if ((c == '\n') || (c == '\r'))
 		{
-			checkValidMacroRedefinition(key, previousDefinition, "", beginning);				
-			addDefinition( key, "" );
+			checkValidMacroRedefinition(key, previousDefinition, "", beginning);				 //$NON-NLS-1$
+			addDefinition( key, "" ); //$NON-NLS-1$
 		}
 		else if ((c == ' ') || (c == '\t') ) {
 			// this is a simple definition 
@@ -2691,33 +2690,33 @@ public class Scanner implements IScanner {
 			if (c == '/') // one line comment
 				{
 				skipOverSinglelineComment();
-				checkValidMacroRedefinition(key, previousDefinition, "", beginning);
-				addDefinition(key, "");
+				checkValidMacroRedefinition(key, previousDefinition, "", beginning); //$NON-NLS-1$
+				addDefinition(key, ""); //$NON-NLS-1$
 			} else if (c == '*') // multi-line comment
 				{
 				if (skipOverMultilineComment()) {
 					// we have gone over a newline
 					// therefore, this symbol was defined to an empty string
-					checkValidMacroRedefinition(key, previousDefinition, "", beginning);
-					addDefinition(key, "");
+					checkValidMacroRedefinition(key, previousDefinition, "", beginning); //$NON-NLS-1$
+					addDefinition(key, ""); //$NON-NLS-1$
 				} else {
 					String value = getRestOfPreprocessorLine();
 					
-					checkValidMacroRedefinition(key, previousDefinition, "", beginning);
+					checkValidMacroRedefinition(key, previousDefinition, "", beginning); //$NON-NLS-1$
 					addDefinition(key, value);
 				}
 			} else {
 				// this is not a comment 
 				// it is a bad statement
 				potentialErrorMessage.append( key );
-				potentialErrorMessage.append( " /");
+				potentialErrorMessage.append( " /"); //$NON-NLS-1$
 				potentialErrorMessage.append( getRestOfPreprocessorLine() );
 				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true );
 				return;
 			}
 		} else {
 			potentialErrorMessage = new StringBuffer(); 
-			potentialErrorMessage.append( "#define");
+			potentialErrorMessage.append( "#define"); //$NON-NLS-1$
 			potentialErrorMessage.append( key );
 			potentialErrorMessage.append( (char)c );
 			potentialErrorMessage.append( getRestOfPreprocessorLine() );
@@ -2832,7 +2831,7 @@ public class Scanner implements IScanner {
                     	buffer.append('\"'); 
                     	break;
                     case IToken.tLSTRING :
-                    	buffer.append( "L\"");
+                    	buffer.append( "L\""); //$NON-NLS-1$
                     	buffer.append(t.getImage());
                     	buffer.append('\"');	
                     	break;
@@ -2992,7 +2991,7 @@ public class Scanner implements IScanner {
 								buffer.append('\"');  
 								break;
 							case IToken.tLSTRING: 
-								buffer.append("L\"");
+								buffer.append("L\""); //$NON-NLS-1$
 								buffer.append(t.getImage());
 								buffer.append('\"');  
 								break;
@@ -3021,7 +3020,7 @@ public class Scanner implements IScanner {
 					
 					if( t.getType() != tPOUNDPOUND && ! pastingNext )
 						if (i < (numberOfTokens-1)) // Do not append to the last one 
-                        	buffer.append( " " ); 
+                        	buffer.append( " " );  //$NON-NLS-1$
 				}
 				String finalString = buffer.toString();
 				try
@@ -3047,7 +3046,7 @@ public class Scanner implements IScanner {
 
 		} 
 		else {
-			StringBuffer logMessage = new StringBuffer( "Unexpected type of MacroDescriptor stored in definitions table: " );
+			StringBuffer logMessage = new StringBuffer( "Unexpected type of MacroDescriptor stored in definitions table: " ); //$NON-NLS-1$
 			logMessage.append( expansion.getMacroType()  );
 			scannerData.getLogService().traceLog( logMessage.toString() ); 
 		}
@@ -3068,8 +3067,8 @@ public class Scanner implements IScanner {
 			c = getChar();
 			if (c != ')')
 			{
-				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, "defined()", o, false, true );
-				return "0";
+				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, "defined()", o, false, true ); //$NON-NLS-1$
+				return "0"; //$NON-NLS-1$
 			}
 		}
 		else
@@ -3079,9 +3078,9 @@ public class Scanner implements IScanner {
 		}		
 
 		if (getDefinition(definitionIdentifier) != null)
-			return "1";
+			return "1"; //$NON-NLS-1$
 
-		return "0";
+		return "0"; //$NON-NLS-1$
 	}
 		
 	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad ){

@@ -20,9 +20,7 @@ import org.eclipse.cdt.core.parser.IProblem;
  */
 public abstract class BaseProblemFactory {
 
-	protected final static String PROBLEM = "IProblem : ";
-	protected final static String IN_FILE = " in file: ";
-	protected final static String ON_LINE = " on line: ";
+	protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
 
 	public abstract String createMessage(int id, Map arguments, int lineNumber, char[] fileName ); 
 

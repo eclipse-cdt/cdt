@@ -186,7 +186,7 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 		 * @see java.util.Iterator#remove()
 		 */
 		public void remove() {
-			throw new UnsupportedOperationException( "OffsetableIterator is a const iterator"); 
+			throw new UnsupportedOperationException( ParserMessages.getString("QuickParseCallback.exception.constIterator"));  //$NON-NLS-1$
 		}
 	}
 

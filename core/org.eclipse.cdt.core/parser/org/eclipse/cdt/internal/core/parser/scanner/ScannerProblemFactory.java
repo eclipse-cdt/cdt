@@ -10,11 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.internal.core.parser.problem.*;
+import org.eclipse.cdt.internal.core.parser.ParserMessages;
+import org.eclipse.cdt.internal.core.parser.problem.BaseProblemFactory;
+import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 
 /**
  * @author jcamelon
@@ -27,55 +30,55 @@ public class ScannerProblemFactory extends BaseProblemFactory implements IProble
 		errorMessages = new HashMap();
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_POUND_ERROR),
-			"#error encountered with text: ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND),
-			"Preprocessor Inclusion not found:  ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.inclusionNotFound")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_DEFINITION_NOT_FOUND),
-			"Macro definition not found: ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.definitionNotFound")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN),
-			"Macro definition malformed for macro: ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidMacroDefn")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN),
-			"Invalid macro redefinition for macro : ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidMacroRedefn")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_UNBALANCE_CONDITION),
-			"Preprocessor Conditionals unbalanced : ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.unbalancedConditional")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR),
-			"Expression Evaluation error for condition : ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.conditionalEval")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR),
-			"Macro usage error for macro :");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroUsage")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_CIRCULAR_INCLUSION),
-			"Circular inclusion for file : ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.circularInclusion")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_INVALID_DIRECTIVE),
-			"Invalid preprocessor directive :  ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidDirective")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR),
-			"Invalid use of macro pasting in macro : ");
+			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroPasting")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_INVALID_ESCAPECHAR),
-			"Invalid escape character encountered ");
+			ParserMessages.getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_UNBOUNDED_STRING),
-			"Unbounded string encountered ");
+			ParserMessages.getString("ScannerProblemFactory.error.scanner.unboundedString")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_BAD_FLOATING_POINT),
-			"Invalid floating point format encountered ");
+			ParserMessages.getString("ScannerProblemFactory.error.scanner.badFloatingPoint")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_BAD_HEX_FORMAT),
-			"Invalid hexidecimal format encountered ");
+			ParserMessages.getString("ScannerProblemFactory.error.scanner.badHexFormat")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_UNEXPECTED_EOF),
-			"Unexpected End Of File encountered ");
+			ParserMessages.getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_BAD_CHARACTER),
-			"Bad character sequence encountered : ");
+			ParserMessages.getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -83,47 +86,46 @@ public class ScannerProblemFactory extends BaseProblemFactory implements IProble
 	 */
 	public String createMessage(int id, Map arguments, int lineNumber, char[] fileName)
 	{
-		StringBuffer buffer = new StringBuffer();
+		String message = (String) errorMessages.get( new Integer(id) );
+		String arg = null; 
 
-		buffer.append(PROBLEM);
-		buffer.append(errorMessages.get(new Integer(id)));
 		switch (id)
 		{
 			case IProblem.PREPROCESSOR_POUND_ERROR :
-				buffer.append(arguments.get(IProblem.A_PREPROC_POUND_ERROR));
+				arg = (String) arguments.get(IProblem.A_PREPROC_POUND_ERROR);
 				break;
 			case IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND :
-				buffer.append(arguments.get(IProblem.A_PREPROC_INCLUDE_FILENAME));
+				arg = (String) arguments.get((IProblem.A_PREPROC_INCLUDE_FILENAME));
 				break;
 			case IProblem.PREPROCESSOR_DEFINITION_NOT_FOUND :
-				buffer.append(arguments.get(IProblem.A_PREPROC_MACRO_NAME));
+				arg = (String) arguments.get(IProblem.A_PREPROC_MACRO_NAME);
 				break;
 			case IProblem.PREPROCESSOR_UNBALANCE_CONDITION :
-				buffer.append(arguments.get(IProblem.A_PREPROC_CONDITIONAL_MISMATCH));
+				arg = (String) arguments.get(IProblem.A_PREPROC_CONDITIONAL_MISMATCH);
 				break;
 			case IProblem.PREPROCESSOR_INVALID_MACRO_DEFN :
-				buffer.append(arguments.get(IProblem.A_PREPROC_MACRO_NAME));
+				arg = (String) arguments.get(IProblem.A_PREPROC_MACRO_NAME);
 				break;
 			case IProblem.PREPROCESSOR_INVALID_DIRECTIVE :
-				buffer.append(arguments.get(IProblem.A_PREPROC_UNKNOWN_DIRECTIVE));
+				arg = (String) arguments.get(IProblem.A_PREPROC_UNKNOWN_DIRECTIVE);
 				break;
 			case IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN :
-				buffer.append(arguments.get(IProblem.A_PREPROC_MACRO_NAME));
+				arg = (String) arguments.get(IProblem.A_PREPROC_MACRO_NAME);
 				break;
 			case IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR :
-				buffer.append(arguments.get(IProblem.A_PREPROC_CONDITION));
+				arg = (String) arguments.get(IProblem.A_PREPROC_CONDITION);
 				break;
 			case IProblem.PREPROCESSOR_MACRO_USAGE_ERROR :
-				buffer.append(arguments.get(IProblem.A_PREPROC_MACRO_NAME));
+				arg = (String) arguments.get(IProblem.A_PREPROC_MACRO_NAME);
 				break;
 			case IProblem.PREPROCESSOR_MACRO_PASTING_ERROR :
-				buffer.append(arguments.get(IProblem.A_PREPROC_MACRO_NAME));
+				arg = (String) arguments.get(IProblem.A_PREPROC_MACRO_NAME);
 				break;
 			case IProblem.PREPROCESSOR_CIRCULAR_INCLUSION :
-				buffer.append(arguments.get(IProblem.A_PREPROC_INCLUDE_FILENAME));
+				arg = (String) arguments.get(IProblem.A_PREPROC_INCLUDE_FILENAME);
 				break;
 			case IProblem.SCANNER_BAD_CHARACTER :
-				buffer.append( arguments.get(IProblem.A_SCANNER_BADCHAR));
+				arg = (String) arguments.get(IProblem.A_SCANNER_BADCHAR);
 				break;
 			case IProblem.SCANNER_UNBOUNDED_STRING :
 			case IProblem.SCANNER_INVALID_ESCAPECHAR :
@@ -134,12 +136,13 @@ public class ScannerProblemFactory extends BaseProblemFactory implements IProble
 			default :
 				return null;
 		}
-
-		buffer.append( IN_FILE );
-		buffer.append(fileName);
-		buffer.append( ON_LINE );
-		buffer.append(lineNumber);
-		return buffer.toString();
+		
+		if( arg != null ){
+			message = MessageFormat.format( message, new Object [] { arg } );
+		}
+		
+		Object [] args = { message, new String( fileName ), new Integer( lineNumber ) };
+		return ParserMessages.getFormattedString( PROBLEM_PATTERN, args );
 	}
 
 	/* (non-Javadoc)

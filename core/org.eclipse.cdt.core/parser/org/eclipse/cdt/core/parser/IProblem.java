@@ -12,6 +12,8 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.parser.ParserMessages;
+
 /**
  * @author jcamelon
  *
@@ -105,7 +107,7 @@ public interface IProblem
 	/**
 	 * Unknown filename sentinel value
 	 */
-	public final static String FILENAME_NOT_PROVIDED = "<unknown>";
+	public final static String FILENAME_NOT_PROVIDED = ParserMessages.getString("IProblem.unknownFileName"); //$NON-NLS-1$
 
 	/**
 	 * Problem Categories
@@ -168,17 +170,17 @@ public interface IProblem
 	/**
 	 * The text that follows a #error preprocessor directive 
 	 */
-	public final static String A_PREPROC_POUND_ERROR = "#error text";
+	public final static String A_PREPROC_POUND_ERROR = ParserMessages.getString("IProblem.preproc.poundError"); //$NON-NLS-1$
 
 	/**
 	 * The filename that failed somehow in an preprocessor include directive
 	 */
-	public final static String A_PREPROC_INCLUDE_FILENAME = "include file";
+	public final static String A_PREPROC_INCLUDE_FILENAME = ParserMessages.getString("IProblem.preproc.include"); //$NON-NLS-1$
 
 	/**
 	 * A preprocessor macro name
 	 */
-	public final static String A_PREPROC_MACRO_NAME = "macro name";
+	public final static String A_PREPROC_MACRO_NAME = ParserMessages.getString("IProblem.preproc.macro"); //$NON-NLS-1$
 
 	/**
 	 * A preprocessor conditional that could not be evaluated
@@ -186,14 +188,14 @@ public interface IProblem
 	 * #if X + Y == Z       <== that one, if X, Y or Z are not defined 
 	 * #endif 
 	 */
-	public final static String A_PREPROC_CONDITION = "preprocessor condition";
+	public final static String A_PREPROC_CONDITION = ParserMessages.getString("IProblem.preproc.condition"); //$NON-NLS-1$
 
 	/**
 	 * A preprocessor directive that could not be interpretted
 	 * 
 	 * e.g.  #blah 
 	 */
-	public final static String A_PREPROC_UNKNOWN_DIRECTIVE = "bad preprocessor directive";
+	public final static String A_PREPROC_UNKNOWN_DIRECTIVE = ParserMessages.getString("IProblem.preproc.unknownDirective"); //$NON-NLS-1$
 
 	/**
 	 * The preprocessor conditional statement that caused an unbalanced mismatch.  
@@ -203,7 +205,7 @@ public interface IProblem
 	 * #else		<=== that one
 	 * #endif 
 	 */
-	public final static String A_PREPROC_CONDITIONAL_MISMATCH = "conditional mismatch";
+	public final static String A_PREPROC_CONDITIONAL_MISMATCH = ParserMessages.getString("IProblem.preproc.conditionalMismatch"); //$NON-NLS-1$
 
 	/**
 	 * The Bad character encountered in scanner 
@@ -213,17 +215,17 @@ public interface IProblem
 	/**
 	 * A_SYMBOL_NAME  - symbol name 
 	 */
-	public static final String A_SYMBOL_NAME = "symbol name";
+	public static final String A_SYMBOL_NAME = ParserMessages.getString("IProblem.symbolName"); //$NON-NLS-1$
 	
 	/**
 	 * A_NAMESPACE_NAME = namespace name
 	 */
-	public static final String A_NAMESPACE_NAME = "namespace name";
+	public static final String A_NAMESPACE_NAME = ParserMessages.getString("IProblem.namespaceName"); //$NON-NLS-1$
 	
 	/**
 	 * A_TYPE_NAME - type name 
 	 */
-	public static final String A_TYPE_NAME = "type name";
+	public static final String A_TYPE_NAME = ParserMessages.getString("IProblem.typeName"); //$NON-NLS-1$
 	
 	/**
 	 * Below are listed all available problem IDs. Note that this list could be augmented in the future, 

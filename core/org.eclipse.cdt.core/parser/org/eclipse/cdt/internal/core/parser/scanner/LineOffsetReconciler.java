@@ -15,6 +15,7 @@ import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IOffsetDuple;
+import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 
 /**
@@ -75,7 +76,7 @@ public class LineOffsetReconciler implements ILineOffsetReconciler
         }
         catch (IOException e)
         {
-            throw new Error( "Could not reset Reader" ); 
+            throw new Error( ParserMessages.getString("LineOffsetReconciler.error.couldNotResetReader") );  //$NON-NLS-1$
         } 
     }
     /* (non-Javadoc)

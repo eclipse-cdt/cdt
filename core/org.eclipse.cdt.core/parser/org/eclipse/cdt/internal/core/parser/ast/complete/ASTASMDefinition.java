@@ -26,12 +26,12 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
     /**
      * 
      */
-    public ASTASMDefinition( IContainerSymbol scope, String assembly, int first, int last )
+    public ASTASMDefinition( IContainerSymbol scope, String assembly, int first, int firstLine, int last , int lastLine )
     {
         super( scope );
         this.assembly = assembly;
-        setStartingOffset(first);
-        setEndingOffset(last);
+        setStartingOffsetAndLineNumber(first, firstLine);
+        setEndingOffsetAndLineNumber(last, lastLine);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTASMDefinition#getBody()
@@ -43,16 +43,16 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
@@ -95,4 +95,19 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public int getStartingLine() {
+    	return offsets.getStartingLine();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public int getEndingLine() {
+    	return offsets.getEndingLine();
+    }
+    
 }

@@ -19,15 +19,15 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
  */
 public class ASTInclusion implements IASTInclusion {
 
-	public ASTInclusion( String name, String fileName, boolean local, int startingOffset, int nameOffset, int nameEndOffset, int endOffset )
+	public ASTInclusion( String name, String fileName, boolean local, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine )
 	{
 		this.name = name; 
 		this.fileName = fileName;
 		this.local = local;
-		setStartingOffset(startingOffset);
+		setStartingOffsetAndLineNumber(startingOffset, startLine);
 		setNameOffset(nameOffset);
-		setNameEndOffset(nameEndOffset);
-		setEndingOffset(endOffset);
+		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
+		setEndingOffsetAndLineNumber(endOffset, endLine);
 	}
 
 	private int nameEndOffset;
@@ -81,16 +81,17 @@ public class ASTInclusion implements IASTInclusion {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IOffsetableElementRW#setStartingOffset(int)
 	 */
-	public void setStartingOffset(int o) {
-		startingOffset = o; 
-		
+	public void setStartingOffsetAndLineNumber(int offset, int lineNumber) {
+		startingOffset = offset; 
+		startingLineNumber = lineNumber;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IOffsetableElementRW#setEndingOffset(int)
 	 */
-	public void setEndingOffset(int o) {
-		endingOffset = o; 
+	public void setEndingOffsetAndLineNumber(int offset, int lineNumber) {
+		endingOffset = offset;
+		endingLineNumber = lineNumber;
 	}
 
 	/* (non-Javadoc)
@@ -149,8 +150,29 @@ public class ASTInclusion implements IASTInclusion {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		nameEndOffset = o;
+		nameEndOffset = offset;
+		nameLineNumber = lineNumber;
+	}
+
+	private int startingLineNumber, endingLineNumber, nameLineNumber;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return startingLineNumber;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return endingLineNumber;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return nameLineNumber;
 	}
 }

@@ -21,5 +21,6 @@ public interface IASTOffsetableNamedElement extends IASTOffsetableElement {
 	public int getNameOffset(); 
 	public void setNameOffset( int o );
 	public int  getNameEndOffset(); 
-	public void setNameEndOffset( int o ); 
+	public void setNameEndOffsetAndLineNumber( int offset, int lineNumber );
+	public int  getNameLineNumber();
 }

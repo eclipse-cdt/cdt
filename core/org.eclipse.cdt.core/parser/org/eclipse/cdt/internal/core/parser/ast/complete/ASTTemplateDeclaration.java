@@ -65,14 +65,14 @@ public class ASTTemplateDeclaration extends ASTNode implements IASTTemplateDecla
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
         // TODO Auto-generated method stub
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
         // TODO Auto-generated method stub
     }
@@ -121,4 +121,20 @@ public class ASTTemplateDeclaration extends ASTNode implements IASTTemplateDecla
     {
         // TODO Auto-generated method stub
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+    
+    
 }

@@ -34,5 +34,5 @@ public interface IScanner  {
 	public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException;
 	public void setTokenizingMacroReplacementList(boolean b);
 	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad );
-    public int getLineNumberForOffset(int i);
+
 }

@@ -73,26 +73,4 @@ public class CModelElementsFailedTests extends TestCase {
 	protected void tearDown()  {
 		CProjectHelper.delete(fCProject);
 	}	
-			
-	public void testBug36379() {
-		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
-		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse(); // require line numbers
-		
-		// tu ---> namespace: MyPackage
-		ArrayList tuPackages = tu.getChildrenOfType(ICElement.C_NAMESPACE);		
-		
-		INamespace namespace = (INamespace) tuPackages.get(0);
-		assertEquals(namespace.getElementName(), new String("MyPackage"));
-
-		// MyPackage ---> class: Hello
-		ArrayList nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);		
-		IStructure classHello = (IStructure) nsClasses.get(0);
-		assertEquals(classHello.getElementName(), new String("Hello"));
-
-		// Bug 36379: parser does not provide line number information for nested definitions
-		assertEquals(0, ((CElement)classHello).getStartLine());
-		assertEquals(0, ((CElement)classHello).getEndLine());
-	}
-
 }

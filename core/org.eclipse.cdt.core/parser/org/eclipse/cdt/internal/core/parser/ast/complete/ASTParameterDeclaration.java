@@ -40,16 +40,16 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
      * @param parameterName
      * @param initializerClause
      */
-    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int endingOffset, int nameOffset, int nameEndOffset )
+    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine )
     {
     	super( symbol );
     	abstractDeclaration = new ASTAbstractDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
 		this.parameterName = parameterName;
 		this.initializerClause = initializerClause;
-		setStartingOffset(startingOffset);
-		setEndingOffset(endingOffset);
+		setStartingOffsetAndLineNumber(startingOffset, startingLine);
+		setEndingOffsetAndLineNumber(endingOffset, endingLine);
 		setNameOffset(nameOffset);
-		setNameEndOffset( nameEndOffset );
+		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getName()
@@ -151,16 +151,16 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
     
     /* (non-Javadoc)
@@ -189,9 +189,28 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setNameEndOffset(o);
+		offsets.setNameEndOffsetAndLineNumber(offset, lineNumber);
 	}
  
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return offsets.getStartingLine();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return offsets.getNameLineNumber();
+	}
 }

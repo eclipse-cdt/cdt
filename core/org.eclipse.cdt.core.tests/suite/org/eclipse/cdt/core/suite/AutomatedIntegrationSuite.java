@@ -13,7 +13,6 @@ import org.eclipse.cdt.core.build.managed.tests.ManagedBuildTests;
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;
 import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
-import org.eclipse.cdt.core.model.failedTests.CModelElementsFailedTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
@@ -67,7 +66,6 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		// Add all failed tests
 		suite.addTestSuite(ASTFailedTests.class);
 		suite.addTestSuite(STLFailedTests.class);
-		suite.addTestSuite(CModelElementsFailedTests.class);
 		suite.addTestSuite(FailedCompleteParseASTTest.class);
 
 		return suite;

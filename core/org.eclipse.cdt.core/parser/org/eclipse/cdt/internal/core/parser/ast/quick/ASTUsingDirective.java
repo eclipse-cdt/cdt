@@ -26,12 +26,12 @@ public class ASTUsingDirective
 	implements IASTUsingDirective {
 
 
-	public ASTUsingDirective( IASTScope scope, String name, int startingOffset, int endingOffset )
+	public ASTUsingDirective( IASTScope scope, String name, int startingOffset, int startingLine, int endingOffset, int endingLine )
 	{
 		super( scope );
 		this.namespaceName = name;
-		setStartingOffset(startingOffset);
-		setEndingOffset(endingOffset);
+		setStartingOffsetAndLineNumber(startingOffset, startingLine);
+		setEndingOffsetAndLineNumber(endingOffset, endingLine);
 		
 	}
 	private final String namespaceName;
@@ -45,16 +45,16 @@ public class ASTUsingDirective
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -104,4 +104,19 @@ public class ASTUsingDirective
     {
         throw new ASTNotImplementedException();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public int getStartingLine() {
+    	return offsets.getStartingLine();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public int getEndingLine() {
+    	return offsets.getEndingLine();
+    }
+    
 }

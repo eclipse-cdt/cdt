@@ -32,11 +32,11 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
     /**
      * @param templateParameters
      */
-    public ASTTemplateDeclaration(IASTScope scope, List templateParameters, int startingOffset, boolean isExported)
+    public ASTTemplateDeclaration(IASTScope scope, List templateParameters, int startingOffset, int startingLine, boolean isExported)
     {
         super( scope );
         this.templateParameters = templateParameters;
-        setStartingOffset(startingOffset);
+        setStartingOffsetAndLineNumber(startingOffset, startingLine);
         this.isExported = isExported;
     }
 
@@ -57,17 +57,17 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
         
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-		offsets.setEndingOffset(o);
+		offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -136,4 +136,19 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
             /* do nothing */
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public int getStartingLine() {
+    	return offsets.getStartingLine();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public int getEndingLine() {
+    	return offsets.getEndingLine();
+    }
+    
 }

@@ -41,7 +41,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
      * @param scope
      */
     public ASTVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression )
+    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression )
     {
         super(scope);
 		this.isAuto = isAuto;
@@ -55,9 +55,9 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		this.name = name;
 		this.constructorExpression = constructorExpression;
 		qualifiedName = new ASTQualifiedNamedElement( scope, name );
-		setStartingOffset(startingOffset);
+		setStartingOffsetAndLineNumber(startingOffset, startLine);
 		setNameOffset(nameOffset);
-		setNameEndOffset( nameEndOffset );
+		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
 		if( initializerClause != null )
 			initializerClause.setOwnerVariableDeclaration(this);
     }
@@ -134,16 +134,16 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 	/* (non-Javadoc)
 	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
 	*/
-   public void setStartingOffset(int o)
+   public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
    {
-	   offsets.setStartingOffset(o);
+	   offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
    }
    /* (non-Javadoc)
 	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
 	*/
-   public void setEndingOffset(int o)
+   public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
    {
-	   offsets.setEndingOffset(o);
+	   offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
    }
    /* (non-Javadoc)
 	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -224,8 +224,29 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setNameEndOffset(o);
+		offsets.setNameEndOffsetAndLineNumber(offset, lineNumber);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return offsets.getStartingLine();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return offsets.getNameLineNumber();
 	}
 }
+

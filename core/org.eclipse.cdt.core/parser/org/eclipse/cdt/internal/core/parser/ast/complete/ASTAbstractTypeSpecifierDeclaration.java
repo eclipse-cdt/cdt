@@ -32,13 +32,13 @@ public class ASTAbstractTypeSpecifierDeclaration
     /**
      * @param ownerScope
      */
-    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int endingOffset )
+    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine )
     {
         super(ownerScope);
         this.typeSpec = typeSpecifier;
         this.ownerTemplate = ownerTemplate;
-        setStartingOffset(startingOffset);
-        setEndingOffset(endingOffset);
+        setStartingOffsetAndLineNumber(startingOffset, startingLine);
+        setEndingOffsetAndLineNumber(endingOffset, endingLine);
     }
 
     /* (non-Javadoc)
@@ -89,17 +89,17 @@ public class ASTAbstractTypeSpecifierDeclaration
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-		offsets.setStartingOffset(o);
+		offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
 
     /* (non-Javadoc)
@@ -117,4 +117,19 @@ public class ASTAbstractTypeSpecifierDeclaration
     {
         return offsets.getEndingOffset();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public int getStartingLine() {
+    	return offsets.getStartingLine();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public int getEndingLine() {
+    	return offsets.getEndingLine();
+    }
+    
 }

@@ -276,7 +276,7 @@ public abstract class Parser implements IParser
                 
                 try
                 {
-                    astUD = astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), last.getEndOffset());
+                    astUD = astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
                 }
                 catch (Exception e1)
                 {
@@ -320,7 +320,7 @@ public abstract class Parser implements IParser
                             typeName,
                             name,
                             firstToken.getOffset(),
-                            last.getEndOffset());
+                            firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
                 }
                 catch (Exception e1)
                 {
@@ -362,7 +362,7 @@ public abstract class Parser implements IParser
                     astFactory.createLinkageSpecification(
                         scope,
                         spec.getImage(),
-                        firstToken.getOffset());
+                        firstToken.getOffset(), firstToken.getLineNumber());
             }
             catch (Exception e)
             {
@@ -395,7 +395,7 @@ public abstract class Parser implements IParser
             }
             // consume the }
             IToken lastToken = consume();
-            linkage.setEndingOffset(lastToken.getEndOffset());
+            linkage.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
             linkage.exitScope( requestor );
         }
         else // single declaration
@@ -407,7 +407,7 @@ public abstract class Parser implements IParser
                     astFactory.createLinkageSpecification(
                         scope,
                         spec.getImage(),
-                        firstToken.getOffset());
+                        firstToken.getOffset(), firstToken.getLineNumber());
             }
             catch (Exception e)
             {
@@ -452,7 +452,7 @@ public abstract class Parser implements IParser
                 templateInstantiation =
                     astFactory.createTemplateInstantiation(
                         scope,
-                        firstToken.getOffset());
+                        firstToken.getOffset(), firstToken.getLineNumber());
             }
             catch (Exception e)
             {
@@ -460,7 +460,7 @@ public abstract class Parser implements IParser
             }
             templateInstantiation.enterScope( requestor );
             declaration(scope, templateInstantiation);
-            templateInstantiation.setEndingOffset(lastToken.getEndOffset());
+            templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
 			templateInstantiation.exitScope( requestor );
  
             return;
@@ -479,7 +479,7 @@ public abstract class Parser implements IParser
                     templateSpecialization =
                         astFactory.createTemplateSpecialization(
                             scope,
-                            firstToken.getOffset());
+                            firstToken.getOffset(), firstToken.getLineNumber());
                 }
                 catch (Exception e)
                 {
@@ -487,8 +487,8 @@ public abstract class Parser implements IParser
                 }
 				templateSpecialization.enterScope(requestor);
                 declaration(scope, templateSpecialization);
-                templateSpecialization.setEndingOffset(
-                    lastToken.getEndOffset());
+                templateSpecialization.setEndingOffsetAndLineNumber(
+                    lastToken.getEndOffset(), lastToken.getLineNumber());
                 templateSpecialization.exitScope(requestor);
                 return;
             }
@@ -506,7 +506,7 @@ public abstract class Parser implements IParser
                         scope,
                         parms,
                         exported,
-                        firstToken.getOffset());
+                        firstToken.getOffset(), firstToken.getLineNumber());
             }
             catch (Exception e)
             {
@@ -514,8 +514,8 @@ public abstract class Parser implements IParser
             }
             templateDecl.enterScope( requestor );
             declaration(scope, templateDecl );
-			templateDecl.setEndingOffset(
-				lastToken.getEndOffset() );
+			templateDecl.setEndingOffsetAndLineNumber(
+				lastToken.getEndOffset(), lastToken.getLineNumber() );
 			templateDecl.exitScope( requestor );
             
         }
@@ -668,7 +668,7 @@ public abstract class Parser implements IParser
                                 declarator.getArrayModifiers(),
                                 null, null, declarator.getName() == null
                                                 ? ""
-                                                : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), wrapper.getEndOffset()),
+                                                : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), wrapper.getEndLine()),
                             null));
                 }
                 catch (Exception e)
@@ -725,7 +725,7 @@ public abstract class Parser implements IParser
                             scope,
                             assembly,
                             first.getOffset(),
-                            last.getEndOffset());
+                            first.getLineNumber(), last.getEndOffset(), last.getLineNumber());
                 }
                 catch (Exception e)
                 {
@@ -842,8 +842,10 @@ public abstract class Parser implements IParser
                         scope,
                         (identifier == null ? "" : identifier.getImage()),
                         first.getOffset(),
+                        first.getLineNumber(), 
                         (identifier == null ? first.getOffset() : identifier.getOffset()), 
-                        (identifier == null ? first.getEndOffset() : identifier.getEndOffset() ));
+						(identifier == null ? first.getEndOffset() : identifier.getEndOffset() ),  
+						(identifier == null ? first.getLineNumber() : identifier.getLineNumber() ));
             }
             catch (Exception e1)
             {
@@ -876,8 +878,8 @@ public abstract class Parser implements IParser
             // consume the }
             IToken last = consume(IToken.tRBRACE);
  
-            namespaceDefinition.setEndingOffset(
-                last.getOffset() + last.getLength());
+            namespaceDefinition.setEndingOffsetAndLineNumber(
+                last.getOffset() + last.getLength(), last.getLineNumber());
             namespaceDefinition.exitScope( requestor );
         }
         else if( LT(1) == IToken.tASSIGN )
@@ -893,7 +895,7 @@ public abstract class Parser implements IParser
             {
                 astFactory.createNamespaceAlias( 
                 	scope, identifier.getImage(), duple, first.getOffset(), 
-                	identifier.getOffset(), identifier.getEndOffset(), duple.getLastToken().getEndOffset() );
+                	first.getLineNumber(), identifier.getOffset(), identifier.getEndOffset(), identifier.getLineNumber(), duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber() );
             }
             catch (Exception e1)
             {
@@ -930,7 +932,7 @@ public abstract class Parser implements IParser
     {
     	IToken firstToken = LA(1);
         DeclarationWrapper sdw =
-            new DeclarationWrapper(scope, firstToken.getOffset(), ownerTemplate);
+            new DeclarationWrapper(scope, firstToken.getOffset(), firstToken.getLineNumber(), ownerTemplate);
 
         setCompletionKeywords( Key.DECL_SPECIFIER_SEQUENCE );
         declSpecifierSeq(sdw, false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR );
@@ -1025,8 +1027,8 @@ public abstract class Parser implements IParser
                 while (i.hasNext())
                 {
                     IASTDeclaration declaration = (IASTDeclaration)i.next();
-                    ((IASTOffsetableElement)declaration).setEndingOffset(
-                        lastToken.getEndOffset());
+                    ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
+                        lastToken.getEndOffset(), lastToken.getLineNumber());
                     declaration.acceptElement( requestor );
                 }
             }
@@ -1040,8 +1042,8 @@ public abstract class Parser implements IParser
    					
                 handleFunctionBody((IASTScope)declaration, 
                 	sdw.isInline() );
-				((IASTOffsetableElement)declaration).setEndingOffset(
-					lastToken.getEndOffset());
+				((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
+					lastToken.getEndOffset(), lastToken.getLineNumber());
   
   				declaration.exitScope( requestor );
   				
@@ -1060,7 +1062,7 @@ public abstract class Parser implements IParser
                         sdw.getTypeSpecifier(),
                         ownerTemplate,
                         sdw.getStartingOffset(),
-                        lastToken.getEndOffset())
+                        sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber())
                     .acceptElement(requestor);
             }
             catch (Exception e1)
@@ -1160,7 +1162,7 @@ public abstract class Parser implements IParser
         IToken current = LA(1);
  
         DeclarationWrapper sdw =
-            new DeclarationWrapper(scope, current.getOffset(), null);
+            new DeclarationWrapper(scope, current.getOffset(), current.getLineNumber(), null);
         declSpecifierSeq(sdw, true, false);
         if (sdw.getTypeSpecifier() == null
             && sdw.getSimpleType()
@@ -1190,7 +1192,7 @@ public abstract class Parser implements IParser
            initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION );
  
  		if( lastToken != null )
- 			sdw.setEndingOffset( lastToken.getEndOffset() );
+ 			sdw.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
  			
         if (current == LA(1))
             throw backtrack;
@@ -1652,8 +1654,8 @@ public abstract class Parser implements IParser
                     eck,
                     d,
                     t.getOffset(),
-                    d.getLastToken().getEndOffset(), 
-                    isForewardDecl, sdw.isFriend() );
+                    t.getLineNumber(), 
+                    d.getLastToken().getEndOffset(), d.getLastToken().getLineNumber(), isForewardDecl, sdw.isFriend() );
         }
         catch (ASTSemanticException e)
         {
@@ -2569,11 +2571,13 @@ public abstract class Parser implements IParser
                         sdw.getScope(),
                         ((identifier == null) ? "" : identifier.getImage()),
                         mark.getOffset(), 
-                        ((identifier == null)
+                        mark.getLineNumber(), 
+                         ((identifier == null)
                             ? mark.getOffset()
                             : identifier.getOffset()), 
-                         ((identifier == null)? mark.getEndOffset()
-				: identifier.getEndOffset()));
+							((identifier == null)? mark.getEndOffset() : identifier.getEndOffset()), 
+							((identifier == null)? mark.getLineNumber() : identifier.getLineNumber())
+                );
             }
             catch (ASTSemanticException e)
             {
@@ -2610,8 +2614,9 @@ public abstract class Parser implements IParser
                             enumeration,
                             enumeratorIdentifier.getImage(),
                             enumeratorIdentifier.getOffset(),
-							enumeratorIdentifier.getOffset(),
-                            enumeratorIdentifier.getEndOffset(), enumeratorIdentifier.getEndOffset(), initialValue);
+							enumeratorIdentifier.getLineNumber(),
+                            enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), 
+                            enumeratorIdentifier.getLineNumber(), lastToken.getEndOffset(), lastToken.getLineNumber(), initialValue);
                     }
                     catch (ASTSemanticException e1)
                     {
@@ -2633,8 +2638,8 @@ public abstract class Parser implements IParser
                         enumeration,
                         enumeratorIdentifier.getImage(),
                         enumeratorIdentifier.getOffset(),
-						enumeratorIdentifier.getOffset(),
-						enumeratorIdentifier.getEndOffset(), enumeratorIdentifier.getEndOffset(), initialValue);
+						enumeratorIdentifier.getLineNumber(),
+						enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), enumeratorIdentifier.getLineNumber(), lastToken.getEndOffset(), lastToken.getLineNumber(), initialValue);
                 }
                 catch (ASTSemanticException e1)
                 {
@@ -2647,7 +2652,7 @@ public abstract class Parser implements IParser
                 consume(IToken.tCOMMA);
             }
             IToken t = consume(IToken.tRBRACE);
-            enumeration.setEndingOffset(t.getEndOffset());
+            enumeration.setEndingOffsetAndLineNumber(t.getEndOffset(), t.getLineNumber());
             enumeration.acceptElement( requestor );
             sdw.setTypeSpecifier(enumeration);
         }
@@ -2724,8 +2729,10 @@ public abstract class Parser implements IParser
                         nameType,
                         access,
                         classKey.getOffset(),
-            			duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset(), 
-						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getEndOffset() );
+            			classKey.getLineNumber(), 
+						duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset(), 
+						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getEndOffset(), 
+						duple == null ?  classKey.getLineNumber() : duple.getFirstToken().getLineNumber() );
         }
         catch (ASTSemanticException e)
         {
@@ -2786,7 +2793,7 @@ public abstract class Parser implements IParser
             }
             // consume the }
             IToken lt = consume(IToken.tRBRACE);
-            astClassSpecifier.setEndingOffset(lt.getEndOffset());
+            astClassSpecifier.setEndingOffsetAndLineNumber(lt.getEndOffset(), lt.getLineNumber());
             
             try
             {
@@ -5139,7 +5146,7 @@ public abstract class Parser implements IParser
                 }
                 catch( BacktrackException bt )
                 {
-                	Declarator d = new Declarator( new DeclarationWrapper(scope, 0, null) );
+                	Declarator d = new Declarator( new DeclarationWrapper(scope, mark.getOffset(), mark.getLineNumber(), null) );
 
 					if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER)
 					{

@@ -34,13 +34,13 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      * @param endingOffset
      */
     //public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset, List references )
-	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int endingOffset, List references )
+	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int startingLine, int endingOffset, int endingLine, List references )
     {
     	super( ownerSymbol );
         //namespace = namespaceDefinition;
         using = usingDirective; 
-        setStartingOffset(startingOffset);
-        setEndingOffset(endingOffset);
+        setStartingOffsetAndLineNumber(startingOffset, startingLine);
+        setEndingOffsetAndLineNumber(endingOffset, endingLine);
         referenceDelegate = new ASTReferenceStore( references );
     }
 
@@ -63,16 +63,16 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset( o );
+        offsets.setEndingOffsetAndLineNumber( offset, lineNumber );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -127,4 +127,17 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
         return (IASTNamespaceDefinition)namespaceSymbol.getASTExtension().getPrimaryDeclaration();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public int getStartingLine() {
+    	return offsets.getStartingLine();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public int getEndingLine() {
+    	return offsets.getEndingLine();
+    }
 }

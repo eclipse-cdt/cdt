@@ -31,15 +31,15 @@ public class ASTAbstractTypeSpecifierDeclaration
      * @param scope
      * @param typeSpecifier
      */
-    public ASTAbstractTypeSpecifierDeclaration(IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int endingOffset)
+    public ASTAbstractTypeSpecifierDeclaration(IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int endingOffset, int startingLine, int endingLine)
     {
         super( ownerTemplate != null ? null : scope  ); 
         this.typeSpecifier = typeSpecifier;
         this.ownerTemplate = ownerTemplate;
         if( ownerTemplate != null )
         	ownerTemplate.setOwnedDeclaration( this );
-		setStartingOffset(startingOffset);
-		setEndingOffset(endingOffset);
+		setStartingOffsetAndLineNumber(startingOffset, startingLine);
+		setEndingOffsetAndLineNumber(endingOffset, endingLine);
     }
 
     /* (non-Javadoc)
@@ -60,16 +60,16 @@ public class ASTAbstractTypeSpecifierDeclaration
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
 	 */
-	public void setStartingOffset(int o)
+	public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setStartingOffset(o);
+		offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
 	 */
-	public void setEndingOffset(int o)
+	public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setEndingOffset(o);
+		offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -114,4 +114,19 @@ public class ASTAbstractTypeSpecifierDeclaration
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return offsets.getStartingLine();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+    
 }

@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.model.tests;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -89,7 +88,7 @@ public class CModelElementsTests extends TestCase {
 	public void testCModelElements(){
 		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse(); 
+		tu.parse(); 
 		
 		// tu ---> include
 		checkInclude(tu);
@@ -438,13 +437,13 @@ public class CModelElementsTests extends TestCase {
 		// template method
 		ArrayList nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);
 		IStructure enclosingClass = (IStructure) nsClasses.get(1);
-		checkLineNumbers((CElement)enclosingClass, 114, 118);
+		checkLineNumbers((CElement)enclosingClass, 115, 120);
 		ArrayList methodTemplates = enclosingClass.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
 		MethodTemplate mt = (MethodTemplate)methodTemplates.get(0);
 		assertEquals(mt.getElementName(), new String("aTemplatedMethod"));
 		checkElementOffset((CElement)mt);
 		assertEquals(mt.getTemplateSignature(), new String("aTemplatedMethod<A, B>(B) : A"));
-		checkLineNumbers((CElement)mt, 118, 119);
+		checkLineNumbers((CElement)mt, 118, 119 );
 		assertEquals(mt.getVisibility(), ASTAccessVisibility.PUBLIC);
 		
 		// template class
@@ -499,9 +498,8 @@ public class CModelElementsTests extends TestCase {
 		
 	}
 	private void checkLineNumbers(CElement element, int startLine, int endLine){
-// Remove comments when testBug36379() is fixed
-//		assertEquals(startLine, element.getStartLine());
-//		assertEquals(endLine, element.getEndLine());		 		
+		assertEquals(startLine, element.getStartLine());
+		assertEquals(endLine, element.getEndLine());		 		
 	}
 	private void checkElementOffset(CElement element){
 		if(element.getElementName().length() > 0 ){

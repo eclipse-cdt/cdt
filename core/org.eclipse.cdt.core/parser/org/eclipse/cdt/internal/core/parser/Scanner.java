@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
-import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -62,7 +61,6 @@ public class Scanner implements IScanner {
 
 	protected final IParserLogService log;
 	private final static String SCRATCH = "<scratch>";
-	private Reader backupReader;
 	private IProblemFactory problemFactory = new ScannerProblemFactory();
 	private boolean initialContextInitialized = false;
 	private final String filename;
@@ -96,7 +94,6 @@ public class Scanner implements IScanner {
 		this.reader = reader;
 		this.language = language;
 		astFactory = ParserFactory.createASTFactory( mode, language );
-		this.backupReader = reader;
 		contextStack = new ContextStack( log );
 		try {
 			//this is a hack to get around a sudden EOF experience
@@ -330,7 +327,7 @@ public class Scanner implements IScanner {
 	}
 
 	protected IToken newToken(int t, String i, IScannerContext c) {
-		setCurrentToken(new Token(t, i, c));
+		setCurrentToken(new Token(t, i, c, contextStack.getCurrentLineNumber()));
 		return currentToken;
 	}
 
@@ -362,7 +359,7 @@ public class Scanner implements IScanner {
 		return buffer.toString();
 	}
 
-	protected void handleInclusion(String fileName, boolean useIncludePaths, int nameOffset, int beginOffset, int endOffset ) throws ScannerException {
+	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
 
 		FileReader inclusionReader = null;
 		String newPath = null; 
@@ -417,13 +414,13 @@ public class Scanner implements IScanner {
 						new FileReader(includeFile);
 				} catch (FileNotFoundException fnf) {
 					// the spec says that if finding in the local directory fails, search the include paths
-					handleInclusion( fileName, true, nameOffset, beginOffset, endOffset );
+					handleInclusion( fileName, true, beginOffset, startLine, nameOffset, nameLine, endOffset, endLine );
 				}
 			}
 			else
 			{
 				// the spec says that if finding in the local directory fails, search the include paths
-				handleInclusion( fileName, true, nameOffset, beginOffset, endOffset );
+				handleInclusion( fileName, true, beginOffset, startLine, nameOffset, nameLine, endOffset, endLine );
 			}
 		}
 		if (inclusionReader != null) {
@@ -436,9 +433,9 @@ public class Scanner implements IScanner {
                         newPath,
                         !useIncludePaths,
                         beginOffset,
+                        startLine,
                         nameOffset,
-                        nameOffset + fileName.length(),
-                        endOffset);
+                        nameOffset + fileName.length(), nameLine, endOffset, endLine);
             }
             catch (Exception e)
             {
@@ -976,7 +973,7 @@ public class Scanner implements IScanner {
 							return newToken( IToken.tDOTSTAR, ".*", contextStack.getCurrentContext() );
 						} else if( c == '.' ){
 							if( getChar() == '.' )
-								return newToken( IToken.tELLIPSIS, "..." );
+								return newToken( IToken.tELLIPSIS, "...", contextStack.getCurrentContext() );
 							else
 								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true, true );				
 						} else {
@@ -1114,6 +1111,7 @@ public class Scanner implements IScanner {
 				
 			} else if (c == '#') {
 				int beginningOffset = contextStack.getCurrentContext().getOffset() - 1;
+				int beginningLine = contextStack.getCurrentLineNumber();
 				// lets prepare for a preprocessor statement
 				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
@@ -1157,7 +1155,7 @@ public class Scanner implements IScanner {
 								continue;
 							}
 
-							poundDefine(beginningOffset);
+							poundDefine(beginningOffset, beginningLine);
 
 							c = getChar();
 							continue;
@@ -1169,7 +1167,7 @@ public class Scanner implements IScanner {
 								continue;
 							}
 
-							poundInclude( beginningOffset );
+							poundInclude( beginningOffset, beginningLine );
 
 							c = getChar();
 							continue;
@@ -2084,11 +2082,13 @@ public class Scanner implements IScanner {
 		return encounteredNewline;
 	}
 
-	protected void poundInclude( int beginningOffset ) throws ScannerException {
+	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException {
 
 		skipOverWhitespace();				
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
+		int nameLine = contextStack.getCurrentLineNumber();
 		String includeLine = getRestOfPreprocessorLine();
+		int endLine = contextStack.getCurrentLineNumber();
 		StringBuffer fileName = new StringBuffer();
 		boolean useIncludePath = true;
 		int startOffset = baseOffset;
@@ -2177,9 +2177,9 @@ public class Scanner implements IScanner {
                             "",
                             !useIncludePath,
                             beginningOffset,
+                            startLine,
                             startOffset,
-                            startOffset + f.length(),
-                            endOffset);
+                            startOffset + f.length(), nameLine, endOffset, endLine);
                 }
                 catch (Exception e)
                 {
@@ -2193,7 +2193,7 @@ public class Scanner implements IScanner {
 			}
 		}
 		else
-			handleInclusion(f.trim(), useIncludePath, startOffset, beginningOffset, endOffset); 
+			handleInclusion(f.trim(), useIncludePath, beginningOffset, startLine, startOffset, nameLine, endOffset, endLine); 
 	}
 
 	protected static final Hashtable EMPTY_MAP = new Hashtable();
@@ -2288,11 +2288,12 @@ public class Scanner implements IScanner {
 	}
 	
 	
-	protected void poundDefine(int beginning) throws ScannerException {
+	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
 		int offset = contextStack.getCurrentContext().getOffset() - key.length() - contextStack.getCurrentContext().undoStackSize();
+		int nameLine = contextStack.getCurrentLineNumber();
 
 		// store the previous definition to check against later
 		IMacroDescriptor previousDefinition = getDefinition( key );
@@ -2413,7 +2414,7 @@ public class Scanner implements IScanner {
 		
 		try
         {
-            astFactory.createMacro( key, beginning, offset, offset + key.length(), contextStack.getCurrentContext().getOffset(), descriptor ).acceptElement( requestor );
+            astFactory.createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, contextStack.getCurrentContext().getOffset(), contextStack.getCurrentLineNumber(), descriptor ).acceptElement( requestor );
         }
         catch (Exception e)
         {
@@ -2753,15 +2754,6 @@ public class Scanner implements IScanner {
 	public void setASTFactory(IASTFactory f) {
 		astFactory = f;	
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.IScanner#getLineNumberForOffset(int)
-     */
-    public int getLineNumberForOffset(int i)
-    {
-        ILineOffsetReconciler reconciler = ParserFactory.createLineOffsetReconciler( backupReader );
-        return reconciler.getLineNumberForOffset(i);
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#setOffsetBoundary(int)

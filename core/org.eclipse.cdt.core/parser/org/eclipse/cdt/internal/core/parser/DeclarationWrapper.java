@@ -65,6 +65,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         mutable = false,
         friend = false,
         inline = false;
+	private int startingLine;
     /**
      * @param b
      */
@@ -85,10 +86,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
     public DeclarationWrapper(
         IASTScope scope,
         int startingOffset,
-        IASTTemplate templateDeclaration)
+        int startingLine, IASTTemplate templateDeclaration)
     {
         this.scope = scope;
         this.startingOffset = startingOffset;
+        this.startingLine = startingLine;
         this.templateDeclaration = templateDeclaration;
     }
     /**
@@ -238,6 +240,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return startingOffset;
     }
+    
+    public int getStartingLine()
+	{
+    	return startingLine;
+    }
     /**
      * @return
      */
@@ -296,6 +303,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         typeSpecifier = specifier;
     }
     private IASTFactory astFactory = null;
+	private int endLine;
     /**
      * @param requestor
      */
@@ -398,7 +406,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                     return astFactory.createTypedef(
                     	scope,
                     	name,
-                    	abs, getStartingOffset(), d.getNameStartOffset(), d.getNameEndOffset() );
+                    	abs, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine() );
                 }
                 catch (ASTSemanticException e1)
                 {
@@ -411,7 +419,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	else
         		try
                 {
-                    return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), d.getNameStartOffset(), d.getNameEndOffset(), d.getConstructorExpression() );
+                    return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
                 }
                 catch (Exception e2)
                 {
@@ -441,7 +449,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                     constt,
                     volatil,
                     getTypeSpecifier(),
-                    declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset(), declarator.getNameEndOffset());
+                    declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null), startingOffset, getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine());
         }
         catch (ASTSemanticException e)
         {
@@ -475,15 +483,15 @@ public class DeclarationWrapper implements IDeclaratorOwner
                     friend,
                     staticc,
                     startingOffset,
+                    getStartingLine(),
                     declarator.getNameStartOffset(),
                     declarator.getNameEndOffset(),
+                    declarator.getNameLine(),
                     templateDeclaration,
                     declarator.isConst(),
                     declarator.isVolatile(),
-                    virtual,
-                    explicit,
-                    declarator.isPureVirtual(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), 
-                    declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), declarator.isVarArgs());
+                    virtual, explicit, 
+                    declarator.isPureVirtual(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), declarator.isVarArgs());
         }
         catch (ASTSemanticException e)
         {
@@ -516,16 +524,16 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 friend,
                 staticc,
                 startingOffset,
+                getStartingLine(),
                 declarator.getNameStartOffset(),
-                declarator.getNameEndOffset(),
+            declarator.getNameEndOffset(),
+            declarator.getNameLine(),
             templateDeclaration,
             declarator.isConst(),
             declarator.isVolatile(),
             virtual,
-            explicit,
-            declarator.isPureVirtual(),
-            declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), 
-			declarator.isVarArgs() );
+            explicit, declarator.isPureVirtual(), declarator.getConstructorMemberInitializers(), 
+			declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), declarator.isVarArgs() );
         }
         catch (ASTSemanticException e)
         {
@@ -560,8 +568,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 register,
                 staticc,
                 startingOffset,
-                declarator.getNameStartOffset(),
-            	declarator.getNameEndOffset(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
+                getStartingLine(),
+            	declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
         }
         catch (ASTSemanticException e)
         {
@@ -594,7 +602,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                             declarator.getArrayModifiers(),
                             null, null, declarator.getName() == null
                                             ? ""
-                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), wrapper.getEndOffset()));
+                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
                 }
                 catch (Exception e)
                 {
@@ -628,7 +636,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 register,
                 staticc,
                 getStartingOffset(),
-                declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getConstructorExpression());
+                getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression());
         }
         catch (ASTSemanticException e)
         {
@@ -748,9 +756,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @param i
      */
-    public void setEndingOffset(int i)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        endOffset = i;
+        endOffset = offset;
+        endLine = lineNumber;
     }
     /**
      * @return
@@ -758,6 +767,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
     public int getEndOffset()
     {
         return endOffset;
+    }
+    
+    public int getEndLine()
+	{
+    	return endLine;
     }
     /**
      * @param b

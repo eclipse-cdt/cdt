@@ -1,3 +1,9 @@
+2004-01-19 John Camelon
+		Added IToken.getLineNumber() to facilitate adding line numbers to AST.
+		Added line number support into IASTOffsetableElement.  Updated all implementations to use this.  
+		Updated Parser and IASTFactory to populate IASTOffsetableElement with the values retrieved from IToken.  
+		Removed IScanner.getLineNumberForOffset().  
+
 2004-01-16 Andrew Niefer
 	Created IExtensibleSymbol, which is a new base class for the symbol interfaces
 	Created IUsingDirectiveSymbol and UsingDirectiveSymbol

@@ -1,3 +1,9 @@
+2004-01-19 John Camelon
+	Updated ParserSymbolTableTest to accommodate new constructors for COMPLETE_PARSE ASTNodes (line # info).  
+	Updated CModelElementsTest to enable testing for line numbers. 
+	Removed CModelElementsFailedTests.testBug36379() as it is redundant due to CModelElementTests.testCModelElements() is complete. 
+	Removed CModelElementsFailedTests from AutomatedIntegrationSuite as it is empty.  
+
 2004-01-16 Andrew Niefer
 	Modified CompleteParseASTTest.testUsingClauses
 	Added ParserSymbolTableTest.testIterator_1 & testIterator_2

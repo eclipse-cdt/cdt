@@ -14,11 +14,12 @@ import org.eclipse.cdt.core.parser.IToken;
 
 public class Token implements IToken {
 
-	public Token(int t, String i, IScannerContext context ) {
+	public Token(int t, String i, IScannerContext context, int lineNumber ) {
 		type = t;
 		image = i;
 		filename = context.getFilename();
 		offset = context.getOffset() - image.length() - context.undoStackSize();
+		this.lineNumber = lineNumber;
         macroOffset = context.getMacroOffset();
         macroLength = context.getMacroLength();
 		
@@ -61,6 +62,8 @@ public class Token implements IToken {
 	}
 	
 	private IToken next;
+
+	private int lineNumber;
 	public IToken getNext() { return next; }
 	public void setNext(IToken t) { next = t; }
 	
@@ -173,6 +176,13 @@ public class Token implements IToken {
 	 */
 	public void setType(int i) {
 		type = i;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#getLineNumber()
+	 */
+	public int getLineNumber() {
+		return lineNumber;
 	}
 
 }

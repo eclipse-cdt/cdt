@@ -17,15 +17,18 @@ package org.eclipse.cdt.internal.core.parser.ast;
 public class Offsets {
 
 	protected int startingOffset = 0;
-
 	protected int endingOffset = 0;
+	private int startingLine;
+	private int endingLine;
 
-	public void setStartingOffset(int o) {
-		startingOffset = o;
+	public void setStartingOffsetAndLineNumber(int offset, int lineNumber) {
+		startingOffset = offset;
+		startingLine = lineNumber;
 	}
 
-	public void setEndingOffset(int o) {
-		endingOffset = o;
+	public void setEndingOffsetAndLineNumber(int offset, int lineNumber) {
+		endingOffset = offset;
+		endingLine = lineNumber;
 	}
 
 	public int getStartingOffset() {
@@ -34,6 +37,20 @@ public class Offsets {
 
 	public int getEndingOffset() {
 		return endingOffset;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getStartingLine() {
+		return startingLine;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getEndingLine() {
+		return endingLine;
 	}
 
 }

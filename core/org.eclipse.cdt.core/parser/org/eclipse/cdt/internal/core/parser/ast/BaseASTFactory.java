@@ -34,16 +34,16 @@ public class BaseASTFactory  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createMacro(java.lang.String, int, int, int)
 	 */
-	public IASTMacro createMacro(String name, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset, IMacroDescriptor info) {
-		IASTMacro m = new ASTMacro( name, startingOffset, endingOffset, nameOffset, nameEndOffset, info );
+	public IASTMacro createMacro(String name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IMacroDescriptor info) {
+		IASTMacro m = new ASTMacro( name, info, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine );
 		return m;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createInclusion(java.lang.String, java.lang.String, boolean)
 	 */
-	public IASTInclusion createInclusion(String name, String fileName, boolean local, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset) {
-		IASTInclusion inclusion = new ASTInclusion( name, fileName, local, startingOffset, nameOffset, nameEndOffset, endingOffset );
+	public IASTInclusion createInclusion(String name, String fileName, boolean local, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine) {
+		IASTInclusion inclusion = new ASTInclusion( name, fileName, local, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine );
 		return inclusion;
 	}
 

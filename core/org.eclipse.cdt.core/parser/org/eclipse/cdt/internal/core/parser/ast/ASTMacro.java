@@ -26,13 +26,13 @@ public class ASTMacro implements IASTMacro {
     private final String name;
     private final IMacroDescriptor innerMacro;
     
-	public ASTMacro( String name, int start, int end, int nameBeg, int nameEnd, IMacroDescriptor info )
+	public ASTMacro( String name, IMacroDescriptor info, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine )
 	{
 		this.name =name; 
-		setStartingOffset(start);
+		setStartingOffsetAndLineNumber(start, startLine);
 		setNameOffset(nameBeg);
-		setNameEndOffset(nameEnd);
-		setEndingOffset(end);
+		setNameEndOffsetAndLineNumber(nameEnd, nameLine);
+		setEndingOffsetAndLineNumber(end, endLine);
 		innerMacro = info;
 	}
 	
@@ -47,14 +47,16 @@ public class ASTMacro implements IASTMacro {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElementRW#setStartingOffset(int)
 	 */
-	public void setStartingOffset(int o) {
-		startingOffset = o; 
+	public void setStartingOffsetAndLineNumber(int offset, int lineNumber) {
+		startingOffset = offset;
+		startingLineNumber = lineNumber;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElementRW#setEndingOffset(int)
 	 */
-	public void setEndingOffset(int o) {
-		endingOffset = o; 
+	public void setEndingOffsetAndLineNumber(int offset, int lineNumber) {
+		endingOffset = offset; 
+		endingLineNumber = lineNumber;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElementRW#setNameOffset(int)
@@ -117,9 +119,10 @@ public class ASTMacro implements IASTMacro {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		nameEndOffset = o;
+		nameEndOffset = offset;
+		nameLineNumber = lineNumber;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getMacroType()
@@ -156,5 +159,25 @@ public class ASTMacro implements IASTMacro {
 	 */
 	public boolean compatible(IMacroDescriptor descriptor) {
 		return innerMacro.compatible(descriptor);
+	}
+	
+	private int startingLineNumber, endingLineNumber, nameLineNumber;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return startingLineNumber;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return endingLineNumber;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return nameLineNumber;
 	}
 }

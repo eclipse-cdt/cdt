@@ -37,9 +37,9 @@ public class ASTField extends ASTVariable implements IASTField
      * @param references
      * @param visibility
      */
-    public ASTField(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, int nameEndOffset, List references, boolean previouslyDeclared, IASTExpression constructorExpression, ASTAccessVisibility visibility)
+    public ASTField(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references, boolean previouslyDeclared, IASTExpression constructorExpression, ASTAccessVisibility visibility)
     {
-        super( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, nameEndOffset, references, constructorExpression, previouslyDeclared );
+        super( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references, constructorExpression, previouslyDeclared );
         this.visibility = visibility;  
         
     }

@@ -38,14 +38,14 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int nameOffset, int nameEndOffset, int endOffset, List references, boolean isDecl )
+    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references, boolean isDecl )
     {
         super( checkSymbol );
         this.kind = kind;
-        setStartingOffset( startingOffset );
+        setStartingOffsetAndLineNumber( startingOffset, startingLine );
         setNameOffset( nameOffset );
-        setNameEndOffset(nameEndOffset);
-        setEndingOffset( endOffset );
+        setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
+        setEndingOffsetAndLineNumber( endOffset, endingLine );
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), checkSymbol.getName() );
         store = new ASTReferenceStore( references );
         isForwardDeclaration = isDecl;
@@ -75,16 +75,16 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset( o );
+        offsets.setEndingOffsetAndLineNumber( offset, lineNumber );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
@@ -163,8 +163,28 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setNameEndOffset(o);
+		offsets.setNameEndOffsetAndLineNumber(offset, lineNumber);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return offsets.getStartingLine();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return offsets.getNameLineNumber();
 	}
 }

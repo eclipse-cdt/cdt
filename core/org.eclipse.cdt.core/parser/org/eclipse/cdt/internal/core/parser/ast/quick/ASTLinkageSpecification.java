@@ -30,11 +30,11 @@ public class ASTLinkageSpecification
 
 	private final String linkage; 
 	
-	public ASTLinkageSpecification( IASTScope scope, String linkage, int startingOffset )
+	public ASTLinkageSpecification( IASTScope scope, String linkage, int startingOffset, int startingLine )
 	{
 		super( scope );
 		this.linkage = linkage;
-		setStartingOffset(startingOffset);
+		setStartingOffsetAndLineNumber(startingOffset, startingLine);
 	}
 
 	/* (non-Javadoc)
@@ -62,16 +62,16 @@ public class ASTLinkageSpecification
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
 	 */
-	public void setStartingOffset(int o)
+	public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setStartingOffset(o);
+		offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
 	 */
-	public void setEndingOffset(int o)
+	public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setEndingOffset(o);
+		offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -125,4 +125,19 @@ public class ASTLinkageSpecification
             /* do nothing */
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+     */
+    public int getStartingLine() {
+    	return offsets.getStartingLine();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+     */
+    public int getEndingLine() {
+    	return offsets.getEndingLine();
+    }
+    
 }

@@ -54,7 +54,6 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public ASTMethod(
         IASTScope scope,
         String name,
-        int nameEndOffset,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -62,30 +61,31 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         boolean isFriend,
         boolean isStatic,
         int startOffset,
+        int startLine,
         int nameOffset,
+        int nameEndOffset,
+        int nameLine,
         IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,
         boolean isConstructor,
         boolean isDestructor,
-        boolean isVirtual,
-        boolean isExplicit,
-        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChainElements, 
-        boolean hasFunctionTryBlock, boolean hasVarArgs )
+        boolean isVirtual, boolean isExplicit, boolean isPureVirtual, 
+        ASTAccessVisibility visibility, List constructorChainElements, boolean hasFunctionTryBlock, boolean hasVarArgs )
     {
         super(
             scope,
             name,
-            nameEndOffset, 
-            parameters,
+            parameters, 
             returnType,
             exception,
             isInline,
             isFriend,
             isStatic,
             startOffset,
+            startLine,
             nameOffset,
-            ownerTemplate, hasFunctionTryBlock, hasVarArgs);
+            nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVarArgs, nameLine);
         this.isVirtual = isVirtual;
         this.isPureVirtual = isPureVirtual;
         this.isConstructor = isConstructor;

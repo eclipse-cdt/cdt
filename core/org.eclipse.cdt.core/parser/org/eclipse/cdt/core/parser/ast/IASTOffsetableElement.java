@@ -16,10 +16,13 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTOffsetableElement {
 
-	public void setStartingOffset( int o ); 
-	public void setEndingOffset( int o );
+	public void setStartingOffsetAndLineNumber( int offset, int lineNumber ); 
+	public void setEndingOffsetAndLineNumber( int offset, int lineNumber );
 
 	public int getStartingOffset();
 	public int getEndingOffset(); 
+	
+	public int getStartingLine(); 
+	public int getEndingLine(); 
 
 }

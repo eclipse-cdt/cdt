@@ -52,7 +52,8 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 	
 	
 	private int nameStartOffset, nameEndOffset;
-	private boolean varArgs; 
+	private boolean varArgs;
+	private int nameLine; 
 
     public Declarator( IDeclaratorOwner owner )
 	{
@@ -75,6 +76,11 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
         return nameEndOffset;
     }
 
+    public int getNameLine()
+	{
+    	return nameLine;
+    }
+    
     /**
      * @return
      */
@@ -102,9 +108,9 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @param i
      */
-    public void setNameEndOffset(int i)
+    public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
     {
-        nameEndOffset = i;
+        nameEndOffset = offset;
     }
 
     /**
@@ -114,7 +120,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     {
         nameStartOffset = i;
     }
-
+    
     /**
      * @return
      */
@@ -175,7 +181,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     {
 		setName( duple.toString() );
 		setNameStartOffset( duple.getFirstToken().getOffset());
-		setNameEndOffset( duple.getLastToken().getEndOffset());
+		setNameEndOffsetAndLineNumber( duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber());
 		namedDuple = duple;
     }
 

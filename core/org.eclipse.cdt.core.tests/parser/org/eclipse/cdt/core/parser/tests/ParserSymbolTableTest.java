@@ -3246,15 +3246,15 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbolASTExtension cuExtension = new StandardSymbolExtension( table.getCompilationUnit(), (ASTSymbol) compUnit );
 		table.getCompilationUnit().setASTExtension( cuExtension );
 		
-		IASTClassSpecifier clsSpec = new ASTClassSpecifier( A, ASTClassKind.CLASS, ClassNameType.IDENTIFIER, ASTAccessVisibility.PUBLIC, 0, 0, 0, new ArrayList( ) ); 
+		IASTClassSpecifier clsSpec = new ASTClassSpecifier( A, ASTClassKind.CLASS, ClassNameType.IDENTIFIER, ASTAccessVisibility.PUBLIC, 0, 0, 0, 0, 0, new ArrayList( ) ); 
 		ISymbolASTExtension clsExtension = new StandardSymbolExtension( A, (ASTSymbol) clsSpec );
 		A.setASTExtension( clsExtension );
 		
-		IASTField field = new ASTField(i, null, null, null, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PUBLIC );
+		IASTField field = new ASTField(i, null, null, null, 0, 0, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PUBLIC );
 		ISymbolASTExtension extension = new StandardSymbolExtension( i, (ASTSymbol) field );
 		i.setASTExtension( extension );
 		
-		field = new ASTField(i, null, null, null, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PRIVATE );
+		field = new ASTField(i, null, null, null, 0, 0, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PRIVATE );
 		extension = new StandardSymbolExtension( j, (ASTSymbol) field );
 		j.setASTExtension( extension );
 	

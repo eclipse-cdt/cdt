@@ -32,13 +32,13 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
      * @param endingOffset
      * @param initialValue
      */
-    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)
+    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IASTExpression initialValue)
     {
         super( enumeratorSymbol );
-        setStartingOffset(startingOffset);
+        setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setNameOffset( nameOffset );
-        setNameEndOffset( nameEndOffset );
-        setEndingOffset( endingOffset );
+        setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
+        setEndingOffsetAndLineNumber( endingOffset, endingLine );
         this.initialValue = initialValue;
         this.owner = owner;
     }
@@ -75,7 +75,7 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
      */
     public void setNameOffset(int o)
     {
-        setStartingOffset(o);
+        offsets.setNameOffset( o );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -98,16 +98,16 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
@@ -134,8 +134,28 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setNameEndOffset(o);
+		offsets.setNameEndOffsetAndLineNumber(offset, lineNumber);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return offsets.getStartingLine();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return offsets.getNameLineNumber();
 	}
 }

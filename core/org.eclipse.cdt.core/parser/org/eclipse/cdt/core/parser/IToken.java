@@ -23,6 +23,10 @@ public interface IToken {
 	public abstract int getOffset();
 	public abstract int getLength();
 	public abstract int getEndOffset();
+	
+	// NOTE:if the token spans lines due to escaped newlines then 
+	// the line number returned is the last one 
+	public int getLineNumber();  
 	public abstract int getDelta(IToken other);
 	public abstract IToken getNext();
 	public abstract void setNext(IToken t);

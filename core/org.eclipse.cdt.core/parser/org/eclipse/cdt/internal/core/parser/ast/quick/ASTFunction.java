@@ -34,8 +34,8 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	/**
      * @param scope
      */
-    public ASTFunction(IASTScope scope, String name, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, 
-    			boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs )
+    public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, 
+    			boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs, int nameLine )
     {
         super(ownerTemplate != null ? null : scope  );
         this.name = name; 
@@ -48,10 +48,10 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         this.ownerTemplateDeclaration = ownerTemplate;
 		if( ownerTemplate != null )
 			ownerTemplate.setOwnedDeclaration( this );
-        offsets.setStartingOffset( startOffset );
+        offsets.setStartingOffsetAndLineNumber( startOffset, startLine );
         offsets.setNameOffset( nameOffset );
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
-        setNameEndOffset(nameEndOffset);
+        setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         this.hasFunctionTryBlock = hasFunctionTryBlock;
         this.varArgs = hasVarArgs;
     }
@@ -142,16 +142,16 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public void setStartingOffset(int o)
+    public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setStartingOffset(o);
+        offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
-    public void setEndingOffset(int o)
+    public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -260,9 +260,9 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffset(int)
 	 */
-	public void setNameEndOffset(int o)
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
 	{
-		offsets.setNameEndOffset(o);
+		offsets.setNameEndOffsetAndLineNumber(offset, lineNumber);
 	}
 	
 	private boolean hasFunctionTryBlock = false;
@@ -287,5 +287,25 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	 */
 	public boolean takesVarArgs() {
 		return varArgs;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
+	 */
+	public int getStartingLine() {
+		return offsets.getStartingLine();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
+	 */
+	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return offsets.getNameLineNumber();
 	}
 }

@@ -237,7 +237,8 @@ public class CModelBuilder {
 			CElement element = createAbstractElement(parent, abstractDeclaration , true);
 			if(element != null){			
 				// set the element position		
-				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
+				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
+				element.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
 				// set the template parameters				
 				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
 				ITemplate classTemplate = (ITemplate) element;
@@ -250,7 +251,8 @@ public class CModelBuilder {
  		if(template != null){
 			CElement element = (CElement)template;
 			// set the element position		
-			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
+			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
+			element.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
 			// set the template parameters
 			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
@@ -318,7 +320,7 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(inclusion.getNameOffset(), inclusion.getNameEndOffset() - inclusion.getNameOffset());
 		element.setPos(inclusion.getStartingOffset(), inclusion.getEndingOffset() - inclusion.getStartingOffset());
-
+		element.setLines( inclusion.getStartingLine(), inclusion.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -331,7 +333,7 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(macro.getNameOffset(), macro.getNameEndOffset() - macro.getNameOffset());
 		element.setPos(macro.getStartingOffset(), macro.getEndingOffset() - macro.getStartingOffset());
-
+		element.setLines( macro.getStartingLine(), macro.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -348,6 +350,7 @@ public class CModelBuilder {
 		element.setIdPos(nsDef.getNameOffset(), 
 		(nsName.length() == 0) ? type.length() : (nsDef.getNameEndOffset() - nsDef.getNameOffset()));
 		element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
+		element.setLines( nsDef.getStartingLine(), nsDef.getEndingLine() );
 		element.setTypeName(type);
 		
 		this.newElements.put(element, element.getElementInfo());		
@@ -373,6 +376,7 @@ public class CModelBuilder {
 		element.setIdPos(enumSpecifier.getNameOffset(), 
 		(enumName.length() == 0) ? type.length() : (enumSpecifier.getNameEndOffset() - enumSpecifier.getNameOffset() ));
 		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getEndingOffset() - enumSpecifier.getStartingOffset());
+		element.setLines( enumSpecifier.getStartingLine(), enumSpecifier.getEndingLine() );
 		element.setTypeName(type);
 		 
 		this.newElements.put(element, element.getElementInfo());
@@ -393,7 +397,7 @@ public class CModelBuilder {
 		// set enumerator position
 		element.setIdPos(enumDef.getStartingOffset(), (enumDef.getNameEndOffset() - enumDef.getNameOffset()));
 		element.setPos(enumDef.getStartingOffset(), enumDef.getEndingOffset() - enumDef.getStartingOffset());
-
+		element.setLines( enumDef.getStartingLine(), enumDef.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
 		return element;		
 	}
@@ -461,6 +465,7 @@ public class CModelBuilder {
 			// set the element position
 			element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getEndingOffset() - classSpecifier.getStartingOffset());
 		}
+		element.setLines( classSpecifier.getStartingLine(), classSpecifier.getEndingLine() );
 		
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -481,7 +486,7 @@ public class CModelBuilder {
 		// set positions
 		element.setIdPos(typeDefDeclaration.getNameOffset(), (typeDefDeclaration.getNameEndOffset() - typeDefDeclaration.getNameOffset()));	
 		element.setPos(typeDefDeclaration.getStartingOffset(), typeDefDeclaration.getEndingOffset() - typeDefDeclaration.getStartingOffset());
-
+		element.setLines( typeDefDeclaration.getStartingLine(), typeDefDeclaration.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
 		return element;	
 	}
@@ -537,7 +542,7 @@ public class CModelBuilder {
 			// set element position
 			element.setPos(varDeclaration.getStartingOffset(), varDeclaration.getEndingOffset() - varDeclaration.getStartingOffset());
 		}
-			
+		element.setLines( varDeclaration.getStartingLine(), varDeclaration.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -637,6 +642,7 @@ public class CModelBuilder {
 			// set the element position		
 			element.setPos(functionDeclaration.getStartingOffset(), functionDeclaration.getEndingOffset() - functionDeclaration.getStartingOffset());	
 		}
+		element.setLines( functionDeclaration.getStartingLine(), functionDeclaration.getEndingLine() );
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;

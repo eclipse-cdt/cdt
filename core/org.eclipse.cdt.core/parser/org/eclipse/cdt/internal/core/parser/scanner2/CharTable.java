@@ -120,7 +120,13 @@ public class CharTable extends HashTable {
 	final public boolean containsKey( char[] key ){
 	    return lookup( key ) != -1; 
 	}
-	
+	final public char[] findKey( char[] buffer, int start, int len ){
+	    int idx = lookup( buffer, start, len );
+	    if( idx == -1 )
+	        return null;
+	    
+	    return keyTable[ idx ];
+	}
 	protected int lookup(char[] buffer ){
 		return lookup(buffer, 0, buffer.length);
 	}

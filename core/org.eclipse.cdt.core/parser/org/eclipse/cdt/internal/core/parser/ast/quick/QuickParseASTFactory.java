@@ -80,7 +80,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createUsingDirective(org.eclipse.cdt.internal.core.parser.ast.IASTScope, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
 	public IASTUsingDirective createUsingDirective(IASTScope scope, ITokenDuple duple, int startingOffset, int startingLine, int endingOffset, int endingLine) {
-		return new ASTUsingDirective( scope, duple.toString(), startingOffset, startingLine, endingOffset, endingLine, duple.getFilename() );
+		return new ASTUsingDirective( scope, duple.toString(), startingOffset, startingLine, endingOffset, endingLine, duple.getFilename(), duple.getStartOffset(), duple.getEndOffset(), duple.getLineNumber() );
 	}
 
 	/* (non-Javadoc)
@@ -119,7 +119,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
 	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, ITokenDuple name, int startingOffset, int startingLine, int endingOffset, int endingLine) {
-		return new ASTUsingDeclaration( scope, isTypeName, name.toCharArray(), startingOffset, startingLine, endingOffset, endingLine, name.getFilename() );
+		return new ASTUsingDeclaration( scope, isTypeName, name.toCharArray(), startingOffset, startingLine, endingOffset, endingLine, name.getFilename(), name.getStartOffset(), name.getEndOffset(), name.getLineNumber() );
 	}
 
 	/* (non-Javadoc)

@@ -40,9 +40,12 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      * @param startingOffset
      * @param endingOffset
      * @param filename
+     * @param nStart
+     * @param nEnd
+     * @param nLine
      */
     //public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset, List references )
-	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int startingLine, int endingOffset, int endingLine, List references, char[] filename )
+	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int startingLine, int endingOffset, int endingLine, List references, char[] filename, int nStart, int nEnd, int nLine )
     {
     	super( ownerSymbol );
         //namespace = namespaceDefinition;
@@ -51,6 +54,8 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
         setEndingOffsetAndLineNumber(endingOffset, endingLine);
         this.references = references;
         fn = filename;
+		setNameOffset( nStart );
+		setNameEndOffsetAndLineNumber( nEnd, nLine );
     }
 
     /* (non-Javadoc)
@@ -152,5 +157,59 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
     {
         return endingOffset;
     }
+
+	private int nameEndOffset;
+	private int nameStartOffset;
+	private int nameLine;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
+	 */
+	public String getName() {
+		return getNamespaceName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+	 */
+	public char[] getNameCharArray() {
+		return getName().toCharArray();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
+	 */
+	public int getNameOffset() {
+		return nameStartOffset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+	 */
+	public void setNameOffset(int o) {
+		nameStartOffset = o;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset() {
+		return nameEndOffset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffsetAndLineNumber(int, int)
+	 */
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber) {
+		nameLine = lineNumber;
+		nameEndOffset = offset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		return nameLine;
+	}
 
 }

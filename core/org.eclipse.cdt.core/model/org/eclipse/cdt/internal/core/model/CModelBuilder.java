@@ -753,7 +753,7 @@ public class CModelBuilder {
 		parent.addChild(element);
 
 		// set positions
-		//element.setIdPos(usingDirDeclaration.getNameOffset(), (usingDirective.getNameEndOffset() - usingDirDeclaration.getNameOffset()));	
+		element.setIdPos(usingDirDeclaration.getNameOffset(), (usingDirDeclaration.getNameEndOffset() - usingDirDeclaration.getNameOffset()));	
 		element.setPos(usingDirDeclaration.getStartingOffset(), usingDirDeclaration.getEndingOffset() - usingDirDeclaration.getStartingOffset());
 		element.setLines(usingDirDeclaration.getStartingLine(), usingDirDeclaration.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
@@ -770,7 +770,7 @@ public class CModelBuilder {
 		parent.addChild(element);
 
 		// set positions
-		//element.setIdPos(usingDeclaration.getNameOffset(), (usingDeclaration.getNameEndOffset() - usingDeclaration.getNameOffset()));	
+		element.setIdPos(usingDeclaration.getNameOffset(), (usingDeclaration.getNameEndOffset() - usingDeclaration.getNameOffset()));	
 		element.setPos(usingDeclaration.getStartingOffset(), usingDeclaration.getEndingOffset() - usingDeclaration.getStartingOffset());
 		element.setLines(usingDeclaration.getStartingLine(), usingDeclaration.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -127,6 +128,15 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 				else
 					return false;
 			}
+			else if (editorInput instanceof ExternalEditorInput){
+				String externalPath = ((ExternalEditorInput) editorInput).getFullPath();
+				String searchMatchPath = searchMatch.getLocation().toString();
+				if (searchMatchPath != null)
+					return externalPath.equals(searchMatchPath);
+				else
+					return false;
+				
+			}
 		} else if (match.getElement() instanceof IFile) {
 			if (editorInput instanceof IFileEditorInput) {
 				return ((IFileEditorInput)editorInput).getFile().equals(match.getElement());
@@ -217,7 +227,39 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 			IFileEditorInput fileEditorInput= (IFileEditorInput) editorInput;
 			return computeContainedMatches(result, fileEditorInput.getFile());
 		} 
+		else if (editorInput instanceof ExternalEditorInput){
+			ExternalEditorInput externalInput=(ExternalEditorInput) editorInput;
+			return computerContainedMatches(result,externalInput.getFullPath());
+		}
 		return null;
+	}
+
+	/**
+	 * @param result
+	 * @param fullPath
+	 * @return
+	 */
+	private Match[] computerContainedMatches(AbstractTextSearchResult result, String fullPath) {
+		Set matches= new HashSet();
+		Object[] test=result.getElements();
+		collectMatches(matches, test, fullPath);
+		return (Match[]) matches.toArray(new Match[matches.size()]);
+	}
+
+	/**
+	 * @param matches
+	 * @param test
+	 * @param fullPath
+	 */
+	private void collectMatches(Set matches, Object[] test, String fullPath) {
+		for (int i=0; i<test.length; i++){
+			Match[]testMatches=this.getMatches(test[i]);
+			for (int k=0;k<testMatches.length;k++){
+				String pathString = ((CSearchMatch) testMatches[k]).getSearchMatch().getLocation().toString();
+			  if (((CSearchMatch) testMatches[k]).getSearchMatch().getLocation().toString().equals(fullPath))
+			     matches.add(testMatches[k]);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -243,6 +285,9 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 		for (int i=0; i<test.length; i++){
 			Match[]testMatches=this.getMatches(test[i]);
 			for (int k=0;k<testMatches.length;k++){
+			  if (((CSearchMatch) testMatches[k]).getSearchMatch().getResource() == null)
+			  	 continue;
+			  
 			  if (((CSearchMatch) testMatches[k]).getSearchMatch().getResource().equals(file))
 			     matches.add(testMatches[k]);
 			}

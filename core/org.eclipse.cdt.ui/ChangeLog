@@ -1,3 +1,20 @@
+2004-11-19 Bogdan Gheorghe
+	Fix for 43664 : Search should report matches outside of workspace
+	
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchAnnotationModel.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchDocumentProvider.java	
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchFile.java	
+	* src/org/eclipse/cdt/internal/ui/preferences/CSearchPreferencePage.java	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResult.java	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java	
+	* src/org/eclipse/cdt/internal/ui/search/NewSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/DeclarationsSearchGroup.java	
+	* src/org/eclipse/cdt/internal/ui/search/actions/ReferencesSearchGroup.java
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* plugin.properties
+	* plugin.xml
+
 2004-11-12 David Inglis
 	
 	Fixed bug # 78292

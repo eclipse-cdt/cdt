@@ -312,8 +312,19 @@ public class GDBTypeParser {
 		} else if (tokenType == NAME) {
 			// Useless we do not need the name of the variable
 			name = " " + token;
+		} else if (tokenType == PARENS) {
+			prependChild(GDBType.FUNCTION);
+		} else if (tokenType == BRACKETS) {			
+			int len = 0;
+			if (token.length() > 0) {
+				try {
+					len = Integer.parseInt(token);
+				} catch (NumberFormatException e) {
+				}
+			}
+			prependChild(GDBType.ARRAY, len);
 		} else {
-			// FIXME: another oops bad declaration
+			// oops bad declaration ?
 			return;
 		}
 

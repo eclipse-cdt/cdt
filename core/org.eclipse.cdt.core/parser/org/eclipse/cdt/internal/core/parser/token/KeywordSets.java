@@ -177,11 +177,57 @@ public class KeywordSets {
 		DECLARATION_TABLE.put( ParserLanguage.C, DECLARATION_C );
 	}
 	
+	private static final Set EXPRESSION_C;
+	static
+	{
+		EXPRESSION_C = new TreeSet();
+		EXPRESSION_C.add( Keywords.CHAR );
+		EXPRESSION_C.add( Keywords.WCHAR_T);
+		EXPRESSION_C.add( Keywords.SHORT);		
+		EXPRESSION_C.add( Keywords.INT);
+		EXPRESSION_C.add( Keywords.LONG);	
+		EXPRESSION_C.add( Keywords.SIGNED);
+		EXPRESSION_C.add( Keywords.UNSIGNED);
+		EXPRESSION_C.add( Keywords.FLOAT);
+		EXPRESSION_C.add( Keywords.DOUBLE);
+		EXPRESSION_C.add( Keywords.SIZEOF );
+		
+	}
+	
+	private static final Set EXPRESSION_CPP;
+	static
+	{
+		EXPRESSION_CPP = new TreeSet(EXPRESSION_C);
+		EXPRESSION_CPP.add( Keywords.BOOL );
+		EXPRESSION_CPP.add( Keywords.NEW );
+		EXPRESSION_CPP.add( Keywords.DELETE );
+		EXPRESSION_CPP.add( Keywords.TYPENAME );
+		EXPRESSION_CPP.add( Keywords.DYNAMIC_CAST );
+		EXPRESSION_CPP.add( Keywords.STATIC_CAST );
+		EXPRESSION_CPP.add( Keywords.REINTERPRET_CAST );
+		EXPRESSION_CPP.add( Keywords.CONST_CAST );
+		EXPRESSION_CPP.add( Keywords.TYPEID );
+		EXPRESSION_CPP.add( Keywords.TRUE );
+		EXPRESSION_CPP.add( Keywords.FALSE );
+		EXPRESSION_CPP.add( Keywords.THIS );
+		EXPRESSION_CPP.add( Keywords.OPERATOR );
+		EXPRESSION_CPP.add( Keywords.THROW );
+	}
+	
+	private static final Hashtable EXPRESSION_TABLE;
+	static
+	{
+		EXPRESSION_TABLE = new Hashtable();
+		EXPRESSION_TABLE.put( ParserLanguage.CPP, EXPRESSION_CPP );
+		EXPRESSION_TABLE.put( ParserLanguage.C, EXPRESSION_C );
+	}
+	
 	private static final Set STATEMENT_C;
 	static 
 	{
 		STATEMENT_C= new TreeSet(); 
 		STATEMENT_C.addAll( DECLARATION_C );
+		STATEMENT_C.addAll( EXPRESSION_C );
 		STATEMENT_C.add( Keywords.FOR );
 		// more to come
 	}
@@ -189,7 +235,8 @@ public class KeywordSets {
 	private static final Set STATEMENT_CPP; 
 	static 
 	{
-		STATEMENT_CPP = new TreeSet( DECLARATION_CPP ); 
+		STATEMENT_CPP = new TreeSet( DECLARATION_CPP );
+		STATEMENT_CPP.addAll( EXPRESSION_CPP );
 		STATEMENT_CPP.add( Keywords.TRY );
 		//TODO finish this
 	}
@@ -261,49 +308,5 @@ public class KeywordSets {
 		PP_DIRECTIVES.add(Directives.POUND_PRAGMA);
 		PP_DIRECTIVES.add(Directives.POUND_ELIF); 
 	}
-	
-	private static final Set EXPRESSION_C;
-	static
-	{
-		EXPRESSION_C = new TreeSet();
-		EXPRESSION_C.add( Keywords.CHAR );
-		EXPRESSION_C.add( Keywords.WCHAR_T);
-		EXPRESSION_C.add( Keywords.SHORT);		
-		EXPRESSION_C.add( Keywords.INT);
-		EXPRESSION_C.add( Keywords.LONG);	
-		EXPRESSION_C.add( Keywords.SIGNED);
-		EXPRESSION_C.add( Keywords.UNSIGNED);
-		EXPRESSION_C.add( Keywords.FLOAT);
-		EXPRESSION_C.add( Keywords.DOUBLE);
-		EXPRESSION_C.add( Keywords.SIZEOF );
-		
-	}
-	
-	private static final Set EXPRESSION_CPP;
-	static
-	{
-		EXPRESSION_CPP = new TreeSet(EXPRESSION_C);
-		EXPRESSION_CPP.add( Keywords.BOOL );
-		EXPRESSION_CPP.add( Keywords.NEW );
-		EXPRESSION_CPP.add( Keywords.DELETE );
-		EXPRESSION_CPP.add( Keywords.TYPENAME );
-		EXPRESSION_CPP.add( Keywords.DYNAMIC_CAST );
-		EXPRESSION_CPP.add( Keywords.STATIC_CAST );
-		EXPRESSION_CPP.add( Keywords.REINTERPRET_CAST );
-		EXPRESSION_CPP.add( Keywords.CONST_CAST );
-		EXPRESSION_CPP.add( Keywords.TYPEID );
-		EXPRESSION_CPP.add( Keywords.TRUE );
-		EXPRESSION_CPP.add( Keywords.FALSE );
-		EXPRESSION_CPP.add( Keywords.THIS );
-		EXPRESSION_CPP.add( Keywords.OPERATOR );
-		EXPRESSION_CPP.add( Keywords.THROW );
-	}
-	
-	private static final Hashtable EXPRESSION_TABLE;
-	static
-	{
-		EXPRESSION_TABLE = new Hashtable();
-		EXPRESSION_TABLE.put( ParserLanguage.CPP, EXPRESSION_CPP );
-		EXPRESSION_TABLE.put( ParserLanguage.C, EXPRESSION_C );
-	}
+
 }

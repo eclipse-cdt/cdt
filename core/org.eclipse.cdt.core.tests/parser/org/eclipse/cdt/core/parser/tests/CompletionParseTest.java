@@ -46,9 +46,9 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testBaseCase_SimpleDeclaration() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 
-		writer.write( "class ABC " ); 
-		writer.write( "{int x;}; " ); 
-		writer.write( "AB\n\n" );
+		writer.write( "class ABC " );  //$NON-NLS-1$
+		writer.write( "{int x;}; " );  //$NON-NLS-1$
+		writer.write( "AB\n\n" ); //$NON-NLS-1$
 
 		IASTCompletionNode node = null;
 		Iterator keywords = null;
@@ -57,7 +57,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertNotNull( node );
 		assertNotNull( node.getCompletionPrefix() );
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
-		assertEquals( node.getCompletionPrefix(), "A");
+		assertEquals( node.getCompletionPrefix(), "A"); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.VARIABLE_TYPE );
 		keywords = node.getKeywords();
 		assertFalse( keywords.hasNext() );
@@ -66,19 +66,19 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertNotNull( node );
 		assertNotNull( node.getCompletionPrefix() );
 		assertTrue( node.getCompletionScope() instanceof IASTClassSpecifier );
-		assertEquals( node.getCompletionPrefix(), "i");
+		assertEquals( node.getCompletionPrefix(), "i"); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.FIELD_TYPE );
 		keywords = node.getKeywords(); 
 		assertTrue( keywords.hasNext() );
-		assertEquals( (String) keywords.next(), "inline");
-		assertEquals( (String) keywords.next(), "int");
+		assertEquals( (String) keywords.next(), "inline"); //$NON-NLS-1$
+		assertEquals( (String) keywords.next(), "int"); //$NON-NLS-1$
 		assertFalse( keywords.hasNext() );
 		
 		node = parse( writer.toString(), 22); 
 		assertNotNull( node );
 		assertNotNull( node.getCompletionPrefix() );
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
-		assertEquals( node.getCompletionPrefix(), "AB");
+		assertEquals( node.getCompletionPrefix(), "AB"); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.VARIABLE_TYPE );
 		keywords = node.getKeywords(); 
 		assertFalse( keywords.hasNext() );
@@ -87,7 +87,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertNotNull( node );
 		assertNotNull( node.getCompletionPrefix() );
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
-		assertEquals( node.getCompletionPrefix(), "");
+		assertEquals( node.getCompletionPrefix(), ""); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.CLASS_REFERENCE );
 		keywords = node.getKeywords(); 
 		assertFalse( keywords.hasNext() );
@@ -96,17 +96,17 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testCompletionLookup_Unqualified() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "int aVar; " );
-		writer.write( "void foo( ) { " );
-		writer.write( "   int anotherVar; " );
-		writer.write( "   a " );
-		writer.write( "} " );
+		writer.write( "int aVar; " ); //$NON-NLS-1$
+		writer.write( "void foo( ) { " ); //$NON-NLS-1$
+		writer.write( "   int anotherVar; " ); //$NON-NLS-1$
+		writer.write( "   a " ); //$NON-NLS-1$
+		writer.write( "} " ); //$NON-NLS-1$
 		
 		String code = writer.toString();
 		
 		for( int i = 0; i < 2; ++i )
 		{	
-			int index = ( i == 0 ? code.indexOf( " a " ) + 2 : code.indexOf( " a ") + 1 );
+			int index = ( i == 0 ? code.indexOf( " a " ) + 2 : code.indexOf( " a ") + 1 ); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			IASTCompletionNode node = parse( code, index );	
 			assertNotNull( node );
@@ -114,7 +114,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			String prefix = node.getCompletionPrefix();
 			assertNotNull( prefix );
 			assertTrue( node.getCompletionScope() instanceof IASTFunction );
-			assertEquals( prefix, i == 0 ? "a" :"" );
+			assertEquals( prefix, i == 0 ? "a" :"" ); //$NON-NLS-1$ //$NON-NLS-2$
 			assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 			
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
@@ -131,37 +131,37 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			if( i != 0 )
 			{
 				IASTFunction foo = (IASTFunction) iter.next();
-				assertEquals( foo.getName(), "foo");
+				assertEquals( foo.getName(), "foo"); //$NON-NLS-1$
 			}
 					
 			assertFalse( iter.hasNext() );
-			assertEquals( anotherVar.getName(), "anotherVar" );
-			assertEquals( aVar.getName(), "aVar" );
+			assertEquals( anotherVar.getName(), "anotherVar" ); //$NON-NLS-1$
+			assertEquals( aVar.getName(), "aVar" ); //$NON-NLS-1$
 		}
 	}
 	
 	public void testCompletionLookup_Qualified() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "int aVar; " );
-		writer.write( "struct D{ " );
-		writer.write( "   int aField; " );
-		writer.write( "   void aMethod(); " );
-		writer.write( "}; " );
-		writer.write( "void foo(){" );
-		writer.write( "   D d; " );
-		writer.write( "   d.a " );
-		writer.write( "}\n" );
+		writer.write( "int aVar; " ); //$NON-NLS-1$
+		writer.write( "struct D{ " ); //$NON-NLS-1$
+		writer.write( "   int aField; " ); //$NON-NLS-1$
+		writer.write( "   void aMethod(); " ); //$NON-NLS-1$
+		writer.write( "}; " ); //$NON-NLS-1$
+		writer.write( "void foo(){" ); //$NON-NLS-1$
+		writer.write( "   D d; " ); //$NON-NLS-1$
+		writer.write( "   d.a " ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "d.a" );
+		int index = code.indexOf( "d.a" ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 3 );				
 		assertNotNull( node );
 		
 		String prefix = node.getCompletionPrefix();
 		assertNotNull( prefix );
-		assertEquals( prefix, "a" );
+		assertEquals( prefix, "a" ); //$NON-NLS-1$
 		
 		assertTrue( node.getCompletionScope() instanceof IASTFunction );
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
@@ -180,79 +180,79 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		assertFalse( iter.hasNext() );
 		
-		assertEquals( aMethod.getName(), "aMethod" );
-		assertEquals( aField.getName(), "aField" );
+		assertEquals( aMethod.getName(), "aMethod" ); //$NON-NLS-1$
+		assertEquals( aField.getName(), "aField" ); //$NON-NLS-1$
 	}
 	
 	public void testMemberCompletion_Arrow() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "class A {" );
-		writer.write( "   public:   void aPublicBaseMethod();" );
-		writer.write( "   private:  void aPrivateBaseMethod();" );
-		writer.write( "};" );
-		writer.write( "class B : public A {" );
-		writer.write( "   public:   void aMethod();" );
-		writer.write( "};" );		
-		writer.write( "void foo(){" );		
-		writer.write( "   B * b = new B();" );		
-		writer.write( "   b-> \n" );
+		writer.write( "class A {" ); //$NON-NLS-1$
+		writer.write( "   public:   void aPublicBaseMethod();" ); //$NON-NLS-1$
+		writer.write( "   private:  void aPrivateBaseMethod();" ); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
+		writer.write( "class B : public A {" ); //$NON-NLS-1$
+		writer.write( "   public:   void aMethod();" ); //$NON-NLS-1$
+		writer.write( "};" );		 //$NON-NLS-1$
+		writer.write( "void foo(){" );		 //$NON-NLS-1$
+		writer.write( "   B * b = new B();" );		 //$NON-NLS-1$
+		writer.write( "   b-> \n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "b->" );
+		int index = code.indexOf( "b->" ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 3 );
 		assertNotNull(node);
-		assertEquals( node.getCompletionPrefix(), "" );
+		assertEquals( node.getCompletionPrefix(), "" ); //$NON-NLS-1$
 		
 		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.MEMBER_REFERENCE);
 		assertTrue(node.getCompletionScope() instanceof IASTFunction );
-		assertEquals( ((IASTFunction)node.getCompletionScope()).getName(), "foo" ); 
+		assertEquals( ((IASTFunction)node.getCompletionScope()).getName(), "foo" );  //$NON-NLS-1$
 		assertTrue(node.getCompletionContext() instanceof IASTVariable );
-		assertEquals( ((IASTVariable)node.getCompletionContext()).getName(), "b" );
+		assertEquals( ((IASTVariable)node.getCompletionContext()).getName(), "b" ); //$NON-NLS-1$
 	}
 	
 	public void testMemberCompletion_Dot() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "class A {" );
-		writer.write( "   public:   void aPublicBaseMethod();" );
-		writer.write( "   private:  void aPrivateBaseMethod();" );
-		writer.write( "};" );
-		writer.write( "class B : public A {" );
-		writer.write( "   public:   void aMethod();" );
-		writer.write( "};" );		
-		writer.write( "void foo(){" );		
-		writer.write( "   B b;" );		
-		writer.write( "   b. \n" );
+		writer.write( "class A {" ); //$NON-NLS-1$
+		writer.write( "   public:   void aPublicBaseMethod();" ); //$NON-NLS-1$
+		writer.write( "   private:  void aPrivateBaseMethod();" ); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
+		writer.write( "class B : public A {" ); //$NON-NLS-1$
+		writer.write( "   public:   void aMethod();" ); //$NON-NLS-1$
+		writer.write( "};" );		 //$NON-NLS-1$
+		writer.write( "void foo(){" );		 //$NON-NLS-1$
+		writer.write( "   B b;" );		 //$NON-NLS-1$
+		writer.write( "   b. \n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "b." );
+		int index = code.indexOf( "b." ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 2 );
 		assertNotNull(node);
-		assertEquals( node.getCompletionPrefix(), "" );
+		assertEquals( node.getCompletionPrefix(), "" ); //$NON-NLS-1$
 		
 		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.MEMBER_REFERENCE);
 		assertTrue(node.getCompletionScope() instanceof IASTFunction );
-		assertEquals( ((IASTFunction)node.getCompletionScope()).getName(), "foo" ); 
+		assertEquals( ((IASTFunction)node.getCompletionScope()).getName(), "foo" );  //$NON-NLS-1$
 		assertTrue(node.getCompletionContext() instanceof IASTVariable );
-		assertEquals( ((IASTVariable)node.getCompletionContext()).getName(), "b" );
+		assertEquals( ((IASTVariable)node.getCompletionContext()).getName(), "b" ); //$NON-NLS-1$
 	}
 	
 	
 	public void testCompletionLookup_Pointer() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "class A {" );
-		writer.write( "   public:   void aPublicBaseMethod();" );
-		writer.write( "   private:  void aPrivateBaseMethod();" );
-		writer.write( "};" );
-		writer.write( "class B : public A {" );
-		writer.write( "   public:   void aMethod();" );
-		writer.write( "};" );		
-		writer.write( "void foo(){" );		
-		writer.write( "   B * b = new B();" );		
-		writer.write( "   b->a \n" );
+		writer.write( "class A {" ); //$NON-NLS-1$
+		writer.write( "   public:   void aPublicBaseMethod();" ); //$NON-NLS-1$
+		writer.write( "   private:  void aPrivateBaseMethod();" ); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
+		writer.write( "class B : public A {" ); //$NON-NLS-1$
+		writer.write( "   public:   void aMethod();" ); //$NON-NLS-1$
+		writer.write( "};" );		 //$NON-NLS-1$
+		writer.write( "void foo(){" );		 //$NON-NLS-1$
+		writer.write( "   B * b = new B();" );		 //$NON-NLS-1$
+		writer.write( "   b->a \n" ); //$NON-NLS-1$
 		
 		for( int i = 0; i < 2; ++i )
 		{	
@@ -260,14 +260,14 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			
 			int index;
 			
-			index = (i == 0 )? (code.indexOf( "b->a" )+4) :(code.indexOf( "b->") + 3);
+			index = (i == 0 )? (code.indexOf( "b->a" )+4) :(code.indexOf( "b->") + 3); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			IASTCompletionNode node = parse( code, index);
 			
 			assertNotNull( node );
 			String prefix = node.getCompletionPrefix();
 			
-			assertEquals( prefix, ( i == 0 ) ? "a" :"");
+			assertEquals( prefix, ( i == 0 ) ? "a" :""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			assertTrue( node.getCompletionScope() instanceof IASTFunction );
 			assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
@@ -285,35 +285,35 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			
 			assertFalse( iter.hasNext() );
 			
-			assertEquals( method.getName(), "aMethod" );
-			assertEquals( baseMethod.getName(), "aPublicBaseMethod" );		
+			assertEquals( method.getName(), "aMethod" ); //$NON-NLS-1$
+			assertEquals( baseMethod.getName(), "aPublicBaseMethod" );		 //$NON-NLS-1$
 		}
 	}
 	
 	public void testCompletionLookup_FriendClass_1() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "class A {" );
-		writer.write( "   private:  void aPrivateMethod();" );
-		writer.write( "   friend class C;" );
-		writer.write( "};" );
+		writer.write( "class A {" ); //$NON-NLS-1$
+		writer.write( "   private:  void aPrivateMethod();" ); //$NON-NLS-1$
+		writer.write( "   friend class C;" ); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
 		
-		writer.write( "class C {" );
-		writer.write( "   void foo();" );
-		writer.write( "};" );	
+		writer.write( "class C {" ); //$NON-NLS-1$
+		writer.write( "   void foo();" ); //$NON-NLS-1$
+		writer.write( "};" );	 //$NON-NLS-1$
 		
-		writer.write( "void C::foo(){" );		
-		writer.write( "   A a;" );		
-		writer.write( "   a.a \n" );
+		writer.write( "void C::foo(){" );		 //$NON-NLS-1$
+		writer.write( "   A a;" );		 //$NON-NLS-1$
+		writer.write( "   a.a \n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "a.a" );
+		int index = code.indexOf( "a.a" ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 3 );
 		
 		assertNotNull( node );
 		
 		String prefix = node.getCompletionPrefix();
-		assertEquals( prefix, "a" );
+		assertEquals( prefix, "a" ); //$NON-NLS-1$
 		
 		assertTrue( node.getCompletionScope() instanceof IASTFunction );
 		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
@@ -330,32 +330,32 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		assertFalse( iter.hasNext() );
 		
-		assertEquals( method.getName(), "aPrivateMethod" );
+		assertEquals( method.getName(), "aPrivateMethod" ); //$NON-NLS-1$
 	}
 	
 	public void testCompletionLookup_FriendClass_2() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "class C {" );
-		writer.write( "   void foo();" );
-		writer.write( "};" );		
-		writer.write( "class A {" );
-		writer.write( "   private:  void aPrivateMethod();" );
-		writer.write( "   friend class C;" );
-		writer.write( "};" );
+		writer.write( "class C {" ); //$NON-NLS-1$
+		writer.write( "   void foo();" ); //$NON-NLS-1$
+		writer.write( "};" );		 //$NON-NLS-1$
+		writer.write( "class A {" ); //$NON-NLS-1$
+		writer.write( "   private:  void aPrivateMethod();" ); //$NON-NLS-1$
+		writer.write( "   friend class C;" ); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
 
-		writer.write( "void C::foo(){" );		
-		writer.write( "   A a;" );		
-		writer.write( "   a.a \n" );
+		writer.write( "void C::foo(){" );		 //$NON-NLS-1$
+		writer.write( "   A a;" );		 //$NON-NLS-1$
+		writer.write( "   a.a \n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "a.a" );
+		int index = code.indexOf( "a.a" ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 3 );
 		
 		assertNotNull( node );
 		
 		String prefix = node.getCompletionPrefix();
-		assertEquals( prefix, "a" );
+		assertEquals( prefix, "a" ); //$NON-NLS-1$
 		
 		assertTrue( node.getCompletionScope() instanceof IASTFunction );
 		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
@@ -372,27 +372,27 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		assertFalse( iter.hasNext() );
 		
-		assertEquals( method.getName(), "aPrivateMethod" );
+		assertEquals( method.getName(), "aPrivateMethod" ); //$NON-NLS-1$
 	}
 	
 	
 	public void testCompletionLookup_ParametersAsLocalVariables() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "int foo( int aParameter ){" );
-		writer.write( "   int aLocal;" );
-		writer.write( "   if( aLocal != 0 ){" );		
-		writer.write( "      int aBlockLocal;" );
-		writer.write( "      a \n" );
+		writer.write( "int foo( int aParameter ){" ); //$NON-NLS-1$
+		writer.write( "   int aLocal;" ); //$NON-NLS-1$
+		writer.write( "   if( aLocal != 0 ){" );		 //$NON-NLS-1$
+		writer.write( "      int aBlockLocal;" ); //$NON-NLS-1$
+		writer.write( "      a \n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( " a " );
+		int index = code.indexOf( " a " ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 2 );
 		
 		assertNotNull( node );
 		
 		String prefix = node.getCompletionPrefix();
-		assertEquals( prefix, "a" );
+		assertEquals( prefix, "a" ); //$NON-NLS-1$
 		
 		assertTrue( node.getCompletionScope() instanceof IASTCodeScope );
 		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
@@ -409,35 +409,35 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		assertFalse( iter.hasNext() );
 		
-		assertEquals( aBlockLocal.getName(), "aBlockLocal" );
-		assertEquals( aLocal.getName(), "aLocal" );
-		assertEquals( aParameter.getName(), "aParameter" );
+		assertEquals( aBlockLocal.getName(), "aBlockLocal" ); //$NON-NLS-1$
+		assertEquals( aLocal.getName(), "aLocal" ); //$NON-NLS-1$
+		assertEquals( aParameter.getName(), "aParameter" ); //$NON-NLS-1$
 	}
 	
 	public void testCompletionLookup_LookupKindTHIS() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "int aGlobalVar;" );
-		writer.write( "namespace NS { " );
-		writer.write( "   int aNamespaceFunction(){}" );
-		writer.write( "   class Base { " );
-		writer.write( "      protected: int aBaseField;" );
-		writer.write( "   };" );
-		writer.write( "   class Derived : public Base {" );
-		writer.write( "      int aMethod();" );
-		writer.write( "   };" );
-		writer.write( "}" );
-		writer.write( "int NS::Derived::aMethod(){");
-		writer.write( "   int aLocal;" );
-		writer.write( "   a  ");
+		writer.write( "int aGlobalVar;" ); //$NON-NLS-1$
+		writer.write( "namespace NS { " ); //$NON-NLS-1$
+		writer.write( "   int aNamespaceFunction(){}" ); //$NON-NLS-1$
+		writer.write( "   class Base { " ); //$NON-NLS-1$
+		writer.write( "      protected: int aBaseField;" ); //$NON-NLS-1$
+		writer.write( "   };" ); //$NON-NLS-1$
+		writer.write( "   class Derived : public Base {" ); //$NON-NLS-1$
+		writer.write( "      int aMethod();" ); //$NON-NLS-1$
+		writer.write( "   };" ); //$NON-NLS-1$
+		writer.write( "}" ); //$NON-NLS-1$
+		writer.write( "int NS::Derived::aMethod(){"); //$NON-NLS-1$
+		writer.write( "   int aLocal;" ); //$NON-NLS-1$
+		writer.write( "   a  "); //$NON-NLS-1$
 
 		String code = writer.toString();
-		int index = code.indexOf( " a " );
+		int index = code.indexOf( " a " ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index + 2 );
 		
 		assertNotNull( node );
 		
-		assertEquals( node.getCompletionPrefix(), "a" );
+		assertEquals( node.getCompletionPrefix(), "a" ); //$NON-NLS-1$
 		assertTrue( node.getCompletionScope() instanceof IASTMethod );
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
@@ -450,8 +450,8 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		IASTMethod method = (IASTMethod) iter.next();
 		IASTField field = (IASTField) iter.next();
 		assertFalse( iter.hasNext() );
-		assertEquals( method.getName(), "aMethod" );
-		assertEquals( field.getName(), "aBaseField" );
+		assertEquals( method.getName(), "aMethod" ); //$NON-NLS-1$
+		assertEquals( field.getName(), "aBaseField" ); //$NON-NLS-1$
 		
 		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 												   new IASTNode.LookupKind[] { IASTNode.LookupKind.THIS, IASTNode.LookupKind.METHODS },
@@ -461,31 +461,31 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		iter = result.getNodes();
 		method = (IASTMethod) iter.next();
 		assertFalse( iter.hasNext() );
-		assertEquals( method.getName(), "aMethod" );
+		assertEquals( method.getName(), "aMethod" ); //$NON-NLS-1$
 	}
 	
 	public void testCompletionInConstructor() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("class SimpleTest{");
-		writer.write("	public:");
-		writer.write("SimpleTest();");
-		writer.write("~SimpleTest();");
-		writer.write("int a, b, c, aa, bb, cc, abc;");
-		writer.write("};");
-		writer.write("SimpleTest::~SimpleTest()");
-		writer.write("{}");
-		writer.write("SimpleTest::SimpleTest()");
-		writer.write("{");
-		writer.write("/**/a");
-		writer.write("}");
+		writer.write("class SimpleTest{"); //$NON-NLS-1$
+		writer.write("	public:"); //$NON-NLS-1$
+		writer.write("SimpleTest();"); //$NON-NLS-1$
+		writer.write("~SimpleTest();"); //$NON-NLS-1$
+		writer.write("int a, b, c, aa, bb, cc, abc;"); //$NON-NLS-1$
+		writer.write("};"); //$NON-NLS-1$
+		writer.write("SimpleTest::~SimpleTest()"); //$NON-NLS-1$
+		writer.write("{}"); //$NON-NLS-1$
+		writer.write("SimpleTest::SimpleTest()"); //$NON-NLS-1$
+		writer.write("{"); //$NON-NLS-1$
+		writer.write("/**/a"); //$NON-NLS-1$
+		writer.write("}"); //$NON-NLS-1$
 
-		IASTCompletionNode node = parse( writer.toString(), writer.toString().indexOf("/**/a") + 5 );
+		IASTCompletionNode node = parse( writer.toString(), writer.toString().indexOf("/**/a") + 5 ); //$NON-NLS-1$
 		assertNotNull(node);
-		assertEquals(node.getCompletionPrefix(), "a");
+		assertEquals(node.getCompletionPrefix(), "a"); //$NON-NLS-1$
 		assertTrue(node.getCompletionScope() instanceof IASTMethod);
 		IASTMethod inquestion = (IASTMethod)node.getCompletionScope();
-		assertEquals( inquestion.getName(), "SimpleTest");
+		assertEquals( inquestion.getName(), "SimpleTest"); //$NON-NLS-1$
 		assertTrue(inquestion.isConstructor());
 		
 		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
@@ -493,32 +493,32 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
 		
-		ILookupResult result = inquestion.lookup( "a", kinds, null );
+		ILookupResult result = inquestion.lookup( "a", kinds, null ); //$NON-NLS-1$
 		assertEquals(result.getResultsSize(), 3 );
 	}
 	
 	public void testCompletionInDestructor() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("class SimpleTest{");
-		writer.write("	public:");
-		writer.write("SimpleTest();");
-		writer.write("~SimpleTest();");
-		writer.write("int a, b, c, aa, bb, cc, abc;");
-		writer.write("};");
-		writer.write("SimpleTest::SimpleTest()");
-		writer.write("{}");
-		writer.write("SimpleTest::~SimpleTest()");
-		writer.write("{");
-		writer.write("/**/a");
-		writer.write("}");
+		writer.write("class SimpleTest{"); //$NON-NLS-1$
+		writer.write("	public:"); //$NON-NLS-1$
+		writer.write("SimpleTest();"); //$NON-NLS-1$
+		writer.write("~SimpleTest();"); //$NON-NLS-1$
+		writer.write("int a, b, c, aa, bb, cc, abc;"); //$NON-NLS-1$
+		writer.write("};"); //$NON-NLS-1$
+		writer.write("SimpleTest::SimpleTest()"); //$NON-NLS-1$
+		writer.write("{}"); //$NON-NLS-1$
+		writer.write("SimpleTest::~SimpleTest()"); //$NON-NLS-1$
+		writer.write("{"); //$NON-NLS-1$
+		writer.write("/**/a"); //$NON-NLS-1$
+		writer.write("}"); //$NON-NLS-1$
 
-		IASTCompletionNode node = parse( writer.toString(), writer.toString().indexOf("/**/a") + 5 );
+		IASTCompletionNode node = parse( writer.toString(), writer.toString().indexOf("/**/a") + 5 ); //$NON-NLS-1$
 		assertNotNull(node);
-		assertEquals(node.getCompletionPrefix(), "a");
+		assertEquals(node.getCompletionPrefix(), "a"); //$NON-NLS-1$
 		assertTrue(node.getCompletionScope() instanceof IASTMethod);
 		IASTMethod inquestion = (IASTMethod)node.getCompletionScope();
-		assertEquals( inquestion.getName(), "~SimpleTest");
+		assertEquals( inquestion.getName(), "~SimpleTest"); //$NON-NLS-1$
 		assertTrue(inquestion.isDestructor());
 		
 		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
@@ -526,23 +526,23 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
 		
-		ILookupResult result = inquestion.lookup( "a", kinds, null );
+		ILookupResult result = inquestion.lookup( "a", kinds, null ); //$NON-NLS-1$
 		assertEquals(result.getResultsSize(), 3 );
 	}
 	
 	public void testBug48307_FriendFunction_1() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer.write( "class A{ public : void foo(); }; " );
-		writer.write( "class B{ ");
-		writer.write( "   private : int aPrivate;" );
-		writer.write( "   friend void A::foo(); ");
-		writer.write( "};" );
-		writer.write( "void A::foo(){" );
-		writer.write( "   B b;");
-		writer.write( "   b.aP" );
+		writer.write( "class A{ public : void foo(); }; " ); //$NON-NLS-1$
+		writer.write( "class B{ "); //$NON-NLS-1$
+		writer.write( "   private : int aPrivate;" ); //$NON-NLS-1$
+		writer.write( "   friend void A::foo(); "); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
+		writer.write( "void A::foo(){" ); //$NON-NLS-1$
+		writer.write( "   B b;"); //$NON-NLS-1$
+		writer.write( "   b.aP" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "b.aP" );
+		int index = code.indexOf( "b.aP" ); //$NON-NLS-1$
 		IASTCompletionNode node = parse( code, index + 4  );
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
@@ -551,22 +551,22 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
-		assertEquals( field.getName(), "aPrivate" );
+		assertEquals( field.getName(), "aPrivate" ); //$NON-NLS-1$
 	}
 
 	public void testBug48307_FriendFunction_2() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer.write( "void global();" );
-		writer.write( "class B{ ");
-		writer.write( "   private : int aPrivate;" );
-		writer.write( "   friend void global(); ");
-		writer.write( "};" );
-		writer.write( "void global(){" );
-		writer.write( "   B b;");
-		writer.write( "   b.aP" );
+		writer.write( "void global();" ); //$NON-NLS-1$
+		writer.write( "class B{ "); //$NON-NLS-1$
+		writer.write( "   private : int aPrivate;" ); //$NON-NLS-1$
+		writer.write( "   friend void global(); "); //$NON-NLS-1$
+		writer.write( "};" ); //$NON-NLS-1$
+		writer.write( "void global(){" ); //$NON-NLS-1$
+		writer.write( "   B b;"); //$NON-NLS-1$
+		writer.write( "   b.aP" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "b.aP" );
+		int index = code.indexOf( "b.aP" ); //$NON-NLS-1$
 		IASTCompletionNode node = parse( code, index + 4  );
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
@@ -575,23 +575,23 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
-		assertEquals( field.getName(), "aPrivate" );
+		assertEquals( field.getName(), "aPrivate" ); //$NON-NLS-1$
 	}
 	
 	public void testBug51260() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( " class A { public: void a(); }; " );
-		writer.write( " class B : public virtual A { public: void b(); };" );
-		writer.write( " class C : public virtual A { public: void c(); };" );
-		writer.write( " class D : public B, C { public: void d(); };" );
+		writer.write( " class A { public: void a(); }; " ); //$NON-NLS-1$
+		writer.write( " class B : public virtual A { public: void b(); };" ); //$NON-NLS-1$
+		writer.write( " class C : public virtual A { public: void c(); };" ); //$NON-NLS-1$
+		writer.write( " class D : public B, C { public: void d(); };" ); //$NON-NLS-1$
 		
-		writer.write( " void A::a(){} ");
-		writer.write( " void B::b(){} ");
-		writer.write( " void C::c(){} ");
-		writer.write( " void D::d(){ SP }" );
+		writer.write( " void A::a(){} "); //$NON-NLS-1$
+		writer.write( " void B::b(){} "); //$NON-NLS-1$
+		writer.write( " void C::c(){} "); //$NON-NLS-1$
+		writer.write( " void D::d(){ SP }" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "SP" );
+		int index = code.indexOf( "SP" ); //$NON-NLS-1$
 		IASTCompletionNode node = parse( code, index );
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
@@ -608,20 +608,20 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		assertFalse( iter.hasNext() );
 		
-		assertEquals( a.getName(), "a" );
-		assertEquals( b.getName(), "b" );
-		assertEquals( c.getName(), "c" );
-		assertEquals( d.getName(), "d" );
+		assertEquals( a.getName(), "a" ); //$NON-NLS-1$
+		assertEquals( b.getName(), "b" ); //$NON-NLS-1$
+		assertEquals( c.getName(), "c" ); //$NON-NLS-1$
+		assertEquals( d.getName(), "d" ); //$NON-NLS-1$
 		
 	}
 	
 	public void testBug52948() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "typedef int Int; ");
-		writer.write( "InSP" );
+		writer.write( "typedef int Int; "); //$NON-NLS-1$
+		writer.write( "InSP" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "SP" );
+		int index = code.indexOf( "SP" ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
@@ -633,7 +633,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		Iterator iter = result.getNodes();
 		IASTTypedefDeclaration typeDef = (IASTTypedefDeclaration) iter.next();
 		
-		assertEquals( typeDef.getName(), "Int" );
+		assertEquals( typeDef.getName(), "Int" ); //$NON-NLS-1$
 		assertFalse( iter.hasNext() );
 	}
 	
@@ -641,28 +641,28 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testCompletionInFunctionBodyFullyQualified() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "int aInteger = 5;\n");
-		writer.write( "namespace NMS { \n");
-		writer.write( " int foo() { \n");
-		writer.write( "::A ");
-		writer.write( "}\n}\n");
+		writer.write( "int aInteger = 5;\n"); //$NON-NLS-1$
+		writer.write( "namespace NMS { \n"); //$NON-NLS-1$
+		writer.write( " int foo() { \n"); //$NON-NLS-1$
+		writer.write( "::A "); //$NON-NLS-1$
+		writer.write( "}\n}\n"); //$NON-NLS-1$
 		String code = writer.toString();
 		
 		for( int i = 0; i < 2; ++i )
 		{
-			String stringToCompleteAfter = ( i == 0 ) ? "::" : "::A";
+			String stringToCompleteAfter = ( i == 0 ) ? "::" : "::A"; //$NON-NLS-1$ //$NON-NLS-2$
 			IASTCompletionNode node = parse( code, code.indexOf( stringToCompleteAfter) + stringToCompleteAfter.length() );
 			
-			validateCompletionNode(node, ( i == 0 ? "" : "A"), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, getCompilationUnit(), false );
+			validateCompletionNode(node, ( i == 0 ? "" : "A"), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, getCompilationUnit(), false ); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
 	                node.getCompletionContext() );
 	
 			Set results = new HashSet();
-			results.add( "aInteger");
+			results.add( "aInteger"); //$NON-NLS-1$
 			if( i == 0 )
-				results.add( "NMS");
+				results.add( "NMS"); //$NON-NLS-1$
 			validateLookupResult(result, results );
 		}
 	}
@@ -670,16 +670,16 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testCompletionInFunctionBodyQualifiedName() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "namespace ABC {\n");
-		writer.write( "  struct DEF { int x; }; \n" );
-		writer.write( "  struct GHI { float y;};\n");
-		writer.write( "}\n");
-		writer.write( "int main() { ABC::D }\n");
+		writer.write( "namespace ABC {\n"); //$NON-NLS-1$
+		writer.write( "  struct DEF { int x; }; \n" ); //$NON-NLS-1$
+		writer.write( "  struct GHI { float y;};\n"); //$NON-NLS-1$
+		writer.write( "}\n"); //$NON-NLS-1$
+		writer.write( "int main() { ABC::D }\n"); //$NON-NLS-1$
 		String code = writer.toString();
 		
 		for( int j = 0; j< 2; ++j )
 		{
-			String stringToCompleteAfter = (j == 0 ) ? "::" : "::D";
+			String stringToCompleteAfter = (j == 0 ) ? "::" : "::D"; //$NON-NLS-1$ //$NON-NLS-2$
 			IASTCompletionNode node = parse( code, code.indexOf( stringToCompleteAfter) + stringToCompleteAfter.length() );
 			
 			IASTNamespaceDefinition namespaceDefinition = null;
@@ -688,7 +688,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			{
 				IASTDeclaration d = (IASTDeclaration) i.next();
 				if( d instanceof IASTNamespaceDefinition ) 
-					if( ((IASTNamespaceDefinition)d).getName().equals( "ABC") )
+					if( ((IASTNamespaceDefinition)d).getName().equals( "ABC") ) //$NON-NLS-1$
 					{
 						namespaceDefinition = (IASTNamespaceDefinition) d;
 						break;
@@ -696,7 +696,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			}
 			assertNotNull( namespaceDefinition );
 			validateCompletionNode( node, 
-					( j == 0 ) ? "" : "D", 
+					( j == 0 ) ? "" : "D",  //$NON-NLS-1$ //$NON-NLS-2$
 					IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, namespaceDefinition, false ); 
 	
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
@@ -704,9 +704,9 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	                node.getCompletionContext() );
 			
 			Set results = new HashSet();
-			results.add( "DEF");
+			results.add( "DEF"); //$NON-NLS-1$
 			if( j == 0 )
-				results.add( "GHI");
+				results.add( "GHI"); //$NON-NLS-1$
 			validateLookupResult(result, results );
 		}
 
@@ -715,16 +715,16 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testCompletionWithTemplateInstanceAsParent() throws Exception
 	{
 		StringWriter writer = new StringWriter();
-		writer.write( "template < class T > class A { public : int a_member; }; ");
-		writer.write( "template < class T > class B : public A< T > { public : int b_member; }; ");
-		writer.write( "void f() { ");
-		writer.write( "   B< int > b; ");
-		writer.write( "   b.SP ");
+		writer.write( "template < class T > class A { public : int a_member; }; "); //$NON-NLS-1$
+		writer.write( "template < class T > class B : public A< T > { public : int b_member; }; "); //$NON-NLS-1$
+		writer.write( "void f() { "); //$NON-NLS-1$
+		writer.write( "   B< int > b; "); //$NON-NLS-1$
+		writer.write( "   b.SP "); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) ); //$NON-NLS-1$
 		
-		ILookupResult result = node.getCompletionScope().lookup( "", 
+		ILookupResult result = node.getCompletionScope().lookup( "",  //$NON-NLS-1$
 				                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL }, 
 																 node.getCompletionContext() );
 		assertEquals( result.getResultsSize(), 2 );
@@ -739,25 +739,25 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testBug58178() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "#define GL_T 0x2001\n");
-		writer.write( "#define GL_TRUE 0x1\n");
-		writer.write( "typedef unsigned char   GLboolean;\n");
-		writer.write( "static GLboolean should_rotate = GL_T");
+		writer.write( "#define GL_T 0x2001\n"); //$NON-NLS-1$
+		writer.write( "#define GL_TRUE 0x1\n"); //$NON-NLS-1$
+		writer.write( "typedef unsigned char   GLboolean;\n"); //$NON-NLS-1$
+		writer.write( "static GLboolean should_rotate = GL_T"); //$NON-NLS-1$
 		String code = writer.toString();
-		final String where = "= GL_T";
+		final String where = "= GL_T"; //$NON-NLS-1$
 		IASTCompletionNode node = parse( code, code.indexOf( where ) + where.length() );
-		assertEquals( node.getCompletionPrefix(), "GL_T");
+		assertEquals( node.getCompletionPrefix(), "GL_T"); //$NON-NLS-1$
 	}
 
 	public void testBug52253() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "class CMyClass {public:\n void doorBell(){ return; }};");
-		writer.write( "int	main(int argc, char **argv) {CMyClass mc; mc.do }");
+		writer.write( "class CMyClass {public:\n void doorBell(){ return; }};"); //$NON-NLS-1$
+		writer.write( "int	main(int argc, char **argv) {CMyClass mc; mc.do }"); //$NON-NLS-1$
 		String code = writer.toString();
-		final String where = "mc.do";
+		final String where = "mc.do"; //$NON-NLS-1$
 		IASTCompletionNode node = parse( code, code.indexOf( where) + where.length() );
-		assertEquals( node.getCompletionPrefix(), "do");
+		assertEquals( node.getCompletionPrefix(), "do"); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), CompletionKind.MEMBER_REFERENCE );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL }, 
@@ -766,23 +766,23 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		Iterator i = result.getNodes();
 		IASTMethod doorBell = (IASTMethod) i.next();
 		assertFalse( i.hasNext() );
-		assertEquals( doorBell.getName(), "doorBell");
+		assertEquals( doorBell.getName(), "doorBell"); //$NON-NLS-1$
 		
 	}
 	
 	public void testBug58492() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("struct Cube {                       ");
-		writer.write("   int nLen;                        ");
-		writer.write("   int nWidth;                      ");
-		writer.write("   int nHeight;                     ");
-		writer.write("};                                  ");
-		writer.write("int volume( struct Cube * pCube ) { ");
-		writer.write("   pCube->SP                        ");
+		writer.write("struct Cube {                       "); //$NON-NLS-1$
+		writer.write("   int nLen;                        "); //$NON-NLS-1$
+		writer.write("   int nWidth;                      "); //$NON-NLS-1$
+		writer.write("   int nHeight;                     "); //$NON-NLS-1$
+		writer.write("};                                  "); //$NON-NLS-1$
+		writer.write("int volume( struct Cube * pCube ) { "); //$NON-NLS-1$
+		writer.write("   pCube->SP                        "); //$NON-NLS-1$
 
 		String code = writer.toString();
-		IASTCompletionNode node = parse( code, code.indexOf("SP"), ParserLanguage.C );
+		IASTCompletionNode node = parse( code, code.indexOf("SP"), ParserLanguage.C ); //$NON-NLS-1$
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 				                                                 new IASTNode.LookupKind[] {IASTNode.LookupKind.ALL },
@@ -797,16 +797,16 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testCompletionOnExpression() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "class ABC { public: void voidMethod(); };\n");
-		writer.write( "ABC * someFunction(void) { return new ABC(); }\n");
-		writer.write( "void testFunction( void ) { someFunction()->V  }\n" );
+		writer.write( "class ABC { public: void voidMethod(); };\n"); //$NON-NLS-1$
+		writer.write( "ABC * someFunction(void) { return new ABC(); }\n"); //$NON-NLS-1$
+		writer.write( "void testFunction( void ) { someFunction()->V  }\n" ); //$NON-NLS-1$
 		String code = writer.toString();
 		for( int i = 0; i < 2; ++i )
 		{
-			int index = code.indexOf( "V");
+			int index = code.indexOf( "V"); //$NON-NLS-1$
 			if( i == 1 ) ++index;
 			IASTCompletionNode node = parse( code, index );
-			assertEquals( node.getCompletionPrefix(), (i == 0 )? "": "V");
+			assertEquals( node.getCompletionPrefix(), (i == 0 )? "": "V"); //$NON-NLS-1$ //$NON-NLS-2$
 			assertEquals( node.getCompletionKind(), CompletionKind.MEMBER_REFERENCE );
 			assertTrue( node.getCompletionContext() instanceof IASTExpression );
 		}
@@ -815,15 +815,15 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	
 	public void testCompletionInTypeDef() throws Exception{
 		StringWriter writer = new StringWriter();
-		writer.write( "struct A {  int name;  };  \n" );
-		writer.write( "typedef struct A * PA;     \n" );
-		writer.write( "int main() {               \n" );
-		writer.write( "   PA a;                   \n" );
-		writer.write( "   a->SP                   \n" );
-		writer.write( "}                          \n" );
+		writer.write( "struct A {  int name;  };  \n" ); //$NON-NLS-1$
+		writer.write( "typedef struct A * PA;     \n" ); //$NON-NLS-1$
+		writer.write( "int main() {               \n" ); //$NON-NLS-1$
+		writer.write( "   PA a;                   \n" ); //$NON-NLS-1$
+		writer.write( "   a->SP                   \n" ); //$NON-NLS-1$
+		writer.write( "}                          \n" ); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		int index = code.indexOf( "SP" );
+		int index = code.indexOf( "SP" ); //$NON-NLS-1$
 		
 		IASTCompletionNode node = parse( code, index );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
@@ -834,7 +834,24 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		Iterator iter = result.getNodes();
 		IASTField name = (IASTField) iter.next();
 		
-		assertEquals( name.getName(), "name" );
+		assertEquals( name.getName(), "name" ); //$NON-NLS-1$
 		assertFalse( iter.hasNext() );
+	}
+	
+	public void testBug59134() throws Exception
+	{
+		String code = "int main(){ siz }"; //$NON-NLS-1$
+		IASTCompletionNode node = parse( code, code.indexOf(" siz") ); //$NON-NLS-1$
+		assertNotNull( node );
+		Iterator keywords = node.getKeywords();
+		boolean passed = false;
+		while( keywords.hasNext() )
+		{
+			String keyword = (String) keywords.next();
+			if( keyword.equals( "sizeof")) //$NON-NLS-1$
+				passed = true;
+		}
+		assertTrue( passed );
+		
 	}
 }

@@ -1,3 +1,7 @@
+2004-11-11 Alain Magloire
+	Fix for PR 75000, from PalmSource
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIVariable.java
+
 2004-11-10 Mikhail Khodjaiants
 	Fix for bug 76340: CDT hogs Windows input loop when double clicking on a breakpoint.
 	* InternalDebugCoreMessages.properties

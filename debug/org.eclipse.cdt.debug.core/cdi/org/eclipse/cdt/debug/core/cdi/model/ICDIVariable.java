@@ -72,4 +72,5 @@ public interface ICDIVariable extends ICDIVariableDescriptor {
 	 */
 	void dispose() throws CDIException;
 
+	boolean equals(ICDIVariable variable);
 }

@@ -260,8 +260,21 @@ public class VariableManager extends Manager {
 		String fullName = varDesc.getFullName();
 		int pos = varDesc.getPosition();
 		int depth = varDesc.getStackDepth();
-		
-		checkType(frame, type);
+
+		// Check the type validity.
+		{
+			StackFrame f = frame;
+			if (f == null) {
+				if (thread != null) {
+					f = thread.getCurrentStackFrame();
+				} else {
+					Thread t = (Thread)target.getCurrentThread();
+					f = t.getCurrentStackFrame();
+				}
+			}
+			checkType(f, type);
+		}
+
 		VariableDescriptor vo = null;
 
 		if (varDesc instanceof ArgumentDescriptor || varDesc instanceof Argument) {

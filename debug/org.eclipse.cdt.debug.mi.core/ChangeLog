@@ -1,3 +1,7 @@
+2004-11-02 Alain Magloire
+	Tentative fix for PR 77435
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+
 2004-10-31 Alain Magloire
 	Tentative fix for PR 74496
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.cdt.testing"
+      label="%featureName"
+      version="1.0.1"
+      provider-name="%providerName"
+      os=""
+      ws=""
+      nl=""
+      image="eclipse_update_120.jpg">
+
+   <description>
+      %description
+   </description>
+
+   <license>
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.cdt.core" version="1.0.1" match="equivalent"/>
+      <import plugin="org.eclipse.test" version="2.1.0" match="compatible"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.cdt.debug.ui.tests"
+         download-size="0"
+         install-size="0"
+         version="1.0.1">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.ui.tests"
+         download-size="0"
+         install-size="0"
+         version="1.0.1">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.testing"
+         download-size="0"
+         install-size="0"
+         version="1.0.1">
+   </plugin>
+
+</feature>

@@ -1,4 +1,15 @@
 2004-02-03 Alain Magloire
+	
+	PR 51121
+	From Chris Wiebe:
+	This patch prevents a null pointer exception in
+	org.eclipse.jface.text.reconciler.AbstractReconciler.  Under certain
+	conditions (like rapidly closing all editors) the call to getDocument()
+	inside initialProcess() can return null which causes an exception.
+	
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+
+2004-02-03 Alain Magloire
 
 	PR 51115
 	Patch from Thomas Fletcher to cache the include queries.

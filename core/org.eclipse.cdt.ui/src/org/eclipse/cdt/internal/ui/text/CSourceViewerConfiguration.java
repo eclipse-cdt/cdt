@@ -192,7 +192,15 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
-			Reconciler reconciler= new Reconciler();
+			Reconciler reconciler= new Reconciler() {
+				protected void initialProcess() {
+					// prevent case where getDocument() returns null
+					// and causes exception in initialProcess()
+					IDocument doc = getDocument();
+					if (doc != null)
+						super.initialProcess();
+				}
+			};
 			reconciler.setDelay(1000);
 			reconciler.setIsIncrementalReconciler(false);
 			reconciler.setReconcilingStrategy(new CReconcilingStrategy(fEditor), IDocument.DEFAULT_CONTENT_TYPE);

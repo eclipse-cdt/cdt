@@ -21,7 +21,6 @@ import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEConstants;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -35,8 +34,8 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 		return getBinary(null, path);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IFile)
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {

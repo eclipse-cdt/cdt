@@ -12,7 +12,6 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
 
 public interface ICExtensionReference {
 
@@ -53,7 +52,7 @@ public interface ICExtensionReference {
 	 * <p>
 	 * The ICExtension is instantiated using its 0-argument public 
 	 * constructor. If the class implements the
-	 * <code>IExecutableExtension</code> interface, the method
+	 * <code>org.eclipse.core.runtime.IExecutableExtension</code> interface, the method
 	 * <code>setInitializationData</code> is called, passing to the object
 	 * the configuration information that was used to create it. 
 	 * </p>
@@ -65,7 +64,7 @@ public interface ICExtensionReference {
 	 * @return the executable ICExtension instance
 	 * @exception CoreException if an instance of the executable extension
 	 *   could not be created for any reason.
-	 * @see IExecutableExtension#setInitializationData
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData
 	 */
     public ICExtension createExtension() throws CoreException;
 

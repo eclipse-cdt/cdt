@@ -1,5 +1,10 @@
 2003-04-03 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdt/VariableManager.java:
+	update(), put a limit on the number of stack we check for variables.
+
+2003-04-03 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdt/model/Target.java:
 	* src/org/eclipse/cdt/debug/mi/core/cdt/model/Thread.java:
 	Before updating the register check if the manager is on autoupdate.

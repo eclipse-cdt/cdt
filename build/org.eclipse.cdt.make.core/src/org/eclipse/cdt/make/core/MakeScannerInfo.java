@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 package org.eclipse.cdt.make.core;
 
 import java.util.ArrayList;
@@ -20,17 +20,12 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-
-/**
- * @author David
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class MakeScannerInfo implements IScannerInfo {
+
 	private IProject project;
 	private ArrayList symbolList;
 	private ArrayList pathList;
+	boolean hasChanged = false;
 
 	MakeScannerInfo(IProject project) {
 		this.project = project;
@@ -41,28 +36,41 @@ public class MakeScannerInfo implements IScannerInfo {
 	}
 
 	public void update() throws CoreException {
-		MakeScannerProvider.updateScannerInfo(this);
+		if (hasChanged) {
+			MakeScannerProvider.updateScannerInfo(this);
+			hasChanged = false;
+		}
 	}
 
 	public synchronized void setPreprocessorSymbols(String[] symbols) {
-		// Clear out any existing symbols and add the new stuff
-		getSymbolList().clear();
-		getSymbolList().addAll(Arrays.asList(symbols));
+		if (!Arrays.equals(symbols, getSymbolList().toArray())) {
+			hasChanged = true;
+			// Clear out any existing symbols and add the new stuff
+			getSymbolList().clear();
+			getSymbolList().addAll(Arrays.asList(symbols));
+		}
 	}
 
 	public synchronized void setIncludePaths(String[] paths) {
-		// Clear the existing list and add the paths
-		getPathList().clear();
-		getPathList().addAll(Arrays.asList(paths));
+		if (!Arrays.equals(paths, getPathList().toArray())) {
+			hasChanged = true;
+			// Clear the existing list and add the paths
+			getPathList().clear();
+			getPathList().addAll(Arrays.asList(paths));
+		}
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public synchronized String[] getIncludePaths() {
-		return (String[])getPathList().toArray(new String[getPathList().size()]);
+		return (String[]) getPathList().toArray(new String[getPathList().size()]);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public synchronized Map getDefinedSymbols() {
@@ -96,7 +104,7 @@ public class MakeScannerInfo implements IScannerInfo {
 	}
 
 	public synchronized String[] getPreprocessorSymbols() {
-		return (String[])getSymbolList().toArray(new String[getSymbolList().size()]);
+		return (String[]) getSymbolList().toArray(new String[getSymbolList().size()]);
 	}
 
 	protected List getSymbolList() {

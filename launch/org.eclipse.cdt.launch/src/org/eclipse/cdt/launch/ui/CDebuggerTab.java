@@ -30,21 +30,29 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
+
 	protected Combo fDCombo;
 	protected Button fStopInMain;
 	protected Button fAttachButton;
 	protected Button fRunButton;
+	protected Button fVarBookKeeping;
+
 	private final boolean DEFAULT_STOP_AT_MAIN = true;
+
 	public void createControl(Composite parent) {
 		GridData gd;
 
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		GridLayout topLayout = new GridLayout(2, false);
-		comp.setLayout(topLayout);
-		Label dlabel = new Label(comp, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		comp.setLayout(layout);
+		
+		Composite comboComp = new Composite(comp, SWT.NONE);
+		layout = new GridLayout(2, false);
+		comboComp.setLayout(layout);
+		Label dlabel = new Label(comboComp, SWT.NONE);
 		dlabel.setText("Debugger:");
-		fDCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fDCombo = new Combo(comboComp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fDCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateComboFromSelection();
@@ -56,10 +64,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		radioLayout.marginHeight = 0;
 		radioLayout.marginWidth = 0;
 		radioComp.setLayout(radioLayout);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		radioComp.setLayoutData(gd);
-		fRunButton = createRadioButton(radioComp, "Run program in debugger");
+		fRunButton = createRadioButton(radioComp, "Run program in debugger.");
 		fRunButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fRunButton.getSelection() == true) {
@@ -70,24 +75,37 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fAttachButton = createRadioButton(radioComp, "Attach to running process");
+		fAttachButton = createRadioButton(radioComp, "Attach to running process.");
 		fAttachButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 
-		fStopInMain = new Button(comp, SWT.CHECK);
-		fStopInMain.setText("Stop at main() on startup");
+		
+		Composite optionComp = new Composite(comp, SWT.NONE);
+		layout = new GridLayout(2, false);
+		optionComp.setLayout(layout);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		optionComp.setLayoutData(gd);
+		
+		fStopInMain = new Button(optionComp, SWT.CHECK);
+		fStopInMain.setText("Stop at main() on startup.");
 		fStopInMain.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fStopInMain.setLayoutData(gd);
-
+		
+		fVarBookKeeping = new Button(optionComp, SWT.CHECK);
+		fVarBookKeeping.setText("Enable variable bookkeeping.");
+		fVarBookKeeping.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
 		debuggerGroup.setText("Debugger Options");
 		setDynamicTabHolder(debuggerGroup);
@@ -176,6 +194,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, DEFAULT_STOP_AT_MAIN);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false);
 		config.setAttribute(
 			ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 			ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
@@ -202,6 +221,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, DEFAULT_STOP_AT_MAIN) == true) {
 				fStopInMain.setSelection(true);
 			}
+			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false) == true) {
+				fVarBookKeeping.setSelection(true);
+			}
 		} catch (CoreException e) {
 			return;
 		}
@@ -211,6 +233,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (isValid(config)) {
 			super.performApply(config);
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, fVarBookKeeping.getSelection());
 			if (fAttachButton.getSelection() == true) {
 				config.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,

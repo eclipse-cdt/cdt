@@ -11,7 +11,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -27,6 +26,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -156,8 +157,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		String projectName = EMPTY_STRING;
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
-		}
-		catch (CoreException ce) {
+		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);
 		}
 		fProjText.setText(projectName);
@@ -167,8 +167,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		String programName = EMPTY_STRING;
 		try {
 			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EMPTY_STRING);
-		}
-		catch (CoreException ce) {
+		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);
 		}
 		fProgText.setText(programName);
@@ -194,11 +193,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 				"Project must first be entered before searching for a program");
 			return;
 		}
-
-		IBinary[] executables = getBinaryFiles(getCProject());
 		ILabelProvider labelProvider = new CElementLabelProvider();
-			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setElements(executables);
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
+		dialog.setElements(getBinaryFiles(getCProject()));
 		dialog.setMessage("Choose a &program to run");
 		dialog.setTitle("Program Selection");
 		if (dialog.open() == ElementListSelectionDialog.OK) {
@@ -211,8 +208,21 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * Iterate through and suck up all of the executable files that
 	 * we can find.
 	 */
-	protected IBinary[] getBinaryFiles(ICProject cproject) {
-		return cproject.getBinaryContainer().getBinaries();
+	protected IBinary[] getBinaryFiles(final ICProject cproject) {
+		final Display display;
+		if ( getShell() == null ) {
+			display = LaunchUIPlugin.getShell().getDisplay();
+		} else {
+			display = getShell().getDisplay();
+		}
+		final Object[] ret = new Object[1];
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				ret[0] = cproject.getBinaryContainer().getBinaries();
+			}
+		});
+
+		return (IBinary[])ret[0];
 	}
 
 	/**
@@ -268,13 +278,13 @@ public class CMainTab extends CLaunchConfigurationTab {
 			try {
 				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource());
 				String projectPlatform = cdesciptor.getPlatform();
-				if (filterPlatform.equals("*") || projectPlatform.equals("*") || 
-				    (isNative && cdesciptor.getPlatform().equalsIgnoreCase("native"))
+				if (filterPlatform.equals("*")
+					|| projectPlatform.equals("*")
+					|| (isNative && cdesciptor.getPlatform().equalsIgnoreCase("native"))
 					|| filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {
 					list.add(cproject[i]);
 				}
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
@@ -346,8 +356,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 		cElement = getContext(config, getPlatform(config));
 		if (cElement != null) {
 			initializeCProject(cElement, config);
+			initializeProgramName(cElement, config);
 		}
-		initializeProgramName(cElement, config);
 	}
 
 	/**
@@ -356,8 +366,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected void initializeProgramName(ICElement cElement, ILaunchConfigurationWorkingCopy config) {
 		IBinary binary = null;
 		if (cElement instanceof ICProject) {
-			IBinaryContainer bc = ((ICProject) cElement).getBinaryContainer();
-			IBinary[] bins = bc.getBinaries();
+			IBinary[] bins = getBinaryFiles((ICProject) cElement);
 			if (bins.length == 1) {
 				binary = bins[0];
 			}
@@ -373,6 +382,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 				name = name.substring(index + 1);
 			}
 			name = getLaunchConfigurationDialog().generateName(name);
+			config.rename(name);
+		} else {
+			String name = getLaunchConfigurationDialog().generateName(cElement.getElementName());
 			config.rename(name);
 		}
 	}

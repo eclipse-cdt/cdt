@@ -77,13 +77,12 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				ICDescriptor descriptor;
 				try {
 					descriptor = CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject());
+					String projectPlatform = descriptor.getPlatform();
+					if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) {
+						obj = null;
+					}
 				}
 				catch (CoreException e) {
-					return null;
-				}
-				String projectPlatform = descriptor.getPlatform();
-				if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) {
-					obj = null;
 				}
 			}
 			if (obj != null) {

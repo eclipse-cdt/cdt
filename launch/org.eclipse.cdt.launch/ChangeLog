@@ -1,3 +1,16 @@
+2003-06-26 David Inglis
+	
+	* src/org/eclipse/cdt/launch/ui/CDebuggerTab.java
+	Added variable book-keeping option in config.
+
+	* src/org/eclipse/cdt/launch/ui/CLaunchConfigurationTab.java (getContext)
+	Returns an ICElement even if CDescriptor does not exsist.
+
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+	Use BusyIndicator when getting binary list from project
+	fixed problem with prefilling a new config when the project did not have a CDescriptor
+	
+	
 2003-04-17 Alain Magloire
 
 	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortCut.java:

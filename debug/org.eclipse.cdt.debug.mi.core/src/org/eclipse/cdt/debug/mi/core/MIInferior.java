@@ -13,10 +13,12 @@ import java.io.PipedOutputStream;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
+import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.utils.spawner.Spawner;
 
 /**
  */
@@ -152,6 +154,23 @@ public class MIInferior extends Process {
 			} catch (MIException e) {
 			}
 			setTerminated();
+		}
+	}
+
+	public void interrupt() {
+		Process gdb = session.getMIProcess();
+		if (gdb instanceof Spawner) {
+			Spawner gdbSpawner = (Spawner)gdb;
+			gdbSpawner.interrupt();
+		} else {
+			// Try the exec-interrupt;
+			CommandFactory factory = session.getCommandFactory();
+			MIExecInterrupt interrupt = factory.createMIExecInterrupt();
+			try {
+				session.postCommand(interrupt);
+				MIInfo info = interrupt.getMIInfo();
+			} catch (MIException e) {
+			}
 		}
 	}
 

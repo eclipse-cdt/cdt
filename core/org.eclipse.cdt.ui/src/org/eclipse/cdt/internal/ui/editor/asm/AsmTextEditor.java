@@ -26,8 +26,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ExtendedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.StatusTextEditor;
 
 
 
@@ -36,8 +36,12 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
 /**
  * Assembly text editor
  */
-public class AsmTextEditor extends StatusTextEditor {
-		
+public class AsmTextEditor extends ExtendedTextEditor {
+//public class AsmTextEditor extends StatusTextEditor {
+// FIXME: Should this editor have a different preference store ?
+// For now we are sharing with the CEditor and any changes will in the
+// setting of the CEditor will be reflected in this editor.
+
 	/**
 	 * Creates a new text editor.
 	 */
@@ -53,12 +57,15 @@ public class AsmTextEditor extends StatusTextEditor {
 		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(textTools, this));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		setRangeIndicator(new DefaultRangeIndicator());
+		// FIXME: Should this editor have a different preference store ?
+		// For now we are sharing with the CEditor and any changes will in the
+		// setting of the CEditor will be reflected in this editor.
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		setEditorContextMenuId("#ASMEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#ASMEditorRulerContext"); //$NON-NLS-1$
 		//setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
-		
 	}
+
 	/**
 	 * The <code>TextEditor</code> implementation of this 
 	 * <code>IEditorPart</code> method returns <code>true</code>.

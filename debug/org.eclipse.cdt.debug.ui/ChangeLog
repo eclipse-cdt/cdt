@@ -1,3 +1,12 @@
+2002-11-28 Mikhail Khodjaiants
+	Live editing of the memory view.
+	* SaveMemoryChangesAction.java - removed
+	* MemoryPresentation.java
+	* MemoryControlArea.java
+	* MemoryText.java
+	* MemoryViewer.java
+	* MemoryView.java
+
 2002-11-27 Mikhail Khodjaiants
 	Render debug target as suspended if no reason is specified.
 	* CDTDebugModelPresentation.java

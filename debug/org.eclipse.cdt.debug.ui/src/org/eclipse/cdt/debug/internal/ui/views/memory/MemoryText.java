@@ -33,38 +33,6 @@ import org.eclipse.swt.widgets.Control;
  */
 public class MemoryText
 {	
-	/**
-	 * 
-	 * The instance of this class specifies the text replacement 
-	 * that has to be applied to the StyledText widget.
-	 * 
-	 * @since Oct 29, 2002
-	 */
-	public static class TextReplacement
-	{
-		private int fStart;
-		private String fText;
-
-		/**
-		 * Constructor for TextReplacement.
-		 */
-		public TextReplacement( int start, String text )
-		{
-			fStart = start;
-			fText = text;
-		}
-		
-		public int getStart()
-		{
-			return fStart;
-		}
-		
-		public String getText()
-		{
-			return fText;
-		}
-	}
-
 	private StyledText fText = null;
 	private MemoryPresentation fPresentation = null;
 	private boolean fUpdating = false;
@@ -118,16 +86,19 @@ public class MemoryText
 			return;
 		if ( event.length != 1 )
 			return;
-		TextReplacement[] trs = fPresentation.textChanged( event.start, 
-														   fText.getText().charAt( event.start ),
-														   event.replacedText.toCharArray() );
 		int caretOffset = fText.getCaretOffset();
-		update( trs );
+		fText.getCaret().setVisible( false );
+		char ch = fText.getText().charAt( event.start );
+		restoreText( event.start, event.length, event.replacedText );
+		fPresentation.setItemValue( event.start, ch );
 		fText.setCaretOffset( caretOffset );
+		fText.getCaret().setVisible( true );
 	}
 	
 	public void refresh()
 	{
+		int offset = fText.getCaretOffset();
+		fText.getCaret().setVisible( false );
 		fText.setFont( new Font( fText.getDisplay(), getFontData() ) );
 		fText.setBackground( getBackgroundColor() );
 		fText.setForeground( getForegroundColor() );
@@ -151,7 +122,8 @@ public class MemoryText
 												 getBackgroundColor() ) );
 		}
 		fText.redraw();
-		updateTitle();
+		fText.setCaretOffset( offset );
+		fText.getCaret().setVisible( true );
 	}
 	
 	private void refresh( Point[] zones, String[] items )
@@ -170,7 +142,6 @@ public class MemoryText
 */
 			fText.redrawRange( zones[i].x, zones[i].y - zones[i].x + 1, false );
 		}
-		updateTitle();
 	}
 
 	protected void handleVerifyKey( VerifyEvent event ) 
@@ -295,7 +266,7 @@ public class MemoryText
 	{
 		return fText;
 	}
-	
+/*	
 	protected void update( TextReplacement[] trs )
 	{
 		fUpdating = true;
@@ -304,18 +275,24 @@ public class MemoryText
 			fText.replaceTextRange( trs[i].getStart(), 
 							  		trs[i].getText().length(),
 							  		trs[i].getText() );
-/*
 			fText.setStyleRange( new StyleRange( trs[i].getStart(), 
 							  					 trs[i].getText().length(),
 										   		 getDirtyColor(),
 										   		 getBackgroundColor() ) );
-*/
 			fText.redrawRange( trs[i].getStart(), trs[i].getText().length(), false );
 		}
+		saveChanges();
 		fUpdating = false;
 		updateTitle();
 	}
-
+*/
+	private void restoreText( int start, int length, String text )
+	{
+		fUpdating = true;
+		fText.replaceTextRange( start, length, text );
+		fUpdating = false;
+	}
+/*
 	private void updateTitle()
 	{
 		if ( fText.getParent() instanceof MemoryControlArea )
@@ -332,4 +309,13 @@ public class MemoryText
 			((MemoryControlArea)fText.getParent()).setTitle( title );
 		}
 	}
+	
+	private void saveChanges()
+	{
+		if ( fText.getParent() instanceof MemoryControlArea )
+		{
+			((MemoryControlArea)fText.getParent()).saveChanges();
+		}
+	}
+*/
 }

@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.internal.ui.actions.MemoryFormatAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryNumberOfColumnAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemorySizeAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
-import org.eclipse.cdt.debug.internal.ui.actions.SaveMemoryChangesAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowAsciiAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -100,11 +99,6 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		setAction( "ClearMemory", action ); //$NON-NLS-1$
 		add( (ClearMemoryAction)action );
 
-		action = new SaveMemoryChangesAction( (MemoryViewer)getViewer() );
-		action.setEnabled( false );
-		setAction( "SaveMemoryChanges", action ); //$NON-NLS-1$
-		add( (SaveMemoryChangesAction)action );
-
 		action = new ShowAsciiAction( (MemoryViewer)getViewer() );
 		action.setEnabled( false );
 		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII ) );
@@ -151,7 +145,6 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "RefreshMemory" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "ClearMemory" ) ); //$NON-NLS-1$
-		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "SaveMemoryChanges" ) ); //$NON-NLS-1$
 
 		MenuManager subMenu = new MenuManager( "Format" );
 		{
@@ -196,7 +189,6 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		tbm.add( getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 		tbm.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
 		tbm.add( getAction( "ClearMemory" ) ); //$NON-NLS-1$
-		tbm.add( getAction( "SaveMemoryChanges" ) ); //$NON-NLS-1$
 
 		tbm.add( new Separator( IDebugUIConstants.RENDER_GROUP ) );
 		tbm.add( getAction( "ShowAscii" ) ); //$NON-NLS-1$
@@ -244,7 +236,6 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		fMemoryNumberOfColumnsGroup.dispose();
 
 		remove( (ShowAsciiAction)getAction( "ShowAscii" ) );
-		remove( (SaveMemoryChangesAction)getAction( "SaveMemoryChanges" ) );
 		remove( (ClearMemoryAction)getAction( "ClearMemory" ) );
 		remove( (RefreshMemoryAction)getAction( "RefreshMemory" ) );
 		remove( (AutoRefreshMemoryAction)getAction( "AutoRefreshMemory" ) );

@@ -6,7 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * 
@@ -378,46 +378,8 @@ public class MemoryPresentation
 			return getMemoryBlock().displayASCII();
 		return false;
 	}
-	
-	protected MemoryText.TextReplacement[] textChanged( int offset, char newChar, char[] replacedText )
-	{
-		ArrayList list = new ArrayList();
-		if ( getMemoryBlock() != null )
-		{
-			int index = getDataItemIndex( offset );
-			if ( index != -1 )
-			{
-				char[] chars = getDataItemChars( index );
-				if ( isInDataArea( offset ) )
-				{
-					int charIndex = getOffsetInDataItem( offset, index );
-					chars[charIndex] = newChar;
-				}
-				if ( isInAsciiArea( offset ) )
-				{
-					chars = CDebugUtils.getByteText( (byte)newChar );
-				}
-				try
-				{
-					String text = new String( chars );
-					getMemoryBlock().setItemValue( index, text );
-					list.add( new MemoryText.TextReplacement( getDataItemOffset( index ), text ) );
-					if ( displayASCII() )
-					{
-						// Ascii is enabled only when the word size is one byte
-						list.add( getAsciiTextReplacement( index, chars ) );
-					}
-				}
-				catch( DebugException e )
-				{
-					// ignore
-				}
-			}
-		}
-		return (MemoryText.TextReplacement[])list.toArray( new MemoryText.TextReplacement[list.size()] );
-	}
 
-	private int getDataItemIndex( int offset )
+	protected int getDataItemIndex( int offset )
 	{
 		int row = offset / getRowLength();
 		int pos = offset % getRowLength() - getAddressLength() - INTERVAL_BETWEEN_ADDRESS_AND_DATA;
@@ -472,20 +434,7 @@ public class MemoryPresentation
 		}
 		return -1;
 	}
-	
-	private MemoryText.TextReplacement getAsciiTextReplacement( int itemIndex, char[] chars )
-	{
-		int row = itemIndex / getNumberOfDataItemsInRow();
-		int col = itemIndex % getNumberOfDataItemsInRow();
-		int offset = row * getRowLength() +
-					 getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
-					 getNumberOfDataItemsInRow() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) + 
-					 INTERVAL_BETWEEN_DATA_AND_ASCII + col;
-		byte newValue = CDebugUtils.textToByte( chars );
-		char ch = ( Character.isISOControl( (char)newValue ) || newValue < 0 ) ? getPaddingCharacter() : (char)newValue;
-		return new MemoryText.TextReplacement( offset, new String( new char[]{ ch } ) );
-	}
-	
+
 	public void dispose()
 	{
 		if ( fAddressZones != null )
@@ -497,16 +446,7 @@ public class MemoryPresentation
 			fChangedZones.clear();
 		}
 	}
-	
-	protected boolean isDirty()
-	{
-		if ( getMemoryBlock() != null )
-		{
-			return getMemoryBlock().isDirty();
-		}
-		return false;
-	}
-	
+
 	private String getDataItemPresentation( String item )
 	{
 		switch( getDataFormat() )
@@ -570,5 +510,53 @@ public class MemoryPresentation
 			return getMemoryBlock().isStartAddressChanged();
 		}
 		return false;
+	}
+	
+	protected String getNewItemValue( int offset, char newChar )
+	{
+		if ( getMemoryBlock() != null )
+		{
+			int index = getDataItemIndex( offset );
+			if ( index != -1 )
+			{
+				char[] chars = getDataItemChars( index );
+				if ( isInDataArea( offset ) )
+				{
+					int charIndex = getOffsetInDataItem( offset, index );
+					chars[charIndex] = newChar;
+				}
+				if ( isInAsciiArea( offset ) )
+				{
+					chars = CDebugUtils.getByteText( (byte)newChar );
+				}
+				return new String( chars );
+			}
+		}
+		return null;
+	}
+
+	protected void setItemValue( int offset, char ch )
+	{
+		if ( getMemoryBlock() != null )
+		{
+			int index = getDataItemIndex( offset );
+			if ( index != -1 )
+			{
+				String newValue = getNewItemValue( offset, ch );
+				if ( newValue != null )
+				{
+					try
+					{
+						getMemoryBlock().setItemValue( index, newValue );
+						return;
+					}
+					catch( DebugException e )
+					{
+						Display.getDefault().beep();
+					}
+				}
+			}
+		}
+		Display.getDefault().beep();
 	}
 }

@@ -424,27 +424,7 @@ public class MemoryControlArea extends Composite
 			}
 		}
 	}
-	
-	protected void saveChanges()
-	{
-		if ( getMemoryBlock() != null )
-		{
-			try
-			{
-				getMemoryBlock().saveChanges();
-				String title = getTitle();
-				if ( title.charAt( 0 ) == '*' )
-				{
-					setTitle( title.substring( 1 ) );
-				}
-			}
-			catch( DebugException e )
-			{
-				CDebugUIPlugin.errorDialog( "Unable to save memory changes.", e.getStatus() );
-			}
-		}
-	}
-	
+
 	private void updateToolTipText()
 	{
 		setTabItemToolTipText( fAddressText.getText().trim() );

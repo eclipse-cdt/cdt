@@ -31,7 +31,10 @@ public class Archive extends CFile implements IArchive {
 	}
 
 	public IBinary[] getBinaries() {
-		return (IBinary[])getChildren();
+		ICElement[] e = getChildren();
+		IBinary[] b = new IBinary[e.length];
+		System.arraycopy(e, 0, b, 0, e.length);
+		return b;
 	}
 
 	public CElementInfo createElementInfo() {

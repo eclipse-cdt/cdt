@@ -29,7 +29,10 @@ public class CRoot extends CResource implements ICRoot {
 	}
 
 	public ICProject[] getCProjects() {
-		return (ICProject[])getChildren();
+		ICElement[] e = getChildren();
+		ICProject[] p = new ICProject[e.length];
+		System.arraycopy(e, 0, p, 0, e.length);
+		return p;
 	}
 
 	public IWorkspace getWorkspace() {

@@ -669,20 +669,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		if ( fName == null )
 		{
-			String cdiName = ( fOriginal != null ) ? fOriginal.getCDIVariableObject().getName() : null;
-			fName = cdiName;
-			if ( cdiName != null && getParent() instanceof ICValue )
-			{
-				CVariable parent = getParentVariable();
-				while( parent instanceof CArrayPartition )
-				{
-					parent = parent.getParentVariable();
-				}
-				if ( parent instanceof CVariable && parent.getType().isArray() )
-				{
-					fName = parent.getName() + '[' + cdiName + ']';
-				}
-			}
+			fName = ( fOriginal != null ) ? fOriginal.getCDIVariableObject().getName() : null;
 		}
 		return fName;
 	}
@@ -932,15 +919,6 @@ public abstract class CVariable extends CDebugElement
 	protected boolean isAccessSpecifier() throws DebugException
 	{
 		return ( "public".equals( getName() ) || "protected".equals( getName() ) || "private".equals( getName() ) );
-	}
-
-	private CVariable getParentVariable() throws DebugException
-	{
-		if ( getParent() instanceof CValue )
-			return ((CValue)getParent()).getParentVariable();
-		if ( getParent() instanceof CArrayPartitionValue )
-			return ((CArrayPartitionValue)getParent()).getParentVariable();
-		return null;
 	}
 
 	/* (non-Javadoc)

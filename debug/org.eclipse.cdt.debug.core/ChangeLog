@@ -1,3 +1,7 @@
+2003-08-21 Mikhail Khodjaiants
+	Use the names of array's elements returned by CDI.
+	* CVariable.java
+
 2003-08-20 Mikhail Khodjaiants
 	Unable to terminate post mortem debugging session.
 	Extended the 'CDebugTarget' class to overload the 'terminate' and 'canTerminate' methods.

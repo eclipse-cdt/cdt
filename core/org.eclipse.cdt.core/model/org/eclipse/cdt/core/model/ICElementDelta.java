@@ -84,6 +84,15 @@ public interface ICElementDelta {
 	public int F_MOVED_TO = 0x0020;
 
 	/**
+	 * Change flag indicating that the element has changed position relatively to its siblings. 
+	 * If the element is an <code>IPackageFragmentRoot</code>,  a classpath entry corresponding 
+	 * to the element has changed position in the project's classpath.
+	 * 
+	 * @since 2.1
+	 */
+	public int F_REORDER = 0x00100;
+
+	/**
 	 * Change flag indicating that the underlying <code>IProject</code> has been
 	 * opened.
 	 */

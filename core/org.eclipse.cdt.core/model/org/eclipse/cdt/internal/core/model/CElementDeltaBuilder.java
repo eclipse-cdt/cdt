@@ -1,4 +1,3 @@
-package org.eclipse.cdt.internal.core.model;
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -9,6 +8,7 @@ package org.eclipse.cdt.internal.core.model;
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -175,8 +175,7 @@ private void findChangesInPositioning(ICElement element, int depth) throws CMode
 		return;
 		
 	if (!isPositionedCorrectly(element)) {
-		this.delta.removed(element);
-		this.delta.added(element);
+		this.delta.changed(element, ICElementDelta.F_REORDER);
 	} 
 	
 	if (element instanceof IParent) {
@@ -287,28 +286,19 @@ private boolean isIdentical(CElement e1, CElement e2) {
  */
 private boolean isPositionedCorrectly(ICElement element) {
 	ListItem oldListItem = this.getOldPosition(element);
-	if (oldListItem == null)
-		return false;
-	ICElement oldPrevious = oldListItem.previous;
+	if (oldListItem == null) return false;
+	
 	ListItem newListItem = this.getNewPosition(element);
-	if (newListItem == null)
-		return false;
-	ICElement newPrevious = newListItem.previous; 
-	if (oldPrevious == newPrevious)
-		return true;
-	ICElement lastNewPrevious = null;
-	while(lastNewPrevious != newPrevious) {
-		if (isIdentical((CElement)oldPrevious, (CElement)newPrevious))
-			return true;
-		ICElement tempLastPrevious = lastNewPrevious; //JOHNC added this
-		lastNewPrevious = newPrevious;
-		// if newPrevious is null at this time we should exit the loop.
-		if (newPrevious == null) break;
-		ICElement tempPrevious = (this.getNewPosition(newPrevious)).previous; //JOHNC added this
-		if( tempLastPrevious == tempPrevious ) break; // JOHNC added this
-		newPrevious = tempPrevious;
-	}
-	return false;
+	if (newListItem == null) return false;
+	
+	ICElement oldPrevious = oldListItem.previous;
+	ICElement newPrevious = newListItem.previous;
+	
+	if (oldPrevious == null) {
+		return newPrevious == null;
+	} else {
+		return oldPrevious.equals(newPrevious);
+	}	
 }
 private void putElementInfo(ICElement element, CElementInfo info) {
 	this.infos.put(element, info);

@@ -4556,7 +4556,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       typeIdExpression.setOperator(op);
       typeIdExpression.setTypeId(typeId);
       typeId.setParent(typeIdExpression);
-      typeId.setPropertyInParent(ICPPASTTypeIdExpression.TYPE_ID);
+      typeId.setPropertyInParent(IASTTypeIdExpression.TYPE_ID);
       return typeIdExpression;
    }
 

@@ -369,19 +369,19 @@ public class ASTSignatureUtil {
 					case ICPPASTCompositeTypeSpecifier.k_class:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CLASS); needSpace=true;
 						break;
-					case ICPPASTCompositeTypeSpecifier.k_struct:
+					case IASTCompositeTypeSpecifier.k_struct:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
 						break;
-					case ICPPASTCompositeTypeSpecifier.k_union:
+					case IASTCompositeTypeSpecifier.k_union:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
 						break;
 				}
 			} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
 				switch(((ICASTCompositeTypeSpecifier)declSpec).getKey()) {
-					case ICASTCompositeTypeSpecifier.k_struct:
+					case IASTCompositeTypeSpecifier.k_struct:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
 						break;
-					case ICASTCompositeTypeSpecifier.k_union:
+					case IASTCompositeTypeSpecifier.k_union:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
 						break;
 				}

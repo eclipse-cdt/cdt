@@ -107,8 +107,8 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
-	public int getRoleForName(IASTName name) {
-		if( this.name == name )
+	public int getRoleForName(IASTName n ) {
+		if( this.name == n  )
 			return r_declaration;
 		return r_unclear;
 	}

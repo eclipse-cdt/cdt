@@ -503,23 +503,21 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private void removeAllBreakpoints() {
-		ICDIBreakpoint[] cdiBreakpoints = getBreakpointMap().getAllCDIBreakpoints();
 		ICDITarget cdiTarget = getCDITarget();
-		if ( cdiBreakpoints.length > 0 ) {
+		try {
+			cdiTarget.deleteAllBreakpoints();
+		}
+		catch( CDIException e ) {
+			// Do we care ? 
+			CDebugCorePlugin.log( e.getMessage() );
+		}
+		ICBreakpoint[] breakpoints = getBreakpointMap().getAllCBreakpoints();
+		for( int i = 0; i < breakpoints.length; ++i ) {
 			try {
-				cdiTarget.deleteBreakpoints( cdiBreakpoints );
+				((CBreakpoint)breakpoints[i]).decrementInstallCount();
 			}
-			catch( CDIException e ) {
+			catch( CoreException e ) {
 				CDebugCorePlugin.log( e.getMessage() );
-			}
-			ICBreakpoint[] breakpoints = getBreakpointMap().getAllCBreakpoints();
-			for( int i = 0; i < breakpoints.length; ++i ) {
-				try {
-					((CBreakpoint)breakpoints[i]).decrementInstallCount();
-				}
-				catch( CoreException e ) {
-					CDebugCorePlugin.log( e.getMessage() );
-				}
 			}
 		}
 	}

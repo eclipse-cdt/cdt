@@ -40,8 +40,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	private StatusInfo fCPathStatus;
 	private StatusInfo fBuildPathStatus;
 
-	private ICProject fCurrCProject;
-
+	private ICElement fCurrCElement;
+	
 	private String fUserSettingsTimeStamp;
 	private long fFileTimeStamp;
 
@@ -71,7 +71,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	public IPathEntry[] getRawCPath() throws CModelException{
 		List elements = getCPaths();
 
-		IPathEntry[] entries = fCurrCProject.getRawPathEntries();
+		IPathEntry[] entries = getCProject().getRawPathEntries();
 		List cpath = new ArrayList(elements.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes(); 
@@ -122,7 +122,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 *        existing Java project - the path entries of the existing project
 	 */
 	public void init(ICElement element, IPathEntry[] cpathEntries) {
-		setCProject(element.getCProject());
+		setCElement(element);
 		List newCPath = null;
 
 		if (cpathEntries == null) {
@@ -130,6 +130,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 				cpathEntries = getCProject().getRawPathEntries();
 			} catch (CModelException e) {
 			}
+			
 		}
 		if (cpathEntries != null) {
 			newCPath = getFilteredElements(cpathEntries, getFilteredTypes());
@@ -149,7 +150,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		for (int i = 0; i < cPathEntries.length; i++) {
 			IPathEntry curr = cPathEntries[i];
 			if (contains(types, curr.getEntryKind())) {
-				newCPath.add(CPElement.createFromExisting(curr, fCurrCProject));
+				newCPath.add(CPElement.createFromExisting(curr, getCProject()));
 			}
 		}
 		return newCPath;
@@ -187,28 +188,32 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	}
 
 	public boolean hasChangesInCPathFile() {
-		IFile file = fCurrCProject.getProject().getFile(".cdtproject"); //$NON-NLS-1$
+		IFile file = getProject().getFile(".cdtproject"); //$NON-NLS-1$
 		return fFileTimeStamp != file.getModificationStamp();
 	}
 
 	public void initializeTimeStamps() {
-		IFile file = fCurrCProject.getProject().getFile(".cdtproject"); //$NON-NLS-1$
+		IFile file = getProject().getFile(".cdtproject"); //$NON-NLS-1$
 		fFileTimeStamp = file.getModificationStamp();
 		fUserSettingsTimeStamp = getEncodedSettings();
 	}
 
 	abstract protected void addTabs();
 
-	protected void setCProject(ICProject project) {
-		fCurrCProject = project;
+	protected void setCElement(ICElement element) {
+		fCurrCElement = element;
+	}
+
+	protected ICElement getCElement() {
+		return fCurrCElement;
 	}
 
 	protected ICProject getCProject() {
-		return fCurrCProject;
+		return fCurrCElement.getCProject();
 	}
 
 	public IProject getProject() {
-		return fCurrCProject.getProject();
+		return getCProject().getProject();
 	}
 
 	protected void doStatusLineUpdate() {
@@ -256,7 +261,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 			entries[i] = currElement.getPathEntry();
 		}
 
-		ICModelStatus status = CoreModel.validatePathEntries(fCurrCProject, entries);
+		ICModelStatus status = CoreModel.validatePathEntries(getCProject(), entries);
 		if (!status.isOK()) {
 			fBuildPathStatus.setError(status.getMessage());
 			return;
@@ -289,7 +294,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 		monitor.worked(2);
 		
-		IPathEntry[] entries = fCurrCProject.getRawPathEntries();
+		IPathEntry[] entries = getCProject().getRawPathEntries();
 		
 		List cpath = new ArrayList(cPathEntries.size() + entries.length);
 

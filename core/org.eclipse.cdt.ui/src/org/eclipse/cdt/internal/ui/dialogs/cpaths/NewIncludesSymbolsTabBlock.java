@@ -52,7 +52,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		initializingTabs = false;
 
 		if (getCProject() != null) {
-			fIncludeSymbols.init(getCProject(), fCPaths);
+			fIncludeSymbols.init(getCElement(), fCPaths);
 		}
 		Dialog.applyDialogFont(fComposite);
 		return fComposite;
@@ -77,7 +77,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		fCPaths = cPaths;
 
 		if (fIncludeSymbols != null) {
-			fIncludeSymbols.init(getCProject(), cPaths);
+			fIncludeSymbols.init(element, cPaths);
 		}
 		doStatusLineUpdate();
 		initializeTimeStamps();

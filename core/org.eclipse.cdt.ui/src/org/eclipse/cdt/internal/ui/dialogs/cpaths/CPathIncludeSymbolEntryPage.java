@@ -62,7 +62,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class CPathIncludeSymbolEntryPage extends CPathBasePage {
@@ -102,7 +101,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			null,
 			/* 14 */CPathEntryMessages.getString("IncludeSymbolEntryPage.up"), //$NON-NLS-1$
 			/* 15 */CPathEntryMessages.getString("IncludeSymbolEntryPage.down")}; //$NON-NLS-1$
-	private CPElementGroup fProjectGroup;
+	private CPElementGroup fTopGroup;
 
 	private class IncludeSymbolAdapter implements IDialogFieldListener, ITreeListAdapter {
 
@@ -174,10 +173,10 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		fIncludeSymPathsList.setLabelText(CPathEntryMessages.getString("IncludeSymbolEntryPage.label")); //$NON-NLS-1$
 		fIncludeSymPathsList.enableButton(IDX_REMOVE, false);
 		fIncludeSymPathsList.enableButton(IDX_EDIT, false);
-		fIncludeSymPathsList.enableButton(IDX_ADD_CONTRIBUTED, false);
-		fIncludeSymPathsList.enableButton(IDX_ADD_EXT_INCLUDE, false);
-		fIncludeSymPathsList.enableButton(IDX_ADD_WS_INCLUDE, false);
-		fIncludeSymPathsList.enableButton(IDX_ADD_SYMBOL, false);
+		fIncludeSymPathsList.enableButton(IDX_ADD_CONTRIBUTED, true);
+		fIncludeSymPathsList.enableButton(IDX_ADD_EXT_INCLUDE, true);
+		fIncludeSymPathsList.enableButton(IDX_ADD_WS_INCLUDE, true);
+		fIncludeSymPathsList.enableButton(IDX_ADD_SYMBOL, true);
 		fIncludeSymPathsList.enableButton(IDX_EXPORT, false);
 		fIncludeSymPathsList.enableButton(IDX_UP, false);
 		fIncludeSymPathsList.enableButton(IDX_DOWN, false);
@@ -204,16 +203,16 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		fIncludeSymPathsList.setButtonsMinWidth(buttonBarWidth);
 		setControl(composite);
 		fIncludeSymPathsList.getTreeViewer().addFilter(fFilter);
-		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
 	}
 
 	public Image getImage() {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
 	}
 
-	public void init(ICProject cproject, List cPaths) {
-		fCurrCProject = cproject;
-		List elements = createGroups(cPaths);
+	public void init(ICElement cElement, List cPaths) {
+		fCurrCProject = cElement.getCProject();
+		List elements = createGroups(cElement, cPaths);
 		fIncludeSymPathsList.setElements(elements);
 		updateStatus();
 	}
@@ -264,44 +263,44 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		}
 	}
 	
-	private List createGroups(List cPaths) {
+	private List createGroups(ICElement element, List cPaths) {
 		// create resource groups
 		List resourceGroups = new ArrayList(5);
-		fProjectGroup = new CPElementGroup(fCurrCProject.getResource());
-		resourceGroups.add(fProjectGroup);
+		fTopGroup = new CPElementGroup(element.getResource());
+		resourceGroups.add(fTopGroup);
 		 // add containers first so that they appear at top of list
 		for (int i = 0; i < cPaths.size(); i++) {
-			CPElement element = (CPElement)cPaths.get(i);
-			switch (element.getEntryKind()) {
+			CPElement cpelement = (CPElement)cPaths.get(i);
+			switch (cpelement.getEntryKind()) {
 				case IPathEntry.CDT_CONTAINER :
-					fProjectGroup.addChild(element);
+					fTopGroup.addChild(cpelement);
 					break;
 			}
 		}
 		for (int i = 0; i < cPaths.size(); i++) {
-			CPElement element = (CPElement)cPaths.get(i);
-			switch (element.getEntryKind()) {
+			CPElement cpelement = (CPElement)cPaths.get(i);
+			switch (cpelement.getEntryKind()) {
 				case IPathEntry.CDT_INCLUDE :
 				case IPathEntry.CDT_MACRO :
-					CPElementGroup resGroup = new CPElementGroup(element.getResource());
+					CPElementGroup resGroup = new CPElementGroup(cpelement.getResource());
 					int ndx = resourceGroups.indexOf(resGroup);
 					if (ndx == -1) {
 						resourceGroups.add(resGroup);
 					} else {
 						resGroup = (CPElementGroup)resourceGroups.get(ndx);
 					}
-					resGroup.addChild(element);
+					resGroup.addChild(cpelement);
 			}
 		}
 
 		// place each path in its appropriate inherited group (or not if
 		// excluded)
 		for (int i = 0; i < cPaths.size(); i++) {
-			CPElement element = (CPElement)cPaths.get(i);
-			switch (element.getEntryKind()) {
+			CPElement cpelement = (CPElement)cPaths.get(i);
+			switch (cpelement.getEntryKind()) {
 				case IPathEntry.CDT_INCLUDE :
 				case IPathEntry.CDT_MACRO :
-					addPathToResourceGroups(element, null, resourceGroups);
+					addPathToResourceGroups(cpelement, null, resourceGroups);
 			}
 		}
 		return resourceGroups;
@@ -512,7 +511,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			if (res != null && res.length > 0) {
 				CPElement curr = res[0];
 				curr.setExported(element.isExported());
-				fProjectGroup.replaceChild(element, curr);
+				fTopGroup.replaceChild(element, curr);
 				fIncludeSymPathsList.refresh();
 			}
 		}
@@ -673,7 +672,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 				return (CPElementGroup)item;
 			}
 		}
-		return null;
+		return fTopGroup;
 	}
 
 	protected void listPageDialogFieldChanged(DialogField field) {

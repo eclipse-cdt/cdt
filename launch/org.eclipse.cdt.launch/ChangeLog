@@ -1,3 +1,8 @@
+2003-10-27 
+	Fixed 46129
+	
+	AbstractCLaunchDelegate.java
+	
 2003-10-27 Mikhail Khodjaiants
 	Changed the initialization of 'SourceLookupBlock'.
 	* CSourceLookupTab.java

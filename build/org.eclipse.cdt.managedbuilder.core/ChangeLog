@@ -1,0 +1,10 @@
+2003-09-15 Sean Evoy
+	First submission of code to new project. Moved the managed builder 
+	source code out of the cdt.core project. This includes the code to 
+	implement the build model, along with the shema and extension point 
+	declaration. Moved the builder, scnanaer info provider and managed 
+	nature definitions into the package as well.
+	
+	There are 2 new classes to handle the externalized strings:
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuilderCorePlugin.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties

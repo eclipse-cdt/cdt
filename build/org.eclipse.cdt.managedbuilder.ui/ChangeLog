@@ -1,0 +1,15 @@
+2003-09-15 Sean Evoy
+	First submission of code to new project. Moved all the managed 
+	builder-specific UI elements out of the cdt.ui project. This 
+	includes the icons, and externalized strings.
+	
+	There are 2 new classes to handle the externalized strings and image 
+	files:
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/ManagedBuilderUIPlugin.java
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/ManagedBuilderUIImages.java
+	
+	The property pages have been modified to use a mix of externalized 
+	strings from the CUIPlugin and ManagedBuilderUIPlugin. The new project 
+	wizard has been reimplemented using the new C project classes added by 
+	QNX September 12, 2003. The UI itself has not changed.

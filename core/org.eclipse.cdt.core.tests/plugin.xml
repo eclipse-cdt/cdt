@@ -19,13 +19,14 @@
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
    </requires>
 
 
    <extension
          id="buildTest"
          name="Tools for Build Test"
-         point="org.eclipse.cdt.core.ManagedBuildInfo">
+         point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
       <target
             makeFlags="-k"
             isTest="true"

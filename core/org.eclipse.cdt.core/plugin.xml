@@ -69,7 +69,6 @@
    <extension-point id="CTool" name="C/C++ Tool" schema="schema/CTool.exsd"/>
    <extension-point id="CBuildVariable" name="C/C++ Build Variable" schema="schema/CBuildVariable.exsd"/>
    <extension-point id="CToolType" name="C/C++ Tool Type" schema="schema/CToolType.exsd"/>
-   <extension-point id="ManagedBuildInfo" name="Managed Build Tools" schema="schema/ManagedBuildTools.exsd"/>
    <extension-point id="ScannerInfoProvider" name="Scanner Information Provider"/>
 
 
@@ -220,22 +219,6 @@
    </extension>
 
 <!-- =================================================================================== -->
-<!-- Extension Point: ????????????????                                                   -->
-<!-- =================================================================================== -->
-
-   <extension
-         id="genmakebuilder"
-         name="%GeneratedMakefileCBuilder.name"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="org.eclipse.cdt.internal.core.GeneratedMakefileBuilder">
-         </run>
-      </builder>
-   </extension>
-
-<!-- =================================================================================== -->
 <!-- CDT customized problem markers: C Problem markers                                   -->
 <!-- =================================================================================== -->
 
@@ -281,26 +264,6 @@
       </runtime>
    </extension>
 
-<!-- =================================================================================== -->
-<!-- Extension Point: ????????????????                                                   -->
-<!-- =================================================================================== -->
-
-   <extension
-         id="managedBuildNature"
-         name="%ManagedBuildNature.name"
-         point="org.eclipse.core.resources.natures">
-      <requires-nature
-            id="org.eclipse.cdt.core.cnature">
-      </requires-nature>
-      <runtime>
-         <run
-               class="org.eclipse.cdt.core.ManagedCProjectNature">
-         </run>
-      </runtime>
-      <builder
-            id="org.eclipse.cdt.core.genmakebuilder">
-      </builder>
-   </extension>
 
 <!-- =================================================================================== -->
 <!-- Deprecated Make default command, will be removed.                                   -->
@@ -429,20 +392,6 @@
             enabled="true"
             pattern="*.exe">
       </ignore>
-   </extension>
-
-<!-- =================================================================================== -->
-<!-- Extension Point(Note:Temporary): IScannerInfoProvider for the managed Builder       -->
-<!-- =================================================================================== -->
-
-   <extension
-         id="ManagedBuildManager"
-         point="org.eclipse.cdt.core.ScannerInfoProvider">
-      <cextension>
-         <run
-               class="org.eclipse.cdt.core.build.managed.ManagedBuildManager">
-         </run>
-      </cextension>
    </extension>
 
 <!-- =================================================================================== -->

@@ -18,6 +18,7 @@ plugin@org.eclipse.cdt.debug.mi.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home
 plugin@org.eclipse.cdt.launch=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-launch/org.eclipse.cdt.launch
 
 plugin@org.eclipse.cdt.doc.user=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.user
+plugin@org.eclipse.cdt.doc.isv=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.isv
 
 plugin@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt
 feature@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt-feature

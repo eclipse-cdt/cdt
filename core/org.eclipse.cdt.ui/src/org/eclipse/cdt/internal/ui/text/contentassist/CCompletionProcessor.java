@@ -512,10 +512,9 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
 		boolean projectScope = store.getBoolean(ContentAssistPreference.PROJECT_SEARCH_SCOPE);
-		boolean projectScopeAndDependency = store.getBoolean(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE);
 		ICSearchScope scope = null;
 	
-		if (((projectScope) || (projectScopeAndDependency))
+		if ( (projectScope)
 				&& (   (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
 					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
 					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
@@ -525,7 +524,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			
 			ICElement[] projectScopeElement = new ICElement[1];
 			projectScopeElement[0] = (ICElement)fCurrentSourceUnit.getCProject();
-			scope = SearchEngine.createCSearchScope(projectScopeElement, projectScopeAndDependency);
+			scope = SearchEngine.createCSearchScope(projectScopeElement, true);
 			
 			// search for global variables, functions, classes, structs, unions, enums, macros, and namespaces
 			OrPattern orPattern = new OrPattern();

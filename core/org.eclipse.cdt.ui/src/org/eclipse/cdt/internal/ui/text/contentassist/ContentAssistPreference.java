@@ -54,8 +54,6 @@ public class ContentAssistPreference {
 	public final static String CURRENT_FILE_SEARCH_SCOPE= "content_assist_current_file_search_scope";	
 	/** Preference key for completion search scope */
 	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	
-	/** Preference key for completion search scope */
-	public final static String PROJECT_AND_DEPENDENCY_SEARCH_SCOPE= "content_assist_project_and_dependency_search_scope";	
 	
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);

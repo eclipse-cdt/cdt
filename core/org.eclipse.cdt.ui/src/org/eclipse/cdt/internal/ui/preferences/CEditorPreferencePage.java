@@ -198,11 +198,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
-		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CASE_SENSITIVITY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE));        
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_TAG_BOLD));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
@@ -279,7 +277,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
 		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
-		store.setDefault(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, false);
 		
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
@@ -291,10 +288,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_BACKGROUND, new RGB(254, 241, 233));
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
-		//store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C, ".,");
-		//store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC, "@");
-		//store.setDefault(ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, true);
-		//store.setDefault(ContentAssistPreference.CASE_SENSITIVITY, false);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
 		
@@ -850,8 +843,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectOption");
 		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectAndDependenciesOption");
-		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, 0);
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		
 		

@@ -1,3 +1,7 @@
+2004-02-10 Hoda Amer
+	Content Assist Preference : Reduced search options to two choices:
+	Current file (plus its included files) + Current project (plus its included paths)
+	
 2004-02-10 Alain Magloire
 
 	Fix to PR 50794

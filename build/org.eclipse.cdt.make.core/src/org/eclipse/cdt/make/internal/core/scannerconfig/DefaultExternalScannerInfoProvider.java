@@ -103,8 +103,10 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 					+ fCompileCommand.toString() + ca);
 			cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
 			
-			OutputStream sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
-					cos, currentProject, buildInfo, collector);
+			ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
+					cos, cos, currentProject, buildInfo, collector);
+			OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
+			OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
 			TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher), fWorkingDirectory);
 			if (p != null) {
@@ -114,7 +116,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 					p.getOutputStream().close();
 				} catch (IOException e) {
 				}
-				if (launcher.waitAndRead(sniffer, sniffer, new SubProgressMonitor(monitor, 0)) != CommandLauncher.OK) {
+				if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0)) != CommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
 				}
 				monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Parsing_Output")); //$NON-NLS-1$
@@ -130,7 +132,8 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			}
 
 			monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Creating_Markers")); //$NON-NLS-1$
-			sniffer.close();
+			consoleOut.close();
+			consoleErr.close();
 			cos.close();
 		}
 		catch (Exception e) {

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -187,19 +188,21 @@ public class MakeBuilder extends ACBuilder {
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
 				// Sniff console output for scanner info
-				OutputStream sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
-						epm.getOutputStream(), getProject(), workingDirectory, this);
+				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
+						stdout, stderr, getProject(), workingDirectory, this);
+				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
+				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);
 				if (p != null) {
 					try {
-						// Close the input of the Process explicitely.
+						// Close the input of the Process explicitly.
 						// We will never write to it.
 						p.getOutputStream().close();
 					} catch (IOException e) {
 					}
 					// Before launching give visual cues via the monitor
 					monitor.subTask(MakeMessages.getString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
-					if (launcher.waitAndRead(sniffer, sniffer, new SubProgressMonitor(monitor, 0))
+					if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0))
 						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
 					monitor.subTask(MakeMessages.getString("MakeBuilder.Updating_project")); //$NON-NLS-1$
@@ -235,7 +238,8 @@ public class MakeBuilder extends ACBuilder {
 				stderr.close();
 
 				monitor.subTask(MakeMessages.getString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
-				sniffer.close();
+				consoleOut.close();
+				consoleErr.close();
 				epm.reportProblems();
 				cos.close();
 			}

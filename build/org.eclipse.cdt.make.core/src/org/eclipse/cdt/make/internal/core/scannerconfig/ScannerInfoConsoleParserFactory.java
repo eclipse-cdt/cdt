@@ -41,12 +41,14 @@ public class ScannerInfoConsoleParserFactory {
 	 * @param markerGenerator
 	 * @param scBuildInfo
 	 * @param collector	- scanner info collector
-	 * @return OutputStream
+	 * @return ConsoleOutputSniffer
 	 */
-	public static OutputStream getESIProviderOutputSniffer(OutputStream outputStream,
-														   IProject currentProject,
-														   IScannerConfigBuilderInfo scBuildInfo,
-														   IScannerInfoCollector collector) {
+	public static ConsoleOutputSniffer getESIProviderOutputSniffer(
+											OutputStream outputStream,
+											OutputStream errorStream,
+											IProject currentProject,
+											IScannerConfigBuilderInfo scBuildInfo,
+											IScannerInfoCollector collector) {
 		if (scBuildInfo.isESIProviderCommandEnabled()) {
 			// get the ESIProvider console parser 
 			IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
@@ -55,10 +57,10 @@ public class ScannerInfoConsoleParserFactory {
 			clParser.startup(currentProject, null /*new ScannerInfoConsoleParserUtility(
 				currentProject, null, markerGenerator)*/, collector);
 			// create an output stream sniffer
-			return new ConsoleOutputStreamSniffer(outputStream, new 
+			return new ConsoleOutputSniffer(outputStream, errorStream, new 
 				IScannerInfoConsoleParser[] {clParser});
 		}
-		return outputStream;
+		return null;
 	}
 	
 	/**
@@ -69,12 +71,14 @@ public class ScannerInfoConsoleParserFactory {
 	 * @param currentProject
 	 * @param workingDirectory
 	 * @param markerGenerator
-	 * @return OutputStream
+	 * @return ConsoleOutputSniffer
 	 */
-	public static OutputStream getMakeBuilderOutputSniffer(OutputStream outputStream,
-														   IProject currentProject,
-														   IPath workingDirectory,
-														   IMarkerGenerator markerGenerator) {
+	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
+											OutputStream outputStream,
+											OutputStream errorStream,
+											IProject currentProject,
+											IPath workingDirectory,
+											IMarkerGenerator markerGenerator) {
 		try {
 			// get the SC builder settings
 			if (currentProject.hasNature(ScannerConfigNature.NATURE_ID)) {
@@ -99,7 +103,7 @@ public class ScannerInfoConsoleParserFactory {
 							scBuildInfo.isSIProblemGenerationEnabled() ? markerGenerator : null),
 							ScannerInfoCollector.getInstance());
 					// create an output stream sniffer
-					return new ConsoleOutputStreamSniffer(outputStream, new 
+					return new ConsoleOutputSniffer(outputStream, errorStream, new 
 						IScannerInfoConsoleParser[] {clParser});
 				}
 			}
@@ -107,6 +111,6 @@ public class ScannerInfoConsoleParserFactory {
 		catch (CoreException e) {
 			MakeCorePlugin.log(e.getStatus());
 		}
-		return outputStream;
+		return null;
 	}
 }

@@ -366,37 +366,6 @@ public class Util {
 				return true;
 		return false;
 	}
-	/**
-	 * @param string
-	 * @return
-	 */
-	public static boolean isCCFileName(String fileName) {
-		String[] sourceExtensions = CModelManager.sourceExtensions;
-		String[] headerExtensions = CModelManager.headerExtensions;
-		
-		int dot =fileName.lastIndexOf("."); //$NON-NLS-1$
-		
-		//No extension, give benefit of doubt
-		if (dot == -1)
-		 return true;
-		 
-	    //Extract extension
-		String extension = ""; //$NON-NLS-1$
-	    if (dot + 1 <= fileName.length())
-	    	extension = fileName.substring(dot + 1);
-	    
-	    for (int i=0; i<sourceExtensions.length; i++){	
-	    	if (sourceExtensions[i].equals(extension))
-	    	  return true; 
-	    }
-	    
-	    for (int i=0; i<headerExtensions.length; i++){
-			if (headerExtensions[i].equals(extension))
-			 return true; 
-	    }
-	    
-		return false;
-	}	
 		
 }
 

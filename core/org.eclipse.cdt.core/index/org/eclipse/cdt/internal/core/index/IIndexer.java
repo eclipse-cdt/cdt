@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import org.eclipse.core.resources.IFile;
+
 /**
  * An <code>IIndexer</code> indexes ONE document at each time. It adds the document names and
  * the words references to an IIndex. Each IIndexer can index certain types of document, and should
  * not index the other files. 
  */
 public interface IIndexer {
-	/**
-	 * Returns the file types the <code>IIndexer</code> handles.
-	 */
-
-	String[] getFileTypes();
 	/**
 	 * Indexes the given document, adding the document name and the word references 
 	 * to this document to the given <code>IIndex</code>.The caller should use 
@@ -35,8 +32,8 @@ public interface IIndexer {
 
 	public void setFileTypes(String[] fileTypes);
 	/**
-	 * Returns whether the <code>IIndexer</code> can index the given document or not.
+	 * Returns whether the <code>IIndexer</code> can index the given IFile or not.
 	 */
 
-	public boolean shouldIndex(IDocument document);
+	public boolean shouldIndex(IFile file);
 }

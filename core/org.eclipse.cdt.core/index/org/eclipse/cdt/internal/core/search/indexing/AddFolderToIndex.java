@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.search.indexing;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
@@ -58,8 +59,8 @@ class AddFolderToIndex extends IndexRequest {
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						switch(proxy.getType()) {
 							case IResource.FILE :
-								if (Util.isCCFileName(proxy.getName())) {
-									IResource resource = proxy.requestResource();
+								IResource resource = proxy.requestResource();
+								if (CoreModel.isValidTranslationUnitName(resource.getProject(),resource.getName())) {
 									if (pattern == null || !Util.isExcluded(resource, pattern))
 										indexManager.addSource((IFile)resource, container);
 								}

@@ -14,6 +14,9 @@ package org.eclipse.cdt.internal.core.search.indexing;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
@@ -52,6 +55,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	final static int FRIEND = 8;
 	
 	public static boolean VERBOSE = false;
+	
+	//IDs defined in plugin.xml for file types
+	private final static String C_SOURCE_ID = "org.eclipse.cdt.core.fileType.c_source";
+	private final static String C_HEADER_ID = "org.eclipse.cdt.core.fileType.c_header";
+	private final static String CPP_SOURCE_ID = "org.eclipse.cdt.core.fileType.cxx_source";
+	private final static String CPP_HEADER_ID = "org.eclipse.cdt.core.fileType.cxx_header";
 	
 	public AbstractIndexer() {
 		super();
@@ -424,10 +433,6 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 	
 	/**
-	 * Returns the file types the <code>IIndexer</code> handles.
-	 */
-	public abstract String[] getFileTypes();
-	/**
 	 * Returns the file types being indexed.
 	 */
 	public abstract IFile getResourceFile();
@@ -436,20 +441,25 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	 */
 	public void index(IDocument document, IIndexerOutput output) throws IOException {
 		this.output = output;
-		if (shouldIndex(document)) indexFile(document);
-	}
+		if (shouldIndex(this.getResourceFile())) indexFile(document);
+	} 
 	
 	protected abstract void indexFile(IDocument document) throws IOException;
 	/**
-	 * @see IIndexer#shouldIndex(IDocument document)
+	 * @param fileToBeIndexed
+	 * @see IIndexer#shouldIndex(IFile file)
 	 */
-	public boolean shouldIndex(IDocument document) {
-		String type = document.getType();
-		String[] supportedTypes = this.getFileTypes();
-		for (int i = 0; i < supportedTypes.length; ++i) {
-			if (supportedTypes[i].equals(type))
-				return true;
+	public boolean shouldIndex(IFile fileToBeIndexed) {
+		if (fileToBeIndexed != null){
+			ICFileType type = CCorePlugin.getDefault().getFileType(fileToBeIndexed.getProject(),fileToBeIndexed.getName());
+			if (type.isSource()){
+			  String id = type.getId();
+			  if (id.equals(AbstractIndexer.C_SOURCE_ID) ||
+			  	  id.equals(AbstractIndexer.CPP_SOURCE_ID))
+			  	return true;
+			}
 		}
+		
 		return false;
 	}
 	/**

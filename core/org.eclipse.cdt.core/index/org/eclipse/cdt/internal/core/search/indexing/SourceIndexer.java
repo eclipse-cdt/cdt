@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.CoreException;
  * - Unions
  */
 public class SourceIndexer extends AbstractIndexer {
-	
+	 
 	//TODO: Indexer, add additional file types
 	//Header files: "h" , "hh", "hpp"
 	//Use the CModelManager defined file types
@@ -71,12 +71,6 @@ public class SourceIndexer extends AbstractIndexer {
 	public SourceIndexer(IFile resource, TimeOut timeOut) {
 		this.resourceFile = resource;
 		this.timeOut = timeOut;
-	}
-	/**
-	 * Returns the file types the <code>IIndexer</code> handles.
-	 */
-	public String[] getFileTypes(){
-		return CModelManager.sourceExtensions;
 	}
 	
 	protected void indexFile(IDocument document) throws IOException {

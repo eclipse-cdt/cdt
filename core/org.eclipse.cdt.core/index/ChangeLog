@@ -1,3 +1,7 @@
+2004-05-27 Bogdan Gheorghe
+	Fix for Bug 62015 - Indexer to not rely on file extension for translation Unit
+	Changed all indexer file type checking to use the CoreModel file resolution services.
+	
 2004-05-21 Andrew Niefer
 	Indexer problem reporting
 		* index/org/eclipse/cdt/internal/core/messages.properties

@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
-import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
 
@@ -32,19 +32,21 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private final int STATE_SPECS_STARTED = 1;
 	private final int STATE_INCLUDES_STARTED = 2;
 
-	private IProject project = null;
-	private IScannerInfoConsoleParserUtility util = null;
+	private IProject fProject = null;
+	private IScannerInfoConsoleParserUtility fUtil = null;
+	private IScannerInfoCollector fCollector = null;
 	
 	private int state = STATE_BEGIN;
 	private List symbols = new ArrayList();
 	private List includes = new ArrayList();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#initialize(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
 	 */
-	public void startup(IProject project, IScannerInfoConsoleParserUtility util) {
-		this.project = project;
-		this.util = util;
+	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector) {
+		this.fProject = project;
+		this.fUtil = util;
+		this.fCollector = collector;
 	}
 	
 	/* (non-Javadoc)
@@ -94,7 +96,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				return rc;
 		}
 			
-		ScannerInfoCollector.getInstance().contributeToScannerConfig(project, includes, symbols, null);
+		fCollector.contributeToScannerConfig(fProject, includes, symbols, null);
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
 				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
 		
@@ -105,8 +107,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
 	 */
 	public void shutdown() {
-		if (util != null) {
-			util.reportProblems();
+		if (fUtil != null) {
+			fUtil.reportProblems();
 		}
 	}
 }

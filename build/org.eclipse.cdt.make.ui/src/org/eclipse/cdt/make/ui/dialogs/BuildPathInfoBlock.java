@@ -53,6 +53,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private static final int PROJECT_LIST_MULTIPLIER = 15;
+	private static final int INITIAL_LIST_WIDTH = 60;
 
 	private static final String PREF_SYMBOLS = "ScannerSymbols"; //$NON-NLS-1$
 	private static final String PREF_INCLUDES = "ScannerIncludes"; //$NON-NLS-1$
@@ -154,6 +155,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = numColumns - 1;
 		gd.heightHint = getDefaultFontHeight(pathList, PROJECT_LIST_MULTIPLIER);
+		gd.widthHint = convertWidthInCharsToPixels(INITIAL_LIST_WIDTH);
 		pathList.setLayoutData(gd);
 		pathList.setFont(parent.getFont());
 	}
@@ -214,6 +216,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		gd.horizontalSpan = numColumns - 1;
 		gd.grabExcessHorizontalSpace = true;
 		gd.heightHint = getDefaultFontHeight(pathList, PROJECT_LIST_MULTIPLIER);
+		gd.widthHint = convertWidthInCharsToPixels(INITIAL_LIST_WIDTH);
 		symbolList.setLayoutData(gd);
 		symbolList.setFont(parent.getFont());
 

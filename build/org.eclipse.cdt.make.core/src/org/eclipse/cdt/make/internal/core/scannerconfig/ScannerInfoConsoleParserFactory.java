@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
@@ -39,18 +40,20 @@ public class ScannerInfoConsoleParserFactory {
 	 * @param currentProject
 	 * @param markerGenerator
 	 * @param scBuildInfo
+	 * @param collector	- scanner info collector
 	 * @return OutputStream
 	 */
 	public static OutputStream getESIProviderOutputSniffer(OutputStream outputStream,
 														   IProject currentProject,
-														   IScannerConfigBuilderInfo scBuildInfo) {
+														   IScannerConfigBuilderInfo scBuildInfo,
+														   IScannerInfoCollector collector) {
 		if (scBuildInfo.isESIProviderCommandEnabled()) {
 			// get the ESIProvider console parser 
 			IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
 				getScannerInfoConsoleParser(scBuildInfo.getESIProviderConsoleParserId());
 			// initialize it with the utility
 			clParser.startup(currentProject, null /*new ScannerInfoConsoleParserUtility(
-				currentProject, null, markerGenerator)*/);
+				currentProject, null, markerGenerator)*/, collector);
 			// create an output stream sniffer
 			return new ConsoleOutputStreamSniffer(outputStream, new 
 				IScannerInfoConsoleParser[] {clParser});
@@ -92,7 +95,7 @@ public class ScannerInfoConsoleParserFactory {
 						getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			
 					// initialize it with the utility
 					clParser.startup(currentProject, new ScannerInfoConsoleParserUtility(
-						currentProject, workingDirectory, markerGenerator));
+						currentProject, workingDirectory, markerGenerator), ScannerInfoCollector.getInstance());
 					// create an output stream sniffer
 					return new ConsoleOutputStreamSniffer(outputStream, new 
 						IScannerInfoConsoleParser[] {clParser});

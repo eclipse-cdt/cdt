@@ -144,9 +144,11 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				// If there is a conflict then try all files in the project.
 				if (isConflictingName(fileName)) {
 					file = null;
+					
 					// Create a problem marker
+					TraceUtil.outputError("Ambiguous file path: ", fileName);	//$NON-NLS-1$
 					generateMarker(fProject, -1, "Ambiguous file path: "+fileName,	//$NON-NLS-1$
-							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);				
+							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
 				}
 			}
 		}
@@ -258,10 +260,22 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		if (dir != null) {
 			IPath pwd = null;
 			if (fBaseDirectory.isPrefixOf(dir)) {
-//				int segments = fBaseDirectory.matchingFirstSegments(dir);
 				pwd = dir.removeFirstSegments(fBaseDirectory.segmentCount());
 			} else {
-				pwd = dir;
+				// check if it is a cygpath
+				if (dir.toString().startsWith("/cygdrive/")) {	// $NON-NLS-1$
+					char driveLetter = dir.toString().charAt(10);
+					StringBuffer buf = new StringBuffer();
+					buf.append(driveLetter);
+					buf.append(':');
+					String drive = buf.toString();
+					pwd = dir.removeFirstSegments(2);
+					pwd = pwd.setDevice(drive);
+					pwd = pwd.makeAbsolute();
+				}
+				else {
+					pwd = dir;
+				}
 			}
 			fDirectoryStack.addElement(pwd);
 		}
@@ -319,12 +333,13 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 					// check if the cwd is the right one
 					// appending fileName to cwd should yield file path
 					IPath filePath = cwd.append(fileName);
-					if (!filePath.equals(file.getLocation())) {
+					if (!filePath.toString().equalsIgnoreCase(file.getLocation().toString())) {
 						// must be the cwd is wrong
 						// check if file name starts with ".."
 						if (fileName.startsWith("..")) {	//$NON-NLS-1$
 							// probably multiple choices for cwd, hopeless
-							generateMarker(file, -1, "Unable to determine working directory",
+							TraceUtil.outputError("Unable to determine working directory for ", fileName); //$NON-NLS-1$
+							generateMarker(file, -1, "Unable to determine working directory for",	//$NON-NLS-1$
 									IMarkerGenerator.SEVERITY_WARNING, fileName);				
 							break;
 						}

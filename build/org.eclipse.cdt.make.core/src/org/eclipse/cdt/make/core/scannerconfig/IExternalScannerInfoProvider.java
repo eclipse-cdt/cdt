@@ -28,9 +28,11 @@ public interface IExternalScannerInfoProvider {
 	 * @param current project - current project being built
 	 * @param buildInfo - settings for ScannerConfigBuilder
 	 * @param targetSpecificOptions - array of options affecting compiler specs
+	 * @param collector - scanner info collector, for StdMake projects - ScannerInfoCollector
 	 */
 	public boolean invokeProvider(IProgressMonitor monitor, 
 								  IProject currentProject,
 								  IScannerConfigBuilderInfo buildInfo, 
-								  List targetSpecificOptions); 
+								  List targetSpecificOptions,
+								  IScannerInfoCollector collector); 
 }

@@ -37,10 +37,12 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 
 /**
@@ -49,7 +51,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
  *
  * @author vhirsl
  */
-public class ScannerInfoCollector { 
+public class ScannerInfoCollector implements IScannerInfoCollector { 
 
 	// Singleton
 	private static ScannerInfoCollector instance = new ScannerInfoCollector();
@@ -77,18 +79,13 @@ public class ScannerInfoCollector {
 		return instance;
 	}
 
-	/**
-	 * Published method to receive per file contributions to ScannerInfo
-	 * 
-	 * @param resource
-	 * @param includes
-	 * @param symbols
-	 * @param targetSpecificOptions
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.List)
 	 */
 	public synchronized void contributeToScannerConfig(IResource resource, List includes, List symbols, List targetSpecificOptions) {
 		IProject project;
 		if (resource == null || (project = resource.getProject()) == null) {
-			// TODO VMIR create a log
+			TraceUtil.outputError("IScannerInfoCollector.contributeToScannerConfig : ", "resource or project is null"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		try {
@@ -170,7 +167,6 @@ public class ScannerInfoCollector {
 							discScanInfo.update();
 							monitor.worked(50);
 						} catch (CoreException e) {
-							// TODO : VMIR create a marker?
 							MakeCorePlugin.log(e);
 						}
 					}
@@ -311,7 +307,6 @@ public class ScannerInfoCollector {
 						translatedIncludePaths.add(translatedPath);
 					}
 					else {
-						// TODO VMIR create problem marker
 						// TODO VMIR for now add even if it does not exist
 						translatedIncludePaths.add(translatedPath);
 					}
@@ -356,7 +351,7 @@ public class ScannerInfoCollector {
 			if (esiProvider != null) {
 				ISafeRunnable runnable = new ISafeRunnable() {
 					public void run() {
-						esiProvider.invokeProvider(monitor, project, buildInfo, tso);
+						esiProvider.invokeProvider(monitor, project, buildInfo, tso, ScannerInfoCollector.getInstance());
 					}
 		
 					public void handleException(Throwable exception) {
@@ -395,7 +390,6 @@ public class ScannerInfoCollector {
 		if (project != null) {
 			sumDiscoveredIncludes.put(project.getName(), null);
 		}
-		// TODO VMIR define error message
 	}
 
 	/**
@@ -407,7 +401,6 @@ public class ScannerInfoCollector {
 		if (project != null) {
 			sumDiscoveredSymbols.put(project.getName(), null);
 		}
-		// TODO VMIR define error message
 	}
 
 	/**

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
@@ -56,9 +57,13 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	private String fCompileArguments;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo, java.util.List)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo, java.util.List, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
 	 */
-	public boolean invokeProvider(IProgressMonitor monitor, IProject currentProject, IScannerConfigBuilderInfo buildInfo, List targetSpecificOptions) {
+	public boolean invokeProvider(IProgressMonitor monitor,
+								  IProject currentProject,
+								  IScannerConfigBuilderInfo buildInfo,
+								  List targetSpecificOptions,
+								  IScannerInfoCollector collector) {
 		if (targetSpecificOptions == null) {
 			targetSpecificOptions = new ArrayList();
 		}
@@ -93,7 +98,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
 			
 			OutputStream sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
-					cos, currentProject, buildInfo);
+					cos, currentProject, buildInfo, collector);
 			Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher), fWorkingDirectory);
 			if (p != null) {
 				try {

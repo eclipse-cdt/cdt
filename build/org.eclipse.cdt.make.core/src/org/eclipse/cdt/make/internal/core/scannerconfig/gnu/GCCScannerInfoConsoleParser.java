@@ -14,9 +14,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
-import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
@@ -31,13 +32,15 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 
 	private IProject fProject = null;
 	private IScannerInfoConsoleParserUtility fUtil = null;
+	private IScannerInfoCollector fCollector = null;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
 	 */
-	public void startup(IProject project, IScannerInfoConsoleParserUtility util) {
+	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector) {
 		fProject = project;
 		fUtil = util;
+		fCollector = collector;
 	}
 
 	/* (non-Javadoc)
@@ -158,14 +161,13 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				}
 				else {
 					TraceUtil.outputError("Unable to find file name: ", line);	//$NON-NLS-1$
-//					fUtil.generateMarker(fProject, -1, "Unable to find file name: " + line, //$NON-NLS-1$
-//							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
+					fUtil.generateMarker(fProject, -1, "Unable to find file name: " + line, //$NON-NLS-1$
+							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
 				}
 			}
 			// Contribute discovered includes and symbols to the ScannerInfoCollector
 			if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-				ScannerInfoCollector.getInstance().
-					contributeToScannerConfig(project, translatedIncludes, symbols, targetSpecificOptions);
+				fCollector.contributeToScannerConfig(project, translatedIncludes, symbols, targetSpecificOptions);
 				
 				TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
 						"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$

@@ -83,7 +83,7 @@ public class ManageIncludePathsDialog extends Dialog {
 	private static final String DELETE_ALL_DISCOVERED = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.deleteAll.label"; //$NON-NLS-1$
 
 	private static final int PROJECT_LIST_MULTIPLIER = 15;
-	private static final int INITIAL_LIST_WIDTH = 40;
+	private static final int INITIAL_LIST_WIDTH = 50;
 
 	private static final int ACTIVE = 0;
 	private static final int REMOVED = 1;

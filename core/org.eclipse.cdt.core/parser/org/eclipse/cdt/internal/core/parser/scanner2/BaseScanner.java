@@ -2478,7 +2478,7 @@ abstract class BaseScanner implements IScanner {
 
                   if (branchState(type == ppElse ? BRANCH_ELSE : BRANCH_ELIF)) {
                      if (type == ppElse)
-                        processElse(pos, bufferPos[bufferStackPos], false);
+                        processElse(pos, bufferPos[bufferStackPos] + 1, false);
                      else
                         processElsif(pos, bufferPos[bufferStackPos], false);
                      skipToNewLine();
@@ -3236,11 +3236,11 @@ abstract class BaseScanner implements IScanner {
                         if (branchState(BRANCH_ELSE)) {
                            skipToNewLine();
                            if (checkelse && nesting == 0) {
-                              processElse(startPos, bufferPos[bufferStackPos],
+                              processElse(startPos, bufferPos[bufferStackPos] + 1,
                                     true);
                               return;
                            }
-                           processElse(startPos, bufferPos[bufferStackPos],
+                           processElse(startPos, bufferPos[bufferStackPos] + 1,
                                  false);
                         } else {
                            //problem, ignore this one.
@@ -3283,7 +3283,7 @@ abstract class BaseScanner implements IScanner {
                         break;
                      case ppEndif:
                         if (branchState(BRANCH_END)) {
-                           processEndif(startPos, bufferPos[bufferStackPos]);
+                           processEndif(startPos, bufferPos[bufferStackPos] + 1);
                            if (nesting > 0) {
                               --nesting;
                            } else {

@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
@@ -269,7 +268,7 @@ public class IndexManager implements IElementChangedListener {
 
 		if (kind == ICElementDelta.REMOVED) {
 			try {
-				IResource resource = ((ICResource)element).getResource();
+				IResource resource = element.getResource();
 				removeResource(resource);
 			} catch (CModelException e) {
 			}
@@ -285,7 +284,7 @@ public class IndexManager implements IElementChangedListener {
 
 		if (element instanceof ITranslationUnit) {
 			if (kind == ICElementDelta.CHANGED) {
-				IResource resource = ((ICResource)element).getResource();
+				IResource resource = element.getResource();
 				addResource(resource);
 				return;
 			}

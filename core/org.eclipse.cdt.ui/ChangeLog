@@ -1,4 +1,10 @@
 2004-06-18 Bogdan Gheorghe
+	Part 2 of Fix for Bug 62668: [Search] Search results rely on case of file names in include statement
+	rather then the filesystem
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
+	
+2004-06-18 Bogdan Gheorghe
 	Partial Fix for Bug 62668: [Search] Search results rely on case of file names in include statement
 	rather then the filesystem
 	

@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -26,6 +28,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -114,12 +118,12 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 				e.printStackTrace();
 			} 
 		} else if (element instanceof IFile) {
-			editor= IDE.openEditor(CUIPlugin.getActivePage(), (IFile) element, false);
+			editor= IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) element), false);
 		} else if (element instanceof BasicSearchMatch){
 			BasicSearchMatch searchMatch = (BasicSearchMatch) element;
 			if (searchMatch.resource != null){
-				editor = IDE.openEditor(CUIPlugin.getActivePage(), (IFile) searchMatch.resource, false);
-				showWithMarker(editor, (IFile) searchMatch.resource, currentOffset, currentLength);
+				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.resource), false);
+				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), currentOffset, currentLength);
 			}}
 		if (editor instanceof ITextEditor) {
 		ITextEditor textEditor= (ITextEditor) editor;
@@ -127,7 +131,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		} else if (editor != null){
 			if (element instanceof IFile) {
 				IFile file= (IFile) element;
-				showWithMarker(editor, file, currentOffset, currentLength);
+				showWithMarker(editor, getCanonicalFile(file), currentOffset, currentLength);
 			}
 		} 
 	}
@@ -257,5 +261,19 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 			addGroupActions(tbm);
 	}
 		
+	private IFile getCanonicalFile(IFile originalFile){
+		
+		File tempFile = originalFile.getRawLocation().toFile();
+		String canonicalPath = null;
+		try {
+			canonicalPath = tempFile.getCanonicalPath();
+		} catch (IOException e1) {}
+		
+		if (canonicalPath != null){
+			IPath path = new Path(canonicalPath);
+			originalFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
+		}
+		return originalFile;
+	}
 	
 }

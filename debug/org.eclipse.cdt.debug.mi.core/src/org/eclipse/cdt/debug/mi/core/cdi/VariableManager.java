@@ -40,6 +40,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		MIVar miVar;
 		String name;
 		StackFrame stackframe;
+		int stackdepth;
 		Variable variable;
 	}
 
@@ -49,6 +50,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		oosList = new ArrayList();
 	}
 
+	/**
+	 * Return the element that have the uniq varName.
+	 */
 	Element getElement(String varName) {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
@@ -59,12 +63,26 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		return null;
 	}
 
+	/**
+	 * Return the Element with that stackframe, stack, that with this name.
+	 * null is return if the element is not in the cache.
+	 */
 	Element getElement(StackFrame stack, String name) {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].name.equals(name)) {
 				if (elements[i].stackframe.equals(stack)) {
-					return elements[i];
+					int depth = 0;
+					CThread thread = stack.getCThread();
+					if (thread != null) {
+						try {
+							depth = thread.getStackFrameCount();
+						} catch (CDIException e) {
+						}
+					}
+					if (elements[i].stackdepth == depth) {
+						return elements[i];
+					}
 				}
 			}
 		}
@@ -85,10 +103,19 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		elementList.add(element);
 	}
 
+	/**
+	 * Returns all the elements that are in the cache.
+	 */
 	Element[] getElements() {
 		return (Element[]) elementList.toArray(new Element[0]);
 	}
 
+	/**
+	 * Update the elements in the cache, from the response of the "-var-update *"
+	 * mi/command.  Out-of-scope elements are removed etc ..
+	 * Expression are special they are not remove when out-of-scope is thrown.
+	 * For all remove element in the cache fires a destroy event.
+	 */
 	void update() throws CDIException {
 		MISession mi = getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -121,6 +148,10 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		}
 	}
 
+	/**
+	 * If element is not in the cache create a new element "-var-create"
+	 * for the stackframe(stack).
+	 */
 	Element createElement(StackFrame stack, String name) throws CDIException {
 		Element element = getElement(stack, name);
 		if (element == null) {
@@ -138,6 +169,10 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 				element.miVar = info.getMIVar();
 				element.name = name;
 				element.stackframe = stack;
+				CThread thread = stack.getCThread();
+				if (thread != null) {
+					element.stackdepth = thread.getStackFrameCount();
+				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
@@ -145,6 +180,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		return element;
 	}
 
+	/**
+	 * Remove element from the OutOfscope list(oos).
+	 */
 	Element removeOutOfScope(String varName) {
 		Element[] oos = (Element[])oosList.toArray(new Element[0]);
 		for (int i = 0; i < oos.length; i++) {
@@ -155,6 +193,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		return null;
 	}
 
+	/**
+	 * Tell gdb to remove the underlying var-object also.
+	 */
 	void removeMIVar(MIVar miVar) throws CDIException {
 		MISession mi = getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -167,6 +208,11 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		}
 	}
 
+	/**
+	 * When element are remove from the cache, they are put on the OutOfScope list, oos,
+	 * because they are still needed for the destroy events.  The destroy event will
+	 * call removeOutOfScope.
+	 */
 	void removeElement(String varName) throws CDIException {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
@@ -178,16 +224,25 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		}
 	}
 
+	/**
+	 * Finds the variable Uniq name and call removeElement().
+	 */
 	void removeElement(MIVarChange changed) throws CDIException {
 		String varName = changed.getVarName();
 		removeElement(varName);
 	}
 
+	/**
+	 * Remove the Element.
+	 */
 	void removeElement(Variable variable) throws CDIException {
 		String varName = ((Variable)variable).getMIVar().getVarName();
 		removeElement(varName);
 	}
 
+	/**
+	 * Remove the elements.
+	 */
 	void removeElements(Variable[] variables) throws CDIException {
 		for (int i = 0; i < variables.length; i++) {
 			removeElement(variables[i]);
@@ -218,7 +273,6 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		addElement(element);
 		return var;
 	}
-
 
 	ICDIArgument createArgument(StackFrame stack, String name) throws CDIException {
 		Element element = createElement(stack, name);

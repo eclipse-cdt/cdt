@@ -2593,59 +2593,10 @@ public final class Scanner implements IScanner, IScannerData {
 		}
 	}
 	
-	protected boolean evaluateExpressionOld(String expression, int beginningOffset )
-		throws ScannerException {
 
-		IExpressionParser parser = null;
-		strbuff.startString();
-		strbuff.append(expression);
-		strbuff.append(';');
-		   
-		IScanner trial = new Scanner(
-				new CodeReader(strbuff.toString().toCharArray()), 
-				definitions,
-				includePathNames,
-				NULL_REQUESTOR,
-				ParserMode.QUICK_PARSE, 
-				language,
-				NULL_LOG_SERVICE,
-				scannerExtension );
-		
-        parser = InternalParserUtil.createExpressionParser(trial, language, NULL_LOG_SERVICE);
-		try {
-			IASTExpression exp = parser.expression(null, null, null);
-			return (exp.evaluateExpression() != 0);
-		} catch( BacktrackException backtrack  )
-		{
-			if( parserMode == ParserMode.QUICK_PARSE )
-				return false;
-			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
-		}
-		catch (ASTExpressionEvaluationException e) {
-			if( parserMode == ParserMode.QUICK_PARSE )
-				return false;			
-			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
-		} catch (EndOfFileException e) {
-			if( parserMode == ParserMode.QUICK_PARSE )
-				return false;
-			handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
-		}
-		return true; 
-	
-	}
 	protected boolean evaluateExpression(String expression, int beginningOffset )
 		throws ScannerException {
-
-//		boolean old_e = evaluateExpressionOld(expression, beginningOffset);
-		boolean new_e = evaluateExpressionNew(expression, beginningOffset);
-
-//		if (old_e != new_e) {
-//			System.out.println("Ouch " + expression + " New: " + new_e + " Old: " + old_e);
-//		}
-//		if (true)
-			return new_e;
-//		else 
-//			return old_e;
+		return evaluateExpressionNew(expression, beginningOffset);
 	}
 
 	

@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory
 import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 
@@ -39,6 +40,8 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  */
 public class ParserFactory {
 
+	public static final boolean USE_NEW_SCANNER = false;
+	
 	private static IParserExtensionFactory extensionFactory = new ParserExtensionFactory( ExtensionDialect.GCC );
 	
 	public static IASTFactory createASTFactory( IFilenameProvider provider, ParserMode mode, ParserLanguage language )
@@ -100,8 +103,12 @@ public class ParserFactory {
     	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
-		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
+		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
+		IScanner s = null;
+		if( USE_NEW_SCANNER )
+			s = new Scanner2( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
+		else
+			s = new Scanner( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
 		return s; 
     }
     

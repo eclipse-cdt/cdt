@@ -1,3 +1,10 @@
+2004-11-05 Alain Magloire
+	More framework for the formatter.
+	* src/org/eclipse/cdt/core/ToolFactory.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/formatter/CodeFormatter.java
+	* src/org/eclipse/cdt/core/formatter/CodeFormatterConstants.java
+	
 2004-11-01 Alain Magloire
 
 	Change to the errorParserManager, ... finally

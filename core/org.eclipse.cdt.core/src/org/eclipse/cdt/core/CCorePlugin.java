@@ -81,7 +81,12 @@ public class CCorePlugin extends Plugin {
 	// Build Model Interface Discovery
 	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
 	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
-	
+
+	/**
+	 * Name of the extension point for contributing a source code formatter
+	 */
+	public static final String FORMATTER_EXTPOINT_ID = "CodeFormatter" ; //$NON-NLS-1$
+
 	/**
 	 * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
 	 * @see #getDefaultOptions

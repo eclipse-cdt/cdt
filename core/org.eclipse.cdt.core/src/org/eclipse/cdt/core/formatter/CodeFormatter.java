@@ -58,7 +58,7 @@ public abstract class CodeFormatter {
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
 	 * 		  K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_COMPILATION_UNIT, K_UNKNOWN
 	 * @param file - file associated with this source (null if no file is associated)
-	 * @param document the document to format
+	 * @param source the document to format
 	 * @param offset the given offset to start recording the edits (inclusive).
 	 * @param length the given length to stop recording the edits (exclusive).
 	 * @param indentationLevel the initial indentation level, used 
@@ -70,7 +70,7 @@ public abstract class CodeFormatter {
 	 * @throws IllegalArgumentException if offset is lower than 0, length is lower than 0 or
 	 * length is greater than source length.
 	 */
-	public abstract TextEdit format(int kind, IDocument document, int offset, int length, int indentationLevel, String lineSeparator);
+	public abstract TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator);
 	
 	/**
 	 * @param options - general formatter options

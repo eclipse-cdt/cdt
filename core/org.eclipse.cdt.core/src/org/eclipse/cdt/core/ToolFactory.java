@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -38,9 +37,8 @@ public class ToolFactory {
 		if (options == null) 
 			options = CCorePlugin.getOptions();
 		String formatterID = (String)options.get(CCorePreferenceConstants.CODE_FORMATTER);
-		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
-		IExtensionPoint extension = Platform.getExtensionRegistry().
-			getExtensionPoint(CCorePlugin.PLUGIN_ID, "CodeFormatter");
+		String extID = CCorePlugin.FORMATTER_EXTPOINT_ID;
+		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, extID);
 		if (extension != null) {
 			IExtension[] extensions =  extension.getExtensions();
 			for(int i = 0; i < extensions.length; i++){

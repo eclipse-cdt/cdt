@@ -271,6 +271,56 @@
                id="target.independent.tool">
          </toolReference>
       </target>
+      <target
+            name="Forward Grandchild"
+            parent="test.forward.child.target"
+            binaryParser="org.eclipse.cdt.core.tests.target1"
+            id="test.forward.grandchild.target">
+         <toolReference
+               command="newcommand"
+               id="test.forward.tool">
+         </toolReference>
+      </target>
+      <target
+            isTest="true"
+            osList="win32,solaris,linux"
+            name="Forward Child"
+            binaryParser="org.eclipse.cdt.core.tests.target2"
+            parent="test.forward.parent.target"
+            id="test.forward.child.target">
+         <toolReference
+               id="test.forward.tool">
+            <optionReference
+                  id="test.forward.option">
+            </optionReference>
+         </toolReference>
+      </target>
+      <target
+            isTest="true"
+            name="Forward Parent"
+            binaryParser="org.eclipse.cdt.core.tests.target3"
+            id="test.forward.parent.target">
+         <tool
+               natureFilter="both"
+               name="Forward Parent Tool"
+               id="test.forward.tool">
+            <option
+                  name="Test Forward Option"
+                  category="test.forward.child.category"
+                  id="test.forward.option">
+            </option>
+            <optionCategory
+                  owner="test.forward.parent.category"
+                  name="Forward Child Category"
+                  id="test.forward.child.category">
+            </optionCategory>
+            <optionCategory
+                  owner="test.forward.tool"
+                  name="Forward Parent Category"
+                  id="test.forward.parent.category">
+            </optionCategory>
+         </tool>
+      </target>
    </extension>
    <extension
          id="runTests"

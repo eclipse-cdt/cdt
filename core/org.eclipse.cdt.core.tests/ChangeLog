@@ -1,3 +1,9 @@
+2004-03-12 Sean Evoy
+	Commit for Jeremiah Lott. 
+	Allows the managed build system to resolve "forward references" within its 
+	extensions. In practice this is necessary to allow references between 
+	extensions in different plugins.
+
 2004-03-12 Andrew Niefer
 	added CompleteParseASTTest.testBug54639
 

@@ -41,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
@@ -101,6 +102,9 @@ public class ManagedBuildTests extends TestCase {
 		ITarget testRoot = null;
 		ITarget testSub = null;
 		ITarget testSubSub = null;
+		ITarget testForwardChild = null;
+		ITarget testForwardParent = null;
+		ITarget testForwardGrandchild = null;
 		
 		// Note secret null parameter which means just extensions
 		ITarget[] targets = ManagedBuildManager.getDefinedTargets(null);
@@ -117,8 +121,20 @@ public class ManagedBuildTests extends TestCase {
 			} else if (target.getName().equals("Test Sub Sub")) {
 				testSubSub = target;
 				checkSubSubTarget(testSubSub);
+			} else if (target.getName().equals("Forward Child")) {
+				testForwardChild = target;
+			} else if (target.getName().equals("Forward Parent")) {
+				testForwardParent = target;
+			} else if (target.getName().equals("Forward Grandchild")) {
+				testForwardGrandchild = target;
 			}
 		}
+		// check that the forward references are properly resolved.
+		assertNotNull(testForwardChild);
+		assertNotNull(testForwardParent);
+		assertNotNull(testForwardGrandchild);
+		checkForwardTargets(testForwardParent, testForwardChild, testForwardGrandchild);
+		
 		// All these targets are defines in the plugin files, so none
 		// of them should be null at this point
 		assertNotNull(testRoot);
@@ -208,7 +224,7 @@ public class ManagedBuildTests extends TestCase {
 		IConfiguration[] configs = newTarget.getConfigurations();
 		assertEquals(4, configs.length);
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
-		buildInfo.setDefaultConfiguration(newTarget.getConfiguration(configs[3].getId()));
+		buildInfo.setDefaultConfiguration(newTarget.getConfiguration(configs[0].getId()));
 
 		// Use the plugin mechanism to discover the supplier of the path information
 		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
@@ -1063,13 +1079,55 @@ public class ManagedBuildTests extends TestCase {
 		// Get the configs for this target; it should inherit all the configs defined for the parent
 		IConfiguration[] configs = target.getConfigurations();
 		assertEquals(4, configs.length);
-		IConfiguration rootConfig = configs[0];
-		assertEquals("Root Config", rootConfig.getName());
-		assertEquals("Root Override Config", configs[1].getName());
-		assertEquals("Complete Override Config", configs[2].getName());
-		assertEquals("Sub Config", configs[3].getName());
+		assertEquals("Sub Config", configs[0].getName());
+		assertEquals("Root Config", configs[1].getName());
+		assertEquals("Root Override Config", configs[2].getName());
+		assertEquals("Complete Override Config", configs[3].getName());
 	}
 
+	private void checkForwardTargets(ITarget parent, ITarget child, ITarget grandchild) {
+		// check that the target parent reference has been resolved.
+		assertEquals(parent, child.getParent());
+		assertEquals(child, grandchild.getParent());
+		
+		// get the parent tool
+		ITool[] parentTools = parent.getTools();
+		assertEquals(1, parentTools.length);
+		ITool parentTool = parentTools[0];
+		assertNotNull(parentTool);
+
+		// check option categories
+		IOption option = parentTool.getOption("test.forward.option");
+		assertNotNull(option);
+		IOptionCategory[] firstLevel = parentTool.getTopOptionCategory()
+			.getChildCategories();
+		assertEquals(1, firstLevel.length);
+		IOptionCategory[] secondLevel = firstLevel[0].getChildCategories();
+		assertEquals(1, secondLevel.length);
+		assertEquals(0, secondLevel[0].getChildCategories().length);
+		IOption[] optList = secondLevel[0].getOptions(null);
+		assertEquals(1, optList.length);
+		assertEquals(option, optList[0]);
+		
+		// get the tool reference from the child
+		ITool[] childTools = child.getTools();
+		assertEquals(2, childTools.length);
+		ToolReference childToolRef = (ToolReference)childTools[1];
+		assertEquals(parentTool, childToolRef.getTool());
+		
+		// get and check the option reference
+		OptionReference optRef = (OptionReference)
+			childToolRef.getOption("test.forward.option");
+		assertEquals(option, optRef.getOption());
+		
+		// get the tool reference from the grandchild
+		ITool[] grandTools = grandchild.getTools();
+		assertEquals(3, grandTools.length);
+		ToolReference grandToolRef = (ToolReference)grandTools[2];
+		assertEquals(parentTool, grandToolRef.getTool());
+		
+	}
+	
 	/**
 	 * Remove all the project information associated with the project used during test.
 	 */

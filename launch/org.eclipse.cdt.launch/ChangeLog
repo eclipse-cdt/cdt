@@ -1,3 +1,17 @@
+2003-02-06 Alain Magloire
+
+	* src/.../launch/internal/ui/WorkingDirectoryBlock.java (geLaunchConfiguration):
+	(updateLaunchConfigurationDialog): New method to change the scope for inner classes.
+	* src/.../launch/ui/CArgumentsTab.java (updateLaunchConfigurationDialog):
+	New method changing the scope for inner classes.
+	* src/.../launch/ui/CDebuggerTab.java (updateLaunchConfigurationDialog):
+	New method changing the scope for inner classes.
+	* src/.../launch/ui/CMainTab.java (updateLaunchConfigurationDialog):
+	New method changing the scope for inner classes.
+	* src/.../launch/ui/CorefileDebuggerTab.java (handleDebuggerChange):
+	New method changing the scope for inner classes.
+
+	
 2003-02-06 David Inglis
 	* src/.../launch/internal/CApplicationLaunchShortcut.java
 	* src/.../launch/ui/CMainTab.java

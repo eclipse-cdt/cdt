@@ -1,3 +1,12 @@
+2003-02-06 Alain Magloire
+
+	* src/.../internal/ui/CygwinDebuggerPage.java (updateLaunchConfigurationDialog):
+	New method to increase visibility for inner classes.
+	(getShell): New method to increase visibility for inner classes.
+	(fGDBCommandText): Change scope to protected.
+	(fGDBInitText) Change scope to protected.
+	* src/.../internal/ui/GDBDebuggerPage.java: Ditto.
+
 2003-01-24 David Inglis
 
 	* src/.../internal/ui/CDebuggerPage.java (removed)

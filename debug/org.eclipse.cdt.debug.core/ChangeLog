@@ -1,10 +1,21 @@
+2003-03-13 ALain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIVariable.java:
+	Also extends ICDIVariableObject.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIArgument.java:
+	Also extends ICDIArgumentObject.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIRegister.java:
+	Also extends ICDIRegisterObject
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariableManager.java:
+	getLocalVariableObject() new method.
+	
 2003-03-09 Mikhail Khodjaiants
 	New ICDIVariableManager methods for the 'DisplayAsArray' and 'CastToType' actions.
 	* CVariable.java
 
 2003-03-11 Alain Magloire
 
-	* src/org/eclipse/cdt/debug/core/cdi/ICDIvariableManager.java:
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariableManager.java:
 	New methods getVariableObjectAsArray(), getVariableObjectAsType().
 
 2003-03-09 Mikhail Khodjaiants

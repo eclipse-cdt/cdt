@@ -1662,13 +1662,11 @@ public final class Scanner implements IScanner, IScannerData {
 						if( c == '/' )
 						{
 							skipOverSinglelineComment();
-							c = getChar(false);
 							continue;
 						}
 						else if( c == '*' )
 						{
 							skipOverMultilineComment();
-							c = getChar(false);
 							continue;
 						}
 					}

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
 
 /**
  * @author jcamelon
@@ -1645,4 +1646,15 @@ public class ScannerTestCase extends BaseScannerTest
 		validateToken( IToken.tRBRACE);
 		validateEOF();
 	}
+    
+    public void testEndif() throws Exception
+    {
+    	Writer writer = new StringWriter();
+    	writer.write( "#ifdef __X__\n" ); //$NON-NLS-1$
+    	writer.write( "  // comment\n" ); //$NON-NLS-1$
+    	writer.write( "#endif\n" ); //$NON-NLS-1$
+    	initializeScanner( writer.toString() );
+    	validateEOF();
+    	assertEquals( ((Scanner)scanner).getBranchTracker().getDepth(), 0 );
+    }
 }

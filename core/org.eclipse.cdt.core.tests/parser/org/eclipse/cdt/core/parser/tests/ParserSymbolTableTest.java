@@ -27,9 +27,9 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.pst.TemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.OperatorExpression;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
@@ -92,7 +92,7 @@ public class ParserSymbolTableTest extends TestCase {
 	public void testSimpleLookup() throws Exception{
 		newTable(); //new symbol table
 		
-		ISymbol x = table.new Declaration( "x" );
+		ISymbol x = table.newSymbol( "x", TypeInfo.t_int );
 		table.getCompilationUnit().addSymbol( x );
 		
 		ISymbol look = table.getCompilationUnit().lookup( "x" );
@@ -110,7 +110,7 @@ public class ParserSymbolTableTest extends TestCase {
 	public void testSimpleSetGetObject() throws Exception{
 		newTable();
 		
-		IContainerSymbol x = table.new Declaration("x");
+		IContainerSymbol x = table.newContainerSymbol( "x", TypeInfo.t_namespace );
 		
 		ISymbolASTExtension extension = new StandardSymbolExtension(x,null);  
 		
@@ -188,7 +188,7 @@ public class ParserSymbolTableTest extends TestCase {
 		class1.setType( TypeInfo.t_class );
 		class1.addParent( parent );
 		
-		ISymbol decl = table.new Declaration("x");
+		ISymbol decl = table.newSymbol( "x", TypeInfo.t_int );
 		parent.addSymbol( decl );
 		
 		table.getCompilationUnit().addSymbol( parent );
@@ -216,7 +216,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol class1 = (IDerivableContainerSymbol) table.getCompilationUnit().lookup( "class" );
 		class1.addParent( parent2 );
 		
-		ISymbol decl = table.new Declaration("x");
+		ISymbol decl = table.newSymbol( "x", TypeInfo.t_int );
 		parent2.addSymbol( decl );
 				
 		try{
@@ -283,7 +283,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IContainerSymbol compUnit = table.getCompilationUnit();
 		compUnit.addSymbol( c );
 		
-		ISymbol x = table.new Declaration( "x" );
+		ISymbol x = table.newSymbol( "x", TypeInfo.t_int );
 		c.addSymbol( x );
 		
 		compUnit.addSymbol( decl );
@@ -357,16 +357,14 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( c );
 		compUnit.addSymbol( d );
 		
-		IContainerSymbol enum = table.new Declaration("enum");
-		enum.setType( TypeInfo.t_enumeration );
+		IContainerSymbol enum = table.newContainerSymbol( "enum", TypeInfo.t_enumeration );
 		
-		ISymbol enumerator = table.new Declaration( "enumerator" );
-		enumerator.setType( TypeInfo.t_enumerator );
+		ISymbol enumerator = table.newSymbol( "enumerator", TypeInfo.t_enumerator );
 		
-		ISymbol stat = table.new Declaration("static");
+		ISymbol stat = table.newSymbol( "static", TypeInfo.t_int );
 		stat.getTypeInfo().setBit( true, TypeInfo.isStatic );
 		
-		ISymbol x = table.new Declaration("x");
+		ISymbol x = table.newSymbol( "x", TypeInfo.t_int );
 		
 		d.addSymbol( enum );
 		d.addSymbol( stat );
@@ -1110,12 +1108,10 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IContainerSymbol compUnit = table.getCompilationUnit();
 		
-		ParserSymbolTable.Declaration A = table.new Declaration( "A" );
-		A.setType( TypeInfo.t_namespace );
+		IContainerSymbol A = table.newContainerSymbol( "A", TypeInfo.t_namespace );
 		compUnit.addSymbol( A );
 		
-		ParserSymbolTable.Declaration f1 = table.new Declaration( "f" );
-		f1.setType( TypeInfo.t_function );
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
 		f1.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f1.addParameter( TypeInfo.t_int, 0, null, false );
 		A.addSymbol( f1 );
@@ -1172,8 +1168,7 @@ public class ParserSymbolTableTest extends TestCase {
 	public void testThisPointer() throws Exception{
 		newTable();
 		
-		IContainerSymbol cls = table.newContainerSymbol("class");
-		cls.setType( TypeInfo.t_class );
+		IDerivableContainerSymbol cls = table.newDerivableContainerSymbol( "class", TypeInfo.t_class );
 		
 		IParameterizedSymbol fn = table.newParameterizedSymbol("function");
 		fn.setType( TypeInfo.t_function );
@@ -1319,8 +1314,7 @@ public class ParserSymbolTableTest extends TestCase {
 		 
 		compUnit.addSymbol( NS1 );
 		
-		ParserSymbolTable.Declaration f1 = table.new Declaration( "f" );
-		f1.setType( TypeInfo.t_function );
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
 		f1.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f1.addParameter( TypeInfo.t_void, 0, new PtrOp( PtrOp.t_pointer ), false );
 		NS1.addSymbol( f1 );
@@ -1992,7 +1986,7 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList args = new LinkedList();
 		args.add( type );
 		
-		ParserSymbolTable.TemplateInstance instance = table.getCompilationUnit().templateLookup( "A", args );
+		TemplateInstance instance = table.getCompilationUnit().templateLookup( "A", args );
 		assertEquals( instance.getInstantiatedSymbol(), A );
 		
 		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
@@ -2047,7 +2041,7 @@ public class ParserSymbolTableTest extends TestCase {
 		args.add( type );
 		
 		look = table.getCompilationUnit().templateLookup( "A", args );
-		assertTrue( look instanceof ParserSymbolTable.TemplateInstance );
+		assertTrue( look instanceof TemplateInstance );
 		
 		B.addParent( look );
 		table.getCompilationUnit().addSymbol( B );

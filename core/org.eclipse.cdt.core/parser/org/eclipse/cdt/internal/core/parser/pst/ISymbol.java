@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 /**
  * @author jcamelon
  *

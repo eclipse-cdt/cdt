@@ -1,3 +1,6 @@
+2003-11-18 Andrew Niefer
+	update ParserSymbolTableTest to reflect refactoring of Declaration into 4 separate classes.
+
 2003-11-13 Hoda Amer
 	Added CompleteParseASTTest::testBug44342(): Failure to dereference function calls after a . or an ->
 	Moved testErrorHandling_1() to FailedCompleteParseASTTest

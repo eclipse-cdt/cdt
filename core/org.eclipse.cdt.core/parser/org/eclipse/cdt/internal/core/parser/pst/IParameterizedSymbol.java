@@ -34,11 +34,11 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public void addArgument( ISymbol arg );
 	public List getArgumentList();
-	public void setArgumentList( List list );
+	//public void setArgumentList( List list );
 	
 	public Map getParameterMap();
 	public List getParameterList();
-	public void setParameterList( List list );
+	//public void setParameterList( List list );
 
 	public boolean hasSameParameters(IParameterizedSymbol newDecl);
 	

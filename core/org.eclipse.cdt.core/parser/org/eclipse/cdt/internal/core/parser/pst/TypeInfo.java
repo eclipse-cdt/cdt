@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.core.parser.Enum;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 
 
 public class TypeInfo {
@@ -316,17 +315,38 @@ public class TypeInfo {
 	}
 	
 	public List getPtrOperators(){
+		if( _ptrOperators == null ){
+			_ptrOperators = new LinkedList();
+		}
 		return _ptrOperators;
 	}
 	
 	public boolean hasSamePtrs( TypeInfo type ){
-		int size = hasPtrOperators() ? getPtrOperators().size() : 0;
-		int size2 = type.hasPtrOperators() ? type.getPtrOperators().size() : 0;
+		int size = getPtrOperators().size();
+		int size2 = type.getPtrOperators().size();
+		Iterator iter1 = getPtrOperators().iterator();
+		Iterator iter2 = type.getPtrOperators().iterator();
+		TypeInfo.PtrOp ptr1 = null, ptr2 = null;
+		if( size2 < size ) {
+			for( int i = size; i > size2; i-- ){
+				ptr2 = (PtrOp) iter1.next();
+				if( ptr2.getType() != PtrOp.t_undef ){
+					return false;	
+				}
+			}
+			size = size2;
+		} else if ( size < size2 ){
+			for( int i = size2; i > size; i-- ){
+				ptr1 = (PtrOp)iter2.next();
+				if( ptr1.getType() != PtrOp.t_undef ){
+					return false;	
+				}
+			}
+			size2 = size;
+		}
+		
 		if( size == size2 ){
 			if( size > 0 ){
-				Iterator iter1 = getPtrOperators().iterator();
-				Iterator iter2 = type.getPtrOperators().iterator();
-				TypeInfo.PtrOp ptr1 = null, ptr2 = null;
 				for( int i = size; i > 0; i-- ){
 					ptr1 = (TypeInfo.PtrOp)iter1.next();
 					ptr2 = (TypeInfo.PtrOp)iter2.next();
@@ -336,11 +356,14 @@ public class TypeInfo {
 				}
 			}
 			return true;
-		}
+		} 
 		return false;
 	}
 
 	public List getOperatorExpressions(){
+		if( _operatorExpressions == null ){
+			_operatorExpressions = new LinkedList();
+		}
 		return _operatorExpressions;
 	}
 	

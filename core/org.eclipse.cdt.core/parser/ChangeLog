@@ -1,3 +1,7 @@
+2003-11-18 Andrew Niefer
+	Refactor PST: Split Declaration into 4 classes : ContainerSymbol, DerivableContainerSymbol, ParameterizedContainerSymbol,
+	SpecializedSymbol.  Move these along with BasicSymbol & TemplateInstance to no longer be nested in ParserSymbolTable.
+
 2003-11-13 Hoda Amer
 	Changed the getExpressionResultType() in the complete factory to return 
 	an object of type ExpressionResult.

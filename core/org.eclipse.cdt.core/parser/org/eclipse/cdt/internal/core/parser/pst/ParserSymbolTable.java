@@ -40,8 +40,7 @@ public class ParserSymbolTable {
 	 */
 	public ParserSymbolTable( ParserLanguage language ) {
 		super();
-		_compilationUnit = new Declaration(EMPTY_NAME);
-		_compilationUnit.setType( TypeInfo.t_namespace );
+		_compilationUnit = newContainerSymbol( EMPTY_NAME, TypeInfo.t_namespace );
 		_language = language;
 	}
 
@@ -50,37 +49,37 @@ public class ParserSymbolTable {
 	}
 	
 	public IContainerSymbol newContainerSymbol( String name ){
-		return new Declaration( name );
+		return new ContainerSymbol( this, name );
 	}
 	public IContainerSymbol newContainerSymbol( String name, TypeInfo.eType type ){
-		return new Declaration( name, type );
+		return new ContainerSymbol( this, name, type );
 	}
 	
 	public ISymbol newSymbol( String name ){
-		return new BasicSymbol( name );
+		return new BasicSymbol( this, name );
 	}
 	public ISymbol newSymbol( String name, TypeInfo.eType type ){
-		return new BasicSymbol( name, type );
+		return new BasicSymbol( this, name, type );
 	}
 	
 	public IDerivableContainerSymbol newDerivableContainerSymbol( String name ){
-		return new Declaration( name );
+		return new DerivableContainerSymbol( this, name );
 	}
 	public IDerivableContainerSymbol newDerivableContainerSymbol( String name, TypeInfo.eType type ){
-		return new Declaration( name, type );
+		return new DerivableContainerSymbol( this, name, type );
 	}
 	public IParameterizedSymbol newParameterizedSymbol( String name ){
-		return new Declaration( name );
+		return new ParameterizedSymbol( this, name );
 	}
 	public IParameterizedSymbol newParameterizedSymbol( String name, TypeInfo.eType type ){
-		return new Declaration( name, type );
+		return new ParameterizedSymbol( this, name, type );
 	}
 	public ISpecializedSymbol newSpecializedSymbol( String name ){
-		return new Declaration( name );
+		return new SpecializedSymbol( this, name );
 	}
-	public ISpecializedSymbol newSpecializedSymbol( String name, TypeInfo.eType type ){
-		return new Declaration( name, type );
-	}		
+//	public ISpecializedSymbol newSpecializedSymbol( String name, TypeInfo.eType type ){
+//		return new Declaration( this, name, type );
+//	}		
 	/**
 	 * Lookup the name from LookupData starting in the inDeclaration
 	 * @param data
@@ -260,7 +259,7 @@ public class ParserSymbolTable {
 						data.foundItems = new HashSet();
 					}
 					if( temp.isTemplateMember() )
-						data.foundItems.add( temp.getSymbolTable().new TemplateInstance( temp, data.templateInstance.getArgumentMap() ) );
+						data.foundItems.add( new TemplateInstance( temp.getSymbolTable(), temp, data.templateInstance.getArgumentMap() ) );
 					else
 						data.foundItems.add( temp );
 						
@@ -281,7 +280,7 @@ public class ParserSymbolTable {
 							data.foundItems = new HashSet();
 						}
 						if( temp.isTemplateMember() )
-							data.foundItems.add( temp.getSymbolTable().new TemplateInstance( temp, data.templateInstance.getArgumentMap() ) );
+							data.foundItems.add( new TemplateInstance( temp.getSymbolTable(), temp, data.templateInstance.getArgumentMap() ) );
 						else
 							data.foundItems.add(temp);
 						foundSomething = true;
@@ -306,7 +305,7 @@ public class ParserSymbolTable {
 					ISymbol symbol = (ISymbol) obj;
 					
 					if( symbol.isTemplateMember() && data.templateInstance != null ){
-						data.foundItems.add( symbol.getSymbolTable().new TemplateInstance( symbol, data.templateInstance.getArgumentMap() ) );
+						data.foundItems.add( new TemplateInstance( symbol.getSymbolTable(), symbol, data.templateInstance.getArgumentMap() ) );
 					} else {
 						data.foundItems.add( symbol );
 					}
@@ -341,9 +340,10 @@ public class ParserSymbolTable {
 	 */
 	private static ISymbol lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
 		IDerivableContainerSymbol container = null;
-		if( lookIn instanceof TemplateInstance ){
+		/*if( lookIn instanceof TemplateInstance ){
 			
-		} else if( lookIn instanceof IDerivableContainerSymbol ){
+		} else*/
+		if( lookIn instanceof IDerivableContainerSymbol ){
 			container = (IDerivableContainerSymbol) lookIn;
 		} else{
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
@@ -749,7 +749,7 @@ public class ParserSymbolTable {
 			sourceParams = data.parameters.iterator();
 			
 			List parameterList = null;
-			if( currFn.getParameterList() == null ){
+			if( currFn.getParameterList().isEmpty() ){
 				//the only way we get here and have no parameters, is if we are looking
 				//for a function that takes void parameters ie f( void )
 				parameterList = new LinkedList();
@@ -1093,18 +1093,18 @@ public class ParserSymbolTable {
 			
 			Iterator iter = obj.getParents().iterator();
 			int size = obj.getParents().size();
-			Declaration.ParentWrapper wrapper;
-			IDerivableContainerSymbol base;
+			IDerivableContainerSymbol.IParentSymbol wrapper;
+			ISymbol base;
 			
 			for( int i = size; i > 0; i-- ){
-				wrapper = (Declaration.ParentWrapper) iter.next();	
-				base = (Declaration) wrapper.parent;	
+				wrapper = (IDerivableContainerSymbol.IParentSymbol) iter.next();	
+				base = wrapper.getParent();	
 				classes.add( base );
 				if( base.getContainingSymbol().getType() == TypeInfo.t_namespace ){
 					classes.add( base.getContainingSymbol());
 				}
 				
-				getBaseClassesAndContainingNamespaces( base, classes );
+				getBaseClassesAndContainingNamespaces( (IDerivableContainerSymbol) base, classes );
 			}
 		}
 	}
@@ -1195,11 +1195,15 @@ public class ParserSymbolTable {
 		
 		if( cost.target.hasPtrOperators() ){
 			List targetPtrs = cost.target.getPtrOperators();
-			Iterator iterator = targetPtrs.iterator();
+			ListIterator iterator = targetPtrs.listIterator();
 			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)iterator.next();
 
 			if( ptr.getType() == TypeInfo.PtrOp.t_reference ){
-				iterator.remove();
+				if( ptr.isConst() || ptr.isVolatile() ){
+					iterator.set( new PtrOp( PtrOp.t_undef, ptr.isConst(), ptr.isVolatile() ) );
+				} else {
+					iterator.remove();
+				}
 				cost.targetHadReference = true;
 			}
 			int size = targetPtrs.size();
@@ -1223,18 +1227,26 @@ public class ParserSymbolTable {
 	 * see spec section 4.4 regarding qualification conversions
 	 */
 	static private void qualificationConversion( Cost cost ){
-		int size = cost.source.hasPtrOperators() ? cost.source.getPtrOperators().size() : 0;
-		int size2 = cost.target.hasPtrOperators() ? cost.target.getPtrOperators().size() : 0;
+		int size = cost.source.getPtrOperators().size();
+		int size2 = cost.target.getPtrOperators().size();
 		
 		TypeInfo.PtrOp op1 = null, op2 = null;
 		boolean canConvert = true;
 		
-		Iterator iter1 = cost.source.hasPtrOperators() ? cost.source.getPtrOperators().iterator() : null;
-		Iterator iter2 = cost.target.hasPtrOperators() ? cost.target.getPtrOperators().iterator() : null;
+		Iterator iter1 = cost.source.getPtrOperators().iterator();
+		Iterator iter2 = cost.target.getPtrOperators().iterator();
 		
 		if( size != size2 ){
-			cost.qualification = 0;
-			return;
+			if( size2 - size == 1 ){
+				op2 = (PtrOp) iter2.next();
+				if( op2.isConst() || op2.isVolatile() ){
+					canConvert = true;
+				} else {
+					canConvert = false;
+				}
+			} else {
+				canConvert = false;
+			}
 		} else if ( size == 1 ){
 			op1 = (TypeInfo.PtrOp) iter1.next();
 			op2 = (TypeInfo.PtrOp) iter2.next();
@@ -1457,6 +1469,20 @@ public class ParserSymbolTable {
 			return cost;
 		}
 		
+		//was the qualification conversion enough?
+		if( cost.source.isType( TypeInfo.t_type ) && cost.target.isType( TypeInfo.t_type ) ){
+			if( cost.target.hasSamePtrs( cost.source ) ){
+				ISymbol srcSymbol = cost.source.getTypeSymbol();
+				ISymbol trgSymbol = cost.target.getTypeSymbol();
+				if( srcSymbol != null && trgSymbol != null ){
+					if( srcSymbol.equals( trgSymbol ) )
+					{
+						return cost;
+					}
+				}
+			}
+		}
+		
 		promotion( cost );
 		if( cost.promotion > 0 || cost.rank > -1 ){
 			return cost;
@@ -1498,7 +1524,7 @@ public class ParserSymbolTable {
 					container = (IDerivableContainerSymbol)((TemplateInstance) targetDecl).getInstantiatedSymbol();
 				}
 				
-				if( container.getConstructors() != null ){
+				if( !container.getConstructors().isEmpty() ){
 					LinkedList constructors = new LinkedList( container.getConstructors() );
 					constructor = resolveFunction( data, constructors );
 				}
@@ -1659,12 +1685,15 @@ public class ParserSymbolTable {
 					ptr = (PtrOp)returnInfo.getPtrOperators().iterator().next();
 				} else {
 					ptr = new PtrOp();
-					returnInfo.addPtrOperator( ptr );					
+					returnInfo.addPtrOperator( ptr );	
+					ptr.setType( topPtr.getType() );				
 				}
 				
 				ptr.setConst( topPtr.isConst() );
 				ptr.setVolatile( topPtr.isVolatile() );
 			}
+		} else {
+			returnInfo = new TypeInfo( topInfo );
 		}
 		
 		return returnInfo;	
@@ -1949,7 +1978,7 @@ public class ParserSymbolTable {
 	 */
 	static private IParameterizedSymbol classTemplateSpecializationToFunctionTemplate( IParameterizedSymbol template ){
 		IParameterizedSymbol transformed = (IParameterizedSymbol) template.clone();
-		transformed.setArgumentList( null );
+		transformed.getArgumentList().clear();
 		transformed.getContainedSymbols().clear();
 		
 		IParameterizedSymbol function = template.getSymbolTable().newParameterizedSymbol( transformed.getName(), TypeInfo.t_function );
@@ -1995,11 +2024,11 @@ public class ParserSymbolTable {
 			map.put( param, val );
 		}
 		
-		return template.getSymbolTable().new TemplateInstance( template, map );
+		return new TemplateInstance( template.getSymbolTable(), template, map );
 	}
 
 	//private Stack _contextStack = new Stack();
-	private Declaration _compilationUnit;
+	private IContainerSymbol _compilationUnit;
 	private ParserLanguage    _language;
 	private LinkedList undoList = new LinkedList();
 	private HashSet markSet = new HashSet();
@@ -2051,7 +2080,7 @@ public class ParserSymbolTable {
 		return false;
 	}
 	
-	static abstract private class Command{
+	static abstract protected class Command{
 		abstract public void undoIt();
 	}
 	
@@ -2059,135 +2088,11 @@ public class ParserSymbolTable {
 		public void undoIt(){ };
 	}
 	
-	static private class AddDeclarationCommand extends Command{
-		AddDeclarationCommand( BasicSymbol newDecl, Declaration context, boolean removeThis ){
-			_decl = newDecl;
-			_context = context;
-			_removeThis = removeThis;
-		}
-		public void undoIt(){
-			Object obj = _context.getContainedSymbols().get( _decl.getName() );
-			
-			if( obj instanceof LinkedList ){
-				LinkedList list = (LinkedList)obj;
-				ListIterator iter = list.listIterator();
-				int size = list.size();
-				Declaration item = null;
-				for( int i = 0; i < size; i++ ){
-					item = (Declaration)iter.next();
-					if( item == _decl ){
-						iter.remove();
-						break;
-					}
-				}
-				if( list.size() == 1 ){
-					_context.getContainedSymbols().remove( _decl.getName() );
-					_context.getContainedSymbols().put( _decl.getName(), list.getFirst() );
-				}
-			} else if( obj instanceof BasicSymbol ){
-				_context.getContainedSymbols().remove( _decl.getName() );
-			}
-			if( _removeThis && _decl instanceof IParameterizedSymbol ){
-				((IParameterizedSymbol)_decl).getContainedSymbols().remove( THIS );
-			}
-		}
-		
-		private BasicSymbol _decl;
-		private Declaration _context; 
-		private boolean 	_removeThis;
-	}
-	
-	static private class AddConstructorCommand extends Command{
-		AddConstructorCommand( Declaration newConstr, Declaration context, boolean removeThis ){
-			_constructor = newConstr;
-			_context = context;
-			_removeThis = removeThis;
-		}
-		public void undoIt(){
-			List constructors = _context.getConstructors();
-			ListIterator iter = constructors.listIterator();
-			
-			int size = constructors.size();
-			Declaration item = null;
-			for( int i = 0; i < size; i++ ){
-				item = (Declaration)iter.next();
-				if( item == _constructor ){
-					iter.remove();
-					break;
-				}
-			}
-			
-			if( _removeThis ){
-				_constructor.getContainedSymbols().remove( THIS );
-			}
-		}
-	
-		private Declaration _constructor;
-		private Declaration _context; 
-		private boolean 	_removeThis;
-	}
-	
-	static private class AddParentCommand extends Command{
-		public AddParentCommand( Declaration container, Declaration.ParentWrapper wrapper ){
-			_decl = container;
-			_wrapper = wrapper;
-		}
-		
-		public void undoIt(){
-			List parents = _decl.getParents();
-			parents.remove( _wrapper );
-		}
-		
-		private Declaration _decl;
-		private Declaration.ParentWrapper _wrapper;
-	}
-	
-	static private class AddParameterCommand extends Command{
-		public AddParameterCommand( Declaration container, BasicSymbol parameter ){
-			_decl = container;
-			_param = parameter;
-		}
-		
-		public void undoIt(){
-			_decl.getParameterList().remove( _param );
-			
-			String name = _param.getName();
-			if( name != null && !name.equals(EMPTY_NAME) )
-			{	
-				_decl.getParameterMap().remove( name );
-			}
-		}
-		
-		private Declaration _decl;
-		private BasicSymbol _param;
-	}
-	
-	static private class AddArgumentCommand extends Command{
-		public AddArgumentCommand( Declaration container, BasicSymbol arg ){
-			_decl = container;
-			_arg = arg;
-		}
-		public void undoIt(){
-			_decl.getArgumentList().remove( _arg );
-		}
 
-		private Declaration _decl;
-		private BasicSymbol _arg;
-	}
 	
-	static private class AddUsingDirectiveCommand extends Command{
-		public AddUsingDirectiveCommand( Declaration container, Declaration namespace ){
-			_decl = container;
-			_namespace = namespace;
-		}
-		public void undoIt(){
-			_decl.getUsingDirectives().remove( _namespace );
-		}
-		private Declaration _decl;
-		private Declaration _namespace;
-	}
+
 	
-	static private class LookupData
+	static protected class LookupData
 	{
 		
 		public String name;
@@ -2327,1244 +2232,4 @@ public class ParserSymbolTable {
 		}
 	}
 
-	public class BasicSymbol implements Cloneable, ISymbol
-	{
-		public BasicSymbol( String name ){
-			super();
-			_name = name;
-			_typeInfo = new TypeInfo();
-		}
-		
-		public BasicSymbol( String name, ISymbolASTExtension obj ){
-			super();
-			_name   = name;
-			_object = obj;
-			_typeInfo = new TypeInfo();
-		}
-		
-		public BasicSymbol( String name, TypeInfo.eType typeInfo )
-		{
-			super();
-			_name = name;
-			_typeInfo = new TypeInfo( typeInfo, 0, null );
-		}
-		
-		public ParserSymbolTable getSymbolTable(){
-			return ParserSymbolTable.this;
-		}
-		
-		public Object clone(){
-			BasicSymbol copy = null;
-			try{
-				copy = (BasicSymbol)super.clone();
-			} catch ( CloneNotSupportedException e ){
-				//should not happen
-				return null;
-			}
-			copy._object = null;
-			return copy;	
-		}
-		
-		public String getName() { return _name; }
-		public void setName(String name) { _name = name; }
-
-		public ISymbolASTExtension getASTExtension() { return _object; }
-		public void setASTExtension( ISymbolASTExtension obj ) { _object = obj; }
-			
-		public IContainerSymbol getContainingSymbol() { return _containingScope; }
-		public void setContainingSymbol( IContainerSymbol scope ){ 
-			_containingScope = ( Declaration )scope;
-			_depth = scope.getDepth() + 1; 
-		}
-	
-		public void setType(TypeInfo.eType t){
-			getTypeInfo().setType( t );	 
-		}
-	
-		public TypeInfo.eType getType(){ 
-			return getTypeInfo().getType(); 
-		}
-	
-		public boolean isType( TypeInfo.eType type ){
-			return getTypeInfo().isType( type, TypeInfo.t_undef ); 
-		}
-
-		public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
-			return getTypeInfo().isType( type, upperType );
-		}
-		
-		public ISymbol getTypeSymbol(){
-			ISymbol symbol = getTypeInfo().getTypeSymbol();
-			
-			if( symbol != null && symbol.getTypeInfo().isForwardDeclaration() && symbol.getTypeSymbol() != null ){
-				return symbol.getTypeSymbol();
-			}
-			
-			return symbol;
-		}
-	
-		public void setTypeSymbol( ISymbol type ){
-			getTypeInfo().setTypeSymbol( type ); 
-		}
-
-		public TypeInfo getTypeInfo(){
-			return _typeInfo; 
-		}
-		
-		public void setTypeInfo( TypeInfo info ) {
-			_typeInfo = info;
-		}
-		
-		public boolean isForwardDeclaration(){
-			return getTypeInfo().isForwardDeclaration();
-		}
-		
-		public void setIsForwardDeclaration( boolean forward ){
-			getTypeInfo().setIsForwardDeclaration( forward );
-		}
-		
-		/**
-		 * returns 0 if same, non zero otherwise
-		 */
-		public int compareCVQualifiersTo( ISymbol symbol ){
-			int size = symbol.getTypeInfo().hasPtrOperators() ? symbol.getTypeInfo().getPtrOperators().size() : 0;
-			int size2 = getTypeInfo().hasPtrOperators() ? getTypeInfo().getPtrOperators().size() : 0;
-				
-			if( size != size2 ){
-				return size2 - size;
-			} else if( size == 0 ) 
-				return 0; 
-			else {
-				
-				Iterator iter1 = symbol.getTypeInfo().getPtrOperators().iterator();
-				Iterator iter2 = getTypeInfo().getPtrOperators().iterator();
-	
-				TypeInfo.PtrOp op1 = null, op2 = null;
-	
-				for( int i = size; i > 0; i-- ){
-					op1 = (TypeInfo.PtrOp)iter1.next();
-					op2 = (TypeInfo.PtrOp)iter2.next();
-		
-					if( op1.compareCVTo( op2 ) != 0 ){
-						return -1;
-					}
-				}
-			}
-			
-			return 0;
-		}
-		
-		public List getPtrOperators(){
-			return getTypeInfo().getPtrOperators();
-		}
-		public void addPtrOperator( TypeInfo.PtrOp ptrOp ){
-			getTypeInfo().addPtrOperator( ptrOp );
-		}	
-		
-		public int getDepth(){
-			return _depth;
-		}
-		
-		public boolean isTemplateMember(){
-			return _isTemplateMember;
-		}
-		public void setIsTemplateMember( boolean isMember ){
-			_isTemplateMember = isMember;
-		}
-		public ISymbol getTemplateInstance(){
-			return _templateInstance;
-		}
-		public void setTemplateInstance( TemplateInstance instance ){
-			_templateInstance = instance;
-		}
-		public Map getArgumentMap(){
-			return null;
-		}
-		private 	String 		_name;					//our name
-		private		ISymbolASTExtension	_object;	//the object associated with us
-		private		TypeInfo	_typeInfo;				//our type info
-		private		Declaration	_containingScope;		//the scope that contains us
-		private		int 		_depth;					//how far down the scope stack we are
-		
-		private		boolean		_isTemplateMember = false;		
-		private		TemplateInstance	_templateInstance;		
-	}
-	
-	public class TemplateInstance extends BasicSymbol
-	{
-		protected TemplateInstance( ISymbol symbol, Map argMap ){
-			super(EMPTY_NAME);
-			_instantiatedSymbol = symbol;
-			symbol.setTemplateInstance( this );
-			_argumentMap = argMap;
-		}
-		
-		public boolean equals( Object t ){
-			if( t == null || !( t instanceof TemplateInstance ) ){ 
-				return false;
-			}
-			
-			TemplateInstance instance = (TemplateInstance) t;
-			
-			if( _instantiatedSymbol != instance._instantiatedSymbol ){
-				return false;
-			}
-			
-			//check arg map
-			Iterator iter1 = _argumentMap.keySet().iterator();
-			Iterator iter2 = instance._argumentMap.keySet().iterator();
-			int size = _argumentMap.size();
-			int size2 = instance._argumentMap.size();
-			ISymbol t1 = null, t2 = null;
-			if( size == size2 ){
-				for( int i = size; i > 0; i-- ){
-					t1 = (ISymbol)iter1.next();
-					t2 = (ISymbol)iter2.next();
-					if( t1 != t2 || !_argumentMap.get(t1).equals( instance._argumentMap.get(t2) ) ){
-						return false;								
-					}
-				}
-			}
-			
-			return true;
-		}
-		
-		public ISymbol getInstantiatedSymbol(){
-			_instantiatedSymbol.setTemplateInstance( this );
-			return _instantiatedSymbol;
-		}
-		
-		public TypeInfo.eType getType(){
-			ISymbol symbol = _instantiatedSymbol;
-			TypeInfo.eType returnType = _instantiatedSymbol.getType();
-			if( returnType == TypeInfo.t_type ){
-				symbol = symbol.getTypeSymbol();
-				TypeInfo info = null;	
-				while( symbol != null && symbol.getType() == TypeInfo.t_undef && symbol.getContainingSymbol().getType() == TypeInfo.t_template ){
-					info = (TypeInfo) _argumentMap.get( symbol );
-					if( !info.isType( TypeInfo.t_type ) ){
-						break;
-					}
-					symbol = info.getTypeSymbol();
-				}
-				
-				return ( info != null ) ? info.getType() : TypeInfo.t_type;
-			}
-			
-			return returnType; 
-		}
-	
-		public boolean isType( TypeInfo.eType type ){
-			return ( type == TypeInfo.t_any || getType() == type );
-		}
-
-		public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
-			if( type == TypeInfo.t_any )
-				return true;
-	
-			if( upperType == TypeInfo.t_undef ){
-				return ( getType() == type );
-			} else {
-				return ( getType().compareTo( type ) >= 0 && getType().compareTo( upperType ) <= 0 );
-			}
-		}
-		
-		public ISymbol getTypeSymbol(){
-			ISymbol symbol = _instantiatedSymbol.getTypeSymbol();
-			if( symbol != null && symbol.getType() == TypeInfo.t_undef && 
-								  symbol.getContainingSymbol().getType() == TypeInfo.t_template )
-			{
-				TypeInfo info = (TypeInfo) _argumentMap.get( symbol );
-				return ( info != null ) ? info.getTypeSymbol() : null;	
-			}
-			
-			return symbol; 
-		}
-	
-		public TypeInfo getTypeInfo(){
-			ISymbol symbol = _instantiatedSymbol.getTypeSymbol();
-			if( symbol != null && symbol.getType() == TypeInfo.t_undef && 
-								  symbol.getContainingSymbol().getType() == TypeInfo.t_template )
-			{
-				TypeInfo info = (TypeInfo) _argumentMap.get( symbol );
-				return info;
-			}
-			
-			return _instantiatedSymbol.getTypeInfo();
-		}
-			
-		public Map getArgumentMap(){
-			return _argumentMap;
-		}
-
-		
-		private ISymbol			 _instantiatedSymbol;
-		//private LinkedList		 _arguments;
-		private Map			 _argumentMap;
-	}
-	
-	public class Declaration extends BasicSymbol implements Cloneable, 
-												   			IContainerSymbol, 
-												   			IDerivableContainerSymbol, 
-												   			IParameterizedSymbol, 
-												   			ISpecializedSymbol
-	{
-
-		public Declaration( String name ){
-			super( name );
-		}
-	
-		public Declaration( String name, ISymbolASTExtension obj ){
-			super( name, obj );
-		}
-		
-		public Declaration( String name, TypeInfo.eType typeInfo )
-		{
-			super( name, typeInfo );
-		}
-
-		/**
-		 * clone
-		 * @see java.lang.Object#clone()
-		 * 
-		 * implement clone for the purposes of using declarations.
-		 * int   		_typeInfo;				//by assignment
-		 * String 		_name;					//by assignment
-		 * Object 		_object;				//null this out
-		 * Declaration	_typeDeclaration;		//by assignment
-		 * Declaration	_containingScope;		//by assignment
-		 * LinkedList 	_parentScopes;			//shallow copy
-		 * LinkedList 	_usingDirectives;		//shallow copy
-		 * HashMap		_containedDeclarations;	//shallow copy
-		 * int 			_depth;					//by assignment
-		 */
-		public Object clone(){
-			Declaration copy = (Declaration)super.clone();
-			
-			copy._parentScopes          = ( _parentScopes != null ) ? (LinkedList) _parentScopes.clone() : null;
-			copy._usingDirectives       = ( _usingDirectives != null ) ? (LinkedList) _usingDirectives.clone() : null; 
-			copy._containedDeclarations = ( _containedDeclarations != null ) ? (HashMap) _containedDeclarations.clone() : null;
-			copy._parameterList         = ( _parameterList != null ) ? (LinkedList) _parameterList.clone() : null;
-			copy._parameterHash 		= ( _parameterHash != null ) ? (HashMap) _parameterHash.clone() : null;
-		
-			return copy;	
-		}
-	
-		public void addParent( ISymbol parent ){
-			addParent( parent, false, ASTAccessVisibility.PUBLIC, -1, null );
-		}
-		public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references ){
-			if( _parentScopes == null ){
-				_parentScopes = new LinkedList();
-			}
-			
-			ParentWrapper wrapper = new ParentWrapper( parent, virtual, visibility, offset, references );
-			_parentScopes.add( wrapper );
-			
-			Command command = new AddParentCommand( this, wrapper );
-			pushCommand( command );
-		}
-	
-		public void addParent( IDerivableContainerSymbol.IParentSymbol wrapper ){
-			if( _parentScopes == null ){
-				_parentScopes = new LinkedList();
-			}
-			
-			//ParentWrapper wrapper = new ParentWrapper( parent, virtual );
-			_parentScopes.add( wrapper );
-			
-			Command command = new AddParentCommand( this, (ParentWrapper) wrapper );
-			pushCommand( command );			
-		}
-		
-		public Map getContainedSymbols(){
-			return _containedDeclarations;
-		}
-	
-		public Map createContained(){
-			if( _containedDeclarations == null )
-				_containedDeclarations = new HashMap();
-		
-			return _containedDeclarations;
-		}
-
-		public List getConstructors(){
-			return _constructors;
-		}
-		
-		public List createConstructors(){
-			if( _constructors == null )
-				_constructors = new LinkedList();
-			
-			return _constructors;
-		}
-		public boolean hasParents(){
-			return ( _parentScopes != null && !_parentScopes.isEmpty() );
-		}
-		
-		public List getParents(){
-			return _parentScopes;
-		}
-	
-		public boolean needsDefinition(){
-			return _needsDefinition;
-		}
-		public void setNeedsDefinition( boolean need ) {
-			_needsDefinition = need;
-		}
-	
-		public ISymbol getReturnType(){
-			return _returnType;
-		}
-	
-		public void setReturnType( ISymbol type ){
-			_returnType = type;
-		}
-	
-		public List getParameterList(){
-			return _parameterList;
-		}
-		
-		public void setParameterList( List list ){
-			_parameterList = new LinkedList( list );	
-		}
-		
-		public Map getParameterMap(){
-			return _parameterHash;
-		}
-		
-		public List getArgumentList(){
-			return _argumentList;
-		}
-		public void setArgumentList( List list ){
-			_argumentList = new LinkedList( list );
-		}
-		public void addArgument( ISymbol arg ){
-			if( _argumentList == null ){
-				_argumentList = new LinkedList();	
-			}
-			_argumentList.addLast( arg );
-			
-			arg.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
-			
-			Command command = new AddArgumentCommand( this, (BasicSymbol) arg );
-			pushCommand( command );
-		}
-		
-		public void addParameter( ISymbol param ){
-			if( _parameterList == null )
-				_parameterList = new LinkedList();
-			
-			_parameterList.addLast( param );
-			String name = param.getName();
-			if( name != null && !name.equals(EMPTY_NAME) )
-			{
-				if( _parameterHash == null )
-					_parameterHash = new HashMap();
-
-				if( !_parameterHash.containsKey( name ) )
-					_parameterHash.put( name, param );
-			}
-			param.setContainingSymbol( this );
-			param.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
-			
-			Command command = new AddParameterCommand( this, (BasicSymbol)param );
-			pushCommand( command );
-		}
-		
-		public void addParameter( ISymbol typeSymbol, TypeInfo.PtrOp ptrOp, boolean hasDefault ){
-			BasicSymbol param = new BasicSymbol(EMPTY_NAME);
-			
-			TypeInfo info = param.getTypeInfo();
-			info.setType( TypeInfo.t_type );
-			info.setTypeSymbol( typeSymbol );
-			info.addPtrOperator( ptrOp );
-			info.setHasDefault( hasDefault );
-				
-			addParameter( param );
-		}
-	
-		public void addParameter( TypeInfo.eType type, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault ){
-			BasicSymbol param = new BasicSymbol(EMPTY_NAME);
-					
-			TypeInfo t = param.getTypeInfo();
-			t.setTypeInfo( info );
-			t.setType( type );
-			t.addPtrOperator( ptrOp );
-			t.setHasDefault( hasDefault );
-				
-			addParameter( param );
-		}
-	
-		public boolean hasSameParameters( IParameterizedSymbol function ){
-			if( function.getType() != getType() ){
-				return false;	
-			}
-		
-			int size = ( getParameterList() == null ) ? 0 : getParameterList().size();
-			int fsize = ( function.getParameterList() == null ) ? 0 : function.getParameterList().size();
-			if( fsize != size ){
-				return false;
-			}
-			if( fsize == 0 )
-				return true;
-		
-			Iterator iter = getParameterList().iterator();
-			Iterator fIter = function.getParameterList().iterator();
-		
-			TypeInfo info = null;
-			TypeInfo fInfo = null;
-		
-			for( int i = size; i > 0; i-- ){
-				info = ((BasicSymbol)iter.next()).getTypeInfo();
-				fInfo = ((BasicSymbol) fIter.next()).getTypeInfo();
-			
-				if( !info.equals( fInfo ) ){
-					return false;
-				}
-			}
-		
-			
-			return true;
-		}
-	
-		public void addSymbol( ISymbol obj ) throws ParserSymbolTableException{
-			Declaration containing = this;
-			
-			//handle enumerators
-			if( obj.getType() == TypeInfo.t_enumerator ){
-				//a using declaration of an enumerator will not be contained in a
-				//enumeration.
-				if( containing.getType() == TypeInfo.t_enumeration ){
-					//Following the closing brace of an enum-specifier, each enumerator has the type of its 
-					//enumeration
-					obj.setTypeSymbol( containing );
-					//Each enumerator is declared in the scope that immediately contains the enum-specifier	
-					containing = (Declaration) containing.getContainingSymbol();
-				}
-			}
-		
-			//Templates contain 1 declaration
-			if( getType() == TypeInfo.t_template ){
-				//declaration must be a class or a function
-				if( ( obj.getType() != TypeInfo.t_class && obj.getType() != TypeInfo.t_function ) ||
-					( getContainedSymbols() != null && getContainedSymbols().size() == 1 ) )
-				{
-					//throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-				}
-			}
-			
-			Map declarations = containing.getContainedSymbols();
-		
-			boolean unnamed = obj.getName().equals( EMPTY_NAME );
-		
-			Object origObj = null;
-		
-			obj.setContainingSymbol( containing );
-
-			if( declarations == null ){
-				declarations = containing.createContained();
-			} else {
-				//does this name exist already?
-				origObj = declarations.get( obj.getName() );
-			}
-		
-			if( origObj != null )
-			{
-				ISymbol origDecl = null;
-				LinkedList  origList = null;
-		
-				if( origObj instanceof ISymbol ){
-					origDecl = (ISymbol)origObj;
-				} else if( origObj.getClass() == LinkedList.class ){
-					origList = (LinkedList)origObj;
-				} else {
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
-				}
-			
-				boolean validOverride = ((origList == null) ? isValidOverload( origDecl, obj ) : isValidOverload( origList, obj ) );
-				if( unnamed || validOverride )
-				{	
-					if( origList == null ){
-						origList = new LinkedList();
-						origList.add( origDecl );
-						origList.add( obj );
-				
-						declarations.remove( origDecl );
-						declarations.put( obj.getName(), origList );
-					} else	{
-						origList.add( obj );
-						//origList is already in _containedDeclarations
-					}
-				} else {
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
-				}
-			} else {
-				declarations.put( obj.getName(), obj );
-			}
-		
-			obj.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
-			
-			//take care of the this pointer
-			TypeInfo type = obj.getTypeInfo();
-			boolean addedThis = false;
-			if( type.isType( TypeInfo.t_function ) && !type.checkBit( TypeInfo.isStatic ) ){
-				addedThis = addThis( (Declaration) obj );
-			}
-			
-			Command command = new AddDeclarationCommand( (BasicSymbol) obj, containing, addedThis );
-			pushCommand( command );
-		}
-		
-		public void addConstructor(IParameterizedSymbol constructor) throws ParserSymbolTableException {
-			if( !constructor.isType( TypeInfo.t_constructor ) )
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
-				
-			List constructors = getConstructors();
-			
-			if( constructors == null )
-				constructors = createConstructors();	
-
-			if( constructors.size() == 0 || isValidOverload( constructors, constructor ) ){
-				constructors.add( constructor );
-			} else {
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
-			}
-			
-			constructor.setContainingSymbol( this );
-			boolean addedThis = addThis( (Declaration) constructor );
-
-			Command command = new AddConstructorCommand( (Declaration)constructor, this, addedThis );
-			pushCommand( command );			
-		}
-		
-		public void addCopyConstructor() throws ParserSymbolTableException{
-			List parameters = new LinkedList();
-			
-			TypeInfo param = new TypeInfo( TypeInfo.t_type, 0, this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, true, false ), false ); 
-			parameters.add( param );
-			
-			IParameterizedSymbol constructor = lookupConstructor( parameters );
-			
-			if( constructor == null ){
-				constructor = getSymbolTable().newParameterizedSymbol( getName(), TypeInfo.t_constructor );
-				constructor.addParameter( this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, true, false ), false );
-				addConstructor( constructor );	
-			}
-		}
-		/**
-		 * 
-		 * @param obj
-		 * @throws ParserSymbolTableException
-		 * 9.3.2-1 In the body of a nonstatic member function... the type of this of
-		 * a class X is X*.  If the member function is declared const, the type of
-		 * this is const X*, if the member function is declared volatile, the type
-		 * of this is volatile X*....
-		 */
-		private boolean addThis( Declaration obj ){
-			if( getSymbolTable().getLanguage() != ParserLanguage.CPP ){
-				return false; 
-			}
-				
-			TypeInfo type = obj.getTypeInfo();
-			if( ( !type.isType( TypeInfo.t_function ) && !type.isType( TypeInfo.t_constructor) ) ||
-			    type.checkBit( TypeInfo.isStatic ) ){
-				return false;
-			}
-	
-			if( obj.getContainingSymbol().isType( TypeInfo.t_class, TypeInfo.t_union ) ){
-				//check to see if there is already a this object, since using declarations
-				//of function will have them from the original declaration
-				LookupData data = new LookupData( THIS, TypeInfo.t_any, null );
-				lookupInContained( data, obj );
-				//if we didn't find "this" then foundItems will still be null, no need to actually
-				//check its contents 
-				if( data.foundItems == null ){
-					Declaration thisObj = new Declaration( THIS );
-					thisObj.setType( TypeInfo.t_type );
-					thisObj.setTypeSymbol( obj.getContainingSymbol() );
-					//thisObj.setCVQualifier( obj.getCVQualifier() );
-					TypeInfo.PtrOp ptr = new TypeInfo.PtrOp();
-					ptr.setType( TypeInfo.PtrOp.t_pointer );
-					if( obj.getTypeInfo().hasPtrOperators() ){
-						ptr.setConst( ((TypeInfo.PtrOp) obj.getPtrOperators().iterator().next()).isConst() );
-						ptr.setVolatile( ((TypeInfo.PtrOp) obj.getPtrOperators().iterator().next()).isVolatile() );
-					}
-					
-					thisObj.addPtrOperator(ptr);
-					
-					try{
-						obj.addSymbol( thisObj );
-					} catch ( ParserSymbolTableException e ) {
-						//shouldn't happen because we checked that "this" didn't exist already
-						return false;
-					}
-					
-				}
-			}	
-			return true;	
-		}
-		
-		/**
-		 * 
-		 * @param name
-		 * @return Declaration
-		 * @throws ParserSymbolTableException
-		 * 
-		 * 7.3.1.2-3 If a friend declaration in a non-local class first declares a
-		 * class or function, the friend class or function is a member of the
-		 * innermost enclosing namespace.
-		 * 
-		 * TODO: if/when the parser symbol table starts caring about visibility
-		 * (public/protected/private) we will need to do more to record friendship.
-		 */
-		public Declaration addFriend( String name ) throws ParserSymbolTableException{
-			Declaration friend = lookupForFriendship( name  );
-		
-			if( friend == null ){
-				friend = new Declaration( name );
-				friend.setNeedsDefinition( true );
-			
-				Declaration containing = (Declaration)getContainingSymbol();
-				//find innermost enclosing namespace
-				while( containing != null && containing.getType() != TypeInfo.t_namespace ){
-					containing = (Declaration)containing.getContainingSymbol();
-				}
-			
-				Declaration namespace = ( containing == null ) ? (Declaration)ParserSymbolTable.this.getCompilationUnit() : containing;
-				namespace.addSymbol( friend );
-			}
-			
-			return friend;
-		}
-		
-		/**
-		 * LookupForFriendship
-		 * @param name
-		 * @return Declaration
-		 * 7.3.1.2-3 When looking for a prior declaration of a class or a function
-		 * declared as a friend, scopes outside the innermost enclosing namespace
-		 * scope are not considered.
-		 * 11.4-9 If a friend declaration appears in a local class and the name
-		 * specified is an unqualified name, a prior declaration is looked up
-		 * without considering scopes that are outside the innermost enclosing non-
-		 * class scope.
-		 */
-		private Declaration lookupForFriendship( String name ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
-		
-			boolean inClass = ( getType() == TypeInfo.t_class);
-		
-			Declaration enclosing = (Declaration) getContainingSymbol();
-			while( enclosing != null && (inClass ? enclosing.getType() != TypeInfo.t_class
-												  :	enclosing.getType() == TypeInfo.t_namespace) )
-			{                                        		
-				enclosing = (Declaration) enclosing.getContainingSymbol();
-			}
-
-			data.stopAt = enclosing;
-		
-			ParserSymbolTable.lookup( data, this );
-			return (Declaration)ParserSymbolTable.resolveAmbiguities( data ); 
-		}
-		
-		/**
-		 * addUsingDeclaration
-		 * @param obj
-		 * @throws ParserSymbolTableException
-		 * 
-		 * 7.3.3-9  The entity declared by a using-declaration shall be known in the
-		 * context using it according to its definition at the point of the using-
-		 * declaration.  Definitions added to the namespace after the using-
-		 * declaration are not considered when a use of the name is made.
-		 * 
-		 * 7.3.3-4 A using-declaration used as a member-declaration shall refer to a
-		 * member of a base class of the class being defined, shall refer to a
-		 * member of an anonymous union that is a member of a base class of the
-		 * class being defined, or shall refer to an enumerator for an enumeration
-		 * type that is a member of a base class of the class being defined.
-		 */
-		public ISymbol addUsingDeclaration( String name ) throws ParserSymbolTableException {
-			return addUsingDeclaration( name, null );
-		}
-
-		public ISymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, TypeInfo.t_any, null );
-	
-			if( declContext != null ){				
-				data.qualified = true;
-				data.templateInstance = declContext.getTemplateInstance();
-				ParserSymbolTable.lookup( data, declContext );
-			} else {
-				ParserSymbolTable.lookup( data, this );
-			}
-	
-			//figure out which declaration we are talking about, if it is a set of functions,
-			//then they will be in data.foundItems (since we provided no parameter info);
-			BasicSymbol obj = null;
-			try{
-				obj = (BasicSymbol)ParserSymbolTable.resolveAmbiguities( data );
-			} catch ( ParserSymbolTableException e ) {
-				if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
-					throw e;
-				}
-			}
-	
-			if( data.foundItems == null ){
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );				
-			}
-
-			BasicSymbol clone = null;
-
-			//if obj != null, then that is the only object to consider, so size is 1,
-			//otherwise we consider the foundItems set				
-			int size = ( obj == null ) ? data.foundItems.size() : 1;
-			Iterator iter = data.foundItems.iterator();
-			for( int i = size; i > 0; i-- ){
-				obj = ( obj != null && size == 1 ) ? obj : (Declaration) iter.next();
-		
-				if( ParserSymbolTable.okToAddUsingDeclaration( obj, this ) ){
-					clone = (BasicSymbol) obj.clone(); //7.3.3-9
-					addSymbol( clone );
-				} else {
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
-				}
-			}
-	
-			return ( size == 1 ) ? clone : null;
-		}
-		
-		public void addUsingDirective( IContainerSymbol namespace ) throws ParserSymbolTableException{
-			if( namespace.getType() != TypeInfo.t_namespace ){
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
-			}
-			
-			//handle namespace aliasing
-			ISymbol alias = namespace.getTypeSymbol();
-			if( alias != null && alias.isType( TypeInfo.t_namespace ) ){
-				namespace = (IContainerSymbol) alias;
-			}
-			
-			if( _usingDirectives == null ){
-				_usingDirectives = new LinkedList(); 
-			}
-		
-			_usingDirectives.add( namespace );
-			
-			Command command = new AddUsingDirectiveCommand( this, (Declaration)namespace );
-			pushCommand( command );
-		}
-		
-		public boolean hasUsingDirectives(){
-			return ( _usingDirectives != null && !_usingDirectives.isEmpty() );
-		}
-		
-		public List getUsingDirectives(){
-			return _usingDirectives;
-		}
-		
-		public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, type, getTemplateInstance() );
-		
-			ParserSymbolTable.lookup( data, this );
-		
-			return ParserSymbolTable.resolveAmbiguities( data ); 
-		}
-		
-		public ISymbol lookup( String name ) throws ParserSymbolTableException {
-			LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
-		
-			ParserSymbolTable.lookup( data, this );
-		
-			return ParserSymbolTable.resolveAmbiguities( data ); 
-		}
-		
-		/**
-		 * LookupMemberForDefinition
-		 * @param name
-		 * @return Declaration
-		 * @throws ParserSymbolTableException
-		 * 
-		 * In a definition for a namespace member in which the declarator-id is a
-		 * qualified-id, given that the qualified-id for the namespace member has
-		 * the form "nested-name-specifier unqualified-id", the unqualified-id shall
-		 * name a member of the namespace designated by the nested-name-specifier.
-		 * 
-		 * ie:
-		 * you have this:
-		 * namespace A{    
-		 *    namespace B{       
-		 *       void  f1(int);    
-		 *    }  
-		 *    using  namespace B; 
-		 * }
-		 * 
-		 * if you then do this 
-		 * void A::f1(int) { ... } //ill-formed, f1 is not a member of A
-		 * but, you can do this (Assuming f1 has been defined elsewhere)
-		 * A::f1( 1 );  //ok, finds B::f1
-		 * 
-		 * ie, We need a seperate lookup function for looking up the member names
-		 * for a definition.
-		 */
-		public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
-			data.qualified = true;
-			
-			IContainerSymbol container = this;
-			
-			//handle namespace aliases
-			if( container.isType( TypeInfo.t_namespace ) ){
-				ISymbol symbol = container.getTypeSymbol();
-				if( symbol != null && symbol.isType( TypeInfo.t_namespace ) ){
-					container = (IContainerSymbol) symbol;
-				}
-			}
-			
-			ParserSymbolTable.lookupInContained( data, container );
-		
-			return ParserSymbolTable.resolveAmbiguities( data );
-		}
-		
-		/**
-		 * Method LookupNestedNameSpecifier.
-		 * @param name
-		 * @return Declaration
-		 * The name of a class or namespace member can be referred to after the ::
-		 * scope resolution operator applied to a nested-name-specifier that
-		 * nominates its class or namespace.  During the lookup for a name preceding
-		 * the ::, object, function and enumerator names are ignored.  If the name
-		 * is not a class-name or namespace-name, the program is ill-formed
-		 */
-		public IContainerSymbol lookupNestedNameSpecifier( String name ) throws ParserSymbolTableException {
-			return lookupNestedNameSpecifier( name, this );
-		}
-		private Declaration lookupNestedNameSpecifier(String name, Declaration inDeclaration ) throws ParserSymbolTableException{		
-			Declaration foundDeclaration = null;
-		
-			LookupData data = new LookupData( name, TypeInfo.t_namespace, getTemplateInstance() );
-			data.upperType = TypeInfo.t_union;
-		
-			ParserSymbolTable.lookupInContained( data, inDeclaration );
-		
-			if( data.foundItems != null ){
-				foundDeclaration = (Declaration) ParserSymbolTable.resolveAmbiguities( data );//, data.foundItems );
-			}
-				
-			if( foundDeclaration == null && inDeclaration.getContainingSymbol() != null ){
-				foundDeclaration = lookupNestedNameSpecifier( name, (Declaration)inDeclaration.getContainingSymbol() );
-			}
-			
-			return foundDeclaration;
-		}
-		
-		/**
-		 * MemberFunctionLookup
-		 * @param name
-		 * @param parameters
-		 * @return Declaration
-		 * @throws ParserSymbolTableException
-		 * 
-		 * Member lookup really proceeds as an unqualified lookup, but doesn't
-		 * include argument dependant scopes
-		 */
-		public IParameterizedSymbol memberFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, TypeInfo.t_function, getTemplateInstance() );
-			//if parameters == null, thats no parameters, but we need to distinguish that from
-			//no parameter information at all, so make an empty list.
-			data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
-			
-			ParserSymbolTable.lookup( data, (IContainerSymbol) this );
-			return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
-		}
-		
-		public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, TypeInfo.t_function, getTemplateInstance() );
-			data.qualified = true;
-			//if parameters == null, thats no parameters, but we need to distinguish that from
-			//no parameter information at all, so make an empty list.
-			data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
-		
-			ParserSymbolTable.lookup( data, (IContainerSymbol)this );
-		
-			return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
-		}
-		
-		public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException{
-		
-			return qualifiedLookup(name, TypeInfo.t_any); 
-		}
-
-		public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, t, getTemplateInstance() );
-			data.qualified = true;
-			ParserSymbolTable.lookup( data, this );
-		
-			return ParserSymbolTable.resolveAmbiguities( data ); 
-		}
-		
-		public TemplateInstance templateLookup( String name, List arguments ) throws ParserSymbolTableException
-		{
-			LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
-			data.parameters = arguments;
-			
-			ParserSymbolTable.lookup( data, (IContainerSymbol) this );
-			ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
-			if( found.isType( TypeInfo.t_template ) ){
-				return ((IParameterizedSymbol) found).instantiate( arguments );
-			} 
-			return null;
-		}
-		
-		public IParameterizedSymbol lookupConstructor( List parameters ) throws ParserSymbolTableException
-		{
-			LookupData data = new LookupData( EMPTY_NAME, TypeInfo.t_constructor, null );
-			data.parameters = parameters;
-			
-			List constructors = new LinkedList();
-			if( getConstructors() != null )
-				constructors.addAll( getConstructors() );
-				
-			return ParserSymbolTable.resolveFunction( data, constructors );
-		}
-		
-		/**
-		 * UnqualifiedFunctionLookup
-		 * @param name
-		 * @param parameters
-		 * @return Declaration
-		 * @throws ParserSymbolTableException
-		 * 
-		 * 3.4.2-1 When an unqualified name is used as the post-fix expression in a
-		 * function call, other namespaces not consdiered during the usual
-		 * unqualified lookup may be searched.
-		 * 
-		 * 3.4.2-2 For each argument type T in the function call, there is a set of
-		 * zero or more associated namespaces and a set of zero or more associated
-		 * classes to be considered.
-		 * 
-		 * If the ordinary unqualified lookup of the name find the declaration of a
-		 * class member function, the associated namespaces and classes are not
-		 * considered.  Otherwise, the set of declarations found by the lookup of
-		 * the function name is the union of the set of declarations found using
-		 * ordinary unqualified lookup and the set of declarations found in the
-		 * namespaces and classes associated with the argument types.
-		 */
-		public IParameterizedSymbol unqualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-			//figure out the set of associated scopes first, so we can remove those that are searched
-			//during the normal lookup to avoid doing them twice
-			HashSet associated = new HashSet();
-		
-			//collect associated namespaces & classes.
-			int size = ( parameters == null ) ? 0 : parameters.size();
-			Iterator iter = ( parameters == null ) ? null : parameters.iterator();
-		
-			TypeInfo param = null;
-			ISymbol paramType = null;
-			for( int i = size; i > 0; i-- ){
-				param = (TypeInfo) iter.next();
-				paramType = ParserSymbolTable.getFlatTypeInfo( param ).getTypeSymbol();
-			
-				if( paramType == null ){
-					continue;
-				}
-					
-				ParserSymbolTable.getAssociatedScopes( paramType, associated );
-			
-				//if T is a pointer to a data member of class X, its associated namespaces and classes
-				//are those associated with the member type together with those associated with X
-				if( param.hasPtrOperators() && param.getPtrOperators().size() == 1 ){
-					TypeInfo.PtrOp op = (TypeInfo.PtrOp)param.getPtrOperators().iterator().next();
-					if( op.getType() == TypeInfo.PtrOp.t_pointer && 
-						paramType.getContainingSymbol().isType( TypeInfo.t_class, TypeInfo.t_union ) )
-					{
-						ParserSymbolTable.getAssociatedScopes( paramType.getContainingSymbol(), associated );	
-					}
-				}
-			}
-		
-			LookupData data = new LookupData( name, TypeInfo.t_function, getTemplateInstance() );
-			//if parameters == null, thats no parameters, but we need to distinguish that from
-			//no parameter information at all, so make an empty list.
-			data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
-			data.associated = associated;
-		
-			ParserSymbolTable.lookup( data, this );
-		
-			Declaration found = (Declaration)resolveAmbiguities( data );
-		
-			//if we haven't found anything, or what we found is not a class member, consider the 
-			//associated scopes
-			if( found == null || found.getContainingSymbol().getType() != TypeInfo.t_class ){
-				if( found != null ){
-					data.foundItems.add( found );
-				}
-									
-				Declaration decl;
-				//dump the hash to an array and iterate over the array because we
-				//could be removing items from the collection as we go and we don't
-				//want to get ConcurrentModificationExceptions			
-				Object [] scopes = associated.toArray();
-			
-				size = associated.size();
-
-				for( int i = 0; i < size; i++ ){
-					decl  = (Declaration) scopes[ i ];
-					if( associated.contains( decl ) ){
-						data.qualified = true;
-						data.ignoreUsingDirectives = true;
-						ParserSymbolTable.lookup( data, decl );
-					}
-				}
-			
-				found = (Declaration)ParserSymbolTable.resolveAmbiguities( data );
-			}
-		
-			return found;
-		}
-		
-		public boolean hasSpecializations(){
-			return ( _specializations != null && !_specializations.isEmpty() );
-		}
-		
-		public List	getSpecializations(){
-			return _specializations;
-		}
-		
-		public void addSpecialization( IParameterizedSymbol spec ){
-			if( _specializations == null ){
-				_specializations = new LinkedList();
-			}
-			_specializations.add( spec );	
-		}
-
-		public TemplateInstance instantiate( List arguments ) throws ParserSymbolTableException{
-			if( getType() != TypeInfo.t_template ){
-				return null;
-			}
-			
-			//TODO uncomment when template specialization matching & ordering is working
-			//IParameterizedSymbol template = ParserSymbolTable.matchTemplatePartialSpecialization( this, arguments );
-			IParameterizedSymbol template = null;
-			
-			if( template == null ){
-				template = this;
-			}
-			
-			List paramList = template.getParameterList();
-			int numParams = ( paramList != null ) ? paramList.size() : 0;
-			
-			if( numParams == 0 ){
-				return null;				
-			}
-
-			HashMap map = new HashMap();
-			Iterator paramIter = paramList.iterator();
-			Iterator argIter = arguments.iterator();
-			
-			ISymbol param = null;
-			TypeInfo arg = null; 
-			for( int i = 0; i < numParams; i++ ){
-				param = (ISymbol) paramIter.next();
-				
-				if( argIter.hasNext() ){
-					arg = (TypeInfo) argIter.next();
-					map.put( param, arg );
-				} else {
-					Object obj = param.getTypeInfo().getDefault();
-					if( obj != null && obj instanceof TypeInfo ){
-						map.put( param, obj );
-					} else {
-						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-					}
-				}
-			}
-			
-			if( template.getContainedSymbols().size() != 1 ){
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-			}
-			
-			Iterator iter = template.getContainedSymbols().keySet().iterator();
-			IContainerSymbol symbol = (IContainerSymbol) template.getContainedSymbols().get( iter.next() );
-			 
-			TemplateInstance instance = new TemplateInstance( symbol, map );
-			return instance;
-		}
-		
-		private		boolean		_needsDefinition;		//this name still needs to be defined
-
-		private		LinkedList	_parentScopes;			//inherited scopes (is base classes)
-		private		LinkedList	_usingDirectives;		//collection of nominated namespaces
-		private		HashMap 	_containedDeclarations;	//declarations contained by us.
-	
-		private		LinkedList	_specializations;		//template specializations
-		private		LinkedList	_argumentList;			//template specialization arguments
-		
-		private 	LinkedList	_parameterList;			//have my cake
-		private 	HashMap		_parameterHash;			//and eat it too
-		
-		private 	LinkedList 	_constructors;			//constructor list
-		
-		private 	ISymbol		_returnType;			
-	
-		public class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol
-		{
-			public ParentWrapper( ISymbol p, boolean v, ASTAccessVisibility s, int offset, List r ){
-				parent    = p;
-				isVirtual = v;
-				access = s;
-				this.offset = offset;
-				this.references = r;
-			}
-		
-			public void setParent( ISymbol parent ){
-				this.parent = (Declaration) parent;
-			}
-			
-			public ISymbol getParent(){
-				return parent;
-			}
-			
-			public boolean isVirtual(){
-				return isVirtual;
-			}
-			
-			public void setVirtual( boolean virtual ){
-				isVirtual = virtual;
-			}
-			
-			public ASTAccessVisibility  getVisibility(){
-				return access;
-			}
-			
-			private boolean isVirtual = false;
-			protected ISymbol parent = null;
-			private final ASTAccessVisibility access;
-			private final int offset; 
-			private final List references; 
-			/**
-			 * @return
-			 */
-			public ASTAccessVisibility getAccess() {
-				return access;
-			}
-
-            /**
-             * 
-             */
-            public int getOffset()
-            {
-                return offset;
-            }
-
-            /**
-             * 
-             */
-            public List getReferences()
-            {
-                return references;
-            }
-
-		}
-	}
 }

@@ -43,6 +43,10 @@ public interface IDerivableContainerSymbol extends IContainerSymbol {
 		public ISymbol getParent();
 		public boolean isVirtual();
 		public void setVirtual( boolean virtual );
+		
 		public ASTAccessVisibility  getVisibility();
+		public ASTAccessVisibility getAccess();
+		public int getOffset();
+		public List getReferences();
 	}
 }

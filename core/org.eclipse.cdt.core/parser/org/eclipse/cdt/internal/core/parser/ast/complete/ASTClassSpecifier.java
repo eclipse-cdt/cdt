@@ -24,8 +24,7 @@ import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Declaration.ParentWrapper;
+import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
 
 /**
  * @author jcamelon
@@ -65,7 +64,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 			if( ! hasNext() )
 				throw new NoSuchElementException();
     		
-			ParserSymbolTable.Declaration.ParentWrapper pw = (ParentWrapper)parents.next();
+			IParentSymbol pw = (IParentSymbol)parents.next();
         
 			return new ASTBaseSpecifier( pw.getParent(), pw.isVirtual(), pw.getAccess(), pw.getOffset(), pw.getReferences() );
          

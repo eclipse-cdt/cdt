@@ -71,6 +71,15 @@ public class CTarget  implements ICDITarget {
 	public ICDITarget getTarget() {
 		return this;
 	}
+	
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#setCurrentThread(ICDIThread)
+	 */
+	public void setCurrentThread(ICDIThread cthread) throws CDIException {
+		if (cthread instanceof CThread) {
+			setCurrentThread((CThread)cthread);
+		}
+	}
 
 	/**
 	 */

@@ -86,6 +86,12 @@ public class CThread extends CObject implements ICDIThread {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame)
 	 */
+	public void setCurrentStackFrame(ICDIStackFrame stackframe) throws CDIException {
+		if (stackframe instanceof  StackFrame) {
+			setCurrentStackFrame((StackFrame)stackframe);
+		}
+	}
+
 	public void setCurrentStackFrame(StackFrame stackframe) throws CDIException {
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();

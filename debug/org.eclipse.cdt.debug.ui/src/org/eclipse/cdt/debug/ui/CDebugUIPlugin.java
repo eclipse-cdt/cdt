@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.debug.core.IDisassemblyStorage;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.ISwitchToFrame;
@@ -12,9 +13,11 @@ import org.eclipse.cdt.debug.core.ISwitchToThread;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
+import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -23,7 +26,11 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -36,6 +43,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -45,7 +55,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener
+public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener, IDebugEventSetListener
 {
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
@@ -312,6 +322,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public void shutdown() throws CoreException
 	{
+		DebugPlugin.getDefault().removeDebugEventListener( this );
 		IWorkbenchWindow ww = getActiveWorkbenchWindow();
 		if ( ww != null )
 		{
@@ -335,6 +346,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		{
 			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		}
+		DebugPlugin.getDefault().addDebugEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -372,6 +384,78 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 						catch( DebugException e )
 						{
 							errorDialog( "Switch to stack frame failed.", e );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 */
+	public void handleDebugEvents( DebugEvent[] events )
+	{
+		for ( int i = 0; i < events.length; i++ )
+		{
+			DebugEvent event = events[i];
+			if ( event.getKind() == DebugEvent.TERMINATE )
+			{
+				Object element = event.getSource();
+				if ( element != null && element instanceof IDebugTarget )
+				{
+					closeDisassemblyEditors( (IDebugTarget)element );
+				}
+			}
+		}
+	}
+	
+	private void closeDisassemblyEditors( final IDebugTarget target )
+	{
+		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
+		for ( int i = 0; i < windows.length; ++i )
+		{
+			IWorkbenchPage[] pages = windows[i].getPages();
+			for ( int j = 0; j < pages.length; ++j )
+			{
+				IEditorReference[] refs = pages[j].getEditorReferences();
+				for ( int k = 0; k < refs.length; ++k )
+				{
+					IEditorPart editor = refs[k].getEditor( false );
+					if ( editor != null )
+					{
+						IEditorInput input = editor.getEditorInput();
+						if ( input != null && input instanceof DisassemblyEditorInput )
+						{
+							try
+							{
+								IStorage storage = ((DisassemblyEditorInput)input).getStorage();
+								if ( storage != null && storage instanceof IDisassemblyStorage && 
+									 target.equals( ((IDisassemblyStorage)storage).getDebugTarget() ) )
+								{
+									Shell shell = windows[i].getShell();
+									if ( shell != null )
+									{
+										Display display = shell.getDisplay();
+										if ( display != null )
+										{
+											final IWorkbenchPage page = pages[j];
+											final IEditorPart editor0 = editor;
+											display.asyncExec( new Runnable()
+																	{
+																		public void run()
+																		{
+																			page.closeEditor( editor0, false );
+																		}
+																	} );
+										}
+									}
+								}
+							}
+							catch( CoreException e )
+							{
+								// ignore
+							}
 						}
 					}
 				}

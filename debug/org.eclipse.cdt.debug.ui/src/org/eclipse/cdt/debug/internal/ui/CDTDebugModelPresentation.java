@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
+import org.eclipse.cdt.debug.core.IDisassemblyStorage;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -23,10 +24,12 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
+import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -136,11 +139,11 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return new FileStorageEditorInput( (IFileStorage)element );
 		}
+*/
 		if ( element instanceof IDisassemblyStorage )
 		{
 			return new DisassemblyEditorInput( (IStorage)element );
 		}
-*/
 		return null;
 	}
 

@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
@@ -36,6 +37,8 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	{
 		setDebugTarget( target );
 		setInstructions( instructions );
+		initializeAddresses();
+		createContent();
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +88,18 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	 */
 	public String getName()
 	{
-		return null;
+		try
+		{
+			if ( getDebugTarget() != null )
+			{ 
+				return  getDebugTarget().getName();
+			}
+		}
+		catch( DebugException e )
+		{
+			// ignore
+		}
+		return "disassembly";
 	}
 
 	/* (non-Javadoc)
@@ -118,5 +132,19 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	protected void setInstructions( ICDIInstruction[] intructions )
 	{
 		fInstructions = intructions;
+	}
+
+	private void createContent()
+	{
+		StringBuffer lines = new StringBuffer();
+		for ( int i = 0; i < fInstructions.length; ++i )
+		{
+			lines.append( fInstructions[i].toString() );
+		}
+		fInputStream = new ByteArrayInputStream( lines.toString().getBytes() );
+	}
+
+	private void initializeAddresses()
+	{
 	}
 }

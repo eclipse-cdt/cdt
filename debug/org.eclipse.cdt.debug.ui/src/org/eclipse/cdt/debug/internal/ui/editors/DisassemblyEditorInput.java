@@ -20,6 +20,7 @@ import org.eclipse.ui.IStorageEditorInput;
  */
 public class DisassemblyEditorInput implements IStorageEditorInput
 {
+	private final static String FILE_NAME_EXTENSION = ".s";
 	protected IStorage fStorage;
 
 	/**
@@ -59,7 +60,18 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 	 */
 	public String getName()
 	{
-		return "disassembly.s";
+		try
+		{
+			if ( getStorage() != null )
+			{
+				return getStorage().getName() + FILE_NAME_EXTENSION;
+			}
+		}
+		catch( CoreException e )
+		{
+			// ignore
+		}
+		return "";
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +87,7 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 	 */
 	public String getToolTipText()
 	{
-		return null;
+		return "Disassembly";
 	}
 
 	/* (non-Javadoc)
@@ -84,5 +96,27 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 	public Object getAdapter( Class adapter )
 	{
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(Object)
+	 */
+	public boolean equals( Object obj )
+	{
+		if ( obj != null && obj instanceof DisassemblyEditorInput )
+		{
+			try
+			{
+				IStorage storage = ((DisassemblyEditorInput)obj).getStorage();
+				if ( storage != null && storage.equals( fStorage ) )
+					return true;
+				else if ( storage == null && fStorage == null )
+					return true;
+			}
+			catch( CoreException e )
+			{
+			}
+		}
+		return false;
 	}
 }

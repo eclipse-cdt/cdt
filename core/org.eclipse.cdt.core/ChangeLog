@@ -1,5 +1,10 @@
 2003-04-29 Alain Magloire
 
+	* model/org/eclipse/cdt/internal/core/model/parser/PEParser.java (getBinary):
+	Catch if path == null.
+
+2003-04-29 Alain Magloire
+
 	PR 37064
 
 	* model/org/eclipse/cdt/internal/core/model/DelatProcessor.java (close):

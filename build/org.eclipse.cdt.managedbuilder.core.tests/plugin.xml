@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.managedbuilder.core.tests"
    name="Tests"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="Eclipse.org"
    class="org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin">
 

@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
@@ -103,6 +104,11 @@ public abstract class CVariable extends CDebugElement
 		{
 			invalidate();
 			setCDIVariableObject( null );
+		}
+
+		protected boolean isSameVariable( ICDIVariable cdiVar )
+		{
+			return ( fCDIVariable != null ) ? fCDIVariable.equals( cdiVar ) : false; 
 		}
 	}
 
@@ -371,16 +377,16 @@ public abstract class CVariable extends CDebugElement
 		{
 			if ( event instanceof ICDIChangedEvent )
 			{
-				try
+				if ( source instanceof ICDIVariable && isSameVariable( (ICDIVariable)source ) )
 				{
-					if ( source instanceof ICDIVariable && source.equals( getCDIVariable() ) )
-					{
-						handleChangedEvent( (ICDIChangedEvent)event );
-					}
+					handleChangedEvent( (ICDIChangedEvent)event );
 				}
-				catch( CDIException e )
+			}
+			else if ( event instanceof ICDIDestroyedEvent )
+			{
+				if ( source instanceof ICDIVariable && isSameVariable( (ICDIVariable)source ) )
 				{
-					// do nothing
+					handleDestroyedEvent( (ICDIDestroyedEvent)event );
 				}
 			}
 		}
@@ -397,6 +403,15 @@ public abstract class CVariable extends CDebugElement
 		{
 			logError( e );
 		}
+	}
+
+	private void handleDestroyedEvent( ICDIDestroyedEvent event )
+	{
+		if ( fOriginal != null )
+			fOriginal.invalidate();
+		if ( getShadow() != null )
+			getShadow().invalidate();
+		invalidateValue();
 	}
 
 	/**
@@ -829,5 +844,11 @@ public abstract class CVariable extends CDebugElement
 	public boolean canEnableDisable()
 	{
 		return ( getParent() instanceof CStackFrame );
+	}
+
+	protected boolean isSameVariable( ICDIVariable cdiVar )
+	{
+		return ( ( getShadow() != null && getShadow().isSameVariable( cdiVar ) ) ||
+				 ( fOriginal != null && fOriginal.isSameVariable( cdiVar ) ) );
 	}
 }

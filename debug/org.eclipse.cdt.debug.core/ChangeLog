@@ -1,3 +1,8 @@
+2003-06-24 Mikhail Khodjaiants
+	All local var_objects are destroyed when a thread other than current is selected.
+	CVariable has to be invalidated if a "destroyed" event has been received.
+	* CVariable.java
+
 2003-06-23 Mikhail Khodjaiants
 	Fix for ClassCastException in CStackFrame.
 	* CStackFrame.java

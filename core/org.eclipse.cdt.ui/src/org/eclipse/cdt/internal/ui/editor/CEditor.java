@@ -213,6 +213,10 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		setRangeIndicator(new DefaultRangeIndicator());
 		setPreferenceStore(CPlugin.getDefault().getPreferenceStore());
 		
+		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
+		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
+		//setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
+		
 		fCEditorErrorTickUpdater= new CEditorErrorTickUpdater(this);
 
 	}
@@ -1714,5 +1718,15 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	private boolean isOverviewRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(OVERVIEW_RULER);
+	}
+	
+	/** Outliner context menu Id */
+	protected String fOutlinerContextMenuId;
+	
+	/**
+	 * Sets the outliner's context menu ID.
+	 */
+	protected void setOutlinerContextMenuId(String menuId) {
+		fOutlinerContextMenuId= menuId;
 	}
 }

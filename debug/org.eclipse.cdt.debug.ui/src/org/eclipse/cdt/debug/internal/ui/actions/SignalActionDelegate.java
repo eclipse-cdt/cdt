@@ -1,8 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICSignal;
@@ -17,85 +22,66 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * Enter type comment.
- * 
- * @since: Jan 31, 2003
+ * The delegate of the "Resume With Signal" action.
  */
-public class SignalActionDelegate implements IObjectActionDelegate
-{
+public class SignalActionDelegate extends ActionDelegate implements IObjectActionDelegate {
+
 	private ICSignal fSignal = null;
 
-	/**
-	 * Constructor for SignalActionDelegate.
-	 */
-	public SignalActionDelegate()
-	{
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
-	public void setActivePart( IAction action, IWorkbenchPart targetPart )
-	{
+	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
-	public void run( IAction action )
-	{
-		if ( getSignal() != null )
-		{
-			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
-													DebugException.REQUEST_FAILED, 
-													CDebugUIPlugin.getResourceString( "internal.ui.actions.SignalActionDelegate.Unable_to_deliver_signal_to_target" ),  //$NON-NLS-1$
-													null ); 
-			BusyIndicator.showWhile( Display.getCurrent(), 
-									new Runnable()
-										{
-											public void run()
-											{
-												try
-												{
-													doAction( getSignal() );
-												}
-												catch( DebugException e )
-												{
-													ms.merge( e.getStatus() );
-												}
-											}
-										} );
-			if ( !ms.isOK() )
-			{
-				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-				if ( window != null )
-				{
-					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.SignalActionDelegate.Operation_failed"), ms ); //$NON-NLS-1$
+	public void run( IAction action ) {
+		if ( getSignal() != null ) {
+			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "SignalActionDelegate.0" ), null ); //$NON-NLS-1$
+			BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+
+				public void run() {
+					try {
+						doAction( getSignal() );
+					}
+					catch( DebugException e ) {
+						ms.merge( e.getStatus() );
+					}
 				}
-				else
-				{
+			} );
+			if ( !ms.isOK() ) {
+				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
+				if ( window != null ) {
+					CDebugUIPlugin.errorDialog( ActionMessages.getString( "SignalActionDelegate.1" ), ms ); //$NON-NLS-1$
+				}
+				else {
 					CDebugUIPlugin.log( ms );
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		if ( selection instanceof IStructuredSelection )
-		{
+	public void selectionChanged( IAction action, ISelection selection ) {
+		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICSignal )
-			{
+			if ( element instanceof ICSignal ) {
 				boolean enabled = enablesFor( (ICSignal)element );
 				action.setEnabled( enabled );
-				if ( enabled )
-				{
+				if ( enabled ) {
 					setSignal( (ICSignal)element );
 					return;
 				}
@@ -105,23 +91,19 @@ public class SignalActionDelegate implements IObjectActionDelegate
 		setSignal( null );
 	}
 
-	protected void doAction( ICSignal signal ) throws DebugException
-	{
+	protected void doAction( ICSignal signal ) throws DebugException {
 		signal.signal();
 	}
 
-	private boolean enablesFor( ICSignal signal )
-	{
-		return ( signal != null && signal.getDebugTarget().isSuspended() );
+	private boolean enablesFor( ICSignal signal ) {
+		return (signal != null && signal.getDebugTarget().isSuspended());
 	}
-	
-	private void setSignal( ICSignal signal )
-	{
+
+	private void setSignal( ICSignal signal ) {
 		fSignal = signal;
 	}
-	
-	protected ICSignal getSignal()
-	{
+
+	protected ICSignal getSignal() {
 		return fSignal;
 	}
 }

@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.util.Collections;
 import java.util.Observable;
-
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IListAdapter;
@@ -26,7 +25,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -64,12 +62,12 @@ public class SolibSearchPathBlock extends Observable
 
 		String[] buttonLabels = new String[] 
 		{
-			/* 0 */ MIUIPlugin.getResourceString("internal.ui.SolibSearchPathBlock.Add"), //$NON-NLS-1$
+			/* 0 */ MIUIMessages.getString( "SolibSearchPathBlock.0" ), //$NON-NLS-1$
 			/* 1 */ null,
-			/* 2 */ MIUIPlugin.getResourceString("internal.ui.SolibSearchPathBlock.Up"), //$NON-NLS-1$
-			/* 3 */ MIUIPlugin.getResourceString("internal.ui.SolibSearchPathBlock.Down"), //$NON-NLS-1$
+			/* 2 */ MIUIMessages.getString( "SolibSearchPathBlock.1" ), //$NON-NLS-1$
+			/* 3 */ MIUIMessages.getString( "SolibSearchPathBlock.2" ), //$NON-NLS-1$
 			/* 4 */ null,
-			/* 5 */ MIUIPlugin.getResourceString("internal.ui.SolibSearchPathBlock.Remove"), //$NON-NLS-1$
+			/* 5 */ MIUIMessages.getString( "SolibSearchPathBlock.3" ), //$NON-NLS-1$
 		};
 
 		IListAdapter listAdapter = new IListAdapter()
@@ -85,7 +83,7 @@ public class SolibSearchPathBlock extends Observable
 										};
 
 		fDirList = new SolibSearchPathListDialogField( listAdapter, buttonLabels, new LabelProvider() );
-		fDirList.setLabelText( MIUIPlugin.getResourceString("internal.ui.SolibSearchPathBlock.Directories") ); //$NON-NLS-1$
+		fDirList.setLabelText( MIUIMessages.getString( "SolibSearchPathBlock.4" ) ); //$NON-NLS-1$
 		fDirList.setUpButtonIndex( 2 );
 		fDirList.setDownButtonIndex( 3 );
 		fDirList.setRemoveButtonIndex( 5 );
@@ -151,7 +149,7 @@ public class SolibSearchPathBlock extends Observable
 	private void addDirectory()
 	{
 		DirectoryDialog dialog = new DirectoryDialog( getShell() );
-		dialog.setMessage( MIUIPlugin.getResourceString("internal.ui.SolibSearchPathBlock.Select_directory_with_shared_lib") ); //$NON-NLS-1$
+		dialog.setMessage( MIUIMessages.getString( "SolibSearchPathBlock.5" ) ); //$NON-NLS-1$
 		String res = dialog.open();
 		if ( res != null ) 
 			fDirList.addElement( res );
@@ -162,3 +160,4 @@ public class SolibSearchPathBlock extends Observable
 		deleteObservers();
 	}
 }
+

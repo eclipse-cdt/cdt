@@ -6,12 +6,11 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
@@ -272,7 +271,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			setStatus( ICDebugElementErrorStatus.WARNING, CDebugCorePlugin.getResourceString("internal.core.model.CThread.Stack_not_available") + e.getMessage() ); //$NON-NLS-1$
+			setStatus( ICDebugElementErrorStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.0" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return new ICDIStackFrame[0];
@@ -1041,7 +1040,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			setStatus( ICDebugElementErrorStatus.WARNING, CDebugCorePlugin.getResourceString("internal.core.model.CThread.Stack_not_available") + e.getMessage() ); //$NON-NLS-1$
+			setStatus( ICDebugElementErrorStatus.WARNING, MessageFormat.format( CoreModelMessages.getString( "CThread.1" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 		}
 		return depth;
 	}

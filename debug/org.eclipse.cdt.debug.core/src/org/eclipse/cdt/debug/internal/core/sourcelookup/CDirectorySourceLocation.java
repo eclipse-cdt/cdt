@@ -319,7 +319,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		{
 			ex = e;
 		}
-		abort( MessageFormat.format( CDebugCorePlugin.getResourceString( "internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_create_memento" ), new String[] { getDirectory().toOSString() } ), ex ); //$NON-NLS-1$
+		abort( MessageFormat.format( InternalSourceLookupMessages.getString( "CDirectorySourceLocation.0" ), new String[] { getDirectory().toOSString() } ), ex ); //$NON-NLS-1$
 		// execution will not reach here
 		return null;
 	}
@@ -341,7 +341,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			String dir = root.getAttribute( ATTR_DIRECTORY );
 			if ( isEmpty( dir ) )
 			{
-				abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_initialize_src_location_no_dir"), null ); //$NON-NLS-1$
+				abort( InternalSourceLookupMessages.getString( "CDirectorySourceLocation.1" ), null ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -352,7 +352,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 				}
 				else
 				{
-					abort( MessageFormat.format( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_initialize_src_location_invalid_dir"), new String[] { dir } ), null ); //$NON-NLS-1$
+					abort( MessageFormat.format( InternalSourceLookupMessages.getString( "CDirectorySourceLocation.2" ), new String[] { dir } ), null ); //$NON-NLS-1$
 				}
 			}
 			dir = root.getAttribute( ATTR_ASSOCIATION );
@@ -387,7 +387,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		{
 			ex = e;
 		}
-		abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Exception_initializing_src_location"), ex ); //$NON-NLS-1$
+		abort( InternalSourceLookupMessages.getString( "CDirectorySourceLocation.3" ), ex ); //$NON-NLS-1$
 	}
 
 	/**

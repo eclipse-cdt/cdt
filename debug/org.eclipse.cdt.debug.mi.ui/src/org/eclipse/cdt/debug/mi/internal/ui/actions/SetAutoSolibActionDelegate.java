@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
@@ -28,7 +29,6 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -223,7 +223,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 
 	protected String getStatusMessage()
 	{
-		return MIUIPlugin.getResourceString("internal.ui.actions.SetAutoSolibActionDelegate.Exception_set_automatically_load_symbols"); //$NON-NLS-1$
+		return ActionMessages.getString( "SetAutoSolibActionDelegate.0" ); //$NON-NLS-1$
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 	 */
 	protected String getErrorDialogMessage()
 	{
-		return MIUIPlugin.getResourceString("internal.ui.actions.SetAutoSolibActionDelegate.Set_automatically_load_symbols_failed"); //$NON-NLS-1$
+		return ActionMessages.getString( "SetAutoSolibActionDelegate.1" ); //$NON-NLS-1$
 	}
 	
 	protected void setStatus( IStatus status )
@@ -278,3 +278,4 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 		return null;		
 	}
 }
+

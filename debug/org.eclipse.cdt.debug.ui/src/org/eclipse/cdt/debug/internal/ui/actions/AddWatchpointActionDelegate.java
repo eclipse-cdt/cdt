@@ -188,7 +188,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IWork
 				CDIDebugModel.createWatchpoint( getSourceHandle(), getResource(), write, read, expression, true, 0, "", true ); //$NON-NLS-1$
 			}
 			catch( CoreException ce ) {
-				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString( "internal.ui.actions.AddWatchpointActionDelegate.Cannot_add_watchpoint" ), ce ); //$NON-NLS-1$
+				CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate.0" ), ce ); //$NON-NLS-1$
 			}
 		}
 	}

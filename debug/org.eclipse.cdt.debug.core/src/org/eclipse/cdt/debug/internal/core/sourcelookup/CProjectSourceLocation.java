@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -251,7 +252,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		{
 			ex = e;
 		}
-		abort( CDebugCorePlugin.getFormattedString( "internal.core.sourcelookup.CProjectSourceLocation.Unable_to_create_memento_for_src_location", new String[] { getProject().getName() } ), ex ); //$NON-NLS-1$
+		abort( MessageFormat.format( InternalSourceLookupMessages.getString( "CProjectSourceLocation.0" ), new String[] { getProject().getName() } ), ex ); //$NON-NLS-1$
 		// execution will not reach here
 		return null;
 	}
@@ -273,7 +274,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			String name = root.getAttribute( ATTR_PROJECT );
 			if ( isEmpty( name ) )
 			{
-				abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CProjectSourceLocation.Unable_to_initialize_src_location_no_project_name"), null ); //$NON-NLS-1$
+				abort( InternalSourceLookupMessages.getString( "CProjectSourceLocation.1" ), null ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -298,7 +299,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		{
 			ex = e;
 		}
-		abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CProjectSourceLocation.Exception_intializing_src_location"), ex ); //$NON-NLS-1$
+		abort( InternalSourceLookupMessages.getString( "CProjectSourceLocation.2" ), ex ); //$NON-NLS-1$
 	}
 
 	/**

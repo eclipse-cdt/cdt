@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 
+import java.text.MessageFormat;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
@@ -205,8 +206,7 @@ public abstract class CVariable extends CDebugElement
 				catch( CDIException e )
 				{
 					fCDIVariable = new ErrorVariable( getCDIVariableObject(), e );
-					setStatus( ICDebugElementErrorStatus.ERROR, 
-							CDebugCorePlugin.getFormattedString( "internal.core.model.CVariable.not_available", new String[] { e.getMessage() } ) ); //$NON-NLS-1$
+					setStatus( ICDebugElementErrorStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.0" ), new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 				}
 			}
 			return fCDIVariable;
@@ -415,7 +415,7 @@ public abstract class CVariable extends CDebugElement
 		fShadow = null;
 		if ( cdiVariableObject instanceof ErrorVariable )
 			setStatus( ICDebugElementErrorStatus.ERROR, 
-					CDebugCorePlugin.getFormattedString( "internal.core.model.CVariable.not_available", new String[] { ((ErrorVariable)cdiVariableObject).getException().getMessage() } ) ); //$NON-NLS-1$
+					MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), new String[] { ((ErrorVariable)cdiVariableObject).getException().getMessage() } ) ); //$NON-NLS-1$
 		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
 		getCDISession().getEventManager().addEventListener( this );
 	}
@@ -485,7 +485,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void setValue( String expression ) throws DebugException
 	{
-		notSupported( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Value_modification_unsupported") ); //$NON-NLS-1$
+		notSupported( CoreModelMessages.getString( "CVariable.2" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -493,7 +493,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void setValue( IValue value ) throws DebugException
 	{
-		notSupported( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Value_modification_unsupported") ); //$NON-NLS-1$
+		notSupported( CoreModelMessages.getString( "CVariable.3" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -938,7 +938,7 @@ public abstract class CVariable extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Qualified_name_unavailable"), e ); //$NON-NLS-1$
+			requestFailed( CoreModelMessages.getString( "CVariable.4" ), e ); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -959,7 +959,7 @@ public abstract class CVariable extends CDebugElement
 			}
 			catch( CDIException e )
 			{
-				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Type_unavailable"), e ); //$NON-NLS-1$
+				requestFailed( CoreModelMessages.getString( "CVariable.5" ), e ); //$NON-NLS-1$
 			}
 		}
 		return type;

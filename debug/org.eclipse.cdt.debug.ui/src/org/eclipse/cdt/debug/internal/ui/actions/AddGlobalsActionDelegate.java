@@ -247,7 +247,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 				}
 				return null;
 			}
-		}, CDebugUIPlugin.getResourceString( "internal.ui.actions.AddGlobalsActionDelegate.Select_Variables" ) ); //$NON-NLS-1$
+		}, ActionMessages.getString( "AddGlobalsActionDelegate.0" ) ); //$NON-NLS-1$
 	}
 
 	protected IGlobalVariableDescriptor[] getGlobals() {
@@ -276,7 +276,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return CDebugUIPlugin.getResourceString( "internal.ui.actions.AddGlobalsActionDelegate.Add_global_variables_failed" ); //$NON-NLS-1$
+		return ActionMessages.getString( "AddGlobalsActionDelegate.1" ); //$NON-NLS-1$
 	}
 
 	protected void setStatus( IStatus status ) {

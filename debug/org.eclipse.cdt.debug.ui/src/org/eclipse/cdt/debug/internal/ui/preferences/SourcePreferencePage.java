@@ -1,15 +1,18 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
-
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
@@ -37,34 +40,31 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Enter type comment.
- * 
- * @since Oct 22, 2003
+ * The "Source Code Locations" preference page.
  */
-public class SourcePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Observer
-{
+public class SourcePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, Observer {
+
 	private SourceListDialogField fSourceListField;
+
 	private SelectionButtonDialogField fSearchForDuplicateFiles;
-	
+
 	private boolean fChanged = false;
 
-	public SourcePreferencePage()
-	{
+	public SourcePreferencePage() {
 		super();
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
-		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Description") ); //$NON-NLS-1$
+		setDescription( PreferenceMessages.getString( "SourcePreferencePage.0" ) ); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createContents( Composite parent )
-	{
+	protected Control createContents( Composite parent ) {
 		WorkbenchHelp.setHelp( getControl(), ICDebugHelpContextIds.SOURCE_PREFERENCE_PAGE );
-
 		fSourceListField = createSourceListField();
 		fSearchForDuplicateFiles = createSearchForDuplicateFilesButton();
-
 		Composite control = new Composite( parent, SWT.NONE );
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -76,157 +76,138 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 		data.horizontalAlignment = GridData.FILL;
 		control.setLayoutData( data );
 		control.setFont( JFaceResources.getDialogFont() );
-
 		PixelConverter converter = new PixelConverter( control );
-		
 		fSourceListField.doFillIntoGrid( control, 3 );
 		LayoutUtil.setHorizontalSpan( fSourceListField.getLabelControl( null ), 2 );
 		LayoutUtil.setWidthHint( fSourceListField.getLabelControl( null ), converter.convertWidthInCharsToPixels( 40 ) );
 		LayoutUtil.setHorizontalGrabbing( fSourceListField.getListControl( null ) );
 		fSearchForDuplicateFiles.doFillIntoGrid( control, 3 );
-		
 		setValues();
-		
 		return control;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init( IWorkbench workbench )
-	{
+	public void init( IWorkbench workbench ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-	public void update( Observable o, Object arg )
-	{
+	public void update( Observable o, Object arg ) {
 		setChanged( true );
 	}
 
-	private SourceListDialogField createSourceListField()
-	{
-		SourceListDialogField field = 
-					new SourceListDialogField( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Source_locations"), //$NON-NLS-1$
-												new IListAdapter()
-													{
-														public void customButtonPressed( DialogField f, int index )
-														{
-															sourceButtonPressed( index );
-														}
+	private SourceListDialogField createSourceListField() {
+		SourceListDialogField field = new SourceListDialogField( PreferenceMessages.getString( "SourcePreferencePage.1" ), //$NON-NLS-1$
+				new IListAdapter() {
 
-														public void selectionChanged(DialogField f)
-														{
-														}
-													} );
+					public void customButtonPressed( DialogField f, int index ) {
+						sourceButtonPressed( index );
+					}
+
+					public void selectionChanged( DialogField f ) {
+					}
+				} );
 		field.addObserver( this );
 		return field;
 	}
 
-	private SelectionButtonDialogField createSearchForDuplicateFilesButton()
-	{
+	private SelectionButtonDialogField createSearchForDuplicateFilesButton() {
 		SelectionButtonDialogField button = new SelectionButtonDialogField( SWT.CHECK );
-		button.setLabelText( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Search_for_duplicate_source_files") ); //$NON-NLS-1$
-		button.setDialogFieldListener( 
-					new IDialogFieldListener()
-						{
-							public void dialogFieldChanged( DialogField field )
-							{
-								setChanged( true );
-							}
-						} );
+		button.setLabelText( PreferenceMessages.getString( "SourcePreferencePage.2" ) ); //$NON-NLS-1$
+		button.setDialogFieldListener( new IDialogFieldListener() {
+
+			public void dialogFieldChanged( DialogField field ) {
+				setChanged( true );
+			}
+		} );
 		return button;
 	}
 
-	protected void sourceButtonPressed( int index )
-	{
-		switch( index )
-		{
-			case 0:		// Add...
+	protected void sourceButtonPressed( int index ) {
+		switch( index ) {
+			case 0: // Add...
 				if ( addSourceLocation() )
 					setChanged( true );
 				break;
-			case 2:		// Up
-			case 3:		// Down
-			case 5:		// Remove
+			case 2: // Up
+			case 3: // Down
+			case 5: // Remove
 				setChanged( true );
 				break;
 		}
 	}
 
-	protected boolean isChanged()
-	{
+	protected boolean isChanged() {
 		return fChanged;
 	}
 
-	protected void setChanged( boolean changed )
-	{
+	protected void setChanged( boolean changed ) {
 		fChanged = changed;
 	}
 
-	private boolean addSourceLocation()
-	{
+	private boolean addSourceLocation() {
 		AddSourceLocationWizard wizard = new AddSourceLocationWizard( getSourceLocations() );
 		WizardDialog dialog = new WizardDialog( getShell(), wizard );
-		if ( dialog.open() == Window.OK )
-		{
+		if ( dialog.open() == Window.OK ) {
 			fSourceListField.addElement( wizard.getSourceLocation() );
 			return true;
 		}
 		return false;
 	}
 
-	public ICSourceLocation[] getSourceLocations()
-	{
-		return ( fSourceListField != null ) ? fSourceListField.getSourceLocations() : new ICSourceLocation[0];
+	public ICSourceLocation[] getSourceLocations() {
+		return (fSourceListField != null) ? fSourceListField.getSourceLocations() : new ICSourceLocation[0];
 	}
 
-	public void setSourceLocations( ICSourceLocation[] locations )
-	{
-		if ( fSourceListField != null ) 
+	public void setSourceLocations( ICSourceLocation[] locations ) {
+		if ( fSourceListField != null )
 			fSourceListField.setElements( Arrays.asList( locations ) );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
-	protected void performDefaults()
-	{
+	protected void performDefaults() {
 		setSourceLocations( new ICSourceLocation[0] );
 		setSearchForDuplicateFiles( false );
 		super.performDefaults();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
-	public boolean performOk()
-	{
+	public boolean performOk() {
 		storeValues();
 		CDebugCorePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 
-	private boolean searchForDuplicateFiles()
-	{
-		return ( fSearchForDuplicateFiles != null ) ? fSearchForDuplicateFiles.isSelected() : false;
+	private boolean searchForDuplicateFiles() {
+		return (fSearchForDuplicateFiles != null) ? fSearchForDuplicateFiles.isSelected() : false;
 	}
 
-	private void setSearchForDuplicateFiles( boolean search )
-	{
+	private void setSearchForDuplicateFiles( boolean search ) {
 		if ( fSearchForDuplicateFiles != null )
 			fSearchForDuplicateFiles.setSelection( search );
 	}
 
-	private void setValues()
-	{
+	private void setValues() {
 		setSourceLocations( CDebugCorePlugin.getDefault().getCommonSourceLocations() );
 		setSearchForDuplicateFiles( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES ) );
 	}
 
-	private void storeValues()
-	{
+	private void storeValues() {
 		CDebugCorePlugin.getDefault().saveCommonSourceLocations( getSourceLocations() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES, searchForDuplicateFiles() );
 	}

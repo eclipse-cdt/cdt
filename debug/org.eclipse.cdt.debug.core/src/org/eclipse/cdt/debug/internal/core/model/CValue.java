@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -187,7 +185,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		catch( CDIException e )
 		{
-			requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CValue.Not_available"), e ); //$NON-NLS-1$
+			requestFailed( CoreModelMessages.getString( "CValue.0" ), e ); //$NON-NLS-1$
 		}
 		return Arrays.asList( vars );
 	}

@@ -1,8 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -20,122 +25,107 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Sep 17, 2002
+ * The "Add Expression" dialog.
  */
-public class ExpressionDialog extends Dialog
-{
+public class ExpressionDialog extends Dialog {
+
 	private Button fBtnOk = null;
+
 	private Text fTextExpression;
-	
+
 	private String fExpression = ""; //$NON-NLS-1$
 
 	/**
 	 * Constructor for ExpressionDialog.
+	 * 
 	 * @param parentShell
 	 */
-	public ExpressionDialog( Shell parentShell, String expression )
-	{
+	public ExpressionDialog( Shell parentShell, String expression ) {
 		super( parentShell );
 		if ( expression != null )
-			fExpression = expression; 
+			fExpression = expression;
 	}
 
-	protected void configureShell( Shell shell ) 
-	{
+	protected void configureShell( Shell shell ) {
 		super.configureShell( shell );
-		shell.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.ExpressionDialog.Add_Expression") ); //$NON-NLS-1$
+		shell.setText( ActionMessages.getString( "ExpressionDialog.0" ) ); //$NON-NLS-1$
 		shell.setImage( DebugPluginImages.getImage( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
 
-	protected Control createContents( Composite parent ) 
-	{
+	protected Control createContents( Composite parent ) {
 		Control control = super.createContents( parent );
 		setOkButtonState();
 		return control;
 	}
 
-	protected Control createDialogArea( Composite parent )
-	{
+	protected Control createDialogArea( Composite parent ) {
 		Composite composite = new Composite( parent, SWT.NONE );
 		composite.setLayout( new GridLayout() );
 		((GridLayout)composite.getLayout()).marginWidth = 10;
-		composite.setLayoutData( new GridData( GridData.FILL_BOTH  ) );
+		composite.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 		createDataWidgets( composite );
 		initializeDataWidgets();
 		return composite;
 	}
-	
-	protected void createButtonsForButtonBar( Composite parent ) 
-	{
+
+	protected void createButtonsForButtonBar( Composite parent ) {
 		fBtnOk = createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true );
 		createButton( parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false );
 	}
 
-	private void createDataWidgets( Composite parent ) 
-	{
-		fTextExpression	= createExpressionText( parent );
+	private void createDataWidgets( Composite parent ) {
+		fTextExpression = createExpressionText( parent );
 	}
 
-	private void initializeDataWidgets()
-	{
+	private void initializeDataWidgets() {
 		fTextExpression.setText( fExpression );
 		fTextExpression.setSelection( fExpression.length() );
 		fTextExpression.selectAll();
 		setOkButtonState();
 	}
 
-	private Text createExpressionText( Composite parent )
-	{
+	private Text createExpressionText( Composite parent ) {
 		Label label = new Label( parent, SWT.RIGHT );
-		label.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.ExpressionDialog.Expression_to_add") );	 //$NON-NLS-1$
+		label.setText( ActionMessages.getString( "ExpressionDialog.1" ) ); //$NON-NLS-1$
 		final Text text = new Text( parent, SWT.BORDER );
 		GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
 		gridData.widthHint = 300;
 		text.setLayoutData( gridData );
-		addModifyListener( text ); 
+		addModifyListener( text );
 		return text;
 	}
 
-	protected void setOkButtonState()
-	{
+	protected void setOkButtonState() {
 		if ( fBtnOk == null )
 			return;
 		fBtnOk.setEnabled( fTextExpression.getText().trim().length() > 0 );
 	}
 
-	private void storeData()
-	{
+	private void storeData() {
 		fExpression = fTextExpression.getText().trim();
 	}
 
-	private void addModifyListener( Text text )
-	{
-		text.addModifyListener( 
-					new ModifyListener() 
-						{
-							public void modifyText( ModifyEvent e )
-							{
-								setOkButtonState();
-							}
-						} );
+	private void addModifyListener( Text text ) {
+		text.addModifyListener( new ModifyListener() {
+
+			public void modifyText( ModifyEvent e ) {
+				setOkButtonState();
+			}
+		} );
 	}
-	
-	public String getExpression()
-	{
+
+	public String getExpression() {
 		return fExpression;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
-	protected void okPressed()
-	{
+	protected void okPressed() {
 		storeData();
 		super.okPressed();
 	}

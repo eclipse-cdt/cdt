@@ -1,8 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
@@ -11,46 +16,42 @@ import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
- * Enter type comment.
- * 
- * @since: Oct 21, 2002
+ * The "Auto-Refresh" action of the Memory View.
  */
-public class AutoRefreshMemoryAction extends SelectionProviderAction implements IUpdate
-{
+public class AutoRefreshMemoryAction extends SelectionProviderAction implements IUpdate {
+
 	private MemoryViewer fMemoryViewer;
 
 	/**
 	 * Constructor for AutoRefreshMemoryAction.
-	 * @param provider
-	 * @param text
 	 */
-	public AutoRefreshMemoryAction( MemoryViewer viewer )
-	{
-		super( viewer, CDebugUIPlugin.getResourceString("internal.ui.actions.AutoRefreshMemoryAction.Auto-Refresh") ); //$NON-NLS-1$
+	public AutoRefreshMemoryAction( MemoryViewer viewer ) {
+		super( viewer, ActionMessages.getString( "AutoRefreshMemoryAction.0" ) ); //$NON-NLS-1$
 		fMemoryViewer = viewer;
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_AUTO_REFRESH );
-		setDescription( CDebugUIPlugin.getResourceString("internal.ui.actions.AutoRefreshMemoryAction.Automatically_Refresh_Memory_Block") ); //$NON-NLS-1$
-		setToolTipText( CDebugUIPlugin.getResourceString("internal.ui.actions.AutoRefreshMemoryAction.Auto-Refresh") ); //$NON-NLS-1$
+		setDescription( ActionMessages.getString( "AutoRefreshMemoryAction.1" ) ); //$NON-NLS-1$
+		setToolTipText( ActionMessages.getString( "AutoRefreshMemoryAction.2" ) ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.AUTO_REFRESH_MEMORY_ACTION );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
-	public void update()
-	{
+	public void update() {
 		setEnabled( fMemoryViewer.canUpdate() );
 		setChecked( !fMemoryViewer.isFrozen() );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
-	public void run()
-	{
+	public void run() {
 		fMemoryViewer.setFrozen( !isChecked() );
 	}
 }

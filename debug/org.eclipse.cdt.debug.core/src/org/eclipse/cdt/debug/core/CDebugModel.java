@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.core;
 
+import java.text.MessageFormat;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -373,8 +374,7 @@ public class CDebugModel
 		}
 		catch( DebugException e )
 		{
-			//String message = MessageFormat.format( "Unable to set temporary breakpoint in main.\nReason: {0}\nContinue?", new String[] { e.getStatus().getMessage() } );
-			String message = CDebugCorePlugin.getFormattedString("core.CDebugCorePlugin.Unable_to_set_temp_brkpt", new String[] { e.getStatus().getMessage() } ); //$NON-NLS-1$
+			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[] { e.getStatus().getMessage() } ); //$NON-NLS-1$
 			IStatus newStatus = new Status( IStatus.WARNING, 
 											e.getStatus().getPlugin(), 
 											ICDebugInternalConstants.STATUS_CODE_QUESTION, 

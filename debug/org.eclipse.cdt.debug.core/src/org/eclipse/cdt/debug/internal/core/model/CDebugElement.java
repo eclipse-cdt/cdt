@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.text.MessageFormat;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -250,7 +251,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	public void targetRequestFailed( String message, CDIException e ) throws DebugException
 	{
-		requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CDebugElement.Target_request_failed") + message, e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
+		requestFailed( MessageFormat.format( "Target request failed: {0}.", new String[] { message } ), e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
 	}
 
 	/**
@@ -275,7 +276,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	public void targetRequestFailed( String message, Throwable e ) throws DebugException
 	{
-		throwDebugException( CDebugCorePlugin.getResourceString("internal.core.model.CDebugElement.Target_request_failed") + message, DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
+		throwDebugException( MessageFormat.format( "Target request failed: {0}.", new String[] { message } ), DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
 	}
 	
 	/**

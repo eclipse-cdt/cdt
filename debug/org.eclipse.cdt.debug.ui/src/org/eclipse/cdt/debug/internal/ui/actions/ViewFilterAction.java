@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;

@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -220,7 +221,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		else {
 			return func;
 		}
-		return CDebugCorePlugin.getFormattedString( "internal.core.model.CStackFrame.function_at_file", new String[]{ func, file } ) + line; //$NON-NLS-1$
+		return MessageFormat.format( CoreModelMessages.getString( "CStackFrame.0" ), new String[]{ func, file, line } ); //$NON-NLS-1$
 	}
 
 	/*

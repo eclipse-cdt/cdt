@@ -12,7 +12,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.debug.core.model.IValueModification;
 
 /**
  * 
@@ -70,7 +70,7 @@ public class CModificationVariable extends CVariable
 			if ( cdiVariable != null )
 				cdiVariable.setValue( newExpression );
 			else
-				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CModificationVariable.Unable_to_set_value"), null ); //$NON-NLS-1$
+				requestFailed( CoreModelMessages.getString( "CModificationVariable.0" ), null ); //$NON-NLS-1$
 			
 		}
 		catch( CDIException e )
@@ -94,7 +94,7 @@ public class CModificationVariable extends CVariable
 			if ( cdiVariable != null )
 				cdiVariable.setValue( value );
 			else
-				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CModificationVariable.Unable_to_set_value"), null ); //$NON-NLS-1$
+				requestFailed( CoreModelMessages.getString( "CModificationVariable.1" ), null ); //$NON-NLS-1$
 		}
 		catch( CDIException e )
 		{

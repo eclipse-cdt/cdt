@@ -1,13 +1,16 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.Iterator;
-
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;
@@ -21,122 +24,105 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**
- * Enter type comment.
- * 
- * @since Jun 19, 2003
+ * The delegate of the "Enable" action contribution to the "IVariable" objects.
  */
-public class EnableVariablesActionDelegate implements IViewActionDelegate
-{
+public class EnableVariablesActionDelegate implements IViewActionDelegate {
+
 	private IViewPart fView;
 
 	private IAction fAction;
 
-	public EnableVariablesActionDelegate()
-	{
+	public EnableVariablesActionDelegate() {
 	}
 
-	protected IViewPart getView()
-	{
+	protected IViewPart getView() {
 		return fView;
 	}
 
-	protected void setView( IViewPart view )
-	{
+	protected void setView( IViewPart view ) {
 		fView = view;
 	}
 
-	protected IAction getAction()
-	{
+	protected IAction getAction() {
 		return fAction;
 	}
 
-	protected void setAction( IAction action )
-	{
+	protected void setAction( IAction action ) {
 		fAction = action;
 	}
 
 	/**
 	 * This action enables variables.
 	 */
-	protected boolean isEnableAction() 
-	{
+	protected boolean isEnableAction() {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
-	public void init( IViewPart view )
-	{
-		setView(view);
+	public void init( IViewPart view ) {
+		setView( view );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void run( IAction action )
-	{
+	public void run( IAction action ) {
 		IStructuredSelection selection = getSelection();
 		final int size = selection.size();
 		if ( size == 0 )
 			return;
-
 		final Iterator enum = selection.iterator();
-		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Exceptions_occurred_enabling_the_variables"), null ); //$NON-NLS-1$
-		BusyIndicator.showWhile( 
-				Display.getCurrent(), 
-				new Runnable()
-					{
-						public void run()
-						{
-							while( enum.hasNext() )
-							{
-								ICVariable var = (ICVariable)enum.next();
-								try
-								{
-									if ( size > 1 )
-									{
-										if ( isEnableAction() )
-											var.setEnabled( true );
-										else
-											var.setEnabled( false );
-									}
-									else
-										var.setEnabled( !var.isEnabled() );
-								}
-								catch( DebugException e )
-								{
-									ms.merge( e.getStatus() );
-								}
-							}
-							update();
-						}
-					} );
+		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "EnableVariablesActionDelegate.0" ), null ); //$NON-NLS-1$
+		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
-		if ( !ms.isOK() )
-		{
-			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Enable_variables_failed."), ms ); //$NON-NLS-1$
+			public void run() {
+				while( enum.hasNext() ) {
+					ICVariable var = (ICVariable)enum.next();
+					try {
+						if ( size > 1 ) {
+							if ( isEnableAction() )
+								var.setEnabled( true );
+							else
+								var.setEnabled( false );
+						}
+						else
+							var.setEnabled( !var.isEnabled() );
+					}
+					catch( DebugException e ) {
+						ms.merge( e.getStatus() );
+					}
+				}
+				update();
+			}
+		} );
+		if ( !ms.isOK() ) {
+			CDebugUIPlugin.errorDialog( ActionMessages.getString( "EnableVariablesActionDelegate.1" ), ms ); //$NON-NLS-1$
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
+	public void selectionChanged( IAction action, ISelection selection ) {
 		setAction( action );
-		if ( !( selection instanceof IStructuredSelection ) )
+		if ( !(selection instanceof IStructuredSelection) )
 			return;
 		IStructuredSelection sel = (IStructuredSelection)selection;
 		Object o = sel.getFirstElement();
-		if ( !( o instanceof ICVariable ) )
+		if ( !(o instanceof ICVariable) )
 			return;
-
 		Iterator enum = sel.iterator();
 		boolean allEnabled = true;
 		boolean allDisabled = true;
-		while( enum.hasNext() )
-		{
+		while( enum.hasNext() ) {
 			ICVariable var = (ICVariable)enum.next();
 			if ( !var.canEnableDisable() )
 				continue;
@@ -145,20 +131,17 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate
 			else
 				allEnabled = false;
 		}
-
 		if ( isEnableAction() )
 			action.setEnabled( !allEnabled );
 		else
 			action.setEnabled( !allDisabled );
 	}
 
-	private IStructuredSelection getSelection()
-	{
+	private IStructuredSelection getSelection() {
 		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
 	}
 
-	protected void update() 
-	{
+	protected void update() {
 		getView().getViewSite().getSelectionProvider().setSelection( getView().getViewSite().getSelectionProvider().getSelection() );
 	}
 }

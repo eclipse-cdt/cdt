@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -291,13 +292,13 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			setBreakpointCondition( breakpoint );
 		}
 		catch( CoreException e ) {
-			requestFailed( CDebugCorePlugin.getResourceString( "internal.core.CBreakpointManager.Set_breakpoint_failed" ) + e.getMessage(), e ); //$NON-NLS-1$
+			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.0" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 		catch( NumberFormatException e ) {
-			requestFailed( CDebugCorePlugin.getResourceString( "internal.core.CBreakpointManager.Set_breakpoint_failed" ) + e.getMessage(), e ); //$NON-NLS-1$
+			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.1" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 		catch( CDIException e ) {
-			targetRequestFailed( CDebugCorePlugin.getResourceString( "internal.core.CBreakpointManager.Set_breakpoint_failed" ) + e.getMessage(), e ); //$NON-NLS-1$
+			targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.2" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 	}
 
@@ -313,7 +314,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				bm.deleteBreakpoints( new ICDIBreakpoint[]{ cdiBreakpoint } );
 			}
 			catch( CDIException e ) {
-				targetRequestFailed( CDebugCorePlugin.getResourceString( "internal.core.CBreakpointManager.Delete_breakpoint_failed" ) + e.getMessage(), e ); //$NON-NLS-1$
+				targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.3" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 			}
 		}
 	}
@@ -343,10 +344,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			}
 		}
 		catch( CoreException e ) {
-			requestFailed( CDebugCorePlugin.getResourceString( "internal.core.CBreakpointManager.Change_brkpt_properties_failed" ) + e.getMessage(), e ); //$NON-NLS-1$
+			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 		catch( CDIException e ) {
-			targetRequestFailed( CDebugCorePlugin.getResourceString( "internal.core.CBreakpointManager.Change_brkpt_properties_failed" ) + e.getMessage(), e ); //$NON-NLS-1$
+			targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.5" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 	}
 

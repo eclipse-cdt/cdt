@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -67,7 +66,7 @@ public class CDebugCorePlugin extends Plugin {
 	private SessionManager fSessionManager = null;
 	static {
 		try {
-			fgResourceBundle = ResourceBundle.getBundle( "org.eclipse.cdt.debug.core.CDebugCorePluginResources" ); //$NON-NLS-1$
+			fgResourceBundle = ResourceBundle.getBundle( "org.eclipse.cdt.debug.internal.core.CDebugCorePluginResources" ); //$NON-NLS-1$
 		}
 		catch( MissingResourceException x ) {
 			fgResourceBundle = null;
@@ -127,13 +126,7 @@ public class CDebugCorePlugin extends Plugin {
 		}
 	}
 
-	public static String getFormattedString( String key, String arg ) {
-		return MessageFormat.format( getResourceString( key ), new String[]{ arg } );
-	}
 
-	public static String getFormattedString( String key, String[] args ) {
-		return MessageFormat.format( getResourceString( key ), args );
-	}
 
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
@@ -200,7 +193,7 @@ public class CDebugCorePlugin extends Plugin {
 		}
 		ICDebugConfiguration dbgCfg = (ICDebugConfiguration)fDebugConfigurations.get( id );
 		if ( dbgCfg == null ) {
-			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), 100, CDebugCorePlugin.getResourceString( "core.CDebugCorePlugin.No_such_debugger" ), null ); //$NON-NLS-1$
+			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), 100, DebugCoreMessages.getString( "CDebugCorePlugin.0" ), null ); //$NON-NLS-1$
 			throw new CoreException( status );
 		}
 		return dbgCfg;

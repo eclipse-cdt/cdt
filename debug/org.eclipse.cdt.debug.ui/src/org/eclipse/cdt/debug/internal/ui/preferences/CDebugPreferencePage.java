@@ -77,7 +77,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	// Format constants
 	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL };
 
-	private static String[] fFormatLabels = new String[]{ CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Natural" ), CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Hexadecimal" ), CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Decimal" ) }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static String[] fFormatLabels = new String[]{ PreferenceMessages.getString( "CDebugPreferencePage.0" ), PreferenceMessages.getString( "CDebugPreferencePage.1" ), PreferenceMessages.getString( "CDebugPreferencePage.2" ) }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private PropertyChangeListener fPropertyChangeListener;
 
@@ -106,7 +106,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		super();
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 		getPreferenceStore().addPropertyChangeListener( getPropertyChangeListener() );
-		setDescription( CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Preference_page_description" ) ); //$NON-NLS-1$
+		setDescription( PreferenceMessages.getString( "CDebugPreferencePage.3" ) ); //$NON-NLS-1$
 	}
 
 	/*
@@ -205,29 +205,29 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 * Create the view setting preferences composite widget
 	 */
 	private void createViewSettingPreferences( Composite parent ) {
-		Composite comp = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Opened_view_default_settings" ) ); //$NON-NLS-1$
-		fPathsButton = createCheckButton( comp, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.pathsButton" ) ); //$NON-NLS-1$
-		fRefreshRegistersButton = createCheckButton( comp, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.autoRefreshRegistersButton" ) ); //$NON-NLS-1$
-		fRefreshSolibsButton = createCheckButton( comp, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.autoRefreshSolibsButton" ) ); //$NON-NLS-1$
+		Composite comp = createGroupComposite( parent, 1, PreferenceMessages.getString( "CDebugPreferencePage.4" ) ); //$NON-NLS-1$
+		fPathsButton = createCheckButton( comp, PreferenceMessages.getString( "CDebugPreferencePage.5" ) ); //$NON-NLS-1$
+		fRefreshRegistersButton = createCheckButton( comp, PreferenceMessages.getString( "CDebugPreferencePage.6" ) ); //$NON-NLS-1$
+		fRefreshSolibsButton = createCheckButton( comp, PreferenceMessages.getString( "CDebugPreferencePage.7" ) ); //$NON-NLS-1$
 		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
 		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
-		fVariableFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.variableFormatCombo" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-		fExpressionFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.expressionFormatCombo" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-		fRegisterFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.registerFormatCombo" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fVariableFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.8" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fExpressionFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.9" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fRegisterFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.10" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
 	}
 
 	/**
 	 * Create the disassembly setting preferences composite widget
 	 */
 	private void createDisassemblySettingPreferences( Composite parent ) {
-		Composite group = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Disassembly_options" ) ); //$NON-NLS-1$
+		Composite group = createGroupComposite( parent, 1, PreferenceMessages.getString( "CDebugPreferencePage.11" ) ); //$NON-NLS-1$
 		Composite comp = ControlFactory.createComposite( group, 2 );
 		createMaxNumberOfInstructionsField( comp );
 		createDisassemblyColorsField( comp );
 	}
 
 	private void createMaxNumberOfInstructionsField( Composite parent ) {
-		fMaxNumberOfInstructionsText = new IntegerFieldEditor( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.maxNumberOfInstructions" ), parent, NUMBER_OF_DIGITS ); //$NON-NLS-1$
+		fMaxNumberOfInstructionsText = new IntegerFieldEditor( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, PreferenceMessages.getString( "CDebugPreferencePage.12" ), parent, NUMBER_OF_DIGITS ); //$NON-NLS-1$
 		GridData data = (GridData)fMaxNumberOfInstructionsText.getTextControl( parent ).getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
 		data.widthHint = convertWidthInCharsToPixels( NUMBER_OF_DIGITS + 1 );
@@ -236,7 +236,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fMaxNumberOfInstructionsText.setValidRange( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
 		String minValue = Integer.toString( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS );
 		String maxValue = Integer.toString( ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
-		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.ErrorMaxNumberOfInstructionsRange" ), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
+		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( PreferenceMessages.getString( "CDebugPreferencePage.13" ), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
 		fMaxNumberOfInstructionsText.load();
 		fMaxNumberOfInstructionsText.setPropertyChangeListener( new IPropertyChangeListener() {
 

@@ -50,7 +50,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	{
 		super();
 		setPreferenceStore( MIUIPlugin.getDefault().getPreferenceStore() );
-		setDescription( MIUIPlugin.getResourceString("internal.ui.preferences.MIPreferencePage.General_GDBMI_settings") ); //$NON-NLS-1$
+		setDescription( PreferenceMessages.getString( "MIPreferencePage.0" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +149,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	private void createCommunicationPreferences( Composite composite )
 	{
-		Composite comp = createGroupComposite( composite, 1, MIUIPlugin.getResourceString("internal.ui.preferences.MIPreferencePage.Communication") ); //$NON-NLS-1$
+		Composite comp = createGroupComposite( composite, 1, PreferenceMessages.getString( "MIPreferencePage.1" ) ); //$NON-NLS-1$
 		//Add in an intermediate composite to allow for spacing
 		Composite spacingComposite = new Composite( comp, SWT.NONE );
 		GridLayout layout = new GridLayout();
@@ -158,7 +158,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		data.horizontalSpan = 2;
 		spacingComposite.setLayoutData( data );
 
-		fDebugTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_TIMEOUT, MIUIPlugin.getResourceString("internal.ui.preferences.MIPreferencePage.Debugger_timeout"), spacingComposite ); //$NON-NLS-1$
+		fDebugTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_TIMEOUT, PreferenceMessages.getString( "MIPreferencePage.2" ), spacingComposite ); //$NON-NLS-1$
 		fDebugTimeoutText.setPropertyChangeListener( 
 					new IPropertyChangeListener()
 						{
@@ -169,7 +169,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 							}
 						} );
 
-		fLaunchTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, MIUIPlugin.getResourceString("internal.ui.preferences.MIPreferencePage.Launch_timeout"), spacingComposite ); //$NON-NLS-1$
+		fLaunchTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, PreferenceMessages.getString( "MIPreferencePage.3" ), spacingComposite ); //$NON-NLS-1$
 		fLaunchTimeoutText.setPropertyChangeListener( 
 					new IPropertyChangeListener()
 						{
@@ -203,8 +203,9 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		toText.setValidRange( IMIConstants.MIN_REQUEST_TIMEOUT, IMIConstants.MAX_REQUEST_TIMEOUT );
 		String minValue = Integer.toString( IMIConstants.MIN_REQUEST_TIMEOUT );
 		String maxValue = Integer.toString( IMIConstants.MAX_REQUEST_TIMEOUT );
-		toText.setErrorMessage( MessageFormat.format( MIUIPlugin.getResourceString("internal.ui.preferences.MIPreferencePage.Error_Request_timeout_range"), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
+		toText.setErrorMessage( MessageFormat.format( PreferenceMessages.getString( "MIPreferencePage.4" ), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
 		toText.load();
 		return toText;
 	}
 }
+

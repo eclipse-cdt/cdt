@@ -1,9 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICastToType;
@@ -29,119 +33,105 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * Enter type comment.
- * 
- * @since Mar 7, 2003
+ * The delegate of the "Cast To Type" action.
  */
-public class CastToTypeActionDelegate extends ActionDelegate
-									  implements IObjectActionDelegate
-{
-	static protected class CastToTypeInputValidator implements IInputValidator
-	{
-		public CastToTypeInputValidator()
-		{
+public class CastToTypeActionDelegate extends ActionDelegate implements IObjectActionDelegate {
+
+	static protected class CastToTypeInputValidator implements IInputValidator {
+
+		public CastToTypeInputValidator() {
 		}
 
-		public String isValid( String newText )
-		{
-			if ( newText.trim().length() == 0 )
-			{
-				return CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Type_field_must_not_be_empty"); //$NON-NLS-1$
+		public String isValid( String newText ) {
+			if ( newText.trim().length() == 0 ) {
+				return ActionMessages.getString( "CastToTypeActionDelegate.0" ); //$NON-NLS-1$
 			}
 			return null;
 		}
-
 	}
 
-	protected class CastToTypeDialog extends InputDialog
-	{
-		public CastToTypeDialog( Shell parentShell, String initialValue )
-		{
-			super( parentShell, 
-				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Cast_To_Type"),  //$NON-NLS-1$
-				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Enter_type"),  //$NON-NLS-1$
-				   initialValue, new CastToTypeInputValidator() ); //$NON-NLS-1$ //$NON-NLS-2$
+	protected class CastToTypeDialog extends InputDialog {
+
+		public CastToTypeDialog( Shell parentShell, String initialValue ) {
+			super( parentShell, ActionMessages.getString( "CastToTypeActionDelegate.1" ), //$NON-NLS-1$
+					ActionMessages.getString( "CastToTypeActionDelegate.2" ), //$NON-NLS-1$
+					initialValue, 
+					new CastToTypeInputValidator() );
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
-		protected void configureShell( Shell shell )
-		{
+		protected void configureShell( Shell shell ) {
 			super.configureShell( shell );
 			shell.setImage( CDebugImages.get( CDebugImages.IMG_LCL_CAST_TO_TYPE ) );
 		}
-
 	}
 
 	private ICastToType fCastToType = null;
+
 	private IStatus fStatus = null;
+
 	private IWorkbenchPart fTargetPart = null;
 
-	public CastToTypeActionDelegate()
-	{
+	public CastToTypeActionDelegate() {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void setActivePart( IAction action, IWorkbenchPart targetPart )
-	{
+	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 		fTargetPart = targetPart;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void run( IAction action )
-	{
+	public void run( IAction action ) {
 		if ( getCastToType() == null )
 			return;
-		BusyIndicator.showWhile( Display.getCurrent(), 
-								 new Runnable() 
-									 {
-										 public void run() 
-										 {
-											 try 
-											 {
-												 doAction( getCastToType() );
-												 setStatus( null );
-											 } 
-											 catch( DebugException e ) 
-											 {
-												setStatus( e.getStatus() );
-											 }
-										 }
-									 } );
-		if ( getStatus() != null && !getStatus().isOK() ) 
-		{
-			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
-			if ( window != null ) 
-			{
-				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Unable_to_cast_to_type."), getStatus() ); //$NON-NLS-1$
-			} 
-			else 
-			{
+		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+
+			public void run() {
+				try {
+					doAction( getCastToType() );
+					setStatus( null );
+				}
+				catch( DebugException e ) {
+					setStatus( e.getStatus() );
+				}
+			}
+		} );
+		if ( getStatus() != null && !getStatus().isOK() ) {
+			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
+			if ( window != null ) {
+				CDebugUIPlugin.errorDialog( ActionMessages.getString( "CastToTypeActionDelegate.3" ), getStatus() ); //$NON-NLS-1$
+			}
+			else {
 				CDebugUIPlugin.log( getStatus() );
 			}
-		}		
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		if ( selection instanceof IStructuredSelection )
-		{
+	public void selectionChanged( IAction action, ISelection selection ) {
+		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICastToType )
-			{
+			if ( element instanceof ICastToType ) {
 				boolean enabled = ((ICastToType)element).supportsCasting();
 				action.setEnabled( enabled );
-				if ( enabled )
-				{
+				if ( enabled ) {
 					setCastToType( (ICastToType)element );
 					return;
 				}
@@ -151,32 +141,26 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		setCastToType( null );
 	}
 
-	protected ICastToType getCastToType()
-	{
+	protected ICastToType getCastToType() {
 		return fCastToType;
 	}
 
-	protected void setCastToType( ICastToType castToType )
-	{
+	protected void setCastToType( ICastToType castToType ) {
 		fCastToType = castToType;
 	}
 
-	public IStatus getStatus()
-	{
+	public IStatus getStatus() {
 		return fStatus;
 	}
 
-	public void setStatus( IStatus status )
-	{
+	public void setStatus( IStatus status ) {
 		fStatus = status;
 	}
-	
-	protected void doAction( ICastToType castToType ) throws DebugException
-	{
+
+	protected void doAction( ICastToType castToType ) throws DebugException {
 		String currentType = castToType.getCurrentType().trim();
 		CastToTypeDialog dialog = new CastToTypeDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType );
-		if ( dialog.open() == Window.OK )
-		{
+		if ( dialog.open() == Window.OK ) {
 			String newType = dialog.getValue().trim();
 			castToType.cast( newType );
 			if ( getSelectionProvider() != null )
@@ -184,8 +168,7 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		}
 	}
 
-	private ISelectionProvider getSelectionProvider()
-	{
-		return ( fTargetPart instanceof IDebugView ) ? ((IDebugView)fTargetPart).getViewer() : null;
+	private ISelectionProvider getSelectionProvider() {
+		return (fTargetPart instanceof IDebugView) ? ((IDebugView)fTargetPart).getViewer() : null;
 	}
 }

@@ -865,7 +865,7 @@ public class CDebugTarget extends CDebugElement
 
 		if ( !canDisconnect() )
 		{
-			notSupported( CDebugCorePlugin.getResourceString("internal.core.model.CDebugTarget.Disconnect_session_unsupported") ); //$NON-NLS-1$
+			notSupported( CoreModelMessages.getString( "CDebugTarget.0" ) ); //$NON-NLS-1$
 		}
 
 		try
@@ -1549,7 +1549,8 @@ public class CDebugTarget extends CDebugElement
 		{
 			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),
 												  ICDebugInternalConstants.STATUS_CODE_ERROR,
-												  CDebugCorePlugin.getResourceString("internal.core.model.CDebugTarget.Execution_suspended_because_of_error"), null ); //$NON-NLS-1$
+												  CoreModelMessages.getString( "CDebugTarget.1" ),  //$NON-NLS-1$
+												  null );
 			StringTokenizer st = new StringTokenizer( info.getDetailMessage(), "\n\r" ); //$NON-NLS-1$
 			while( st.hasMoreTokens() )
 			{

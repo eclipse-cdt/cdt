@@ -7,7 +7,6 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.io.File;
-
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -40,8 +38,8 @@ import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
  */
 public class GDBServerDebuggerPage extends GDBDebuggerPage
 {
-	private final static String CONNECTION_TCP = MIUIPlugin.getResourceString("internal.ui.GDBServerDebuggerPage.TCP"); //$NON-NLS-1$
-	private final static String CONNECTION_SERIAL = MIUIPlugin.getResourceString("internal.ui.GDBServerDebuggerPage.Serial"); //$NON-NLS-1$
+	private final static String CONNECTION_TCP = MIUIMessages.getString( "GDBServerDebuggerPage.0" ); //$NON-NLS-1$
+	private final static String CONNECTION_SERIAL = MIUIMessages.getString( "GDBServerDebuggerPage.1" ); //$NON-NLS-1$
 
 	private ComboDialogField fConnectionField;
 
@@ -63,7 +61,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 	public void createMainTab( TabFolder tabFolder )
 	{
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
-		tabItem.setText( MIUIPlugin.getResourceString("internal.ui.GDBServerDebuggerPage.Main") ); //$NON-NLS-1$
+		tabItem.setText( MIUIMessages.getString( "GDBServerDebuggerPage.2" ) ); //$NON-NLS-1$
 
 		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
@@ -72,7 +70,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
 
-		Label label = ControlFactory.createLabel( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_debugger") ); //$NON-NLS-1$
+		Label label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.3" ) ); //$NON-NLS-1$
 		GridData gd = new GridData();
 //		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
@@ -87,7 +85,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 								}
 							} );
 
-		Button button = createPushButton( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Browse"), null ); //$NON-NLS-1$
+		Button button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.4" ), null ); //$NON-NLS-1$
 		button.addSelectionListener( 
 						new SelectionAdapter() 
 							{
@@ -100,7 +98,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 								private void handleGDBButtonSelected() 
 								{
 									FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-									dialog.setText( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_Debugger") ); //$NON-NLS-1$
+									dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.5" ) ); //$NON-NLS-1$
 									String gdbCommand = fGDBCommandText.getText().trim();
 									int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
 									if ( lastSeparatorIndex != -1 ) 
@@ -116,7 +114,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 								}
 							} );
 
-		label = ControlFactory.createLabel( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_command_file")+':' ); //$NON-NLS-1$
+		label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.6" ) ); //$NON-NLS-1$
 		gd = new GridData();
 //		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
@@ -131,7 +129,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 													updateLaunchConfigurationDialog();
 												}
 											} );
-		button = createPushButton( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Browse"), null ); //$NON-NLS-1$
+		button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.7" ), null ); //$NON-NLS-1$
 		button.addSelectionListener(
 						new SelectionAdapter() 
 						{
@@ -144,7 +142,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 							private void handleGDBInitButtonSelected() 
 							{
 								FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-								dialog.setText( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_Command_File") ); //$NON-NLS-1$
+								dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.8" ) ); //$NON-NLS-1$
 								String gdbCommand = fGDBInitText.getText().trim();
 								int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
 								if ( lastSeparatorIndex != -1 ) 
@@ -188,7 +186,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 	private ComboDialogField createConnectionField()
 	{
 		ComboDialogField field = new ComboDialogField( SWT.DROP_DOWN | SWT.READ_ONLY );
-		field.setLabelText( MIUIPlugin.getResourceString("internal.ui.GDBServerDebuggerPage.Connection"));//$NON-NLS-1$
+		field.setLabelText( MIUIMessages.getString( "GDBServerDebuggerPage.9" ) ); //$NON-NLS-1$
 		field.setItems( fConnections );
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
@@ -286,3 +284,4 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		fSerialBlock.setDefaults( configuration );
 	}
 }
+

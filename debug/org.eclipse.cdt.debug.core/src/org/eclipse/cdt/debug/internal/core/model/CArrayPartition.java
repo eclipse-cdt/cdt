@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -18,7 +17,6 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  *
@@ -178,7 +176,7 @@ public class CArrayPartition extends CVariable
 			}
 			catch (CDIException e)
 			{
-				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CArrayPartition.Type_not_available"), e ); //$NON-NLS-1$
+				requestFailed( CoreModelMessages.getString( "CArrayPartition.0" ), e ); //$NON-NLS-1$
 			}
 		}
 		return fType;
@@ -208,7 +206,7 @@ public class CArrayPartition extends CVariable
 			}
 			catch( CDIException e )
 			{
-				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CArrayPartition.Qualified_name_not_available"), e ); //$NON-NLS-1$
+				requestFailed( CoreModelMessages.getString( "CArrayPartition.1" ), e ); //$NON-NLS-1$
 			}
 		}
 		return fQualifiedName;

@@ -7,7 +7,6 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.util.Observable;
-
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IDialogFieldListener;
@@ -23,7 +22,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -104,7 +102,7 @@ public class TCPSettingsBlock extends Observable
 	private StringDialogField createHostNameField()
 	{
 		StringDialogField field = new StringDialogField();
-		field.setLabelText( MIUIPlugin.getResourceString("TCPSettingsBlock.Host_or_IP") ); //$NON-NLS-1$
+		field.setLabelText( MIUIMessages.getString( "TCPSettingsBlock.0" ) ); //$NON-NLS-1$
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
@@ -119,7 +117,7 @@ public class TCPSettingsBlock extends Observable
 	private StringDialogField createPortNumberField()
 	{ 
 		StringDialogField field = new StringDialogField();
-		field.setLabelText( MIUIPlugin.getResourceString("TCPSettingsBlock.Port") ); //$NON-NLS-1$
+		field.setLabelText( MIUIMessages.getString( "TCPSettingsBlock.1" ) ); //$NON-NLS-1$
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
@@ -195,13 +193,13 @@ public class TCPSettingsBlock extends Observable
 		if ( fHostNameField != null && fPortNumberField != null )
 		{
 			if ( fHostNameField.getText().trim().length() == 0 )
-				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Host_or_IP_must_be_specified") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "TCPSettingsBlock.2" ) ); //$NON-NLS-1$
 			else if ( !hostNameIsValid( fHostNameField.getText().trim() ) )
-				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Invalid_host_or_IP") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "TCPSettingsBlock.3" ) ); //$NON-NLS-1$
 			else if ( fPortNumberField.getText().trim().length() == 0 )
-				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Port_must_be_specified") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "TCPSettingsBlock.4" ) ); //$NON-NLS-1$
 			else if ( !portNumberIsValid( fPortNumberField.getText().trim() ) )
-				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Invalid_port") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "TCPSettingsBlock.5" ) ); //$NON-NLS-1$
 		}
 	}
 
@@ -235,3 +233,4 @@ public class TCPSettingsBlock extends Observable
 		return true;
 	}
 }
+

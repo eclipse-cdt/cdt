@@ -7,7 +7,6 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.util.Observable;
-
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
@@ -25,7 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -110,7 +108,7 @@ public class SerialPortSettingsBlock extends Observable
 	private StringDialogField createDeviceField()
 	{
 		StringDialogField field = new StringDialogField();
-		field.setLabelText( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Device") ); //$NON-NLS-1$
+		field.setLabelText( MIUIMessages.getString( "SerialPortSettingsBlock.0" ) ); //$NON-NLS-1$
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
@@ -125,7 +123,7 @@ public class SerialPortSettingsBlock extends Observable
 	private ComboDialogField createSpeedField()
 	{
 		ComboDialogField field = new ComboDialogField( SWT.DROP_DOWN | SWT.READ_ONLY );
-		field.setLabelText( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Speed") ); //$NON-NLS-1$
+		field.setLabelText( MIUIMessages.getString( "SerialPortSettingsBlock.1" ) ); //$NON-NLS-1$
 		field.setItems( fSpeedChoices );
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
@@ -217,11 +215,11 @@ public class SerialPortSettingsBlock extends Observable
 		if ( fDeviceField != null && fSpeedField != null )
 		{
 			if ( fDeviceField.getText().trim().length() == 0 )
-				setErrorMessage( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Device_must_be_specified") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "SerialPortSettingsBlock.2" ) ); //$NON-NLS-1$
 			else if ( !deviceIsValid( fDeviceField.getText().trim() ) )
-				setErrorMessage( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Invalid_device") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "SerialPortSettingsBlock.3" ) ); //$NON-NLS-1$
 			else if ( fSpeedField.getSelectionIndex() < 0 )
-				setErrorMessage( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Speed_must_be_specified") ); //$NON-NLS-1$
+				setErrorMessage( MIUIMessages.getString( "SerialPortSettingsBlock.4" ) ); //$NON-NLS-1$
 		}
 	}
 
@@ -240,3 +238,4 @@ public class SerialPortSettingsBlock extends Observable
 		return true;
 	}
 }
+

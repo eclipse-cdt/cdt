@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 package org.eclipse.cdt.debug.ui;
 
 import java.text.MessageFormat;
@@ -55,15 +55,16 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener
-{
+public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener {
+
 	/**
 	 * The plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui" ; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui"; //$NON-NLS-1$
 
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
+
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 
@@ -74,17 +75,13 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	/**
 	 * The constructor.
 	 */
-	public CDebugUIPlugin()
-	{
+	public CDebugUIPlugin() {
 		super();
 		plugin = this;
-		try
-		{
-			resourceBundle =
-				ResourceBundle.getBundle( "org.eclipse.cdt.debug.ui.CDebugUIPluginResources" ); //$NON-NLS-1$
+		try {
+			resourceBundle = ResourceBundle.getBundle( "org.eclipse.cdt.debug.ui.CDebugUIPluginResources" ); //$NON-NLS-1$
 		}
-		catch( MissingResourceException x )
-		{
+		catch( MissingResourceException x ) {
 			resourceBundle = null;
 		}
 	}
@@ -92,60 +89,57 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	/**
 	 * Returns the shared instance.
 	 */
-	public static CDebugUIPlugin getDefault()
-	{
+	public static CDebugUIPlugin getDefault() {
 		return plugin;
 	}
 
 	/**
 	 * Returns the workspace instance.
 	 */
-	public static IWorkspace getWorkspace()
-	{
+	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 
 	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
+	 * Returns the string from the plugin's resource bundle, or 'key' if not found.
 	 */
-	public static String getResourceString(String key)
-	{
+	public static String getResourceString( String key ) {
 		ResourceBundle bundle = CDebugUIPlugin.getDefault().getResourceBundle();
-		try	{	
+		try {
 			return bundle.getString( key );
-		} catch (MissingResourceException e) {
+		}
+		catch( MissingResourceException e ) {
 			return '!' + key + '!';
-		} catch (NullPointerException e) {
+		}
+		catch( NullPointerException e ) {
 			return '#' + key + '#';
 		}
 	}
-	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
-	}
-	public static String getFormattedString(String key, Integer arg) {
-		return MessageFormat.format(getResourceString(key), new Object[] { arg });
+
+	public static String getFormattedString( String key, String arg ) {
+		return MessageFormat.format( getResourceString( key ), new String[]{ arg } );
 	}
 
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
+	public static String getFormattedString( String key, Integer arg ) {
+		return MessageFormat.format( getResourceString( key ), new Object[]{ arg } );
+	}
+
+	public static String getFormattedString( String key, String[] args ) {
+		return MessageFormat.format( getResourceString( key ), args );
 	}
 
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
-	public ResourceBundle getResourceBundle()
-	{
+	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
 
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
-	public static String getUniqueIdentifier()
-	{
-		if ( getDefault() == null )
-		{
+	public static String getUniqueIdentifier() {
+		if ( getDefault() == null ) {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
@@ -155,67 +149,64 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	}
 
 	/**
-	 * Returns the a color based on the type of output.
-	 * Valid types:
+	 * Returns the a color based on the type of output. Valid types:
 	 * <li>CHANGED_REGISTER_RGB</li>
 	 */
-	public static Color getPreferenceColor( String type )
-	{
-		return ColorManager.getDefault().getColor( 
-				PreferenceConverter.getColor( getDefault().getPreferenceStore(), type ) );
+	public static Color getPreferenceColor( String type ) {
+		return ColorManager.getDefault().getColor( PreferenceConverter.getColor( getDefault().getPreferenceStore(), type ) );
 	}
 
-	public static CDTDebugModelPresentation getDebugModelPresentation()
-	{
+	public static CDTDebugModelPresentation getDebugModelPresentation() {
 		return CDTDebugModelPresentation.getDefault();
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
-	 * @param status status to log
+	 * @param status
+	 *            status to log
 	 */
-	public static void log( IStatus status )
-	{
+	public static void log( IStatus status ) {
 		getDefault().getLog().log( status );
 	}
 
 	/**
 	 * Logs an internal error with the specified throwable
 	 * 
-	 * @param e the exception to be logged
-	 */	
-	public static void log( Throwable e )
-	{
+	 * @param e
+	 *            the exception to be logged
+	 */
+	public static void log( Throwable e ) {
 		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) ); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified message.
 	 * 
-	 * @param message the error message to log
+	 * @param message
+	 *            the error message to log
 	 */
-	public static void logErrorMessage( String message ) 
-	{
+	public static void logErrorMessage( String message ) {
 		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, message, null ) );
 	}
 
-	public ILaunchConfigurationTab getDebuggerPage(String debuggerID) {
-		if (fDebuggerPageMap == null) {	
+	public ILaunchConfigurationTab getDebuggerPage( String debuggerID ) {
+		if ( fDebuggerPageMap == null ) {
 			initializeDebuggerPageMap();
 		}
-		IConfigurationElement configElement = (IConfigurationElement) fDebuggerPageMap.get(debuggerID);
+		IConfigurationElement configElement = (IConfigurationElement)fDebuggerPageMap.get( debuggerID );
 		ILaunchConfigurationTab tab = null;
-		if (configElement != null) {
+		if ( configElement != null ) {
 			try {
-				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
-			} catch(CoreException ce) {			 
-				log(new Status(IStatus.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce)); //$NON-NLS-1$
+				tab = (ILaunchConfigurationTab)configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
+			}
+			catch( CoreException ce ) {
+				log( new Status( IStatus.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce ) ); //$NON-NLS-1$
 			}
 		}
 		return tab;
 	}
-	
+
 	protected void initializeDebuggerPageMap() {
 		fDebuggerPageMap = new HashMap( 10 );
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( PLUGIN_ID, "CDebuggerPage" ); //$NON-NLS-1$
@@ -226,24 +217,20 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		}
 	}
 
-	public static void errorDialog( String message, IStatus status )
-	{
+	public static void errorDialog( String message, IStatus status ) {
 		log( status );
 		Shell shell = getActiveWorkbenchShell();
-		if ( shell != null )
-		{
-			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString("ui.CDebugUIPlugin.Error"), message, status ); //$NON-NLS-1$
+		if ( shell != null ) {
+			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString( "ui.CDebugUIPlugin.Error" ), message, status ); //$NON-NLS-1$
 		}
 	}
 
-	public static void errorDialog( String message, Throwable t )
-	{
+	public static void errorDialog( String message, Throwable t ) {
 		log( t );
 		Shell shell = getActiveWorkbenchShell();
-		if ( shell != null )
-		{
+		if ( shell != null ) {
 			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
-			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString("ui.CDebugUIPlugin.Error"), message, status ); //$NON-NLS-1$
+			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString( "ui.CDebugUIPlugin.Error" ), message, status ); //$NON-NLS-1$
 		}
 	}
 
@@ -252,16 +239,13 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 * 
 	 * @return the active workbench window
 	 */
-	public static IWorkbenchWindow getActiveWorkbenchWindow()
-	{
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	public static IWorkbenchPage getActivePage()
-	{
+	public static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow w = getActiveWorkbenchWindow();
-		if ( w != null )
-		{
+		if ( w != null ) {
 			return w.getActivePage();
 		}
 		return null;
@@ -272,23 +256,19 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 * 
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
-	public static Shell getActiveWorkbenchShell()
-	{
+	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if ( window != null )
-		{
+		if ( window != null ) {
 			return window.getShell();
 		}
 		return null;
 	}
 
 	/**
-	 * Returns the standard display to be used. The method first checks, if
-	 * the thread calling this method has an associated display. If so, this
-	 * display is returned. Otherwise the method returns the default display.
+	 * Returns the standard display to be used. The method first checks, if the thread calling this method has an associated display. If so, this display is
+	 * returned. Otherwise the method returns the default display.
 	 */
-	public static Display getStandardDisplay()
-	{
+	public static Display getStandardDisplay() {
 		Display display;
 		display = Display.getCurrent();
 		if ( display == null )
@@ -299,57 +279,44 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	/**
 	 * Returns the image descriptor registry used for this plugin.
 	 */
-	public static CDebugImageDescriptorRegistry getImageDescriptorRegistry()
-	{
-		if ( getDefault().fImageDescriptorRegistry == null )
-		{
+	public static CDebugImageDescriptorRegistry getImageDescriptorRegistry() {
+		if ( getDefault().fImageDescriptorRegistry == null ) {
 			getDefault().fImageDescriptorRegistry = new CDebugImageDescriptorRegistry();
 		}
 		return getDefault().fImageDescriptorRegistry;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection )
-	{
-		if ( selection != null && selection instanceof IStructuredSelection )
-		{
-			if ( ((IStructuredSelection)selection).size() == 1 )
-			{
+	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
+		if ( selection != null && selection instanceof IStructuredSelection ) {
+			if ( ((IStructuredSelection)selection).size() == 1 ) {
 				Object element = ((IStructuredSelection)selection).getFirstElement();
-				if ( element != null && element instanceof IThread )
-				{
-					if ( ((IThread)element).getDebugTarget() instanceof ISwitchToThread )
-					{
-						try
-						{
-							if ( !sameThread( (IDebugElement)element ) )
-							{
+				if ( element != null && element instanceof IThread ) {
+					if ( ((IThread)element).getDebugTarget() instanceof ISwitchToThread ) {
+						try {
+							if ( !sameThread( (IDebugElement)element ) ) {
 								((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );
 							}
 						}
-						catch( DebugException e )
-						{
+						catch( DebugException e ) {
 							errorDialog( e.getMessage(), e );
 						}
 					}
 				}
-				else if ( element != null && element instanceof IStackFrame )
-				{
-					if ( ((IStackFrame)element).getThread() instanceof ISwitchToFrame )
-					{
-						try
-						{
-							if ( !sameThread( (IDebugElement)element ) )
-							{
+				else if ( element != null && element instanceof IStackFrame ) {
+					if ( ((IStackFrame)element).getThread() instanceof ISwitchToFrame ) {
+						try {
+							if ( !sameThread( (IDebugElement)element ) ) {
 								((ISwitchToThread)((IStackFrame)element).getDebugTarget()).setCurrentThread( ((IStackFrame)element).getThread() );
 							}
 							((ISwitchToFrame)((IStackFrame)element).getThread()).switchToFrame( (IStackFrame)element );
 						}
-						catch( DebugException e )
-						{
-//							errorDialog( "Switch to stack frame failed.", e );
+						catch( DebugException e ) {
+							//							errorDialog( "Switch to stack frame failed.", e );
 						}
 					}
 				}
@@ -357,41 +324,36 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		}
 	}
 
-	private boolean sameThread( IDebugElement element ) throws DebugException
-	{
-		if ( element.getDebugTarget() instanceof ISwitchToThread )
-		{
-			if ( element instanceof IThread )
-			{
+	private boolean sameThread( IDebugElement element ) throws DebugException {
+		if ( element.getDebugTarget() instanceof ISwitchToThread ) {
+			if ( element instanceof IThread ) {
 				return ((IThread)element).equals( ((ISwitchToThread)element.getDebugTarget()).getCurrentThread() );
 			}
-			if ( element instanceof IStackFrame )
-			{
+			if ( element instanceof IStackFrame ) {
 				return ((IStackFrame)element).getThread().equals( ((ISwitchToThread)element.getDebugTarget()).getCurrentThread() );
 			}
 		}
 		return false;
 	}
 
-	public static IPersistableSourceLocator createDefaultSourceLocator()
-	{
+	public static IPersistableSourceLocator createDefaultSourceLocator() {
 		return new DefaultSourceLocator();
 	}
 
-	public static String getDefaultSourceLocatorID()
-	{
+	public static String getDefaultSourceLocatorID() {
 		return DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR;
 	}
 
 	/*
 	 * to support old launch configurations
 	 */
-	public static String getDefaultSourceLocatorOldID()
-	{
+	public static String getDefaultSourceLocatorOldID() {
 		return DefaultSourceLocator.ID_OLD_DEFAULT_SOURCE_LOCATOR;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start( BundleContext context ) throws Exception {
@@ -403,7 +365,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop( BundleContext context ) throws Exception {

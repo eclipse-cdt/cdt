@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -21,7 +20,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -56,7 +54,7 @@ public class GDBSolibBlock extends Observable implements Observer
 				
 		if ( autoSolib )
 		{	
-			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIPlugin.getResourceString("mi.internal.ui.GDBSolibBlock.Load_shared_lib_symbols_automatically") ); //$NON-NLS-1$
+			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.0" ) ); //$NON-NLS-1$
 			fAutoSoLibButton.addSelectionListener( 
 										new SelectionAdapter()
 											{
@@ -70,7 +68,7 @@ public class GDBSolibBlock extends Observable implements Observer
 
 		if ( stopOnSolibEvents )
 		{
-			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, MIUIPlugin.getResourceString("mi.internal.ui.GDBSolibBlock.Stop_on_shared_lib_events") ); //$NON-NLS-1$
+			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.1" ) ); //$NON-NLS-1$
 			fStopOnSolibEventsButton.addSelectionListener( 
 										new SelectionAdapter()
 											{
@@ -192,3 +190,4 @@ public class GDBSolibBlock extends Observable implements Observer
 		}
 	}
 }
+

@@ -1,8 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
@@ -17,86 +22,66 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * Enter type comment.
- * 
- * @since: Feb 4, 2003
+ * The object contribution delegate of the "Resume Without Signal" action.
  */
-public class SignalZeroObjectActionDelegate implements IObjectActionDelegate
-{
+public class SignalZeroObjectActionDelegate extends ActionDelegate implements IObjectActionDelegate {
+
 	private IResumeWithoutSignal fTarget = null;
 
-	/**
-	 * Constructor for SignalZeroObjectActionDelegate.
-	 */
-	public SignalZeroObjectActionDelegate()
-	{
-		super();
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
-	public void setActivePart( IAction action, IWorkbenchPart targetPart )
-	{
+	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
-	public void run( IAction action )
-	{
-		if ( getTarget() != null )
-		{
-			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
-													DebugException.REQUEST_FAILED, 
-													CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroObjectActionDelegate.Unable_to_resume_ignoring_signal"),  //$NON-NLS-1$
-													null ); 
-			BusyIndicator.showWhile( Display.getCurrent(), 
-									new Runnable()
-										{
-											public void run()
-											{
-												try
-												{
-													doAction( getTarget() );
-												}
-												catch( DebugException e )
-												{
-													ms.merge( e.getStatus() );
-												}
-											}
-										} );
-			if ( !ms.isOK() )
-			{
-				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-				if ( window != null )
-				{
-					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroObjectActionDelegate.Operation_failed"), ms ); //$NON-NLS-1$
+	public void run( IAction action ) {
+		if ( getTarget() != null ) {
+			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "SignalZeroObjectActionDelegate.0" ), null ); //$NON-NLS-1$
+			BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+
+				public void run() {
+					try {
+						doAction( getTarget() );
+					}
+					catch( DebugException e ) {
+						ms.merge( e.getStatus() );
+					}
 				}
-				else
-				{
+			} );
+			if ( !ms.isOK() ) {
+				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
+				if ( window != null ) {
+					CDebugUIPlugin.errorDialog( ActionMessages.getString( "SignalZeroObjectActionDelegate.1" ), ms ); //$NON-NLS-1$
+				}
+				else {
 					CDebugUIPlugin.log( ms );
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		if ( selection instanceof IStructuredSelection )
-		{
+	public void selectionChanged( IAction action, ISelection selection ) {
+		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof IResumeWithoutSignal )
-			{
+			if ( element instanceof IResumeWithoutSignal ) {
 				boolean enabled = ((IResumeWithoutSignal)element).canResumeWithoutSignal();
 				action.setEnabled( enabled );
-				if ( enabled )
-				{
+				if ( enabled ) {
 					setTarget( (IResumeWithoutSignal)element );
 					return;
 				}
@@ -106,18 +91,15 @@ public class SignalZeroObjectActionDelegate implements IObjectActionDelegate
 		setTarget( null );
 	}
 
-	protected void doAction( IResumeWithoutSignal target ) throws DebugException
-	{
+	protected void doAction( IResumeWithoutSignal target ) throws DebugException {
 		target.resumeWithoutSignal();
 	}
 
-	protected IResumeWithoutSignal getTarget()
-	{
+	protected IResumeWithoutSignal getTarget() {
 		return fTarget;
 	}
 
-	protected void setTarget( IResumeWithoutSignal target )
-	{
+	protected void setTarget( IResumeWithoutSignal target ) {
 		fTarget = target;
 	}
 }

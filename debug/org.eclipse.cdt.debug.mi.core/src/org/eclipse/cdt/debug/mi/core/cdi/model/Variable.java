@@ -165,11 +165,15 @@ public class Variable extends VariableObject implements ICDIVariable {
 			children = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
 				String qName = getQualifiedName();
+				String childName = vars[i].getExp();
 				String childTypename = null;
 				boolean childFake = false;
 				ICDIType t = getType();
 				if (t instanceof ICDIArrayType) {
 					qName = "(" + getQualifiedName() + ")[" + i + "]";
+					// For Array gdb varobj only return the index, override here.
+					int index = castingIndex + i;
+					childName = getName() + "[" + index + "]";
 				} else if (t instanceof ICDIPointerType) {
 					qName = "*(" + getQualifiedName() + ")";
 				} else if (t instanceof ICDIStructType) {
@@ -201,8 +205,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 						qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
 					}
 				}
-				Variable v =
-					new Variable(getTarget(), vars[i].getExp(), qName, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
+				Variable v = new Variable(getTarget(), childName, qName, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
 				if (childTypename != null) {
 					// Hack to reset the typename to a known value
 					v.typename = childTypename;

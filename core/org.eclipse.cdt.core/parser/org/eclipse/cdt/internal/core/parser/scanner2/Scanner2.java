@@ -2509,10 +2509,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		            idx = indexOfNextNonWhiteSpace( bufferStack[stackpPos], bufferPos[stackpPos], bufferLimit[stackpPos] );
 		            if( idx >= bufferLimit[stackpPos] ) continue;
 		            if( idx > 0 && bufferStack[stackpPos][idx] == '(' ) break;
+		            bufferPos[bufferStackPos]--;
                     return null;
 		        }
-		        if( idx == -1 )
+		        if( idx == -1 ){
+		            bufferPos[bufferStackPos]--;
 		            return null;
+		        }
 		        
 		        MacroData data = (MacroData) bufferData[stackpPos+1];
 		        for( int i = bufferStackPos; i > stackpPos; i-- )
@@ -2523,11 +2526,14 @@ public class Scanner2 implements IScanner, IScannerData {
 		        limit = bufferLimit[bufferStackPos];
 		        start = data.startOffset;
 		    } else {
+		        bufferPos[bufferStackPos]--;
 		        return null;
 		    }
 		}
-		if( buffer[bufferPos[bufferStackPos]] != '(' )
+		if( buffer[bufferPos[bufferStackPos]] != '(' ){
+		    bufferPos[bufferStackPos]--;
 			return null;
+		}
 		
 		char[][] arglist = macro.arglist;
 		int currarg = -1;

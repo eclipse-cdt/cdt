@@ -234,7 +234,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						if (container != null) {
 							IPathEntry[] entries = container.getPathEntries();
 							for (int i = 0; i < entries.length; i++) {
-								if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+								if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 									ILibraryEntry refEntry = (ILibraryEntry)entries[i];
 									if (refEntry.getPath().equals(libraryPath)) {
 										return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class LibraryEntry extends APathEntry implements ILibraryEntry {
 
@@ -37,7 +38,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	public LibraryEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath libraryPath, IPath sourceAttachmentPath,
 		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
 		super(ILibraryEntry.CDT_LIBRARY, basePath, baseRef, resourcePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
-		this.libraryPath = (libraryPath == null) ? EMPTY_PATH : libraryPath;
+		this.libraryPath = (libraryPath == null) ? Path.EMPTY : libraryPath;
 		this.sourceAttachmentPath = sourceAttachmentPath;
 		this.sourceAttachmentRootPath = sourceAttachmentRootPath;
 		this.sourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping;

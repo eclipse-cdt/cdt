@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public abstract class APathEntry extends PathEntry {
 
@@ -34,8 +35,8 @@ public abstract class APathEntry extends PathEntry {
 	 */
 	public APathEntry (int kind, IPath basePath, IPath baseRef, IPath path, IPath[] exclusionPatterns, boolean isExported) {
 		super(kind, path, isExported);
-		this.basePath = (basePath == null) ? EMPTY_PATH : basePath;
-		this.baseRef = (baseRef == null) ? EMPTY_PATH : baseRef;
+		this.basePath = (basePath == null) ? Path.EMPTY : basePath;
+		this.baseRef = (baseRef == null) ? Path.EMPTY : baseRef;
 		this.exclusionPatterns = (exclusionPatterns == null) ? NO_EXCLUSION_PATTERNS : exclusionPatterns;
 	}
 

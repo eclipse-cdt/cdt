@@ -22,10 +22,8 @@ public class PathEntry implements IPathEntry {
 	protected boolean isExported;
 	protected IPath path;
 
-	public final static IPath EMPTY_PATH = new Path("");
-
 	public PathEntry(int entryKind, IPath path, boolean isExported) {
-		this.path = (path == null) ? EMPTY_PATH : path;
+		this.path = (path == null) ? Path.EMPTY : path;
 		this.entryKind = entryKind;
 		this.isExported = isExported;
 	}

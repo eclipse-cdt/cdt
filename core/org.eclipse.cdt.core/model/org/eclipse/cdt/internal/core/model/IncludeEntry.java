@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	IPath includePath;
@@ -24,7 +25,7 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	public IncludeEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath includePath, boolean isSystemInclude,
 			IPath[] exclusionPatterns, boolean isExported) {
 		super(IIncludeEntry.CDT_INCLUDE, basePath, baseRef, resourcePath, exclusionPatterns, isExported);
-		this.includePath = (includePath == null) ? EMPTY_PATH : includePath;
+		this.includePath = (includePath == null) ? Path.EMPTY : includePath;
 		this.isSystemInclude = isSystemInclude;
 	}
 

@@ -42,7 +42,7 @@ public class MakefileStorageDocumentProvider extends StorageDocumentProvider {
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
 		return new DefaultPartitioner(
-				new MakefilePartitionScanner(), MakefilePartitionScanner.TYPES);
+				new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
 	}
 
 }

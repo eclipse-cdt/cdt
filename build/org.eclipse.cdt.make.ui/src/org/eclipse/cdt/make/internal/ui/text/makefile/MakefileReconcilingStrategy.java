@@ -16,6 +16,7 @@ import java.io.StringReader;
 
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.editor.IReconcilingParticipant;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileContentOutlinePage;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileEditor;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
@@ -34,8 +35,8 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
-
 	private MakefileContentOutlinePage fOutliner;
+	private IReconcilingParticipant fMakefileReconcilingParticipant;
 
 	public MakefileReconcilingStrategy(MakefileEditor editor) {
 		fOutliner= editor.getOutlinePage();
@@ -43,6 +44,10 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		fEditor= editor;
 		fManager= MakeUIPlugin.getDefault().getWorkingCopyManager();
 		fDocumentProvider= MakeUIPlugin.getDefault().getMakefileDocumentProvider();
+		if (fEditor instanceof IReconcilingParticipant) {
+			fMakefileReconcilingParticipant= (IReconcilingParticipant)fEditor;
+		}
+
 	}
 	
 	/**
@@ -76,16 +81,26 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	}
 	
 	private void reconcile() {
-		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
-		if (makefile != null) {
-			String content = fDocumentProvider.getDocument(fEditor.getEditorInput()).get();
-			StringReader reader = new StringReader(content);
-			try {
-				makefile.parse(makefile.getFileName(), reader);
-			} catch (IOException e) {
+		try {
+			IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
+			if (makefile != null) {
+				String content = fDocumentProvider.getDocument(fEditor.getEditorInput()).get();
+				StringReader reader = new StringReader(content);
+				try {
+					makefile.parse(makefile.getFileName(), reader);
+				} catch (IOException e) {
+				}
+				
+				fOutliner.update();
 			}
-			
-			fOutliner.update();
+		} finally {
+			try {
+				if (fMakefileReconcilingParticipant != null) {
+					fMakefileReconcilingParticipant.reconciled();
+				}
+			} finally {
+				//
+			}
 		}
  	}	
 }

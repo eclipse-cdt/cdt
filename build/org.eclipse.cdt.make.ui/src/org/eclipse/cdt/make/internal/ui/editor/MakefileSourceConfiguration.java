@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
-import org.eclipse.cdt.make.internal.ui.text.IMakefileColorManager;
-import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
+import org.eclipse.cdt.make.internal.ui.text.ColorManager;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileAnnotationHover;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCodeScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCompletionProcessor;
@@ -34,12 +33,13 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 
 public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 
-	private IMakefileColorManager colorManager;
-	private MakefileCodeScanner codeScanner;
+	private ColorManager colorManager;
+	MakefileCodeScanner codeScanner;
 	private MakefileEditor fEditor;
 
 	/**
@@ -54,10 +54,10 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	/**
 	 * Constructor for MakeConfiguration
 	 */
-	public MakefileSourceConfiguration(IMakefileColorManager colorManager, MakefileEditor editor) {
+	public MakefileSourceConfiguration(MakefileEditor editor) {
 		super();
 		fEditor = editor;
-		this.colorManager = colorManager;
+		colorManager = ColorManager.getDefault();
 	}
 
 	/**
@@ -66,11 +66,11 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
-			MakefilePartitionScanner.MAKEFILE_COMMENT,
-			MakefilePartitionScanner.MAKEFILE_IF_BLOCK,
-			MakefilePartitionScanner.MAKEFILE_DEF_BLOCK,
-			MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK,
-			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT,
+			MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION,
+			MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION,
+			MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION,
+			MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION,
+			MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION,
 		};
 
 	}
@@ -81,11 +81,11 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
+		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
 
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
@@ -93,20 +93,14 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 		assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 		//Set to Carolina blue
-		assistant.setContextInformationPopupBackground(getColorManager().getColor(new RGB(0, 191, 255)));
+		assistant.setContextInformationPopupBackground(colorManager.getColor(new RGB(0, 191, 255)));
 
 		return assistant;
 	}
 
-	protected IMakefileColorManager getColorManager() {
-		if (null == colorManager)
-			colorManager = new MakefileColorManager();
-		return colorManager;
-	}
-
 	protected MakefileCodeScanner getCodeScanner() {
 		if (null == codeScanner)
-			codeScanner = new MakefileCodeScanner(getColorManager());
+			codeScanner = new MakefileCodeScanner();
 		return codeScanner;
 
 	}
@@ -121,28 +115,28 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_COMMENT);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_COMMENT);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
 
 		dr = new DefaultDamagerRepairer(getCodeScanner());
-		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER);
-		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER);
+		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
+		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER_PARTITION);
 		return reconciler;
 	}
 
@@ -178,4 +172,22 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new MakefileAnnotationHover(fEditor);
 	}
+
+	/**
+	 * @param event
+	 * @return
+	 */
+	public boolean affectsBehavior(PropertyChangeEvent event) {
+		MakefileCodeScanner scanner = getCodeScanner();
+		return scanner.affectsBehavior(event);
+	}
+
+	/**
+	 * @param event
+	 */
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		MakefileCodeScanner scanner = getCodeScanner();
+		scanner.adaptToPreferenceChange(event);
+	}
+
 }

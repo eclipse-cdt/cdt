@@ -13,19 +13,15 @@ package org.eclipse.cdt.make.internal.ui.text.makefile;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.make.internal.ui.text.IMakefileColorManager;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.cdt.make.internal.ui.text.ColorManager;
 import org.eclipse.jface.text.rules.EndOfLineRule;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
-public class MakefileCodeScanner extends RuleBasedScanner {
+public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 
 	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -41,18 +37,30 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 		"shell", "origin", "foreach", "call" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	};
 
+	public static final String[] fTokenProperties = new String[] {
+			ColorManager.MAKE_COMMENT_COLOR,
+			ColorManager.MAKE_KEYWORD_COLOR,
+			ColorManager.MAKE_FUNCTION_COLOR,
+			ColorManager.MAKE_MACRO_REF_COLOR,
+			ColorManager.MAKE_MACRO_DEF_COLOR,
+			ColorManager.MAKE_DEFAULT_COLOR
+	};
 
 	/**
 	 * Constructor for MakefileCodeScanner
 	 */
-	public MakefileCodeScanner(IMakefileColorManager provider) {
+	public MakefileCodeScanner() {
 		super();
-
-		IToken keyword = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_KEYWORD)));
-		IToken function = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_FUNCTION)));
-		IToken comment = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_COMMENT)));
-		IToken macro = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_MACRO_VAR)));
-		IToken other = new Token(new TextAttribute(provider.getColor(IMakefileColorManager.MAKE_DEFAULT)));
+		initialize();
+	}
+	
+	protected List createRules() {
+		IToken keyword = getToken(ColorManager.MAKE_KEYWORD_COLOR);
+		IToken function = getToken(ColorManager.MAKE_FUNCTION_COLOR);
+		IToken comment = getToken(ColorManager.MAKE_COMMENT_COLOR);
+		IToken macroRef = getToken(ColorManager.MAKE_MACRO_REF_COLOR);
+		IToken macroDef = getToken(ColorManager.MAKE_MACRO_DEF_COLOR);
+		IToken other = getToken(ColorManager.MAKE_DEFAULT_COLOR);
 
 		List rules = new ArrayList();
 
@@ -66,6 +74,12 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 			}
 		}));
 
+		// Put before the the word rules
+		MultiLineRule defineRule = new MultiLineRule("define", "endef", macroDef); //$NON-NLS-1$ //$NON-NLS-2$
+		defineRule.setColumnConstraint(0);
+		rules.add(defineRule);
+		rules.add(new MacroDefinitionRule(macroDef, other));
+
 		// Add word rule for keywords, types, and constants.
 		// We restring the detection of the keywords to be the first column to be valid.
 		WordRule keyWordRule = new WordRule(new MakefileWordDetector(), other);
@@ -78,115 +92,21 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 		WordRule functionRule = new WordRule(new MakefileWordDetector(), other);
 		for (int i = 0; i < functions.length; i++)
 			functionRule.addWord(functions[i], function);
-
 		rules.add(functionRule);
 
-		//rules.add(new PatternRule("$(", ")", macro, '\\', true)); //$NON-NLS-1$ //$NON-NLS-2$
-		rules.add(new MakefileSimpleMacroRule(macro)); //$NON-NLS-1$ //$NON-NLS-2$
-
-		rules.add(new MacroRule(macro, other));
+		rules.add(new MacroReferenceRule(macroRef, "$(", ")")); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MacroReferenceRule(macroRef, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		setDefaultReturnToken(other);
 
-		IRule[] result = new IRule[rules.size()];
-
-		rules.toArray(result);
-
-		setRules(result);
-
+		return rules;
 	}
 
-	private class MacroRule implements IRule {
-		private static final int INIT_STATE = 0;
-		private static final int VAR_STATE = 1;
-		private static final int END_VAR_STATE = 2;
-		private static final int EQUAL_STATE = 3;
-		private static final int FINISH_STATE = 4;
-		private static final int ERROR_STATE = 5;
-
-		private IToken token;
-		private StringBuffer buffer = new StringBuffer();
-		protected IToken defaultToken;
-		public MacroRule(IToken token, IToken defaultToken) {
-			this.token = token;
-			this.defaultToken = defaultToken;
-		}
-		public IToken evaluate(ICharacterScanner scanner) {
-			int state = INIT_STATE;
-			buffer.setLength(0);
-			boolean bTwoCharsAssign = false;
-
-			for (int c = scanner.read(); c != ICharacterScanner.EOF; c = scanner.read()) {
-				switch (state) {
-					case INIT_STATE :
-						if (c != '\n' && Character.isWhitespace((char) c))
-							break;
-						if (isValidCharacter(c))
-							state = VAR_STATE;
-						else
-							state = ERROR_STATE;
-						break;
-					case VAR_STATE :
-						if (isValidCharacter(c))
-							break;
-					case END_VAR_STATE :
-						if (c != '\n' && Character.isWhitespace((char) c))
-							state = END_VAR_STATE;
-						else if (c == ':' || c == '+') {
-							bTwoCharsAssign = true;
-							state = EQUAL_STATE;
-						} else if (c == '=')
-							state = FINISH_STATE;
-						else {
-							if (state == END_VAR_STATE)
-								scanner.unread(); // Return back to the space
-							state = ERROR_STATE;
-						}
-						break;
-					case EQUAL_STATE :
-						if (c == '=')
-							state = FINISH_STATE;
-						else
-							state = ERROR_STATE;
-						break;
-					case FINISH_STATE :
-						break;
-					default :
-						break;
-				}
-				if (state >= FINISH_STATE)
-					break;
-				buffer.append((char) c);
-			}
-
-			scanner.unread();
-
-			if (state == FINISH_STATE) {
-				if (bTwoCharsAssign)
-					scanner.unread();
-				return token;
-			}
-
-			if (defaultToken.isUndefined())
-				unreadBuffer(scanner);
-
-			return Token.UNDEFINED;
-		}
-
-		/**
-		 * Returns the characters in the buffer to the scanner.
-		 *
-		 * @param scanner the scanner to be used
-		 */
-		protected void unreadBuffer(ICharacterScanner scanner) {
-			for (int i = buffer.length() - 1; i >= 0; i--)
-				scanner.unread();
-		}
-
-		protected boolean isValidCharacter(int c) {
-			char c0 = (char) c;
-			return Character.isLetterOrDigit(c0) || (c0 == '_');
-		}
+	/*
+	 * @see AbstractMakefileCodeScanner#getTokenProperties()
+	 */
+	protected String[] getTokenProperties() {
+		return fTokenProperties;
 	}
 
 }

@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.make.internal.ui.editor.IMakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.WorkingCopyManager;
+import org.eclipse.cdt.make.internal.ui.text.ColorManager;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -24,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -133,6 +136,13 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			return "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 		}
 		return getDefault().getBundle().getSymbolicName();
+	}
+
+	/**
+	 * Returns the preference color, identified by the given preference.
+	 */
+	public static Color getPreferenceColor(String key) {
+		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), key));
 	}
 
 	public static void log(IStatus status) {
@@ -252,4 +262,5 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	}
 		super.stop(context);
 	}
+
 }

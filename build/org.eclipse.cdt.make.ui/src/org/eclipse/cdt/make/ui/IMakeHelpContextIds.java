@@ -34,4 +34,6 @@ public interface IMakeHelpContextIds {
 	public static final String MAKE_PREF_ERROR_PARSER = PREFIX + "newproj_parser_error"; //$NON-NLS-1$
 	public static final String MAKE_PREF_BINARY_PARSER = PREFIX + "newproj_parser_binary"; //$NON-NLS-1$
 
+	public static final String MAKE_EDITOR_PREFERENCE_PAGE = PREFIX + "make_editor_pref"; //$NON-NLS-1$
+
 }

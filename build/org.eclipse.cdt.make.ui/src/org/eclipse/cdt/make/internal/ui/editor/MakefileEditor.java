@@ -14,11 +14,12 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
+import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferenceConstants;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -26,10 +27,19 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -40,13 +50,41 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class MakefileEditor extends TextEditor implements ISelectionChangedListener{
+public class MakefileEditor extends TextEditor implements ISelectionChangedListener, IReconcilingParticipant {
 
 	/**
 	 * The page that shows the outline.
 	 */
 	protected MakefileContentOutlinePage page;
+	ProjectionSupport projectionSupport;
+	ProjectionMakefileUpdater fProjectionMakefileUpdater;
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+
+	/**
+	 * Reconciling listeners.
+	 * @since 3.0
+	 */
+	private ListenerList fReconcilingListeners= new ListenerList();
+
+	/**
+	 * Property changes update the scanner
+	 */
+	final IPropertyChangeListener fPropertyChangeListener= new IPropertyChangeListener() {
+		/*
+		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			handlePreferenceStoreChanged(event);
+		}
+	};
+
+	MakefileSourceConfiguration getMakefileSourceConfiguration() {
+		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+		if (configuration instanceof MakefileSourceConfiguration) {
+			return (MakefileSourceConfiguration)configuration;
+		}
+		return null;
+	}
 
 	public MakefileContentOutlinePage getOutlinePage() {
 		if (page == null) {
@@ -65,8 +103,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
-
-		setSourceViewerConfiguration(new MakefileSourceConfiguration(new MakefileColorManager(), this));
+		setSourceViewerConfiguration(new MakefileSourceConfiguration(this));
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#MakefileEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#MakefileRulerContext"); //$NON-NLS-1$
@@ -75,10 +112,73 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		if (fProjectionMakefileUpdater != null) {
+			fProjectionMakefileUpdater.uninstall();
+			fProjectionMakefileUpdater= null;
+		}
+        if (fPropertyChangeListener != null) {
+			IPreferenceStore preferenceStore = getPreferenceStore();
+			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
+		}
+		super.dispose();
+	}
+
+	boolean isFoldingEnabled() {
+		return MakeUIPlugin.getDefault().getPreferenceStore().getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		ProjectionViewer projectionViewer = (ProjectionViewer) getSourceViewer();
+		projectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+		projectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+		projectionSupport.install();
+
+		if (isFoldingEnabled()) {
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+		}
+
+		ProjectionAnnotationModel model= (ProjectionAnnotationModel) getAdapter(ProjectionAnnotationModel.class);
+
+		fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
+		if (fProjectionMakefileUpdater != null) {
+			fProjectionMakefileUpdater.install(this, projectionViewer);
+			fProjectionMakefileUpdater.initialize();
+		}
+
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.addPropertyChangeListener(fPropertyChangeListener);
+
+	}
+
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
+
+		// ensure decoration support has been created and configured.
+		getSourceViewerDecorationSupport(viewer);
+		
+		return viewer;
+	}
+
+	/* (non-Javadoc)
 	 * Method declared on IAdaptable
 	 */
 	public Object getAdapter(Class key) {
-		if (key.equals(IContentOutlinePage.class)) {
+		if (ProjectionAnnotationModel.class.equals(key)) {
+			if (projectionSupport != null) {
+				Object result = projectionSupport.getAdapter(getSourceViewer(), key);
+				if (result != null) {
+					return result;
+				}
+			}
+		} else if (key.equals(IContentOutlinePage.class)) {
 			return getOutlinePage();
 		}
 		return super.getAdapter(key);
@@ -220,4 +320,116 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		//addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "OpenDeclarationAction"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Adds the given listener.
+	 * Has no effect if an identical listener was not already registered.
+	 * 
+	 * @param listener	The reconcile listener to be added
+	 * @since 3.0
+	 */
+	final void addReconcilingParticipant(IReconcilingParticipant listener) {
+		synchronized (fReconcilingListeners) {
+			fReconcilingListeners.add(listener);
+		}
+	}
+	
+	/**
+	 * Removes the given listener.
+	 * Has no effect if an identical listener was not already registered.
+	 * 
+	 * @param listener	the reconcile listener to be removed
+	 * @since 3.0
+	 */
+	final void removeReconcilingParticipant(IReconcilingParticipant listener) {
+		synchronized (fReconcilingListeners) {
+			fReconcilingListeners.remove(listener);
+		}
+	}
+	
+	/*
+	 */
+	public void reconciled() {
+
+		
+		// Notify listeners
+		Object[] listeners = fReconcilingListeners.getListeners();
+		for (int i = 0, length= listeners.length; i < length; ++i)
+			((IReconcilingParticipant)listeners[i]).reconciled();
+
+//		// Update Java Outline page selection
+//		if (!forced && !progressMonitor.isCanceled()) {
+//			Shell shell= getSite().getShell();
+//			if (shell != null && !shell.isDisposed()) {
+//				shell.getDisplay().asyncExec(new Runnable() {
+//					public void run() {
+//						selectionChanged();
+//					}
+//				});
+//			}
+//		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
+	 */
+	protected void performRevert() {
+		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+		projectionViewer.setRedraw(false);
+		try {
+			
+			boolean projectionMode= projectionViewer.isProjectionMode();
+			if (projectionMode) {
+				projectionViewer.disableProjection();				
+				if (fProjectionMakefileUpdater != null)
+					fProjectionMakefileUpdater.uninstall();
+			}
+			
+			super.performRevert();
+			
+			if (projectionMode) {
+				if (fProjectionMakefileUpdater != null)
+					fProjectionMakefileUpdater.install(this, projectionViewer);	
+				projectionViewer.enableProjection();
+			}
+			
+		} finally {
+			projectionViewer.setRedraw(true);
+		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		ISourceViewer sourceViewer= getSourceViewer();
+		if (sourceViewer == null)
+			return;
+
+        String property = event.getProperty();
+
+        MakefileSourceConfiguration makeConf = getMakefileSourceConfiguration();
+        if (makeConf != null) {
+        	if (makeConf.affectsBehavior(event)) {
+        		makeConf.adaptToPreferenceChange(event);
+        		sourceViewer.invalidateTextPresentation();
+        	}
+        }
+
+        if (MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
+			if (sourceViewer instanceof ProjectionViewer) {
+				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
+				if (fProjectionMakefileUpdater != null)
+					fProjectionMakefileUpdater.uninstall();
+				// either freshly enabled or provider changed
+				fProjectionMakefileUpdater= new ProjectionMakefileUpdater();
+				if (fProjectionMakefileUpdater != null) {
+					fProjectionMakefileUpdater.install(this, projectionViewer);
+				}
+			}
+			return;
+		}
+
+		super.handlePreferenceStoreChanged(event);
+	}
 }

@@ -92,21 +92,12 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 		MakefileFileInfo makefileInfo= (MakefileFileInfo) info;
 		setUpSynchronization(makefileInfo);
 
-//		IProblemRequestor requestor= cuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) cuInfo.fModel : null;
-
-		//original.becomeWorkingCopy(requestor, getProgressMonitor());
 		makefileInfo.fCopy = original;
 
 		if (makefileInfo.fModel instanceof MakefileAnnotationModel)   {
 			MakefileAnnotationModel model= (MakefileAnnotationModel) makefileInfo.fModel;
 			model.setMakefile(makefileInfo.fCopy);
-		} 
-		
-//		if (requestor instanceof IProblemRequestorExtension) {
-//			IProblemRequestorExtension extension= (IProblemRequestorExtension) requestor;
-//			extension.setIsActive(isHandlingTemporaryProblems());
-//		}
-		
+		} 		
 		return makefileInfo;
 	}
 	
@@ -117,7 +108,6 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	    if (info instanceof MakefileFileInfo) {
 		    MakefileFileInfo makefileInfo= (MakefileFileInfo) info;
 		    if (makefileInfo.fCopy != null) {
-			    //makefileInfo.fCopy.dispose();
 		    	makefileInfo.fCopy = null;
 		    }
 	    }

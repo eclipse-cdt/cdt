@@ -46,6 +46,6 @@ public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticip
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
 		return new DefaultPartitioner(
-				new MakefilePartitionScanner(), MakefilePartitionScanner.TYPES);
+				new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
 	}
 }

@@ -6,257 +6,234 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBinaryParser;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.model.IBinaryParser.IBinaryShared;
+import org.eclipse.cdt.core.model.IBinaryParser.ISymbol;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.utils.elf.Elf;
-import org.eclipse.cdt.utils.elf.ElfHelper;
-
 class BinaryInfo extends CFileInfo {
 
-	String [] needed;
-	ElfHelper.Sizes sizes;
-	Elf.Attribute attribute;
-	String soname; 
+	IBinaryObject binary;
 	Map hash;
-	ElfHelper elfHelper = null;
 
 	public BinaryInfo(CElement element) {
 		super(element);
-		needed = new String[0];
-		sizes = null;
-		attribute = null;
-		soname = "";
-		hash = new HashMap();
 	}
 
 	public boolean isBinary() {
 		return true;
 	}
 
-	public ICElement [] getChildren() {
-		initChildren();
+	public ICElement[] getChildren() {
+		if (hasChanged()) {
+			if (hash == null) {
+				hash = new HashMap();
+			}
+			hash.clear();
+			removeChildren();
+			setIsStructureKnown(true);
+			IBinaryObject bin = getBinaryObject();
+			ISymbol[] symbols = bin.getSymbols();
+			for (int i = 0; i < symbols.length; i++) {
+				switch (symbols[i].getType()) {
+					case ISymbol.FUNCTION :
+						addFunction(symbols[i]);
+						break;
+
+					case ISymbol.VARIABLE :
+						addVariable(symbols[i]);
+						break;
+				}
+			}
+		}
 		return super.getChildren();
 	}
 
 	public String getCPU() {
-		init();
-		String cpu = null;
-		if (attribute != null)
-			cpu = attribute.getCPU();
-		return (cpu == null) ? "" : cpu;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getCPU();
+		}
+		return "";
 	}
 
 	public boolean isSharedLib() {
-		init();
-		if (attribute != null)
-			return attribute.getType() == attribute.ELF_TYPE_SHLIB;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getType() == IBinaryObject.SHARED;
+		}
 		return false;
 	}
 
 	public boolean isExecutable() {
-		init();
-		if (attribute != null)
-			return attribute.getType() == attribute.ELF_TYPE_EXE;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getType() == IBinaryObject.EXECUTABLE;
+		}
 		return false;
 	}
 
 	public boolean isObject() {
-		init();
-		if (attribute != null)
-			return attribute.getType() == attribute.ELF_TYPE_OBJ;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getType() == IBinaryObject.OBJECT;
+		}
 		return false;
 	}
 
-	public boolean hasDebug () {
-		init();
-		if (attribute != null)
-			return attribute.hasDebug();
+	public boolean hasDebug() {
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.hasDebug();
+		}
 		return false;
 	}
 
-	public String [] getNeededSharedLibs() {
-		init();
-		return needed;
+	public String[] getNeededSharedLibs() {
+		if (isExecutable()) {
+			IBinaryExecutable exec = (IBinaryExecutable) getBinaryObject();
+			return exec.getNeededSharedLibs();
+		}
+		return new String[0];
 	}
 
 	public long getText() {
-		init();
-		if (sizes != null) {
-			return sizes.text;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getText();
 		}
 		return 0;
 	}
 
 	public long getData() {
-		init();
-		if (sizes != null) {
-			return sizes.data;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getData();
 		}
 		return 0;
 	}
 
 	public long getBSS() {
-		init();
-		if (sizes != null) {
-			return sizes.bss;
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getBSS();
 		}
 		return 0;
 	}
 
 	public String getSoname() {
-		init();
-		return soname;
+		if (isSharedLib()) {
+			IBinaryShared shared = (IBinaryShared) getBinaryObject();
+			return shared.getSoName();
+		}
+		return "";
 	}
 
 	public boolean isLittleEndian() {
-		init();
-		if (attribute != null) {
-			return attribute.isLittleEndian();
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.isLittleEndian();
 		}
 		return false;
 	}
-	
-	private void addFunction(Elf.Symbol [] symbol, boolean external) {
-		for (int i = 0; i < symbol.length; i++) {
-			ICElement parent = getElement();
-			String filename = null;
-			try {
-				filename = symbol[i].getFilename();
-			} catch (IOException e) {
-				//e.printStackTrace();
-			}
-			Function function = null;
 
-			// Addr2line returns the funny "??" when it can find the file.
-			if (filename != null && !filename.equals("??")) {
-				TranslationUnit tu = null;
-				IPath path = new Path(filename);
-				if (hash.containsKey(path)) {
-					tu = (TranslationUnit)hash.get(path);
-				} else {
-					tu = new TranslationUnit(parent, path);
-					hash.put(path, tu);
-					addChild(tu);
+	IBinaryObject getBinaryObject() {
+		if (binary == null) {
+			IProject project = getElement().getCProject().getProject();
+			IBinaryParser parser = CModelManager.getBinaryParser(project);
+			if (parser != null) {
+				try {
+					IFile file = (IFile) getElement().getUnderlyingResource();
+					IBinaryFile bfile = parser.getBinary(file);
+					if (bfile instanceof IBinaryObject) {
+						binary = (IBinaryObject) bfile;
+					}
+				} catch (CModelException e) {
+				} catch (IOException e) {
 				}
-				function = new Function(tu, symbol[i].toString());
-				tu.addChild(function);
+			}
+		}
+		return binary;
+	}
+
+	private void addFunction(ISymbol symbol) {
+		ICElement parent = getElement();
+		String filename = filename = symbol.getFilename();
+		Function function = null;
+
+		// Addr2line returns the funny "??" when it can find the file.
+		if (filename != null && !filename.equals("??")) {
+			TranslationUnit tu = null;
+			IPath path = new Path(filename);
+			if (hash.containsKey(path)) {
+				tu = (TranslationUnit) hash.get(path);
 			} else {
-				function = new Function(parent, symbol[i].toString());
-				addChild(function);
+				// A special ITranslationUnit we do not want the file to be parse.
+				tu = new TranslationUnit(parent, path) {
+					ArrayList array = new ArrayList(5);
+					public void addChild(ICElement e) {
+						array.add(e);
+						array.trimToSize();
+					}
+						
+					public ICElement [] getChildren() {
+						return (ICElement[])array.toArray(new ICElement[0]);
+					}
+				};
+				hash.put(path, tu);
+				addChild(tu);
 			}
-			if (function != null)
-				if (!external)
-					function.getFunctionInfo().setAccessControl(IConstants.AccStatic);
+			function = new Function(tu, symbol.getName());
+			tu.addChild(function);
+		} else {
+			function = new Function(parent, symbol.getName());
+			addChild(function);
 		}
+		//		if (function != null) {
+		//			if (!external) {
+		//				function.getFunctionInfo().setAccessControl(IConstants.AccStatic);
+		//			}
+		//		}
 	}
 
-	private void addVariable(Elf.Symbol[] symbol, boolean external) {
-		for (int i = 0; i < symbol.length; i++) {
-			String filename = null;
-			try {
-				filename = symbol[i].getFilename();
-			} catch (IOException e) {
-				//e.printStackTrace();
-			}
-			ICElement parent = getElement();
-			Variable variable = null;
-			// Addr2line returns the funny "??" when it can not find the file.
-			if (filename != null && !filename.equals("??")) {
-				TranslationUnit tu = null;
-				IPath path = new Path(filename);
-				if (hash.containsKey(path)) {
-					tu = (TranslationUnit)hash.get(path);
-				} else {
-					tu = new TranslationUnit(parent, path);
-					hash.put(path, tu);
-					addChild(tu);
-				}
-				variable = new Variable(tu, symbol[i].toString());
-				tu.addChild(variable);
+	private void addVariable(ISymbol symbol) {
+		String filename = filename = symbol.getFilename();
+		ICElement parent = getElement();
+		Variable variable = null;
+		// Addr2line returns the funny "??" when it can not find the file.
+		if (filename != null && !filename.equals("??")) {
+			TranslationUnit tu = null;
+			IPath path = new Path(filename);
+			if (hash.containsKey(path)) {
+				tu = (TranslationUnit) hash.get(path);
 			} else {
-				variable = new Variable(parent, symbol[i].toString());
-				addChild(variable);
+				tu = new TranslationUnit(parent, path);
+				hash.put(path, tu);
+				addChild(tu);
 			}
-			if (variable != null)
-				if (!external)
-					variable.getVariableInfo().setAccessControl(IConstants.AccStatic);
+			variable = new Variable(tu, symbol.getName());
+			tu.addChild(variable);
+		} else {
+			variable = new Variable(parent, symbol.getName());
+			addChild(variable);
 		}
+		//if (variable != null) {
+		//	if (!external) {
+		//		variable.getVariableInfo().setAccessControl(IConstants.AccStatic);
+		//	}
+		//}
 	}
 
-	protected void init() {
-		if (hasChanged()) {
-			loadInfo();
-		}
-	}
-
-	protected void initChildren() {
-		if (hasChanged() || !isStructureKnown()) {
-			removeChildren();
-			loadInfoChildren();
-		}
-	}
-	
-
-	protected ElfHelper getElfHelper() throws IOException {
-		if (elfHelper != null) {
-			return elfHelper;
-		}
-		CFile file = (CFile)getElement();
-		if (file != null) {
-			IPath path = ((CFile)getElement()).getLocation();
-			if (path == null)
-				path = new Path("");
-			return new ElfHelper(path.toOSString());
-		}
-		throw new IOException("No file assiocated with Binary");
-	}
-
-	protected void loadInfo() {
-		try {
-			ElfHelper helper = this.getElfHelper();
-			Elf.Dynamic[] sharedlibs = helper.getNeeded();
-			needed = new String[sharedlibs.length];
-			for (int i = 0; i < sharedlibs.length; i++) {
-				needed[i] = sharedlibs[i].toString();
-			}
-
-			sizes = helper.getSizes();
-			soname = helper.getSoname();
-			attribute = helper.getElf().getAttributes();
-			helper.dispose();
-		} catch (IOException e) {
-			//e.printStackTrace();
-		}
-	}
-
-	protected void loadInfoChildren() {
-		try {
-			setIsStructureKnown(true);
-			ElfHelper helper = this.getElfHelper();
-			addFunction(helper.getExternalFunctions(), true);
-			addFunction(helper.getLocalFunctions(), false);
-			addVariable(helper.getExternalObjects(), true);
-			addVariable(helper.getLocalObjects(), false);
-
-			Elf.Dynamic[] sharedlibs = helper.getNeeded();
-			needed = new String[sharedlibs.length];
-			for (int i = 0; i < sharedlibs.length; i++) {
-				needed[i] = sharedlibs[i].toString();
-			}
-
-			sizes = helper.getSizes();
-			soname = helper.getSoname();
-			
-			attribute = helper.getElf().getAttributes();
-			helper.dispose();
-		} catch (IOException e) {
-			//e.printStackTrace();
-		}
-	}
 }

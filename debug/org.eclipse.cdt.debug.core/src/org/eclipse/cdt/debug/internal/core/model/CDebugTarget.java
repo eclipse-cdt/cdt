@@ -1222,6 +1222,15 @@ public class CDebugTarget extends CDebugElement
 	
 	private void handleWatchpointScope( ICDIWatchpointScope ws )
 	{
+		CBreakpoint watchpoint = (CBreakpoint)findBreakpoint( ws.getWatchpoint() );
+		try
+		{
+			removeBreakpoint( watchpoint );
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 	
@@ -1541,5 +1550,19 @@ public class CDebugTarget extends CDebugElement
 	private ICDIBreakpoint findCDIBreakpoint( IBreakpoint breakpoint )
 	{
 		return (ICDIBreakpoint)getBreakpoints().get( breakpoint );
+	}
+	
+	private IBreakpoint findBreakpoint( ICDIBreakpoint cdiBreakpoint )
+	{
+		if ( cdiBreakpoint == null )
+			return null;
+		Iterator it = getBreakpoints().keySet().iterator();
+		while( it.hasNext() )
+		{
+			IBreakpoint breakpoint = (IBreakpoint)it.next();
+			if ( cdiBreakpoint.equals( getBreakpoints().get( breakpoint ) ) )
+				return breakpoint;
+		}
+		return null;
 	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -302,6 +303,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 									   						 new String[] { ((ICDIWatchpointTrigger)info).getOldValue(), 
 									   						 				((ICDIWatchpointTrigger)info).getNewValue() } );
 						return label;
+					}
+					if ( info != null && info instanceof ICDIWatchpointScope )
+					{
+						return target.getName() + " (Watchpoint is out of scope)";
 					}
 /*
 					if ( info != null && info instanceof ICDIBreakpointHit )

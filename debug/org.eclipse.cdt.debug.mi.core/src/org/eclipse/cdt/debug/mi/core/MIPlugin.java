@@ -54,7 +54,7 @@ public class MIPlugin extends Plugin {
 		/*
 		try {
 			CommandFactory factory = session.getCommandFactory();
-			MIBreakInsert bkpt= factory.createMIBreakInsert(true, false, null, 0, "routine");
+			MIBreakInsert bkpt= factory.createMIBreakInsert(true, false, null, 0, "main");
 			session.postCommand(bkpt);
 			MIInfo info = bkpt.getMIInfo();
 			if (info == null) {

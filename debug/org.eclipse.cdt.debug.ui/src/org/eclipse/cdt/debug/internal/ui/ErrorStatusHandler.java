@@ -9,7 +9,9 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.dialogs.ErrorDialog;
 
 /**
@@ -26,9 +28,10 @@ public class ErrorStatusHandler implements IStatusHandler
 	 */
 	public Object handleStatus( final IStatus status, Object source ) throws CoreException
 	{
-		if ( status != null && source != null && source instanceof IDebugTarget )
+		if ( status != null && (source instanceof IDebugTarget || source instanceof IThread ) )
 		{
-			final String title = ((IDebugTarget)source).getName();
+			IDebugTarget target = ((IDebugElement)source).getDebugTarget();
+			final String title = target.getName();
 			CDebugUIPlugin.getStandardDisplay().asyncExec(
 					new Runnable()
 						{

@@ -1172,6 +1172,12 @@
             class="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler"
             id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
       </statusHandler>
+      <statusHandler
+            plugin="org.eclipse.cdt.debug.core"
+            code="5010"
+            class="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler"
+            id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
+      </statusHandler>
    </extension>
    <extension
          point="org.eclipse.debug.ui.debugActionGroups">

@@ -1,3 +1,8 @@
+2004-01-29 Mikhail Khodjaiants
+	Added new error status handler.
+	* plugin.xml
+	* ErrorStatusHandler.java
+
 2004-01-22 Alain Magloire
 
 	Set the sharedLibManager autorefresh to be off by defaul

@@ -254,6 +254,7 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 		Object current = getViewer().getInput();
 		if ( current != null && current.equals( slm ) )
 		{
+			updateObjects();
 			return;
 		}
 		showViewer();

@@ -1,3 +1,8 @@
+2003-04-24 Mikhail Khodjaiants
+	Update the actions of the 'Shared Libraries' view even if the viewer's input 
+	is the same as before.
+	* SharedLibrariesView.java
+
 2003-04-23 Mikhail Khodjaiants
 	If error occurs when acquiring the signal information from gdb 
 	the error message should be displayed in the 'Signals' view.

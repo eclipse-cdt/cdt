@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -56,7 +56,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(1);
 			IPath exePath = verifyProgramPath(config);
 			ICProject project = verifyCProject(config);
-			IBinaryExecutable exeFile = verifyBinary(project, exePath);
+			IBinaryObject exeFile = verifyBinary(project, exePath);
 			String arguments[] = getProgramArgumentsArray(config);
 
 			// set the default source locator if required

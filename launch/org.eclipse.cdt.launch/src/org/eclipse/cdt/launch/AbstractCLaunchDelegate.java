@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -725,12 +725,12 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return
 	 * @throws CoreException
 	 */
-	protected IBinaryExecutable verifyBinary(ICProject project, IPath exePath) throws CoreException {
+	protected IBinaryObject verifyBinary(ICProject project, IPath exePath) throws CoreException {
 		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project.getProject());
 		for (int i = 0; i < parserRef.length; i++) {
 			try {
 				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
-				IBinaryExecutable exe = (IBinaryExecutable)parser.getBinary(exePath);
+				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
 				if (exe != null) {
 					return exe;
 				}
@@ -740,7 +740,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		}
 		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
 		try {
-			return (IBinaryExecutable)parser.getBinary(exePath);
+			return (IBinaryObject)parser.getBinary(exePath);
 		} catch (ClassCastException e) {
 		} catch (IOException e) {
 		}

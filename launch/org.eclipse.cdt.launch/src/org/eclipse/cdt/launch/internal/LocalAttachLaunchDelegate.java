@@ -8,7 +8,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.launch.internal;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -56,7 +56,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(1);
 			IPath exePath = verifyProgramPath(config);
 			ICProject project = verifyCProject(config);
-			IBinaryExecutable exeFile = verifyBinary(project, exePath);
+			IBinaryObject exeFile = verifyBinary(project, exePath);
 
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				ICDebugConfiguration debugConfig = getDebugConfig(config);

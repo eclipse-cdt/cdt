@@ -1,3 +1,9 @@
+2004-11-17 David Inglis
+	
+	ICDIDebugger change to use IBinaryObject instead of IBnaryExecutable
+	
+	* stc/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java
+	
 2004-11-17 Alain Magloire
 	Fix for 78816
 	* mi/org/eclipse/cdt/debug/mi/core/MIInferior.java

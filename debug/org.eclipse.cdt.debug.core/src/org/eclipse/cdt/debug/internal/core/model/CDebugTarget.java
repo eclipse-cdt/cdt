@@ -16,10 +16,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -194,7 +194,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/**
 	 * The executable binary file associated with this target.
 	 */
-	private IBinaryExecutable fBinaryFile;
+	private IBinaryObject fBinaryFile;
 
 	/** 
 	 * The project associated with this target.
@@ -221,7 +221,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/**
 	 * Constructor for CDebugTarget.
 	 */
-	public CDebugTarget( ILaunch launch, IProject project, ICDITarget cdiTarget, String name, IProcess debuggeeProcess, IBinaryExecutable file, boolean allowsTerminate, boolean allowsDisconnect) {
+	public CDebugTarget( ILaunch launch, IProject project, ICDITarget cdiTarget, String name, IProcess debuggeeProcess, IBinaryObject file, boolean allowsTerminate, boolean allowsDisconnect) {
 		super( null );
 		setLaunch( launch );
 		setDebugTarget( this );
@@ -1417,15 +1417,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#getExecFile()
 	 */
-	public IBinaryExecutable getExecFile() {
+	public IBinaryObject getExecFile() {
 		return getBinaryFile();
 	}
 	
-	public IBinaryExecutable getBinaryFile() {
+	public IBinaryObject getBinaryFile() {
 		return fBinaryFile;
 	}
 
-	private void setExecFile( IBinaryExecutable file ) {
+	private void setExecFile( IBinaryObject file ) {
 		fBinaryFile = file;
 	}
 	

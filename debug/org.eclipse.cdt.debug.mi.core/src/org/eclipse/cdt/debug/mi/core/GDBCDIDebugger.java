@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.ICDIDebugger;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -53,7 +54,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDIDebugger#createDebuggerSession(org.eclipse.debug.core.ILaunch, org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ICDISession createDebuggerSession(ILaunch launch, IBinaryExecutable exe, IProgressMonitor monitor)
+	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor)
 			throws CoreException {
 		fLaunch = launch;
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
@@ -89,7 +90,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		return dsession;
 	}
 
-	public Session createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createLaunchSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		Session session = null;
 		boolean failed = false;
 		try {
@@ -124,7 +125,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		}
 	}
 
-	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createAttachSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		Session session = null;
 		boolean failed = false;
 		try {
@@ -155,7 +156,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		}
 	}
 
-	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createCoreSession(ILaunchConfiguration config, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		Session session = null;
 		boolean failed = false;
 		try {

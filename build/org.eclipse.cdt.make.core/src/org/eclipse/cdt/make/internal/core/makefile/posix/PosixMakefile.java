@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Makefile : ( statement ) *
@@ -210,6 +212,9 @@ public class PosixMakefile extends AbstractMakefile {
 			try {
 				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
 				PosixMakefile gnu = new PosixMakefile();
+				URL url = Platform.find(MakeCorePlugin.getDefault().getBundle(), new Path(location));
+				url = Platform.resolve(url);
+				location = url.getFile();
 				gnu.parse(location, new InputStreamReader(stream));
 				builtins = gnu.getDirectives();
 				for (int i = 0; i < builtins.length; i++) {

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
 import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Makefile : ( statement ) *
@@ -772,6 +774,9 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			try {
 				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
 				GNUMakefile gnu = new GNUMakefile();
+				URL url = Platform.find(MakeCorePlugin.getDefault().getBundle(), new Path(location));
+				url = Platform.resolve(url);
+				location = url.getFile();
 				gnu.parse(location, new InputStreamReader(stream));
 				builtins = gnu.getDirectives();
 				for (int i = 0; i < builtins.length; i++) {

@@ -73,6 +73,7 @@ public class RxThread extends Thread {
 					// at least for testing.
 
 					// We accumulate until we see the gdb terminator.
+MIPlugin.getDefault().debugLog(line);
 					if (line.startsWith(MIOutput.terminator)) {
 						// discard termination
 						processMIOutput(buffer.toString());

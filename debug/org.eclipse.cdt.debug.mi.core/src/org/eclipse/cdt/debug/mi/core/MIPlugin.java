@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakInsert;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -50,6 +51,19 @@ public class MIPlugin extends Plugin {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
 		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		/*
+		try {
+			CommandFactory factory = session.getCommandFactory();
+			MIBreakInsert bkpt= factory.createMIBreakInsert(true, false, null, 0, "main");
+			session.postCommand(bkpt);
+			MIInfo info = bkpt.getMIInfo();
+			if (info == null) {
+				throw new IOException("Timedout");
+			}
+		} catch (MIException e) {
+			throw new IOException("Failed to attach");
+		}
+		*/
 		return new CSession(session);
 	}
 
@@ -70,7 +84,7 @@ public class MIPlugin extends Plugin {
 			session.postCommand(attach);
 			MIInfo info = attach.getMIInfo();
 			if (info == null) {
-				throw new IOException("Failed to attach");
+				throw new IOException("Timedout");
 			}
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
@@ -79,9 +93,9 @@ public class MIPlugin extends Plugin {
 	}
 	
 	public static void debugLog(String message) {
-		if ( getDefault().isDebugging() ) {
+	//	if ( getDefault().isDebugging() ) {
 	//		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
 			System.err.println(message);
-		}
+	//	}
 	}
 }

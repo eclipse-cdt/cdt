@@ -156,6 +156,7 @@ public class MISession extends Observable {
 	 */
 	public void postCommand(Command cmd, long timeout) throws MIException {
 
+		MIPlugin.getDefault().debugLog(cmd.toString());
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
 			throw new MIException("{R,T}xThread terminated");
 		}

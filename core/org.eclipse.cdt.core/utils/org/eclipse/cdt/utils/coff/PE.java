@@ -550,7 +550,7 @@ public class PE {
 				byte[] bytes = new byte[4];
 				accessFile.readFully(bytes);
 				int str_len = ReadMemoryAccess.getIntLE(bytes);
-				if (str_len > 4) {
+				if (str_len > 4 && str_len < accessFile.length()) {
 					str_len -= 4;
 					stringTable = new byte[str_len];
 					accessFile.seek(offset + 4);

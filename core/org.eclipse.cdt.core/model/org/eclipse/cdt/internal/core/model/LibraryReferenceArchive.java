@@ -19,13 +19,11 @@ import org.eclipse.core.runtime.IPath;
 public class LibraryReferenceArchive extends Archive implements ILibraryReference {
 
 	ILibraryEntry entry;
-	IBinaryArchive archive;
 
 	public LibraryReferenceArchive(ICElement parent, ILibraryEntry e, IBinaryArchive ar) {
-		super(parent, e.getLibraryPath());
+		super(parent, e.getLibraryPath(), ar);
 		setElementType(ICElement.C_VCONTAINER);
 		entry = e;
-		archive = ar;
 	}
 
 	/* (non-Javadoc)
@@ -41,13 +39,6 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	 */
 	public IPath getPath() {
 		return entry.getLibraryPath();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Archive#getBinaryArchive(org.eclipse.core.resources.IResource)
-	 */
-	IBinaryArchive getBinaryArchive(IResource res) {
-		return archive;
 	}
 
 }

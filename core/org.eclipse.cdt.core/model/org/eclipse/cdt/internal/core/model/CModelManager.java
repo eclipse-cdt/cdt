@@ -139,13 +139,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	private HashMap sourceMappers = new HashMap();
    
-	// TODO: This should be in a preference/property page
-    public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    public static final String [] headerExtensions = {"h", "hh", "hpp", "H"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    public static final String [] assemblyExtensions = {"s", "S"}; //$NON-NLS-1$ //$NON-NLS-2$
-
-
-
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
 	static CModelManager factory = null;

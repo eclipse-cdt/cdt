@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class MakeTargetDialog extends Dialog {
 
-	private MessageLine fStatusLine;
+	protected MessageLine fStatusLine;
 	private static final String TARGET_PREFIX = "TargetBlock"; //$NON-NLS-1$
 	private static final String TARGET_NAME_LABEL = TARGET_PREFIX + ".target.label";
 
@@ -78,7 +78,7 @@ public class MakeTargetDialog extends Dialog {
 	private String targetString;
 	private String targetName;
 	private String targetBuildID;
-	private IMakeTarget fTarget;
+	protected IMakeTarget fTarget;
 
 	/**
 	 * @param parentShell

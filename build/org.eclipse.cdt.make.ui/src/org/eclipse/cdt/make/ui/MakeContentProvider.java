@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
 public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener {
-	private boolean bFlatten;
+	protected boolean bFlatten;
 
 	protected StructuredViewer viewer;
 

@@ -556,7 +556,7 @@ public class NewClassCodeGenerator {
                 boolean foundPath = false;
 	            for (Iterator ipIter = includePaths.iterator(); ipIter.hasNext(); ) {
 	                IPath includePath = (IPath) ipIter.next();
-		            if (includePath.isPrefixOf(folderToAdd)) {
+		            if (includePath.isPrefixOf(folderToAdd) || includePath.equals(folderToAdd)) {
 		                foundPath = true;
 		                break;
 		            }
@@ -569,7 +569,9 @@ public class NewClassCodeGenerator {
         	                newIter.remove();
         	            }
                     }
-                    newIncludePaths.add(folderToAdd);
+                    if (!newIncludePaths.contains(folderToAdd)) {
+                        newIncludePaths.add(folderToAdd);
+                    }
 	            }
             }
         }
@@ -594,7 +596,10 @@ public class NewClassCodeGenerator {
                     List list = new ArrayList();
                     for (int i = 0; i < includePaths.length; ++i) {
                         //TODO do we need to canonicalize these paths first?
-                        list.add(new Path(includePaths[i]));
+                        IPath path = new Path(includePaths[i]);
+                        if (!list.contains(path)) {
+                            list.add(path);
+                        }
                     }
                     return list;
                 }
@@ -617,7 +622,7 @@ public class NewClassCodeGenerator {
                 if (verifyLocation) {
                     throw new CodeGeneratorException("Could not find base class " + baseClass.toString()); //$NON-NLS-1$
                 }
-	        } else {
+	        } else if (!list.contains(baseClassLocation)) {
                 list.add(baseClassLocation);
             }
 	    }

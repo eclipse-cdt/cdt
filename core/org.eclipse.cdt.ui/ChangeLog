@@ -1,5 +1,8 @@
 2005-03-29 Chris Wiebe
+	prevent duplicate #includes
+	* src/org/eclipse/cdt/internal/ui/wizards/NewClassCodeGenerator.java
 
+2005-03-29 Chris Wiebe
 	fix PR#87328 by making class wizard page publicly accessible
 	refactored wizard code and added comments
 	* src/org/eclipse/cdt/internal/ui/wizards/AbstractMethodStub.java

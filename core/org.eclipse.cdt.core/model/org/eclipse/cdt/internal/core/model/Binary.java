@@ -36,7 +36,6 @@ public class Binary extends Openable implements IBinary {
 		binaryFile = bin;
 	}
 
-
 	public boolean isSharedLib() {
 		if (binaryFile != null) {
 			return binaryFile.getType() == IBinaryObject.SHARED;
@@ -80,7 +79,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	public String[] getNeededSharedLibs() {
-		if (isExecutable()) {
+		if (isExecutable() || isSharedLib()) {
 			return ((IBinaryExecutable)binaryFile).getNeededSharedLibs();
 		}
 		return new String[0];
@@ -119,6 +118,13 @@ public class Binary extends Openable implements IBinary {
 			return ((IBinaryObject)binaryFile).isLittleEndian();
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return true;
 	}
 
 	public CElementInfo createElementInfo() {

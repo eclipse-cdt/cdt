@@ -39,6 +39,13 @@ public class Archive extends Openable implements IArchive {
 		return b;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return true;
+	}
+
 	public CElementInfo createElementInfo() {
 		return new ArchiveInfo(this);
 	}

@@ -27,8 +27,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -51,7 +54,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
@@ -63,6 +72,8 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
@@ -76,6 +87,78 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 										IDebugExceptionHandler,
 										IDisassemblyListener {
 
+	/**
+	 * Creates and returns the listener on this view's context menus.
+	 *
+	 * @return the menu listener
+	 */
+	protected final IMenuListener getContextMenuListener() {
+		if ( fMenuListener == null ) {
+			fMenuListener = new IMenuListener() {
+
+				public void menuAboutToShow( IMenuManager menu ) {
+					String id = menu.getId();
+					if ( getRulerContextMenuId().equals( id ) ) {
+						setFocus();
+						rulerContextMenuAboutToShow( menu );
+					}
+					else if ( getViewContextMenuId().equals( id ) ) {
+						setFocus();
+						viewContextMenuAboutToShow( menu );
+					}
+				}
+			};
+		}
+		return fMenuListener;
+	}
+
+	/**
+	 * Creates and returns the listener on this editor's vertical ruler.
+	 *
+	 * @return the mouse listener
+	 */
+	protected final MouseListener getRulerMouseListener() {
+		if ( fMouseListener == null ) {
+			fMouseListener = new MouseListener() {
+
+				private boolean fDoubleClicked = false;
+
+				private void triggerAction( String actionID ) {
+					IAction action = getAction( actionID );
+					if ( action != null ) {
+						if ( action instanceof IUpdate )
+							((IUpdate)action).update();
+						if ( action.isEnabled() )
+							action.run();
+					}
+				}
+
+				public void mouseUp( MouseEvent e ) {
+					setFocus();
+					if ( 1 == e.button && !fDoubleClicked )
+						triggerAction( ITextEditorActionConstants.RULER_CLICK );
+					fDoubleClicked = false;
+				}
+
+				public void mouseDoubleClick( MouseEvent e ) {
+					if ( 1 == e.button ) {
+						fDoubleClicked = true;
+						triggerAction( ITextEditorActionConstants.RULER_DOUBLE_CLICK );
+					}
+				}
+
+				public void mouseDown( MouseEvent e ) {
+					StyledText text = getSourceViewer().getTextWidget();
+					if ( text != null && !text.isDisposed() ) {
+						Display display = text.getDisplay();
+						Point location = display.getCursorLocation();
+						getRulerContextMenu().setLocation( location.x, location.y );
+					}
+				}
+			};
+		}
+		return fMouseListener;
+	}
 
 	/**
 	 * The width of the vertical ruler.
@@ -91,6 +174,16 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * Preference key for highlight color of current line.
 	 */
 	private final static String CURRENT_LINE_COLOR = ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+
+	/** 
+	 * The view's context menu id. 
+	 */
+	private String fViewContextMenuId;
+
+	/** 
+	 * The ruler's context menu id. 
+	 */
+	private String fRulerContextMenuId;
 
 	/**
 	 * The vertical ruler.
@@ -133,11 +226,33 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	private DisassemblyInstructionPointerAnnotation fInstrPointerAnnotation;
 
+	/** 
+	 * Context menu listener. 
+	 */
+	private IMenuListener fMenuListener;
+
+	/** 
+	 * Vertical ruler mouse listener. 
+	 */
+	private MouseListener fMouseListener;
+
+	/** 
+	 * The ruler context menu to be disposed. 
+	 */
+	private Menu fRulerContextMenu;
+
+	/** 
+	 * The text context menu to be disposed. 
+	 */
+	private Menu fTextContextMenu;
+
 	/**
 	 * Constructor for DisassemblyView.
 	 */
 	public DisassemblyView() {
 		super();
+		setViewContextMenuId( "#DisassemblyViewContext" ); //$NON-NLS-1$
+		setRulerContextMenuId( "#DisassemblyEditorRulerContext" ); //$NON-NLS-1$
 		fAnnotationPreferences = new MarkerAnnotationPreferences();
 	}
 
@@ -170,7 +285,6 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		// TODO Auto-generated method stub
 	}
 
 	/* (non-Javadoc)
@@ -326,7 +440,9 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 
 		if ( fDocumentProvider != null ) {
 			fDocumentProvider.dispose();
+			fDocumentProvider = null;
 		}
+
 		super.dispose();
 	}
 
@@ -453,6 +569,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	public void createPartControl( Composite parent ) {
 		super.createPartControl( parent );
+		createViewContextMenu();
+		createRulerContextMenu();
 		if ( fSourceViewerDecorationSupport != null )
 			fSourceViewerDecorationSupport.install( getEditorPreferenceStore() );
 		}
@@ -599,5 +717,99 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		if ( fOverviewRuler == null )
 			fOverviewRuler = createOverviewRuler( getSharedColors() );
 		return fOverviewRuler;
+	}
+
+	protected String getRulerContextMenuId() {
+		return this.fRulerContextMenuId;
+	}
+
+	private void setRulerContextMenuId( String rulerContextMenuId ) {
+		Assert.isNotNull( rulerContextMenuId );
+		this.fRulerContextMenuId = rulerContextMenuId;
+	}
+
+	protected String getViewContextMenuId() {
+		return this.fViewContextMenuId;
+	}
+
+	private void setViewContextMenuId( String viewContextMenuId ) {
+		Assert.isNotNull( viewContextMenuId );
+		this.fViewContextMenuId = viewContextMenuId;
+	}
+
+	/**
+	 * Sets up the ruler context menu before it is made visible.
+	 * 
+	 * @param menu the menu
+	 */
+	protected void rulerContextMenuAboutToShow( IMenuManager menu ) {
+		menu.add( new Separator( ITextEditorActionConstants.GROUP_REST ) );
+		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+	}
+
+	/**
+	 * Sets up the view context menu before it is made visible.
+	 * 
+	 * @param menu the menu
+	 */
+	protected void viewContextMenuAboutToShow( IMenuManager menu ) {
+		menu.add( new Separator( ITextEditorActionConstants.GROUP_REST ) );
+		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+	}
+
+	/**
+	 * Convenience method to add the action installed under the given action id to the specified group of the menu.
+	 * @param menu the menu to add the action to
+	 * @param group the group in the menu
+	 * @param actionId the id of the action to add
+	 */
+	protected final void addAction( IMenuManager menu, String group, String actionId ) {
+		IAction action = getAction( actionId );
+		if ( action != null ) {
+			if ( action instanceof IUpdate )
+				((IUpdate)action).update();
+			IMenuManager subMenu = menu.findMenuUsingPath( group );
+			if ( subMenu != null )
+				subMenu.add( action );
+			else
+				menu.appendToGroup( group, action );
+		}
+	}
+
+	protected Menu getRulerContextMenu() {
+		return this.fRulerContextMenu;
+	}
+
+	private void setRulerContextMenu( Menu rulerContextMenu ) {
+		this.fRulerContextMenu = rulerContextMenu;
+	}
+
+	private void createViewContextMenu() {
+		String id = getViewContextMenuId();
+		MenuManager manager = new MenuManager( id, id );
+		manager.setRemoveAllWhenShown( true );
+		manager.addMenuListener( getContextMenuListener() );
+		StyledText styledText = getSourceViewer().getTextWidget();
+		setTextContextMenu( manager.createContextMenu( styledText ) );
+		styledText.setMenu( getTextContextMenu() );
+	}
+
+	private void createRulerContextMenu() {
+		String id = getRulerContextMenuId();
+		MenuManager manager = new MenuManager( id, id );
+		manager.setRemoveAllWhenShown( true );
+		manager.addMenuListener( getContextMenuListener() );
+		Control rulerControl = fVerticalRuler.getControl();
+		setRulerContextMenu( manager.createContextMenu( rulerControl ) );
+		rulerControl.setMenu( getRulerContextMenu() );
+		rulerControl.addMouseListener( getRulerMouseListener() );
+	}
+
+	private Menu getTextContextMenu() {
+		return this.fTextContextMenu;
+	}
+
+	private void setTextContextMenu( Menu textContextMenu ) {
+		this.fTextContextMenu = textContextMenu;
 	}
 }

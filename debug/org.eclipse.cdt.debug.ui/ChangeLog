@@ -1,4 +1,8 @@
 2004-04-28 Mikhail Khodjaiants
+	Added support of context menu to the Disassembly view.
+	* DisassemblyView.java
+
+2004-04-28 Mikhail Khodjaiants
 	Added the overview ruler to the Disassembly view.
 	* DisassemblyView.java
 	* DisassemblyViewer.java

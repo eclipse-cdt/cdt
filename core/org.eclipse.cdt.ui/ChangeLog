@@ -1,3 +1,13 @@
+2004-02-28 Alain Magloire
+
+	Fixing a NPE.
+	java.lang.NullPointerException
+        at org.eclipse.cdt.internal.core.model.Parent.getChildren(Parent.java:47)
+        at org.eclipse.cdt.internal.ui.BaseCElementContentProvider.getChildren(BaseCElementContentProvider.java:139)
+        at org.eclipse.jface.viewers.AbstractTreeViewer.getRawChildren(AbstractTreeViewer.java:729)
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	
 2004-02-27 Hoda Amer
 	Fixed [Bug 53074] The CView to update with each reconcile
 	Added the ability for CView to update based on the translation unit working copy

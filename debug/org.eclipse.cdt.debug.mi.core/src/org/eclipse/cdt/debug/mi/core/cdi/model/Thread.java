@@ -128,14 +128,29 @@ public class Thread extends CObject implements ICDIThread {
 				CommandFactory factory = mi.getCommandFactory();
 				MIStackInfoDepth depth = factory.createMIStackInfoDepth();
 				mi.postCommand(depth);
-				MIStackInfoDepthInfo info = depth.getMIStackInfoDepthInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
+				MIStackInfoDepthInfo info = null;
+				try {
+					// Catch the first exception gdb can recover the second time.
+					info = depth.getMIStackInfoDepthInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+					stackdepth = info.getDepth();
+				} catch (MIException e) {
+					// First try fails, retry. gdb patches up the corrupt frame
+					// so retry should give us a frame count that is safe.
+					mi.postCommand(depth);
+					info = depth.getMIStackInfoDepthInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+					stackdepth = info.getDepth();
+					if (stackdepth > 0) {
+						stackdepth--;
+					}
 				}
-				stackdepth = info.getDepth();
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
-				//System.out.println(e);
 			} finally {
 				currentTarget.setCurrentThread(currentThread, false);
 			}

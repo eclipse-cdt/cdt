@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 
 /**
@@ -63,7 +62,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		
-		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
 		
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);

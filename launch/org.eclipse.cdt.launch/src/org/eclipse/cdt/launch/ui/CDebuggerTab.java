@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -41,7 +42,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
 
@@ -123,7 +123,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	public void createControl( Composite parent ) {
 		Composite comp = new Composite( parent, SWT.NONE );
 		setControl( comp );
-		WorkbenchHelp.setHelp( getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB );
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp( getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB );
 		GridLayout layout = new GridLayout( 2, true );
 		comp.setLayout( layout );
 		GridData gd = new GridData();

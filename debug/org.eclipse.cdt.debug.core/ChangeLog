@@ -1,3 +1,7 @@
+2005-01-04 Mikhail Khodjaiants
+	Fix for bug 82184: arrayboundsexception on display of array variable.
+	* CIndexedValue.java
+
 2004-12-23 Mikhail Khodjaiants
 	Cleanup.
 	* CMemoryBlockExtension.java

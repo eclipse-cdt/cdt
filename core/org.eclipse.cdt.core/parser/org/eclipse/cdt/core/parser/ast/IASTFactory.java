@@ -143,7 +143,13 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplate ownerTemplate) throws ASTSemanticException;
+        IASTTemplate ownerTemplate,
+		boolean isConst,
+		boolean isVolatile,
+		boolean isVirtual,
+		boolean isExplicit,
+		boolean isPureVirtual,
+		ASTAccessVisibility visibility, List constructorChain) throws ASTSemanticException;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         boolean isVolatile,
@@ -163,8 +169,6 @@ public interface IASTFactory
         IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,
-        boolean isConstructor,
-        boolean isDestructor,
         boolean isVirtual,
         boolean isExplicit,
         boolean isPureVirtual,
@@ -188,5 +192,8 @@ public interface IASTFactory
 	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset ) throws ASTSemanticException;
 
 	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset);
+
+	static final String DOUBLE_COLON = "::";
+	static final String TELTA = "~";
 
 }

@@ -1,3 +1,13 @@
+2003-08-28 Hoda Amer
+	- Added resolving references in a method's qualified name 
+	in Complete parse mode.
+	Example (.cpp file ): The method "A::B::C::aMethod(){};"
+	used to be an IASTFunction, with name = "A::B::C::aMethod".
+	Now is an IASTMethod, with name = "aMethod", and references to 
+	class A, class B and class C.
+	- Added the checking for "isConstructor" and "isDestructor"
+	for an IASTMethod in complete parse mode.
+	
 2003-08-26 Bogdan Gheorghe
 	- Modified start up code to set debug trace options
 	- Added trace debug statements to CModelBuilder.
@@ -5,11 +15,10 @@
 	  Util.debugLog clients (currently Parser and CModelBuidler)
 	- Modified Util.java to make use of IDebugLogConstants
 	
-	
 2003-08-25 Hoda Amer
 	Modified the IASTFactory to take three expression lists 
 	for the createNewDescriptor() instead of just one. 
-	They are : newPlacementExpressions, typeIdExpressions, and
+	They are : newPlacementExpressions, newTypeIdExpressions, and
 	newInitializerExpressions.
 	
 2003-08-25 John Camelon

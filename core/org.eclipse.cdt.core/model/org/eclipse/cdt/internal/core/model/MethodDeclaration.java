@@ -30,13 +30,13 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	}
 	
 	public boolean isConstructor(){
-		// Still a problem with the parser
+		// is not implemented in the parser's quick mode
 		//return isConstructor;
 		return getElementName().equals(getParent().getElementName());
 	}
 
 	public boolean isDestructor() {
-		// still a problem with the parser
+		// is not implemented in the parser's quick mode
 		//return isDestructor;
 		return getElementName().startsWith("~");
 	}

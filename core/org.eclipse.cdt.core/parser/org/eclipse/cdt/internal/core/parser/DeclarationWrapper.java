@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
@@ -431,13 +432,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 templateDeclaration,
                 declarator.isConst(),
                 declarator.isVolatile(),
-                false,
-        // isConstructor
-        false, // isDestructor
-        virtual,
-            explicit,
-            declarator.isPureVirtual(),
-            ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers());
+		        virtual,
+	            explicit,
+	            declarator.isPureVirtual(),
+	            ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers());
     }
     /**
      * @param declarator
@@ -460,7 +458,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
             staticc,
             startingOffset,
             declarator.getNameStartOffset(),
-            templateDeclaration);
+            templateDeclaration,
+		declarator.isConst(),
+		declarator.isVolatile(),
+		virtual,
+		explicit,
+		declarator.isPureVirtual(),
+		ASTAccessVisibility.PUBLIC,
+		declarator.getConstructorMemberInitializers());
     }
     /**
      * @param declarator

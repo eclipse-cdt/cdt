@@ -522,5 +522,39 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariableReference maxRef = (IASTVariableReference) callback.getReferences().get(0);
 		assertEquals( maxRef.getReferencedElement(), max );
 	}
+	
+	public void testQualifiedNameReferences() throws Exception
+	{
+		Iterator i = parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ).getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator j = getDeclarations(classA);
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)j.next()).getTypeSpecifier();
+		Iterator k = getDeclarations(classB);
+		IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)k.next()).getTypeSpecifier();
+		
+		// Note : this used to be considered a function, not a method
+		IASTMethod method = (IASTMethod)i.next(); 
+		
+		assertEquals( callback.getReferences().size(), 3 );
+		Iterator references = callback.getReferences().iterator();
+		assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classA );
+		assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classB );
+		assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classC );
+	}
 
+	public void testIsConstructor() throws Exception
+	{
+		Iterator i = parse( "class A{ public: A(); }; \n  A::A() {}; \n" ).getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTMethod method = (IASTMethod)i.next();
+		assertTrue (method.isConstructor()); 
+	}
+
+	public void testIsDestructor() throws Exception
+	{
+		Iterator i = parse( "class A{ public: A(); }; \n  A::~A() {}; \n" ).getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTMethod method = (IASTMethod)i.next();
+		assertTrue (method.isDestructor()); 
+	}
 }

@@ -3021,7 +3021,12 @@ public class ParserSymbolTable {
 		}
 		
 		public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException{
-			LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		
+			return qualifiedLookup(name, TypeInfo.t_any); 
+		}
+
+		public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException{
+			LookupData data = new LookupData( name, t, getTemplateInstance() );
 			data.qualified = true;
 			ParserSymbolTable.lookup( data, this );
 		

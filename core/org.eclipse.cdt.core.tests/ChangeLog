@@ -1,3 +1,7 @@
+2003-08-28 Hoda Amer
+	- Added to completeParseASTTest testQualifiedNameReferences(), 
+	testIsConstructor() and testIsDestructor().
+
 2003-08-28 John Camelon
 	Moved bug39535 from failedTests to quickParse success tests.  
 	

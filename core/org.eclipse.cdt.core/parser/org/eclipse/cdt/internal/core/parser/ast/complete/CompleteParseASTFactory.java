@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -82,11 +84,47 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /**
      * 
      */
+    
     public CompleteParseASTFactory()
     {
         super();
     }
 
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError ) throws ASTSemanticException
+	{
+		ISymbol result = null;
+		try
+		{	
+			if( name == null ) throw new ASTSemanticException();
+			try
+			{
+				if(type == TypeInfo.t_function){
+					// looking for a function
+					result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
+				}else{
+					// looking for a class
+					result = startingScope.qualifiedLookup(name, type);
+				}
+				if( result != null ) 
+					references.add( createReference( result, name, offset ));
+				else
+					throw new ASTSemanticException();    
+			}
+			catch (ParserSymbolTableException e)
+			{
+				throw new ASTSemanticException();    
+			}
+			
+		}
+		catch( ASTSemanticException se )
+		{
+			if( throwOnError )
+				throw se;
+			return null;
+		}
+		return result;			
+		
+	}
 
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references, boolean throwOnError ) throws ASTSemanticException
 	{
@@ -833,51 +871,107 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createFunction(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate)
-     */
-    public IASTFunction createFunction(
-        IASTScope scope,
-        String name,
-        List parameters,
-        IASTAbstractDeclaration returnType,
-        IASTExceptionSpecification exception,
-        boolean isInline,
-        boolean isFriend,
-        boolean isStatic,
-        int startOffset,
-        int nameOffset,
-        IASTTemplate ownerTemplate) throws ASTSemanticException
-    {
-    	IContainerSymbol ownerScope = scopeToSymbol( scope );
-    	IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
-        setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
-        List references = new ArrayList();
-    	
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createFunction(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate)
+	 */
+	public IASTFunction createFunction(
+	    IASTScope scope,
+	    String name,
+	    List parameters,
+	    IASTAbstractDeclaration returnType,
+	    IASTExceptionSpecification exception,
+	    boolean isInline,
+	    boolean isFriend,
+	    boolean isStatic,
+	    int startOffset,
+	    int nameOffset,
+	    IASTTemplate ownerTemplate,
+		boolean isConst,
+		boolean isVolatile,
+		boolean isVirtual,
+		boolean isExplicit,
+		boolean isPureVirtual,
+		ASTAccessVisibility visibility, 
+		List constructorChain) throws ASTSemanticException
+	{
+		List references = new ArrayList();
+		IContainerSymbol ownerScope = scopeToSymbol( scope );		
+		
+		// check if this is a method in a body file
+		StringTokenizer tokenizer = new StringTokenizer(name,DOUBLE_COLON);
+		int tokencount = tokenizer.countTokens();
+		if(tokencount > 1){
+			List tokens = new ArrayList();
+			String oneToken = "";
+			// This is NOT a function. This is a method definition
+			while (tokenizer.hasMoreTokens()){
+				oneToken = tokenizer.nextToken();
+				tokens.add(oneToken);
+			}
+				
+			String functionName = oneToken;
+			String parentName = name.substring(0, name.lastIndexOf(DOUBLE_COLON));
+			
+			int numOfTokens = 1;
+			int offset = nameOffset;
+			IContainerSymbol parentScope = ownerScope;
+			Iterator i = tokens.iterator();
+			while (i.hasNext() && (numOfTokens++) < tokens.size()){
+				String token = (String) i.next();
+				IContainerSymbol parentSymbol =
+				(IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_class, null, offset, references, false);
+				if(parentSymbol == null){
+					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_namespace, null, offset, references, false);						
+				}
+				if(parentSymbol == null)
+					break;
+				else {
+					parentScope = parentSymbol;
+					offset += token.length()+ DOUBLE_COLON.length();
+				}
+			}
+			
+			if((parentScope != null) && (parentScope.getType() == TypeInfo.t_class)){
+				// find out the visibility of the method's declaration
+				List functionReferences = new ArrayList();
+				IParameterizedSymbol methodDeclaration = 
+					(IParameterizedSymbol) lookupQualifiedName(parentScope, functionName, TypeInfo.t_function, parameters, 0, functionReferences, false);
+				if(methodDeclaration != null){
+					ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
+					visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
+				}
+				return createMethod(scope, functionName, parameters, returnType,
+				exception, isInline, isFriend, isStatic, startOffset, offset,
+				ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
+				visibility, constructorChain,parentName, references);
+			}
+		}
+	
+		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
+		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
+		
 		setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
-    	
-    	
-    	try
-        {
-            ownerScope.addSymbol( symbol );
-        }
-        catch (ParserSymbolTableException e)
-        {
-         	throw new ASTSemanticException();   
-        }
-    	
-
-        ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references );
-        try
-        {
-            attachSymbolExtension(symbol, function);
-        }
-        catch (ExtensionException e1)
-        {
-            throw new ASTSemanticException();
-        } 
-        return function;
-    }
+	
+		try
+		{
+			ownerScope.addSymbol( symbol );
+		}
+		catch (ParserSymbolTableException e)
+		{
+			throw new ASTSemanticException();   
+		}
+		ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references );        
+	    try
+	    {
+	        attachSymbolExtension(symbol, function);
+	    }
+	    catch (ExtensionException e1)
+	    {
+	        throw new ASTSemanticException();
+	    } 
+	    return function;
+	}
+    
     protected void setFunctionTypeInfoBits(
         boolean isInline,
         boolean isFriend,
@@ -1019,6 +1113,33 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createMethod(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, boolean, boolean, boolean, boolean, boolean, boolean, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
      */
+     
+	public IASTMethod createMethod(
+		IASTScope scope,
+		String name,
+		List parameters,
+		IASTAbstractDeclaration returnType,
+		IASTExceptionSpecification exception,
+		boolean isInline,
+		boolean isFriend,
+		boolean isStatic,
+		int startOffset,
+		int nameOffset,
+		IASTTemplate ownerTemplate,
+		boolean isConst,
+		boolean isVolatile,
+		boolean isVirtual,
+		boolean isExplicit,
+		boolean isPureVirtual,
+		ASTAccessVisibility visibility, 
+		List constructorChain) throws ASTSemanticException
+	{
+		return createMethod(scope, name, parameters, returnType,
+		exception, isInline, isFriend, isStatic, startOffset, nameOffset,
+		ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
+		visibility, constructorChain,scopeToSymbol(scope).getName(), null);
+	}   
+	  
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
@@ -1033,18 +1154,23 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,
-        boolean isConstructor,
-        boolean isDestructor,
         boolean isVirtual,
         boolean isExplicit,
         boolean isPureVirtual,
-        ASTAccessVisibility visibility, List constructorChain) throws ASTSemanticException
+        ASTAccessVisibility visibility, 
+        List constructorChain,
+        String parentName, 
+        List references) throws ASTSemanticException
     {
+		boolean isConstructor = false;
+		boolean isDestructor = false;
+
 		IContainerSymbol ownerScope = scopeToSymbol( scope );
 		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
-		List references = new ArrayList();
+		if(references == null)
+			references = new ArrayList();
     	
     	if( returnType.getTypeSpecifier() != null )
 			setParameter( symbol, returnType, false, references );
@@ -1058,7 +1184,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			throw new ASTSemanticException();   
 		}
-    	
+		
+		// check constructor / destructor if no return type
+		if ( returnType.getTypeSpecifier() == null ){
+			if(parentName.indexOf(DOUBLE_COLON) != -1){				
+				parentName = parentName.substring(parentName.lastIndexOf(DOUBLE_COLON) + DOUBLE_COLON.length());
+			}    	
+	    	if( parentName.equals(name) ){
+				isConstructor = true; 
+	    	} else if(name.startsWith(TELTA) && parentName.equals(name.substring(1))){
+	    		isDestructor = true;
+	    	}
+		}
+  
         ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
         try
         {

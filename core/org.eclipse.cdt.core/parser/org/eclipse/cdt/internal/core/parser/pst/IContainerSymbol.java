@@ -46,6 +46,7 @@ public interface IContainerSymbol extends ISymbol {
 	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException;
 	public IContainerSymbol lookupNestedNameSpecifier( String name ) throws ParserSymbolTableException;
 	public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException;
+	public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException;
 	public IParameterizedSymbol unqualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol memberFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol qualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;

@@ -110,8 +110,8 @@ public class CModelBuilder {
 			
 		catch( ParserException e )
 		{
-			System.out.println( "Parse Exception in Outline View" ); 
-			e.printStackTrace();
+			Util.debugLog( "Parse Exception in CModelBuilder", IDebugLogConstants.MODEL ); 
+			//e.printStackTrace();
 		}
 		long startTime = System.currentTimeMillis();
 		try
@@ -120,8 +120,8 @@ public class CModelBuilder {
 		}
 		catch( NullPointerException npe )
 		{
-			System.out.println( "NullPointer exception generating CModel");
-			npe.printStackTrace();
+			Util.debugLog( "NullPointer exception in CModelBuilder", IDebugLogConstants.MODEL);
+			//npe.printStackTrace();
 		}
 				 
 		// For the debuglog to take place, you have to call

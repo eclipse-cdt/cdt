@@ -37,10 +37,17 @@ public class SelectionParser extends ContextualParser {
 	protected void handleNewToken(IToken value) {
 		if( value != null && scanner.isOnTopContext() )
 		{
+			log.traceLog( "IToken provided w/offsets " + value.getOffset() + " & " + value.getEndOffset() );
 			if( value.getOffset() == offsetRange.getFloorOffset() )
+			{
+				log.traceLog( "Offset Floor Hit w/token \"" + value.getImage() + "\"");
 				firstTokenOfDuple = value;
+			}
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
+			{
+				log.traceLog( "Offset Ceiling Hit w/token \"" + value.getImage() + "\"");
 				lastTokenOfDuple = value;
+			}
 		}
 	}
 
@@ -92,7 +99,7 @@ public class SelectionParser extends ContextualParser {
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#checkEndOfFile()
 	 */
 	protected void checkEndOfFile() throws EndOfFileException {
-		if( lastToken != null && lastToken.getEndOffset() >= offsetRange.getCeilingOffset() )
+		if( scanner.isOnTopContext() && lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )
 			throw new EndOfFileException();
 	}
 

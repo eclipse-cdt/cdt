@@ -1,3 +1,7 @@
+2004-02-25 Bogdan Gheorghe
+	- Check to see if the resource has a location before using it in
+	  UpdateDependency
+	  
 2003-11-10 Bogdan Gheorghe
 	- Added a null resource check in UpdateDependency to fix up
 	  a potential NPE in the test suite

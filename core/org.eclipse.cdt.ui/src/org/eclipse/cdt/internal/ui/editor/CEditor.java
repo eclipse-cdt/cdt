@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -75,12 +76,14 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
@@ -104,12 +107,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
+	
+	/** Search actions **/
 
 	private FileSearchAction fFileSearchAction;
 
 	private FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
 	
 	private SearchDialogAction fSearchDialogAction;
+	
+	private ActionGroup fSelectionSearchGroup;
 	
 	protected ISelectionChangedListener fStatusLineClearer;
     
@@ -465,7 +472,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action = new ShowInCViewAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
 		setAction("ShowInCView", action); //$NON-NLS-1$
-
+		
+		//Selection Search group
+		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		
+		//Search items
 		fFileSearchAction = new FileSearchAction(getSelectionProvider());
 		
 		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(getSelectionProvider());
@@ -504,7 +515,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenDeclarations"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$	
+		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
+		
+		fSelectionSearchGroup.fillContextMenu(menu);
+	
 	}
 
 	public void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {

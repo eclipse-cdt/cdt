@@ -1,3 +1,23 @@
+2004-02-25 Bogdan Gheorghe
+	First go at Selection Search facility. Added Selection Search menus to
+	the CView, the CEditor and the COutlineView.
+	
+	New:
+	* src/org/eclipse/cdt/internal/ui/search/actions/DeclarationsSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindDeclarationsAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindRefsAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindRefsInWorkingSetAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/ReferencesSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/SelctionSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindDeclarationsInWorkingSetAction.java
+	
+	Modified:
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutline.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	
+	
 2004-02-25 John Camelon
 	Updates for new ISourceElementRequestor interface updates.  
 

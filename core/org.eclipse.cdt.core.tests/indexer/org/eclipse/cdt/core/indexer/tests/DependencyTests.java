@@ -33,7 +33,9 @@ import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
+import org.eclipse.cdt.internal.core.search.processing.IJob;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
+import org.eclipse.cdt.internal.core.sourcedependency.UpdateDependency;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
@@ -72,6 +74,7 @@ import org.eclipse.core.runtime.Platform;
 		suite.addTest(new DependencyTests("testDepHeaderChangeReindex"));
 		suite.addTest(new DependencyTests("testDepSourceChangeTable"));
 		suite.addTest(new DependencyTests("testDepHeaderChangeTable"));
+		suite.addTest(new DependencyTests("testUpdateDependancyNPE"));
 		return suite;
 	}
 	/**
@@ -535,6 +538,16 @@ import org.eclipse.core.runtime.Platform;
    compareArrays(iPath,beforeModel);
    
  }
+ 
+ public void testUpdateDependancyNPE() {
+ 	IResource nonExistantResource = ResourcesPlugin.getWorkspace().getRoot().getProject("non-existant-project-aha");
+ 	
+ 	assertFalse(nonExistantResource.exists());
+ 	assertNull(nonExistantResource.getLocation());
+ 	
+ 	IJob job = new UpdateDependency(nonExistantResource);
+ 	assertFalse(job.execute(new NullProgressMonitor()));
+ }
   
 
  public void testDepHeaderChangeReindex() throws Exception{
@@ -570,7 +583,7 @@ import org.eclipse.core.runtime.Platform;
 
 
    private String[] convertToLocalPath(String[] model) {
-	   IPath defaultPath = Platform.getLocation();
+	   IPath defaultPath = Platform.getInstanceLocation();
 	   String[] tempLocalArray = new String[model.length];
 	   for (int i=0;i<model.length;i++){
 		   StringBuffer buffer = new StringBuffer();

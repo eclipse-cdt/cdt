@@ -47,6 +47,8 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
@@ -64,6 +66,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
+	private ActionGroup fSelectionSearchGroup;
+	
 	public CContentOutlinePage(CEditor editor) {
 		this("#TranslationUnitOutlinerContext", editor);
 	}
@@ -153,6 +157,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
+		
+		fSelectionSearchGroup.fillContextMenu(menu);
 	}
 	
 	/**
@@ -181,6 +187,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		Menu menu= manager.createContextMenu(control);
 		control.setMenu(menu);
 
+		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		
 		// register global actions
 		IPageSite site= getSite();
 		site.registerContextMenu(fContextMenuId, manager, treeViewer);

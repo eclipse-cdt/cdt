@@ -1,3 +1,7 @@
+2004-02-25 Bogdan Gheorghe
+	Added a check to make sure that the parser is in the top context before throwing
+	an EOF exception in SeletionParser.
+	
 2004-02-25 John Camelon
 	Fixed Bug 43051 : Search: cannot specify relative search paths
 	Fixed Bug 45140 : refactor IScanner to allow use of Readers of IResource

@@ -1,3 +1,21 @@
+2003-06-18 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ChangedEvent.java:
+	Check if the variable was a register.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/CreatedEvent.java:
+	Cleanup.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java:
+	Removing of method {get,set}Value() and new method getChildren().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+	(setValue): calls update on the appropriate manager.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/RegisterValue.java:
+	Remove file, unused.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	(getVariableObjectAsType): check for register.
+	(getVariableObjectAsArray): check for register.	
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java:
+	(getRegister): reimplemented.
+
 2003-06-18 Mikhail Khodjaiants
 	Removed unused local variable.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java

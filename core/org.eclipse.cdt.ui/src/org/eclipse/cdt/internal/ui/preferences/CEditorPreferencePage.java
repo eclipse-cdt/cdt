@@ -360,7 +360,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_EDITOR_PREF_PAGE);	
 	}
 
 	protected void handleListSelection() {
@@ -661,7 +660,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE);	
+		WorkbenchHelp.setHelp(colorComposite, ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE);	
 		return colorComposite;
 	}
 
@@ -878,6 +877,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
+		WorkbenchHelp.setHelp(behaviorComposite, ICHelpContextIds.C_EDITOR_PREF_PAGE);	
 		return behaviorComposite;
 	}
 
@@ -926,6 +926,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 //
 //		label= "Fo&reground for method parameters:";
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
+
+		WorkbenchHelp.setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);	
 
 		return contentAssistComposite;
 	}

@@ -34,6 +34,7 @@ public interface ICHelpContextIds {
 	public static final String C_EDITOR_PREF_PAGE= PREFIX + "new_c_editor_pref_page_context";
 	public static final String C_EDITOR_ANNOTATIONS_PREF_PAGE= PREFIX + "new_c_editor_annotations_pref_page_context";
 	public static final String C_EDITOR_COLORS_PREF_PAGE= PREFIX + "new_c_editor_colors_pref_page_context";
+	public static final String C_EDITOR_CONTENT_ASSIST_PREF_PAGE= PREFIX + "new_c_editor_content_assist_pref_page_context";
 	public static final String TEMPLATE_PREFERENCE_PAGE= PREFIX + "new_c_templates_pref_page_context";
 	public static final String LAUNCH_PROPERTY_PAGE= PREFIX + "new_launch_property_page_context";
 	public static final String PROJECT_PROPERTY_PAGE= PREFIX + "new_project_property_page_context";

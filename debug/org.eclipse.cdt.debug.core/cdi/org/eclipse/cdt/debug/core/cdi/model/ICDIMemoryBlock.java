@@ -23,6 +23,18 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * @since Jul 18, 2002
  */
 public interface ICDIMemoryBlock extends ICDIObject {
+
+    /**
+     * Bit mask used to indicate a byte is read-only.
+     */
+	public static final byte READ_ONLY	= 0x01;
+	
+	/**
+	 * Bit mask used to indicate a byte is valid.
+	 */
+	public static final byte VALID	= 0x02;
+	
+
 	/**
 	 * Returns the start address of this memory block.
 	 * 
@@ -50,7 +62,16 @@ public interface ICDIMemoryBlock extends ICDIObject {
 	 * </ul>
 	 */	
 	byte[] getBytes() throws CDIException;
-	
+
+	/**
+	 * Returns this memory byte's attribute as a bit mask.
+	 * The method throw IndexOutOfBoundsException if the offset
+	 * is out of range of the block.
+	 * 
+	 * @return this memory byte's attribute as a bit mask
+	 */
+	public byte getFlags(int offset);
+
 	/**
 	 * Sets the value of the bytes in this memory block at the specified
 	 * offset within this memory block to the spcified bytes.

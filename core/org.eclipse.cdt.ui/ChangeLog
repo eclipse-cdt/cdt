@@ -1,3 +1,8 @@
+2004-08-19 Alain Magloire
+
+	Show the right icons for non-C-Resources.
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+
 2004-08-19 Chris Wiebe
 
 	improved file validation

@@ -366,6 +366,7 @@ public class BreakpointManager extends Manager {
 						watchType &= ICDIWatchpoint.WRITE;
 					}
 					Watchpoint wpoint = new Watchpoint(target, allMIBreakpoints[i].getWhat(), type, watchType, condition);
+					wpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 					bList.add(wpoint);
 				} else {
 					Location location = new Location (allMIBreakpoints[i].getFile(),
@@ -641,7 +642,7 @@ public class BreakpointManager extends Manager {
 					try {
 						miSession.postCommand(breakDisable);
 						MIInfo disableInfo = breakDisable.getMIInfo();
-						if (info == null) {
+						if (disableInfo == null) {
 							throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 						}
 					} catch (MIException e) {

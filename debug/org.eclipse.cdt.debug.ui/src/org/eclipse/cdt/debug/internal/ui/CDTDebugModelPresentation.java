@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
@@ -362,7 +363,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					{
 						return target.getName() + " (Breakpoint hit)";
 					}
-					if ( info == null )
+					if ( info != null && info instanceof ICDISession )
 					{
 						return target.getName() + " (Suspended)";
 					}

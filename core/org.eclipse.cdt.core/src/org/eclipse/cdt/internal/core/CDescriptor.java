@@ -39,8 +39,10 @@ import org.eclipse.cdt.core.ICOwnerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -51,6 +53,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -306,6 +309,14 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	void save() throws CoreException {
+		IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
+		ISchedulingRule rule;
+		IFile rscFile = getFile();
+		if (rscFile.exists()) {
+			rule = ruleFactory.modifyRule(rscFile);
+		} else {
+			rule = ruleFactory.createRule(rscFile);
+		}
 		fManager.getWorkspace().run(new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor mon) throws CoreException {
@@ -348,7 +359,7 @@ public class CDescriptor implements ICDescriptor {
 				}
 				fUpdating = false;
 			}
-		}, fProject, IWorkspace.AVOID_UPDATE, null);
+		}, rule, IWorkspace.AVOID_UPDATE, null);
 	}
 
 	boolean isUpdating() {

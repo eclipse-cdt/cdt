@@ -1,3 +1,8 @@
+2005-01-18 David Inglis
+	Fixed bug #82705
+	
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	
 2005-01-11 David Inglis
 
 	Fixed NPE bug #82572

@@ -129,6 +129,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return  getCProjects((ICModel)element);
 		} else if  (element instanceof ICProject ) {
 			return getSourceRoots((ICProject)element);
+		} else if (element instanceof IBinaryContainer) {
+			return ((IBinaryContainer)element).getBinaries();
+		} else if (element instanceof IArchiveContainer) {
+			return ((IArchiveContainer)element).getArchives();
 		} else if (element instanceof ICContainer) {
 			return getCResources((ICContainer)element);
 		} else if (element instanceof ITranslationUnit) {
@@ -182,7 +186,13 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return true;	
 			}
 		}
- 
+
+		if (element instanceof IBinaryContainer) {
+			IBinaryContainer cont = (IBinaryContainer)element;
+			IBinary[] bin = cont.getBinaries();
+			return (bin != null) && bin.length > 0;
+		}
+
 		if (element instanceof IParent) {
 			// when we have C children return true, else we fetch all the children
 			if (((IParent)element).hasChildren()) {

@@ -107,8 +107,7 @@ public class CPPParameter implements IParameter, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		// TODO Auto-generated method stub
-		return null;
+		return CPPVisitor.getContainingScope( getPrimaryDeclaration() );
 	}
 
 	/* (non-Javadoc)

@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -611,6 +612,10 @@ public class AST2CPPTests extends AST2BaseTest {
 
         assertInstances(collector, f, 2);
         assertInstances(collector, a, 3);
+        
+        IScope scope = a.getScope();
+        assertNotNull( scope );
+        assertSame( scope.getParent(), f.getScope() );
     }
 
     public void testSimpleFunctionCall() throws Exception {

@@ -543,8 +543,10 @@ public class CPPVisitor implements ICPPASTVisitor {
 			} else if( node instanceof IASTParameterDeclaration ){
 				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node.getParent();
 				ASTNodeProperty prop = dtor.getPropertyInParent();
-				if( prop == IASTSimpleDeclaration.DECLARATOR || prop == IASTFunctionDefinition.DECLARATOR )
+				if( prop == IASTSimpleDeclaration.DECLARATOR )
 				    return dtor.getFunctionScope();
+				else if( prop == IASTFunctionDefinition.DECLARATOR )
+				    return ((IASTCompoundStatement)((IASTFunctionDefinition)dtor.getParent()).getBody()).getScope();
 			} else if( node instanceof IASTExpression ){
 		    	IASTNode parent = node.getParent();
 			    if( parent instanceof IASTForStatement ){
@@ -610,13 +612,12 @@ public class CPPVisitor implements ICPPASTVisitor {
 			scope = getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){
 		    IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
-			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
-			if( function != null ){
-				try {
-	                scope = function.getScope();
-				} catch ( DOMException e ) {
-	            }    
-			}
+		    IASTName name = fnDeclarator.getName();
+		    if( name instanceof ICPPASTQualifiedName ){
+		        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+		        name = ns [ ns.length -1 ];
+		    }
+		    return getContainingScope( name );
 		}
 		
 		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){

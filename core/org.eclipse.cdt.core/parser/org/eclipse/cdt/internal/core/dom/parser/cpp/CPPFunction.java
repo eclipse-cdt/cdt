@@ -178,11 +178,12 @@ public class CPPFunction implements IFunction, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
 	 */
 	public IScope getFunctionScope() {
+	    resolveAllDeclarations();
 	    if( definition != null ){
-			IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
-			return def.getScope();
-	    }
-	    return null;
+			return definition.getFunctionScope();
+	    } 
+	        
+	    return declarations[0].getFunctionScope();
 	}
 
 	/* (non-Javadoc)
@@ -268,12 +269,21 @@ public class CPPFunction implements IFunction, ICPPBinding {
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
     		temp = definition.getParameters()[i];
-    		((CPPASTName)temp.getDeclarator().getName()).setBinding( binding );
+    		CPPASTName n = (CPPASTName)temp.getDeclarator().getName();
+    		if( n != name ) {
+    		    n.setBinding( binding );
+    		    ((CPPParameter)binding).addDeclaration( n );
+    		}
     	}
     	if( declarations != null ){
     		for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
     			temp = declarations[j].getParameters()[i];
-        		((CPPASTName)temp.getDeclarator().getName()).setBinding( binding );
+        		CPPASTName n = (CPPASTName)temp.getDeclarator().getName();
+        		if( n != name ) {
+        		    n.setBinding( binding );
+        		    ((CPPParameter)binding).addDeclaration( n );
+        		}
+
     		}
     	}
     	return binding;

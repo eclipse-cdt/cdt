@@ -44,7 +44,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 
 	public CSession(MISession s, boolean attach) {
 		commonSetup(s);
-		configuration = new Configuration(attach);
+		configuration = new Configuration(s, attach);
 	}
 
 	public CSession(MISession s) {

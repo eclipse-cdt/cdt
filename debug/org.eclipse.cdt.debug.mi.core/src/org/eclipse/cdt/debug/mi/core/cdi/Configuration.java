@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
+import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -17,9 +18,11 @@ import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
  */
 public class Configuration implements ICDIConfiguration {
 	protected boolean fAttached;
+	MISession miSession;
 	
-	public Configuration(boolean attached) {
+	public Configuration(MISession s, boolean attached) {
 		fAttached = attached;
+		miSession = s;
 	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsBreakpoints()
@@ -103,5 +106,6 @@ public class Configuration implements ICDIConfiguration {
 	 */
 	public boolean supportsTerminate() {
 		return fAttached ? false : true;
+		
 	}
 }

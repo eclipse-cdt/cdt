@@ -8,94 +8,93 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
+import java.util.HashMap;
+
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class MakeTarget implements IMakeTarget {
 
-	private boolean bDirty;
+	private String buildArguments;
+	private IPath buildCommand;
+	private boolean isDefaultBuildCmd;
+	private boolean isStopOnError;
+	private String name;
+	private String targetBuilderID;
+	private IContainer container;
 
-	MakeTarget(IContainer container, String targetBuilderID, String targetName) {
-		// dinglis-TODO Auto-generated constructor stub
+	MakeTarget(IContainer container, String targetBuilderID, String name) {
+		this.container = container;
+		this.targetBuilderID = targetBuilderID;
+		this.name = name;
 	}
 
 	void setName(String name) {
-		// dinglis-TODO Auto-generated method stub
-	}
-
-	void setContainer(IContainer container) {
-		// dinglis-TODO Auto-generated method stub		
+		this.name = name;
 	}
 
 	public String getName() {
-		// dinglis-TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	public String getTargetBuilderID() {
-		// dinglis-TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getBuilderID() {
-		// dinglis-TODO Auto-generated method stub
-		return null;
+		return targetBuilderID;
 	}
 
 	public boolean isStopOnError() {
-		// dinglis-TODO Auto-generated method stub
-		return false;
+		return isStopOnError;
 	}
 
 	public void setStopOnError(boolean stopOnError) {
-		// dinglis-TODO Auto-generated method stub
-
+		isStopOnError = stopOnError;
 	}
 
 	public boolean isDefaultBuildCmd() {
-		// dinglis-TODO Auto-generated method stub
-		return false;
+		return isDefaultBuildCmd;
 	}
 
 	public void setUseDefaultBuildCmd(boolean useDefault) {
-		// dinglis-TODO Auto-generated method stub
-
+		isDefaultBuildCmd = useDefault;
 	}
 
 	public IPath getBuildCommand() {
-		// dinglis-TODO Auto-generated method stub
-		return null;
+		return buildCommand;
 	}
 
 	public void setBuildCommand(IPath command) {
-		// dinglis-TODO Auto-generated method stub
-
+		buildCommand = command;
 	}
 
 	public String getBuildArguments() {
-		// dinglis-TODO Auto-generated method stub
-		return null;
+		return buildArguments;
 	}
 
 	public void setBuildArguments(String arguments) {
-		// dinglis-TODO Auto-generated method stub
-
+		buildArguments = arguments;
 	}
 
 	public IContainer getContainer() {
-		// dinglis-TODO Auto-generated method stub
-		return null;
+		return container;
 	}
 
 	public void build(IProgressMonitor monitor) throws CoreException {
-		// dinglis-TODO Auto-generated method stub
-		
-	}
-	
-	public boolean isDirty() {
-		return bDirty;
+		IProject project = container.getProject();
+		String builderID = MakeCorePlugin.getDefault().getTargetProvider().getBuilderID(targetBuilderID);
+		HashMap infoMap = new HashMap();
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
+		info.setBuildArguments(buildArguments);
+		info.setBuildCommand(buildCommand);
+		info.setUseDefaultBuildCmd(isDefaultBuildCmd);
+		info.setStopOnError(isStopOnError);
+		info.setFullBuildEnable(true);
+		info.setFullBuildTarget(buildArguments);
+		project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
 	}
 }

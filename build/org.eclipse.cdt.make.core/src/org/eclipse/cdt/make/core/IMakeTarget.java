@@ -19,8 +19,6 @@ public interface IMakeTarget {
 	String getName();
 	String getTargetBuilderID();
 	
-	String getBuilderID();
-
 	boolean isStopOnError();
 	void setStopOnError(boolean stopOnError);
 

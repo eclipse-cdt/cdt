@@ -14,13 +14,15 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-public interface IMakeTargetProvider {
+public interface IMakeTargetManager {
 	IMakeTarget addTarget(IContainer container, String targetBuilderID, String targetName) throws CoreException;
 	void removeTarget(IMakeTarget target) throws CoreException;
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
 
 	IMakeTarget[] getTargets(IContainer container) throws CoreException;
 	IProject[]    getTargetBuilderProjects() throws CoreException;
+
+	String getBuilderID(String targetBuilderID);
 				
 	void addListener(IMakeTargetListener listener);
 	void removeListener(IMakeTargetListener listener);

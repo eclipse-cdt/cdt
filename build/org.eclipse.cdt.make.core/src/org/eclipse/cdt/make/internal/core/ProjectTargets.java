@@ -1,9 +1,8 @@
 package org.eclipse.cdt.make.internal.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,22 +33,21 @@ public class ProjectTargets {
 	private static String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
 	private static String TARGET_ELEMENT = "target"; //$NON-NLS-1$
 
-	private boolean isDirty;
 	private HashMap targetMap = new HashMap();
 	private IProject project;
-	
+
 	public ProjectTargets(IProject project) {
 		this.project = project;
 	}
 
-	public ProjectTargets(IProject project, File targetFile) throws CoreException {
+	public ProjectTargets(IProject project, InputStream input) throws CoreException {
 		Document document = null;
-		try { 
-			FileInputStream file = new FileInputStream(targetFile);
+		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			document = parser.parse(file);
+			document = parser.parse(input);
 		} catch (Exception e) {
-			 throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Error reading target file", e));
+			throw new CoreException(
+				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Error reading target file", e));
 		}
 		Node node = document.getFirstChild();
 		if (node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
@@ -103,17 +101,17 @@ public class ProjectTargets {
 	}
 
 	public IMakeTarget[] get(IContainer container) {
-		ArrayList list = (ArrayList)targetMap.get(container);
+		ArrayList list = (ArrayList) targetMap.get(container);
 		if (list != null) {
-			return (IMakeTarget[])list.toArray(new IMakeTarget[list.size()]);
+			return (IMakeTarget[]) list.toArray(new IMakeTarget[list.size()]);
 		}
 		return new IMakeTarget[0];
 	}
-	
+
 	public void add(MakeTarget target) throws CoreException {
-		ArrayList list = (ArrayList)targetMap.get(target.getContainer());
+		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetProvider.target_exists"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		if (list == null) {
 			list = new ArrayList();
@@ -123,7 +121,7 @@ public class ProjectTargets {
 	}
 
 	public boolean contains(MakeTarget target) {
-		ArrayList list = (ArrayList)targetMap.get(target.getContainer());
+		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			return true;
 		}
@@ -131,7 +129,7 @@ public class ProjectTargets {
 	}
 
 	public void remove(IMakeTarget target) {
-		ArrayList list = (ArrayList)targetMap.get(target.getContainer());
+		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && !list.contains(target)) {
 			return;
 		}
@@ -141,35 +139,26 @@ public class ProjectTargets {
 		}
 	}
 
-	public void setDirty() {
-		isDirty = true;
-	}
-
-	public boolean isDirty() {
-		return isDirty;		
-	}
-
 	public IProject getProject() {
 		return project;
 	}
-	
-	protected String getAsXML() throws IOException {
+
+	protected Document getAsXML() throws IOException {
 		Document doc = new DocumentImpl();
 		Element configRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
 		doc.appendChild(configRootElement);
-		return serializeDocument(doc);
-	}
-	
-	protected String serializeDocument(Document doc) throws IOException {
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
-		serializer.asDOMSerializer().serialize(doc);
-		return s.toString("UTF8"); //$NON-NLS-1$		
+		return doc;
 	}
 
+	public void saveTargets(OutputStream output) throws IOException {
+		Document doc = getAsXML();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		format.setPreserveSpace(true);
+		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(output, "UTF8"), format);
+		serializer.asDOMSerializer().serialize(doc);
+	}
 
 }

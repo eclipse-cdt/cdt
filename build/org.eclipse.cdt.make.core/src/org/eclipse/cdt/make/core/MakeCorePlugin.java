@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -17,19 +18,22 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
-import org.eclipse.cdt.make.internal.core.MakeTargetProvider;
+import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 
 /**
  * The main plugin class to be used in the desktop.
  */
 public class MakeCorePlugin extends Plugin {
-	private IMakeTargetProvider fTargetProvider;
+	private MakeTargetManager fTargetManager;
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
 	//The shared instance.
 	private static MakeCorePlugin plugin;
@@ -54,6 +58,21 @@ public class MakeCorePlugin extends Plugin {
 	 */
 	public static MakeCorePlugin getDefault() {
 		return plugin;
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException) e).getStatus();
+		else
+			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
+		log(status);
+	}
+
+	public static void log(IStatus status) {
+		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
 	/**
@@ -120,10 +139,18 @@ public class MakeCorePlugin extends Plugin {
 		return BuildInfoFactory.create(args, builderID);
 	}
 
-	public IMakeTargetProvider getTargetProvider() {
-		if ( fTargetProvider == null) {
-			fTargetProvider = new MakeTargetProvider();
+	public IMakeTargetManager getTargetProvider() {
+		if ( fTargetManager == null) {
+			fTargetManager = new MakeTargetManager();
+			fTargetManager.startup();
 		}
-		return fTargetProvider;
+		return fTargetManager;
+	}
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		if ( fTargetManager != null) {
+			fTargetManager.shutdown();
+			fTargetManager = null;
+		}
 	}
 }

@@ -39,7 +39,10 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.ICProjectDescriptor;
+import org.eclipse.cdt.core.ICProjectOwnerInfo;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
@@ -212,7 +215,12 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 				monitor.beginTask(CPlugin.getResourceString(OP_DESC), 3);
 
 				doRunPrologue(new SubProgressMonitor(monitor, 1));
-				doRun(new SubProgressMonitor(monitor, 1));
+				try {
+					doRun(new SubProgressMonitor(monitor, 1));
+				}
+				catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 				doRunEpilogue(new SubProgressMonitor(monitor, 1));
 
 				monitor.done();
@@ -243,6 +251,11 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 			}
 			MessageDialog.openError(shell, title, message);
 			CPlugin.log(th);
+			try {
+				getProjectHandle().delete(true, true, null);
+			}
+			catch (CoreException ignore) {
+			}
 			return false;
 		} catch  (InterruptedException e) {
 			return false;
@@ -250,7 +263,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 		return true;
 	}
 
-	protected void doRun(IProgressMonitor monitor) {
+	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		createNewProject(monitor);
 	}	
 
@@ -270,7 +283,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	 * @return the created project resource, or <code>null</code> if the project
 	 *    was not created
 	 */
-	protected IProject createNewProject(IProgressMonitor monitor) {
+	protected IProject createNewProject(IProgressMonitor monitor) throws CoreException {
 
 		if (newProject != null)
 			return newProject;
@@ -287,13 +300,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 		IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 		description.setLocation(newPath);
 
-		try {
-			newProject = createProject(description, newProjectHandle, monitor);
-		} catch (CoreException e) {
-			return null;
-		} catch (OperationCanceledException e) {
-			return null;
-		}
+		newProject = createProject(description, newProjectHandle, monitor);
 		return newProject;
 	}
 
@@ -324,10 +331,17 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 			projectHandle.open(new SubProgressMonitor(monitor, 1));
 			// Add C Nature.
 			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-
+			CCorePlugin.getDefault().mapCProjectOwner(projectHandle, getProjectID());
 		} finally {
 			//monitor.done();
 		}
 		return projectHandle;
 	}
+
+	/**
+	 * Method getID.
+	 * @return String
+	 */
+	public abstract String getProjectID();
+
 }

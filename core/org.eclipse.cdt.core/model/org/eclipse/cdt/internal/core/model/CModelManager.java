@@ -883,7 +883,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				operation.run(monitor);
 			} else {
 		// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
-				getCModel().getUnderlyingResource().getWorkspace().run(operation, monitor);
+				getCModel().getUnderlyingResource().getWorkspace()
+					.run(operation, operation.getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
 			}
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {

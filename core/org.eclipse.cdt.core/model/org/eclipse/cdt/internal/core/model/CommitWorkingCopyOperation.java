@@ -11,13 +11,16 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * Commits the contents of a working copy translation unit to its original
@@ -54,6 +57,15 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 		super(new ICElement[] {element}, force);
 	}
 	
+	public ISchedulingRule getSchedulingRule() {
+		IResource resource = getElementToProcess().getResource();
+		IWorkspace workspace = resource.getWorkspace();
+		if (resource.exists()) {
+			return workspace.getRuleFactory().modifyRule(resource);
+		} else {
+			return workspace.getRuleFactory().createRule(resource);
+		}
+	}
 	
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#executeOperation()

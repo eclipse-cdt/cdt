@@ -21,12 +21,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * Defines behavior common to all C Model operations
@@ -380,6 +382,15 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	public ICElement[] getResultElements() {
 		return fResultElements;
+	}
+
+	/**
+	 * Returns the scheduling rule for this operation (i.e. the resource that needs to be locked 
+	 * while this operation is running.
+	 * Subclasses can override.
+	 */
+	public ISchedulingRule getSchedulingRule() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	/**

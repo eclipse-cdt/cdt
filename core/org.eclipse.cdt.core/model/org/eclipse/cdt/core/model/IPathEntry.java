@@ -34,37 +34,37 @@ public interface IPathEntry {
 	 */
 	int CDT_SOURCE = 3;
 
-	/*
-	 * Entry kind constant describing a path entry defined using
-	 * a path that begins with a variable reference.
-	 */
-	int CDT_VARIABLE = 4;
-
 	/**
 	 * Entry kind constant describing a path entry identifying a
 	 * include path.
 	 */
-	int CDT_INCLUDE = 5;
+	int CDT_INCLUDE = 4;
 	
 	/**
 	 * Entry kind constant describing a path entry representing
 	 * a container id.
 	 *
 	 */
-	int CDT_CONTAINER = 6;
+	int CDT_CONTAINER = 5;
 
 	/**
 	 * Entry kind constant describing a path entry representing
 	 * a macro definition.
 	 *
 	 */
-	int CDT_MACRO = 7;
+	int CDT_MACRO = 6;
 
 	/**
 	 * Entry kind constant describing output location
 	 *
 	 */
-	int CDT_OUTPUT = 8;
+	int CDT_OUTPUT = 7;
+
+    /**
+     * Entry kind constant describing an entry defined using
+     * a path that begins with a variable reference.
+     */
+	int CDT_VARIABLE = 10;
 
 	/**
 	 * Returns the kind of this path entry.
@@ -75,8 +75,6 @@ public interface IPathEntry {
 			its project
 	 * <li><code>CDT_LIBRARY</code> - this entry describes a library
 	 * <li><code>CDT_PROJECT</code> - this entry describes another project
-	 * <li><code>CDT_VARIABLE</code> - this entry describes a project or library
-	 *  	indirectly via a variable in the first segment of the path
 	 * <li><code>CDT_INCLUDE</code> - this entry describes a include path
 	 * <li><code>CDT_MACRO</code> - this entry describes a macro definition
 	 * <li><code>CDT_CONTAINER</code> - this entry describes a container id

@@ -35,14 +35,14 @@ public class SetPathEntriesOperation extends CModelOperation {
      */
     static final String[] NO_PREREQUISITES = new String[0];
 
-	IPathEntry[] oldEntries;
-	IPathEntry[] newEntries;
+	IPathEntry[] oldResolvedEntries;
+	IPathEntry[] newRawEntries;
 	ICProject cproject;
 
-	public SetPathEntriesOperation(ICProject project, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
+	public SetPathEntriesOperation(ICProject project, IPathEntry[] oldResolvedEntries, IPathEntry[] newRawEntries) {
 		super(project);
-		this.oldEntries = oldEntries;
-		this.newEntries = newEntries;
+		this.oldResolvedEntries = oldResolvedEntries;
+		this.newRawEntries = newRawEntries;
 		this.cproject = project;
 	}
 
@@ -52,9 +52,11 @@ public class SetPathEntriesOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		//	project reference updated - may throw an exception if unable to write .cdtproject file
 		updateProjectReferencesIfNecessary();
-		PathEntryManager mgr = PathEntryManager.getDefault();
-		mgr.saveRawPathEntries(cproject, oldEntries, newEntries);
-		ICElementDelta[] deltas = mgr.generatePathEntryDeltas(cproject, oldEntries, newEntries);
+		PathEntryManager mgr = PathEntryManager.getDefault();		
+		mgr.saveRawPathEntries(cproject, newRawEntries);
+		hasModifiedResource = true;
+		IPathEntry[] newResolvedEntries = mgr.getResolvedPathEntries(cproject);
+		ICElementDelta[] deltas = mgr.generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
 		for (int i = 0; i < deltas.length; i++) {
 			addDelta(deltas[i]);
 		}
@@ -63,8 +65,8 @@ public class SetPathEntriesOperation extends CModelOperation {
 
 	protected void updateProjectReferencesIfNecessary() throws CModelException {
 		PathEntryManager mgr = PathEntryManager.getDefault();
-		String[] oldRequired = mgr.projectPrerequisites(oldEntries);
-		String[] newRequired = mgr.projectPrerequisites(newEntries);
+		String[] oldRequired = mgr.projectPrerequisites(oldResolvedEntries);
+		String[] newRequired = mgr.projectPrerequisites(newRawEntries);
 
 		try {
 			IProject projectResource = cproject.getProject();

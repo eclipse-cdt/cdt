@@ -670,6 +670,19 @@ public class CElementDelta implements ICElementDelta {
 			buffer.append("MODIFIERS CHANGED"); //$NON-NLS-1$
 			prev = true;
 		}
+		if ((changeFlags & ICElementDelta.F_ADDED_TO_PATHENTRY) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("ADDED TO PATHENTRY"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((changeFlags & ICElementDelta.F_REMOVED_FROM_PATHENTRY) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("REMOVED FROM PATHENTRY"); //$NON-NLS-1$
+			prev = true;
+		}
+		
 		//if ((changeFlags & ICElementDelta.F_SUPER_TYPES) != 0) {
 		//	if (prev)
 		//		buffer.append(" | "); //$NON-NLS-1$

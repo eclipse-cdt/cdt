@@ -73,7 +73,6 @@ public class PathEntryManager {
 	static String ATTRIBUTE_SYSTEM = "system"; //$NON-NLS-1$
 	static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
-	static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	static String VALUE_TRUE = "true"; //$NON-NLS-1$
 
 	final static IPathEntry[] EMPTY = {};
@@ -137,9 +136,10 @@ public class PathEntryManager {
 
 	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		try {
-			SetPathEntriesOperation op = new SetPathEntriesOperation(cproject, getRawPathEntries(cproject), newEntries);
-			CModelManager.getDefault().runOperation(op, monitor);
+			IPathEntry[] oldResolvedEntries = (IPathEntry[])resolvedMap.get(cproject);
 			resolvedMap.put(cproject, null);
+			SetPathEntriesOperation op = new SetPathEntriesOperation(cproject, oldResolvedEntries, newEntries);
+			CModelManager.getDefault().runOperation(op, monitor);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
@@ -211,6 +211,7 @@ public class PathEntryManager {
 			}
 			remaining++;
 			oldResolvedEntries[i] = (IPathEntry[])resolvedMap.get(affectedProject);
+			resolvedMap.put(affectedProject, null);
 			containerPut(affectedProject, containerPath, newContainer);
 		}
 
@@ -380,7 +381,7 @@ public class PathEntryManager {
 		}
 		return NO_PREREQUISITES;
 	}
-	public void saveRawPathEntries(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) throws CModelException {
+	public void saveRawPathEntries(ICProject cproject, IPathEntry[] newRawEntries) throws CModelException {
 		try {
 			ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(cproject.getProject());
 			Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
@@ -392,10 +393,10 @@ public class PathEntryManager {
 			}
 
 			// Save the entries
-			if (newEntries != null && newEntries.length > 0) {
+			if (newRawEntries != null && newRawEntries.length > 0) {
 				// Serialize the include paths
 				Document doc = rootElement.getOwnerDocument();
-				encodePathEntries(cproject.getPath(), doc, rootElement, newEntries);
+				encodePathEntries(cproject.getPath(), doc, rootElement, newRawEntries);
 			}
 			descriptor.saveProjectData();
 		} catch (CoreException e) {
@@ -488,12 +489,12 @@ public class PathEntryManager {
 			IContainerEntry container = (IContainerEntry) entry;
 			celement = cproject;
 		}
-		if (celement != null) {
-			CElementDelta delta = new CElementDelta(cproject.getCModel());
-			delta.changed(celement, flag);
-			return delta;
+		if (celement == null) {
+			celement = cproject;
 		}
-		return null;
+		CElementDelta delta = new CElementDelta(cproject.getCModel());
+		delta.changed(celement, flag);
+		return delta;
 	}
 
 	static String[] getRegisteredContainerIDs() {
@@ -597,7 +598,7 @@ public class PathEntryManager {
 
 			case IPathEntry.CDT_INCLUDE :
 				{
-					// include path info (optional
+					// include path info
 					IPath includePath =
 						element.hasAttribute(ATTRIBUTE_INCLUDE) ? new Path(element.getAttribute(ATTRIBUTE_INCLUDE)) : null;
 					// isSysteminclude
@@ -622,7 +623,7 @@ public class PathEntryManager {
 
 			case IPathEntry.CDT_CONTAINER :
 				{
-					IPath id = new Path(element.getAttribute(ATTRIBUTE_ID));
+					IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
 					return CoreModel.newContainerEntry(id, isExported);
 				}
 
@@ -705,7 +706,7 @@ public class PathEntryManager {
 				element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
 			} else if (kind == IPathEntry.CDT_CONTAINER) {
 				IContainerEntry container = (IContainerEntry) entries[i];
-				element.setAttribute(ATTRIBUTE_ID, container.getPath().toString());
+				element.setAttribute(ATTRIBUTE_PATH, container.getPath().toString());
 			}
 			if (entries[i].isExported()) {
 				element.setAttribute(ATTRIBUTE_EXPORTED, VALUE_TRUE);

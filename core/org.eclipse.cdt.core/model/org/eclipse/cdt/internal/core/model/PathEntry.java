@@ -60,8 +60,8 @@ public class PathEntry implements IPathEntry {
 
 		if (kindStr.equalsIgnoreCase("prj")) //$NON-NLS-1$
 			return IPathEntry.CDT_PROJECT;
-		if (kindStr.equalsIgnoreCase("var")) //$NON-NLS-1$
-			return IPathEntry.CDT_VARIABLE;
+		//if (kindStr.equalsIgnoreCase("var")) //$NON-NLS-1$
+		//	return IPathEntry.CDT_VARIABLE;
 		if (kindStr.equalsIgnoreCase("src")) //$NON-NLS-1$
 			return IPathEntry.CDT_SOURCE;
 		if (kindStr.equalsIgnoreCase("lib")) //$NON-NLS-1$
@@ -87,8 +87,8 @@ public class PathEntry implements IPathEntry {
 				return "src"; //$NON-NLS-1$
 			case IPathEntry.CDT_LIBRARY :
 				return "lib"; //$NON-NLS-1$
-			case IPathEntry.CDT_VARIABLE :
-				return "var"; //$NON-NLS-1$
+			//case IPathEntry.CDT_VARIABLE :
+			//	return "var"; //$NON-NLS-1$
 			case IPathEntry.CDT_INCLUDE :
 				return "inc"; //$NON-NLS-1$
 			case IPathEntry.CDT_MACRO :
@@ -116,9 +116,9 @@ public class PathEntry implements IPathEntry {
 			case IPathEntry.CDT_SOURCE :
 				buffer.append("CDT_SOURCE"); //$NON-NLS-1$
 				break;
-			case IPathEntry.CDT_VARIABLE :
-				buffer.append("CDT_VARIABLE"); //$NON-NLS-1$
-				break;
+			//case IPathEntry.CDT_VARIABLE :
+			//	buffer.append("CDT_VARIABLE"); //$NON-NLS-1$
+			//	break;
 			case IPathEntry.CDT_INCLUDE :
 				buffer.append("CDT_INCLUDE"); //$NON-NLS-1$
 				break;

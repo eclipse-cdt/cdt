@@ -406,14 +406,13 @@ public class CoreModel {
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
 	 * @param path
-	 *            the affected worksapce-relative resource path, the path
-	 *            can pe empty or null if it is exported
+	 *            the affected worksapce-relative resource path
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @return IIncludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath path, IPath includePath) {
-		return newIncludeEntry(path, includePath, false);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath) {
+		return newIncludeEntry(resourcePath, includePath, false);
 	}
 
 	/**
@@ -421,7 +420,6 @@ public class CoreModel {
 	 * 
 	 * @param path
 	 *            the affected workspace-relative resource path 
-	 *            or the path can be empty or null if it is exported
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
@@ -429,15 +427,15 @@ public class CoreModel {
 	 *            include path
 	 * @return IIncludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath path, IPath includePath, boolean isSystemInclude) {
-		return newIncludeEntry(path, includePath, isSystemInclude, true, IncludeEntry.NO_EXCLUSION_PATTERNS);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude) {
+		return newIncludeEntry(resourcePath, includePath, isSystemInclude, true, IncludeEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
 	 * @param path
-	 *            the affected workspace-relative resource path or null if global
+	 *            the affected workspace-relative resource path
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
@@ -450,9 +448,9 @@ public class CoreModel {
 	 *            exclusion patterns in the resource if a container
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath path, IPath includePath, boolean isSystemInclude, boolean isRecursive,
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude, boolean isRecursive,
 			IPath[] exclusionPatterns) {
-		return new IncludeEntry(path, includePath, isSystemInclude, isRecursive, exclusionPatterns);
+		return new IncludeEntry(resourcePath, includePath, isSystemInclude, isRecursive, exclusionPatterns);
 	}
 
 	/**

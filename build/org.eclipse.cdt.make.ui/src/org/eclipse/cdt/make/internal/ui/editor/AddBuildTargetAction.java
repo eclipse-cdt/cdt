@@ -97,7 +97,6 @@ public class AddBuildTargetAction extends Action {
 
 	public boolean canActionBeAdded(ISelection selection) {
 		ITargetRule[] rules = getTargetRules(selection);
-		boolean ok = false;
 		for (int i = 0; i < rules.length; i++) {
 			IFile file = getFile();
 			if (file == null)
@@ -128,7 +127,7 @@ public class AddBuildTargetAction extends Action {
 						targets.add(elements[i]);
 					}
 				}
-				return (ITargetRule[])list.toArray(EMPTY_TARGET_RULES);
+				return (ITargetRule[])targets.toArray(EMPTY_TARGET_RULES);
 			}
 		}
 		return EMPTY_TARGET_RULES;

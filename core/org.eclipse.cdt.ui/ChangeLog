@@ -1,5 +1,6 @@
 2004-06-17 Hoda Amer
 	Fix for PR 63933: [Refactoring] compilation errors does not prevent rename refactoring
+	Fix for PR 64213: [Refactoring] No warning given when renaming class A to B when B already exists
 	
 2004-06-16 Hoda Amer 
 	Fix for PR 66730: [Refactoring] Renaming a class does not change .cpp file.

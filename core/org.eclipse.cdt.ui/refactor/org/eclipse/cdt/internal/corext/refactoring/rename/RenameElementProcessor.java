@@ -12,10 +12,14 @@ package org.eclipse.cdt.internal.corext.refactoring.rename;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.IEnumerator;
@@ -28,6 +32,7 @@ import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -207,7 +212,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		}
 		
 		if (!(fCElement instanceof IFunctionDeclaration)){
-			if(checkSiblingsCollision().hasError()){
+			if(checkSiblingsCollision(true).hasError()){
 				String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
 						new String[]{fNewElementName, fCElement.getParent().getElementName()});
 				result.addFatalError(msg);		
@@ -301,7 +306,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			result.merge(checkEnclosedElements());
 			pm.worked(1);
 
-			result.merge(checkSiblingsCollision());
+			result.merge(checkSiblingsCollision(false));
 			pm.worked(1);
 			
 			if (result.hasFatalError())
@@ -580,18 +585,92 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		}
 		return null;
 	}
-	private RefactoringStatus checkSiblingsCollision() {		
+	
+	private boolean isTopLevelStructure(ICElement element){
+		if(element instanceof IStructure){
+			ICElement parent = element.getParent();
+			while (!(parent instanceof ITranslationUnit)){
+				if(parent instanceof IStructure)
+					return false;
+				parent = parent.getParent();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	private ICElement[] getSiblings(ICElement element, boolean localSiblings) throws CModelException{
+		// only for top level structures
+		if ((localSiblings) || (!isTopLevelStructure(element))){
+			ICElement[] siblings= ((IParent)fCElement.getParent()).getChildren();
+			return siblings;
+		}
+		else {
+			Set siblingsSet = new HashSet();
+			
+			ICElement parent = element.getParent();
+			int level = 1;
+			boolean folderIsFound = false;
+			while (!folderIsFound) {
+				if (parent instanceof ICContainer){
+					folderIsFound = true;
+					break;
+				}						
+				parent = parent.getParent();
+				level++;
+			}
+			// get siblings at level = level
+			Set parentsSet = new HashSet();
+			Set childrenSet = new HashSet();
+			ICElement[] pr =((IParent)parent).getChildren();
+			for (int i =0; i < pr.length; i++){
+				parentsSet.add(pr[i]);
+			}
+			int currentLevel = 1;
+			while (currentLevel < level) {
+				Iterator itr = parentsSet.iterator();
+				while (itr.hasNext()){
+					Object o = itr.next();
+					if((o instanceof ISourceManipulation) || (o instanceof ICContainer)){
+						ICElement p = (ICElement)o;
+						if(p instanceof IParent){
+							ICElement[] ch = ((IParent)p).getChildren();
+							for (int i = 0; i < ch.length; i++){
+								childrenSet.add(ch[i]);
+							}
+						}
+					}
+				}
+				currentLevel++;
+				if (currentLevel < level){
+					parentsSet.clear();
+					parentsSet.addAll(childrenSet);
+					childrenSet.clear();
+				}
+			}
+			return (ICElement[])childrenSet.toArray(new ICElement[childrenSet.size()]);	
+		}
+	}
+	
+	private RefactoringStatus checkSiblingsCollision(boolean localSiblings) {		
 		RefactoringStatus result= new RefactoringStatus();
 		try {
 			// get the siblings of the CElement and check if it has the same name
-			ICElement[] siblings= ((IParent)fCElement.getParent()).getChildren();
+			ICElement[] siblings = getSiblings(fCElement, localSiblings);
 			for (int i = 0; i <siblings.length; ++i ){
 				ICElement sibling = siblings[i];
 				if ((sibling.getElementName().equals(fNewElementName)) 
 						&& (sibling.getElementType() == fCElement.getElementType())  ) {
-					String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
-							new String[]{fNewElementName, fCElement.getParent().getElementName()});
-					result.addError(msg);
+					if(localSiblings){
+						String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
+								new String[]{fNewElementName, fCElement.getParent().getElementName()});
+						result.addError(msg);
+						
+					}else {
+						String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.global_member_type_exists", //$NON-NLS-1$
+								new String[]{fNewElementName, fCElement.getParent().getElementName()});
+						result.addError(msg);
+					}
 				}
 			}
 		} catch (CModelException e) {

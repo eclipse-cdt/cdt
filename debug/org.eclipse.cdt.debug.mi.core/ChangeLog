@@ -1,4 +1,8 @@
 2003-08-11 Mikhail Khodjaiants
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java:
+	The 'type' argument of the 'getVariableObjectAsArray' method shouldn't be null.
+ 
+2003-08-11 Mikhail Khodjaiants
 	* src/org/eclipse/cdt/debug/mi/core/cdi/variableManager.java
 	Mistype in the 'CheckType' method.
 

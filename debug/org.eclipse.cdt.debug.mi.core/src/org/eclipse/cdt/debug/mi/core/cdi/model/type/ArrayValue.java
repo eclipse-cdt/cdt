@@ -56,7 +56,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		ICDITarget target = getTarget();
 		Session session = (Session) (target.getSession());
 		ICDIVariableManager mgr = session.getVariableManager();
-		ICDIVariableObject vo = mgr.getVariableObjectAsArray(variable, null, index, length);
+		ICDIVariableObject vo = mgr.getVariableObjectAsArray(variable, variable.getTypeName(), index, length);
 		return mgr.createVariable(vo).getValue().getVariables();
 	}
 }

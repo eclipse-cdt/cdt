@@ -1,3 +1,10 @@
+2003-04-16 John Camelon
+	Added DOMTests::testBug36532().
+	Added DOMTests::testBug36432(). 
+	Added DOMTests::testBug36594().
+	Added DOMTests::testBug36600(). 
+	Added DOMTests::testArrayOfPointerToFunctions(). 
+
 2003-04-15 John Camelon
 	Added ScannerTestCase::testBug36434().
 	Added ScannerTestCase::testMultipleLines(). 

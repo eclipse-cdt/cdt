@@ -1,3 +1,9 @@
+2003-04-16 John Camelon
+	Fixed Bug36532  -   Hang on partial template definition.
+	Fixed Bug36432  -   Trying to open attached source code hangs Eclipse. 
+	Fixed Bug36594  -   Parser Stack Overflow on unaryExpression
+	Fixed Bug36600  -   Elaborated Enumerated Types Parse Incorrectly. 
+
 2003-04-15 John Camelon
 	Fixed bug36434 - Broken outline in winbase.h
 	Partial Fix for bug36379 - The parser to set Line informations when scanning.

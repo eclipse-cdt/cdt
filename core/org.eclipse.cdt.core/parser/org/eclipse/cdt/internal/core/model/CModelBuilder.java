@@ -38,6 +38,7 @@ import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.ITemplateParameterListOwner;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.Macro;
+import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
@@ -80,8 +81,16 @@ public class CModelBuilder {
 			System.out.println( "Parse Exception in Outline View" ); 
 			e.printStackTrace();
 		}
-		long startTime = System.currentTimeMillis(); 
-		generateModelElements(domBuilder.getTranslationUnit());
+		long startTime = System.currentTimeMillis();
+		try
+		{ 
+			generateModelElements(domBuilder.getTranslationUnit());
+		}
+		catch( NullPointerException npe )
+		{
+			System.out.println( "NullPointer exception generating CModel");
+			npe.printStackTrace();
+		}
 		System.out.println("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms" );
 		return this.newElements;
 	}
@@ -343,7 +352,10 @@ public class CModelBuilder {
 	
 	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
 		// create the element
-		String declaratorName = declarator.getName().toString();		
+		Name domName = ( declarator.getDeclarator() != null ) ? declarator.getDeclarator().getName() : 
+			declarator.getName(); 
+		String declaratorName = domName.toString();		
+			
 		TypeDef element = new TypeDef( parent, declaratorName );
 		String type = getType(simpleDeclaration, declarator);
 		element.setTypeName(type);
@@ -352,21 +364,21 @@ public class CModelBuilder {
 		parent.addChild((CElement)element);
 
 		// set positions
-		element.setIdPos(declarator.getName().getStartOffset(), declarator.getName().length());	
+		element.setIdPos(domName.getStartOffset(), domName.length());	
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;	
 	}
 
-	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){	
-		String declaratorName = declarator.getName().toString();
+	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
+		String variableName = declarator.getName().toString();  
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		
 		VariableDeclaration element = null;
 		if(parent instanceof IStructure){
 			// field
-			Field newElement = new Field( parent, declaratorName );
+			Field newElement = new Field( parent, variableName);
 			newElement.setMutable(declSpecifier.isMutable());			
 			newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
 			element = newElement;			
@@ -374,12 +386,12 @@ public class CModelBuilder {
 		else {
 			if(declSpecifier.isExtern()){
 				// variableDeclaration
-				VariableDeclaration newElement = new VariableDeclaration( parent, declaratorName );
+				VariableDeclaration newElement = new VariableDeclaration( parent, variableName );
 				element = newElement;
 			}
 			else {
 				// variable
-				Variable newElement = new Variable( parent, declaratorName );
+				Variable newElement = new Variable( parent, variableName );
 				element = newElement;				
 			}
 		}

@@ -632,7 +632,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
 	public Object enumSpecifierBegin(Object container, Token enumKey) {
-		SimpleDeclaration decl = (SimpleDeclaration)container;
+		TypeSpecifier.IOwner decl = (TypeSpecifier.IOwner)container;
 		EnumerationSpecifier es = new EnumerationSpecifier( decl );
 		es.setStartToken(enumKey);
 		decl.setTypeSpecifier(es);

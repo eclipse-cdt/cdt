@@ -1264,6 +1264,54 @@ public class DOMTests extends TestCase {
 		assertEquals( clause.getDeclarations().size(), 3 );
 	}
 	
+	public void testBug36532() throws Exception
+	{
+		try
+		{
+			TranslationUnit tu = parse( "template<int f() {\n" );
+			fail( "We should not make it this far");
+		}
+		catch( ParserException pe )
+		{
+		}
+		catch( Exception e )
+		{
+			fail( "We should have gotten a ParserException rather than" + e);
+		}
+	}
+
+	public void testBug36432() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "#define CMD_GET		\"g\"\n" ); 	 
+		code.write( "#define CMD_ACTION   	\"a\"\n" ); 	 
+		code.write( "#define CMD_QUIT		\"q\"\n" );
+		code.write( "static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n");
+		code.write( "memevent_get,\n");
+		code.write( "memevent_action,\n");
+		code.write( "memevent_quit,\n");
+		code.write( "};\n");
+		TranslationUnit tu = parse( code.toString() );
+		assertEquals( tu.getDeclarations().size(), 1 );
+	}
+	
+	public void testBug36594() throws Exception
+	{
+		TranslationUnit tu = parse( "const int n = sizeof(A) / sizeof(B);");
+		assertEquals( tu.getDeclarations().size(), 1 );
+	}
+	
+	public void testArrayOfPointerToFunctions() throws Exception
+	{
+		TranslationUnit tu = parse( "unsigned char (*main_data)[MAD_BUFFER_MDLEN];");
+	}
+	
+	public void testBug36600() throws Exception
+	{
+		TranslationUnit tu = parse( "enum mad_flow (*input_func)(void *, struct mad_stream *);");
+		
+	}
+	
 	public void testBug36247() throws Exception
 	{
 		Writer code = new StringWriter(); 

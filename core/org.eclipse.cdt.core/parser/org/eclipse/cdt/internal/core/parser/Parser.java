@@ -130,6 +130,7 @@ c, quick);
 		while (LT(1) != Token.tSEMI) {
 			consume();
 		}
+		consume();
 	}
 	
 	/**
@@ -340,6 +341,7 @@ c, quick);
 		} catch( Backtrack bt )
 		{
 			try { callback.templateDeclarationAbort( templateDeclaration ); } catch( Exception e ) {}
+			throw bt;
 		}
 	}
 
@@ -639,6 +641,7 @@ c, quick);
 	
 	protected void parameterDeclaration( Object containerObject ) throws Backtrack
 	{
+		Token current = LA(1);
 		Object parameterDecl = null;
 		try{ parameterDecl = callback.parameterDeclarationBegin( containerObject );} catch( Exception e ) {}
 		declSpecifierSeq( parameterDecl, true );
@@ -647,10 +650,13 @@ c, quick);
 			try {
 				Object declarator = initDeclarator(parameterDecl);
 				
+				
 			} catch (Backtrack b) {
 				// allowed to be empty
 			}
- 		 
+ 		
+		if( current == LA(1) )
+			throw backtrack; 
 		try{ callback.parameterDeclarationEnd( parameterDecl );} catch( Exception e ) {}
 		 
 	}
@@ -944,6 +950,7 @@ c, quick);
 	 */
 	protected Object initDeclarator( Object owner ) throws Backtrack {
 		Object declarator = declarator( owner );
+		
 			
 		// handle = initializerClause
 		if (LT(1) == Token.tASSIGN) {
@@ -1347,6 +1354,7 @@ c, quick);
 	protected void enumSpecifier( Object owner ) throws Backtrack
 	{
 		Object enumSpecifier = null;
+		Token mark = mark(); 
 		try{ enumSpecifier = callback.enumSpecifierBegin( owner, consume( Token.t_enum ) );} catch( Exception e ) {}
 
 		if( LT(1) == Token.tIDENTIFIER )
@@ -1402,6 +1410,7 @@ c, quick);
 		else
 		{
 			// enumSpecifierAbort
+			backup(mark);
 			throw backtrack; 
 		}
 
@@ -2008,8 +2017,9 @@ c, quick);
 				try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 				return;
 			case Token.t_sizeof:
+				consume(Token.t_sizeof);
 				if (LT(1) == Token.tLPAREN) {
-					consume();
+					consume( Token.tLPAREN );	
 					typeId();
 					consume(Token.tRPAREN);
 				} else {

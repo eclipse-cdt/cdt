@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.parser.Token;
  */
 public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 	
-	public EnumerationSpecifier(SimpleDeclaration declaration) {
+	public EnumerationSpecifier(IOwner declaration) {
 		super(declaration);
 	}
 	

@@ -1,3 +1,7 @@
+2004-02-20 Mikhail Khodjaiants
+	Fire the "suspend" event when the target is suspended because of an error.
+	* CDebugTarget.java
+
 2004-02-17 Mikhail Khodjaiants
 	Reset the current thread flag when resume.
 	* CThread.java

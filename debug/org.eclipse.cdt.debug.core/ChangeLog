@@ -1,3 +1,7 @@
+2005-02-03 Mikhail Khodjaiants
+	Fix for bug 84187: "Toggle Watchpoint" and "Toggle Method Breakpoint" don't work with C editor.
+	* CDIDebugModel.java
+
 2005-02-02 Mikhail Khodjaiants
 	Fix for bug 84187: "Toggle Watchpoint" and "Toggle Method Breakpoint" don't work with C editor.
 	Added new "createWatchpoint" method that accepts position information.

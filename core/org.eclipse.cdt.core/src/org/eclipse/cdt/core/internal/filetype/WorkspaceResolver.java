@@ -31,11 +31,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 
 /**
+ * The new CFileTypeAssociations are save in a property String
+ * The removed CFileTypeAssociations are save in a property String
+ * 
  */
 public class WorkspaceResolver extends CFileTypeResolver {
 
-	public static final String PREFS_ASSOCIATIONS_INCLUSION = CCorePlugin.PLUGIN_ID + ".associationInclusion";
-	public static final String PREFS_ASSOCIATIONS_EXCLUSION = CCorePlugin.PLUGIN_ID + ".associationExclusion";
+	public static final String PREFS_ASSOCIATIONS_INCLUSION = CCorePlugin.PLUGIN_ID + ".associationInclusion"; //$NON-NLS-1$
+	public static final String PREFS_ASSOCIATIONS_EXCLUSION = CCorePlugin.PLUGIN_ID + ".associationExclusion"; //$NON-NLS-1$
 
 	ResolverModel fModel;
 	List extensionsList;
@@ -77,6 +80,10 @@ public class WorkspaceResolver extends CFileTypeResolver {
 		}
 
 		// add
+		// For adding we have to
+		//  - check if the association was define in an extension
+		//     if yes make sure we remove in the inclusion list
+		//     if not add as a new association in the inclusion list
 		if (null != addAssocs && addAssocs.length > 0) {
 			List newIncList = new ArrayList();
 			List newExcList = new ArrayList();
@@ -103,6 +110,10 @@ public class WorkspaceResolver extends CFileTypeResolver {
 		}
 
 		// remove
+		// For removing we have to
+		//  - check if the association was define in an extension
+		//     if yes make sure we remove in the exclusion list
+		//     if not remove in the inclusion list
 		if (null != delAssocs && delAssocs.length > 0) {
 			List newIncList = new ArrayList();
 			List newExcList = new ArrayList();
@@ -188,7 +199,7 @@ public class WorkspaceResolver extends CFileTypeResolver {
 				sb.append(';');
 			}
 			sb.append(addAssocs[i].getPattern());
-			sb.append("!!"); //$NON-NLS-1
+			sb.append("!!"); //$NON-NLS-1$
 			sb.append(addAssocs[i].getType().getId());
 		}
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
@@ -222,7 +233,7 @@ public class WorkspaceResolver extends CFileTypeResolver {
 				sb.append(';');
 			}
 			sb.append(addAssocs[i].getPattern());
-			sb.append("!!"); //$NON-NLS-1
+			sb.append("!!"); //$NON-NLS-1$
 			sb.append(addAssocs[i].getType().getId());
 		}
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();

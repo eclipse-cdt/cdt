@@ -231,6 +231,7 @@ public class ResolverProcessor  {
 						return new ICElement[] { cprojects[i] };
 					}
 				}
+				return CElement.NO_ELEMENTS;
 			}
 			// Assume a workspace resolver
 			List list = new ArrayList(cprojects.length);

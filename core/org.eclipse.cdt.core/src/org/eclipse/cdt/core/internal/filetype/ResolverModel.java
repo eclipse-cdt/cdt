@@ -79,7 +79,7 @@ public class ResolverModel implements IResolverModel {
 	private Map fTypeMap = new HashMap();
 
 	// Default resolver
-	private ICFileTypeResolver fDefaultResolver = null;
+	private ICFileTypeResolver fWorkspaceResolver = null;
 
 	// XML tag names, etc.
 	private static final String EXTENSION_LANG	= "CLanguage"; //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class ResolverModel implements IResolverModel {
 			loadDeclaredLanguages();
 			loadDeclaredTypes();
 			
-			fDefaultResolver = loadDefaultResolver();
+			fWorkspaceResolver = loadWorkspaceResolver();
 			convertFrom20();
 			
 			initRegistryChangeListener();
@@ -224,7 +224,7 @@ public class ResolverModel implements IResolverModel {
 	}
 
 	public ICFileTypeResolver getResolver() {
-		return fDefaultResolver;
+		return fWorkspaceResolver;
 	}
 
 	public boolean hasCustomResolver(IProject project) {
@@ -426,7 +426,7 @@ public class ResolverModel implements IResolverModel {
 		if (property != null) {
 			if (WorkspaceResolver.PREFS_ASSOCIATIONS_EXCLUSION.equals(property) ||
 					WorkspaceResolver.PREFS_ASSOCIATIONS_INCLUSION.equals(property)) {
-				fDefaultResolver = loadDefaultResolver();
+				fWorkspaceResolver = loadWorkspaceResolver();
 			}
 		}
 	}
@@ -447,8 +447,7 @@ public class ResolverModel implements IResolverModel {
 		
 		deltas = event.getExtensionDeltas(CCorePlugin.PLUGIN_ID, EXTENSION_ASSOC);			
 		if (deltas.length != 0) {
-			fDefaultResolver	= loadDefaultResolver();
-			//fWkspResolver		= loadWorkspaceResolver();
+			fWorkspaceResolver	= loadWorkspaceResolver();
 		}
 		
 		fireEvent(modelEvent);
@@ -639,7 +638,7 @@ public class ResolverModel implements IResolverModel {
 	 * Initialize the default resolver by loading data from
 	 * declared extension points.
 	 */
-	private ICFileTypeResolver loadDefaultResolver() {
+	private ICFileTypeResolver loadWorkspaceResolver() {
 		return new WorkspaceResolver(this);
 	}
 
@@ -651,7 +650,7 @@ public class ResolverModel implements IResolverModel {
 
 	private void convertFrom20() {
 		if (customWorkspaceResolverExists()) {
-			ICFileTypeAssociation[] assocs = loadWorkspaceResolver();
+			ICFileTypeAssociation[] assocs = loadOldWorkspaceResolver();
 			if (assocs != null && assocs.length > 0) {
 				getResolver().addAssociations(assocs);
 			}
@@ -671,7 +670,7 @@ public class ResolverModel implements IResolverModel {
 		return CCorePlugin.getDefault().getStateLocation().append(WKSP_STATE_FILE);
 	}
 
-	private ICFileTypeAssociation[] loadWorkspaceResolver() {
+	private ICFileTypeAssociation[] loadOldWorkspaceResolver() {
 		List				assocs		= new ArrayList();
 		File				file		= getWorkspaceResolverStateFilePath().toFile();
 		

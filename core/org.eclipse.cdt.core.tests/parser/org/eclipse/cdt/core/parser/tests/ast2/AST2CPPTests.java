@@ -737,5 +737,29 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue( ((IPointerType) ft.getReturnType()).getType() instanceof IFunctionType );
         assertEquals( ft.getParameterTypes().length, 1 );
     }
+      
+    public void testFunctionDeclarations() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("typedef int Int;      \n"); //$NON-NLS-1$
+        buffer.append("void f( int i );      \n"); //$NON-NLS-1$
+        buffer.append("void f( const int );  \n"); //$NON-NLS-1$
+        buffer.append("void f( Int i );      \n"); //$NON-NLS-1$
+        buffer.append("void g( char * );     \n"); //$NON-NLS-1$
+        buffer.append("void g( char [] );    \n"); //$NON-NLS-1$
+        buffer.append("void h( int()() );    \n"); //$NON-NLS-1$
+        buffer.append("void h( int (*) () ); \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		IFunction f = (IFunction) collector.getName( 1 ).resolveBinding();
+		IFunction g = (IFunction) collector.getName( 8 ).resolveBinding();
+		IFunction h = (IFunction) collector.getName( 12 ).resolveBinding();
+		
+		assertInstances( collector, f, 3 );
+		assertInstances( collector, g, 2 );
+		assertInstances( collector, h, 2 );
+    }
 }
 

@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+
 /**
  * Represents the relationship between a class and one of its base classes.
  * 
@@ -32,9 +34,9 @@ public interface ICPPBase {
 	 */
 	public int getVisibility();
 	
-	public static final int v_private = 1;
-	public static final int v_protected = 2;
-	public static final int v_public = 3;
+	public static final int v_private = ICPPASTBaseSpecifier.v_private;
+	public static final int v_protected = ICPPASTBaseSpecifier.v_protected;
+	public static final int v_public = ICPPASTBaseSpecifier.v_public;
 
 	/**
 	 * Whether this is a virtual base class.

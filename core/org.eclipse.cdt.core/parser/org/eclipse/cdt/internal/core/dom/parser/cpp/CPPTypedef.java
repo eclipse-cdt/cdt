@@ -35,6 +35,16 @@ public class CPPTypedef implements ITypedef, ITypeContainer {
 		// TODO Auto-generated constructor stub
 	}
 
+    public boolean equals( Object o ){
+	    if( o instanceof ITypedef )
+	        return getType().equals( ((ITypedef)o).getType());
+	    
+	    if( !( o instanceof IType ) ) 
+	        return false;
+	    
+	    return getType().equals( o );
+	}
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */

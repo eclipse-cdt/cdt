@@ -65,6 +65,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -90,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -204,9 +206,10 @@ public class CPPVisitor {
 			ICPPASTNamespaceDefinition namespaceDef = (ICPPASTNamespaceDefinition) declaration;
 			ICPPScope scope = (ICPPScope) getContainingScope( namespaceDef );
 			CPPNamespace binding = (CPPNamespace) scope.getBinding( namespaceDef.getName() );
-			if( binding == null )
+			if( binding == null ){
 				binding = new CPPNamespace( namespaceDef );
-			else
+				scope.addBinding( binding );
+			} else
 				binding.addDefinition( namespaceDef );
 			return binding;
 		} else if( declaration instanceof ICPPASTUsingDirective ){
@@ -842,17 +845,12 @@ public class CPPVisitor {
 	        //so only create the base type from the declspec and not the qualifiers
 	        pt = getBaseType( pDeclSpec );
 	        
-	        pt = getPointerTypes( pt, pDtor );
+	        pt = createType( pt, pDtor );
 	        
 	        //any parameter of type array of T is adjusted to be pointer to T
-	        if( pDtor instanceof IASTArrayDeclarator ){
-	            IASTArrayModifier [] mods = ((IASTArrayDeclarator)pDtor).getArrayModifiers();
-	    	    for( int j = 0; j < mods.length - 1; j++ ){
-	    	        pt = new CPPArrayType( pt );
-	    	    }
-	    	    if( mods.length > 0 ){
-	    	        pt = new CPPPointerType( pt );
-	    	    }
+	        if( pt instanceof IArrayType ){
+	            IArrayType at = (IArrayType) pt;
+	            pt = new CPPPointerType( at.getType() );
 	        }
 	        
 	        //any parameter to type function returning T is adjusted to be pointer to function
@@ -895,7 +893,10 @@ public class CPPVisitor {
 	private static IType getPointerTypes( IType type, IASTDeclarator declarator ){
 	    IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
 		for( int i = ptrOps.length - 1; i >= 0; i-- ){
-			type = new CPPPointerType( type, (IASTPointer) ptrOps[i] );
+		    if( ptrOps[i] instanceof IASTPointer )
+		        type = new CPPPointerType( type, (IASTPointer) ptrOps[i] );
+		    else if( ptrOps[i] instanceof ICPPASTReferenceOperator )
+		        type = new CPPReferenceType( type );
 		}
 		return type;
 	}

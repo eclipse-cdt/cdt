@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
@@ -40,6 +41,18 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 		this.type = type;
 	}
 
+	public boolean equals( Object o ){
+	    if( o instanceof ITypedef )
+	        return o.equals( this );
+	    if( !( o instanceof CPPPointerType ) ) 
+	        return false;
+	    
+	    CPPPointerType pt = (CPPPointerType) o;
+	    if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() )
+	        return type.equals( pt.getType() );
+	    return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#getType()
 	 */

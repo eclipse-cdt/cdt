@@ -284,10 +284,26 @@ public class CPPSemantics {
 		return data;
 	}
 
+	static private ICPPScope getLookupScope( IASTName name ){
+	    IASTNode parent = name.getParent();
+	    
+	    if( parent instanceof IASTDeclSpecifier ){
+	        IASTNode node = parent.getParent();
+	        if( node instanceof IASTParameterDeclaration ){
+	            IASTNode n = CPPVisitor.getContainingBlockItem( parent );
+		        return (ICPPScope) CPPVisitor.getContainingScope( n );
+	        }
+	    } else if( parent instanceof ICPPASTBaseSpecifier ) {
+	        IASTNode n = CPPVisitor.getContainingBlockItem( parent );
+	        return (ICPPScope) CPPVisitor.getContainingScope( n );
+	    } 
+	    return (ICPPScope) CPPVisitor.getContainingScope( name );
+	}
+	
 	static private void lookup( CPPSemantics.LookupData data, IASTName name ){
 		IASTNode node = name; 
 		
-		ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( node );		
+		ICPPScope scope = getLookupScope( name );		
 		while( scope != null ){
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
 			if( scope.getPhysicalNode() != blockItem.getParent() )

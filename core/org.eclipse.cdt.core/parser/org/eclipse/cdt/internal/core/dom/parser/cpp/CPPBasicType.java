@@ -34,6 +34,9 @@ public class CPPBasicType implements ICPPBasicType {
 	}
 
 	public boolean equals( Object object ) {
+	    if( object instanceof CPPTypedef )
+	        return object.equals( this );
+	    
 		if( !(object instanceof CPPBasicType) )
 			return false;
 		

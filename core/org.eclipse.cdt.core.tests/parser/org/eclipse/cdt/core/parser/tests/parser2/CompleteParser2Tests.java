@@ -12,10 +12,30 @@ package org.eclipse.cdt.core.parser.tests.parser2;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -29,6 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguratio
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
@@ -45,7 +66,32 @@ public class CompleteParser2Tests extends TestCase {
 
     private static final NullLogService NULL_LOG = new NullLogService();
     
+    static private class CPPNameCollector extends CPPVisitor.CPPBaseVisitorAction {
+        {
+            processNames = true;
+        }
+        public List nameList = new ArrayList();
+        public boolean processName( IASTName name ){
+            nameList.add( name );
+            return true;
+        }
+        public IASTName getName( int idx ){
+            if( idx < 0 || idx >= nameList.size() )
+                return null;
+            return (IASTName) nameList.get( idx );
+        }
+        public int size() { return nameList.size(); } 
+    }
 
+    protected void assertInstances( CPPNameCollector nameCollector, IBinding binding, int num ) throws Exception {
+        int count = 0;
+        for( int i = 0; i < nameCollector.size(); i++ )
+            if( nameCollector.getName( i ).resolveBinding() == binding )
+                count++;
+        
+        assertEquals( count, num );
+    }
+    
     protected IASTTranslationUnit parse(String code, boolean expectedToPass,
             ParserLanguage lang) throws Exception {
         return parse(code, expectedToPass, lang, false);
@@ -116,87 +162,283 @@ public class CompleteParser2Tests extends TestCase {
     
     public void testSimpleNamespace() throws Exception
     {
-    	parse( "namespace A { }").getDeclarations(); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( "namespace A { }"); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 1 );
+		assertTrue( col.getName(0).resolveBinding() instanceof ICPPNamespace );
     }
 
 	public void testMultipleNamespaceDefinitions() throws Exception
 	{
-		parse( "namespace A { } namespace A { }"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "namespace A { } namespace A { }"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 2 );
+		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+		assertInstances( col, A, 2 );
 	}
 
     public void testNestedNamespaceDefinitions() throws Exception
     {
-		parse( "namespace A { namespace B { } }"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( "namespace A { namespace B { } }"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 2 );
+		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+		ICPPNamespace B = (ICPPNamespace) col.getName(1).resolveBinding();
+		
+		assertSame( A.getNamespaceScope(), B.getNamespaceScope().getParent() );
     }
     
     public void testEmptyClassDeclaration() throws Exception
     {
-    	parse( "class A { };"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( "class A { };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 1 );
+		assertTrue( col.getName(0).resolveBinding() instanceof ICPPClassType );
     }
     
     public void testSimpleSubclass() throws Exception
     {
-    	parse( "class A { };  class B : public A { };"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( "class A { };  class B : public A { };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 3 );
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
+		
+		assertInstances( col, A, 2 );
+		
+		assertEquals( B.getBases().length, 1 );
+		ICPPBase base = B.getBases()[0];
+		assertSame( base.getBaseClass(), A );
+		assertEquals( base.getVisibility(), ICPPBase.v_public );
+		assertFalse( base.isVirtual() );
     }
     
     public void testNestedSubclass() throws Exception
     {
-    	parse( "namespace N { class A { }; } class B : protected virtual N::A { };"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( "namespace N { class A { }; } class B : protected virtual N::A { };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 6 );
+		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
+		ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
+		ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+		
+		assertInstances( col, N, 2 );
+		assertInstances( col, A, 3 );
+		assertInstances( col, B, 1 );
+		
+		assertSame( A.getScope(), N.getNamespaceScope() );
+		
+		ICPPBase base = B.getBases()[0];
+		assertSame( base.getBaseClass(), A );
+		assertTrue( base.isVirtual() );
+		assertEquals( base.getVisibility(), ICPPBase.v_protected );
     }
     
     public void testSimpleVariable() throws Exception
     {
-    	parse( "int x;"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( "int x;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 1 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		
+ 		assertTrue( x.getType() instanceof IBasicType );
+ 		IBasicType t = (IBasicType) x.getType();
+ 		assertEquals( t.getType(), IBasicType.t_int );
     }
     
 	public void testSimpleClassReferenceVariable() throws Exception
 	{
-		parse( "class A { }; A x;"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class A { }; A x;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(2).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertSame( x.getType(), A );
 	}
     
 	public void testNestedClassReferenceVariable() throws Exception
 	{
-		parse( "namespace N { class A { }; } N::A x;"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "namespace N { class A { }; } N::A x;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 6 );
+ 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
+ 		IVariable x =  (IVariable) col.getName(5).resolveBinding();
+ 		
+ 		assertInstances( col, N, 2 );
+ 		assertInstances( col, A, 3 );
+ 		assertSame( x.getType(), A );
+ 		assertSame( A.getScope(), N.getNamespaceScope() );
 	}
 	
 	public void testMultipleDeclaratorsVariable() throws Exception
 	{
-		parse( "class A { }; A x, y, z;"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class A { }; A x, y, z;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(2).resolveBinding();
+ 		IVariable y = (IVariable) col.getName(3).resolveBinding();
+ 		IVariable z = (IVariable) col.getName(4).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertSame( A, x.getType() );
+ 		assertSame( x.getType(), y.getType() );
+ 		assertSame( y.getType(), z.getType() );
 	}
 	
 	public void testSimpleField() throws Exception
 	{
-		parse( "class A { double x; };"); //$NON-NLS-1$
-	}
+	    IASTTranslationUnit tu = parse( "class A { double x; };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 2 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPField x = (ICPPField) col.getName(1).resolveBinding();
+ 		
+ 		assertSame( x.getScope(), A.getCompositeScope() );
+ 		List fields = A.getFields();
+ 		assertEquals( fields.size(), 1 );
+ 		assertSame( fields.get(0), x );
+ 	}
 	
 	public void testUsingClauses() throws Exception
 	{
-		parse( "namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n using namespace A::B;\n using A::B::x;using A::B::C;using A::B::C::y;"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n using namespace A::B;\n using A::B::x;using A::B::C;using A::B::C::y;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 21 );
+ 		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		ICPPNamespace B = (ICPPNamespace) col.getName(1).resolveBinding();
+ 		IVariable x =  (IVariable) col.getName(2).resolveBinding();
+ 		ICPPClassType C =  (ICPPClassType) col.getName(3).resolveBinding();
+ 		ICPPField y = (ICPPField) col.getName(4).resolveBinding();
+ 		
+ 		assertInstances( col, A, 5 );
+ 		assertInstances( col, B, 6 );
+ 		assertInstances( col, x, 3 );
+ 		assertInstances( col, C, 4 );
+ 		assertInstances( col, y, 3 );
 	}
 	
 	public void testEnumerations() throws Exception
 	{
-		parse( "namespace A { enum E { e1, e2, e3 }; E varE;}"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "namespace A { enum E { e1, e2, e3 }; E varE;}"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 7 );
+ 		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		IEnumeration E = (IEnumeration) col.getName(1).resolveBinding();
+ 		IEnumerator e1 = (IEnumerator) col.getName(2).resolveBinding();
+ 		IEnumerator e2 = (IEnumerator) col.getName(3).resolveBinding();
+ 		IEnumerator e3 = (IEnumerator) col.getName(4).resolveBinding();
+ 		IVariable varE = (IVariable) col.getName(6).resolveBinding();
+ 		
+ 		assertInstances( col, E, 2 );
+ 		assertSame( E.getScope(), A.getNamespaceScope() );
+ 		assertSame( e1.getScope(), A.getNamespaceScope() );
+ 		assertNotNull( e2 );
+ 		assertNotNull( e3 );
+ 		assertNotNull( varE );
 	}
 	
 	public void testSimpleFunction() throws Exception
 	{
-		parse( "void foo( void );"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "void foo( void );"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 2 );
+ 		IFunction foo = (IFunction) col.getName(0).resolveBinding();
+ 		IParameter p =  (IParameter) col.getName(1).resolveBinding();
+ 		
+ 		assertEquals( foo.getParameters().size(), 1 );
+ 		assertSame( foo.getParameters().get(0), p );
+ 		assertSame( p.getScope(), foo.getFunctionScope() );
 	}
 	
 	public void testSimpleFunctionWithTypes() throws Exception
 	{
-		parse( "class A { public: \n class B { }; }; const A::B &  foo( A * myParam );"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class A { public: \n class B { }; }; const A::B &  foo( A * myParam );"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 8 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
+ 		IFunction foo = (IFunction) col.getName(5).resolveBinding();
+ 		IParameter p = (IParameter) col.getName(7).resolveBinding();
+ 		
+ 		assertInstances( col, A, 3 );
+ 		assertInstances( col, B, 3 );
+ 		
+ 		IFunctionType ftype = foo.getType();
+ 		assertTrue( ftype.getReturnType() instanceof ICPPReferenceType );
+ 		ICPPReferenceType rt = (ICPPReferenceType) ftype.getReturnType();
+ 		assertTrue( rt.getType() instanceof IQualifierType );
+ 		assertSame( ((IQualifierType)rt.getType()).getType(), B );
+ 		
+ 		IType pt = ftype.getParameterTypes()[0];
+ 		assertEquals( p.getType(), pt );
+ 		assertTrue( pt instanceof IPointerType );
+ 		assertSame( ((IPointerType) pt).getType(), A );
 	}
 	
 	public void testSimpleMethod() throws Exception
 	{
-		parse( "class A { void foo(); };"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class A { void foo(); };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 2 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPMethod foo = (ICPPMethod) col.getName(1).resolveBinding();
+ 		
+ 		assertSame( foo.getScope(), A.getCompositeScope() );
 	}
 	
 	public void testSimpleMethodWithTypes() throws Exception
 	{
-		parse( "class U { }; class A { U foo( U areDumb ); };"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class U { }; class A { U foo( U areDumb ); };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 6 );
+ 		ICPPClassType U = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
+ 		ICPPMethod foo = (ICPPMethod) col.getName(3).resolveBinding();
+ 		IParameter p = (IParameter) col.getName(5).resolveBinding();
+ 		
+ 		assertInstances( col, U, 3 );
+ 		assertSame( foo.getScope(), A.getCompositeScope() );
+ 		IFunctionType ft = foo.getType();
+ 		assertSame( ft.getReturnType(), U );
+ 		assertSame( p.getType(), U );
 	}
 	
 	public void testUsingDeclarationWithFunctionsAndMethods() throws Exception

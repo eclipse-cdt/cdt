@@ -55,6 +55,11 @@ public interface ICDIThread extends ICDIObject {
 	void setCurrentStackFrame(ICDIStackFrame current) throws CDIException;
 
 	/**
+	 * Set the current stackframe.
+	 * @return ICDIStackFrame
+	 */
+	ICDIStackFrame getCurrentStackFrame() throws CDIException;
+	/**
 	 * Returns whether this thread is currently suspended.
 	 *
 	 * @return whether this thread is currently suspended
@@ -138,4 +143,5 @@ public interface ICDIThread extends ICDIObject {
 	 * Returns true if the threads are the same.
 	 */
 	boolean equals(ICDIThread thead);
+
 }

@@ -2554,7 +2554,7 @@ public final class Scanner implements IScanner, IScannerData {
 		// TODO John HELP!  something has changed.   If I turn this to true, My tests finish early (but the JUnits pass!)
 		IScannerContext context = new ScannerContextTopString(expression, EXPRESSION, ';', true);
 		contextStack.cs_push(context);
-
+		IToken previousToken = currentToken;
 		ISourceElementRequestor savedRequestor =  requestor;
 		IParserLogService savedLog = log;
 		log = NULL_LOG_SERVICE;
@@ -2581,6 +2581,9 @@ public final class Scanner implements IScanner, IScannerData {
 		} catch (EndOfFileException e) {
 				return false;
 		} finally {
+			currentToken = previousToken;
+			if( currentToken != null )
+				currentToken.setNext( null );
 			contextStack.cs_pop();
 			requestor = savedRequestor;
 			passOnToClient = savedPassOnToClient;
@@ -2712,6 +2715,7 @@ public final class Scanner implements IScanner, IScannerData {
 			throw INCLUSION_PARSE_EXCEPTION ;
 		
 		ISourceElementRequestor savedRequestor = requestor;
+		IToken previousToken = currentToken;
 		try
 		{
 			IScannerContext context = new ScannerContextTopString( includeLine, "INCLUDE", true );  //$NON-NLS-1$
@@ -2785,6 +2789,9 @@ public final class Scanner implements IScanner, IScannerData {
 		{
 			throw INCLUSION_PARSE_EXCEPTION ;
 		} finally {
+			currentToken = previousToken;
+			if( currentToken != null )
+				currentToken.setNext( null );
 			contextStack.cs_pop();
 			requestor = savedRequestor;
 			disableMacroExpansion = false;
@@ -2886,6 +2893,7 @@ public final class Scanner implements IScanner, IScannerData {
 		contextStack.cs_push(context);
 		ISourceElementRequestor savedRequestor =  requestor;
 		IParserLogService savedLog = log;
+		IToken previousToken = currentToken;
 		
 		setTokenizingMacroReplacementList( true );
 		disableMacroExpansion = true;
@@ -2959,6 +2967,9 @@ public final class Scanner implements IScanner, IScannerData {
 			return result;
 		}
 		finally {
+			currentToken = previousToken;
+			if( currentToken != null )
+				currentToken.setNext( null );
 			contextStack.cs_pop();
 			setTokenizingMacroReplacementList( false );
 			requestor = savedRequestor;
@@ -3193,7 +3204,7 @@ public final class Scanner implements IScanner, IScannerData {
 		IParserLogService savedLog = log;
 		log = NULL_LOG_SERVICE;
 		requestor = NULL_REQUESTOR;
-		
+		IToken previousToken = currentToken;
 		
         Vector parameterValues = new Vector();
 		for (int i = 0; i < parameters.size(); i++) {
@@ -3244,6 +3255,9 @@ public final class Scanner implements IScanner, IScannerData {
 	            parameterValues.add(strBuff2.toString());
 	        }
 		}
+		currentToken = previousToken;
+		if( currentToken != null )
+			currentToken.setNext( null );
 		setThrowExceptionOnBadCharacterRead(true);
 		requestor = savedRequestor;
 		log = savedLog;

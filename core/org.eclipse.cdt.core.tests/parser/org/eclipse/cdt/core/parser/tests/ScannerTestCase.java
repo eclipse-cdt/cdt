@@ -1680,4 +1680,40 @@ public class ScannerTestCase extends BaseScannerTest
     	validateEOF();
     	assertEquals( ((Scanner)scanner).getBranchTracker().getDepth(), 0 );
     }
+    
+    public void test68229() throws Exception{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define COUNT 0     \n" ); //$NON-NLS-1$
+    	writer.write( "1                   \n" ); //$NON-NLS-1$
+    	writer.write( "#if COUNT           \n" ); //$NON-NLS-1$
+    	writer.write( "   2                \n" ); //$NON-NLS-1$
+    	writer.write( "#endif              \n" ); //$NON-NLS-1$
+    	writer.write( "3                   \n" ); //$NON-NLS-1$
+
+    	initializeScanner( writer.toString() );
+    	
+    	IToken t1 = scanner.nextToken();
+    	IToken t3 = scanner.nextToken();
+
+    	assertEquals( t1.getImage(), "1" ); //$NON-NLS-1$
+    	assertEquals( t3.getImage(), "3" ); //$NON-NLS-1$
+    	assertEquals( t1.getNext(), t3 );
+    	validateEOF();
+    	
+    	writer = new StringWriter();
+    	writer.write( "#define FOO( x ) x   \n" ); //$NON-NLS-1$
+    	writer.write( "1  FOO( 2 )  3       \n" ); //$NON-NLS-1$
+    	
+    	initializeScanner( writer.toString() );
+    	t1 = scanner.nextToken();
+    	IToken t2 = scanner.nextToken();
+    	t3 = scanner.nextToken();
+    	validateEOF();
+    	
+    	assertEquals( t1.getImage(), "1" ); //$NON-NLS-1$
+    	assertEquals( t2.getImage(), "2" ); //$NON-NLS-1$
+    	assertEquals( t3.getImage(), "3" ); //$NON-NLS-1$
+    	
+    	assertEquals( t1.getNext(), t2 );
+    }
 }

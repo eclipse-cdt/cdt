@@ -18,7 +18,7 @@ import org.eclipse.debug.core.IStatusHandler;
  */
 public class CDebugUtils
 {
-	public static boolean confirm( IStatus status, Object source )
+	public static boolean question( IStatus status, Object source )
 	{
 		Boolean result = new Boolean( false );
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler( status );

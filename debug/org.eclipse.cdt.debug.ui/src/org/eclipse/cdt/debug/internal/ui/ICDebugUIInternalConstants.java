@@ -15,13 +15,6 @@ package org.eclipse.cdt.debug.internal.ui;
 public interface ICDebugUIInternalConstants
 {
 	/*
-	 * Status handler codes.
-	 */
-	public static final int STATUS_CODE_CONFIRM = 10000;
-	public static final int STATUS_CODE_INFO = 10001;
-	public static final int STATUS_CODE_ERROR = 10002;
-
-	/*
 	 * Memory view constants.
 	 */
 	public static final int MEMORY_SIZE_BYTE = 1;

@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.core;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -14,6 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -115,22 +117,14 @@ public class CDebugModel
 		catch( CoreException e )
 		{
 			CDebugCorePlugin.log( e );
-			// throw DebugException
+			throw new DebugException( e.getStatus() );
 		}
 
 		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
 
 		if ( config.supportsBreakpoints() && stopInMain )
 		{
-			ICDILocation location = cdiTarget.getSession().getBreakpointManager().createLocation( "", "main", 0 );
-			try
-			{
-				((CDebugTarget)target[0]).setInternalTemporaryBreakpoint( location );
-			}
-			catch( DebugException e )
-			{
-				CDebugUtils.confirm( e.getStatus(), e );
-			}
+			stopInMain( (CDebugTarget)target[0] );
 		}
 
 		if ( config.supportsResume() )
@@ -292,5 +286,32 @@ public class CDebugModel
 			}
 		}
 		return null;
+	}
+	
+	private static void stopInMain( CDebugTarget target ) throws DebugException
+	{
+		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "xxxxmain", 0 );
+		try
+		{
+			target.setInternalTemporaryBreakpoint( location );
+		}
+		catch( DebugException e )
+		{
+			String message = MessageFormat.format( "Unable to set temporary breakpoint in main.\nReason: {0}\nContinue?", new String[] { e.getStatus().getMessage() } );
+			IStatus newStatus = new Status( IStatus.WARNING, 
+											e.getStatus().getPlugin(), 
+											ICDebugInternalConstants.STATUS_CODE_QUESTION, 
+											message,
+											null );
+			if ( !CDebugUtils.question( newStatus, target ) )
+			{
+				target.terminate();
+				throw new DebugException( new Status( IStatus.OK, 
+													  e.getStatus().getPlugin(),
+													  e.getStatus().getCode(),
+													  e.getStatus().getMessage(),
+													  null ) );
+			}
+		}
 	}
 }

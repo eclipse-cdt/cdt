@@ -241,7 +241,8 @@ public class CDebugTarget extends CDebugElement
 	}
 
 	/**
-	 * Adds all of the pre-existing threads to this debug target.  
+	 * Adds all of the pre-existing threads to this debug target.
+	 * 
 	 */
 	protected void initializeState()
 	{
@@ -252,7 +253,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			internalError( e );
+			// ignore
 		}
 		for ( int i = 0; i < threads.length; ++i )
 			createRunningThread( threads[i] );

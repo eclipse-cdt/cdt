@@ -1,3 +1,8 @@
+2003-10-27 Mikhail Khodjaiants
+	Changed the 'getAdapter' method of 'CSourceManager' to return the adapter of 
+	the 'ICSourceLocator' class.
+	* CSourceManager.java
+
 2003-10-26 Mikhail Khodjaiants
 	Fix for PR 45534: gdb/MI error in retrieving a register can lead to an empty register pane.
 	* CRegister.java

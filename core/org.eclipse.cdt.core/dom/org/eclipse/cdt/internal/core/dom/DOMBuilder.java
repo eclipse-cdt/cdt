@@ -4,7 +4,7 @@ package org.eclipse.cdt.internal.core.dom;
 import org.eclipse.cdt.core.dom.IScope;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
-import org.eclipse.cdt.internal.core.parser.util.*;
+import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
@@ -76,7 +76,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorBegin()
 	 */
 	public Object declaratorBegin(Object container) {
-		DeclarationSpecifier.Container decl = (DeclarationSpecifier.Container )container; 
+		DeclSpecifier.Container decl = (DeclSpecifier.Container )container; 
 		Declarator declarator = new Declarator(decl);
 		decl.addDeclarator(declarator);
 		return declarator; 
@@ -99,16 +99,18 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void simpleDeclSpecifier(Object Container, Token specifier) {
-		DeclarationSpecifier.Container decl = (DeclarationSpecifier.Container)Container;
-		DeclarationSpecifier declSpec = decl.getDeclSpecifier(); 
+		DeclSpecifier.Container decl = (DeclSpecifier.Container)Container;
+		DeclSpecifier declSpec = decl.getDeclSpecifier(); 
 		if( declSpec == null )
 		{
-			declSpec = new DeclarationSpecifier(); 
+			declSpec = new DeclSpecifier(); 
 			decl.setDeclSpecifier( declSpec ); 
 		}
 
 		declSpec.setType( specifier );		
 	}
+
+
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionOperator(org.eclipse.cdt.internal.core.newparser.Token)
@@ -256,11 +258,23 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
 	 */
 	public void declaratorAbort(Object container, Object declarator) {
-		DeclarationSpecifier.Container decl = (DeclarationSpecifier.Container )container;
+		DeclSpecifier.Container decl = (DeclSpecifier.Container )container;
 		Declarator toBeRemoved = (Declarator)declarator;
 		decl.removeDeclarator( toBeRemoved ); 
 		currName = null;
 		toBeRemoved = null; 
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionBegin(java.lang.Object)
+	 */
+	public Object expressionBegin(Object container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
+	 */
+	public void expressionEnd(Object expression) {
 	}
 
 }

@@ -3,7 +3,8 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.util.*;
+import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
+
 
 /**
  * @author jcamelon
@@ -13,16 +14,16 @@ import org.eclipse.cdt.internal.core.parser.util.*;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ParameterDeclaration extends Declaration implements DeclarationSpecifier.Container {
+public class ParameterDeclaration extends Declaration implements DeclSpecifier.Container {
 
-	DeclarationSpecifier declSpec = null; 
+	DeclSpecifier declSpec = null; 
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#getDeclSpecifier()
 	 */
-	public DeclarationSpecifier getDeclSpecifier() {
+	public DeclSpecifier getDeclSpecifier() {
 		if( declSpec == null )
-			declSpec = new DeclarationSpecifier(); 
+			declSpec = new DeclSpecifier(); 
 			
 		return declSpec; 
 	}
@@ -30,7 +31,7 @@ public class ParameterDeclaration extends Declaration implements DeclarationSpec
 	/**
 	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#setDeclSpecifier(org.eclipse.cdt.internal.core.dom.DeclarationSpecifier)
 	 */
-	public void setDeclSpecifier(DeclarationSpecifier in) {
+	public void setDeclSpecifier(DeclSpecifier in) {
 		declSpec = in; 
 	}
 	private List declarators = new LinkedList();

@@ -11,10 +11,11 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.TestCase;
-
 import java.util.Iterator;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
 import org.eclipse.cdt.internal.core.parser.Declaration;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTableException;

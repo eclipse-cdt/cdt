@@ -1,0 +1,48 @@
+2003-03-11 John Camelon
+	added ChangeLog to parser directory
+	updated IParserCallback (and all implementors) for expressions 
+	removed inheritance relationship between ExpressionEvaluator and NullParserCallback
+	removed redundant assignmentOperator() calls in Parser::initDeclarator
+	removed class util.DeclarationSpecifier, merged Container interface into util.DeclSpecifier
+	organized imports on the parser folder
+	* dom/org/eclipse/cdt/internal/core/dom/DOMBuilder.java
+	* dom/org/eclipse/cdt/internal/core/dom/Declarator.java
+	* dom/org/eclipse/cdt/internal/core/dom/ParameterDeclaration.java
+	* dom/org/eclipse/cdt/internal/core/dom/SimpleDeclaration.java
+	* parser/org/eclipse/cdt/internal/core/model/NewModelBuilder.java
+	* parser/org/eclipse/cdt/internal/core/model/Parameter.java
+	* parser/org/eclipse/cdt/internal/core/model/SimpleDeclarationWrapper.java
+	* parser/org/eclipse/cdt/internal/core/parser/ExpressionEvaluator.java
+	* parser/org/eclipse/cdt/internal/core/parser/IParserCallback.java
+	* parser/org/eclipse/cdt/internal/core/parser/NullParserCallback.java
+	* parser/org/eclipse/cdt/internal/core/parser/Parser.java
+	* parser/org/eclipse/cdt/internal/core/parser/util/DeclSpecifier.java
+
+2003-03-10 John Camelon
+	added in support for detecting and reporting circular inclusions
+	added optimization by caching inclusion directories
+	added macro pasting capabilities
+	updated inclusion searching algorithm for local inclusions
+
+2003-03-07 John Camelon
+	fixed initDeclarators for the outline view. 
+
+2003-03-06 Doug Schaefer
+	Some minor fixes to get constructors/destructors parsing as well as some minor clean up and robustness.
+
+2003-03-06 John Camelon
+	added quickParse heuristic to Scanner for handling #if conditionals to avoid throwing 
+	ScannerExceptions on undefined preprocessor symbols
+	added minimal enum support to Parser (though not to DOM or CModel)
+
+2003-03-06 Andrew Niefer
+	Implementation of Namespaces & using directives in new parser's symbol table
+
+2003-03-05 Doug Schaefer
+	Some minor fixes to the parser. 
+
+2003-03-04 Doug Schaefer
+	Added Parser in the "parser" source folder in cdt.core 
+	Preference in the C/C++ preference page to enable/disable use of the new parser (disabled by default) 
+	Start on the DOM which we are using to test the parser (source folder "dom") 
+	Start on a new Model Builder for creating CElements using the new parser (currently in source folder "parser") 

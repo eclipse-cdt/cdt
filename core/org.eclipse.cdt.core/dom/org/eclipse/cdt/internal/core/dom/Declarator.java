@@ -1,22 +1,22 @@
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.util.*;
+import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 
 public class Declarator {
 	
-	public Declarator(DeclarationSpecifier.Container declaration) {
+	public Declarator(DeclSpecifier.Container declaration) {
 		this.declaration = declaration;
 	}
 	
-	private DeclarationSpecifier.Container declaration;
+	private DeclSpecifier.Container declaration;
 	
 	/**
 	 * Returns the declaration.
 	 * @return SimpleDeclaration
 	 */
-	public DeclarationSpecifier.Container getDeclaration() {
+	public DeclSpecifier.Container getDeclaration() {
 		return declaration;
 	}
 

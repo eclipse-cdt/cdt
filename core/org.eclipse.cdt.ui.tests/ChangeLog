@@ -1,3 +1,19 @@
+2003-03-11 John Camelon
+	Updated DOMTests for core.internal.parser change of merging DeclarationSpecifier and DeclSpecifier
+	Organized imports
+	* parser/org/eclipse/cdt/core/parser/tests/DOMTests.java
+	* parser/org/eclipse/cdt/core/parser/tests/ParserSymbolTableTest.java
+
+2003-03-10 John Camelon
+	Added macro pasting tests
+
+2003-03-06 Andrew Niefer
+	Added tests for exercising Namespaces & using directives in new parser's symbol table
+
+2003-03-04 Doug Schaefer
+	This is a pretty big patch, but it is the merge of the NewParser1 branch into the HEAD branch.  lder "parser") 
+	JUnit tests for testing various pieces (source folder "parser" in cdt.ui.tests. 
+
 2003-01-29 Peter Graves
 
     Fixed the warnings when accessing static methods

@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser.util.DeclarationSpecifier;
+import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
@@ -52,7 +52,7 @@ public class DOMTests extends TestCase {
 		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it is only an int
-		assertEquals(DeclarationSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
+		assertEquals(DeclSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the declarator and check its name
 		List declarators = declaration.getDeclarators();
@@ -125,7 +125,7 @@ public class DOMTests extends TestCase {
 		declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it's an int
-		assertEquals(DeclarationSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
+		assertEquals(DeclSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the declarator and check it's name
 		List declarators = declaration.getDeclarators();
@@ -184,7 +184,7 @@ public class DOMTests extends TestCase {
 		declaration = (SimpleDeclaration)declarations.get(0);
 		
 		// Make sure it's an int
-		assertEquals(DeclarationSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
+		assertEquals(DeclSpecifier.t_int, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		
 		// Get the declarator and check it's name
 		List declarators = declaration.getDeclarators();
@@ -198,7 +198,7 @@ public class DOMTests extends TestCase {
 		
 		declaration = (SimpleDeclaration)declarations.get(1); 
 		// Make sure it's an float
-		assertEquals(DeclarationSpecifier.t_float, declaration.getDeclSpecifier().getDeclSpecifierSeq());
+		assertEquals(DeclSpecifier.t_float, declaration.getDeclSpecifier().getDeclSpecifierSeq());
 		declarators = declaration.getDeclarators(); 
 		assertEquals( 3, declarators.size() );
 		name  = ((Declarator)declarators.get(0)).getName(); 
@@ -225,7 +225,7 @@ public class DOMTests extends TestCase {
 		List declarations = translationUnit.getDeclarations();
 		assertEquals(1, declarations.size());
 		SimpleDeclaration simpleDeclaration = (SimpleDeclaration)declarations.get(0);
-		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclarationSpecifier.t_void );
+		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_void );
 		List declarators  = simpleDeclaration.getDeclarators(); 
 		assertEquals( 1, declarators.size() ); 
 		Declarator functionDeclarator = (Declarator)declarators.get( 0 ); 
@@ -235,7 +235,7 @@ public class DOMTests extends TestCase {
 		List parameterDecls = pdc.getDeclarations(); 
 		assertEquals( 1, parameterDecls.size() );
 		ParameterDeclaration parm1 = (ParameterDeclaration)parameterDecls.get( 0 );
-		assertEquals( DeclarationSpecifier.t_void, parm1.getDeclSpecifier().getType() );
+		assertEquals( DeclSpecifier.t_void, parm1.getDeclSpecifier().getType() );
 		List parm1Decls = parm1.getDeclarators(); 
 		assertEquals( 1, parm1Decls.size() ); 
 		Declarator parm1Declarator = (Declarator) parm1Decls.get(0); 
@@ -261,7 +261,7 @@ public class DOMTests extends TestCase {
 		List classDeclarations = classSpec.getDeclarations(); 
 		assertEquals( classDeclarations.size(), 1 ); 
 		SimpleDeclaration simpleDeclaration = (SimpleDeclaration)classDeclarations.get(0);
-		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclarationSpecifier.t_int );
+		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_int );
 		List simpleDeclarators =  simpleDeclaration.getDeclarators(); 
 		assertEquals( simpleDeclarators.size(), 2 ); 
 		Declarator methodDeclarator = (Declarator)simpleDeclarators.get(0);
@@ -271,7 +271,7 @@ public class DOMTests extends TestCase {
 		List parameterDeclarations = pdc.getDeclarations(); 
 		assertEquals( 1, parameterDeclarations.size() ); 
 		ParameterDeclaration parm1Declaration = (ParameterDeclaration)parameterDeclarations.get(0);
-		assertEquals(  DeclarationSpecifier.t_double, parm1Declaration.getDeclSpecifier().getType() ); 
+		assertEquals(  DeclSpecifier.t_double, parm1Declaration.getDeclSpecifier().getType() ); 
 		List parm1Declarators = parm1Declaration.getDeclarators(); 
 		assertEquals( parm1Declarators.size(), 1 ); 
 		Declarator parm1Declarator = (Declarator)parm1Declarators.get(0);

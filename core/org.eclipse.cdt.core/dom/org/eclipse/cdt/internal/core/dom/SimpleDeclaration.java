@@ -3,20 +3,20 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.util.*;
+import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 
-public class SimpleDeclaration extends Declaration implements DeclarationSpecifier.Container{
+public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container {
 
-	private DeclarationSpecifier declSpec = null;
+	private DeclSpecifier declSpec = null;
 	 
-	public DeclarationSpecifier getDeclSpecifier()
+	public DeclSpecifier getDeclSpecifier()
 	{
 		if( declSpec == null )
-			declSpec = new DeclarationSpecifier(); 
+			declSpec = new DeclSpecifier(); 
 		return declSpec;
 	}
 		
-	public void setDeclSpecifier( DeclarationSpecifier in )
+	public void setDeclSpecifier( DeclSpecifier in )
 	{
 		declSpec = in; 
 	} 
@@ -40,7 +40,7 @@ public class SimpleDeclaration extends Declaration implements DeclarationSpecifi
 	 * @param typeSpecifier The typeSpecifier to set
 	 */
 	public void setTypeSpecifier(TypeSpecifier typeSpecifier) {
-		getDeclSpecifier().setType(DeclarationSpecifier.t_type);
+		getDeclSpecifier().setType(DeclSpecifier.t_type);
 		this.typeSpecifier = typeSpecifier;
 	}
 

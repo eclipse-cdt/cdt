@@ -1,3 +1,6 @@
+2004-01-15 Hoda Amer
+	Moved Content Assist log to the UI plugin
+	
 2004-01-13 Alain Magloire
 
 	Small fix on in the elf parser, we have to check for 

@@ -26,7 +26,6 @@ public class Util implements ICLogConstants {
 	
 	public static boolean VERBOSE_PARSER = false;
 	public static boolean VERBOSE_MODEL = false;
-	public static boolean VERBOSE_CONTENTASSIST = false;
 	
 	private Util() {
 	}
@@ -217,9 +216,6 @@ public class Util implements ICLogConstants {
 		}
 		else if (client.equals(IDebugLogConstants.MODEL)){
 			return VERBOSE_MODEL;
-		}
-		else if (client.equals(IDebugLogConstants.CONTENTASSIST)){
-			return VERBOSE_CONTENTASSIST;
 		}
 		return false;
 	}

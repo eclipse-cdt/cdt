@@ -1,3 +1,6 @@
+2004-01-15 Hoda Amer
+	Moved Content Assist log to the UI plugin
+	
 2004-01-15 John Camelon
 	Updated references to LookupResult as it was renamed to ILookupResult.  
 	Updated references of ParserFactoryException to ParserFactoryError.

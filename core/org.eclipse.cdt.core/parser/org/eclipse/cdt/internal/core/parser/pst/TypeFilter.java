@@ -74,7 +74,7 @@ public class TypeFilter {
 				return false;
 			}
 		} 
-		else if ( typeInfo.isType( TypeInfo.t_type ) || typeInfo.isType( TypeInfo.t_bool, TypeInfo.t_enumerator ) )
+		else if ( typeInfo.isType( TypeInfo.t_type ) || typeInfo.isType( TypeInfo.t_bool, TypeInfo.t_void ) )
 		{
 			if( ( acceptedKinds.contains( LookupKind.VARIABLES ) 	   && !symbolIsMember && !symbolIsLocal ) ||
 				( acceptedKinds.contains( LookupKind.LOCAL_VARIABLES ) && !symbolIsMember && symbolIsLocal )  ||
@@ -99,7 +99,7 @@ public class TypeFilter {
         else if ( kind == LookupKind.STRUCTURES )  { acceptedTypes.add( TypeInfo.t_class );
                                                      acceptedTypes.add( TypeInfo.t_struct );
                                                      acceptedTypes.add( TypeInfo.t_union );       }
-        else if ( kind == LookupKind.STRUCS )      { acceptedTypes.add( TypeInfo.t_struct );      }
+        else if ( kind == LookupKind.STRUCTS )      { acceptedTypes.add( TypeInfo.t_struct );      }
         else if ( kind == LookupKind.UNIONS )      { acceptedTypes.add( TypeInfo.t_union );       }
         else if ( kind == LookupKind.CLASSES )     { acceptedTypes.add( TypeInfo.t_class );       }
 		else if ( kind == LookupKind.CONSTRUCTORS ){ acceptedTypes.add( TypeInfo.t_constructor ); } 

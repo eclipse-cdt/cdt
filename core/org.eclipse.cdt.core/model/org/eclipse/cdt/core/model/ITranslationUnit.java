@@ -7,7 +7,6 @@ package org.eclipse.cdt.core.model;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Represents an entire C translation unit (<code>.c</code> source file).

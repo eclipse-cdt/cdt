@@ -66,7 +66,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#commit(boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#commit(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void commit(boolean force, IProgressMonitor monitor)
 		throws CModelException {
@@ -106,7 +106,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#destroy()
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#destroy()
 	 */
 	public void destroy() {
 		if (--this.useCount > 0) {
@@ -171,7 +171,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#getOriginalElement()
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()
 	 */
 	public ITranslationUnit getOriginalElement() {
 		return new TranslationUnit(getParent(), getFile());
@@ -281,7 +281,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#reconcile()
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile()
 	 */
 	public IMarker[] reconcile() throws CModelException {
 		reconcile(false, null);
@@ -289,7 +289,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#reconcile(boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean reconcile(boolean forceProblemDetection, IProgressMonitor monitor)
 		throws CModelException {
@@ -343,7 +343,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		return somethingChanged;	
 	}
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.IWorkingCopy#restore()
+	 * @see org.eclipse.cdt.core.model.IWorkingCopy#restore()
 	 */
 	public void restore() throws CModelException{
 		if (this.useCount == 0) throw newNotPresentException(); //was destroyed

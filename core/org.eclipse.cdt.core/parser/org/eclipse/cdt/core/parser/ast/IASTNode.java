@@ -24,7 +24,7 @@ public interface IASTNode {
 
 		public static final LookupKind ALL = new LookupKind( 0 );
 		public static final LookupKind STRUCTURES = new LookupKind( 1 );
-		public static final LookupKind STRUCS = new LookupKind( 2 );
+		public static final LookupKind STRUCTS = new LookupKind( 2 );
 		public static final LookupKind UNIONS = new LookupKind( 3 );
 		public static final LookupKind CLASSES = new LookupKind( 4 );
 		public static final LookupKind FUNCTIONS = new LookupKind( 5 );

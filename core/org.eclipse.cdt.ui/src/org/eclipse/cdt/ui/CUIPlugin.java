@@ -19,8 +19,8 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
+import org.eclipse.cdt.internal.ui.util.Util;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -80,6 +81,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	
 	static String SEPARATOR = System.getProperty("file.separator");
+
+	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 	
 	// -------- static methods --------
 
@@ -308,6 +311,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
+		//Set debug tracing options
+		CUIPlugin.getDefault().configurePluginDebugOptions();
 		
 		runUI(new Runnable() {
 			public void run() {
@@ -381,4 +386,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fSharedTextColors= new SharedTextColors();
 		return fSharedTextColors;
 	}
+	
+	public void configurePluginDebugOptions(){
+		
+		if(CUIPlugin.getDefault().isDebugging()){
+			String option = Platform.getDebugOption(CONTENTASSIST);
+			if(option != null) Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+		}
+	}
+			
 }

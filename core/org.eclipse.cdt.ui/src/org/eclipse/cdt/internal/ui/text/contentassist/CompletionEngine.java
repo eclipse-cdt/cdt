@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -50,10 +51,9 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.internal.core.CharOperation;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
-import org.eclipse.cdt.internal.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
+import org.eclipse.cdt.internal.ui.util.IDebugLogConstants;
+import org.eclipse.cdt.internal.ui.util.Util;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -176,7 +176,7 @@ public class CompletionEngine implements RelevanceConstants{
 			IScannerInfo buildScanInfo = provider.getScannerInformation(project);
 			if( buildScanInfo != null )
 				scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
-		}
+		} 			
 	
 		//C or CPP?
 		ParserLanguage language = CoreModel.getDefault().hasCCNature(project) ? ParserLanguage.CPP : ParserLanguage.C;
@@ -339,10 +339,13 @@ public class CompletionEngine implements RelevanceConstants{
 	}
 	
 	private void addKeywordsToCompletions(Iterator keywords){
+		int numOfKeywords = 0;
 		while (keywords.hasNext()){
 			String keyword = (String) keywords.next();
 			addKeywordToCompletions(keyword);
+			numOfKeywords++;
 		}
+		log("No of Keywords       = " + numOfKeywords);
 	}
 	
 	private void resetElementNumbers(){
@@ -364,6 +367,9 @@ public class CompletionEngine implements RelevanceConstants{
 			return;
 		Iterator nodes = result.getNodes();
 		int numberOfElements = result.getResultsSize();
+		
+		log("No of Lookup Results = " + numberOfElements);
+		
 		resetElementNumbers();
 		while (nodes.hasNext()){
 			IASTNode node = (IASTNode) nodes.next();
@@ -418,7 +424,7 @@ public class CompletionEngine implements RelevanceConstants{
 		
 		ILookupResult result = null;
 		// lookup fields and methods with the right visibility
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[8];
 		kinds[0] = IASTNode.LookupKind.FIELDS; 
 		kinds[1] = IASTNode.LookupKind.METHODS;
 		kinds[2] = IASTNode.LookupKind.VARIABLES; 
@@ -426,6 +432,8 @@ public class CompletionEngine implements RelevanceConstants{
 		kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
 		kinds[5] = IASTNode.LookupKind.NAMESPACES;
 		kinds[6] = IASTNode.LookupKind.FUNCTIONS;
+		kinds[7] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+		
 		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions (result);
 	}
@@ -491,16 +499,16 @@ public class CompletionEngine implements RelevanceConstants{
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// if prefix is not empty
 		if (completionNode.getCompletionPrefix().length() > 0){
-			// here we have to look for anything that could be referenced within this scope
+			// here we have to look for any names that could be referenced within this scope
 			// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
 			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
 			kinds[1] = IASTNode.LookupKind.FIELDS; 
 			kinds[2] = IASTNode.LookupKind.VARIABLES; 
-			kinds[3] = IASTNode.LookupKind.STRUCTURES; 
-			kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
-			kinds[5] = IASTNode.LookupKind.METHODS; 
-			kinds[6] = IASTNode.LookupKind.FUNCTIONS; 
+			kinds[3] = IASTNode.LookupKind.METHODS; 
+			kinds[4] = IASTNode.LookupKind.FUNCTIONS; 
+			kinds[5] = IASTNode.LookupKind.NAMESPACES; 
+			kinds[6] = IASTNode.LookupKind.ENUMERATORS; 
 			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		} else // prefix is empty
@@ -571,6 +579,7 @@ public class CompletionEngine implements RelevanceConstants{
 	}
 	
 	public IASTCompletionNode complete(IWorkingCopy sourceUnit, int completionOffset) {
+		long startTime = System.currentTimeMillis();
 		
 		// 1- Parse the translation unit
 		IASTCompletionNode completionNode = parse(sourceUnit, completionOffset);
@@ -584,7 +593,13 @@ public class CompletionEngine implements RelevanceConstants{
 		
 		logNode("Scope   = " , completionNode.getCompletionScope());
 		logNode("Context = " , completionNode.getCompletionContext());
-		logKind("Kind    = ", completionNode.getCompletionKind().getEnumValue());		
+		logKind("Kind    = ", completionNode.getCompletionKind());		
+		log	   ("Prefix  = " + completionNode.getCompletionPrefix());
+
+		if (completionNode.getCompletionScope() == null){
+			log("Null Completion Scope Error");
+			return null;
+		}
 		
 		// set the completionStart and the completionLength
 		completionStart = completionOffset - completionNode.getCompletionPrefix().length();
@@ -592,149 +607,118 @@ public class CompletionEngine implements RelevanceConstants{
 		CompletionKind kind = completionNode.getCompletionKind();
 		
 		// 2- Check the return value 
-		if(kind == IASTCompletionNode.CompletionKind.MEMBER_REFERENCE){
+		if(kind == CompletionKind.MEMBER_REFERENCE){
 			// completionOnMemberReference
 			completionOnMemberReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE){
+		else if(kind == CompletionKind.SCOPED_REFERENCE){
 			// completionOnMemberReference
 			completionOnScopedReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE){
+		else if(kind == CompletionKind.STATEMENT_START )
+		{
+			// CompletionOnStatementStart
+			completionOnStatementStart(completionNode);
+		}
+		else if(kind == CompletionKind.FIELD_TYPE){
 			// CompletionOnFieldType
 			completionOnFieldType(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE) {
+		else if(kind == CompletionKind.VARIABLE_TYPE) {
 			// CompletionOnVariableType
 			completionOnVariableType(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.ARGUMENT_TYPE){
+		else if(kind == CompletionKind.ARGUMENT_TYPE){
 			// CompletionOnArgumentType
 			completionOnTypeReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE){
+		else if(kind == CompletionKind.SINGLE_NAME_REFERENCE){
 			// CompletionOnSingleNameReference
 			completionOnSingleNameReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.TYPE_REFERENCE){
+		else if(kind == CompletionKind.TYPE_REFERENCE){
 			// CompletionOnStructureReference
 			completionOnTypeReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.CLASS_REFERENCE){
+		else if(kind == CompletionKind.CLASS_REFERENCE){
 			// CompletionOnClassReference
 			completionOnClassReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.NAMESPACE_REFERENCE){
+		else if(kind == CompletionKind.NAMESPACE_REFERENCE){
 			// completionOnNamespaceReference
 			completionOnNamespaceReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.EXCEPTION_REFERENCE){
+		else if(kind == CompletionKind.EXCEPTION_REFERENCE){
 			// CompletionOnExceptionReference
 			completionOnExceptionReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.MACRO_REFERENCE){
+		else if(kind == CompletionKind.MACRO_REFERENCE){
 			// CompletionOnMacroReference
 			completionOnMacroReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.FUNCTION_REFERENCE){
+		else if(kind == CompletionKind.FUNCTION_REFERENCE){
 			// completionOnFunctionReference
 			completionOnFunctionReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.CONSTRUCTOR_REFERENCE){
+		else if(kind == CompletionKind.CONSTRUCTOR_REFERENCE){
 			// completionOnConstructorReference
 			completionOnConstructorReference(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.KEYWORD){
+		else if(kind == CompletionKind.KEYWORD){
 			// CompletionOnKeyword
 			completionOnKeyword(completionNode);
 		}
-		else if(kind == IASTCompletionNode.CompletionKind.STATEMENT_START )
-		{
-			completionOnStatementStart(completionNode);
-		}
 	
-		addKeywordsToCompletions( completionNode.getKeywords());
+		if((kind != CompletionKind.MEMBER_REFERENCE) &&(kind != CompletionKind.SCOPED_REFERENCE)){
+			addKeywordsToCompletions( completionNode.getKeywords());
+		}
+		
+		log("Time spent in Completion Engine = "+ ( System.currentTimeMillis() - startTime ) + " ms");		
 		return completionNode;
 			
 	}
-	private void logKind(String message, int kindEnum){
+	private void logKind(String message, IASTCompletionNode.CompletionKind kind){
 		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST) )
 			return;
 		
 		String kindStr = "";
-		switch (kindEnum){
-		case 0:
+		if(kind == IASTCompletionNode.CompletionKind.MEMBER_REFERENCE)
 			kindStr = "MEMBER_REFERENCE";
-			break;
-	
-		case 1:
+		else if(kind == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE)
 			kindStr = "SCOPED_REFERENCE";
-			break;
-			
-		case 2:
-			kindStr = "FIELD_TYPE";
-			break;
-			
-		case 3:
-			kindStr = "VARIABLE_TYPE";
-			break;
-			
-		case 4:
+		else if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE)
+			kindStr = "FIELD_TYPE Class Scope";
+		else if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
+			kindStr = "VARIABLE_TYPE Global Scope";
+		else if(kind == IASTCompletionNode.CompletionKind.ARGUMENT_TYPE)
 			kindStr = "ARGUMENT_TYPE";
-			break;
-			
-		case 5:
+		else if(kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
 			kindStr = "SINGLE_NAME_REFERENCE";
-			break;
-			
-		case 6:
+		else if(kind == IASTCompletionNode.CompletionKind.TYPE_REFERENCE)
 			kindStr = "TYPE_REFERENCE";
-			break;
-			
-		case 7:
+		else if(kind == IASTCompletionNode.CompletionKind.CLASS_REFERENCE)
 			kindStr = "CLASS_REFERENCE";
-			break;
-			
-		case 8:
+		else if(kind == IASTCompletionNode.CompletionKind.NAMESPACE_REFERENCE)
 			kindStr = "NAMESPACE_REFERENCE";
-			break;
-			
-		case 9:
+		else if(kind == IASTCompletionNode.CompletionKind.EXCEPTION_REFERENCE)
 			kindStr = "EXCEPTION_REFERENCE";
-			break;
-			
-		case 10:
+		else if(kind == IASTCompletionNode.CompletionKind.MACRO_REFERENCE)
 			kindStr = "MACRO_REFERENCE";
-			break;
-			
-		case 11:
+		else if(kind == IASTCompletionNode.CompletionKind.FUNCTION_REFERENCE)
 			kindStr = "FUNCTION_REFERENCE";
-			break;
-			
-		case 12:
+		else if(kind == IASTCompletionNode.CompletionKind.CONSTRUCTOR_REFERENCE)
 			kindStr = "CONSTRUCTOR_REFERENCE";
-			break;
-			
-		case 13:
+		else if(kind == IASTCompletionNode.CompletionKind.KEYWORD)
 			kindStr = "KEYWORD";
-			break;
-			
-		case 14:
+		else if(kind == IASTCompletionNode.CompletionKind.PREPROCESSOR_DIRECTIVE)
 			kindStr = "PREPROCESSOR_DIRECTIVE";
-			break;
-			
-		case 15:
+		else if(kind == IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME)
 			kindStr = "USER_SPECIFIED_NAME";
-			break;
-		
-		case 16:
+		else if(kind == IASTCompletionNode.CompletionKind.STATEMENT_START)
 			kindStr = "STATEMENT_START";
-			break;
-			
-		case 200:
+		else if(kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND)
 			kindStr = "NO_SUCH_KIND";
-			break;
-		}
+
 		log (message + kindStr);
 	}
 	private void logNode(String message, IASTNode node){
@@ -768,6 +752,11 @@ public class CompletionEngine implements RelevanceConstants{
 			log(message + name);
 			return;
 		}
+		if(node instanceof IASTCodeScope){
+			String name = "Code Scope";
+			log(message + name);
+			return;
+		}
 		
 		log(message + node.toString());
 		return;
@@ -780,66 +769,48 @@ public class CompletionEngine implements RelevanceConstants{
 		StringBuffer kindName = new StringBuffer("Looking For ");
 		for(int i = 0; i<kinds.length; i++){
 			LookupKind kind = (LookupKind) kinds[i];
-			switch (kind.getEnumValue()){
-			case 0:
+			if(kind == IASTNode.LookupKind.ALL)
 				kindName.append("ALL");
-				break;
-			case 1:
+			else if(kind == IASTNode.LookupKind.STRUCTURES)				
 				kindName.append("STRUCTURES");
-				break;
-			case 2:
-				kindName.append("STRUCS");
-				break;
-			case 3:
+			else if(kind == IASTNode.LookupKind.STRUCTS)				
+				kindName.append("STRUCTS");
+			else if(kind == IASTNode.LookupKind.UNIONS)				
 				kindName.append("UNIONS");
-				break;
-			case 4:
+			else if(kind == IASTNode.LookupKind.CLASSES)				
 				kindName.append("CLASSES");
-				break;
-			case 5:
+			else if(kind == IASTNode.LookupKind.FUNCTIONS)				
 				kindName.append("FUNCTIONS");
-				break;
-			case 6:
+			else if(kind == IASTNode.LookupKind.VARIABLES)				
 				kindName.append("VARIABLES");
-				break;
-			case 7:
+			else if(kind == IASTNode.LookupKind.LOCAL_VARIABLES)				
 				kindName.append("LOCAL_VARIABLES");
-				break;
-			case 8:
+			else if(kind == IASTNode.LookupKind.MEMBERS)				
 				kindName.append("MEMBERS");
-				break;
-			case 9:
+			else if(kind == IASTNode.LookupKind.METHODS)				
 				kindName.append("METHODS");
-				break;
-			case 10:
+			else if(kind == IASTNode.LookupKind.FIELDS)				
 				kindName.append("FIELDS");
-				break;
-			case 11:
+			else if(kind == IASTNode.LookupKind.CONSTRUCTORS)				
 				kindName.append("CONSTRUCTORS");
-				break;
-			case 12:
+			else if(kind == IASTNode.LookupKind.NAMESPACES)				
 				kindName.append("NAMESPACES"); 
-				break;
-			case 13:
+			else if(kind == IASTNode.LookupKind.MACROS)				
 				kindName.append("MACROS"); 
-				break;
-			case 14:
+			else if(kind == IASTNode.LookupKind.ENUMERATIONS)				
 				kindName.append("ENUMERATIONS"); 
-				break;
-			case 15:
+			else if(kind == IASTNode.LookupKind.ENUMERATORS)				
 				kindName.append("ENUMERATORS");
-				break;
-			case 16:
+			else if(kind == IASTNode.LookupKind.THIS)				
 				kindName.append("THIS");
-				break;		
-			}
+
 			kindName.append(", ");
 		}
 		log (kindName.toString());
 	}
 	private void log(String message){
-		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
+		if (! CUIPlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
 			return;
-		Util.debugLog(message, IDebugLogConstants.CONTENTASSIST, false);
+		Util.debugLog(message, IDebugLogConstants.CONTENTASSIST);
 	}
 }

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core.model;
+package org.eclipse.cdt.core.model;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -1,3 +1,8 @@
+2004-01-15 Hoda Amer
+	Moved Content Assist testing to the UI.tests plugin
+	Started a new framework of JUnit tests for content assist.
+	Added Content assist tests to the AutomatedSuite test of the UI.tests plugin
+	
 2003-07-17 Peter Graves
      Remove the usage of the assert, as it's a reserved keyword in 
      Java 1.4 (Bugzilla 40377)

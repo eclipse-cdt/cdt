@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;

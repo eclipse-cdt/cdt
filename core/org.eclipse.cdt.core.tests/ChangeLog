@@ -1,3 +1,6 @@
+2004-01-15 Hoda Amer
+	Moved Content Assist testing to the UI.tests plugin
+	
 2004-01-15 John Camelon
 	Updated references to LookupResult as it was renamed to ILookupResult.  
 	Removed some warnings from parser tests.  

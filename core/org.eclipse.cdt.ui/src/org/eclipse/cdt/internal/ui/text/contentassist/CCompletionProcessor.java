@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
@@ -20,7 +21,6 @@ import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
@@ -119,6 +119,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	
 	private int fCurrentOffset = 0;
 	private IWorkingCopy fCurrentSourceUnit = null;
+	private IASTCompletionNode fCurrentCompletionNode = null;
 	private int fNumberOfComputedResults= 0;
 	private ITextViewer fTextViewer;
 	
@@ -383,12 +384,18 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		// clear the completion list at the result collector
 		resultCollector.reset(viewer);
 		
-		IASTCompletionNode completionNode = addProposalsFromModel(completions);
-		addProposalsFromSearch(completionNode, completions);
-		addProposalsFromCompletionContributors(completionNode, completions);
-		addProposalsFromTemplates(viewer, completionNode, completions);
+		fCurrentCompletionNode = addProposalsFromModel(completions);
+		if(fCurrentCompletionNode != null){
+			addProposalsFromSearch(fCurrentCompletionNode, completions);
+			addProposalsFromCompletionContributors(fCurrentCompletionNode, completions);
+			addProposalsFromTemplates(viewer, fCurrentCompletionNode, completions);
 		
-		return order ( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]) );		
+			return order ( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]) );
+		}
+		else{
+			return null;
+		}
+			
 	}
 	
 	private void addProposalsFromTemplates(ITextViewer viewer, IASTCompletionNode completionNode, List completions){
@@ -670,4 +677,12 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			} // end switch
 		} // end while		
 	}
+	/**
+	 * @return Returns the fCurrentCompletionNode.
+	 * This method is added for JUnit tests.
+	 */
+	public IASTCompletionNode getCurrentCompletionNode() {
+		return fCurrentCompletionNode;
+	}
+
 }

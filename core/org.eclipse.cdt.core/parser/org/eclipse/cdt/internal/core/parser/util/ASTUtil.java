@@ -119,7 +119,7 @@ public class ASTUtil {
 			type.append("(");
 			type.append(getPointerOperator(po));
 			type.append(")");
-			String[] parameters =getParameterTypes(declaration.getParameters()); 
+			String[] parameters =getParameterTypes(declaration.getParameters(), false /* replace with takeVarArgs() later*/); 
 			type.append(getParametersString(parameters));
 		}
 		return type.toString();
@@ -200,19 +200,25 @@ public class ASTUtil {
 	public static String[] getFunctionParameterTypes(IASTFunction functionDeclaration)
 	{
 		Iterator parameters = functionDeclaration.getParameters();
-		return getParameterTypes(parameters);
+		return getParameterTypes(parameters, functionDeclaration.takesVarArgs());
 	}
 
-	public static String[] getParameterTypes(Iterator parameters){
+	public static String[] getParameterTypes(Iterator parameters, boolean takesVarArgs){
 		List paramList = new ArrayList();
 		while (parameters.hasNext()){
 			IASTParameterDeclaration param = (IASTParameterDeclaration)parameters.next();
 			paramList.add(getType(param));
 		}
-		String[] parameterTypes = new String[paramList.size()];
+		int paramListSize = paramList.size();
+		if(takesVarArgs)
+			paramListSize++;
+		String[] parameterTypes = new String[paramListSize];
 		for(int i=0; i<paramList.size(); ++i){
 			parameterTypes[i] = (String)paramList.get(i); 
 		}
+		// add the ellipse to the parameter type list
+		if(takesVarArgs)
+			parameterTypes[paramListSize-1] = "...";
 		return parameterTypes;			
 	}
 	public static String getParametersString(String[] parameterTypes) 

@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.ui.IEditorInput;
 
 /**

@@ -123,7 +123,8 @@ public class CPPSemantics {
 		public boolean forUserDefinedConversion = false;
 		public boolean forAssociatedScopes = false;
 		public boolean prefixLookup = false;
-		
+		public boolean typesOnly = false;
+		public boolean considerConstructors = false;
 		public Object foundItems = null;
 		public Object [] functionParameters;
 		public ProblemBinding problem;
@@ -132,6 +133,8 @@ public class CPPSemantics {
 		public LookupData( IASTName n ){
 			astName = n;
 			this.name = n.toCharArray();
+			typesOnly = typesOnly();
+			considerConstructors = considerConstructors();
 		}
 		public LookupData( char [] n ){
 			astName = null;
@@ -146,7 +149,7 @@ public class CPPSemantics {
 		    }
 		    return false;
 		}
-		public boolean typesOnly(){
+		private boolean typesOnly(){
 			if( astName == null ) return false;
 			IASTNode parent = astName.getParent();
 			if( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier || 
@@ -182,7 +185,7 @@ public class CPPSemantics {
 				     ( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) ||
 				     ( p1 instanceof IASTDeclarator && p2 instanceof IASTFunctionDefinition));
 		}
-		public boolean considerConstructors(){
+		private boolean considerConstructors(){
 			if( astName == null ) return false;
 			IASTNode p1 = astName.getParent();
 			IASTNode p2 = p1.getParent();
@@ -427,7 +430,7 @@ public class CPPSemantics {
             }
         }
             
-        if( binding instanceof ICPPClassType && data.considerConstructors() ){
+        if( binding instanceof ICPPClassType && data.considerConstructors ){
 		    ICPPClassType cls = (ICPPClassType) binding;
 		    try {
                 //force resolution of constructor bindings
@@ -1040,7 +1043,7 @@ public class CPPSemantics {
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
 		else if( node instanceof IASTForStatement && checkAux )
 			declaration = ((IASTForStatement)node).getInitDeclaration();
-		else if( node instanceof IASTParameterDeclaration && !data.typesOnly() ){
+		else if( node instanceof IASTParameterDeclaration && !data.typesOnly ){
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
 		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
 		    while( dtor.getNestedDeclarator() != null )
@@ -1055,13 +1058,13 @@ public class CPPSemantics {
 		
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
-			if( !data.typesOnly() || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) { 
+			if( !data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) { 
 				IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
 				for( int i = 0; i < declarators.length; i++ ){
 					IASTDeclarator declarator = declarators[i];
 					while( declarator.getNestedDeclarator() != null )
 						declarator = declarator.getNestedDeclarator();
-					if( data.considerConstructors() || !CPPVisitor.isConstructor( scope, declarator ) ){
+					if( data.considerConstructors || !CPPVisitor.isConstructor( scope, declarator ) ){
 						IASTName declaratorName = declarator.getName();
 						if( nameMatches( data, declaratorName.toCharArray() ) ) {
 							return declaratorName;
@@ -1088,7 +1091,7 @@ public class CPPSemantics {
 			    if( nameMatches( data, eName.toCharArray() ) ) {
 					return eName;
 				}
-			    if( !data.typesOnly() ) {
+			    if( !data.typesOnly ) {
 				    //check enumerators too
 				    IASTEnumerator [] list = enumeration.getEnumerators();
 				    for( int i = 0; i < list.length; i++ ) {
@@ -1121,7 +1124,7 @@ public class CPPSemantics {
 				return alias;
 		}
 		
-		if( data.typesOnly() )
+		if( data.typesOnly )
 		    return null;
 		
 		if( declaration instanceof IASTFunctionDefinition ){
@@ -1130,7 +1133,7 @@ public class CPPSemantics {
 			
 			//check the function itself
 			IASTName declName = declarator.getName();
-			if( data.considerConstructors() || !CPPVisitor.isConstructor( scope, declarator ) ){
+			if( data.considerConstructors || !CPPVisitor.isConstructor( scope, declarator ) ){
 			    if( nameMatches( data, declName.toCharArray() ) ) {
 					return declName;
 				}
@@ -1296,7 +1299,7 @@ public class CPPSemantics {
 	    }
 	        
 	    if( type != null ) {
-	    	if( data.typesOnly() || (obj == null && fns == null) )
+	    	if( data.typesOnly || (obj == null && fns == null) )
 	    		return type;
 //	    	IScope typeScope = type.getScope();
 //	    	if( obj != null && obj.getScope() != typeScope ){

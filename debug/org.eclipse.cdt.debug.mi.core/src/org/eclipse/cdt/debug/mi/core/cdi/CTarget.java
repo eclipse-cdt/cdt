@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
+import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
@@ -359,11 +360,6 @@ public class CTarget  implements ICDITarget {
 		MICommand noop = new MICommand("");
 		try {
 			mi.getMIInferior().interrupt();
-			mi.postCommand(noop);
-			MIInfo info = noop.getMIInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
@@ -385,6 +381,8 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		MISession miSession = session.getMISession();
+		miSession.fireEvent(new MIDetachedEvent());
 	}
 
 	/**

@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
@@ -63,6 +64,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			cdiEvent = new ExitedEvent(session, (MIInferiorExitEvent)miEvent);
 		} else if (miEvent instanceof MIGDBExitEvent) {
 			cdiEvent = new DestroyedEvent(session);
+		} else if (miEvent instanceof MIDetachedEvent) {
+			cdiEvent = new DisconnectedEvent(session);
 		}
 
 		// Fire the event;

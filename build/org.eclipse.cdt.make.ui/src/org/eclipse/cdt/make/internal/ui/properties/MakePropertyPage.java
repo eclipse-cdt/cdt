@@ -74,7 +74,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		Shell shell = getControl().getShell();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				fOptionBlock.performOk(monitor);
+				fOptionBlock.performApply(monitor);
 			}
 		};
 		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);

@@ -6,11 +6,18 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.internal.ui.wizards;
+package org.eclipse.cdt.make.ui.wizards;
 
+import java.util.Vector;
+
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.part.WizardCheckboxTablePart;
+import org.eclipse.cdt.make.internal.ui.wizards.StatusWizardPage;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -25,11 +32,14 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 
+	private static final String MAKE_UPDATE_TITLE = "MakeWizardUpdatePage.title";
+	private static final String MAKE_UPDATE_DESCRIPTION = "MakeWizardUpdatePage.description";
+
 	private IProject[] selected;
 	private CheckboxTableViewer makeProjectListViewer;
 	private TablePart tablePart;
 
-	public class BuildpathContentProvider implements IStructuredContentProvider {
+	public class MakeProjectContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return getProjects();
 		}
@@ -57,10 +67,10 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 
 	public UpdateMakeProjectWizardPage(IProject[] selected) {
 		super("UpdateMakeProjectWizardPage", true);
-		setTitle("Make update title");
-		setDescription("Make update description");
+		setTitle(MakeUIPlugin.getResourceString(MAKE_UPDATE_TITLE));
+		setDescription(MakeUIPlugin.getResourceString(MAKE_UPDATE_DESCRIPTION));
 		this.selected = selected;
-		tablePart = new TablePart("project list");
+		tablePart = new TablePart("Project list");
 	}
 
 	public void dispose() {
@@ -77,7 +87,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 
 		tablePart.createControl(container);
 		makeProjectListViewer = tablePart.getTableViewer();
-		makeProjectListViewer.setContentProvider(new BuildpathContentProvider());
+		makeProjectListViewer.setContentProvider(new MakeProjectContentProvider());
 		makeProjectListViewer.setLabelProvider(new WorkbenchLabelProvider());
 
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
@@ -102,16 +112,25 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		updateStatus(genStatus);
 	}
 
-	private IProject[] getProjects() {
-		return MakeUIPlugin.getWorkspace().getRoot().getProjects();
-//		Vector result = new Vector();
-//		try {
-//
-//		} catch (CoreException e) {
-////			MakeUIPlugin.logException(e);
-//		}
+	protected IProject[] getProjects() {
+		IProject[] project = MakeUIPlugin.getWorkspace().getRoot().getProjects();
+		Vector result = new Vector();
+		try {
+			for (int i = 0; i < project.length; i++) {
+				IProjectDescription desc = project[i].getDescription();
+				ICommand builder[] = desc.getBuildSpec();
+				for( int j = 0; j < builder.length; j++ ) {
+					if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
+						result.add(project[i]);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {
+			MakeUIPlugin.logException(e);
+		}
 
-//		return (IProject[])result.toArray(new IProject[result.size()]);
+		return (IProject[]) result.toArray(new IProject[result.size()]);
 	}
 
 	private IStatus validatePlugins() {
@@ -125,4 +144,3 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		return createStatus(IStatus.OK, "");
 	}
 }
-

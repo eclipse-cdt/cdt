@@ -61,7 +61,7 @@ public class MakePreferencePage extends PreferencePage implements IWorkbenchPref
 	}
 
 	public boolean performOk() {
-		return fOptionBlock.performOk(null);
+		return fOptionBlock.performApply(null);
 	}
 
 	/**

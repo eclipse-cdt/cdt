@@ -6,19 +6,25 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.internal.ui.wizards;
+package org.eclipse.cdt.make.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.wizards.UpdateMakeProjectWizard;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -78,7 +84,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					try {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) throws CoreException {
-								doMakeProjectUpdate(monitor, projects);
+								doProjectUpdate(monitor, projects);
 							}
 						};
 						MakeUIPlugin.getWorkspace().run(runnable, monitor);
@@ -96,15 +102,30 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
-	public static void doMakeProjectUpdate(IProgressMonitor monitor, IProject[] projects) throws CoreException {
-		// dinglis-TODO : Implement Make project updating. 
-		monitor.beginTask("Updating make Projects...", projects.length);
+	protected static void doProjectUpdate(IProgressMonitor monitor, IProject[] project) throws CoreException {
+		monitor.beginTask("Updating make Projects...", project.length * 3);
 		try {
-			for (int i = 0; i < projects.length; i++) {
-//				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+			for (int i = 0; i < project.length; i++) {
+				// remove old builder
+				MakeProjectNature.removeFromBuildSpec(
+					project[i],
+					MakeCorePlugin.OLD_BUILDER_ID,
+					new SubProgressMonitor(monitor, 1));
+				// add new nature
+				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
+				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation"),
+				String location = project[i].getPersistentProperty(qlocation);
 
-				if (monitor.isCanceled())
-					break;
+				//remove old properties
+				QualifiedName[] qName =
+					{
+						new QualifiedName(CCorePlugin.PLUGIN_ID, "buildFullArguments"),
+						new QualifiedName(CCorePlugin.PLUGIN_ID, "buildIncrementalArguments"),
+						new QualifiedName("org.eclipse.cdt", "make.goals")};
+				for (int j = 0; j < qName.length; j++) {
+					project[i].setPersistentProperty(qName[j], null);
+				}
+				monitor.worked(1);
 			}
 		} finally {
 			monitor.done();

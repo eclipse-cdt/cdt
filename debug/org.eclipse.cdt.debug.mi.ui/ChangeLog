@@ -1,3 +1,8 @@
+2004-06-21 Mikhail Khodjaiants
+	Fix for bug 60872. Accessibility: Run/Debug configuration dialog has duplicate mnemonics.
+	* MIUIMessages.properties
+	* MIUIPluginResources.properties
+
 2004-05-21 Mikhail Khodjaiants
 	Removed dependencies on the compatibility plugin and replaced deprecated classes and methods.
 	Warning cleanup.

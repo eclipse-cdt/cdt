@@ -24,6 +24,16 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 * @return a memory block with the specified identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
+	ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException;
+
+	/**
+	 * Returns a memory block specified by given identifier.
+	 * 
+	 * @param address 
+	 * @param length - how much for address
+	 * @return a memory block with the specified identifier
+	 * @throws CDIException on failure. Reasons include:
+	 */
 	ICDIMemoryBlock createMemoryBlock(long address, int length) throws CDIException;
 
 	/**

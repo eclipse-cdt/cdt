@@ -1140,6 +1140,21 @@
             class="org.eclipse.cdt.debug.internal.ui.CBreakpointWorkbenchAdapterFactory"
             adaptableType="org.eclipse.cdt.debug.core.model.ICBreakpoint">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer"
+            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer"
+            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer"
+            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>   </extension>
    <extension
          point="org.eclipse.ui.themes">
@@ -1182,6 +1197,18 @@
             <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
          </enablement>
       </renderingBindings>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.sourceContainerPresentations">
+      <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.MappingSourceContainerBrowser"
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.mapping"
+            icon="icons/full/obj16/mapping_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapping"/>
+      <sourceContainerPresentation
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.mapEntry"
+            icon="icons/full/obj16/mapentry_obj.gif"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
    </extension>
 
 </plugin>

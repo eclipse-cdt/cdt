@@ -146,5 +146,31 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.debug.internal.core.CDebugCorePreferenceInitializer"/>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.CSourcePathComputerDelegate"
+            id="org.eclipse.cdt.debug.core.sourcePathComputer"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector"
+            name="C/C++ Source Locator"
+            id="org.eclipse.cdt.debug.core.sourceLocator"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceContainerTypes">
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.MappingSourceContainerType"
+            description="%containerDescription.mapping"
+            id="org.eclipse.cdt.debug.core.containerType.mapping"
+            name="%containerName.mapping"/>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainerType"
+            description="%containerDescription.mapEntry"
+            id="org.eclipse.cdt.debug.core.containerType.mapEntry"
+            name="%containerName.mapEntry"/>
+   </extension>
 
 </plugin>

@@ -1,3 +1,16 @@
+2005-03-21 Mikhail Khodjaiants
+	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
+	* MappingSourceContainer.java: new
+	* DisassemblyBlock.java
+	* CSourceLookupDirector.java: new
+	* CSourceLookupParticipant.java: new
+	* CSourcePathComputerDelegate.java: new
+	* MapEntrySourceContainer.java: new
+	* MapEntrySourceContainerType.java: new
+	* MappingSourceContainerType.java: new
+	* plugin.properties
+	* plugin.xml
+
 2005-03-17 Mikhail Khodjaiants
 	If casting of variable to a type or array causes an error, the status 
 	of the variable is set to "error" and it can't be reset by subsequent castings.

@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 
 /**
  * CDI-based implementation of <code>IDisassemblyBlock</code>.
@@ -57,11 +58,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	public static DisassemblyBlock create( IDisassembly disassembly, ICDIMixedInstruction[] instructions ) {
 		DisassemblyBlock block = new DisassemblyBlock( disassembly );
 		block.setMixedMode( true );
-		ISourceLocator adapter = disassembly.getDebugTarget().getLaunch().getSourceLocator();
-		ICSourceLocator locator = null;
-		if ( adapter instanceof IAdaptable ) {
-			locator = (ICSourceLocator)((IAdaptable)adapter).getAdapter( ICSourceLocator.class );
-		}
+		ISourceLocator locator = disassembly.getDebugTarget().getLaunch().getSourceLocator();
 		IAddressFactory factory = ((CDebugTarget)disassembly.getDebugTarget()).getAddressFactory();
 		block.setSourceLines( createSourceLines( factory, locator, instructions ) );
 		block.initializeAddresses();
@@ -136,12 +133,18 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	public void dispose() {
 	}
 
-	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ICSourceLocator locator, ICDIMixedInstruction[] mi ) {
+	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ISourceLocator locator, ICDIMixedInstruction[] mi ) {
 		IAsmSourceLine[] result = new IAsmSourceLine[mi.length];
 		LineNumberReader reader = null;
 		if ( result.length > 0 && locator != null ) {
 			String fileName = mi[0].getFileName();
-			Object element = locator.findSourceElement( fileName );
+			Object element = null;
+			if ( locator instanceof ISourceLookupDirector ) {
+				element = ((ISourceLookupDirector)locator).getSourceElement( fileName );
+			}
+			if ( locator instanceof ICSourceLocator ) {
+				element = ((ICSourceLocator)locator).findSourceElement( fileName );
+			}
 			File file= null;
 			if ( element instanceof IFile ) {
 				file = ((IFile)element).getLocation().toFile();

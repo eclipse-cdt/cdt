@@ -69,6 +69,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -139,7 +140,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if ( file != null )
 				return new FileEditorInput( file );
 		}
-		if ( element instanceof FileStorage ) {
+		if ( element instanceof FileStorage || element instanceof LocalFileStorage ) {
 			return new ExternalEditorInput( (IStorage)element );
 		}
 		if ( element instanceof FileNotFoundElement ) {

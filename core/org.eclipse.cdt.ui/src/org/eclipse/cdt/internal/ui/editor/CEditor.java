@@ -1417,8 +1417,11 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		if (!c_file && filename.endsWith(".h")){
 			// ensure that this .h file is part of a C project & not a CPP project
 		
-			IProject project = getInputFile().getProject();
-			c_file = !CoreModel.getDefault().hasCCNature(project);
+			IFile file = getInputFile();
+			if (file != null) {
+				IProject project = file.getProject();
+				c_file = !CoreModel.getDefault().hasCCNature(project);
+			}
 		}
 
 		return new AdaptedSourceViewer(parent, ruler, styles, c_file ? LANGUAGE_C : LANGUAGE_CPP);

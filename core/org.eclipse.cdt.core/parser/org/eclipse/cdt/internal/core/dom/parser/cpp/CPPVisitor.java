@@ -77,7 +77,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -107,6 +106,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -149,8 +149,37 @@ public class CPPVisitor {
 		    return createBinding( (IASTEnumerationSpecifier) parent );
 		} else if( parent instanceof IASTEnumerator ){
 		    return createBinding( (IASTEnumerator) parent );
+		} else if( parent instanceof IASTGotoStatement ){
+		    return createBinding( (IASTGotoStatement) parent );
+		} else if( parent instanceof IASTLabelStatement ){
+		    return createBinding( (IASTLabelStatement) parent );
 		}
+		
 		return null;
+	}
+	
+	private static IBinding createBinding( IASTGotoStatement gotoStatement ) {
+	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( gotoStatement );
+	    IASTName name = gotoStatement.getName();
+	    IBinding binding = functionScope.getBinding( name );
+	    if( binding == null ){
+	        binding = new CPPLabel( gotoStatement );
+	        functionScope.addBinding( binding );
+	    }
+	    return binding;
+	}
+	
+	private static IBinding createBinding( IASTLabelStatement labelStatement ) {
+	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( labelStatement );
+	    IASTName name = labelStatement.getName();
+	    IBinding binding = functionScope.getBinding( name );
+	    if( binding == null ){
+	        binding = new CPPLabel( labelStatement );
+	        functionScope.addBinding( binding );
+	    } else {
+	        ((CPPLabel)binding).setLabelStatement( labelStatement );
+	    }
+	    return binding;
 	}
 	
     private static IBinding createBinding( IASTEnumerator enumerator ) {
@@ -395,7 +424,7 @@ public class CPPVisitor {
 		
 		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
 		    //labels have function scope
-		    while( scope != null && !(scope instanceof ICFunctionScope) ){
+		    while( scope != null && !(scope instanceof ICPPFunctionScope) ){
 		        scope = scope.getParent();
 		    }
 		}

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -963,12 +964,42 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testSimpleWhileStatement() throws Exception
 	{
-		parse( "const bool T = true; void foo() { int x = 0; while( T ) {  ++x;  if( x == 100 ) break; } }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "const bool T = true; void foo() { int x = 0; while( T ) {  ++x;  if( x == 100 ) break; } }"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 6 );
+ 		IVariable T = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(2).resolveBinding();
+ 		assertInstances( col, T, 2 );
+ 		assertInstances( col, x, 3 );
 	}
 	
 	public void testSimpleSwitchStatement() throws Exception
 	{
-		parse( "const int x = 5; const int y = 10; void foo() { switch( x ) { case 1: break; case 2: goto blah; case y: continue; default: break;} }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "const int x = 5; const int y = 10; " + //$NON-NLS-1$
+										"void foo() {                       " + //$NON-NLS-1$
+										"	while( true ) {                 " + //$NON-NLS-1$
+										"      switch( x ) {                " + //$NON-NLS-1$
+										"         case 1: break;            " + //$NON-NLS-1$
+										"         case 2: goto blah;        " + //$NON-NLS-1$
+										"         case y: continue;         " + //$NON-NLS-1$
+										"         default: break;           " + //$NON-NLS-1$
+										"      }                            " + //$NON-NLS-1$
+										"   }                               " + //$NON-NLS-1$
+										"   blah : ;                        " + //$NON-NLS-1$
+										"}                                  "); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 7 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable y = (IVariable) col.getName(1).resolveBinding();
+ 		ILabel blah = (ILabel) col.getName(4).resolveBinding();
+ 		assertNotNull( blah );
+ 		assertInstances( col, x, 2 );
+ 		assertInstances( col, y, 2 );
+ 		assertInstances( col, blah, 2 );
 	}
 	
 	public void testSimpleDoStatement() throws Exception

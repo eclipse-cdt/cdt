@@ -19,15 +19,19 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * @author aniefer
  */
 public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 
+    private CharArrayObjectMap labels = CharArrayObjectMap.EMPTY_MAP;
+    
 	/**
 	 * @param physicalNode
 	 */
@@ -35,20 +39,26 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 		super(physicalNode);
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public void addBinding(IBinding binding) {
-		// TODO Auto-generated method stub
-
+	    //3.3.4 only labels have function scope
+	    if( !( binding instanceof ILabel ) )
+	        return;
+	    
+	    if( labels == CharArrayObjectMap.EMPTY_MAP )
+	        labels = new CharArrayObjectMap( 2 );
+	    
+	    labels.put( binding.getNameCharArray(), binding );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
 	public IBinding getBinding( IASTName name ) {
-		// TODO Auto-generated method stub
-		return null;
+	    return (IBinding) labels.get( name.toCharArray() );
 	}
 
 	/* (non-Javadoc)

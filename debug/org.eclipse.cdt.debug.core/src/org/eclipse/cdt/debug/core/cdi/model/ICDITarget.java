@@ -174,12 +174,13 @@ public interface ICDITarget extends ICDIObject
 	 */
 	void suspend() throws CDIException;
 
-	/**
+	/*
 	 * Returns whether this target is is currently stepping.
 	 *
 	 * @return whether this target is currently stepping
-	 */
+	 
 	boolean isStepping();
+	*/
 	
 	/**
 	 * Steps over the current source line. Can only be called

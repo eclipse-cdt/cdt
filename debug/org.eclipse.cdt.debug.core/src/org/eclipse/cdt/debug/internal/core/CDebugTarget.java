@@ -30,7 +30,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDILoadedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
+//import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
@@ -692,13 +692,13 @@ public class CDebugTarget extends CDebugElement
 					handleRestartedEvent( (ICDIRestartedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDISteppingEvent )
-			{
-				if ( source instanceof ICDITarget )
-				{
-					handleSteppingEvent( (ICDISteppingEvent)event );
-				}
-			}
+			//else if ( event instanceof ICDISteppingEvent )
+			//{
+			//	if ( source instanceof ICDITarget )
+			//	{
+			//		handleSteppingEvent( (ICDISteppingEvent)event );
+			//	}
+			//}
 		}
 	}
 
@@ -1018,13 +1018,13 @@ public class CDebugTarget extends CDebugElement
 	private void handleRestartedEvent( ICDIRestartedEvent event )
 	{
 	}
-
+/*
 	private void handleSteppingEvent( ICDISteppingEvent event )
 	{
 		setCurrentStateId( IState.STEPPING );
 		setCurrentStateInfo( null );
 	}
-
+*/
 	private void handleThreadCreatedEvent( ICDICreatedEvent event )
 	{
 		ICDIThread cdiThread = (ICDIThread)event.getSource();

@@ -25,7 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
+//import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
@@ -413,13 +413,13 @@ public class CThread extends CDebugElement
 					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDISteppingEvent )
-			{
-				if ( source instanceof ICDIThread )
-				{
-					handleSteppingEvent( (ICDISteppingEvent)event );
-				}
-			}
+			//else if ( event instanceof ICDISteppingEvent )
+			//{
+			//	if ( source instanceof ICDIThread )
+			//	{
+			//		handleSteppingEvent( (ICDISteppingEvent)event );
+			//	}
+			//}
 		}
 	}
 
@@ -882,11 +882,11 @@ public class CThread extends CDebugElement
 	{
 	}
 
-	private void handleSteppingEvent( ICDISteppingEvent event )
-	{
-		setCurrentStateId( IState.STEPPING );
-		setCurrentStateInfo( null );
-	}
+	//private void handleSteppingEvent( ICDISteppingEvent event )
+	//{
+	//	setCurrentStateId( IState.STEPPING );
+	//	setCurrentStateInfo( null );
+	//}
 
 	/** 
 	 * Cleans up the internal state of this thread.

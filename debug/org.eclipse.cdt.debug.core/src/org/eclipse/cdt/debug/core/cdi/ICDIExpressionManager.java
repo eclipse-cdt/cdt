@@ -50,4 +50,9 @@ public interface ICDIExpressionManager extends ICDISessionObject
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICDIExpression[] getExpressions() throws CDIException;
+	
+	/**
+	 * Return a ICDICondition
+	 */
+	ICDICondition createCondition(int ignoreCount, String expression);
 }

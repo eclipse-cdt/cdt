@@ -35,12 +35,5 @@ public interface ICDISuspendedEvent extends ICDIEvent
 	 * @return ICDIObject
 	 */
 	ICDISessionObject getReason();
-	
-	/**
-	 * Returns the current stack frame.
-	 * 
-	 * @return the current stack frame
-	 */
-	ICDIStackFrame getStackFrame();
 
 }

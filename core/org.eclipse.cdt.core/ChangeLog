@@ -1,4 +1,10 @@
-2004-07-17 Brad Jarvinen.
+2004-07-16 Alain Magloire
+
+	Fix for PR 70255
+
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+
+2004-07-16 Brad Jarvinen
 
 	Fix Pr 70252
 

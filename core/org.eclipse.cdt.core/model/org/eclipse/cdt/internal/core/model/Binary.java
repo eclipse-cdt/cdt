@@ -280,7 +280,7 @@ public class Binary extends Openable implements IBinary {
 	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
 		IPath filename = filename = symbol.getFilename();
 		BinaryVariable variable = null;
-		if (filename != null) {
+		if (filename != null && !filename.isEmpty()) {
 			BinaryModule module = null;
 			if (hash.containsKey(filename)) {
 				module = (BinaryModule)hash.get(filename);

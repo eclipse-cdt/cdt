@@ -88,7 +88,6 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	protected void createActions()
 	{
 		IAction action = new ShowRegisterTypesAction( getStructuredViewer() );
-		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( IDebugUIConstants.PREF_SHOW_TYPE_NAMES ) );
 		setAction( "ShowTypeNames", action ); //$NON-NLS-1$
 
 		action = new ChangeRegisterValueAction( getViewer() );
@@ -134,13 +133,17 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	{
 		menu.add( new Separator( ICDebugUIConstants.EMPTY_REGISTER_GROUP ) );
 		menu.add( new Separator( ICDebugUIConstants.REGISTER_GROUP ) );
-		menu.add( getAction( "ChangeRegisterValue" ) ); //$NON-NLS-1$
+
 		menu.add( new Separator( IDebugUIConstants.EMPTY_RENDER_GROUP ) );
 		menu.add( new Separator( IDebugUIConstants.RENDER_GROUP ) );
-		menu.add( getAction( "ShowTypeNames" ) ); //$NON-NLS-1$
+
+		menu.add( new Separator( ICDebugUIConstants.EMPTY_REFRESH_GROUP ) );
+		menu.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 
+		menu.appendToGroup( ICDebugUIConstants.REGISTER_GROUP, getAction( "ChangeRegisterValue" ) ); //$NON-NLS-1$
+		menu.appendToGroup( IDebugUIConstants.RENDER_GROUP, getAction( "ShowTypeNames" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "AutoRefresh" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "Refresh" ) ); //$NON-NLS-1$
 	}

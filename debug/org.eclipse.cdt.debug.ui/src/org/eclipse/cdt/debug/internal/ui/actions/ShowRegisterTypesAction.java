@@ -31,7 +31,7 @@ public class ShowRegisterTypesAction extends Action
 	 */
 	public ShowRegisterTypesAction( StructuredViewer viewer )
 	{
-		super( "Show &Type Names" );
+		super( "Show &Type Names", Action.AS_CHECK_BOX );
 		setViewer( viewer );
 		setToolTipText( "Show Type Names" );
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_TYPE_NAMES );

@@ -1,3 +1,9 @@
+2003-04-01 Mikhail Khodjaiants
+	Removed the 'Show Type Names' preference from the Registers view's preference page.
+	* ShowRegisterTypesAction.java
+	* RegistersViewPreferencePage.java
+	* RegistersView.java
+
 2003-03-31 Mikhail Khodjaiants
 	'Auto-Refresh' and 'Refresh' actions for registers view.
 	* ICDebugHelpContextIds.java

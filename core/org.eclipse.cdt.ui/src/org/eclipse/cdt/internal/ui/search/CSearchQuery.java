@@ -55,45 +55,7 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		_collector = collector;
 		_collector.setOperation( this );
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.search.ui.ISearchResult)
-	 */
-	public IStatus run(IProgressMonitor monitor, ISearchResult result) {
-		_collector.setProgressMonitor( monitor );	
-		
-		SearchEngine engine = new SearchEngine( CUIPlugin.getSharedWorkingCopies() );
 
-		ICSearchPattern pattern = null;
-		if( _searchFor.size() > 1 ){
-			OrPattern orPattern = new OrPattern();
-			for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
-				SearchFor element = (SearchFor)iter.next();
-				orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
-			}
-			
-			pattern = orPattern;
-			
-		} else {
-			Iterator iter = _searchFor.iterator();
-			pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
-		}
-		
-		try {
-			engine.search( _workspace, pattern, _scope, _collector, false );
-		} catch (InterruptedException e) {
-		}
-		
-		return new Status(IStatus.OK, CUIPlugin.getPluginId(),0,"",null); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#getName()
-	 */
-	public String getName() {
-		// TODO Auto-generated method stub
-		return "CDT Search Job"; //$NON-NLS-1$
-	}
-	
 	/**
 	 * @return
 	 */
@@ -148,5 +110,74 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		} else {
 			return CPluginImages.DESC_OBJS_SEARCH_REF;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus run(IProgressMonitor monitor) {
+		_collector.setProgressMonitor( monitor );	
+		
+		SearchEngine engine = new SearchEngine( CUIPlugin.getSharedWorkingCopies() );
+
+		ICSearchPattern pattern = null;
+		if( _searchFor.size() > 1 ){
+			OrPattern orPattern = new OrPattern();
+			for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
+				SearchFor element = (SearchFor)iter.next();
+				orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
+			}
+			
+			pattern = orPattern;
+			
+		} else {
+			Iterator iter = _searchFor.iterator();
+			pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
+		}
+		
+		try {
+			engine.search( _workspace, pattern, _scope, _collector, false );
+		} catch (InterruptedException e) {
+		}
+		
+		return new Status(IStatus.OK, CUIPlugin.getPluginId(),0,"",null); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
+	 */
+	public String getLabel() {
+		if (_limitTo == REFERENCES)
+			return CSearchMessages.getString("CSearchQuery.searchfor_references"); //$NON-NLS-1$
+		else if (_limitTo == DECLARATIONS)
+			return CSearchMessages.getString("CSearchQuery.searchfor_declarations"); //$NON-NLS-1$
+		else if (_limitTo == DEFINITIONS)
+			return CSearchMessages.getString("CSearchQuery.searchfor_definitions"); //$NON-NLS-1$
+		else if (_limitTo == ALL_OCCURRENCES)
+			return CSearchMessages.getString("CSearchQuery.searchfor_all"); //$NON-NLS-1$ 
+		
+		return CSearchMessages.getString("CSearchQuery.search_label"); //$NON-NLS-1$;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchQuery#canRerun()
+	 */
+	public boolean canRerun() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchQuery#canRunInBackground()
+	 */
+	public boolean canRunInBackground() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchQuery#getSearchResult()
+	 */
+	public ISearchResult getSearchResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

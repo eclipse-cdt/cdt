@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
@@ -134,7 +133,13 @@ public class CSearchResult extends AbstractTextSearchResult {
 	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
 	 */
 	public ISearchQuery getQuery() {
-		// TODO Auto-generated method stub
 		return cQuery;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
+	 */
+	public String getLabel() {
+		return cQuery.getLabel();
 	}
 }

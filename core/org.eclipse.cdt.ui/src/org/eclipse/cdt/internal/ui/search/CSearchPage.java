@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.ui.search;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,7 +57,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -146,7 +144,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
 		//NewSearchUI.activateSearchResultView();
 	    CSearchResult result = new CSearchResult(job);
-		NewSearchUI.runSearchInBackground(job, result);
+		NewSearchUI.runQuery(job);
 		
 		return true;
 	}

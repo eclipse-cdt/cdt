@@ -53,7 +53,7 @@ public class ContentAssistTests extends TestCase {
     static IWorkspace 				workspace;
     static IProject 				project;
     static FileManager 				fileManager;
-    
+    static boolean 					disabledHelpContributions = false;
     {
 		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
@@ -66,18 +66,6 @@ public class ContentAssistTests extends TestCase {
         
             project = cPrj.getProject();
             project.setSessionProperty(IndexManager.activationKey,new Boolean(false));
-            
-            //disable the help books so we don't get proposals we weren't expecting
-            CHelpBookDescriptor helpBooks[];
-			helpBooks = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
-				public IProject getProject(){return project;}
-				public ITranslationUnit getTranslationUnit(){return null;}
-				}
-			);
-			for( int i = 0; i < helpBooks.length; i++ ){
-			    if( helpBooks[i] != null )
-			        helpBooks[i].enable( false );
-			}
         } catch ( CoreException e ) {
             /*boo*/
         }
@@ -97,6 +85,20 @@ public class ContentAssistTests extends TestCase {
     public ContentAssistTests(String name)
     {
         super(name);
+    }
+    
+    private void disableContributions (){
+        //disable the help books so we don't get proposals we weren't expecting
+        CHelpBookDescriptor helpBooks[];
+		helpBooks = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
+			public IProject getProject(){return project;}
+			public ITranslationUnit getTranslationUnit(){return null;}
+			}
+		);
+		for( int i = 0; i < helpBooks.length; i++ ){
+		    if( helpBooks[i] != null )
+		        helpBooks[i].enable( false );
+		}
     }
     
     public static Test suite() {
@@ -146,7 +148,10 @@ public class ContentAssistTests extends TestCase {
 		return file;
 	}
     
-    protected ICompletionProposal[] getResults( IFile file, int offset ) throws Exception { 
+    protected ICompletionProposal[] getResults( IFile file, int offset ) throws Exception {
+        if( !disabledHelpContributions )
+            disableContributions();
+        
 	    ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create( file );
 		String buffer = tu.getBuffer().getContents();
 		IWorkingCopy wc = null;

@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ArchiveContainer;
+import org.eclipse.cdt.internal.core.model.BinaryContainer;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -125,6 +127,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 					element instanceof IBinary || element instanceof IArchive) {
 				postRefresh(element);
 				return;
+			} else if (element instanceof ArchiveContainer || element instanceof BinaryContainer) {
+				postContainerRefresh((IParent) element, element.getCProject());
 			}
 
 		}

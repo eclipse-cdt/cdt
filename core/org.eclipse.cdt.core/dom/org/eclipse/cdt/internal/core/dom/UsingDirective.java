@@ -12,6 +12,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.Name;
+
 
 /**
  * @author jcamelon
@@ -19,7 +21,7 @@ package org.eclipse.cdt.internal.core.dom;
  */
 public class UsingDirective extends Declaration {
 
-	private Name namespaceName; 
+	private String namespaceName; 
 	
 	public UsingDirective( IScope owner )
 	{
@@ -29,7 +31,7 @@ public class UsingDirective extends Declaration {
 	/**
 	 * @return String
 	 */
-	public Name getNamespaceName() {
+	public String getNamespaceName() {
 		return namespaceName;
 	}
 
@@ -37,7 +39,7 @@ public class UsingDirective extends Declaration {
 	 * Sets the namespaceName.
 	 * @param namespaceName The namespaceName to set
 	 */
-	public void setNamespaceName(Name namespaceName) {
+	public void setNamespaceName(String namespaceName) {
 		this.namespaceName = namespaceName;
 	}
 }

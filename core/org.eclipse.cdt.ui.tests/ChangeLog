@@ -1,3 +1,12 @@
+2003-06-13 John Camelon
+	Merged ParserSymbolTable branch back into HEAD.
+
+2003-06-12 John Camelon
+	Get rest of JUnit tests working, will merge back to HEAD branch.  
+
+2003-06-12 John Camelon
+	Introduction of ASTFactory strategy, some restructuring of packages and interfaces.
+	
 2003-06-11 Victor Mozgin
 	Old Java TestCase.txt and TestCase2.txt for partioning testing have been replaced with C/C++ files.
 	Modified AutomatedIntegrationSuite.java so it doesn't produce JUnit warning anymore.
@@ -11,9 +20,15 @@
 	Added TortureTest to test CDT C++ parser with GCC testsuites.
 	GCC testsuites are not included.
 
+2003-06-10 John Camelon
+	Futher pursuit of the golden hammer, symbol table integration. 
+
 2003-06-10 Brent Nicolle
 	Added some Interface tests of (IInclude, IMacro, IStructure).
 	Made sure all the Test Suites have names in the JUnit hierarchy.
+
+2003-06-09 John Camelon
+	First step in replacing IParserCallback with ISourceElementRequestor.  
 	
 2003-06-09 Victor Mozgin
 	Moved testBug36769() from ACEFailedTest.java to DOMTests.java.
@@ -37,6 +52,26 @@
 2003-06-05 John Camelon
 	Moved testBug23478A() & testBug23478B() from failed tests to TranslationUnitTests.java.
 	Removed TranslationUnitFailedTests.java as it was empty. 
+
+2003-05-29 Andrew Niefer
+	Modified tests to support eType & PtrOp changes in core
+	Added ParserSymbolTableTest::testTemplateParameterAsParent
+	Added ParserSymbolTableTest::testTemplateInstanceAsParent
+	Added ParserSymbolTableTest::testTemplateParameterDefaults
+	Added ParserSymbolTableTest::testTemplateParameterAsFunctionArgument
+	started ParserSymbolTableTest::incompletetestTemplateSpecialization
+
+2003-05-26 John Camelon
+	Rollback PST/Parser integration.
+
+2003-05-13 Andrew Niefer	
+	Modified ParserSymbolTableTest to use new interface
+
+2003-05-08 Andrew Niefer
+	Added ParserSymbolTableTest::testMarkRollback
+
+2003-05-06 John Camelon
+	Further integration of SymbolTable into Parser, some refactoring. 
 
 2003-05-05 John Camelon/Andrew Niefer
 	Added CrossReferenceTests to ParserTestSuite to test symbol-table/DOM interworking.

@@ -1,3 +1,22 @@
+2003-06-13 John Camelon
+	Merged ParserSymbolTable branch back into HEAD.
+
+2003-06-12 John Camelon
+	Get rest of JUnit tests working, will merge back to HEAD branch.  
+
+2003-06-12 John Camelon
+	Introduction of ASTFactory strategy, some restructuring of packages and interfaces.
+
+2003-06-10 John Camelon
+	Futher pursuit of the golden hammer, symbol table integration. 
+
+2003-06-09 John Camelon
+	First step in replacing IParserCallback with ISourceElementRequestor.  
+
+2003-06-05 Andrew Niefer
+	Begin implementation of functions for template specializations: deduceTemplateArgument,
+	classTemplateSpecializationToFunctionTemplate, transformFunctionTemplateForOrdering
+	
 2003-06-09 Victor Mozgin
 	Fixed for conversion operator declarations.
 	This fixes PR 36769 (finally) and PR 38657.
@@ -19,6 +38,31 @@
 
 2003-06-05 John Camelon
 	Fix Bug 38380  "Include" class public methods fails JUnit tests 
+
+2003-05-29 Andrew Niefer
+	new Class eType for stronger type safety in TypeInfo
+	new class PtrOp for better handling of pointer operators and cv qualifiers
+	new class TemplateInstance to support templates
+	Start of implementation for templates & specializations
+
+2003-05-29 John Camelon
+	Remove all AST components.
+
+2003-05-26 John Camelon
+	Rollback PST/Parser integration.
+
+2003-05-13 Andrew Niefer
+	Moved symbol table to org.eclipse.cdt.internal.core.pst
+	Created interface for symbol table: ISymbol, IContainerSymbol, IDerivableContainerSymbol, 
+	IParameterizedSymbol, and ISpecializedSymbol.  These are all implemented by Declaration
+	The symbol table itself uses this interface instead of using its Declaration directly
+	(with the exception of the undo command framework)
+
+2003-05-08 Andrew Niefer
+	Added a basic command structure to support rollbacks
+
+2003-05-06 John Camelon
+	Further integration of SymbolTable into Parser, some refactoring. 
 
 2003-05-05 John Camelon/Andrew Niefer
 	Added Symboltable infrastructure into main parser.  

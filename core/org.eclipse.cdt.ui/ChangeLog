@@ -1,3 +1,6 @@
+2003-06-13 John Camelon
+	Merged ParserSymbolTable branch back into HEAD.
+
 2003-06-12 Alain Magloire
 
 	Patch from Thomas Fletcher
@@ -112,6 +115,13 @@
 	Fixed the inclusion problem on May 28th
 	Fixed the non-cmodel selection problem May 30th.
 	
+
+2003-05-06 John Camelon
+	Further integration of SymbolTable into Parser, some refactoring. 
+	
+	* src/org/eclipse/cdt/internal/ui/compare/ComparatorModelBuilder.java
+	moved some imports around.
+
 2003-04-27 Alain Magloire
 
 	PR 36759, the outline does not update

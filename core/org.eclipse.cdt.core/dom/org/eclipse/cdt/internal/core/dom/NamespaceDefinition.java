@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.Token;
-
 /**
  * @author jcamelon
  *
@@ -25,8 +23,10 @@ import org.eclipse.cdt.internal.core.parser.Token;
 public class NamespaceDefinition extends Declaration implements IScope {
 
 	private List declarations = new LinkedList();
-	private Name name = null;
-	private Token startToken = null;
+	private String name = "namespace";
+	int startingOffset = 0; 
+	int nameOffset = 0; 
+	int endOffset = 0; 
 
 	public NamespaceDefinition( IScope owner )
 	{
@@ -52,7 +52,7 @@ public class NamespaceDefinition extends Declaration implements IScope {
 	/**
 	 * @return String
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -60,25 +60,44 @@ public class NamespaceDefinition extends Declaration implements IScope {
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
+
+	public int getStartOffset()
+	{
+		return startingOffset;
+	}
+	
+	public int getNameOffset()
+	{
+		return nameOffset;
+	}
+	
+	public int getEndOffset()
+	{
+		return endOffset;
+	}
 	/**
-	 * Returns the startToken.
-	 * @return Token
+	 * @param i
 	 */
-	public Token getStartToken() {
-		return startToken;
+	public void setEndOffset(int i) {
+		endOffset = i;
 	}
 
 	/**
-	 * Sets the startToken.
-	 * @param startToken The startToken to set
+	 * @param i
 	 */
-	public void setStartToken(Token startToken) {
-		this.startToken = startToken;
+	public void setNameOffset(int i) {
+		nameOffset = i;
 	}
 
-
+	/**
+	 * @param i
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+	
 }

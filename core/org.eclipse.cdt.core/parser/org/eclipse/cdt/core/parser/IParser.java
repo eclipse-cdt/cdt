@@ -8,7 +8,7 @@
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
 
@@ -81,5 +81,8 @@ public interface IParser {
 	 * 				our first unrecoverable error.
 	 */
 	public int getLastErrorOffset(); 
+	
+	
+	public void setRequestor( ISourceElementRequestor r );
 	
 }

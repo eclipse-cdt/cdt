@@ -18,15 +18,13 @@ import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
-import org.eclipse.core.runtime.Path;
-
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DOMFactory;
-import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import junit.framework.AssertionFailedError;
+import org.eclipse.core.runtime.Path;
 
 
 /**
@@ -201,7 +199,7 @@ public class TortureTest extends FractionalAutomatedTest {
 	
 		public void run(){
 			try {           
-				DOMBuilder domBuilder = DOMFactory.createDOMBuilder(true); 
+				DOMBuilder domBuilder = new DOMBuilder(); 
 				parser = new Parser(code.toString(), domBuilder, quickParse);
 	
 				parser.setCppNature(cppNature);

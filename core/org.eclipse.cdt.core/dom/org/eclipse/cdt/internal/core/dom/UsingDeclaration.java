@@ -13,13 +13,14 @@
 package org.eclipse.cdt.internal.core.dom;
 
 
+
 /**
  * @author jcamelon
  *
  */
 public class UsingDeclaration extends Declaration {
 
-	private Name mappedName;
+	private String mappedName;
 	boolean isTypename = false;
 	
 	public UsingDeclaration( IScope owner )
@@ -29,7 +30,7 @@ public class UsingDeclaration extends Declaration {
 	/**
 	 * @return String
 	 */
-	public Name getMappedName() {
+	public String getMappedName() {
 		return mappedName;
 	}
 
@@ -37,7 +38,7 @@ public class UsingDeclaration extends Declaration {
 	 * Sets the mapping.
 	 * @param mapping The mapping to set
 	 */
-	public void setMappedName(Name mapping) {
+	public void setMappedName(String mapping) {
 		this.mappedName = mapping;
 	}
 

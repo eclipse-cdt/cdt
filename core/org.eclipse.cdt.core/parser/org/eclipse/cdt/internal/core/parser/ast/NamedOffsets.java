@@ -8,18 +8,30 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.dom;
+package org.eclipse.cdt.internal.core.parser.ast;
+
 
 /**
  * @author jcamelon
+ *
  */
-public class DOMFactory {
+public class NamedOffsets extends Offsets  {
 
-	public static DOMBuilder createDOMBuilder( boolean lineNumbers )
-	{ 
-		if( lineNumbers )
-			return new LineNumberedDOMBuilder(); 
-		else
-			return new DOMBuilder(); 
+	private int nameOffset = 0; 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
+	 */
+	public int getElementNameOffset() {
+		return nameOffset;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+	 */
+	public void setNameOffset(int o) {
+		nameOffset = o; 
+	}
+
+
 }

@@ -1,6 +1,8 @@
 package org.eclipse.cdt.internal.core.parser;
 import java.io.IOException;
 import java.io.Reader;
+
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 /**
  * @author jcamelon
  *
@@ -17,17 +19,20 @@ public interface IScannerContext {
 	public static int INCLUSION = 2; 
 	public static int MACROEXPANSION = 3; 
 
+	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i);
+	public int read() throws IOException;
+	public String getFilename();
+	public int getOffset();
+	public Reader getReader();
 	
-	IScannerContext initialize(Reader r, String f, int k);
-	int read() throws IOException;
-	String getFilename();
-	int getOffset();
-	Reader getReader();
+	public int undoStackSize();  
+	public int popUndo();
+	public void pushUndo(int undo);
 	
-	int undoStackSize();  
-	int popUndo();
-	void pushUndo(int undo);
+	public int getKind(); 
+	public void setKind( int kind ); 
+
+	public IASTInclusion getExtension(); 
+	public void setExtension( IASTInclusion ext );	
 	
-	int getKind(); 
-	void setKind( int kind ); 
 }

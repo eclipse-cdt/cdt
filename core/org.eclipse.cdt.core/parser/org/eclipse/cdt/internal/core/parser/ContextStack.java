@@ -19,6 +19,9 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+
 /**
  * @author aniefer
  *
@@ -31,18 +34,20 @@ public class ContextStack {
 		super();
 	}
 
-	public void updateContext(Reader reader, String filename, int type) throws ScannerException {
+	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ScannerException {
 		undoStack.clear();
-		
-		push( new ScannerContext().initialize(reader, filename, type ) );	
+		push( new ScannerContext().initialize(reader, filename, type, null ), requestor );	
 	}
 	
-	protected void push( IScannerContext context ) throws ScannerException
+	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ScannerException
 	{
 		if( context.getKind() == IScannerContext.INCLUSION )
 		{
 			if( !inclusions.add( context.getFilename() ) )
-				throw new ScannerException( "Inclusion " + context.getFilename() + " already encountered." ); 		
+				throw new ScannerException( "Inclusion " + context.getFilename() + " already encountered." );
+			if( requestor != null )
+				requestor.enterInclusion( context.getExtension() );
+
 		} else if( context.getKind() == IScannerContext.MACROEXPANSION )
 		{
 			if( !defines.add( context.getFilename() ) )
@@ -56,7 +61,7 @@ public class ContextStack {
 			topContext = context;
 	}
 	
-	public boolean rollbackContext() {
+	public boolean rollbackContext(ISourceElementRequestor requestor) {
 		try {
 			currentContext.getReader().close();
 		} catch (IOException ie) {
@@ -66,6 +71,8 @@ public class ContextStack {
 		if( currentContext.getKind() == IScannerContext.INCLUSION )
 		{
 			inclusions.remove( currentContext.getFilename() );
+			if( requestor != null )
+				requestor.exitInclusion( currentContext.getExtension() );
 		} else if( currentContext.getKind() == IScannerContext.MACROEXPANSION )
 		{
 			defines.remove( currentContext.getFilename() );
@@ -82,7 +89,7 @@ public class ContextStack {
 		return true;
 	}
 	
-	public void undoRollback( IScannerContext undoTo ) throws ScannerException {
+	public void undoRollback( IScannerContext undoTo, ISourceElementRequestor requestor ) throws ScannerException {
 		if( currentContext == undoTo ){
 			return;
 		}
@@ -93,7 +100,7 @@ public class ContextStack {
 			Iterator iter = undoStack.iterator();
 			for( int i = size; i > 0; i-- )
 			{
-				push( (IScannerContext) undoStack.removeFirst() );
+				push( (IScannerContext) undoStack.removeFirst(), requestor );
 				
 				if( currentContext == undoTo )
 					break;

@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.parser;
 
+import org.eclipse.cdt.core.parser.IParser;
+
 public class NullParserCallback implements IParserCallback {
 
 	/* (non-Javadoc)

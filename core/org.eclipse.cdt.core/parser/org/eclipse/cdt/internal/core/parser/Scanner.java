@@ -24,6 +24,13 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
+
 /**
  * @author jcamelon
  *
@@ -43,12 +50,12 @@ public class Scanner implements IScanner {
 						new ScannerContext().initialize(
 						new StringReader("\n"),
 						START,
-						ScannerContext.SENTINEL));
+						ScannerContext.SENTINEL, null), requestor);
 
 			if (filename == null)
-				contextStack.push( new ScannerContext().initialize(reader, TEXT, ScannerContext.TOP ) ); 
+				contextStack.push( new ScannerContext().initialize(reader, TEXT, ScannerContext.TOP, null ), requestor ); 
 			else
-				contextStack.push( new ScannerContext().initialize(reader, filename, ScannerContext.TOP ) );
+				contextStack.push( new ScannerContext().initialize(reader, filename, ScannerContext.TOP, null ), requestor );
 		} catch( ScannerException se ) {
 			//won't happen since we aren't adding an include or a macro
 		} 
@@ -255,8 +262,10 @@ public class Scanner implements IScanner {
 		return buffer.toString();
 	}
 
-	protected void handleInclusion(String fileName, boolean useIncludePaths ) throws ScannerException {
+	protected void handleInclusion(String fileName, boolean useIncludePaths, int nameOffset, int beginOffset, int endOffset ) throws ScannerException {
 
+		FileReader inclusionReader = null;
+		String newPath = null; 
 		if( useIncludePaths ) // search include paths for this file
 		{
 			// iterate through the include paths 
@@ -266,16 +275,12 @@ public class Scanner implements IScanner {
 	
 				File pathFile = (File)iter.next();
 				if (pathFile.isDirectory()) {
-					String newPath = pathFile.getPath() + File.separatorChar + fileName;
-	
+					newPath = pathFile.getPath() + File.separatorChar + fileName;
 					File includeFile = new File(newPath);
-	
 					if (includeFile.exists() && includeFile.isFile()) {
 						try {
-							FileReader inclusionReader =
-								new FileReader(includeFile);
-							contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION );
-							return;
+							inclusionReader = new FileReader(includeFile);
+							break;
 						} catch (FileNotFoundException fnf) {
 							// do nothing - check the next directory
 						}
@@ -289,23 +294,24 @@ public class Scanner implements IScanner {
 			File currentIncludeFile = new File( currentFilename );
 			String parentDirectory = currentIncludeFile.getParent();
 			currentIncludeFile = null; 
-			String fullPath = parentDirectory + File.separatorChar + fileName;
-			File includeFile = new File( fullPath );
+			newPath = parentDirectory + File.separatorChar + fileName;
+			File includeFile = new File( newPath );
 			if (includeFile.exists() && includeFile.isFile()) {
 				try {
-					FileReader inclusionReader =
+					inclusionReader =
 						new FileReader(includeFile);
-					contextStack.updateContext(inclusionReader, fullPath, ScannerContext.INCLUSION );
-					return;
 				} catch (FileNotFoundException fnf) {
 					if (throwExceptionOnInclusionNotFound)
 						throw new ScannerException("Cannot find inclusion " + fileName);	
 				}
 			}
 		}
-		
-		if (throwExceptionOnInclusionNotFound)
+
+		if (throwExceptionOnInclusionNotFound && inclusionReader == null )
 			throw new ScannerException("Cannot find inclusion " + fileName);
+		
+		IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, endOffset, nameOffset ); 
+		contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );
 	}
 
 	// constants
@@ -390,7 +396,7 @@ public class Scanner implements IScanner {
 				try {
 					c = contextStack.getCurrentContext().read();
 					if (c == NOCHAR) {
-						if (contextStack.rollbackContext() == false) {
+						if (contextStack.rollbackContext(requestor) == false) {
 							c = NOCHAR;
 							break;
 						} else {
@@ -398,7 +404,7 @@ public class Scanner implements IScanner {
 						}
 					}
 				} catch (IOException e) {
-					if (contextStack.rollbackContext() == false) {
+					if (contextStack.rollbackContext(requestor) == false) {
 						c = NOCHAR;
 					} else {
 						done = false;
@@ -442,7 +448,7 @@ public class Scanner implements IScanner {
 	private void ungetChar(int c) throws ScannerException{
 		contextStack.getCurrentContext().pushUndo(c);
 		if( c == '\n' ) contextStack.recantNewline();
-		contextStack.undoRollback( lastContext );
+		contextStack.undoRollback( lastContext, requestor );
 	}
 
 	protected boolean lookAheadForTokenPasting() throws ScannerException
@@ -652,7 +658,7 @@ public class Scanner implements IScanner {
 						if( storageBuffer != null )
 						{
 							storageBuffer.append( ident );
-							contextStack.updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION );
+							contextStack.updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
 							storageBuffer = null;  
 							c = getChar(); 
 							continue;
@@ -788,7 +794,7 @@ public class Scanner implements IScanner {
 					{
 						if( storageBuffer != null )
 						{
-							contextStack.updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION );
+							contextStack.updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
 							storageBuffer = null;  
 							c = getChar(); 
 							continue; 
@@ -1776,17 +1782,26 @@ public class Scanner implements IScanner {
 		}
 		
 		String f = fileName.toString();
+		offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
 		
 		if( quickScan )
 		{ 
 			if( callback != null )
 			{
-				offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
 				callback.inclusionEnd(callback.inclusionBegin( f, offset, beginningOffset, !useIncludePath ));  
+			}
+			
+			if( requestor != null )
+			{
+				IASTInclusion i = astFactory.createInclusion( f, "", !useIncludePath, beginningOffset, 
+					contextStack.getCurrentContext().getOffset(), offset ); 
+				requestor.enterInclusion(i);
+				requestor.exitInclusion(i);
 			}
 		}
 		else
-			handleInclusion(f.trim(), useIncludePath );
+			handleInclusion(f.trim(), useIncludePath, offset, beginningOffset, contextStack.getCurrentContext().getOffset() ); 
+
 	}
 
 	protected void poundDefine(int beginning) throws ScannerException, Parser.EndOfFile {
@@ -1952,6 +1967,12 @@ public class Scanner implements IScanner {
 			// NOTE: return value is ignored!
 			callback.macro( key, offset, beginning, contextStack.getCurrentContext().getOffset() );
 		}
+		
+		if( requestor != null )
+		{
+			IASTMacro m = astFactory.createMacro( key, beginning, contextStack.getCurrentContext().getOffset(), offset ); 
+			requestor.acceptMacro(m);
+		}
 	}
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
@@ -2000,7 +2021,7 @@ public class Scanner implements IScanner {
 		throws ScannerException {
 		if (expansion instanceof String ) {
 			String replacementValue = (String) expansion;
-			contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION );
+			contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION, null, requestor );
 		} else if (expansion instanceof IMacroDescriptor ) {
 			IMacroDescriptor macro = (IMacroDescriptor) expansion;
 			skipOverWhitespace();
@@ -2117,7 +2138,7 @@ public class Scanner implements IScanner {
 				String finalString = buffer.toString(); 
 				contextStack.updateContext(
 					new StringReader(finalString),
-					POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION );
+					POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION, null, requestor );
 			} else 
 				if (throwExceptionOnBadMacroExpansion)
 					throw new ScannerException(
@@ -2184,5 +2205,22 @@ public class Scanner implements IScanner {
 		mapLineNumbers = value; 
 	}
 
-	private boolean mapLineNumbers = false; 
+	private boolean mapLineNumbers = false;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IScanner#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+	 */
+	public void setRequestor(ISourceElementRequestor r) {
+		requestor = r; 
+	}
+	
+	private ISourceElementRequestor requestor = null;
+	private IASTFactory astFactory = null; 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScanner#setASTFactory(org.eclipse.cdt.internal.core.parser.ast.IASTFactory)
+	 */
+	public void setASTFactory(IASTFactory f) {
+		astFactory = f;	
+	}  
 }

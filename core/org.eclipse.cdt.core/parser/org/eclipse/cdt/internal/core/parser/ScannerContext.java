@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+
 public class ScannerContext implements IScannerContext
 {
 	private Reader reader;
@@ -23,12 +25,13 @@ public class ScannerContext implements IScannerContext
 	private int kind; 
 				
 	public ScannerContext(){}
-	public IScannerContext initialize(Reader r, String f, int k)
+	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i)
 	{
 		reader = r;
 		filename = f;
 		offset = 0;
 		kind = k; 
+		inc = i;		
 		return this;
 	}
 		
@@ -103,6 +106,20 @@ public class ScannerContext implements IScannerContext
 	public void setKind(int kind) {
 		this.kind = kind;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IScannerContext#getExtension()
+	 */
+	public IASTInclusion getExtension() {
+		return inc;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IScannerContext#setExtension(org.eclipse.cdt.core.parser.ast.IASTInclusion)
+	 */
+	public void setExtension(IASTInclusion ext) {
+		inc = ext;
+	}
+	
+	private IASTInclusion inc = null;
 
 
 }

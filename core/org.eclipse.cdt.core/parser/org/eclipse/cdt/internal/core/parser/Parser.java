@@ -15,9 +15,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.Declaration;
-import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.TypeInfo;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -35,7 +44,8 @@ public class Parser implements IParser {
 	private boolean quickParse = false;				// are we doing the high-level parse, or an in depth parse? 
 	private boolean parsePassed = true;				// did the parse pass?
 	private boolean cppNature = true;				// true for C++, false for C
-	private ParserSymbolTable pst = new ParserSymbolTable();  // names
+	private ISourceElementRequestor requestor = null; // new callback mechanism 
+	private IASTFactory astFactory = null;				// ast factory 
 	
 	/**
 	 * This is the single entry point for setting parsePassed to 
@@ -62,9 +72,13 @@ public class Parser implements IParser {
 	public Parser(IScanner s, IParserCallback c, boolean quick) {
 		callback = c;
 		scanner = s;
+		if( c instanceof ISourceElementRequestor )
+			setRequestor( (ISourceElementRequestor)c );
 		quickParse = quick;
+		astFactory = ParserFactory.createASTFactory( quick );
 		scanner.setQuickScan(quick);
 		scanner.setCallback(c);
+		scanner.setASTFactory( astFactory );
 	}
 
 	
@@ -162,14 +176,17 @@ c, quickParse);
 	protected void translationUnit()  {
 		try { callback.setParser( this ); } catch( Exception e) {}
 		Object translationUnit = null;
-		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}
-		pst.getCompilationUnit().setObject(translationUnit);
+		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}		
+		
+		IASTCompilationUnit compilationUnit = astFactory.createCompilationUnit();
+		requestor.enterCompilationUnit( compilationUnit );
+		
 		Token lastBacktrack = null;
 		Token checkToken;
 		while (true) {
 			try {
 				checkToken = LA(1);
-				declaration( translationUnit, pst.getCompilationUnit() );
+				declaration( translationUnit, compilationUnit );
 				if( LA(1) == checkToken )
 					errorHandling();
 			} catch (EndOfFile e) {
@@ -199,7 +216,11 @@ c, quickParse);
 			}
 		}
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
+		requestor.exitCompilationUnit( compilationUnit );
 	}
+
+
+
 
 	/**
 	 * This function is called whenever we encounter and error that we cannot backtrack out of and we 
@@ -240,7 +261,7 @@ c, quickParse);
 	 * @param container		Callback object representing the scope these definitions fall into. 
 	 * @throws Backtrack	request for a backtrack
 	 */
-	protected void usingClause( Object container ) throws Backtrack
+	protected void usingClause( Object container, IASTScope scope ) throws Backtrack
 	{
 		Token firstToken = consume( Token.t_using );
 		
@@ -251,10 +272,11 @@ c, quickParse);
 			// using-directive
 			consume( Token.t_namespace );
 			
-			// optional :: and nested classes handled in name	
+			// optional :: and nested classes handled in name
+			TokenDuple duple = null ;	
 			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
 			{
-				name();
+				duple = name();
 				try{ callback.usingDirectiveNamespaceId( directive );} catch( Exception e ) {}
 			}
 			else
@@ -267,6 +289,9 @@ c, quickParse);
 			{
 				consume( Token.tSEMI );
 				try{ callback.usingDirectiveEnd( directive );} catch( Exception e ) {}
+				
+				IASTUsingDirective astUD = astFactory.createUsingDirective(scope, duple);
+				requestor.acceptUsingDirective( astUD );
 				return;
 			}
 			else
@@ -287,10 +312,11 @@ c, quickParse);
 				consume( Token.t_typename );
 			}
 			
+			TokenDuple name = null; 
 			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
 			{
 				//	optional :: and nested classes handled in name
-				name();
+				name = name();
 				try{ callback.usingDeclarationMapping( usingDeclaration, typeName ); } catch( Exception e ) {}
 			}
 			else
@@ -302,7 +328,11 @@ c, quickParse);
 			if( LT(1) == Token.tSEMI )
 			{
 				consume( Token.tSEMI );
+				
 				try{ callback.usingDeclarationEnd( usingDeclaration );} catch( Exception e ) {}
+				
+				IASTUsingDeclaration declaration = astFactory.createUsingDeclaration( scope, typeName, name );
+				requestor.acceptUsingDeclaration(declaration);
 			}
 			else
 			{
@@ -311,7 +341,8 @@ c, quickParse);
 			}			
 		}
 	}
-	
+
+
 	/**
 	 * Implements Linkage specification in the ANSI C++ grammar. 
 	 * 
@@ -322,19 +353,25 @@ c, quickParse);
 	 * @param container Callback object representing the scope these definitions fall into.
 	 * @throws Backtrack	request for a backtrack
 	 */
-	protected void linkageSpecification( Object container ) throws Backtrack
+	protected void linkageSpecification( Object container, IASTScope scope ) throws Backtrack
 	{
 		consume( Token.t_extern );
 
 		if( LT(1) != Token.tSTRING )
 			throw backtrack;
 
-		Object linkageSpec = null; 
-		try{ linkageSpec = callback.linkageSpecificationBegin( container, consume( Token.tSTRING ).getImage() );} catch( Exception e ) {}
-
+		Object linkageSpec = null;
+		Token spec = consume( Token.tSTRING ); 
+		try{ linkageSpec = callback.linkageSpecificationBegin( container, spec.getImage() );} catch( Exception e ) {}
+		
 		if( LT(1) == Token.tLBRACE )
-		{
-			consume(Token.tLBRACE); 
+		{	
+			consume(Token.tLBRACE);
+		
+			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification(scope, spec.getImage());
+		
+			requestor.enterLinkageSpecification( linkage );
+			 
 			linkageDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
 				Token checkToken = LA(1);
@@ -345,7 +382,7 @@ c, quickParse);
 					default:
 						try
 						{
-							declaration(linkageSpec, null);
+							declaration(linkageSpec, linkage);
 						}
 						catch( Backtrack bt )
 						{
@@ -360,13 +397,21 @@ c, quickParse);
 			// consume the }
 			consume();
 			try{ callback.linkageSpecificationEnd( linkageSpec );} catch( Exception e ) {}
+			requestor.exitLinkageSpecification( linkage );
 		}
 		else // single declaration
 		{
-			declaration( linkageSpec, null );
+			
+			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification( scope, spec.getImage() );
+		
+			requestor.enterLinkageSpecification( linkage );
+
+			declaration( linkageSpec );
 			try{ callback.linkageSpecificationEnd( linkageSpec );} catch( Exception e ) {}
+			requestor.exitLinkageSpecification( linkage );
 		}
 	}
+
 	
 	/**
 	 * 
@@ -397,7 +442,7 @@ c, quickParse);
 			// explicit-instantiation
 			Object instantiation = null; 
 			try { instantiation = callback.explicitInstantiationBegin( container ); } catch( Exception e ) { }
-			declaration( instantiation, null );
+			declaration( instantiation );
 			try { callback.explicitInstantiationEnd( instantiation ); } catch( Exception e ) { }
 			return;
 		}
@@ -410,7 +455,7 @@ c, quickParse);
 				// explicit-specialization
 				Object specialization = null;
 				try{ specialization = callback.explicitSpecializationBegin( container ); } catch( Exception e ) { }
-				declaration( specialization, null ); 
+				declaration( specialization ); 
 				try{ callback.explicitSpecializationEnd( specialization ); } catch( Exception e ) { }
 				return;
 			}
@@ -422,7 +467,7 @@ c, quickParse);
 			try{ templateDeclaration = callback.templateDeclarationBegin( container, firstToken ); } catch ( Exception e ) {}
 			templateParameterList( templateDeclaration );
 			consume( Token.tGT );
-			declaration( templateDeclaration, null ); 
+			declaration( templateDeclaration ); 
 			try{ callback.templateDeclarationEnd( templateDeclaration, lastToken ); } catch( Exception e ) {}
 			
 		} catch( Backtrack bt )
@@ -529,6 +574,11 @@ c, quickParse);
 		}
 	}
 	
+	
+	protected void declaration( Object container ) throws Backtrack
+	{
+		declaration( container, null );
+	}
 	/**
 	 * The most abstract construct within a translationUnit : a declaration.  
 	 * 
@@ -552,23 +602,29 @@ c, quickParse);
 	 * @param container		IParserCallback object which serves as the owner scope for this declaration.  
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void declaration( Object container, Declaration scope ) throws Backtrack {
+	protected void declaration( Object container, IASTScope scope ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_asm:
-				consume( Token.t_asm );
+				Token first = consume( Token.t_asm );
 				consume( Token.tLPAREN );
 				String assembly = consume( Token.tSTRING ).getImage();
 				consume( Token.tRPAREN ); 
-				consume( Token.tSEMI );
+				Token last = consume( Token.tSEMI );
+				
+				IASTASMDefinition asmDefinition =
+					astFactory.createASMDefinition(scope, assembly, first.getOffset(), last.getEndOffset());
+				
 				// if we made it this far, then we have all we need 
 				// do the callback
 				try{ callback.asmDefinition( container, assembly );} catch( Exception e ) {}
-				return; 
+				
+				requestor.acceptASMDefinition( asmDefinition );
+				return;
 			case Token.t_namespace:
-				namespaceDefinition( container, scope );
+				namespaceDefinition( container, scope);
 				return; 
 			case Token.t_using:
-				usingClause( container );
+				usingClause( container, scope );
 				return; 
 			case Token.t_export:
 			case Token.t_template:
@@ -577,20 +633,20 @@ c, quickParse);
 			case Token.t_extern:
 				if( LT(2) == Token.tSTRING )
 				{
-					linkageSpecification( container ); 
+					linkageSpecification( container, scope ); 
 					return;
 				}
 			default:
 				Token mark = mark(); 
 				try
 				{
-					simpleDeclaration( container, true, scope ); // try it first with the original strategy 
+					simpleDeclaration( container, true ); // try it first with the original strategy 
 				}
 				catch( Backtrack bt)
 				{ 
 					// did not work 
 					backup( mark );
-					simpleDeclaration( container, false, scope ); // try it again with the second strategy
+					simpleDeclaration( container, false ); // try it again with the second strategy
 				}
 		}
 	}
@@ -606,72 +662,43 @@ c, quickParse);
 	 * @throws Backtrack	request a backtrack
 
 	 */	
-	protected void namespaceDefinition( Object container, Declaration scope ) throws Backtrack
+	protected void namespaceDefinition( Object container, IASTScope scope ) throws Backtrack
 	{
 		Object namespace = null;
-		boolean redeclared = false;
-		Token firstToken = consume( Token.t_namespace );
+		Token first = consume( Token.t_namespace );
+		try{ namespace = callback.namespaceDefinitionBegin( container, first );} catch( Exception e ) {}
 
-		// optional name
-		String identifier = "";  		
+		Token identifier = null; 
+		// optional name 		
 		if( LT(1) == Token.tIDENTIFIER )
 		{
-			identifier = LA(1).getImage(); 
-			identifier();
+			identifier = identifier();
+			try{ callback.namespaceDefinitionId( namespace );} catch( Exception e ) {}
 		}
 	
 		if( LT(1) == Token.tLBRACE )
 		{
-			consume( Token.tLBRACE);
-			 
-			Declaration namespaceSymbol = null; 
-			try {
-				namespaceSymbol = scope.Lookup( identifier );
-			} catch (ParserSymbolTableException e1) {
-				// should not get ambiguity here 
-			}
-	
-			if( namespaceSymbol == null )
-			{
-				namespaceSymbol = pst.new Declaration( identifier );
-				try
-				{
-					namespaceSymbol.setType( TypeInfo.t_namespace );
-				}
-				catch( ParserSymbolTableException pste )
-				{
-					// should never happen
-				}
-				try{ namespace = callback.namespaceDefinitionBegin( container, firstToken );} catch( Exception e ) {}
-				namespaceSymbol.setObject( namespace );
-				try {
-					scope.addDeclaration( namespaceSymbol );
-				} catch (ParserSymbolTableException e2) {
-					// TODO ambiguity?
-				}
-				if( !identifier.equals( "" ))
-					try{ callback.namespaceDefinitionId( namespace );} catch( Exception e ) {}
-			}
-			else
-			{
-				if( namespaceSymbol.getType() != TypeInfo.t_namespace ) 
-					throw backtrack; 
-				namespace = namespaceSymbol.getObject();
-				redeclared = true;
-			}
-
-
+			consume(); 
+			
+			IASTNamespaceDefinition namespaceDefinition =
+				astFactory.createNamespaceDefinition( 
+					scope, 
+					( identifier == null ? "" : identifier.getImage() ), 
+					first.getOffset(), ( identifier == null ? 0 : identifier.getOffset()) );
+			
+			requestor.enterNamespaceDefinition( namespaceDefinition );
+			
 			namepsaceDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
 				Token checkToken = LA(1);
 				switch (LT(1)) {
 					case Token.tRBRACE:
-						consume(Token.tRBRACE);
+						//consume(Token.tRBRACE);
 						break namepsaceDeclarationLoop;
 					default:
 						try
 						{
-							declaration(namespace, namespaceSymbol);
+							declaration(namespace, namespaceDefinition);
 						}
 						catch( Backtrack bt )
 						{
@@ -685,9 +712,11 @@ c, quickParse);
 			}
 			// consume the }
 			
-			Token lastToken =consume( Token.tRBRACE );   
-			if( ! redeclared )
-				try{ callback.namespaceDefinitionEnd( namespace, lastToken );} catch( Exception e ) {}
+			Token last = consume( Token.tRBRACE ); 
+			try{ callback.namespaceDefinitionEnd( namespace, last);} catch( Exception e ) {}
+			
+			namespaceDefinition.setEndingOffset( last.getOffset() + last.getLength());
+			requestor.exitNamespaceDefinition( namespaceDefinition );
 		}
 		else
 		{
@@ -695,9 +724,9 @@ c, quickParse);
 			throw backtrack;
 		}
 	}
-	
-	
 
+
+		
 	/**
 	 * Serves as the catch-all for all complicated declarations, including function-definitions.  
 	 * 
@@ -715,10 +744,10 @@ c, quickParse);
 	 * @param tryConstructor	true == take strategy1 (constructor ) : false == take strategy 2 ( pointer to function) 
 	 * @throws Backtrack		request a backtrack
 	 */
-	protected void simpleDeclaration( Object container, boolean tryConstructor, Declaration scope ) throws Backtrack {
+	protected void simpleDeclaration( Object container, boolean tryConstructor ) throws Backtrack {
 		Object simpleDecl = null; 
 		try{ simpleDecl = callback.simpleDeclarationBegin( container, LA(1));} catch( Exception e ) {}
-		declSpecifierSeq(simpleDecl, false, tryConstructor, scope);
+		declSpecifierSeq(simpleDecl, false, tryConstructor);
 		Object declarator = null; 
 
 		if (LT(1) != Token.tSEMI)
@@ -846,7 +875,7 @@ c, quickParse);
 		Token current = LA(1);
 		Object parameterDecl = null;
 		try{ parameterDecl = callback.parameterDeclarationBegin( containerObject );} catch( Exception e ) {}
-		declSpecifierSeq( parameterDecl, true, false, null );
+		declSpecifierSeq( parameterDecl, true, false );
 		
 		if (LT(1) != Token.tSEMI)
 			try {
@@ -1029,7 +1058,7 @@ c, quickParse);
 	 * @param tryConstructor	true for constructor, false for pointer to function strategy
 	 * @throws Backtrack		request a backtrack
 	 */
-	protected void declSpecifierSeq( Object decl, boolean parm, boolean tryConstructor, Declaration scope ) throws Backtrack {
+	protected void declSpecifierSeq( Object decl, boolean parm, boolean tryConstructor ) throws Backtrack {
 		Flags flags = new Flags( parm, tryConstructor ); 
 		declSpecifiers:		
 		for (;;) {
@@ -1097,7 +1126,6 @@ c, quickParse);
 						return;
 					if ( lookAheadForDeclarator( flags ) )
 						return;
-						
 					try{ callback.simpleDeclSpecifier(decl,LA(1));} catch( Exception e ) {}
 					name(); 
 					try{ callback.simpleDeclSpecifierName( decl );} catch( Exception e ) {}
@@ -1112,7 +1140,7 @@ c, quickParse);
 					{
 						try
 						{
-							classSpecifier(decl, scope);
+							classSpecifier(decl);
 							return;
 						}
 						catch( Backtrack bt )
@@ -1172,6 +1200,7 @@ c, quickParse);
 			callback.elaboratedTypeSpecifierEnd( elab );
 		} catch( Exception e ) {}
 	}
+
 	
 	/**
 	 * Consumes template parameters.  
@@ -1210,13 +1239,14 @@ c, quickParse);
 	 * 
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void identifier() throws Backtrack {
+	protected Token identifier() throws Backtrack {
 		Token first = consume(Token.tIDENTIFIER); // throws backtrack if its not that
 		try
 		{ 
 			callback.nameBegin(first);
 			callback.nameEnd(first);
 		} catch( Exception e ) {}
+		return first;
 	}
 
 	/**
@@ -1274,7 +1304,7 @@ c, quickParse);
 	 * 
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void name() throws Backtrack {
+	protected TokenDuple name() throws Backtrack {
 		Token first = LA(1);
 		Token last = null;
 		
@@ -1318,6 +1348,7 @@ c, quickParse);
 		}
 
 		try{ callback.nameEnd(last);} catch( Exception e ) {}
+		return new TokenDuple( first, last );
 
 	}
 
@@ -1873,7 +1904,7 @@ c, quickParse);
 	 * @param	owner		IParserCallback object that represents the declaration that owns this classSpecifier
 	 * @throws	Backtrack	request a backtrack
 	 */
-	protected void classSpecifier( Object owner, Declaration scope ) throws Backtrack {
+	protected void classSpecifier( Object owner ) throws Backtrack {
 		Token classKey = null;
 		
 		Token mark = mark();
@@ -1931,7 +1962,7 @@ c, quickParse);
 					default:
 						try
 						{
-							declaration(classSpec, scope);
+							declaration(classSpec);
 						}
 						catch( Backtrack bt )
 						{
@@ -2115,7 +2146,7 @@ c, quickParse);
 				while (LT(1) == Token.t_catch) {
 					consume();
 					consume(Token.tLPAREN);
-					declaration(null, null); // was exceptionDeclaration
+					declaration(null); // was exceptionDeclaration
 					consume(Token.tRPAREN);
 					compoundStatement();
 				}
@@ -2147,7 +2178,7 @@ c, quickParse);
 				}
 				
 				// declarationStatement
-				declaration(null, null);
+				declaration(null);
 		}
 	}
 	
@@ -3120,5 +3151,15 @@ c, quickParse);
 	 */
 	public int getLastErrorOffset() {
 		return firstErrorOffset;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParser#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+	 */
+	public void setRequestor(ISourceElementRequestor r) {
+		requestor = r;
+		if( scanner != null )
+			scanner.setRequestor(r);
 	}
 }

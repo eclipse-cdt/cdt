@@ -19,15 +19,14 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
-import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -92,7 +91,7 @@ public class LineNumberTest extends TestCase {
 	
 	public void testDOMLineNos() throws Exception
 	{
-		DOMBuilder domBuilder = DOMFactory.createDOMBuilder( true );
+		DOMBuilder domBuilder = new DOMBuilder();
 		IParser parser = new Parser( fileIn, domBuilder, true ); 
 		parser.mapLineNumbers(true); 
 		if( ! parser.parse() ) fail( "Parse of file failed");

@@ -12,10 +12,9 @@ package org.eclipse.cdt.core.parser.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
-import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -32,11 +31,11 @@ public class BaseDOMTest extends TestCase {
 	
 	public TranslationUnit parse( String code ) throws Exception
 	{
-		return parse( code, false, true );
+		return parse( code, true, true );
 	}
 	
 	public TranslationUnit parse(String code, boolean quickParse, boolean throwOnError ) throws Exception {
-		DOMBuilder domBuilder = DOMFactory.createDOMBuilder(false); 
+		DOMBuilder domBuilder = new DOMBuilder(); 
 		IParser parser = new Parser(code, domBuilder, quickParse );
 		if( ! parser.parse() )
 			if( throwOnError ) throw new ParserException( "Parse failure" );

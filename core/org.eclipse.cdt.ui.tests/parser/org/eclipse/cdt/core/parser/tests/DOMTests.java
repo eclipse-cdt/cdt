@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.dom.Expression;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.Macro;
-import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
@@ -39,6 +38,7 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameterList;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.UsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.UsingDirective;
+import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
 
@@ -66,7 +66,7 @@ public class DOMTests extends BaseDOMTest {
 			if( i == 0 )
 				assertEquals( namespace.getName().toString(), "KingJohn" );
 			else
-				assertNull( namespace.getName() );
+				assertEquals( namespace.getName(), "" );
 			List namespaceDeclarations = namespace.getDeclarations();
 			assertEquals( namespaceDeclarations.size(), 1 );
 			SimpleDeclaration simpleDec = (SimpleDeclaration)namespaceDeclarations.get(0);
@@ -222,16 +222,16 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( second.getNamespaceName().toString(), "C" ); 
 		
 		third = (UsingDeclaration) declarations.get(2);
-		assertEquals( third.getMappedName().toString(), "B::f" );
+		assertEquals( third.getMappedName(), "B::f" );
 		assertFalse( third.isTypename() ); 
 		
 		fourth = (UsingDeclaration) declarations.get(3);
-		assertEquals( fourth.getMappedName().toString(), "::f" );
+		assertEquals( fourth.getMappedName(), "::f" );
 		assertFalse( fourth.isTypename() ); 
 		
 		fifth = (UsingDeclaration) declarations.get(4);
 		assertTrue( fifth.isTypename() );
-		assertEquals( fifth.getMappedName().toString(), "crap::de::crap" );
+		assertEquals( fifth.getMappedName(), "crap::de::crap" );
 	}
 	
 	public void testDeclSpecifier() throws Exception
@@ -899,7 +899,7 @@ public class DOMTests extends BaseDOMTest {
 	
 	public void testConstructorChain() throws Exception
 	{
-		TranslationUnit tu = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}" );
+		TranslationUnit tu = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}", true, true);
 		List tuDeclarations = tu.getDeclarations(); 
 		assertEquals( tuDeclarations.size(), 1 );
 		SimpleDeclaration decl1 = (SimpleDeclaration)tuDeclarations.get(0);

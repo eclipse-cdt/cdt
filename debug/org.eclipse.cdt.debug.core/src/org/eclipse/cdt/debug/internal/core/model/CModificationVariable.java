@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStringValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStructureValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -64,30 +65,7 @@ public abstract class CModificationVariable extends CVariable
 	 */
 	public boolean verifyValue( String expression )
 	{
-		try
-		{
-			ICDIValue vmValue = generateValue( expression );
-			return vmValue != null;
-		}
-		catch( DebugException e )
-		{
-			logError( e );
-			return false;
-		}
-	}
-
-	protected ICDIValue generateValue( String expression ) throws DebugException
-	{
-		ICDIValue value = null;
-		try
-		{
-			value = getCDITarget().evaluateExpressionToValue( expression );
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( MessageFormat.format( ERROR_MESSAGE, new String[] { expression } ), null );
-		}
-		return value;
+		return true;
 	}
 
 	/**
@@ -103,19 +81,26 @@ public abstract class CModificationVariable extends CVariable
 	 */
 	public final void setValue( String expression ) throws DebugException
 	{
-		ICDIValue value = generateValue( expression );
-
-		if ( value == null )
+		ICDIVariable cdiVariable = getCDIVariable();
+		if ( cdiVariable == null )
 		{
-			targetRequestFailed( MessageFormat.format( ERROR_MESSAGE, new String[] { expression } ), null );
+			logError( "Error in IValueModification#setValue: no cdi variable." );
+			requestFailed( "Unable to set value.", null );
 		}
-
-		setValue( value );
-		fireChangeEvent( DebugEvent.CONTENT );
+		try
+		{
+			cdiVariable.setValue( expression );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 
 	/**
 	 * Set this variable's value to the given value
 	 */
 	protected abstract void setValue( ICDIValue value ) throws DebugException;
+	
+	protected abstract ICDIVariable getCDIVariable();
 }

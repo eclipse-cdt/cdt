@@ -116,6 +116,20 @@ public class CDebugCorePlugin extends Plugin
 		getDefault().getLog().log( status );
 	}
 	
+	/**
+	 * Logs the specified message with this plug-in's log.
+	 * 
+	 * @param status status to log
+	 */
+	public static void log( String message )
+	{
+		getDefault().getLog().log( new Status( IStatus.ERROR, 
+											   CDebugModel.getPluginIdentifier(),
+											   INTERNAL_ERROR, 
+											   message, 
+											   null ) );
+	}
+	
 	private void initializeDebugConfiguration() {
 		IPluginDescriptor descriptor= getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebugger");

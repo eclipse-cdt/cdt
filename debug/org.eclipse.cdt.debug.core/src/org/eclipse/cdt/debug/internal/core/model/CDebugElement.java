@@ -80,12 +80,31 @@ public class CDebugElement extends PlatformObject
 	}
 
 	/**
+	 * Logs the given message.
+	 * 
+	 * @param message the message
+	 */
+	public void internalError( String message )
+	{
+		logError( message );
+	}
+
+	/**
 	 * Convenience method to log errors
 	 * 
 	 */
 	protected void logError( Exception e ) 
 	{
 		CDebugCorePlugin.log( e );
+	}
+
+	/**
+	 * Convenience method to log errors
+	 * 
+	 */
+	protected void logError( String message ) 
+	{
+		CDebugCorePlugin.log( message );
 	}
 
 	/**

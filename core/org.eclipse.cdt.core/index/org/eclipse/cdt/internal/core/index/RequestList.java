@@ -34,6 +34,10 @@ public class RequestList {
 		}
 	}
 
+	public boolean removeItem(Object key) {
+		return list.remove(key);
+	}
+
 	public void addItem(IResource item) {
 		//print("in addItem() - entering");
 		synchronized (list) {

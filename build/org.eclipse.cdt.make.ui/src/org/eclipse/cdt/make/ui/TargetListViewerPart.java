@@ -42,15 +42,17 @@ public class TargetListViewerPart extends StructuredViewerPart {
 		tableViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
 		Table table = (Table) tableViewer.getControl();
 		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
-		table.setHeaderVisible(true);
 
 		layout.addColumnData(new ColumnWeightData(50));
-		TableColumn tc = new TableColumn(table, SWT.NONE);
+		TableColumn tc = new TableColumn(table, SWT.NONE, 0);
 		tc.setText("Targets");
+
 		layout.addColumnData(new ColumnWeightData(50));
-		tc = new TableColumn(table, SWT.NONE);
+		tc = new TableColumn(table, SWT.NONE, 1);
 		tc.setText("Location");
+
+		table.setLayout(layout);
+		table.setHeaderVisible(true);
 
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
@@ -100,13 +102,15 @@ public class TargetListViewerPart extends StructuredViewerPart {
 
 	protected void selectionChanged(IStructuredSelection selection) {
 		fSelectedTarget = (IMakeTarget) selection.getFirstElement();
-		updateEnabledState();
+		if (getViewer() != null) {
+			updateEnabledState();
+		}
 	}
 
 	public void setSelectedTarget(IMakeTarget target) {
 		fSelectedTarget = target;
 		if (tableViewer != null) {
-			tableViewer.setSelection(new StructuredSelection(fSelectedTarget), true);
+			tableViewer.setSelection(new StructuredSelection(fSelectedTarget), false);
 		}
 	}
 
@@ -128,8 +132,8 @@ public class TargetListViewerPart extends StructuredViewerPart {
 	public void createControl(Composite parent, int style, int span) {
 		super.createControl(parent, style, span);
 		updateEnabledState();
-		if (fSelectedTarget != null) {
-			tableViewer.setSelection(new StructuredSelection(fSelectedTarget), true);
+		if (getViewer() != null && fSelectedTarget != null) {
+			getViewer().setSelection(new StructuredSelection(fSelectedTarget));
 		}
 	}
 

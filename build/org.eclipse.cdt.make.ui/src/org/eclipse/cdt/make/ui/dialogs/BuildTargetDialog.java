@@ -8,6 +8,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,6 +45,7 @@ public class BuildTargetDialog extends Dialog {
 		// create Build and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, "Build", true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		getButton(IDialogConstants.OK_ID).setEnabled(targetPart.getSelectedTarget() != null);
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -64,16 +67,20 @@ public class BuildTargetDialog extends Dialog {
 				okPressed();
 			}
 		});
-
+		targetPart.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				getButton(IDialogConstants.OK_ID).setEnabled(targetPart.getSelectedTarget() != null);
+			}
+		});
 		return composite;
 	}
 
 	protected void okPressed() {
 		IMakeTarget selected = targetPart.getSelectedTarget();
-		if (selected != null) {
-			TargetBuild.runWithProgressDialog(getShell(), new IMakeTarget[] { selected });
-		}
 		super.okPressed();
+		if (selected != null) {
+			TargetBuild.runWithProgressDialog(getParentShell(), new IMakeTarget[] { selected });
+		}
 	}
 
 }

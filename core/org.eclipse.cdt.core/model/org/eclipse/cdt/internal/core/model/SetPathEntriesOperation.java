@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IProject;
@@ -55,11 +54,6 @@ public class SetPathEntriesOperation extends CModelOperation {
 		PathEntryManager mgr = PathEntryManager.getDefault();		
 		hasModifiedResource = true;
 		mgr.saveRawPathEntries(cproject, newRawEntries);
-		IPathEntry[] newResolvedEntries = mgr.getResolvedPathEntries(cproject);
-		ICElementDelta[] deltas = mgr.generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
-		for (int i = 0; i < deltas.length; i++) {
-			addDelta(deltas[i]);
-		}
 		done();
 	}
 

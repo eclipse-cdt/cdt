@@ -103,17 +103,17 @@ public class CModelTests extends TestCase {
         testProject=CProjectHelper.createCProject("naturetest", "none");
         if (testProject==null)
             fail("Unable to create project");
-        assertTrue("hasCNature works", CoreModel.hasCNature(testProject.getProject()));
-        assertTrue("hasCCNature works without ccnature", !(CoreModel.hasCCNature(testProject.getProject())));
+        assertTrue("hasCNature works", CoreModel.getDefault().hasCNature(testProject.getProject()));
+        assertTrue("hasCCNature works without ccnature", !(CoreModel.getDefault().hasCCNature(testProject.getProject())));
    
    
         CCProjectNature.addCCNature(testProject.getProject(), monitor);
-        assertTrue("hasCCNature works", (CoreModel.hasCCNature(testProject.getProject())));
+        assertTrue("hasCCNature works", (CoreModel.getDefault().hasCCNature(testProject.getProject())));
         
         CCProjectNature.removeCCNature(testProject.getProject(), monitor);
         CCProjectNature.removeCNature(testProject.getProject(), monitor);                
-        assertTrue("hasCNature works without cnature", !CoreModel.hasCNature(testProject.getProject()));
-        assertTrue("hasCCNature works without ccnature or cnature", !(CoreModel.hasCCNature(testProject.getProject())));
+        assertTrue("hasCNature works without cnature", !CoreModel.getDefault().hasCNature(testProject.getProject()));
+        assertTrue("hasCCNature works without ccnature or cnature", !(CoreModel.getDefault().hasCCNature(testProject.getProject())));
 
     }    
 
@@ -135,12 +135,12 @@ public class CModelTests extends TestCase {
         /***
          * file should be a binary, executable, not shared or archive
          */
-        assertTrue("isBinary", CoreModel.isBinary(file));
-        assertTrue("isExecutable", CoreModel.isExecutable(file));
-        assertTrue("isSharedLib", !CoreModel.isSharedLib(file));
-        assertTrue("isArchive", !CoreModel.isArchive(file));
-        assertTrue("isObject", !CoreModel.isObject(file));
-        assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+        assertTrue("isBinary", CoreModel.getDefault().isBinary(file));
+        assertTrue("isExecutable", CoreModel.getDefault().isExecutable(file));
+        assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
+        assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
+        assertTrue("isObject", !CoreModel.getDefault().isObject(file));
+        assertTrue("isTranslationUnit", !CoreModel.getDefault().isTranslationUnit(file));
         
         
         file = testProject.getProject().getFile("exetest.c");
@@ -151,12 +151,12 @@ public class CModelTests extends TestCase {
         /***
          * file should be a translation unit
          */
-        assertTrue("isBinary", !CoreModel.isBinary(file));
-        assertTrue("isExecutable", !CoreModel.isExecutable(file));
-        assertTrue("isSharedLib", !CoreModel.isSharedLib(file));
-        assertTrue("isArchive", !CoreModel.isArchive(file));
-        assertTrue("isObject", !CoreModel.isObject(file));
-        assertTrue("isTranslationUnit", CoreModel.isTranslationUnit(file));
+        assertTrue("isBinary", !CoreModel.getDefault().isBinary(file));
+        assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
+        assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
+        assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
+        assertTrue("isObject", !CoreModel.getDefault().isObject(file));
+        assertTrue("isTranslationUnit", CoreModel.getDefault().isTranslationUnit(file));
         
         file = testProject.getProject().getFile("exetest.o");
         if (!file.exists()) {
@@ -166,12 +166,12 @@ public class CModelTests extends TestCase {
         /***
          * file should be a object file unit
          */
-        assertTrue("isBinary", CoreModel.isBinary(file));
-        assertTrue("isExecutable", !CoreModel.isExecutable(file));
-        assertTrue("isSharedLib", !CoreModel.isSharedLib(file));
-        assertTrue("isArchive", !CoreModel.isArchive(file));
-        assertTrue("isObject", CoreModel.isObject(file));
-        assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+        assertTrue("isBinary", CoreModel.getDefault().isBinary(file));
+        assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
+        assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
+        assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
+        assertTrue("isObject", CoreModel.getDefault().isObject(file));
+        assertTrue("isTranslationUnit", !CoreModel.getDefault().isTranslationUnit(file));
 
         file = testProject.getProject().getFile("liblibtest_g.so");
         if (!file.exists()) {
@@ -181,12 +181,12 @@ public class CModelTests extends TestCase {
         /***
          * file should be a sharedlib/binary file
          */
-        assertTrue("isBinary", CoreModel.isBinary(file));
-        assertTrue("isExecutable", !CoreModel.isExecutable(file));
-        assertTrue("isSharedLib", CoreModel.isSharedLib(file));
-        assertTrue("isArchive", !CoreModel.isArchive(file));
-        assertTrue("isObject", !CoreModel.isObject(file));
-        assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+        assertTrue("isBinary", CoreModel.getDefault().isBinary(file));
+        assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
+        assertTrue("isSharedLib", CoreModel.getDefault().isSharedLib(file));
+        assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
+        assertTrue("isObject", !CoreModel.getDefault().isObject(file));
+        assertTrue("isTranslationUnit", !CoreModel.getDefault().isTranslationUnit(file));
 
         file = testProject.getProject().getFile("liblibtest_g.a");
         if (!file.exists()) {
@@ -198,13 +198,13 @@ public class CModelTests extends TestCase {
         /***
          * file should be a archive file
          */
-        assertTrue("isArchive", CoreModel.isArchive(file));
-        assertTrue("isBinary:", !CoreModel.isBinary(file));
-        assertTrue("isExecutable", !CoreModel.isExecutable(file));
-        assertTrue("isSharedLib", !CoreModel.isSharedLib(file));
-        assertTrue("isArchive", CoreModel.isArchive(file));
-        assertTrue("isObject", !CoreModel.isObject(file));
-        assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+        assertTrue("isArchive", CoreModel.getDefault().isArchive(file));
+        assertTrue("isBinary:", !CoreModel.getDefault().isBinary(file));
+        assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
+        assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
+        assertTrue("isArchive", CoreModel.getDefault().isArchive(file));
+        assertTrue("isObject", !CoreModel.getDefault().isObject(file));
+        assertTrue("isTranslationUnit", !CoreModel.getDefault().isTranslationUnit(file));
 
 
         testProject.getProject().delete(true,true,monitor);
@@ -214,9 +214,9 @@ public class CModelTests extends TestCase {
      * Some simple tests for isValidTranslationUnitName
      */
     public void testIsValidTranslationUnitName() throws CoreException {
-        assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName("notcfile"));        
-        assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName("not.c.file"));        
-        assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName("not.ca"));        
-        assertTrue("Valid C file", CoreModel.isValidTranslationUnitName("areal.c"));        
+        assertTrue("Invalid C file", !CoreModel.getDefault().isValidTranslationUnitName("notcfile"));        
+        assertTrue("Invalid C file", !CoreModel.getDefault().isValidTranslationUnitName("not.c.file"));        
+        assertTrue("Invalid C file", !CoreModel.getDefault().isValidTranslationUnitName("not.ca"));        
+        assertTrue("Valid C file", CoreModel.getDefault().isValidTranslationUnitName("areal.c"));        
     }
 }

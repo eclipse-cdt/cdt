@@ -158,7 +158,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 		}
 		if ( element instanceof ICLineBreakpoint )
 		{
-			return new FileEditorInput( (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class ) );
+			IFile file = (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class );
+			if ( file != null )
+				return new FileEditorInput( file );
 		}
 		if ( element instanceof FileStorage )
 		{

@@ -1,3 +1,7 @@
+2003-07-29 Mikhail Khodjaiants
+	Fix for PR 40911: Double clicking on breakpoint with no source causes internal error.
+	* CDTDebugModelPresentation.java: check if the resource associated with breakpoint is a file.
+
 2003-07-28 Mikhail Khodjaiants
 	Minimize the number of the "evaluate expression" requests when changing the value of the floating point types.
 	* CDTDebugModelPresentation.java

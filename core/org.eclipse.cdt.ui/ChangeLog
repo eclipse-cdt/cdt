@@ -1,3 +1,8 @@
+2004-03-31 David Daoust
+	Changed the default value for the preference "LinkToEditor" to be 
+	off -- the same as in the JDT.
+	* src/org/eclipse/cdt/internal/ui/preferences/CPluginPreferencePage.java
+
 2004-03-31 Bogdan Gheorghe
 	Fixed the overview annotations in the Overview bar in the CEditor
 	Modified the CEditorPreferencePage to add the Index Marker annotation

@@ -84,7 +84,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 * Initializes the default values of this page in the preference bundle.
 	 */
 	public static void initDefaults(IPreferenceStore prefs) {
-		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, true);
+		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, false);
 		prefs.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
 		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CCorePlugin.getDefault().useStructuralParseMode());
 		prefs.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);

@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -340,27 +339,33 @@ public class CVisitor {
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 		 */
 		public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
-			if ( declSpec instanceof IASTSimpleDeclSpecifier ||	declSpec instanceof ICASTTypedefNameSpecifier ) 
+			if ( compositeTypeDeclared && declSpec instanceof ICASTTypedefNameSpecifier )  
 				return PROCESS_CONTINUE;
 			
 			//if the binding isn't declared in a decl spec, skip it
 			if( !(binding instanceof ICompositeType) &&	!(binding instanceof IEnumeration) )
 				return PROCESS_CONTINUE;
 			
-			if ( !compositeTypeDeclared && declSpec != null && declSpec instanceof IASTCompositeTypeSpecifier ) {
-				if (((IASTCompositeTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
+			if ( binding instanceof ICompositeType && declSpec instanceof IASTCompositeTypeSpecifier ) {
+			    if( ((IASTCompositeTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
 					compositeTypeDeclared = true;
 					addName(((IASTCompositeTypeSpecifier)declSpec).getName());
 				}
-			} else if (!compositeTypeDeclared && declSpec instanceof IASTElaboratedTypeSpecifier ) {
+			} else if ( binding instanceof IEnumeration && declSpec instanceof IASTEnumerationSpecifier ) {
+				if( ((IASTEnumerationSpecifier)declSpec).getName().resolveBinding() == binding ) {
+					compositeTypeDeclared = true;
+					addName(((IASTEnumerationSpecifier)declSpec).getName());
+				}
+			} else if( declSpec instanceof IASTElaboratedTypeSpecifier ) {
+			    if( compositeTypeDeclared ){
+			        IASTNode parent = declSpec.getParent();
+			        if( !(parent instanceof IASTSimpleDeclaration) || ((IASTSimpleDeclaration)parent).getDeclarators().length > 0 ){
+			            return PROCESS_CONTINUE;
+			        }
+			    }
 				if (((IASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
 					compositeTypeDeclared = true;
 					addName(((IASTElaboratedTypeSpecifier)declSpec).getName());
-				}
-			} else if (!compositeTypeDeclared && declSpec instanceof IASTEnumerationSpecifier ) {
-				if (((IASTEnumerationSpecifier)declSpec).getName().resolveBinding() == binding) {
-					compositeTypeDeclared = true;
-					addName(((IASTEnumerationSpecifier)declSpec).getName());
 				}
 			}
 			

@@ -651,20 +651,23 @@ public class AST2Tests extends AST2BaseTest {
 
       // test tu.getDeclarations(IBinding)
       IASTName[] decls = tu.getDeclarations(name_A1.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], name_A1);
+      assertEquals(decls[1], name_Adef);
 
       decls = tu.getDeclarations(name_A2.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], name_A1);
+      assertEquals(decls[1], name_Adef);
 
       decls = tu.getDeclarations(name_a.resolveBinding());
       assertEquals(decls.length, 1);
       assertEquals(decls[0], name_a);
 
       decls = tu.getDeclarations(name_Adef.resolveBinding());
-      assertEquals(decls.length, 1);
+      assertEquals(decls.length, 2);
       assertEquals(decls[0], name_A1);
+      assertEquals(decls[1], name_Adef);
 
       decls = tu.getDeclarations(name_i.resolveBinding());
       assertEquals(decls.length, 1);

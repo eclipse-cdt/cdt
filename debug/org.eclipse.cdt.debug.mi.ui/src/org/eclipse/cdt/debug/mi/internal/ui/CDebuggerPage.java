@@ -4,15 +4,11 @@
  */
 package org.eclipse.cdt.debug.mi.internal.ui;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -58,7 +54,7 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fAutoSoLibButton.setLayoutData(gd);
-
+/*
 		ListEditor listEditor = new ListEditor("1", "Shared library search paths:", comp) {
 			protected String createList(String[] items) {
 				StringBuffer buf = new StringBuffer();
@@ -88,7 +84,7 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 			}
 
 		};
-		
+*/		
 		
 	}
 

@@ -15,25 +15,28 @@ package org.eclipse.cdt.internal.core.search.indexing;
  * @author bgheorgh
 */
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStreamReader;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A SourceIndexer indexes source files using the parser. The following items are indexed:
@@ -90,11 +93,14 @@ public class SourceIndexer extends AbstractIndexer {
 		
 		try
 		{
+			
+			BufferedInputStream inStream = new BufferedInputStream(resourceFile.getContents());
 			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService() ), 
+							ParserFactory.createScanner( new BufferedReader(new InputStreamReader(inStream)), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService() ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
 		} catch( ParserFactoryError pfe )
 		{
+		} catch (CoreException e) {
 		}
 		
 		try{

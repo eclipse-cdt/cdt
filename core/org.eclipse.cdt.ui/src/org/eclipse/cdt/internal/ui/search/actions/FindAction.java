@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IParser;
@@ -30,7 +31,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.ParseError.ParseErrorKind;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -187,12 +187,13 @@ public abstract class FindAction extends Action {
 		try{
 			node = parser.parse(selectionStart,selectionEnd);
 		} 
-		catch (ParseError er){
-			ParseErrorKind per = er.getErrorKind();
-			er.printStackTrace();
+		catch (ParseError er){}
+		catch (Exception ex){}
+		catch ( VirtualMachineError vmErr){
+			if (vmErr instanceof OutOfMemoryError){
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Selection Search Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
-		catch (Exception ex){
-		ex.printStackTrace();}
 		
 		if (node == null){
 			operationNotAvailableDialog();

@@ -206,7 +206,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER));
-		
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.HYPERLINK_ENABLED));
+       
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
@@ -291,6 +292,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
 		
+		store.setDefault(CEditor.HYPERLINK_ENABLED,true);
+		
+
 	}
 
 	/*
@@ -920,9 +924,35 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createContentAssistPage(folder));
 
+		item = new TabItem(folder, SWT.NONE);
+		item.setText("Navigation");
+		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
+		item.setControl(createNavPage(folder));
+		
 		initialize();
 
 		return folder;
+	}
+
+	/**
+	 * @param folder
+	 * @return
+	 */
+	private Control createNavPage(Composite parent) {
+		Composite navComposite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		navComposite.setLayout(layout);
+
+		Button navCheck = new Button(navComposite,SWT.CHECK);
+		navCheck.setText("Enable Hyperlink Navigation");
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		navCheck.setLayoutData(gd);
+		navCheck.addSelectionListener(fCheckBoxListener);
+		fCheckBoxes.put(navCheck, CEditor.HYPERLINK_ENABLED);
+
+		return navComposite;
 	}
 
 	private void initialize() {

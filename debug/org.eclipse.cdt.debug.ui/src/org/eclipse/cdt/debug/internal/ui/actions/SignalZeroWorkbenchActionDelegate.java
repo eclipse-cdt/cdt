@@ -39,14 +39,6 @@ public class SignalZeroWorkbenchActionDelegate extends AbstractListenerActionDel
 	}
 
 	/**
-	 * @see AbstractDebugActionDelegate#enableForMultiSelection()
-	 */
-	protected boolean enableForMultiSelection()
-	{
-		return false;
-	}
-
-	/**
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage()

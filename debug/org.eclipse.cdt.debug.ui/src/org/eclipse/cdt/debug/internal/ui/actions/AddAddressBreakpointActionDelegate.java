@@ -63,7 +63,7 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 	 */
 	protected void doAction( Object element ) throws DebugException
 	{
-		InputDialog dialog = new InputDialog( getPage().getWorkbenchWindow().getShell(),
+		InputDialog dialog = new InputDialog( getWindow().getShell(),
 											  "Add Address Breakpoint",
 											  "Enter address:",
 											  null,

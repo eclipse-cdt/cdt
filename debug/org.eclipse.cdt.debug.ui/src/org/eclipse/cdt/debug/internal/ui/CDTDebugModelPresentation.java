@@ -96,6 +96,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 * @see #setAttribute(String, Object)
 	 */
 	public final static String DISPLAY_FULL_PATHS = "DISPLAY_FULL_PATHS"; //$NON-NLS-1$
+
+	private static final String DUMMY_STACKFRAME_LABEL = "..."; 
 	
 	protected HashMap fAttributes = new HashMap(3);
 
@@ -521,32 +523,41 @@ public class CDTDebugModelPresentation extends LabelProvider
 		IStackFrameInfo info = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
 		if ( info != null )
 		{
-			String label = new String();
-			label += info.getLevel() + " ";
-			if ( info.getFunction() != null && info.getFunction().trim().length() > 0 )
+			StringBuffer label = new StringBuffer();
+			label.append( info.getLevel() );
+			label.append( ' ' );
+			if ( info.getFunction() != null )
 			{
-				label += info.getFunction() + "() ";
-				if ( info.getFile() != null )
+				String function = info.getFunction().trim();
+				if ( function.length() > 0 )
 				{
-					IPath path = new Path( info.getFile() );
-					if ( !path.isEmpty() )
+					label.append( function );
+					label.append( "() " );
+					if ( info.getFile() != null )
 					{
-						label += "at " + ( qualified ? path.toOSString() : path.lastSegment() ) + ":";
-						if ( info.getFrameLineNumber() != 0 )
-							label += info.getFrameLineNumber();
+						IPath path = new Path( info.getFile() );
+						if ( !path.isEmpty() )
+						{
+							label.append( "at " );
+							label.append( ( qualified ? path.toOSString() : path.lastSegment() ) );
+							label.append( ":" );
+							if ( info.getFrameLineNumber() != 0 )
+								label.append( info.getFrameLineNumber() );
+						}
 					}
 				}
 			}
 			else
-				label += "<symbol is not available>";
-			return label;
+				label.append( "<symbol is not available>" );
+			return label.toString();
 		}
-		IDummyStackFrame dummy = (IDummyStackFrame)stackFrame.getAdapter( IDummyStackFrame.class );
-		if ( dummy != null )
-		{
-			return stackFrame.getName();
-		}
-		return stackFrame.getName();
+		return ( stackFrame.getAdapter( IDummyStackFrame.class ) != null ) ? 
+				getDummyStackFrameLabel( stackFrame ) : stackFrame.getName();
+	}
+
+	private String getDummyStackFrameLabel( IStackFrame stackFrame )
+	{
+		return DUMMY_STACKFRAME_LABEL;
 	}
 
 	protected String getVariableText( IVariable var ) throws DebugException

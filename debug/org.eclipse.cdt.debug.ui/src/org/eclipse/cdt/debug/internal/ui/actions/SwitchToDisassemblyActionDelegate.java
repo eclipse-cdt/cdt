@@ -31,12 +31,12 @@ public class SwitchToDisassemblyActionDelegate extends AbstractListenerActionDel
 	 */
 	protected void doAction( Object element ) throws DebugException
 	{
-		if ( element != null && element instanceof CDebugElement )
+		if ( element != null && element instanceof CDebugElement && getAction() != null && getAction().isEnabled() )
 		{
 			ISourceMode sourceMode = (ISourceMode)((CDebugElement)element).getDebugTarget().getAdapter( ISourceMode.class );
 			if ( sourceMode != null )
 			{
-				sourceMode.setMode( ( sourceMode.getMode() == ISourceMode.MODE_SOURCE ) ? ISourceMode.MODE_DISASSEMBLY : ISourceMode.MODE_SOURCE );
+				sourceMode.setMode( ( getAction().isChecked() ) ? ISourceMode.MODE_DISASSEMBLY : ISourceMode.MODE_SOURCE );
 				((CDebugElement)element).fireChangeEvent( DebugEvent.CLIENT_REQUEST );
 				if ( fViewPart != null && fViewPart instanceof ISelectionChangedListener )
 				{

@@ -1,3 +1,8 @@
+2003-11-13 Mikhail Khodjaiants
+	Use 'StringBuffer' instead of 'String' when generating stack frame labels.
+	Added a label for dummy stack frames instead of using the name provided by the rendered object.
+	* CDTDebugModelPresentation.java 
+
 2003-11-05 Mikhail Khodjaiants
 	The argument type of the 'getBreakpointAddress' of 'ICBreakpointManager' is changed from 
 	'ICBreakpoint' to 'ICBreakpointManager'.
@@ -6,6 +11,15 @@
 2003-11-03 Mikhail Khodjaiants
 	Fix for PR 45957: Memory view: last column does not show updates.
 	* MemoryPresentation.java
+
+2003-10-31 Mikhail Khodjaiants
+	Applied the changes made to the corresponding classes of 'org.eclipse.debug.ui'.
+	* AbstractDebugActionDelegate.java
+	* AbstractListenerActionDelegate.java
+	* AddAddressBreakpointActionDelegate.java
+	* DebuggerConsoleActionDelegate.java
+	* SwitchToDisassemblyActionDelegate.java
+	* SignalZeroWorkbenchActionDelegate.java
 
 2003-10-28 Mikhail Khodjaiants
 	Changed name of source lookup preference page.

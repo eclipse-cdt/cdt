@@ -1,3 +1,15 @@
+2003-04-24 Alex Chapiro
+
+	* os/win32/x86/spawner.dll: Rebuild
+	* src/library/Win32ProcessEx.c:
+	Include additionnal functionality for interruption.
+	* src/library/Spawner.h:
+	Fix the headers.
+	* src/library/raise.c:
+	New file, implements interruption function.
+	* src/library/spawner.dsp:
+	Update, new file raise.c added.
+
 2003-02-25 Alex Chapiro
 
 	Fix for this type of problem:

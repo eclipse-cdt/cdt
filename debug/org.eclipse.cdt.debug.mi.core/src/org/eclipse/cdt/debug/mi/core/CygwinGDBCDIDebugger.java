@@ -36,7 +36,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		// the "search-solib-path" and "stop-on-solib-events" options are not supported in CygWin
 	}
 
-	public ICDISession createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
 		Session session = (Session) super.createLaunchSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
@@ -61,7 +61,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		return session;
 	}
 
-	public ICDISession createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
 		Session session = (Session) super.createAttachSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
@@ -72,7 +72,7 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		return session;
 	}
 
-	public ICDISession createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
 		Session session = (Session) super.createCoreSession(config, exe, monitor);
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {

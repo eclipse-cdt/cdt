@@ -24,8 +24,10 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -43,10 +45,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
- * @author User
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Implementing cdebugger extension point
  */
 public class GDBCDIDebugger implements ICDIDebugger {
 
@@ -59,7 +58,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 			throws CoreException {
 		fLaunch = launch;
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		ICDISession dsession = null;
+		Session dsession = null;
 		String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 
@@ -78,22 +77,23 @@ public class GDBCDIDebugger implements ICDIDebugger {
 			dsession = createCoreSession(config, exe, monitor);
 		}
 		if (dsession != null) {
-			Process debugger;
-			try {
-				debugger = dsession.getSessionProcess();
-				if (debugger != null ) {
-					IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
-					launch.addProcess(debuggerProcess);
+			ICDITarget[] dtargets = dsession.getTargets();
+			for (int i = 0; i < dtargets.length; i++) {
+				if (dtargets[i] instanceof Target) {
+					Target target = (Target)dtargets[i];
+					Process debugger = target.getMISession().getSessionProcess();
+					if (debugger != null ) {
+						IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
+						launch.addProcess(debuggerProcess);
+					}
 				}
-			} catch (CDIException e) {
-				// Should we just ignore ?
 			}
 		}
 
 		return dsession;
 	}
 
-	public ICDISession createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createLaunchSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
 		Session session = null;
 		boolean failed = false;
 		try {
@@ -123,7 +123,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		}
 	}
 
-	public ICDISession createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
 		Session session = null;
 		boolean failed = false;
 		try {
@@ -154,7 +154,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		}
 	}
 
-	public ICDISession createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
 		Session session = null;
 		boolean failed = false;
 		try {

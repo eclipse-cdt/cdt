@@ -393,18 +393,12 @@ public class MISession extends Observable {
 
 		// Although we will close the pipe().  It is cleaner
 		// to give a chance to gdb to cleanup.
-		// send the exit(-gdb-exit).
+		// send the exit(-gdb-exit).  But we only wait a maximum of 2 sec.
 		MIGDBExit exit = factory.createMIGDBExit();
-		txQueue.addCommand(exit);
-
-		// Wait for the response
-		synchronized (exit) {
-			// RxThread will set the MIOutput on the cmd
-			// when the response arrive.
-			try {
-				exit.wait(2000);
-			} catch (InterruptedException e) {
-			}
+		try {
+			postCommand0(exit, 2000);
+		} catch (MIException e) {
+			//ignore any exception at this point.
 		}
 		
 		// Make sure gdb is killed.

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
@@ -2103,5 +2104,21 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write( "int main(int argc, char **argv) { char *sign; sign = \"\";\n" );
     	writer.write( "  return argc;\n }" );
     	parse( writer.toString() );
+	}
+    
+    public void testBug75338() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("class Thrown { };\n");
+		writer.write("void foo() throw( Thrown );");
+		Iterator i = (Iterator) parse(writer.toString()).getDeclarations();
+		assertTrue(i.next() instanceof IASTAbstractTypeSpecifierDeclaration);
+		IASTFunction foo = (IASTFunction) i.next();
+		assertFalse(i.hasNext());
+		IASTExceptionSpecification exSpec = foo.getExceptionSpec();
+		assertNotNull(exSpec);
+		Iterator typeIds = exSpec.getTypeIds();
+		assertTrue(typeIds.hasNext());
+		IASTTypeId typeId = (IASTTypeId) typeIds.next();
+		assertEquals(typeId.getTypeOrClassName(), "Thrown");
 	}
 }

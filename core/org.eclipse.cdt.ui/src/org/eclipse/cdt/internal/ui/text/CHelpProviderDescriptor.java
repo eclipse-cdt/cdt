@@ -128,9 +128,9 @@ public class CHelpProviderDescriptor {
 	}
 	
 	public CHelpBookDescriptor [] getCHelpBookDescriptors(Element projectElement){
-		if(fHelpBookDescriptors == null || projectElement != null){
+		if (fHelpBookDescriptors == null || projectElement != null){
 			ICHelpProvider provider = getCHelpProvider();
-			if(provider != null){
+			if (provider != null && fProject != null) {
 				ICHelpBook books[] = provider.getCHelpBooks();
 				if(books != null){
 					List descriptorList = new ArrayList();

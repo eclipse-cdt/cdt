@@ -1,3 +1,7 @@
+2004-02-18 Andrew Niefer
+	added IUsingDeclarationSymbol and UsingDeclarationSymbol
+	changed IContainerSymbol.addUsingDeclaration to return a IUsingDeclarationSymbol
+
 2004-02-17 Andrew Niefer
 	bug 52111 : added IContainerSymbol.removeSymbol() which is implemented as ContainerSymbol.removeSymbol()
 	

@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
+import org.eclipse.cdt.internal.core.parser.pst.IUsingDeclarationSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IUsingDirectiveSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
@@ -1137,7 +1138,12 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = compUnit.lookupNestedNameSpecifier("A");
 		assertEquals( look, A );
 		
-		IParameterizedSymbol usingF = (IParameterizedSymbol) compUnit.addUsingDeclaration( "f", A );
+		IUsingDeclarationSymbol using = compUnit.addUsingDeclaration( "f", A );
+		assertEquals( using.getReferencedSymbols().size(), 1 );
+		
+		assertEquals( using.getReferencedSymbols().get(0), f1 );
+		
+		IParameterizedSymbol usingF = (IParameterizedSymbol)using.getDeclaredSymbols().get(0); 
 		
 		look = compUnit.lookup("A");
 		assertEquals( look, A );
@@ -1168,11 +1174,20 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = bar.lookupNestedNameSpecifier( "A" );
 		assertEquals( look, A );
-		bar.addUsingDeclaration( "f", A );
+		
+		using = bar.addUsingDeclaration( "f", A );
+		
+		Iterator iter = using.getReferencedSymbols().iterator();
+		assertEquals( iter.next(), f1 );
+		assertEquals( iter.next(), f2 );
+		assertFalse( iter.hasNext() );
+		
+		iter = using.getDeclaredSymbols().iterator();
+		iter.next();
 		
 		look = bar.unqualifiedFunctionLookup( "f", paramList );
 		assertTrue( look != null );
-		assertTrue( ((IParameterizedSymbol) look).hasSameParameters( f2 ) );
+		assertEquals( look, iter.next() );
 	}
 	
 	/**

@@ -318,14 +318,14 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * class being defined, or shall refer to an enumerator for an enumeration
 	 * type that is a member of a base class of the class being defined.
 	 */
-	public ISymbol addUsingDeclaration( String name ) throws ParserSymbolTableException {
+	public IUsingDeclarationSymbol addUsingDeclaration( String name ) throws ParserSymbolTableException {
 		return addUsingDeclaration( name, null );
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
-	public ISymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException{
+	public IUsingDeclarationSymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, TypeInfo.t_any );
 
 		if( declContext != null ){				
@@ -359,6 +359,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			symbol = ( iter != null && iter.hasNext() ) ? (ISymbol)iter.next() : null;
 		}
 
+		List usingDecs = new LinkedList();
+		List usingRefs = new LinkedList();
+		
 		while( symbol != null ){
 			if( ParserSymbolTable.okToAddUsingDeclaration( symbol, this ) ){
 				clone = (ISymbol) symbol.clone(); //7.3.3-9
@@ -367,6 +370,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
 			}
 			
+			usingDecs.add( clone );
+			usingRefs.add( symbol );
+			
 			if( iter != null && iter.hasNext() ){
 				symbol = (ISymbol) iter.next();
 			} else {
@@ -374,7 +380,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 		
-		return clone;
+		return new UsingDeclarationSymbol( getSymbolTable(), usingRefs, usingDecs );
 	}
 	
 	/* (non-Javadoc)

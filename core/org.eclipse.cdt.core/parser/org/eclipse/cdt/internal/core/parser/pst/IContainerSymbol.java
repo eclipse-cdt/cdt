@@ -68,8 +68,8 @@ public interface IContainerSymbol extends ISymbol {
 	 *                            IDerivableContainerSymbol
 	 *             r_CircularInheritance if during lookup of the name, we come across a class with a circular inheritance tree
 	 */
-	public ISymbol addUsingDeclaration( String name ) throws ParserSymbolTableException;
-	public ISymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException;
+	public IUsingDeclarationSymbol addUsingDeclaration( String name ) throws ParserSymbolTableException;
+	public IUsingDeclarationSymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException;
 			
 	public Map getContainedSymbols();
 	

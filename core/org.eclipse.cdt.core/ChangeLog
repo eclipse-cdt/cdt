@@ -1,3 +1,8 @@
+2004-08-06 Chris Wiebe
+
+	Add scheduling rule to CoreModel.run
+	* src/org/eclipse/cdt/core/model/CoreModel.java
+
 2004-07-30 Alain Magloire
 
 	Add the Using-{directive,declaration} part of the Core Model.

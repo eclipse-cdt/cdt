@@ -1,3 +1,13 @@
+2004-05-10 Andrew Niefer
+	- fixing bug 60493:
+	  - created CSearchUtil.getSearchForFromElement and CSearchUtil.getSearchForFromNode
+	  - modified FindAction to use working copies if editor is dirty
+	  - modified FindAction to use CElement information if available instead of parsing.
+	  
+	  * src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	  * src/org/eclipse/cdt/internal/ui/search/CSearchUtil.jav
+	  * src/org/eclipse/cdt/internal/ui/search/actions/FindAction.java
+
 2004-05-07 Andrew Niefer
 	- handle content assist for function references so that the function is not inserted if we are just getting signature
 	  info for the popup

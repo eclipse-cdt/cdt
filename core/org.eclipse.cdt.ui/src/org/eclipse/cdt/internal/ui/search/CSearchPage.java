@@ -518,40 +518,9 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			return null;
 		
 		List searchFor = new LinkedList();
+		searchFor.add( CSearchUtil.getSearchForFromElement( element ) );
 		
-		//outliune view will confuse methods with functions, so if the 
-		//name contains a "::", treat it as a method
 		String pattern = element.getElementName();
-		boolean forceMethod = ( pattern.indexOf("::") != -1 ); //$NON-NLS-1$
-		
-		switch ( element.getElementType() ){
-			case ICElement.C_TEMPLATE_FUNCTION:	   /*fall through to function */
-			case ICElement.C_FUNCTION_DECLARATION: /*fall through to function */
-			case ICElement.C_FUNCTION:	if( forceMethod ) searchFor.add( METHOD ); 
-										else 			  searchFor.add( FUNCTION );		
-										break;
-										
-			case ICElement.C_VARIABLE:	searchFor.add( VAR );			break;
-			
-			case ICElement.C_TEMPLATE_CLASS:/*   fall through to CLASS   */ 
-			case ICElement.C_STRUCT:		/*   fall through to CLASS   */	 
-			case ICElement.C_CLASS:		searchFor.add( CLASS_STRUCT );	break;
-			
-			case ICElement.C_UNION:		searchFor.add( UNION );			break;
-			
-			case ICElement.C_ENUMERATOR: /* fall through to FIELD    */
-			case ICElement.C_FIELD:		searchFor.add( FIELD );			break;
-			
-			case ICElement.C_TEMPLATE_METHOD : 	  /*fall through to METHOD */
-			case ICElement.C_METHOD_DECLARATION : /*fall through to METHOD */
-			case ICElement.C_METHOD:	searchFor.add( METHOD );		break;
-			
-			case ICElement.C_NAMESPACE: searchFor.add( NAMESPACE );		break;
-			
-			case ICElement.C_ENUMERATION: searchFor.add( ENUM );		break;
-			
-			default: searchFor.add( UNKNOWN_SEARCH_FOR ); break;
-		}
 
 		LimitTo limitTo = ALL_OCCURRENCES;			
 		

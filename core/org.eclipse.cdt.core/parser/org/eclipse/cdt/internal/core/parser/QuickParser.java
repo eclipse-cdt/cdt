@@ -38,8 +38,6 @@ public class QuickParser extends Parser {
 	 */
 	public QuickParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
 		super(scanner, callback, language, log);
-		astFactory = ParserFactory.createASTFactory( ParserMode.QUICK_PARSE, language);
-		scanner.setASTFactory(astFactory);
 	}
 
 	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
@@ -65,5 +63,15 @@ public class QuickParser extends Parser {
 	public IASTNode parse(int startingOffset, int endingOffset) throws ParseError {
 		throw new ParseError( ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
-		
+
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
+	 */
+	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
+		astFactory = ParserFactory.createASTFactory( ParserMode.QUICK_PARSE, language);
+		scanner.setASTFactory(astFactory);
+	}
+
 }

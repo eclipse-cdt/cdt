@@ -6,14 +6,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.internal.core.parser.IExpressionParser;
+import org.eclipse.cdt.internal.core.parser.InternalParserFactory;
 
 public class ExprEvalTest extends TestCase {
 
@@ -28,7 +28,7 @@ public class ExprEvalTest extends TestCase {
 	public void runTest(String code, int expectedValue) throws Exception {
 		
 		final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
-        IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), getClass().getName(), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService() ), nullCallback, ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+        IExpressionParser parser = InternalParserFactory.createExpressionParser(ParserFactory.createScanner( new StringReader( code ), getClass().getName(), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService() ), ParserLanguage.CPP, null );
 		IASTExpression expression = parser.expression(null);
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}

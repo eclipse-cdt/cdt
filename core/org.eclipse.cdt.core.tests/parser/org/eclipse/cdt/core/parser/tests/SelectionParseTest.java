@@ -53,7 +53,7 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 	}
 	
 	
-	public void testBaseCase_Variable() throws Exception
+	public void testBaseCase_VariableReference() throws Exception
 	{
 		String code = "int x; x=3;";
 		int offset1 = code.indexOf( "x=" );
@@ -63,9 +63,9 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertEquals( ((IASTVariable)node).getName(), "x" );
 	}
 
-	public void testBaseCase_Function() throws Exception
+	public void testBaseCase_FunctionReference() throws Exception
 	{
-		String code = "int x(); x( );";
+		String code = "int x(){x( );}";
 		int offset1 = code.indexOf( "x( " );
 		int offset2 = code.indexOf( "( )");
 		IASTNode node = parse( code, offset1, offset2 );
@@ -75,11 +75,31 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 	
 	public void testBaseCase_Error() throws Exception
 	{
-		String code = "int x(); y( );";
+		String code = "int x() { y( ) }";
 		int offset1 = code.indexOf( "y( " );
 		int offset2 = code.indexOf( "( )");
 		assertNull( parse( code, offset1, offset2 ));
 	}
+	
+//	public void testBaseCase_FunctionDeclaration() throws Exception
+//	{
+//		String code = "int x(); x( );";
+//		int offset1 = code.indexOf( "x()" );
+//		int offset2 = code.indexOf( "()");
+//		IASTNode node = parse( code, offset1, offset2 );
+//		assertTrue( node instanceof IASTFunction );
+//		assertEquals( ((IASTFunction)node).getName(), "x" );
+//	}
+//	
+//	public void testBaseCase_VariableDeclaration() throws Exception
+//	{
+//		String code = "int x = 3;";
+//		int offset1 = code.indexOf( "x" );
+//		int offset2 = code.indexOf( " =");
+//		IASTNode node = parse( code, offset1, offset2 );
+//		assertTrue( node instanceof IASTVariable );
+//		assertEquals( ((IASTVariable)node).getName(), "x" );
+//	}
 	
 	
 }

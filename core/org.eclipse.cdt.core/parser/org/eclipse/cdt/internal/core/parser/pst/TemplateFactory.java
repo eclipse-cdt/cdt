@@ -97,7 +97,7 @@ public class TemplateFactory implements ITemplateFactory {
 		}
 				
 		ITemplateSymbol template = (ITemplateSymbol) getTemplatesList().get( getTemplatesList().size() - 1 );
-		IContainerSymbol container = (IContainerSymbol) template.getTemplatedSymbol();
+		IContainerSymbol container = template.getTemplatedSymbol();
 		
 		if( container.isForwardDeclaration() &&	container.getTypeSymbol() == symbol ){
 			template.addSymbol( symbol );
@@ -113,7 +113,7 @@ public class TemplateFactory implements ITemplateFactory {
 		Set keys = getPrimaryTemplate().getContainedSymbols().keySet();
 		IContainerSymbol symbol = (IContainerSymbol) getPrimaryTemplate().getContainedSymbols().get( keys.iterator().next() );
 
-		return (ISymbol) symbol.lookupMemberForDefinition( name );
+		return symbol.lookupMemberForDefinition( name );
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +123,7 @@ public class TemplateFactory implements ITemplateFactory {
 		Set keys = getPrimaryTemplate().getContainedSymbols().keySet();
 		IContainerSymbol symbol = (IContainerSymbol) getPrimaryTemplate().getContainedSymbols().get( keys.iterator().next() );
 
-		return (IParameterizedSymbol) symbol.lookupMethodForDefinition( name, params );
+		return symbol.lookupMethodForDefinition( name, params );
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,6 @@
+2004-02-11 John Camelon
+	Updated tests to accommodate for new Parser class hierarchy and factories.  
+
 2004-02-10 Andrew Niefer
 	Added new File: ParserSymbolTableTemplateTests.java (contains 30 new tests)
 	Added new File: FailingTemplateTests.java (contains 5 test stubs for failing cases)

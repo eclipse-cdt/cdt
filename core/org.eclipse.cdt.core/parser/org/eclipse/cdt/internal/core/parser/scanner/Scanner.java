@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
-import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -55,6 +54,8 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.internal.core.parser.*;
+import org.eclipse.cdt.internal.core.parser.InternalParserFactory;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.Token;
@@ -2255,12 +2256,12 @@ public class Scanner implements IScanner {
 		{
 			if( expression.trim().equals( "0" ) )
 				return false; 
+			
 			return true; 
 		}
 		else
 		{	
-			final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
-			IParser parser = null;
+			IExpressionParser parser = null;
 			StringBuffer expressionBuffer = new StringBuffer( expression );
 			expressionBuffer.append( ';');
 			try
@@ -2270,8 +2271,8 @@ public class Scanner implements IScanner {
 						new StringReader(expressionBuffer.toString()),
 							EXPRESSION,
 							new ScannerInfo( scannerData.getDefinitions(), scannerData.getOriginalConfig().getIncludePaths()), 
-							ParserMode.QUICK_PARSE, scannerData.getLanguage(), nullCallback, nullLogService );
-	            parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, scannerData.getLanguage(), nullLogService);
+							ParserMode.QUICK_PARSE, scannerData.getLanguage(), new NullSourceElementRequestor(), nullLogService );
+	            parser = InternalParserFactory.createExpressionParser(trial, scannerData.getLanguage(), nullLogService);
 			} catch( ParserFactoryError pfe )
 			{
 				handleInternalError();

@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
 import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.expression.ASTExpression;
 
 /**
 
@@ -69,6 +70,7 @@ import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
  */
 public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory {
 
+	private static final boolean CREATE_EXCESS_CONSTRUCTS = true;
 	private final IASTExtensionFactory extensionFactory;
 
 	public QuickParseASTFactory( IASTExtensionFactory extensionFactory )
@@ -159,25 +161,31 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		try {
-			return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, extensionFactory.createExpressionExtension() );
-		} catch (ASTNotImplementedException e) {
-			return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, new IASTExpressionExtension() {
-
-				public void setExpression(IASTExpression expression) {
-				}
-
-				public int evaluateExpression() throws ASTExpressionEvaluationException {
-					throw new ASTExpressionEvaluationException();
-				} } );
+		if( CREATE_EXCESS_CONSTRUCTS )
+		{
+			try {
+				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, extensionFactory.createExpressionExtension() );
+			} catch (ASTNotImplementedException e) {
+				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, new IASTExpressionExtension() {
+	
+					public void setExpression(IASTExpression expression) {
+					}
+	
+					public int evaluateExpression() throws ASTExpressionEvaluationException {
+						throw new ASTExpressionEvaluationException();
+					} } );
+			}
 		}
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
 	 */
 	public IASTNewExpressionDescriptor createNewDescriptor(List newPlacementEpressions, List newTypeIdExpressions, List newInitializerExpressions) {
-		return new ASTNewDescriptor();
+		if( CREATE_EXCESS_CONSTRUCTS )
+			return new ASTNewDescriptor();
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -193,7 +201,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTConstructorMemberInitializer createConstructorMemberInitializer(IASTScope scope, ITokenDuple duple, IASTExpression expressionList )
     {
-        return new ASTConstructorMemberInitializer( duple.toString(), expressionList );
+//        return new ASTConstructorMemberInitializer( duple.toString(), expressionList );
+    	return null;
     }
 
     /* (non-Javadoc)
@@ -233,8 +242,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTField createField(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression, ASTAccessVisibility visibility)
     {
-        final ASTField field = new ASTField(scope, name, isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, isRegister, isStatic, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, constructorExpression, visibility);
-        return field;
+        return new ASTField(scope, name, isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, isRegister, isStatic, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, constructorExpression, visibility);
     }
 
     /* (non-Javadoc)
@@ -336,7 +344,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 
     public IASTInitializerClause createInitializerClause(IASTScope scope, IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators)
     {
-    	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
+    	if( CREATE_EXCESS_CONSTRUCTS )
+    		return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
+    	return null;
     }
 
 	/* (non-Javadoc)

@@ -11,9 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 
 
@@ -23,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
  * 
  * @author jcamelon
  */
-public interface IParser {
+public interface IParser  {
 	
 	
 	/**
@@ -46,18 +44,6 @@ public interface IParser {
 	 * @return
 	 */
 	public IASTNode parse( int startingOffset, int endingOffset ) throws ParseError;
-	
-	
-	/**
-	 * Request a parse from a pre-configured parser to parse an expression.    
-	 * 
-	 * @param expression	Optional parameter representing an expression object that 
-	 * 						your particular IParserCallback instance would appreciate 
-	 * 	
-	 * @throws BacktrackException	thrown if the Scanner/Stream provided does not yield a valid
-	 * 						expression	
-	 */
-	public IASTExpression expression(IASTScope scope) throws BacktrackException, EndOfFileException;
 	
 	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  

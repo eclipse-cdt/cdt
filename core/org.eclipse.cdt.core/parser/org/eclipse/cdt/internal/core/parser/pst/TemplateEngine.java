@@ -498,7 +498,7 @@ public final class TemplateEngine {
 					
 					List pPtrs = p.getPtrOperators();
 					if( pPtrs.size() != 0 ){
-						PtrOp op = (PtrOp) pPtrs.iterator().next();;
+						PtrOp op = (PtrOp) pPtrs.iterator().next();
 						if( op.getType() == PtrOp.t_memberPointer ){
 							TypeInfo info = new TypeInfo( TypeInfo.t_type, 0, aFunction.getContainingSymbol() );
 							if( !deduceTemplateArgument( map, op.getMemberOf(), info ) ){
@@ -657,7 +657,6 @@ public final class TemplateEngine {
 		Iterator pIter = pList.iterator();
 		Iterator aIter = arguments.iterator();
 		
-		ISymbol aSymbol = null;
 		while( pIter.hasNext() ){
 			if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), (TypeInfo) aIter.next() ) ){
 				return null;
@@ -887,7 +886,7 @@ public final class TemplateEngine {
 	 * @throws ParserSymbolTableException
 	 */
 	static protected ITemplateSymbol selectTemplateOrSpecialization( ITemplateSymbol template, List parameters, List arguments ) throws ParserSymbolTableException {
-		if( template != null && template instanceof ITemplateSymbol ){
+		if( template != null  ){
 			//primary definition or specialization?
 			boolean forPrimary = true;
 			
@@ -908,7 +907,7 @@ public final class TemplateEngine {
 				}
 			}
 			
-			ITemplateSymbol primary = (ITemplateSymbol) template;
+			ITemplateSymbol primary = template;
 			
 			if( forPrimary ){
 				//make sure parameters match up with found template
@@ -1085,7 +1084,7 @@ public final class TemplateEngine {
 				ISpecializedSymbol spec = (ISpecializedSymbol) symbol;
 				instance = spec.deferredInstance( spec.getArgumentList() );
 			} else {
-				ITemplateSymbol template = (ITemplateSymbol) symbol;
+				ITemplateSymbol template = symbol;
 				Iterator iter = template.getParameterList().iterator();
 				List args = new LinkedList();
 				while( iter.hasNext() ){

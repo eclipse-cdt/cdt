@@ -1,3 +1,7 @@
+2004-02-11 John Camelon
+	Restructured Parser implementation to allow for better support of Selection Search.
+	Restructured Parser implementation to allow for separation between parsing expressions (Scanner) and complete C/C++ source.  
+
 2004-02-10 John Camelon
 	Workaround for Bug 51502 - Parser spins on particular file (Scalability)
 	

@@ -37,8 +37,6 @@ public class CompleteParser extends Parser {
 	 */
 	public CompleteParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
 		super(scanner, callback, language, log);
-		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETE_PARSE, language);
-		scanner.setASTFactory(astFactory);
 	}
 	
 	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
@@ -67,4 +65,12 @@ public class CompleteParser extends Parser {
 	
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
+	 */
+	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
+		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETE_PARSE, language);
+		scanner.setASTFactory(astFactory);
+	}
+
 }

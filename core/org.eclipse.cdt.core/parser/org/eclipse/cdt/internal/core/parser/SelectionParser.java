@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 /**
  * @author jcamelon
  */
-public class SelectionParser extends CompletionParser {
+public class SelectionParser extends ContextualParser {
 
 	private OffsetDuple offsetRange;
 	private IToken firstTokenOfDuple = null, lastTokenOfDuple = null;
@@ -34,16 +34,13 @@ public class SelectionParser extends CompletionParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
 	 */
-	protected void handleNewToken(IToken value) throws EndOfFileException {
+	protected void handleNewToken(IToken value) {
 		if( value != null )
 		{
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 				firstTokenOfDuple = value;
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
-			{	
 				lastTokenOfDuple = value;
-				throw new EndOfFileException();
-			}
 		}
 	}
 
@@ -63,7 +60,7 @@ public class SelectionParser extends CompletionParser {
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
 	public IASTNode parse(int startingOffset, int endingOffset) {
-		scanner.setOffsetBoundary(endingOffset);
+//		scanner.setOffsetBoundary(endingOffset);
 		offsetRange = new OffsetDuple( startingOffset, endingOffset );
 		translationUnit();
 		return reconcileTokenDuple();
@@ -88,5 +85,15 @@ public class SelectionParser extends CompletionParser {
 	 */
 	public IASTCompletionNode parse(int offset) {
 		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );	
-	}	
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#checkEndOfFile()
+	 */
+	protected void checkEndOfFile() throws EndOfFileException {
+		if( lastToken != null && lastToken.getEndOffset() >= offsetRange.getCeilingOffset() )
+			throw new EndOfFileException();
+	}
+
 }

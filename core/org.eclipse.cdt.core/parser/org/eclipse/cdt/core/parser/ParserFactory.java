@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.parser.SelectionParser;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.scanner.Preprocessor;
@@ -41,7 +42,9 @@ public class ParserFactory {
 	public static IASTFactory createASTFactory( ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
-			return new QuickParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.QUICK_PARSE ) ); 
+			return new QuickParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.QUICK_PARSE ) );
+		else if( mode == ParserMode.EXPRESSION_PARSE )
+			return new ExpressionParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.EXPRESSION_PARSE ) );
 		else
 			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtensionFactory( ParserMode.COMPLETE_PARSE ) ); 
 	}

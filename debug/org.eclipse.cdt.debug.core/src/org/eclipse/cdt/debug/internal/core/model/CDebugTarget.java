@@ -712,7 +712,7 @@ public class CDebugTarget extends CDebugElement
 			}
 			catch( DebugException e )
 			{
-				CDebugCorePlugin.log( e );
+//				CDebugCorePlugin.log( e );
 			}
 		}
 	}

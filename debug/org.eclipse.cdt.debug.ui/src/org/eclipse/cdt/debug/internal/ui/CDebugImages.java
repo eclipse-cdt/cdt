@@ -53,6 +53,8 @@ public class CDebugImages
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED = NAME_PREFIX + "installed_ovr_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_ENABLED = NAME_PREFIX + "addrbrkp_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_DISABLED = NAME_PREFIX + "addrbrkpd_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_FUNCTION_BREAKPOINT_ENABLED = NAME_PREFIX + "funbrkp_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_FUNCTION_BREAKPOINT_DISABLED = NAME_PREFIX + "funbrkpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_ENABLED = NAME_PREFIX + "readwrite_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_DISABLED = NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_READ_WATCHPOINT_ENABLED = NAME_PREFIX + "read_obj.gif";	//$NON-NLS-1$
@@ -104,6 +106,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_ADDRESS_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_ADDRESS_BREAKPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_ADDRESS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_ADDRESS_BREAKPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OBJS_FUNCTION_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_FUNCTION_BREAKPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_FUNCTION_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_FUNCTION_BREAKPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );

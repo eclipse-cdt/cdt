@@ -854,6 +854,25 @@
             </enablement>
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.core.model.IFunction"
+            id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
+         <action
+               label="%ManageFunctionBreakpointAction.label"
+               helpContextId="manage_function_breakpoint_action_context"
+               tooltip="%ManageFunctionBreakpointAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate">
+            <enablement>
+               <pluginState
+                     value="installed"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

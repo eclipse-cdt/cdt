@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.editors;
 
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.ui.DebugUITools;
@@ -39,7 +40,8 @@ public class DisassemblyMarkerAnnotation extends MarkerAnnotation
 		IMarker marker = getMarker();
 
 		if ( MarkerUtilities.isMarkerType( marker, CLineBreakpoint.getMarkerType() ) ||
-			  MarkerUtilities.isMarkerType( marker, CAddressBreakpoint.getMarkerType() ) )
+			 MarkerUtilities.isMarkerType( marker, CFunctionBreakpoint.getMarkerType() ) ||
+			 MarkerUtilities.isMarkerType( marker, CAddressBreakpoint.getMarkerType() ) )
 		{
 			if ( fPresentation == null )
 				fPresentation = DebugUITools.newDebugModelPresentation();

@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -167,6 +168,7 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 		try
 		{
 			return ( marker.getType().equals( CLineBreakpoint.getMarkerType() ) ||
+					 marker.getType().equals( CFunctionBreakpoint.getMarkerType() ) ||
 					 marker.getType().equals( CAddressBreakpoint.getMarkerType() ) );
 		}
 		catch( CoreException e )
@@ -218,6 +220,10 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 		try
 		{
 			if ( marker.getType().equals( CLineBreakpoint.getMarkerType() ) )
+			{
+				return createPositionFromLineBreakpoint( marker );
+			}
+			if ( marker.getType().equals( CFunctionBreakpoint.getMarkerType() ) )
 			{
 				return createPositionFromLineBreakpoint( marker );
 			}

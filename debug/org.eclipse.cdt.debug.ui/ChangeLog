@@ -1,3 +1,17 @@
+2003-04-11 Mikhail Khodjaiants
+	Method and function breakpoints.
+	* plugin.properties
+	* plugin.xml
+	* icons/full/obj16/brkpd_obj.gif: new
+	* icons/full/obj16/funbrkp_obj.gif: new
+	* icons/full/obj16/funbrkpd_obj.gif: new
+	* CDTDebugModelPresentation.java
+	* CDebugImages.java
+	* CBreakpointPreferencePage.java
+	* ManageFunctionBreakpointActionDelegate.java: new
+	* DisassemblyMarkerAnnotation.java
+	* DisassemblyMarkerAnnotationModel.java
+
 2003-04-08 Mikhail Khodjaiants
 	Removed unused private methods and members.
 	* CDebugEditor.java

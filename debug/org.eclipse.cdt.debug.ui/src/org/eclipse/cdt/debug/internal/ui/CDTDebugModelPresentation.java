@@ -531,6 +531,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return getAddressBreakpointImage( (ICAddressBreakpoint)breakpoint );
 		}
+		if ( breakpoint instanceof ICFunctionBreakpoint )
+		{
+			return getFunctionBreakpointImage( (ICFunctionBreakpoint)breakpoint );
+		}
 		if ( breakpoint instanceof ICLineBreakpoint )
 		{
 			return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
@@ -572,6 +576,21 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return fDebugImageRegistry.get( descriptor );
 	}
 
+	protected Image getFunctionBreakpointImage( ICFunctionBreakpoint breakpoint ) throws CoreException
+	{
+		int flags = computeBreakpointAdornmentFlags( breakpoint );
+		CImageDescriptor descriptor = null;
+		if ( breakpoint.isEnabled() )
+		{
+			descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_FUNCTION_BREAKPOINT_ENABLED,  flags );
+		}
+		else
+		{
+			descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_FUNCTION_BREAKPOINT_DISABLED,  flags );
+		}
+		return fDebugImageRegistry.get( descriptor );
+	}
+
 	protected Image getWatchpointImage( ICWatchpoint watchpoint ) throws CoreException
 	{
 		int flags = computeBreakpointAdornmentFlags( watchpoint );
@@ -608,13 +627,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return getAddressBreakpointText( (ICAddressBreakpoint)breakpoint, qualified );
 		}
-		if ( breakpoint instanceof ICLineBreakpoint )
-		{
-			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
-		}
 		if ( breakpoint instanceof ICFunctionBreakpoint )
 		{
 			return getFunctionBreakpointText( (ICFunctionBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICLineBreakpoint )
+		{
+			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
 		}
 		if ( breakpoint instanceof ICWatchpoint )
 		{
@@ -655,7 +674,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected String getFunctionBreakpointText( ICFunctionBreakpoint breakpoint, boolean qualified ) throws CoreException
 	{
-		return null;
+		StringBuffer label = new StringBuffer();
+		appendResourceName( breakpoint, label, qualified );
+		appendFunction( breakpoint, label );
+		appendIgnoreCount( breakpoint, label );
+		appendCondition( breakpoint, label );
+		return label.toString();
 	}
 
 	protected StringBuffer appendResourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException
@@ -691,6 +715,20 @@ public class CDTDebugModelPresentation extends LabelProvider
 		}
 		catch( NumberFormatException e )
 		{
+		}
+		return label;
+	}
+
+	protected StringBuffer appendFunction( ICFunctionBreakpoint breakpoint, StringBuffer label ) throws CoreException
+	{
+		String function = breakpoint.getFunction();
+		if ( function != null && function.trim().length() > 0 )
+		{
+			label.append( " [" ); //$NON-NLS-1$
+			label.append( "function:" );
+			label.append( ' ' );
+			label.append( function.trim() );
+			label.append( ']' );
 		}
 		return label;
 	}

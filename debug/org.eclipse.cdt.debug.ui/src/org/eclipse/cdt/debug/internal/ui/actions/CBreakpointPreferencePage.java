@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -289,7 +290,27 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 	 */
 	private void createTypeSpecificLabelFieldEditors( ICBreakpoint breakpoint )
 	{
-		if ( breakpoint instanceof ICAddressBreakpoint )
+		if ( breakpoint instanceof ICFunctionBreakpoint )
+		{
+			ICFunctionBreakpoint fbrkpt = (ICFunctionBreakpoint)breakpoint;
+			String function = "Not available";
+			try
+			{
+				function = fbrkpt.getFunction();
+			}
+			catch( CoreException e )
+			{
+			}
+			catch( NumberFormatException e )
+			{
+			}
+			if ( function != null )
+			{
+				addField( createLabelEditor( getFieldEditorParent(), "Function name: ", function ) );
+			}
+			setTitle( "C/C++ Function Breakpoint Properties" );
+		}
+		else if ( breakpoint instanceof ICAddressBreakpoint )
 		{
 			ICAddressBreakpoint abrkpt = (ICAddressBreakpoint)breakpoint;
 			String address = "Not available";

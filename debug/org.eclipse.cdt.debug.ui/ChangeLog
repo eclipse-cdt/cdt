@@ -1,3 +1,16 @@
+2004-06-09 Mikhail Khodjaiants
+	New implementation of the "Refresh" actions for registers and shared libraries.
+	* icons/full/clcl16/auto_refresh_co.gif: new
+	* icons/full/clcl16/refresh_co.gif: new
+	* plugin.properties
+	* plugin.xml	
+	* CDebugImages.java
+	* AbstractRefreshActionDelegate.java: new
+	* RefreshRegistersAction.java: new
+	* RefreshSharedLibrariesAction.java: new
+	* SharedLibrariesView.java
+	* Refreshaction.java: removed
+
 2004-06-08 Mikhail Khodjaiants
 	Warning clean-up.
 	* DebugTextHover.java

@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -155,6 +156,8 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
 	protected void fillContextMenu( IMenuManager menu ) {
+		menu.add( new Separator( ICDebugUIConstants.EMPTY_REFRESH_GROUP ) );
+		menu.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 		updateObjects();
 	}
@@ -163,6 +166,7 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar( IToolBarManager tbm ) {
+		tbm.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 	}
 
 	/* (non-Javadoc)

@@ -496,7 +496,7 @@
             </enablement>
          </action>
       </viewerContribution>
-      <objectContribution
+      <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICVariable"
             id="org.eclipse.cdt.debug.ui.CVariableActions">
          <menu
@@ -535,6 +535,21 @@
       <viewerContribution
             targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
             id="org.eclipse.cdt.debug.ui.SharedLibrariesViewPopupActions">
+         <action
+               helpContextId="refresh_shared_libraries_context"
+               label="%RefreshAction.label"
+               tooltip="%RefreshAction.tooltip"
+               icon="icons/full/elcl16/refresh_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction"
+               style="push"
+               menubarPath="refreshGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
       </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICSharedLibrary"
@@ -755,6 +770,31 @@
             </selection>
          </action>
       </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.RegisterView"
+            id="org.eclipse.debug.ui.registersView.popupMenu">
+         <menu
+               label="%Dummy"
+               id="org.eclipse.cdt.debug.ui.refresh">
+            <separator name="refreshGroup"/>
+            <separator name="emptyRefreshGroup"/>
+         </menu>
+         <action
+               helpContextId="refresh_registers_context"
+               label="%RefreshAction.label"
+               tooltip="%RefreshAction.tooltip"
+               icon="icons/full/elcl16/refresh_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction"
+               style="push"
+               menubarPath="refreshGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -916,6 +956,54 @@
                      value="activated"
                      id="org.eclipse.cdt.debug.ui">
                </pluginState>
+            </enablement>
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
+            id="org.eclipse.debug.ui.sharedLibrariesView.toolbar">
+         <action
+               helpContextId="refresh_shared_libraries_context"
+               disabledIcon="icons/full/dlcl16/refresh_co.gif"
+               hoverIcon="icons/full/clcl16/refresh_co.gif"
+               toolbarPath="refreshGroup"
+               label="%RefreshAction.label"
+               tooltip="%RefreshAction.tooltip"
+               icon="icons/full/elcl16/refresh_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction"
+               style="push"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.RegisterView"
+            id="org.eclipse.debug.ui.registersView.toolbar">
+         <menu
+               label="%Dummy"
+               id="org.eclipse.cdt.debug.ui.refresh">
+            <separator name="refreshGroup"/>
+            <separator name="emptyRefreshGroup"/>
+         </menu>
+         <action
+               helpContextId="refresh_registers_context"
+               disabledIcon="icons/full/dlcl16/refresh_co.gif"
+               hoverIcon="icons/full/clcl16/refresh_co.gif"
+               toolbarPath="refreshGroup"
+               label="%RefreshAction.label"
+               tooltip="%RefreshAction.tooltip"
+               icon="icons/full/elcl16/refresh_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction"
+               style="push"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
             </enablement>
          </action>
       </viewContribution>

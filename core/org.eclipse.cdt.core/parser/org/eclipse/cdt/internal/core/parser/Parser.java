@@ -1165,7 +1165,18 @@ public abstract class Parser extends ExpressionParser implements IParser
 			}
 			catch (ASTSemanticException e)
 			{
-				throwBacktrack(e.getProblem());
+				if( e.getProblem() == null )
+				{
+					IProblem p = problemFactory.createProblem( IProblem.SYNTAX_ERROR, 
+							                                   sdw.getStartingOffset(), 
+							                                   lastToken != null ? lastToken.getEndOffset() : 0, 
+							                                   sdw.getStartingLine(),
+							                                   scanner.getCurrentFilename(),
+							                                   EMPTY_STRING, false, true );
+					throwBacktrack( p );
+				} else { 
+					throwBacktrack(e.getProblem());
+				}
 			}
 			catch( Exception e )
 			{

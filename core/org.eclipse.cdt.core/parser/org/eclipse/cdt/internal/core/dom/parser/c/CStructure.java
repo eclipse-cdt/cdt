@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CStructure implements ICompositeType {
+public class CStructure implements ICompositeType, ICBinding {
 	private IASTElaboratedTypeSpecifier[] declarations = null;
 	private ICASTCompositeTypeSpecifier definition;
 	//final private IASTDeclSpecifier declSpecifier;

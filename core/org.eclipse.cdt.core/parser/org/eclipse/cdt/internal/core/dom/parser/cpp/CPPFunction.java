@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 /**
  * @author aniefer
  */
-public class CPPFunction implements IFunction {
+public class CPPFunction implements IFunction, ICPPBinding {
 	protected ICPPASTFunctionDeclarator [] declarations;
 	protected ICPPASTFunctionDeclarator definition;
 	protected IFunctionType type = null;
@@ -43,6 +43,20 @@ public class CPPFunction implements IFunction {
 	    }
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return declarations;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return definition;
+    }
+    
 	public void addDefinition( ICPPASTFunctionDeclarator dtor ){
 		updateParameterBindings( dtor );
 		definition = dtor;

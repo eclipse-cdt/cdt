@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 /**
  * @author aniefer
  */
-public class CPPEnumerator implements IEnumerator {
+public class CPPEnumerator implements IEnumerator, ICPPBinding {
     private IASTEnumerator enumerator;
     /**
      * @param enumerator
@@ -34,6 +34,20 @@ public class CPPEnumerator implements IEnumerator {
         this.enumerator = enumerator;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return enumerator;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */

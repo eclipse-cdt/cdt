@@ -8,27 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 /*
- * Created on Nov 29, 2004
+ * Created on Jan 24, 2005
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * @author aniefer
  */
-public class CPPField extends CPPVariable implements ICPPField, ICPPBinding {
-	public CPPField( IASTDeclarator declarator ){
-		super( declarator );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
-	public int getVisibility() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+public interface ICPPBinding {
+    //methods required by the CPPVisitor but not meant for the public interface
+    
+    IASTNode [] getDeclarations();
+    IASTNode getDefinition();
 }

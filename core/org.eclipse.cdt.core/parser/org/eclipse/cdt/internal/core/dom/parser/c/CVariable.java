@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CVariable implements IVariable {
+public class CVariable implements IVariable, ICBinding {
 	final IASTName name;
 	private IType type = null;
 	

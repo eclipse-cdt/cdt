@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 /**
  * @author aniefer
  */
-public class CPPNamespace implements ICPPNamespace {
+public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	private static final char[] EMPTY_CHAR_ARRAY = { };
 	
 	IASTName [] namespaceDefinitions = null;
@@ -42,6 +42,20 @@ public class CPPNamespace implements ICPPNamespace {
 	    findAllDefinitions( nsDef );
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return namespaceDefinitions;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return ( tu != null ) ? tu : (IASTNode) namespaceDefinitions[0];
+    }
+
 	static private class NamespaceCollector extends CPPVisitor.CPPBaseVisitorAction {
 	    private char [] name;
 	    public List namespaces = Collections.EMPTY_LIST;

@@ -30,5 +30,4 @@ public interface IBinding {
 	 */
 	public IScope getScope();
 
-	public IASTNode getPhysicalNode();
 }

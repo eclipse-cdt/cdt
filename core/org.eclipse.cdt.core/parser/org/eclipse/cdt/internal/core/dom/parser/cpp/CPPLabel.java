@@ -24,13 +24,27 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 /**
  * @author aniefer
  */
-public class CPPLabel implements ILabel {
+public class CPPLabel implements ILabel, ICPPBinding {
     private IASTStatement statement;
     /**
      * @param gotoStatement
      */
     public CPPLabel( IASTStatement statement ) {
         this.statement = statement;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return statement;
     }
 
     /* (non-Javadoc)

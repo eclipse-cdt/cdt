@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CFunction implements IFunction {
+public class CFunction implements IFunction, ICBinding {
 	private IASTFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
 	IFunctionType type = null;

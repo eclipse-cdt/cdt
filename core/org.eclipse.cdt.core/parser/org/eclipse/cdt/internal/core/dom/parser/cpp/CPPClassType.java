@@ -44,7 +44,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 /**
  * @author aniefer
  */
-public class CPPClassType implements ICPPClassType {
+public class CPPClassType implements ICPPClassType, ICPPBinding {
 	private ICPPASTCompositeTypeSpecifier definition;
 	private ICPPASTElaboratedTypeSpecifier [] declarations;
 	
@@ -55,6 +55,20 @@ public class CPPClassType implements ICPPClassType {
 			declarations = new ICPPASTElaboratedTypeSpecifier[] { (ICPPASTElaboratedTypeSpecifier) declSpec };
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return declarations;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return definition;
+    }
+    
 	private class FindDefinitionAction extends CPPVisitor.CPPBaseVisitorAction {
 	    private char [] nameArray = CPPClassType.this.getNameCharArray();
 	    public ICPPASTCompositeTypeSpecifier result = null;

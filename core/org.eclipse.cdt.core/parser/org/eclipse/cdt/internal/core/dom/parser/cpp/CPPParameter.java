@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * @author aniefer
  */
-public class CPPParameter implements IParameter {
+public class CPPParameter implements IParameter, ICPPBinding {
 	private IType type = null;
 	private IASTName [] declarations = null;
 	
@@ -36,6 +36,20 @@ public class CPPParameter implements IParameter {
 	    this.type = type;
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return declarations;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return null;
+    }
+
 	public void addDeclaration( IASTName name ){
 		if( declarations == null ){
 		    declarations = new IASTName [] { name };

@@ -20,11 +20,13 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -169,9 +171,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	private boolean isConstructorReference( IASTName name ){
 	    IASTNode node = name.getParent();
 	    
-	    if( node instanceof IASTDeclSpecifier )
+	    if( node instanceof IASTDeclSpecifier ){
+	        IASTNode parent = node.getParent();
+	        if( parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression )
+	            return true;
 	        return false;
-	    
+	    }
 	    return true;
 	}
 

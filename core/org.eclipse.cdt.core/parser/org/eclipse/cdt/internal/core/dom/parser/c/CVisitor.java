@@ -681,7 +681,7 @@ public class CVisitor {
 			
 			if ( fDtor.getName().resolveBinding() instanceof IFunction ) { // possible to have IASTParameterDeclaration whose parent is an IVariable
 				IFunction function = (IFunction) fDtor.getName().resolveBinding();
-				if( function.getPhysicalNode() != fDtor ) {
+				if( ((ICBinding)function).getPhysicalNode() != fDtor ) {
 				    IASTParameterDeclaration [] ps = fDtor.getParameters();
 				    int index = -1;
 				    for( index = 0; index < ps.length; index++ )
@@ -1699,7 +1699,7 @@ public class CVisitor {
 		
 		if ( declarator.getName().resolveBinding() instanceof IFunction ) { // possible to have IASTParameterDeclaration whose parent is an IVariable
 			IFunction function = (IFunction) declarator.getName().resolveBinding();
-			if( function.getPhysicalNode() != declarator ) {
+			if( ((ICBinding)function).getPhysicalNode() != declarator ) {
 			    IASTDeclaration [] ps = declarator.getParameterDeclarations();
 			    int index = -1;
 			    outerLoop: for( index = 0; index < ps.length; index++ )

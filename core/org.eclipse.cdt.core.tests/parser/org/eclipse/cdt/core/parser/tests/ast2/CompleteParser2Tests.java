@@ -67,8 +67,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
@@ -1095,10 +1095,11 @@ public class CompleteParser2Tests extends TestCase {
  		CPPVisitor.visitTranslationUnit( tu, col );
  		
  		assertEquals( col.size(), 8 );
- 		ICompositeType SD_01 = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICPPClassType SD_01 = (ICPPClassType) col.getName(0).resolveBinding();
  		ICPPMethod f_SD_01 = (ICPPMethod) col.getName(1).resolveBinding();
- 		
- 		assertInstances( col, SD_01, 3 );
+ 		ICPPConstructor ctor = SD_01.getConstructors()[0];
+ 		assertInstances( col, SD_01, 2 );
+ 		assertInstances( col, ctor, 1 );
  		assertInstances( col, f_SD_01, 2 );
 	}	
 	
@@ -1194,13 +1195,15 @@ public class CompleteParser2Tests extends TestCase {
  		assertEquals( col.size(), 17 );
  		ICompositeType SD_02 = (ICompositeType) col.getName(0).resolveBinding();
  		ICPPMethod f_SD_02 = (ICPPMethod) col.getName(1).resolveBinding();
- 		ICompositeType SD_01 = (ICompositeType) col.getName(2).resolveBinding();
+ 		ICPPClassType SD_01 = (ICPPClassType) col.getName(2).resolveBinding();
  		ICPPField next = (ICPPField) col.getName(4).resolveBinding();
  		ICPPMethod f_SD_01 = (ICPPMethod) col.getName(5).resolveBinding();
+ 		ICPPConstructor ctor = SD_01.getConstructors()[0];
  		
  		assertInstances( col, SD_02, 2 );
  		assertInstances( col, f_SD_02, 2 );
- 		assertInstances( col, SD_01, 4 );
+ 		assertInstances( col, SD_01, 3 );
+ 		assertInstances( col, ctor, 1 );
  		assertInstances( col, next, 2 );
  		assertInstances( col, f_SD_01, 4 );
 	}
@@ -1237,11 +1240,38 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testBug43951() throws Exception
 	{
-		parse( "class B{ B(); ~B(); }; B::B(){} B::~B(){}" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class B{ B(); ~B(); }; B::B(){} B::~B(){}" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 9 );
+		ICPPClassType B = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPConstructor constructor = (ICPPConstructor) col.getName(1).resolveBinding();
+		ICPPMethod destructor = (ICPPMethod) col.getName(2).resolveBinding();
+		
+		assertInstances( col, B, 3 );
+		assertInstances( col, constructor, 3 );
+		assertInstances( col, destructor, 3 );
 	}	
 
 	public void testBug44342() throws Exception {
-		parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} "); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} "); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 10 );
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
+		ICPPMethod f2 = (ICPPMethod) col.getName(2).resolveBinding();
+		
+		ICPPConstructor ctor = A.getConstructors()[0];
+		IVariable a = (IVariable) col.getName( 6 ).resolveBinding();
+		
+		assertInstances( col, A, 2 );
+		assertInstances( col, f1, 2 );
+		assertInstances( col, f2, 1 );
+		assertInstances( col, ctor, 1 );
+		assertInstances( col, a, 2 );
 	}	
 
 	

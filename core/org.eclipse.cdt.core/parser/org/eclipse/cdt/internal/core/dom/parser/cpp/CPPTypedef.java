@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 /**
  * @author aniefer
  */
-public class CPPTypedef implements ITypedef, ITypeContainer {
+public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
 	private IASTDeclarator declarator = null;
 	private IType type = null;
 	
@@ -35,6 +35,20 @@ public class CPPTypedef implements ITypedef, ITypeContainer {
 		
 		// TODO Auto-generated constructor stub
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return declarator;
+    }
 
     public boolean equals( Object o ){
 	    if( o instanceof ITypedef )

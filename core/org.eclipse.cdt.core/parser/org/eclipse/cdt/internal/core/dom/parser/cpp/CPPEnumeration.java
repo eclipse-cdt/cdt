@@ -23,13 +23,27 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * @author aniefer
  */
-public class CPPEnumeration implements IEnumeration {
+public class CPPEnumeration implements IEnumeration, ICPPBinding {
     private IASTEnumerationSpecifier enumSpecifier;
     /**
      * @param specifier
      */
     public CPPEnumeration( IASTEnumerationSpecifier specifier ) {
         this.enumSpecifier = specifier;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return enumSpecifier;
     }
 
     /* (non-Javadoc)

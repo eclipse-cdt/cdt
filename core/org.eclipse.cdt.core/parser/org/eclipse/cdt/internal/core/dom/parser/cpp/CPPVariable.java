@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 /**
  * @author aniefer
  */
-public class CPPVariable implements IVariable {
+public class CPPVariable implements IVariable, ICPPBinding {
 	private IASTDeclarator declarator = null;
 	private IType type = null;
 	
@@ -30,6 +30,20 @@ public class CPPVariable implements IVariable {
 		declarator = dtor;
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        return declarator;
+    }
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */

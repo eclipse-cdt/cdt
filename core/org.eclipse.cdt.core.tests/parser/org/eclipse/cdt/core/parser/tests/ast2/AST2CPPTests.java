@@ -836,11 +836,12 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPClassType C = (ICPPClassType) collector.getName( 2 ).resolveBinding();
 		ICPPClassType B = (ICPPClassType) collector.getName( 4 ).resolveBinding();
 		ICPPClassType A = (ICPPClassType) collector.getName( 6 ).resolveBinding();
-		
+		ICPPConstructor ctor = A.getConstructors()[0];
 		assertInstances( collector, D, 3 );
 		assertInstances( collector, C, 2 );
 		assertInstances( collector, B, 2 );
-		assertInstances( collector, A, 3 );
+		assertInstances( collector, A, 2 );
+		assertInstances( collector, ctor, 1 );
 		assertInstances( collector, x, 2 );
     }
     
@@ -866,14 +867,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPClassType C = (ICPPClassType) collector.getName( 2 ).resolveBinding();
 		ICPPClassType B = (ICPPClassType) collector.getName( 4 ).resolveBinding();
 		ICPPClassType A = (ICPPClassType) collector.getName( 6 ).resolveBinding();
-		
+		ICPPConstructor ctor = A.getConstructors()[0];
 		IProblemBinding x2 = (IProblemBinding) collector.getName( 14 ).resolveBinding();
 		assertEquals( x2.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
 		
 		assertInstances( collector, D, 3 );
 		assertInstances( collector, C, 2 );
 		assertInstances( collector, B, 2 );
-		assertInstances( collector, A, 3 );
+		assertInstances( collector, A, 2 );
+		assertInstances( collector, ctor, 1 );
 		assertInstances( collector, x1, 1 );
     }
     

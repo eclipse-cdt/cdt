@@ -110,6 +110,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
 	public static final String INDEXER_PROBLEMS_VALUE = "indexProblemsValue"; //$NON-NLS-1$
 	
+	public static final int PREPROCESSOR_PROBLEMS_BIT = 1;
+	public static final int SEMANTIC_PROBLEMS_BIT = 1 << 1;
+	public static final int SYNTACTIC_PROBLEMS_BIT = 1 << 2;
+	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
 		// must tag the index as inconsistent, in case we exit before the update job is started
@@ -359,33 +363,33 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		return false;
 	}
 	
-	public boolean isIndexProblemsEnabled(IProject project) {
-		Boolean value = null;
+	public int indexProblemsEnabled(IProject project) {
+		Integer value = null;
 		
 		try {
-			value = (Boolean) project.getSessionProperty(problemsActivationKey);
+			value = (Integer) project.getSessionProperty(problemsActivationKey);
 		} catch (CoreException e) {
 		}
 		
 		if (value != null)
-			return value.booleanValue();
+			return value.intValue();
 		
 		try {
 			//Load value for project
 			value = loadIndexerProblemsEnabledFromCDescriptor(project);
 			if (value != null){
 				project.setSessionProperty(IndexManager.problemsActivationKey, value);
-				return value.booleanValue();
+				return value.intValue();
 			}
 			
 			//TODO: Indexer Block Place holder for Managed Make - take out
-			value = new Boolean(false);
+			value = new Integer(0);
 			project.setSessionProperty(IndexManager.problemsActivationKey, value);
-			return value.booleanValue();
+			return value.intValue();
 		} catch (CoreException e1) {
 		}
 		
-		return false;
+		return 0;
 	}
 	/**
 	 * Index the content of the given source folder.
@@ -773,32 +777,44 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		
 		return strBool;
 	}
-	private Boolean loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
-		// we are only checking for the settings do not create the descriptor.
+	private Integer loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
+	// we are only checking for the settings do not create the descriptor.
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		Boolean strBool = null;
-		if (descriptor != null) {
+		Integer strInt = null;
+		if( descriptor != null ){
 			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
-
+			
 			while (child != null) {
-				if (child.getNodeName().equals(INDEXER_PROBLEMS_ENABLED)) 
-					strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_PROBLEMS_VALUE));
+				if (child.getNodeName().equals(INDEXER_PROBLEMS_ENABLED)){
+					String val = ((Element)child).getAttribute(INDEXER_PROBLEMS_VALUE);
+					try{
+						strInt = Integer.valueOf( val );
+					} catch( NumberFormatException e ){
+						//some old projects might have a boolean stored, translate that into just preprocessors
+						Boolean bool = Boolean.valueOf( val );
+						if( bool.booleanValue() )
+							strInt = new Integer( IndexManager.PREPROCESSOR_PROBLEMS_BIT );
+						else 
+							strInt = new Integer( 0 );
+					}
+					break;
+				}
 				child = child.getNextSibling();
 			}
 		}
 		
-		return strBool;
+		return strInt;
 	}
 	
 	static private class RemoveIndexMarkersJob extends Job{
-		private final IProject project;
-		public RemoveIndexMarkersJob( IProject project, String name ){
+		private final IResource resource;
+		public RemoveIndexMarkersJob( IResource resource, String name ){
 			super( name );
-			this.project = project;
+			this.resource = resource;
 		}
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
-				project.deleteMarkers( ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE );
+				resource.deleteMarkers( ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE );
 			} catch (CoreException e) {
 				return Status.CANCEL_STATUS;
 			}
@@ -807,9 +823,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		
 	}
 	
-	public void removeAllIndexerProblems( IProject project){
+	public void removeIndexerProblems( IResource resource){
 		String jobName = "remove markers"; //$NON-NLS-1$
-		RemoveIndexMarkersJob job = new RemoveIndexMarkersJob( project, jobName );
+		RemoveIndexMarkersJob job = new RemoveIndexMarkersJob( resource, jobName );
+		job.setRule( resource );
 		job.setPriority( Job.DECORATE );
 		job.schedule();
 	}

@@ -32,12 +32,17 @@ import org.w3c.dom.Node;
 
 public class IndexerOptionDialogPage extends DialogPage {
 	
-	private static final String ENABLE_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableProblems" ); //$NON-NLS-1$
+	private static final String ENABLE_PREPROCESSOR_PROBLEMS = CUIMessages.getString( "IndexerOptions.enablePreprocessor" ); //$NON-NLS-1$
+	private static final String ENABLE_SEMANTIC_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableSemantic" ); //$NON-NLS-1$
+	private static final String ENABLE_SYNTACTIC_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableSyntactic" ); //$NON-NLS-1$
 	private static final String ENABLE_INDEXING = CUIMessages.getString( "IndexerOptions.enableIndexing" ); //$NON-NLS-1$
 	private static final String INDEXER = CUIMessages.getString("IndexerOptions.indexer" ); //$NON-NLS-1$ 
+	private static final String INDEXER_PROBLEMS = CUIMessages.getString("IndexerOptions.problemReporting" ); //$NON-NLS-1$
 	
 	private Button indexerEnabled;
-	private Button indexerProblemsEnabled;
+	private Button preprocessorProblemsEnabled;
+	private Button syntacticProblemsEnabled;
+	private Button semanticProblemsEnabled;
 	
 	public IndexerOptionDialogPage(){
 		super();
@@ -60,8 +65,16 @@ public class IndexerOptionDialogPage extends DialogPage {
 		group.setText( INDEXER );
 
 		indexerEnabled = createCheckButton(group, ENABLE_INDEXING );
-		indexerProblemsEnabled = createCheckButton( group, ENABLE_PROBLEMS );
 		
+		Group problemsGroup = new Group(result, SWT.NONE );
+		problemsGroup.setLayout(new GridLayout());
+		problemsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		problemsGroup.setText( INDEXER_PROBLEMS );
+		
+		preprocessorProblemsEnabled = createCheckButton( problemsGroup, ENABLE_PREPROCESSOR_PROBLEMS );
+		semanticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SEMANTIC_PROBLEMS );
+		//uncomment when we want to report syntax problems
+		//syntacticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
 		setControl(result);
 	}
 	
@@ -83,16 +96,24 @@ public class IndexerOptionDialogPage extends DialogPage {
 		indexerEnabled.setSelection(value);
 	}
 	
-	public void setIndexerProblemsValue( boolean value ){
-		indexerProblemsEnabled.setSelection( value );
+	public void setIndexerProblemValues( int value ){
+		preprocessorProblemsEnabled.setSelection( (value & IndexManager.PREPROCESSOR_PROBLEMS_BIT) != 0 );
+		if( syntacticProblemsEnabled != null ) 
+			syntacticProblemsEnabled.setSelection( (value & IndexManager.SYNTACTIC_PROBLEMS_BIT) != 0 );
+		semanticProblemsEnabled.setSelection( (value & IndexManager.SEMANTIC_PROBLEMS_BIT) != 0 );
 	}
 	
 	public boolean getIndexerValue(){
 		return indexerEnabled.getSelection();
 	}
 	
-	public boolean getIndexerProblemsValue(){
-		return indexerProblemsEnabled.getSelection();
+	public int getIndexerProblemsValues(){
+		int result = 0;
+		result |= preprocessorProblemsEnabled.getSelection() ? IndexManager.PREPROCESSOR_PROBLEMS_BIT : 0;
+		if( syntacticProblemsEnabled != null )
+			result |= syntacticProblemsEnabled.getSelection() ? IndexManager.SYNTACTIC_PROBLEMS_BIT : 0;
+		result |= semanticProblemsEnabled.getSelection() ? IndexManager.SEMANTIC_PROBLEMS_BIT : 0;
+		return result;
 	}
 	
 	public void persistIndexerValues(IProject project){
@@ -105,31 +126,28 @@ public class IndexerOptionDialogPage extends DialogPage {
 			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
 			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
 		
-		
-		// Clear out all current children
-		Node child = rootElement.getFirstChild();
-		while (child != null) {
-			rootElement.removeChild(child);
-			child = rootElement.getFirstChild();
-		}
-		Document doc = rootElement.getOwnerDocument();
-
-		boolean indexProject = getIndexerValue();
-		boolean problemsEnabled = getIndexerProblemsValue();
-		
-		saveIndexerEnabled(indexProject, rootElement, doc);
-		saveIndexerProblemsEnabled( problemsEnabled, rootElement, doc );
-		
-		descriptor.saveProjectData();
-		
-		//Update project session property
-		
-		project.setSessionProperty(IndexManager.activationKey,new Boolean(indexProject));
-		project.setSessionProperty(IndexManager.problemsActivationKey, new Boolean( problemsEnabled ));
+			// Clear out all current children
+			Node child = rootElement.getFirstChild();
+			while (child != null) {
+				rootElement.removeChild(child);
+				child = rootElement.getFirstChild();
+			}
+			Document doc = rootElement.getOwnerDocument();
 	
+			boolean indexProject = getIndexerValue();
+			int problemValues = getIndexerProblemsValues();
+					
+			saveIndexerEnabled(indexProject, rootElement, doc);
+			saveIndexerProblemsEnabled( problemValues, rootElement, doc );
+			
+			descriptor.saveProjectData();
+			
+			//Update project session property
+			
+			project.setSessionProperty(IndexManager.activationKey,new Boolean(indexProject));
+			project.setSessionProperty(IndexManager.problemsActivationKey, new Integer( problemValues ));	
 	
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -143,13 +161,12 @@ public class IndexerOptionDialogPage extends DialogPage {
 		rootElement.appendChild(indexEnabled);
 
 	}
-	private static void saveIndexerProblemsEnabled (boolean problemsEnabled, Element rootElement, Document doc ) {
+	private static void saveIndexerProblemsEnabled ( int problemValues, Element rootElement, Document doc ) {
 		
 		Element enabled = doc.createElement(IndexManager.INDEXER_PROBLEMS_ENABLED);
-		Boolean tempValue= new Boolean( problemsEnabled );
+		Integer tempValue= new Integer( problemValues );
 		
-		enabled.setAttribute(IndexManager.INDEXER_PROBLEMS_VALUE,tempValue.toString());
+		enabled.setAttribute(IndexManager.INDEXER_PROBLEMS_VALUE, tempValue.toString());
 		rootElement.appendChild(enabled);
-
 	}
 }

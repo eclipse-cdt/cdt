@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.search.indexing;
  * @author bgheorgh
 */
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -80,8 +79,8 @@ public class SourceIndexer extends AbstractIndexer {
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile, timeOut);
 		
 		IndexManager manager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		boolean problemsEnabled = manager.isIndexProblemsEnabled( resourceFile.getProject() );
-		requestor.setProblemMarkersEnabled( problemsEnabled );
+		int problems = manager.indexProblemsEnabled( resourceFile.getProject() );
+		requestor.setProblemMarkersEnabled( problems );
 		requestor.requestRemoveMarkers( resourceFile, null );
 		
 		//Get the scanner info
@@ -103,7 +102,6 @@ public class SourceIndexer extends AbstractIndexer {
 		try
 		{
 			CodeReader reader = new CodeReader(resourceFile.getLocation().toOSString(), resourceFile.getContents());
-			BufferedInputStream inStream = new BufferedInputStream(resourceFile.getContents());
 			parser = ParserFactory.createParser( 
 							ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
@@ -145,7 +143,7 @@ public class SourceIndexer extends AbstractIndexer {
 		finally{
 			requestor.stopTimer();
 			//if the user disable problem reporting since we last checked, don't report the collected problems
-			if( manager.isIndexProblemsEnabled( resourceFile.getProject() ) )
+			if( manager.indexProblemsEnabled( resourceFile.getProject() ) != 0 )
 				requestor.reportProblems();
 			
 			//Report events

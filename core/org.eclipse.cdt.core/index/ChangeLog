@@ -1,3 +1,9 @@
+2004-06-21 Andrew Niefer
+	enable reporting of semantic problems:
+		* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+		* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexer.java
+		* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java
+
 2004-06-21 Alain Magloire
 
 	IndexManager, call CCorePlugin.getCDescriptor(.., false).

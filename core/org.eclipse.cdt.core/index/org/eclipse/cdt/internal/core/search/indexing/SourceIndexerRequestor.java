@@ -100,7 +100,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	private IASTInclusion currentInclude = null;
 	private LinkedList includeStack = new LinkedList();
 	
-	private boolean problemMarkersEnabled = false;
+	private int problemMarkersEnabled = 0;
 	private Map problemsMap = null;
 	
 	private IProgressMonitor pm = new NullProgressMonitor();
@@ -704,14 +704,14 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	
 	
 	public boolean areProblemMarkersEnabled(){
-		return problemMarkersEnabled;
+		return problemMarkersEnabled != 0;
 	}
 	
-	public void setProblemMarkersEnabled( boolean enabled ){
-		if( enabled ){
+	public void setProblemMarkersEnabled( int value ){
+		if( value != 0 ){
 			problemsMap = new HashMap();
 		}
-		this.problemMarkersEnabled = enabled;
+		this.problemMarkersEnabled = value;
 	}
 	
 	public void reportProblems(){
@@ -754,9 +754,20 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	}
 	
 	public boolean shouldRecordProblem( IProblem problem ){
-		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) ){
-			return problem.getID() != IProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
-		}
+		if( problem.getSourceLineNumber() == -1  )
+			return false;
+		
+		boolean preprocessor = ( problemMarkersEnabled & IndexManager.PREPROCESSOR_PROBLEMS_BIT ) != 0;
+		boolean semantics = ( problemMarkersEnabled & IndexManager.SEMANTIC_PROBLEMS_BIT ) != 0;
+		boolean syntax = ( problemMarkersEnabled & IndexManager.SYNTACTIC_PROBLEMS_BIT ) != 0;
+		
+		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) )
+			return preprocessor && problem.getID() != IProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
+		else if( problem.checkCategory( IProblem.SEMANTICS_RELATED ) )
+			return semantics;
+		else if( problem.checkCategory( IProblem.SYNTAX_RELATED ) )
+			return syntax;
+		
 		return false;
 	}
 
@@ -779,7 +790,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		
 	}
 	private class ProcessMarkersJob extends Job{
-		private final List problems;
+		protected final List problems;
 		private final IFile resource;
 		public ProcessMarkersJob( IFile resource, List problems, String name ){
 			super( name );
@@ -799,7 +810,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			}
 			return Status.OK_STATUS;
 		}
-	};
+	}
 	
 	abstract private class Problem {
 		public IFile file;

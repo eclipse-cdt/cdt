@@ -175,8 +175,8 @@ public class ResourceToItemsMapper {
 	 */
 	public boolean isEmpty() {
 		return fResourceToItem.isEmpty();
-	}	
-	
+	}
+
 	/**
 	 * Method that decides which elements can have error markers
 	 * Returns null if an element can not have error markers.
@@ -184,7 +184,7 @@ public class ResourceToItemsMapper {
 	private static IResource getCorrespondingResource(Object element) {
 		if (element instanceof ICElement) {
 			ICElement elem= (ICElement) element;
-//			if (!elem.isReadROnly()) { // only modifieable elements can get error ticks
+			if (elem.exists()) { 
 				IResource res= elem.getResource();
 				if (res == null) {
 					ITranslationUnit cu= (ITranslationUnit) elem.getAncestor(ICElement.C_UNIT);
@@ -194,8 +194,7 @@ public class ResourceToItemsMapper {
 					}
 				}
 				return res; 
-//			}
-//			return null;
+			}
 		} else if (element instanceof IResource) {
 			return (IResource) element;
 		}

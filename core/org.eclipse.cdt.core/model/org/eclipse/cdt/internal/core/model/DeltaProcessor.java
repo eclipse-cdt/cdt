@@ -344,27 +344,21 @@ public class DeltaProcessor {
 	 */
 	private boolean  updateCurrentDeltaAndIndex(IResourceDelta delta) throws CModelException {
 
-		ICElement element = null;
 		IResource resource = delta.getResource();
-
-		boolean isProcess = false;
+		ICElement element = createElement(resource);
 
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
-				element = createElement(resource);
 				if (element != null) {
 					updateIndexAddResource(element, delta);
 					elementAdded(element, delta);
-					isProcess = true;
 				}
 				break;
 
 			case IResourceDelta.REMOVED :
-				element = createElement(resource);
 				if (element != null) {
 					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
-					isProcess = true;
 				}
 				break;
 
@@ -372,36 +366,36 @@ public class DeltaProcessor {
 				int flags = delta.getFlags();
 				if ((flags & IResourceDelta.CONTENT) != 0) {
 					// content has changed
-					element = createElement(resource);
 					if (element != null) {
 						contentChanged(element, delta);
 						updateIndexAddResource(element, delta);
-						isProcess = true;
 					}
-				} else if ((flags & IResourceDelta.OPEN) != 0) {
-					// project has been opened or closed
-					IProject res = (IProject)resource;
-					element = createElement(resource);
-					if (element != null) {
-						if (res.isOpen()) {
-							elementOpened(element, delta);
-							updateIndexAddResource(element, delta);
-						} else {
-							elementClosed(element, delta);
-							updateIndexRemoveResource(element, delta);
+				} else if (resource.getType() == IResource.PROJECT) {
+					if ((flags & IResourceDelta.OPEN) != 0) {
+						// project has been opened or closed
+						IProject res = (IProject)resource;
+						if (element != null) {
+							if (res.isOpen()) {
+								elementOpened(element, delta);
+								updateIndexAddResource(element, delta);
+							} else {
+								elementClosed(element, delta);
+								updateIndexRemoveResource(element, delta);
+							}
 						}
-						isProcess = true;
-					}
-				} else if ((flags & IResourceDelta.DESCRIPTION) != 0) {
-					element = createElement(resource);
-					if (element != null) {
+					} else if ((flags & IResourceDelta.DESCRIPTION) != 0) {
+						if (element != null) {
+							elementAdded(element, delta);
+						}
+					} else if (element != null) {
 						elementAdded(element, delta);
-						isProcess = true;
 					}
+				} else if (element != null) {
+					elementAdded(element, delta);
 				}
 				break;
 		}
-		return isProcess;
+		return element != null;
 	}
 
 	protected void updateIndexAddResource(ICElement element, IResourceDelta delta) {

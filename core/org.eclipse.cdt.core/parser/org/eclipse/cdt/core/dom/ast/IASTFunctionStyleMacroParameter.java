@@ -15,6 +15,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTFunctionStyleMacroParameter extends IASTNode {
 
+   public static final IASTFunctionStyleMacroParameter[] EMPTY_PARAMETER_ARRAY = new IASTFunctionStyleMacroParameter[0];
+   
    public String getParameter();
    public void   setParameter( String value );
    

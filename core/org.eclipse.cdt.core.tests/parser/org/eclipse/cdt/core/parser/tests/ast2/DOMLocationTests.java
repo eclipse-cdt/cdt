@@ -13,9 +13,12 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -90,7 +93,7 @@ public class DOMLocationTests extends AST2BaseTest {
    }
 
    
-   public void testSimpleMacroDefinition() throws Exception {
+   public void testSimpleObjectStyleMacroDefinition() throws Exception {
       String code ="/* hi */\n#define FOOT 0x01\n\n"; //$NON-NLS-1$
       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
             : null) {
@@ -101,11 +104,34 @@ public class DOMLocationTests extends AST2BaseTest {
          assertNotNull( macros );
          assertEquals( macros.length, 1 );
          assertSoleLocation( macros[0], code.indexOf( "#"), code.indexOf( "0x01") + 4 - code.indexOf( "#")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         assertTrue( macros[0] instanceof IASTPreprocessorObjectStyleMacroDefinition );
          assertEquals( macros[0].getName().toString(), "FOOT" ); //$NON-NLS-1$
          assertEquals( macros[0].getExpansion(), "0x01"); //$NON-NLS-1$
       }
    }
    
+
+   public void testSimpleFunctionStyleMacroDefinition() throws Exception {
+      String code = "#define FOOBAH( WOOBAH ) JOHN##WOOBAH\n\n"; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p); 
+         IASTDeclaration[] declarations = tu.getDeclarations();
+         assertEquals(declarations.length, 0);
+         IASTPreprocessorMacroDefinition [] macros = tu.getMacroDefinitions();
+         assertNotNull( macros );
+         assertEquals( macros.length, 1 );
+         assertTrue( macros[0] instanceof IASTPreprocessorFunctionStyleMacroDefinition );
+         assertSoleLocation( macros[0], code.indexOf( "#define"), code.indexOf( "##WOOBAH") + 8 - code.indexOf( "#define")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$s
+         assertEquals( macros[0].getName().toString(), "FOOBAH" ); //$NON-NLS-1$
+         assertEquals( macros[0].getExpansion(), "JOHN##WOOBAH"); //$NON-NLS-1$
+         IASTFunctionStyleMacroParameter [] parms = ((IASTPreprocessorFunctionStyleMacroDefinition)macros[0]).getParameters();
+         assertNotNull( parms );
+         assertEquals( parms.length, 1 );
+         assertEquals( parms[0].getParameter(), "WOOBAH" ); //$NON-NLS-1$
+      }
+      
+   }
    
    /**
     * @param declarator

@@ -112,11 +112,11 @@ public class DOMScanner extends BaseScanner {
    protected void processMacro(char[] name, int startingOffset,
          int startingLineNumber, int idstart, int idend, int nameLine,
          int textEnd, int endingLine, IMacro macro) {
-      if (macro instanceof ObjectStyleMacro)
-         locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
-               startingOffset, idstart, idend, textEnd);
-      else if (macro instanceof FunctionStyleMacro)
+      if (macro instanceof FunctionStyleMacro)
          locationMap.defineFunctionStyleMacro((FunctionStyleMacro) macro,
+               startingOffset, idstart, idend, textEnd);
+      else if (macro instanceof ObjectStyleMacro)
+         locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
                startingOffset, idstart, idend, textEnd);
 
    }

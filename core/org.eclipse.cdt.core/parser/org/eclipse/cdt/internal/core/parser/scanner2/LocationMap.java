@@ -16,14 +16,14 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -51,181 +51,106 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          this.path = cs;
       }
 
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement#getPath()
        */
       public String getPath() {
-         return new String( path );
+         return new String(path);
       }
 
    }
+
    /**
     * @author jcamelon
     */
    public static class ASTFunctionMacro extends ScannerASTNode implements
          IASTPreprocessorFunctionStyleMacroDefinition {
 
-      /* (non-Javadoc)
+      private IASTName name;
+      private String   expansion;
+
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroDefinition#getParameters()
        */
       public IASTFunctionStyleMacroParameter[] getParameters() {
-         // TODO Auto-generated method stub
-         return null;
+         if (parameters == null)
+            return IASTFunctionStyleMacroParameter.EMPTY_PARAMETER_ARRAY;
+         removeNullParameters();
+         return parameters;
       }
 
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroDefinition#addParameter(org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter)
        */
       public void addParameter(IASTFunctionStyleMacroParameter parm) {
-         // TODO Auto-generated method stub
-         
+         if (parameters == null) {
+            parameters = new IASTFunctionStyleMacroParameter[DEFAULT_PARMS_LIST_SIZE];
+            currentIndex = 0;
+         }
+         if (parameters.length == currentIndex) {
+            IASTFunctionStyleMacroParameter[] old = parameters;
+            parameters = new IASTFunctionStyleMacroParameter[old.length * 2];
+            for (int i = 0; i < old.length; ++i)
+               parameters[i] = old[i];
+         }
+         parameters[currentIndex++] = parm;
       }
 
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getName()
-       */
-      public IASTName getName() {
-         // TODO Auto-generated method stub
-         return null;
+      private void removeNullParameters() {
+         int nullCount = 0;
+         for (int i = 0; i < parameters.length; ++i)
+            if (parameters[i] == null)
+               ++nullCount;
+         if (nullCount == 0)
+            return;
+         IASTFunctionStyleMacroParameter[] old = parameters;
+         int newSize = old.length - nullCount;
+         parameters = new IASTFunctionStyleMacroParameter[newSize];
+         for (int i = 0; i < newSize; ++i)
+            parameters[i] = old[i];
+         currentIndex = newSize;
       }
 
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-       */
-      public void setName(IASTName name) {
-         // TODO Auto-generated method stub
-         
-      }
+      private int                               currentIndex            = 0;
+      private IASTFunctionStyleMacroParameter[] parameters              = null;
+      private static final int                  DEFAULT_PARMS_LIST_SIZE = 2;
 
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getExpansion()
-       */
-      public String getExpansion() {
-         // TODO Auto-generated method stub
-         return null;
-      }
-
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setExpansion(java.lang.String)
-       */
-      public void setExpansion(String exp) {
-         // TODO Auto-generated method stub
-         
-      }
-
-   }
-   public static class ScannerASTNode extends ASTNode
-   {
-      private IASTNode parent;
-      private ASTNodeProperty property;
-
-      public IASTNode getParent() {
-          return parent;
-      }
-
-      
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
-       */
-      public ASTNodeProperty getPropertyInParent() {
-          return property;
-      }
-
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
-       */
-      public void setParent(IASTNode parent) {
-          this.parent = parent;
-      }
-
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTNode#setPropertyInParent(org.eclipse.cdt.core.dom.ast.IASTNodeProperty)
-       */
-      public void setPropertyInParent(ASTNodeProperty property) {
-          this.property = property;
-      }
-
-
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTNode#getTranslationUnit()
-       */
-      public IASTTranslationUnit getTranslationUnit() {
-          if( this instanceof IASTTranslationUnit ) return (IASTTranslationUnit) this;
-          IASTNode node = getParent();
-          while( ! (node instanceof IASTTranslationUnit ) && node != null )
-          {
-              node = node.getParent();
-          }
-          return (IASTTranslationUnit) node;
-      }
-
-   
-   }
-   /**
-    * @author jcamelon
-    */
-   public static class ScannerASTName extends ScannerASTNode implements IASTName {
-      private final char[] name;
-
-      public ScannerASTName( char [] n )
-      {
-         this.name = n;
-      }
-
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
-       */
-      public IBinding resolveBinding() {
-         // TODO Auto-generated method stub
-         return null;
-      }
-
-      /* (non-Javadoc)
-       * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
-       */
-      public char[] toCharArray() {
-         return name;
-      }
-      
-      /* (non-Javadoc)
-       * @see java.lang.Object#toString()
-       */
-      public String toString() {
-         return new String( name );
-      }
-   }
-   /**
-    * @author jcamelon
-    */
-   public static class ASTObjectMacro extends ScannerASTNode implements
-         IASTPreprocessorObjectStyleMacroDefinition {
-
-      private IASTName name;
-      private String expansion;
-
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getName()
        */
       public IASTName getName() {
          return name;
       }
 
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setName(org.eclipse.cdt.core.dom.ast.IASTName)
        */
       public void setName(IASTName name) {
          this.name = name;
-         
       }
 
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getExpansion()
        */
       public String getExpansion() {
          return expansion;
       }
 
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setExpansion(java.lang.String)
        */
       public void setExpansion(String exp) {
@@ -233,6 +158,147 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       }
 
    }
+
+   public static class ScannerASTNode extends ASTNode {
+      private IASTNode        parent;
+      private ASTNodeProperty property;
+
+      public IASTNode getParent() {
+         return parent;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
+       */
+      public ASTNodeProperty getPropertyInParent() {
+         return property;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
+       */
+      public void setParent(IASTNode parent) {
+         this.parent = parent;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#setPropertyInParent(org.eclipse.cdt.core.dom.ast.IASTNodeProperty)
+       */
+      public void setPropertyInParent(ASTNodeProperty property) {
+         this.property = property;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#getTranslationUnit()
+       */
+      public IASTTranslationUnit getTranslationUnit() {
+         if (this instanceof IASTTranslationUnit)
+            return (IASTTranslationUnit) this;
+         IASTNode node = getParent();
+         while (!(node instanceof IASTTranslationUnit) && node != null) {
+            node = node.getParent();
+         }
+         return (IASTTranslationUnit) node;
+      }
+
+   }
+
+   /**
+    * @author jcamelon
+    */
+   public static class ScannerASTName extends ScannerASTNode implements
+         IASTName {
+      private final char[] name;
+
+      public ScannerASTName(char[] n) {
+         this.name = n;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
+       */
+      public IBinding resolveBinding() {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
+       */
+      public char[] toCharArray() {
+         return name;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see java.lang.Object#toString()
+       */
+      public String toString() {
+         return new String(name);
+      }
+   }
+
+   /**
+    * @author jcamelon
+    */
+   public static class ASTObjectMacro extends ScannerASTNode implements
+         IASTPreprocessorObjectStyleMacroDefinition {
+
+      private IASTName name;
+      private String   expansion;
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getName()
+       */
+      public IASTName getName() {
+         return name;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setName(org.eclipse.cdt.core.dom.ast.IASTName)
+       */
+      public void setName(IASTName name) {
+         this.name = name;
+
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getExpansion()
+       */
+      public String getExpansion() {
+         return expansion;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setExpansion(java.lang.String)
+       */
+      public void setExpansion(String exp) {
+         this.expansion = exp;
+      }
+
+   }
+
    public static class Location implements IASTNodeLocation {
       private final int nodeOffset;
       private final int nodeLength;
@@ -266,6 +332,30 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
+   public static class ASTFunctionMacroParameter extends ScannerASTNode
+         implements IASTFunctionStyleMacroParameter {
+      private String value;
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter#getParameter()
+       */
+      public String getParameter() {
+         return value;
+      }
+
+      /*
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter#setParameter(java.lang.String)
+       */
+      public void setParameter(String value) {
+         this.value = value;
+      }
+
+   }
+
    public static class FileLocation extends Location implements
          IASTFileLocation {
 
@@ -292,7 +382,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       }
 
    }
-   
+
    protected static class _Context {
       /**
        * @param startOffset
@@ -305,9 +395,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          this.parent = parent;
       }
 
-      public final int               context_directive_start;
-      public final int               context_directive_end;
-      public int                     context_ends;
+      public final int                context_directive_start;
+      public final int                context_directive_end;
+      public int                      context_ends;
       private final _CompositeContext parent;
 
       public _CompositeContext getParent() {
@@ -348,8 +438,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    protected static class _Inclusion extends _CompositeContext {
       public final CodeReader reader;
 
-      public _Inclusion(_CompositeContext parent, CodeReader reader, int startOffset,
-            int endOffset) {
+      public _Inclusion(_CompositeContext parent, CodeReader reader,
+            int startOffset, int endOffset) {
          super(parent, startOffset, endOffset);
          this.reader = reader;
       }
@@ -367,59 +457,63 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          this.reader = reader;
       }
    }
-   
-   protected static class _MacroDefinition extends _Context 
-   {
+
+   protected static class _MacroDefinition extends _Context {
 
       /**
        * @param parent
        * @param startOffset
        * @param endOffset
-       * @param nameOffset TODO
+       * @param nameOffset
+       *           TODO
        */
-      public _MacroDefinition(_CompositeContext parent, int startOffset, int endOffset, char[] name, int nameOffset, char[] expansion) {
+      public _MacroDefinition(_CompositeContext parent, int startOffset,
+            int endOffset, char[] name, int nameOffset, char[] expansion) {
          super(parent, startOffset, endOffset);
          this.name = name;
          this.expansion = expansion;
          this.nameOffset = nameOffset;
       }
 
-      public final char [] name;
-      public final char [] expansion;
-      public final int nameOffset;
+      public final char[] name;
+      public final char[] expansion;
+      public final int    nameOffset;
    }
-   
-   protected static class _ObjectMacroDefinition extends _MacroDefinition
-   {
+
+   protected static class _ObjectMacroDefinition extends _MacroDefinition {
       /**
        * @param parent
        * @param startOffset
        * @param endOffset
-       * @param name TODO
-       * @param expansion TODO
+       * @param name
+       *           TODO
+       * @param expansion
+       *           TODO
        */
-      public _ObjectMacroDefinition(_CompositeContext parent, int startOffset, int endOffset, char[] name, int nameOffset, char[] expansion) {
+      public _ObjectMacroDefinition(_CompositeContext parent, int startOffset,
+            int endOffset, char[] name, int nameOffset, char[] expansion) {
          super(parent, startOffset, endOffset, name, nameOffset, expansion);
       }
-      
-   }
-   
-   protected static class _FunctionMacroDefinition extends _MacroDefinition
-   {
 
-      public final char [] [] parms; 
+   }
+
+   protected static class _FunctionMacroDefinition extends _MacroDefinition {
+
+      public final char[][] parms;
+
       /**
        * @param parent
        * @param startOffset
        * @param endOffset
        * @param parameters
        */
-      public _FunctionMacroDefinition(_CompositeContext parent, int startOffset, int endOffset, char [] name, int nameOffset, char [] expansion, char[][] parameters ) {
+      public _FunctionMacroDefinition(_CompositeContext parent,
+            int startOffset, int endOffset, char[] name, int nameOffset,
+            char[] expansion, char[][] parameters) {
          super(parent, startOffset, endOffset, name, nameOffset, expansion);
          this.parms = parameters;
       }
    }
-   
 
    protected static class _Problem extends _Context {
       public final IASTProblem problem;
@@ -439,7 +533,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    protected _TranslationUnit  tu;
    protected _CompositeContext currentContext;
-   
 
    /**
     *  
@@ -447,10 +540,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    public LocationMap() {
    }
 
-   private static final IASTProblem[]      EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
-   private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
-   private static final IASTPreprocessorMacroDefinition[] EMPTY_MACRO_DEFINITIONS_ARRAY = new IASTPreprocessorMacroDefinition[0];
-   private static final IASTPreprocessorIncludeStatement[] EMPTY_INCLUDES_ARRAY = new IASTPreprocessorIncludeStatement[0];
+   private static final IASTProblem[]                      EMPTY_PROBLEMS_ARRAY          = new IASTProblem[0];
+   private static final IASTNodeLocation[]                 EMPTY_LOCATION_ARRAY          = new IASTNodeLocation[0];
+   private static final IASTPreprocessorMacroDefinition[]  EMPTY_MACRO_DEFINITIONS_ARRAY = new IASTPreprocessorMacroDefinition[0];
+   private static final IASTPreprocessorIncludeStatement[] EMPTY_INCLUDES_ARRAY          = new IASTPreprocessorIncludeStatement[0];
 
    /*
     * (non-Javadoc)
@@ -462,30 +555,40 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       LocationMap.collectContexts(V_MACRODEFS, tu, contexts);
       if (contexts.isEmpty())
          return EMPTY_MACRO_DEFINITIONS_ARRAY;
-      IASTPreprocessorMacroDefinition[] result = new IASTPreprocessorMacroDefinition[contexts.size()];
-      for (int i = 0; i < contexts.size(); ++i)
-      {
+      IASTPreprocessorMacroDefinition[] result = new IASTPreprocessorMacroDefinition[contexts
+            .size()];
+      for (int i = 0; i < contexts.size(); ++i) {
          _MacroDefinition d = (_MacroDefinition) contexts.get(i);
          IASTPreprocessorMacroDefinition r = null;
-         if( d instanceof _ObjectMacroDefinition )
+         if (d instanceof _ObjectMacroDefinition)
             r = new ASTObjectMacro();
-         else if ( d instanceof _FunctionMacroDefinition )
-         {
+         else if (d instanceof _FunctionMacroDefinition) {
             IASTPreprocessorFunctionStyleMacroDefinition f = new ASTFunctionMacro();
-            //TODO parms
+            char[][] parms = ((_FunctionMacroDefinition) d).parms;
+            for (int j = 0; j < parms.length; ++j) {
+               if( parms[j] == null ) continue;
+               IASTFunctionStyleMacroParameter parm = new ASTFunctionMacroParameter();
+               parm.setParameter(new String(parms[j]));
+               f.addParameter(parm);
+               parm.setParent(f);
+               parm
+                     .setPropertyInParent(IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER);
+            }
             r = f;
          }
 
-         IASTName name = new ScannerASTName( d.name );
-         name.setPropertyInParent( IASTPreprocessorMacroDefinition.MACRO_NAME );
-         name.setParent( r );
-         r.setName( name );  
-         r.setExpansion( new String( ((_ObjectMacroDefinition)d).expansion ) );
-         ((ScannerASTNode)r).setOffsetAndLength( d.context_directive_start, d.context_directive_end - d.context_directive_start );
+         IASTName name = new ScannerASTName(d.name);
+         name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
+         name.setParent(r);
+         r.setName(name);
+         r.setExpansion(new String(d.expansion));
+         ((ScannerASTNode) r).setOffsetAndLength(d.context_directive_start,
+               d.context_directive_end - d.context_directive_start);
          result[i] = r;
       }
 
-      return result;   }
+      return result;
+   }
 
    /*
     * (non-Javadoc)
@@ -494,14 +597,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
       List contexts = new ArrayList(8);
-      collectContexts( V_INCLUSIONS, tu, contexts );
-      if( contexts.isEmpty() ) return EMPTY_INCLUDES_ARRAY;
-      IASTPreprocessorIncludeStatement [] result = new IASTPreprocessorIncludeStatement[ contexts.size() ];
-      for( int i = 0; i < contexts.size(); ++i )
-      {
-         _Inclusion inc = ((_Inclusion)contexts.get(i));
-         result[i] = new _InclusionStatement( inc.reader.filename );
-         ((ScannerASTNode)result[i]).setOffsetAndLength( inc.context_directive_start, inc.context_directive_end - inc.context_directive_start );
+      collectContexts(V_INCLUSIONS, tu, contexts);
+      if (contexts.isEmpty())
+         return EMPTY_INCLUDES_ARRAY;
+      IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[contexts
+            .size()];
+      for (int i = 0; i < contexts.size(); ++i) {
+         _Inclusion inc = ((_Inclusion) contexts.get(i));
+         result[i] = new _InclusionStatement(inc.reader.filename);
+         ((ScannerASTNode) result[i]).setOffsetAndLength(
+               inc.context_directive_start, inc.context_directive_end
+                     - inc.context_directive_start);
       }
       return result;
    }
@@ -542,14 +648,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          int length) {
       IASTNodeLocation[] result = new IASTNodeLocation[1];
       if (c instanceof _TranslationUnit) {
-         result[0] = new FileLocation(((_TranslationUnit) c).reader.filename, reconcileOffset( c, offset ),
-               length);
+         result[0] = new FileLocation(((_TranslationUnit) c).reader.filename,
+               reconcileOffset(c, offset), length);
          return result;
       }
-      if( c instanceof _Inclusion )
-      {
-         result[0] = new FileLocation(((_Inclusion) c).reader.filename, reconcileOffset( c, offset ),
-               length);
+      if (c instanceof _Inclusion) {
+         result[0] = new FileLocation(((_Inclusion) c).reader.filename,
+               reconcileOffset(c, offset), length);
          return result;
       }
       return EMPTY_LOCATION_ARRAY;
@@ -562,13 +667,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    protected static int reconcileOffset(_Context c, int offset) {
       int subtractOff = 0;
-      if( c instanceof _CompositeContext )
-      {
-         List subs = ((_CompositeContext)c).getSubContexts();
-         for( int i = 0; i < subs.size(); ++i )
-         {
+      if (c instanceof _CompositeContext) {
+         List subs = ((_CompositeContext) c).getSubContexts();
+         for (int i = 0; i < subs.size(); ++i) {
             _Context subC = (_Context) subs.get(i);
-            if( subC.context_ends < offset )
+            if (subC.context_ends < offset)
                subtractOff += subC.context_ends - subC.context_directive_end;
             else
                break;
@@ -587,9 +690,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    protected static _Context findContextForOffset(_CompositeContext context,
          int offset) {
-      if (!context.hasSubContexts() )
-      {
-         if( context.context_ends >= offset)
+      if (!context.hasSubContexts()) {
+         if (context.context_ends >= offset)
             return context;
          return null;
       }
@@ -598,7 +700,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       _Context bestContext = (_Context) subContexts.get(0);
       if (bestContext.context_directive_end > offset)
          return context;
-      
+
       for (int i = 1; i < subContexts.size(); ++i) {
          _Context nextContext = (_Context) subContexts.get(i);
          if (nextContext.context_directive_end < offset)
@@ -606,10 +708,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          else
             break;
       }
-      
-      if ( bestContext.context_ends < offset )
+
+      if (bestContext.context_ends < offset)
          return context;
-      
+
       if (bestContext instanceof _CompositeContext)
          return findContextForOffset((_CompositeContext) bestContext, offset);
       return bestContext;
@@ -651,8 +753,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void startInclusion(CodeReader reader, int offset, int endOffset) {
-      _Inclusion i = new _Inclusion(currentContext, reader, offset,
-            endOffset);
+      _Inclusion i = new _Inclusion(currentContext, reader, offset, endOffset);
       currentContext.addSubContext(i);
       currentContext = i;
    }
@@ -722,7 +823,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public void defineObjectStyleMacro(ObjectStyleMacro m, int startOffset,
          int nameOffset, int nameEndOffset, int endOffset) {
-      currentContext.addSubContext(new _ObjectMacroDefinition( currentContext, startOffset, endOffset, m.name, nameOffset, m.expansion ));
+      currentContext.addSubContext(new _ObjectMacroDefinition(currentContext,
+            startOffset, endOffset, m.name, nameOffset, m.expansion));
    }
 
    /*
@@ -733,7 +835,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public void defineFunctionStyleMacro(FunctionStyleMacro m, int startOffset,
          int nameOffset, int nameEndOffset, int endOffset) {
-      currentContext.addSubContext(new _FunctionMacroDefinition( currentContext, startOffset, endOffset, m.name, nameOffset, m.expansion, m.arglist ));   
+      currentContext
+            .addSubContext(new _FunctionMacroDefinition(currentContext,
+                  startOffset, endOffset, m.name, nameOffset, m.expansion,
+                  m.arglist));
    }
 
    /*
@@ -890,7 +995,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                result.add(source);
             break;
          case V_MACRODEFS:
-            if( source instanceof _MacroDefinition )
+            if (source instanceof _MacroDefinition)
                result.add(source);
             break;
       }

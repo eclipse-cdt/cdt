@@ -13,9 +13,14 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author jcamelon
  */
-public interface IASTPreprocessorFunctionStyleMacroDefinition extends IASTPreprocessorMacroDefinition {
+public interface IASTPreprocessorFunctionStyleMacroDefinition extends
+      IASTPreprocessorMacroDefinition {
 
-    public IASTFunctionStyleMacroParameter [] getParameters();
-    public void addParameter( IASTFunctionStyleMacroParameter parm );
-    
+   public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
+                                                       "Function Macro Parameter"); //$NON-NLS-1$
+
+   public IASTFunctionStyleMacroParameter[] getParameters();
+
+   public void addParameter(IASTFunctionStyleMacroParameter parm);
+
 }

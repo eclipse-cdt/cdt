@@ -1,3 +1,8 @@
+2003-10-20 Hoda Amer
+	Fixed bug#44507 outline flickers with CDT1.2 RC0
+	Returned a boolean from IWorkingCopy.reconcile() indicating
+	if there was a real change.
+
 2003-10-20 David Inglis
 	fixed junit breakage - testGetSoname()    
 	* utils/org/eclipse/cdt/utils/elf/parser/BinaryShared.java

@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.BuildConsoleManager;
@@ -217,6 +218,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 				CPluginImages.initialize();
 			}
 		});
+		
+		// TODO - temporary kludge (maybe) to make sure the core preferences
+		// are kept in sync with the stored preferences
+		CCorePlugin.getDefault().setUseNewParser(CPluginPreferencePage.useNewParser());
 	}
 
 	/**

@@ -8,15 +8,15 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.cdt.internal.parser.CStructurizer;
-
-import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.cdt.internal.parser.CStructurizer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 class TranslationUnitInfo extends CFileInfo {
 
@@ -55,10 +55,18 @@ class TranslationUnitInfo extends CFileInfo {
 	protected void parse(InputStream in) {
 		try {
 			removeChildren();
-			ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
-			CStructurizer.getCStructurizer().parse(modelBuilder, in);
-		} catch (IOException e) {
-			//e.printStackTrace();
+			if (CCorePlugin.getDefault().useNewParser()) {
+				// new parser
+				NewModelBuilder modelBuilder = new NewModelBuilder((TranslationUnit)getElement());
+				Parser parser = new Parser(in, modelBuilder, true);
+				parser.parse();
+			} else {
+				// cdt 1.0 parser
+				ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
+				CStructurizer.getCStructurizer().parse(modelBuilder, in);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 	}
 

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -20,11 +21,13 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CPluginPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	private static final String PREF_LINK_TO_EDITOR= "linkToEditor";
+	private static final String PREF_LINK_TO_EDITOR= "linkToEditor"; //$NON-NLS-1$
 	public static final String PREF_SHOW_CU_CHILDREN= "CUChildren"; //$NON-NLS-1$
+	private static final String PREF_USE_NEW_PARSER= "useNewParser"; //$NON-NLS-1$
 
 	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label";
 	private static final String SHOW_CU_CHILDREN_LABEL= "CBasePreferencePage.CUChildren.label";
+	private static final String USE_NEW_PARSER_LABEL= "CBasePreferencePage.useNewParser.label";
 
 	public CPluginPreferencePage() {
 		super(GRID);
@@ -51,6 +54,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		BooleanFieldEditor showCUChildrenEditor= new BooleanFieldEditor(PREF_SHOW_CU_CHILDREN, CUIPlugin.getResourceString(SHOW_CU_CHILDREN_LABEL), parent);
 		addField(showCUChildrenEditor);
 
+		BooleanFieldEditor useNewParserEditor= new BooleanFieldEditor(PREF_USE_NEW_PARSER, CUIPlugin.getResourceString(USE_NEW_PARSER_LABEL), parent);
+		addField(useNewParserEditor);
 	}
 	
 
@@ -60,6 +65,10 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 
 	public static boolean showCompilationUnitChildren() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_SHOW_CU_CHILDREN);
+	}
+	
+	public static boolean useNewParser() {
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_USE_NEW_PARSER);
 	}
 	
 	/**
@@ -74,6 +83,18 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PREF_LINK_TO_EDITOR, true);
 		prefs.setDefault(PREF_SHOW_CU_CHILDREN, true);
-	}	
+		prefs.setDefault(PREF_USE_NEW_PARSER, false);
+	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		if (!super.performOk())
+			return false;
+		
+		CCorePlugin.getDefault().setUseNewParser(useNewParser());
+		return true;
+	}
+
 }

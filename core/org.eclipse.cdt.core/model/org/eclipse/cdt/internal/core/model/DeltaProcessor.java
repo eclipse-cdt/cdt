@@ -540,12 +540,6 @@ public class DeltaProcessor {
 						IProject project = (IProject)resource;
 						if (element != null) {
 							if (project.isOpen()) {
-								if ( CoreModel.hasCNature(project) ) { 
-									// project opening... lets add the runner to the 
-									// map but no need to start it since the deltas 
-									// will populate containers
-									CModelManager.getDefault().getBinaryRunner((ICProject)element, false);
-								}
 								elementOpened(element, delta);
 								updateIndexAddResource(element, delta);
 								return false;

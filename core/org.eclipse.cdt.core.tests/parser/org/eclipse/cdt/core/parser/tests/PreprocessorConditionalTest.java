@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -79,10 +78,6 @@ public class PreprocessorConditionalTest extends BaseScannerTest
         catch( ScannerException se )
         {
         	fail( "Got #error, should not have gotten that.");
-        }
-        catch( OffsetLimitReachedException olre )
-        {
-        	fail( "Should never have reached OffsetLimitReachedException");
         }
         catch( EndOfFileException eof )
         {

@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -69,7 +68,7 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#isResolved()
      */
-    public boolean isResolved() throws ASTNotImplementedException
+    public boolean isResolved()
     {
         return ! getSymbol().isForwardDeclaration();
     }

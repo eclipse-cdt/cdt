@@ -3353,7 +3353,7 @@ public class ParserSymbolTableTest extends TestCase {
 		results = f.prefixLookup( new TypeFilter( LookupKind.FIELDS), "a", false );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( a3_int ) );
-	};
+	}
 	
 	/**
 	 * void foo( ... ){ }

@@ -45,7 +45,6 @@ public interface IASTNode {
 		 */
 		protected LookupKind(int enumValue) {
 			super(enumValue);
-			// TODO Auto-generated constructor stub
 		}
 	 }
 	 
@@ -53,7 +52,7 @@ public interface IASTNode {
 	 {
 	 }
 	 
-	 public static interface LookupResult 
+	 public static interface ILookupResult 
 	 {
 	 	public String getPrefix(); 
 	 	public Iterator getNodes(); 
@@ -67,6 +66,6 @@ public interface IASTNode {
 	 * @return
 	 * @throws LookupException
 	 */
-	public LookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException;
+	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException;
 }
 

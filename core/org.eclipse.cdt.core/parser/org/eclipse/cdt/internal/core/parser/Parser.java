@@ -1326,7 +1326,7 @@ public abstract class Parser implements IParser
                 || (LT(3) != IToken.tLPAREN && LT(3) != IToken.tASSIGN))
                 && !LA(2).isPointer());
     }
-    private void callbackSimpleDeclToken(Flags flags) throws BacktrackException, EndOfFileException
+    private void callbackSimpleDeclToken(Flags flags) throws EndOfFileException
     {
         flags.setEncounteredRawType(true);
         consume(); 
@@ -1624,16 +1624,16 @@ public abstract class Parser implements IParser
         ASTClassKind eck = null;
         switch (t.getType())
         {
-            case Token.t_class :
+            case IToken.t_class :
                 eck = ASTClassKind.CLASS;
                 break;
-            case Token.t_struct :
+            case IToken.t_struct :
                 eck = ASTClassKind.STRUCT;
                 break;
-            case Token.t_union :
+            case IToken.t_union :
                 eck = ASTClassKind.UNION;
                 break;
-            case Token.t_enum :
+            case IToken.t_enum :
                 eck = ASTClassKind.ENUM;
                 break;
             default :
@@ -1794,14 +1794,11 @@ public abstract class Parser implements IParser
 	            case IToken.tIDENTIFIER :
 	                last = consume(IToken.tIDENTIFIER);
 	                IToken secondMark = null;
-	                try
-					{
+	                if( queryLookaheadCapability() )
 	                	secondMark = mark();
-	                }
-	                catch( OffsetLimitReachedException olre )
-					{
+	                else
 	                	return new TokenDuple(last, last);
-	                }
+	                
 	                try
 	                {
 	                	last = consumeTemplateParameters(last);
@@ -2514,7 +2511,7 @@ public abstract class Parser implements IParser
 	        }
 	        if ( LT(1) == IToken.tSTAR)
 	        {
-	            result = consume(Token.tSTAR); // tokenType = "*"
+	            result = consume(IToken.tSTAR); // tokenType = "*"
 	
 				d.setPointerOperatorName(nameDuple);
 	

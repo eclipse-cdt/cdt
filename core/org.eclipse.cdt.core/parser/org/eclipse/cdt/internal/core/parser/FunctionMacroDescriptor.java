@@ -16,11 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
 
-public class MacroDescriptor implements IMacroDescriptor {
-
-	public MacroDescriptor()
-	{
-	}
+public class FunctionMacroDescriptor implements IMacroDescriptor {
 	
 	/**
 	 * Method initialize.
@@ -31,18 +27,20 @@ public class MacroDescriptor implements IMacroDescriptor {
 	 * RHS expansion in the macro definition.
 	 * @param sig			The complete signature of the macro, as a string.
 	 */
-	public void initialize( String name, List identifiers, List tokens, String sig )
+	public FunctionMacroDescriptor( String name, List identifiers, List tokens, String fullSignature, String expansionSignature )
 	{
 		this.name = name; 
 		identifierParameters = identifiers; 
 		tokenizedExpansion = tokens;
-		signature = sig;
+		signature = fullSignature;
+		this.expansionSignature = expansionSignature;
 	}
 
 	private String name; 
 	private List identifierParameters; 
 	private List tokenizedExpansion; 
-	private String signature; 
+	private String signature;
+	private String expansionSignature; 
 	/**
 	 * Returns the identifiers.
 	 * @return List
@@ -102,7 +100,7 @@ public class MacroDescriptor implements IMacroDescriptor {
 	 * Returns the signature.
 	 * @return String
 	 */
-	public final String getSignature()
+	public final String getCompleteSignature()
 	{
 		return signature;
 	}
@@ -114,6 +112,7 @@ public class MacroDescriptor implements IMacroDescriptor {
 		if( descriptor.getName() == null ) return false;
 		if( descriptor.getTokenizedExpansion() == null ) return false;
 		if( descriptor.getParameters() == null ) return false;
+		if( descriptor.getMacroType() != getMacroType() ) return false;
 		if( ! name.equals( descriptor.getName() )) return false;
 		if( descriptor.getParameters().size() != identifierParameters.size() ) return false; 
 		if( descriptor.getTokenizedExpansion().size() != tokenizedExpansion.size() ) return false;
@@ -121,6 +120,20 @@ public class MacroDescriptor implements IMacroDescriptor {
 		if( ! (descriptor.getParameters().containsAll( identifierParameters ) )) return false;
 		if( ! (descriptor.getTokenizedExpansion().containsAll( tokenizedExpansion ))) return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getMacroType()
+	 */
+	public MacroType getMacroType() {
+		return MacroType.FUNCTION_LIKE;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getExpansionSignature()
+	 */
+	public String getExpansionSignature() {
+		return expansionSignature;
 	}
 
 }

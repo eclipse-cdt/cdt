@@ -5,13 +5,12 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -720,7 +719,7 @@ public class ScannerTestCase extends BaseScannerTest
 			validateToken(IToken.tSEMI);
 
 			IMacroDescriptor descriptor=
-				(IMacroDescriptor) scanner.getDefinition("GO");
+				scanner.getDefinition("GO");
 			List parms= descriptor.getParameters();
 			assertNotNull(parms);
 			assertTrue(parms.size() == 1);
@@ -769,7 +768,7 @@ public class ScannerTestCase extends BaseScannerTest
 			validateToken(IToken.tSEMI);
 			validateEOF();
 
-			IMacroDescriptor macro= (IMacroDescriptor) scanner.getDefinition("SUM");
+			IMacroDescriptor macro= scanner.getDefinition("SUM");
 			List params= macro.getParameters();
 			assertNotNull(params);
 			assertTrue(params.size() == 7);
@@ -853,7 +852,7 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 	}
 
-	public void testQuickScan() throws EndOfFileException, ParserFactoryException
+	public void testQuickScan() throws ParserFactoryError
 	{
 		try
 		{
@@ -929,7 +928,7 @@ public class ScannerTestCase extends BaseScannerTest
 
 	}
 
-	public void testOtherPreprocessorCommands() throws ParserFactoryException
+	public void testOtherPreprocessorCommands() throws ParserFactoryError
 	{
 		try
 		{
@@ -1038,7 +1037,7 @@ public class ScannerTestCase extends BaseScannerTest
 		validateEOF();
 	}
 
-	public void testBug35892() throws ParserFactoryException
+	public void testBug35892() throws ParserFactoryError
 	{
 		try
 		{
@@ -1069,7 +1068,7 @@ public class ScannerTestCase extends BaseScannerTest
 		validateString( "\\\"\\\\");
 	}
 
-	public void testConditionalWithBraces() throws ParserFactoryException
+	public void testConditionalWithBraces() throws ParserFactoryError
 	{
 		try
 		{
@@ -1166,7 +1165,7 @@ public class ScannerTestCase extends BaseScannerTest
 	{
 		initializeScanner( "#define X(Y)");
 		validateEOF();
-		IMacroDescriptor macro = (IMacroDescriptor)scanner.getDefinition( "X" );
+		IMacroDescriptor macro = scanner.getDefinition( "X" );
 		assertNotNull( macro ); 
 		assertEquals( macro.getParameters().size(), 1 );
 		assertEquals( (String)macro.getParameters().get(0), "Y" );

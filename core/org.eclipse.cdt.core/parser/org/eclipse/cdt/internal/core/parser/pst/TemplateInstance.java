@@ -19,11 +19,12 @@ import java.util.Map;
 
 public class TemplateInstance extends BasicSymbol
 {
-	private final ParserSymbolTable _table;
+	//TODO ANDREW - this field is not read, is this a work in progress?
+	//private final ParserSymbolTable _table; 
 	
 	protected TemplateInstance( ParserSymbolTable table, ISymbol symbol, Map argMap ){
 		super(table, ParserSymbolTable.EMPTY_NAME );
-		this._table = table;
+		//this._table = table;
 		_instantiatedSymbol = symbol;
 		symbol.setTemplateInstance( this );
 		_argumentMap = argMap;

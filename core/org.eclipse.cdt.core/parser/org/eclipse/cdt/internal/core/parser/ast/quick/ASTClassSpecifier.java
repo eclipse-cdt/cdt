@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 /**
  * @author jcamelon
@@ -28,7 +27,6 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQClassSpecifier, IASTQScope
 {
     
-    private final IASTScope scope;
     public ASTClassSpecifier(
         IASTScope scope,
         String name,
@@ -40,8 +38,6 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         ASTAccessVisibility access)
     {
     	super( scope, name );
-        this.scope = scope; 
-        qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
         classNameType = type;
         classKind = kind;
         offsets.setStartingOffset(startingOffset);
@@ -51,7 +47,6 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         this.name = name;
     }
     
-    private final ASTQualifiedNamedElement qualifiedNameElement;
     private final String name;
     private List declarations = new ArrayList();
     private List baseClauses = new ArrayList();

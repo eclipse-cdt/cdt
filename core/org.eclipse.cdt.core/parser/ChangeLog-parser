@@ -1,8 +1,20 @@
+2004-01-15 John Camelon
+	Renamed IASTNode.LookupResult IASTNode.ILookupResult.  
+	Introduced new ParseError exception for contextual parse() methods.  
+	Renamed ParserFactoryException ParserFactoryError.  
+	Replaced ParserNotImplementedException with a variant of ParseError.
+	Updated IScanner & IParser to not reference OffsetLimitReachedException explicitly. 
+	Renamed ParserMode.CONTEXTUAL_PARSE to COMPLETION_PARSE.  
+	Cleaned up IMacroDescriptor and made Scanner definitions table consistent.
+	Added IScanner.getDefinitions() to return the entire Map of definitions to a client.
+	Removed most of the warnings from parser source directory.  
+	Removed the unused SyntaxErrorException. 
+	Provided partial fix for Bug 44370  IASTMacro requires more information for clients.  
+
 2004-01-12 John Camelon
 	Fixed bug 48909 - Wrong completion node after a . or an ->
 	Fixed bug 49702 - Wrong completion kind sent in const/dest and code blocks
 	Added new CompletionKind - STATEMENT_START to indicate the beginning of a statement line.  
-
 
 2004-01-08 Andrew Niefer
 	fixing bug 43110 - Parser support needed for functions with ellipses

@@ -31,7 +31,7 @@ public class ASTNode implements IASTNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind, org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public LookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException {
+	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException {
 		if( ! ( this instanceof ISymbolOwner ) || ( context != null && !(context instanceof ISymbolOwner) ) ){
 			return null;
 		}
@@ -105,7 +105,7 @@ public class ASTNode implements IASTNode {
 		return new Result( prefix, iterator, lookupResults.size() );
 	}
 	
-	private class Result implements LookupResult{
+	private class Result implements ILookupResult{
 		private String prefix;
 		private Iterator iterator;
 		private int resultsNumber;

@@ -12,7 +12,33 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
+ *
  */
-public class ParserNotImplementedException extends Exception {
+public class ParserFactoryError extends Error {
 
+	public static class Kind extends Enum {
+		
+		public static final Kind NULL_READER 		= new Kind( 1 );
+		public static final Kind NULL_FILENAME		= new Kind( 2 );
+		public static final Kind NULL_CONFIG			= new Kind( 3 );
+		public static final Kind NULL_LANGUAGE	= new Kind( 4 );
+		public static final Kind NULL_SCANNER		= new Kind( 5 );
+		
+		protected Kind( int arg )
+		{
+			super( arg );
+		}
+	}
+	
+	public ParserFactoryError( Kind e )
+	{
+		kind = e;
+	}
+	
+	public Kind getKind()
+	{
+		return kind;
+	}
+	
+	private Kind kind;	
 }

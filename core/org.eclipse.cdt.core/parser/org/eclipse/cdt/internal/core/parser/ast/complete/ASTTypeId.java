@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
@@ -122,7 +121,7 @@ public class ASTTypeId implements IASTTypeId
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#createTypeSymbol(org.eclipse.cdt.core.parser.ast.IASTFactory)
      */
-    public ISymbol getTypeSymbol() throws ASTNotImplementedException
+    public ISymbol getTypeSymbol()
     {
         return symbol;
     }

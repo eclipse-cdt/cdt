@@ -15,10 +15,10 @@ import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -57,15 +57,15 @@ public class CompleteParser extends Parser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int)
 	 */
-	public IASTCompletionNode parse(int offset) throws ParserNotImplementedException {
-		throw new ParserNotImplementedException();
+	public IASTCompletionNode parse(int offset) throws ParseError {
+		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
-	public IASTNode parse(int startingOffset, int endingOffset) throws ParserNotImplementedException {
-		throw new ParserNotImplementedException();
+	public IASTNode parse(int startingOffset, int endingOffset) throws ParseError {
+		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
 	
 }

@@ -81,7 +81,7 @@ public class CStructureCreator implements IStructureCreator {
 			// The CParseTreeBuilder will throw CParseTreeBuilder.ParseError
 			// for acceptProblem.
 			
-			//TODO : New : ParserFactoryException gets thrown by ParserFactory primitives
+			//TODO : New : ParserFactoryError gets thrown by ParserFactory primitives
 		}
 
 		return root;

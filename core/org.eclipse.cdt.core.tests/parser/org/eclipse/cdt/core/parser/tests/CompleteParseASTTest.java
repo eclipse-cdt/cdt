@@ -42,7 +42,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
+import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 
@@ -1176,7 +1176,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTMethod method = (IASTMethod) i.next();
 		
-		LookupResult result = method.lookup( "a", new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, classB );
+		ILookupResult result = method.lookup( "a", new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, classB );
 
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
@@ -1198,7 +1198,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTFunction functionDef = (IASTFunction) i.next();
 		
-		LookupResult result = functionDef.lookup( "a", new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, classB );
+		ILookupResult result = functionDef.lookup( "a", new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, classB );
 
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();

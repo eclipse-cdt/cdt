@@ -43,7 +43,6 @@ public class ASTFunction extends ASTScope implements IASTFunction
 	private final ASTQualifiedNamedElement qualifiedName;
 	private final List parameters;
 	protected final ASTReferenceStore references;
-	private final int nameEndOffset;  
 	private List declarations = new ArrayList();	
     /**
      * @param symbol
@@ -59,7 +58,6 @@ public class ASTFunction extends ASTScope implements IASTFunction
     {
     	super( symbol );
     	this.parameters = parameters;
-    	this.nameEndOffset = nameEndOffset;
     	this.returnType = returnType; 
     	this.exception = exception; 
     	setStartingOffset(startOffset);

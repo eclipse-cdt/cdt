@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
@@ -26,7 +27,7 @@ public interface IASTFactory
         String name,
         int startingOffset,
         int nameOffset,
-        int nameEndOffset, int endingOffset);
+        int nameEndOffset, int endingOffset, IMacroDescriptor info);
         
     public IASTInclusion createInclusion(
         String name,

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -58,7 +57,6 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
      * @see org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias#getNamespace()
      */
     public IASTNamespaceDefinition getNamespace()
-        throws ASTNotImplementedException
     {
         return namespace;
     }
@@ -67,7 +65,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-
+    	store.processReferences(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -338,7 +338,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
     protected IContainerSymbol getScopeToSearchUpon(
         IASTScope currentScope,
-        IToken firstToken, Iterator iterator ) throws ASTSemanticException
+        IToken firstToken, Iterator iterator ) 
     {
 		if( firstToken.getType() == IToken.tCOLONCOLON )  
 		{ 
@@ -347,7 +347,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		else
 		{
-			return (IContainerSymbol)scopeToSymbol(currentScope);
+			return scopeToSymbol(currentScope);
 		}
         	
         
@@ -627,7 +627,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	
 		IContainerSymbol symbol = null; 
 		
-		symbol = getScopeToSearchUpon(astClassSpec, (IToken)parentClassName.getFirstToken(), iterator );
+		symbol = getScopeToSearchUpon(astClassSpec, parentClassName.getFirstToken(), iterator );
 		
 		while( iterator.hasNext() )
 		{
@@ -909,9 +909,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.PM_DOTSTAR)
 		|| (kind == IASTExpression.Kind.PM_ARROWSTAR)
 		){
-			TypeInfo lhsInfo = (TypeInfo) ((ASTExpression)lhs).getResultType().getResult();
+			TypeInfo lhsInfo = ((ASTExpression)lhs).getResultType().getResult();
 			if(lhsInfo != null){
-				ISymbol firstContainingScope = (ISymbol) lhsInfo.getTypeSymbol();
+				ISymbol firstContainingScope = lhsInfo.getTypeSymbol();
 				if(firstContainingScope != null){
 					ISymbol containingScope = firstContainingScope.getTypeSymbol();
 					if(containingScope != null){
@@ -1046,7 +1046,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		throws ASTSemanticException{
 		if(exp == null)
 			throw new ASTSemanticException();
-		TypeInfo info = (TypeInfo)((ASTExpression)exp).getResultType().getResult();
+		TypeInfo info = exp.getResultType().getResult();
 		info.setBit(flag, mask);
 		return info;
 	}
@@ -1186,7 +1186,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression left =(ASTExpression)lhs;
 				if(left == null)
 					throw new ASTSemanticException(); 
-				info = (TypeInfo)left.getResultType().getResult();
+				info = left.getResultType().getResult();
 				if ((info != null) && (info.getTypeSymbol() != null)){
 					info.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
 				} else {
@@ -1201,7 +1201,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression left =(ASTExpression)lhs;
 				if(left == null)
 					throw new ASTSemanticException(); 
-				info = (TypeInfo)left.getResultType().getResult();
+				info = left.getResultType().getResult();
 				if ((info != null)&& (info.getTypeSymbol() != null)){
 					info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 				}else {
@@ -1215,7 +1215,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression left =(ASTExpression)lhs;
 				if(left == null)
 					throw new ASTSemanticException(); 
-				info = (TypeInfo)left.getResultType().getResult();
+				info = left.getResultType().getResult();
 				if ((info != null) && (info.getTypeSymbol() != null)){
 					info.addOperatorExpression( TypeInfo.OperatorExpression.subscript );
 				}else {
@@ -1246,7 +1246,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression right =(ASTExpression)rhs;
 				if (right == null)
 					throw new ASTSemanticException(); 
-				info = (TypeInfo)right.getResultType().getResult();
+				info = right.getResultType().getResult();
 				if ((info != null) && (symbol != null)){
 					info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 					info.setTypeSymbol(symbol);
@@ -1273,8 +1273,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression right = (ASTExpression)rhs;  
 				ASTExpression third = (ASTExpression)thirdExpression;
 				if((right != null ) && (third != null)){
-					TypeInfo rightType =(TypeInfo)right.getResultType().getResult();
-					TypeInfo thirdType =(TypeInfo)third.getResultType().getResult();
+					TypeInfo rightType =right.getResultType().getResult();
+					TypeInfo thirdType =third.getResultType().getResult();
 					if((rightType != null) && (thirdType != null)){
 						info = conditionalExpressionConversions(rightType, thirdType);   
 					} else {
@@ -1315,8 +1315,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression left = (ASTExpression)lhs;
 				ASTExpression right = (ASTExpression)rhs;  
 				if((left != null ) && (right != null)){
-					TypeInfo leftType =(TypeInfo)left.getResultType().getResult();
-					TypeInfo rightType =(TypeInfo)right.getResultType().getResult();
+					TypeInfo leftType =left.getResultType().getResult();
+					TypeInfo rightType =right.getResultType().getResult();
 					info = usualArithmeticConversions(leftType, rightType);
 				}
 				else {
@@ -1352,7 +1352,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			){
 				ASTExpression left = (ASTExpression)lhs;  
 				if(left != null){
-					info =(TypeInfo)left.getResultType().getResult();   
+					info =left.getResultType().getResult();   
 				} else {
 					throw new ASTSemanticException();
 				}
@@ -1480,7 +1480,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     public IASTConstructorMemberInitializer createConstructorMemberInitializer(
         IASTScope scope,
-        ITokenDuple duple, IASTExpression expressionList) throws ASTSemanticException
+        ITokenDuple duple, IASTExpression expressionList)
     {
         List references = new ArrayList(); 
         
@@ -2138,7 +2138,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 				IContainerSymbol parentSymbol = null;
 				try {
-					parentSymbol = (IContainerSymbol) parentScope.lookupNestedNameSpecifier( token );
+					parentSymbol = parentScope.lookupNestedNameSpecifier( token );
 					if( parentSymbol != null )	
 						addReference( references, createReference( parentSymbol, name, offset ));
 				} catch (ParserSymbolTableException e1) {
@@ -2178,7 +2178,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		newSymbol.setIsForwardDeclaration(isStatic);
 		boolean previouslyDeclared = false;
 		if(!isStatic){
-			ISymbol variableDeclaration = (ISymbol) lookupQualifiedName(ownerScope, name, new ArrayList(), false, LookupType.UNQUALIFIED);                
+			ISymbol variableDeclaration = lookupQualifiedName(ownerScope, name, new ArrayList(), false, LookupType.UNQUALIFIED);                
 	
 			if( variableDeclaration != null )
 			{

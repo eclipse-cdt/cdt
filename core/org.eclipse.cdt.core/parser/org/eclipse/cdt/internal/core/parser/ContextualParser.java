@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -59,7 +58,7 @@ public class ContextualParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int)
 	 */
-	public IASTCompletionNode parse(int offset) throws ParserNotImplementedException {
+	public IASTCompletionNode parse(int offset) {
 		scanner.setOffsetBoundary(offset);
 		boundaryOffset = offset;
 		translationUnit();
@@ -123,7 +122,7 @@ public class ContextualParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
-	public IASTNode parse(int startingOffset, int endingOffset) throws ParserNotImplementedException {
+	public IASTNode parse(int startingOffset, int endingOffset) {
 		scanner.setOffsetBoundary(endingOffset);
 		translationUnit();
 		return getCompletionContext();
@@ -165,7 +164,7 @@ public class ContextualParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleOffsetLimitException()
 	 */
-	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException, OffsetLimitReachedException {
+	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws OffsetLimitReachedException {
 		setCompletionToken( exception.getFinalToken() );
 		if( (finalToken!= null )&& (finalToken.getEndOffset() != boundaryOffset ))
 			setCompletionToken(null);

@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -273,7 +276,7 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( elab.getName(), "A");
 		assertEquals( elab.getClassKind(), ASTClassKind.STRUCT );
 		assertTrue( typedef.getAbstractDeclarator().getPointerOperators().hasNext() );
-		Iterator pIter = (Iterator)typedef.getAbstractDeclarator().getPointerOperators();
+		Iterator pIter = typedef.getAbstractDeclarator().getPointerOperators();
 		ASTPointerOperator po =(ASTPointerOperator)pIter.next(); 
 		assertEquals( po, ASTPointerOperator.CONST_POINTER ); 
 		assertFalse( pIter.hasNext() );
@@ -1311,7 +1314,7 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( typeSpec.getType(), IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME );
 		assertEquals( typeSpec.getTypename(), "A");
 		Iterator pointerOps = f.getReturnType().getPointerOperators();
-		assertEquals( (ASTPointerOperator)pointerOps.next(), ASTPointerOperator.REFERENCE ); 
+		assertEquals( pointerOps.next(), ASTPointerOperator.REFERENCE ); 
 		assertFalse( pointerOps.hasNext() );
 		assertEquals( f.getName(), "A::operator =");
 		Iterator parms = f.getParameters();
@@ -1941,7 +1944,7 @@ public class QuickParseASTTests extends BaseASTTest
 		}
 		IASTClassSpecifier structB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString())).getTypeSpecifier();
 		Iterator members = structB.getDeclarations();
-		IASTField a = (IASTField)members.next();
+		assertTrue( members.next() instanceof IASTField);
 		IASTMethod b = (IASTMethod)members.next();
 		assertFalse( members.hasNext() );
 		assertTrue( b.hasFunctionTryBlock() );
@@ -1964,9 +1967,8 @@ public class QuickParseASTTests extends BaseASTTest
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration)assertSoleDeclaration( writer.toString() );
 		IASTClassSpecifier X = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
 		Iterator members = X.getDeclarations();
-		IASTMethod defaultCons = (IASTMethod)members.next();
-		IASTMethod inlinedCons = (IASTMethod)members.next();
-		IASTMethod destructor = (IASTMethod)members.next();
+		for( int i = 0; i < 3; ++i )
+			assertTrue( members.next() instanceof IASTMethod );
 		assertFalse( members.hasNext() );
 	}
 
@@ -2030,4 +2032,52 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue( function.takesVarArgs() );
 	}
 	
+	public void testBug44370() throws Exception
+	{
+		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n");
+		Iterator macros = quickParseCallback.getMacros();
+		assertNotNull(macros);
+		assertTrue( macros.hasNext());
+		IASTMacro swap = (IASTMacro) macros.next();
+		assertFalse( macros.hasNext() );
+		assertEquals( swap.getName(), "SWAP");
+		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
+		List params = swap.getParameters();
+		assertEquals( params.size(), 2 );
+		assertEquals( params.get(0), "x");
+		assertEquals( params.get(1), "y");
+		assertEquals( swap.getCompleteSignature().trim(), "#define SWAP(x,y) {x|=y;y|=x;x|=y;}");
+		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}");
+		Iterator tokens = swap.getTokenizedExpansion().iterator();
+		validateToken( (IToken)tokens.next(), IToken.tLBRACE);
+		validateIdentifier( (IToken)tokens.next(), "x");
+		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
+		validateIdentifier( (IToken) tokens.next(), "y");
+		validateToken( (IToken) tokens.next(), IToken.tSEMI );
+		validateIdentifier( (IToken) tokens.next(), "y");
+		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
+		validateIdentifier( (IToken)tokens.next(), "x");
+		validateToken( (IToken) tokens.next(), IToken.tSEMI );
+		validateIdentifier( (IToken)tokens.next(), "x");
+		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
+		validateIdentifier( (IToken) tokens.next(), "y");
+		validateToken( (IToken) tokens.next(), IToken.tSEMI );
+		validateToken( (IToken) tokens.next(), IToken.tRBRACE );
+		assertFalse( tokens.hasNext() );
+	}
+	/**
+	 * @param token
+	 * @param string
+	 */
+	private void validateIdentifier(IToken token, String identifierName ) {
+		validateToken( token, IToken.tIDENTIFIER);
+		assertEquals( token.getImage(), identifierName  );
+	}
+	/**
+	 * @param token
+	 * @param i
+	 */
+	private void validateToken(IToken token, int signal) {
+		assertEquals( token.getType(), signal );
+	}
 }

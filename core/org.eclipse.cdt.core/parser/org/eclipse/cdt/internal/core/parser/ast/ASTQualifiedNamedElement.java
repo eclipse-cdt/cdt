@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
  */
 public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
 {
-
     /**
      * @param scope
      */

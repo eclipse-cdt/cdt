@@ -10,6 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
+import java.util.List;
+
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 
@@ -20,14 +23,17 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 public class ASTMacro implements IASTMacro {
 
 	private int nameEndOffset = 0;
-    private final String name; 
-	public ASTMacro( String name, int start, int end, int nameBeg, int nameEnd )
+    private final String name;
+    private final IMacroDescriptor innerMacro;
+    
+	public ASTMacro( String name, int start, int end, int nameBeg, int nameEnd, IMacroDescriptor info )
 	{
 		this.name =name; 
 		setStartingOffset(start);
 		setNameOffset(nameBeg);
 		setNameEndOffset(nameEnd);
 		setEndingOffset(end);
+		innerMacro = info;
 	}
 	
 	private int startingOffset = 0, endingOffset = 0, nameOffset = 0;
@@ -114,5 +120,41 @@ public class ASTMacro implements IASTMacro {
 	public void setNameEndOffset(int o)
 	{
 		nameEndOffset = o;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getMacroType()
+	 */
+	public MacroType getMacroType() {
+		return innerMacro.getMacroType();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getParameters()
+	 */
+	public List getParameters() {
+		return innerMacro.getParameters();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
+	 */
+	public List getTokenizedExpansion() {
+		return innerMacro.getTokenizedExpansion();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getCompleteSignature()
+	 */
+	public String getCompleteSignature() {
+		return innerMacro.getCompleteSignature();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getExpansionSignature()
+	 */
+	public String getExpansionSignature() {
+		return innerMacro.getExpansionSignature();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#compatible(org.eclipse.cdt.core.parser.IMacroDescriptor)
+	 */
+	public boolean compatible(IMacroDescriptor descriptor) {
+		return innerMacro.compatible(descriptor);
 	}
 }

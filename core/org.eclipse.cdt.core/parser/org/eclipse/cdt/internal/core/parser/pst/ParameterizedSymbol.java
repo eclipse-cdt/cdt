@@ -73,7 +73,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		param.setContainingSymbol( this );
 		param.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
-		Command command = new AddParameterCommand( this, (BasicSymbol)param );
+		Command command = new AddParameterCommand( this, param );
 		getSymbolTable().pushCommand( command );
 	}
 
@@ -116,7 +116,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		
 		arg.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
-		Command command = new AddArgumentCommand( this, (BasicSymbol) arg );
+		Command command = new AddArgumentCommand( this, arg );
 		getSymbolTable().pushCommand( command );
 	}
 

@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -46,7 +46,7 @@ public class BaseASTTest extends TestCase
 	protected IQuickParseCallback quickParseCallback; 
 	protected IParser parser; 
 	
-	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError, ParserLanguage lang ) throws ParserException, ParserFactoryException
+	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError, ParserLanguage lang ) throws ParserException, ParserFactoryError
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
@@ -57,27 +57,27 @@ public class BaseASTTest extends TestCase
 	}
 	
 	
-	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError ) throws ParserException, ParserFactoryException
+	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError ) throws ParserException, ParserFactoryError
 	{
 		return parse( code, quick, throwExceptionOnError, ParserLanguage.CPP );
 	}
 	
-	protected IASTCompilationUnit parse( String code )throws ParserException, ParserFactoryException
+	protected IASTCompilationUnit parse( String code )throws ParserException, ParserFactoryError
 	{
 		return parse( code, true, true );
 	}
 	
-	protected IASTCompilationUnit fullParse( String code ) throws ParserException, ParserFactoryException
+	protected IASTCompilationUnit fullParse( String code ) throws ParserException, ParserFactoryError
 	{
 		return parse( code, false, true );
 	}
 	
-	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException, ParserFactoryException
+	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException, ParserFactoryError
 	{
 		return assertSoleDeclaration( code, ParserLanguage.CPP );
 	}	
 	
-	protected IASTDeclaration assertSoleDeclaration( String code, ParserLanguage language ) throws ParserException, ParserFactoryException
+	protected IASTDeclaration assertSoleDeclaration( String code, ParserLanguage language ) throws ParserException, ParserFactoryError
 	{
 		Iterator declarationIter = null;
         try

@@ -26,7 +26,12 @@ public class ParserMode extends Enum {
 	public static final ParserMode QUICK_PARSE = new ParserMode( 3 );
 	
 	// follow inclusions, parse function/method bodies, stop at particular offset
-	public static final ParserMode CONTEXTUAL_PARSE = new ParserMode( 4 );
+	// provide optimized lookup capability for querying symbols
+	public static final ParserMode COMPLETION_PARSE = new ParserMode( 4 );
+
+	// follow inclusions, parse function/method bodies, stop at particular offset
+	// provide specific semantic information about an offset range or selection
+	public static final ParserMode SELECTION_PARSE = new ParserMode( 5 );
 	
 	protected ParserMode( int value )
 	{

@@ -25,9 +25,8 @@ import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -185,7 +184,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					ParserLanguage.CPP,
 					callback, 
 					ParserUtil.getParserLogService());
-		} catch (ParserFactoryException e) {
+		} catch (ParserFactoryError e) {
 
 		}
 		LinkedList list = scanForNames( scanner, null );
@@ -255,7 +254,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
 					callback,ParserUtil.getParserLogService());
-		} catch (ParserFactoryException e) {
+		} catch (ParserFactoryError e) {
 
 		}
 		LinkedList list = scanForNames( scanner, null );
@@ -297,7 +296,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
 					callback,ParserUtil.getParserLogService());
-		} catch (ParserFactoryException e) {
+		} catch (ParserFactoryError e) {
 		}
 		
 		LinkedList names = scanForNames( scanner, null );
@@ -355,11 +354,11 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
 					callback,ParserUtil.getParserLogService());
-		} catch (ParserFactoryException e1) {
+		} catch (ParserFactoryError e1) {
 		}
 		
 		IToken token = null;
-		ASTClassKind kind = null;
+		ASTClassKind kind = null; 
 		
 		try {
 			token = scanner.nextToken();
@@ -419,7 +418,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
 					callback,ParserUtil.getParserLogService());
-		} catch (ParserFactoryException e1) {
+		} catch (ParserFactoryError e1) {
 		}
 		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();			   
 		IParser parser=null;
@@ -430,7 +429,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					callback,
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP, ParserUtil.getParserLogService());
-		} catch (ParserFactoryException e2) {
+		} catch (ParserFactoryError e2) {
 		} 
 
 		if( parser.parse() ){

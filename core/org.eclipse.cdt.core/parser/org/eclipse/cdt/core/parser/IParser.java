@@ -29,15 +29,15 @@ public interface IParser {
 	/**
 	 * Request a parse from a pre-configured parser to parse a whole translation unit or file.  
 	 * 
-	 * @return		whether or not the parse was successful 
+	 * @return	whether or not the parse was successful 
 	 */
 	public boolean parse();
 	
 	/**
 	 * @param offset  offset in the input file where code completion is being requested for 
-	 * @return		an IASTCompletionConstruct that provides a mechanism for determining C/C++ code completion contributions
+	 * @return	an IASTCompletionConstruct that provides a mechanism for determining C/C++ code completion contributions
 	 */
-	public IASTCompletionNode parse( int offset )throws ParserNotImplementedException;
+	public IASTCompletionNode parse( int offset ) throws ParseError;
 	
 	/**
 	 * 
@@ -45,7 +45,7 @@ public interface IParser {
 	 * @param endingOffset
 	 * @return
 	 */
-	public IASTNode                          parse( int startingOffset, int endingOffset ) throws ParserNotImplementedException;
+	public IASTNode parse( int startingOffset, int endingOffset ) throws ParseError;
 	
 	
 	/**

@@ -41,11 +41,12 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.IMacroDescriptor.MacroType;
 import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
@@ -67,6 +68,7 @@ public class Scanner implements IScanner {
 	private final String filename;
 	private final Reader reader;
 	protected IToken finalToken;
+	private static final boolean NEW_STRATEGY = true;
 
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error ) throws ScannerException
 	{
@@ -110,7 +112,25 @@ public class Scanner implements IScanner {
 		
 		originalConfig = info;
 		if( info.getDefinedSymbols() != null )
-			definitions.putAll( info.getDefinedSymbols() );
+		{	
+			if( NEW_STRATEGY )
+			{	
+				Iterator i = info.getDefinedSymbols().keySet().iterator(); 
+				Map m = info.getDefinedSymbols();
+				while( i.hasNext() )
+				{
+					String symbolName = (String) i.next();
+					Object value = m.get( symbolName );
+		
+					if( value instanceof String )
+						addDefinition( symbolName, (String) value);
+					else if( value instanceof IMacroDescriptor )
+						addDefinition( symbolName, (IMacroDescriptor)value);
+				}
+			}
+			else
+				definitions.putAll( info.getDefinedSymbols() );
+		}
 			
 		if( info.getIncludePaths() != null )
 			overwriteIncludePath( info.getIncludePaths() );
@@ -165,11 +185,23 @@ public class Scanner implements IScanner {
 	}
 
 	public void addDefinition(String key, String value) {
-		definitions.put(key, value);
+		if( NEW_STRATEGY )
+		{
+			StringBuffer signatureBuffer  = new StringBuffer();
+			signatureBuffer.append( key );
+			signatureBuffer.append( ' ');
+			signatureBuffer.append( value );
+			
+			addDefinition(key,
+					new ObjectMacroDescriptor(	key, signatureBuffer.toString(), 
+							tokenizeReplacementString( NO_OFFSET_LIMIT, key, value, null ), value ));
+		}
+		else
+			definitions.put(key, value);
 	}
 
-	public final Object getDefinition(String key) {
-		return definitions.get(key);
+	public final IMacroDescriptor getDefinition(String key) {
+		return (IMacroDescriptor) definitions.get(key); 
 	}
 
 	public final String[] getIncludePaths() {
@@ -442,7 +474,7 @@ public class Scanner implements IScanner {
 	private IScannerInfo originalConfig; 
 	private List includePathNames = new ArrayList();
 	private List includePaths = new ArrayList();
-	private Hashtable definitions = new Hashtable();
+	private Map definitions = new Hashtable();
 	private StringBuffer storageBuffer = null; 
 	
 	private int count = 0;
@@ -695,15 +727,15 @@ public class Scanner implements IScanner {
 			getChar();
 	}
 
-	public IToken nextToken() throws ScannerException, EndOfFileException, OffsetLimitReachedException {
+	public IToken nextToken() throws ScannerException, EndOfFileException {
 		return nextToken( true, false ); 
 	}
 
-	public IToken nextToken(boolean pasting) throws ScannerException, EndOfFileException, OffsetLimitReachedException {
+	public IToken nextToken(boolean pasting) throws ScannerException, EndOfFileException {
 		return nextToken( pasting, false ); 
 	}
 
-	public IToken nextToken( boolean pasting, boolean lookingForNextAlready ) throws ScannerException, EndOfFileException, OffsetLimitReachedException
+	public IToken nextToken( boolean pasting, boolean lookingForNextAlready ) throws ScannerException, EndOfFileException 
 	{
 		if( ! initialContextInitialized )
 			setupInitialContext();
@@ -860,7 +892,7 @@ public class Scanner implements IScanner {
 					continue;
 				}
 					
-				Object mapping = definitions.get(ident);
+				IMacroDescriptor mapping = getDefinition(ident);
 
 				if (mapping != null) {
 					if( contextStack.shouldExpandDefinition( POUND_DEFINE + ident ) ) {					
@@ -1148,11 +1180,7 @@ public class Scanner implements IScanner {
 								continue;
 							}
 							skipOverWhitespace();
-							// definition 
-							String toBeUndefined = getNextIdentifier();
-							
-							definitions.remove(toBeUndefined);
-							
+							removeSymbol(getNextIdentifier());
 							skipOverTextUntilNewline();
 							c = getChar();
 							continue;
@@ -1174,10 +1202,7 @@ public class Scanner implements IScanner {
 
 						case PreprocessorDirectives.IFDEF :
 							skipOverWhitespace();
-							String definition = getNextIdentifier();
-							Object mapping = definitions.get(definition);
-
-							if (mapping == null) {
+							if (getDefinition(getNextIdentifier()) == null) {
 								// not defined	
 								passOnToClient = branches.poundif( false );
 								skipOverTextUntilNewline();
@@ -1197,10 +1222,7 @@ public class Scanner implements IScanner {
 
 						case PreprocessorDirectives.IFNDEF :
 							skipOverWhitespace();
-							String def = getNextIdentifier();
-							Object map = definitions.get(def);
-
-							if (map != null) {
+							if (getDefinition(getNextIdentifier()) != null) {
 								// not defined	
 								skipOverTextUntilNewline();
 								passOnToClient = branches.poundif( false ); 
@@ -1624,6 +1646,13 @@ public class Scanner implements IScanner {
 
 
     /**
+	 * @param key
+	 */
+	protected void removeSymbol(String key) {
+		definitions.remove(key);
+	}
+
+	/**
 	 * 
 	 */
 	protected void handlePragmaOperator() throws ScannerException
@@ -1684,11 +1713,11 @@ public class Scanner implements IScanner {
     }
 
 
-    protected static class endOfMacroTokenException extends Exception {};
+    protected static class endOfMacroTokenException extends Exception {}
     // the static instance we always use
     protected static endOfMacroTokenException endOfMacroToken = new endOfMacroTokenException();
     
-    public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException, OffsetLimitReachedException
+    public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException
     {     
     	int beginOffset = getCurrentOffset();
         int c = getChar();
@@ -1973,7 +2002,7 @@ public class Scanner implements IScanner {
 							new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
 							ParserMode.QUICK_PARSE, language, nullCallback, log );
 	            parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language, log );
-			} catch( ParserFactoryException pfe )
+			} catch( ParserFactoryError pfe )
 			{
 				handleInternalError();
 			}
@@ -2078,9 +2107,6 @@ public class Scanner implements IScanner {
 			
 			try {
 				t = helperScanner.nextToken(false);
-			} catch (OffsetLimitReachedException e) {
-				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );				
-				return;
 			} catch (EndOfFileException eof) {
 				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );				
 				return;
@@ -2128,9 +2154,6 @@ public class Scanner implements IScanner {
 				} else 
 					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 			}
-			catch (OffsetLimitReachedException e) {
-				handleInternalError();
-			}
 			catch( EndOfFileException eof )
 			{
 				// good
@@ -2173,19 +2196,20 @@ public class Scanner implements IScanner {
 			handleInclusion(f.trim(), useIncludePath, startOffset, beginningOffset, endOffset); 
 	}
 
-	protected static final Hashtable emptyMap = new Hashtable(); 
-	protected Hashtable holderMap = null; 
+	protected static final Hashtable EMPTY_MAP = new Hashtable();
+	protected static final List EMPTY_LIST = new ArrayList();
+	protected Map definitionsBackupMap = null; 
 	
 	protected void temporarilyReplaceDefinitionsMap()
 	{
-		holderMap = definitions; 
-		definitions = emptyMap; 
+		definitionsBackupMap = definitions; 
+		definitions = EMPTY_MAP; 
 	}
 	
 	protected void restoreDefinitionsMap()
 	{
-		definitions = holderMap; 
-		holderMap = null;
+		definitions = definitionsBackupMap; 
+		definitionsBackupMap = null;
 	}
 
 
@@ -2198,15 +2222,81 @@ public class Scanner implements IScanner {
 		forInclusion = b;
 	}
 
-	protected void poundDefine(int beginning) throws ScannerException, EndOfFileException {
+	protected List tokenizeReplacementString( int beginning, String key, String replacementString, List parameterIdentifiers ) 
+	{
+		List macroReplacementTokens = new ArrayList();
+		if( replacementString.trim().equals( "" ) ) 
+			return macroReplacementTokens;
+		IScanner helperScanner=null;
+		try {
+			helperScanner =
+				ParserFactory.createScanner(
+						new StringReader(replacementString),
+						SCRATCH,
+						new ScannerInfo(),
+						mode,
+						language,
+						new NullSourceElementRequestor(), log);
+		} catch (ParserFactoryError e1) {
+		}
+		helperScanner.setTokenizingMacroReplacementList( true );
+		IToken t = null;
+		try {
+			t = helperScanner.nextToken(false);
+		} catch (ScannerException e) {
+		} catch (EndOfFileException e) {
+		}
+		
+		if( t == null )
+			return macroReplacementTokens;
+		
+		try {
+			while (true) {
+				//each # preprocessing token in the replacement list shall be followed
+				//by a parameter as the next reprocessing token in the list
+				if( t.getType() == tPOUND ){
+					macroReplacementTokens.add( t );
+					t = helperScanner.nextToken(false);
+					if( parameterIdentifiers != null )
+					{	
+						int index = parameterIdentifiers.indexOf(t.getImage());
+						if (index == -1 ) {
+							//not found
+							
+							if( beginning != NO_OFFSET_LIMIT )
+							{	
+								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "#define " + key + " " + replacementString,
+										beginning, false, true, true ); 									
+								return null;
+							}
+						}
+					}
+				}
+				
+				macroReplacementTokens.add(t);
+				t = helperScanner.nextToken(false);
+			}
+		}
+		catch( EndOfFileException eof )
+		{
+		}
+		catch( ScannerException sc )
+		{
+		}
+		
+		return macroReplacementTokens;
+	}
+	
+	
+	protected void poundDefine(int beginning) throws ScannerException {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
 		int offset = contextStack.getCurrentContext().getOffset() - key.length() - contextStack.getCurrentContext().undoStackSize();
 
 		// store the previous definition to check against later
-		Object previousDefinition = definitions.get( key );
-
+		IMacroDescriptor previousDefinition = getDefinition( key );
+		IMacroDescriptor descriptor = null;
 		// get the next character
 		// the C++ standard says that macros must not put
 		// whitespace between the end of the definition 
@@ -2253,67 +2343,21 @@ public class Scanner implements IScanner {
 
 			skipOverWhitespace();
 
-			ArrayList macroReplacementTokens = new ArrayList();
+			List macroReplacementTokens = null;
 			String replacementString = getRestOfPreprocessorLine();
 			
-			if( ! replacementString.equals( "" ) )
-			{
-				IScanner helperScanner=null;
-				try {
-					helperScanner =
-						ParserFactory.createScanner(
-							new StringReader(replacementString),
-							SCRATCH,
-							new ScannerInfo(),
-							mode,
-							language,
-							new NullSourceElementRequestor(), log);
-				} catch (ParserFactoryException e1) {
-				}
-				helperScanner.setTokenizingMacroReplacementList( true );
-				IToken t = null;
-				try {
-					t = helperScanner.nextToken(false);
-				} catch (OffsetLimitReachedException e2) {
-					handleInternalError();
-				}
-				try {
-					while (true) {
-						//each # preprocessing token in the replacement list shall be followed
-						//by a parameter as the next reprocessing token in the list
-						if( t.getType() == tPOUND ){
-							macroReplacementTokens.add( t );
-							t = helperScanner.nextToken(false);
-							int index = parameterIdentifiers.indexOf(t.getImage());
-							if (index == -1 ) {
-								//not found
-								
-								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "#define " + key + " " + replacementString,
-									beginning, false, true, true ); 									
-								return;
-							}
-						}
-						
-						macroReplacementTokens.add(t);
-						t = helperScanner.nextToken(false);
-					}
-				}
-				catch( OffsetLimitReachedException olre )
-				{
-					handleInternalError();
-				}
-				catch( EndOfFileException eof )
-				{
-					// good
-				}
-			}
+			
+			macroReplacementTokens = ( ! replacementString.equals( "" ) ) ? 
+										tokenizeReplacementString( beginning, key, replacementString, parameterIdentifiers ) :
+										EMPTY_LIST;
+			
 
-			IMacroDescriptor descriptor = new MacroDescriptor();
-			descriptor.initialize(
+			descriptor = new FunctionMacroDescriptor(
 				key,
 				parameterIdentifiers,
 				macroReplacementTokens,
-				key + "(" + parameters + ")");
+				"#define " + key + "(" + parameters + ") " + replacementString, 
+				replacementString);
 				
 			checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
 			addDefinition(key, descriptor);
@@ -2369,7 +2413,7 @@ public class Scanner implements IScanner {
 		
 		try
         {
-            astFactory.createMacro( key, beginning, offset, offset + key.length(), contextStack.getCurrentContext().getOffset() ).acceptElement( requestor );
+            astFactory.createMacro( key, beginning, offset, offset + key.length(), contextStack.getCurrentContext().getOffset(), descriptor ).acceptElement( requestor );
         }
         catch (Exception e)
         {
@@ -2377,73 +2421,42 @@ public class Scanner implements IScanner {
         } 
 	}
 
-
+	protected void checkValidMacroRedefinition(
+			String key,
+			IMacroDescriptor previousDefinition,
+			String newDefinition, int beginningOffset )
+	throws ScannerException 
+	{
+		IMacroDescriptor newMacro = new ObjectMacroDescriptor( key, key + ' ' + newDefinition, 
+				tokenizeReplacementString( NO_OFFSET_LIMIT, key, newDefinition, null ), newDefinition );
+		checkValidMacroRedefinition( key, previousDefinition, newMacro, beginningOffset );
+	}
+	
+	
+	protected void checkValidMacroRedefinition(
+			String key,
+			String previousDefinition,
+			String newDefinition, int beginningOffset )
+	throws ScannerException 
+	{
+		IMacroDescriptor prevMacro = new ObjectMacroDescriptor( key, key + ' ' + previousDefinition, 
+				tokenizeReplacementString( NO_OFFSET_LIMIT, key, previousDefinition, null ), previousDefinition );
+		IMacroDescriptor newMacro = new ObjectMacroDescriptor( key, key + ' ' + newDefinition, 
+				tokenizeReplacementString( NO_OFFSET_LIMIT, key, newDefinition, null ), newDefinition );
+		checkValidMacroRedefinition( key, prevMacro, newMacro, beginningOffset );
+	}
+	
 
 	protected void checkValidMacroRedefinition(
 		String key,
-		Object previousDefinition,
-		Object newDefinition, int beginningOffset )
+		IMacroDescriptor previousDefinition,
+		IMacroDescriptor newDefinition, int beginningOffset )
 		throws ScannerException 
 		{
 			if( mode != ParserMode.QUICK_PARSE && previousDefinition != null ) 
 			{
-				if( newDefinition instanceof IMacroDescriptor )
-				{
-					if( previousDefinition instanceof IMacroDescriptor )
-					{
-						if( ((IMacroDescriptor)previousDefinition).compatible( (IMacroDescriptor) newDefinition ) )
-							return; 		
-					}					
-				}
-				else if( newDefinition instanceof String )
-				{				 
-					if( previousDefinition instanceof String ) 
-					{
-						Scanner previous = new Scanner( new StringReader( (String)previousDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
-							mode, language, log );
-						Scanner current = new Scanner( new StringReader( (String)newDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
-													mode, language, log );
-						for ( ; ; )
-						{
-							IToken p = null;
-							IToken c = null;
-							try
-							{
-								p = previous.nextToken(); 
-								c = current.nextToken();
-								
-								if ( c.equals( p ) ) continue;
-								break; 
-								
-							}
-							catch( OffsetLimitReachedException olre ) 
-							{
-								handleInternalError(); 
-							}
-							catch( EndOfFileException eof )
-							{
-								if( ( p != null ) && ( c == null ) )
-									break;
-								if( p == null )
-								{
-									try
-									{
-										c = current.nextToken(); 
-										break; 
-									}
-									catch( OffsetLimitReachedException olre ) 
-									{
-										handleInternalError(); 
-									}
-									catch( EndOfFileException eof2 )
-									{
-										return;
-									}
-								}
-							}							
-						} 
-					}
-				}
+				if( previousDefinition.compatible( newDefinition ) ) 
+					return; 							
 				
 				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN, key, beginningOffset, false, true, true );
 			}			
@@ -2499,10 +2512,6 @@ public class Scanner implements IScanner {
                 space = true;
             }
         }
-        catch( OffsetLimitReachedException olre )
-            {
-            	handleInternalError();
-            }
         catch (EndOfFileException e) {
             // Good
             parameterValues.add(str);
@@ -2511,14 +2520,29 @@ public class Scanner implements IScanner {
         
         return parameterValues;
     }
-    	
-	protected void expandDefinition(String symbol, Object expansion, int symbolOffset) 
+    
+	protected void expandDefinition(String symbol, String expansion, int symbolOffset ) throws ScannerException
+	{
+		StringBuffer fullSignatureBuffer = new StringBuffer();
+		fullSignatureBuffer.append( symbol );
+		fullSignatureBuffer.append( ' ');
+		fullSignatureBuffer.append( expansion );
+		List tokens = tokenizeReplacementString(NO_OFFSET_LIMIT, symbol, expansion, null );
+		expandDefinition( symbol, 
+				new ObjectMacroDescriptor( 	symbol, 
+											fullSignatureBuffer.toString(), 
+											tokens, 
+											expansion ), 
+							symbolOffset);
+	}
+	
+	protected void expandDefinition(String symbol, IMacroDescriptor expansion, int symbolOffset) 
                     throws ScannerException 
     {
         // All the tokens generated by the macro expansion 
         // will have dimensions (offset and length) equal to the expanding symbol.
-		if (expansion instanceof String ) {
-			String replacementValue = (String) expansion;
+		if ( expansion.getMacroType() == MacroType.OBJECT_LIKE ) {
+			String replacementValue = expansion.getExpansionSignature();
 			try
 			{
 				contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, symbol.length());
@@ -2529,8 +2553,7 @@ public class Scanner implements IScanner {
 				consumeUntilOutOfMacroExpansion();
 				return;
 			}
-		} else if (expansion instanceof IMacroDescriptor ) {
-			IMacroDescriptor macro = (IMacroDescriptor) expansion;
+		} else if (expansion.getMacroType() == MacroType.FUNCTION_LIKE ) {
 			skipOverWhitespace();
 			int c = getChar();
 
@@ -2562,8 +2585,8 @@ public class Scanner implements IScanner {
                 
 				// create a string that represents what needs to be tokenized
 				buffer = new StringBuffer();
-				List tokens = macro.getTokenizedExpansion();
-				List parameterNames = macro.getParameters();
+				List tokens = expansion.getTokenizedExpansion();
+				List parameterNames = expansion.getParameters();
 
 				if (parameterNames.size() != parameterValues.size())
 				{ 
@@ -2595,7 +2618,7 @@ public class Scanner implements IScanner {
 						t = (Token) tokens.get( ++i );
 						int index = parameterNames.indexOf(t.image);
 						if( index == -1 ){
-							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, macro.getName(), getCurrentOffset(), false, true, true  );
+							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true, true  );
 							return;
 						} else {
 							buffer.append('\"');
@@ -2652,7 +2675,7 @@ public class Scanner implements IScanner {
 				{
 					contextStack.updateContext(
 						new StringReader(finalString),
-						POUND_DEFINE + macro.getSignature(), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
+						POUND_DEFINE + expansion.getCompleteSignature(), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
 				}
 				catch (ContextException e)
 				{
@@ -2699,7 +2722,7 @@ public class Scanner implements IScanner {
 			definitionIdentifier = getNextIdentifier(); 
 		}		
 
-		if (definitions.get(definitionIdentifier) != null)
+		if (getDefinition(definitionIdentifier) != null)
 			return "1";
 
 		return "0";
@@ -2746,4 +2769,12 @@ public class Scanner implements IScanner {
 	public void setOffsetBoundary(int offset) {
 		offsetLimit = offset;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
+	 */
+	public Map getDefinitions() {
+		return definitions;
+	}
+
 }

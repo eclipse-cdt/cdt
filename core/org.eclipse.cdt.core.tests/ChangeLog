@@ -1,3 +1,9 @@
+2004-01-15 John Camelon
+	Updated references to LookupResult as it was renamed to ILookupResult.  
+	Removed some warnings from parser tests.  
+	Updated Scanner & QuickParseTests to accommodate new errors and signatures.  
+	Added QuickParseASTTests.testBug44370().  
+
 2004-01-13 John Camelon
 	Updated ContextualParseTest to accommodate bugfixes 48909 & 49702.  
 

@@ -133,7 +133,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		obj.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
-		Command command = new AddSymbolCommand( (ISymbol) obj, containing );
+		Command command = new AddSymbolCommand( obj, containing );
 		getSymbolTable().pushCommand( command );
 	}
 
@@ -388,7 +388,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	
 		if( data.foundItems != null ){
-			foundSymbol = (ISymbol) ParserSymbolTable.resolveAmbiguities( data );//, data.foundItems );
+			foundSymbol = ParserSymbolTable.resolveAmbiguities( data );//, data.foundItems );
 		}
 			
 		if( foundSymbol == null && inSymbol.getContainingSymbol() != null ){
@@ -541,7 +541,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		//no parameter information at all, so make an empty list.
 		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
 		
-		ParserSymbolTable.lookup( data, (IContainerSymbol) this );
+		ParserSymbolTable.lookup( data, this );
 		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
 	}
 	
@@ -555,7 +555,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		//no parameter information at all, so make an empty list.
 		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
 	
-		ParserSymbolTable.lookup( data, (IContainerSymbol)this );
+		ParserSymbolTable.lookup( data, this );
 	
 		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
 	}
@@ -568,7 +568,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
 		data.parameters = arguments;
 		
-		ParserSymbolTable.lookup( data, (IContainerSymbol) this );
+		ParserSymbolTable.lookup( data, this );
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
 		if( found.isType( TypeInfo.t_template ) ){
 			return ((IParameterizedSymbol) found).instantiate( arguments );

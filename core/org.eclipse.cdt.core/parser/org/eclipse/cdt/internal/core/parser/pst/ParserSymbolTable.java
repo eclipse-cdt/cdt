@@ -106,7 +106,6 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		ISymbol symbol = null;					//the return value
 		LinkedList transitives = new LinkedList();	//list of transitive using directives
 		
 		//if this name define in this scope?
@@ -159,7 +158,7 @@ public class ParserSymbolTable {
 		if( !data.usingDirectivesOnly && inSymbol instanceof IDerivableContainerSymbol ){
 			//if we still havn't found it, check any parents we have
 			data.visited.clear();	//each virtual base class is searched at most once
-			map = lookupInParents( data, (IDerivableContainerSymbol)inSymbol );
+			map = lookupInParents( data, inSymbol );
 			
 			if( data.foundItems == null || data.foundItems.isEmpty() ){
 				data.foundItems = map;
@@ -293,8 +292,6 @@ public class ParserSymbolTable {
 	protected static Map lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
 		Map found = new LinkedHashMap();
 		
-		boolean foundSomething = false;
-		ISymbol temp  = null;
 		Object obj = null;
 	
 		if( data.associated != null ){
@@ -617,7 +614,7 @@ public class ParserSymbolTable {
 		return symbol;	
 	}
 	
-	private static boolean checkAmbiguity( Object obj1, Object obj2 ) throws ParserSymbolTableException{
+	private static boolean checkAmbiguity( Object obj1, Object obj2 ){
 		//it is not ambiguous if they are the same thing and it is static or an enumerator
 		if( obj1 == obj2 ){
 			
@@ -646,7 +643,7 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @throws ParserSymbolTableException
 	 */
-	private static void mergeInheritedResults( Map resultMap, Map map ) throws ParserSymbolTableException{
+	private static void mergeInheritedResults( Map resultMap, Map map ){
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
@@ -784,16 +781,9 @@ public class ParserSymbolTable {
 	 * provided in data.parameters.
 	 */
 	static protected ISymbol resolveAmbiguities( LookupData data ) throws ParserSymbolTableException{
-		ISymbol decl = null;
-		ISymbol obj	= null;
-		IContainerSymbol cls = null;
-		
 		if( data.foundItems == null || data.foundItems.isEmpty() || data.mode == LookupMode.PREFIX ){
 			return null;
 		}
-		
-		int size = data.foundItems.size(); 
-		//Iterator iter = data.foundItems.iterator();
 		
 		Object object = data.foundItems.get( data.name );
 
@@ -865,7 +855,6 @@ public class ParserSymbolTable {
 		Iterator sourceParams = null;
 		Iterator targetParams = null;
 		
-		int numTargetParams = 0;
 		int comparison;
 		Cost cost = null;
 		Cost temp = null;
@@ -914,8 +903,6 @@ public class ParserSymbolTable {
 			}
 			
 			targetParams = parameterList.iterator();
-			numTargetParams = parameterList.size();
-			
 			if( currFnCost == null ){
 				currFnCost = new Cost [ numSourceParams ];	
 			}
@@ -1290,20 +1277,20 @@ public class ParserSymbolTable {
 			try{
 				//a member of a base class
 				if( obj.getContainingSymbol().getType() == context.getType() ){
-					okToAdd = ( hasBaseClass( (IDerivableContainerSymbol) context, (IDerivableContainerSymbol) container ) > 0 );		
+					okToAdd = ( hasBaseClass( context, container ) > 0 );		
 				} 
 				else if ( obj.getContainingSymbol().getType() == TypeInfo.t_union ) {
 					// TODO : must be an _anonymous_ union
 					container = container.getContainingSymbol();
 					okToAdd = ( container instanceof IDerivableContainerSymbol ) 
-							  ? ( hasBaseClass( (IDerivableContainerSymbol)context, (IDerivableContainerSymbol) container ) > 0 )
+							  ? ( hasBaseClass( context, container ) > 0 )
 							  : false; 
 				}
 				//an enumerator for an enumeration
 				else if ( obj.getType() == TypeInfo.t_enumerator ){
 					container = container.getContainingSymbol();
 					okToAdd = ( container instanceof IDerivableContainerSymbol ) 
-							  ? ( hasBaseClass( (IDerivableContainerSymbol)context, (IDerivableContainerSymbol) container ) > 0 )
+							  ? ( hasBaseClass( context, container ) > 0 )
 							  : false; 
 				}
 			} catch ( ParserSymbolTableException e ) {
@@ -1551,7 +1538,7 @@ public class ParserSymbolTable {
 				// to an rvalue of type "pointer to cv B", where B is a base class of D.
 				if( (srcDecl instanceof IDerivableContainerSymbol) && trgDecl.isType( srcDecl.getType() ) ){
 					try {
-						temp = hasBaseClass( (IDerivableContainerSymbol) srcDecl, (IDerivableContainerSymbol) trgDecl );
+						temp = hasBaseClass( srcDecl, trgDecl );
 					} catch (ParserSymbolTableException e) {
 						//not going to happen since we didn't ask for the visibility exception
 					}
@@ -1571,7 +1558,7 @@ public class ParserSymbolTable {
 				TypeInfo.PtrOp srcPtr =  trg.hasPtrOperators() ? (TypeInfo.PtrOp)trg.getPtrOperators().iterator().next() : null;
 				if( trgDecl.isType( srcDecl.getType() ) && srcPtr != null && srcPtr.getType() == TypeInfo.PtrOp.t_memberPointer ){
 					try {
-						temp = hasBaseClass( (IDerivableContainerSymbol)ptr.getMemberOf(), (IDerivableContainerSymbol)srcPtr.getMemberOf() );
+						temp = hasBaseClass( ptr.getMemberOf(), srcPtr.getMemberOf() );
 					} catch (ParserSymbolTableException e) {
 						//not going to happen since we didn't ask for the visibility exception
 					}
@@ -1609,7 +1596,7 @@ public class ParserSymbolTable {
 			return;
 		}
 		
-		int temp = hasBaseClass( (IDerivableContainerSymbol) srcDecl, (IDerivableContainerSymbol) trgDecl, true );
+		int temp = hasBaseClass( srcDecl, trgDecl, true );
 		
 		if( temp > -1 ){
 			cost.rank = Cost.DERIVED_TO_BASE_CONVERSION;
@@ -1723,10 +1710,10 @@ public class ParserSymbolTable {
 		}
 		
 		if( constructor != null ){
-			constructorCost = checkStandardConversionSequence( (TypeInfo) new TypeInfo( TypeInfo.t_type, 0, constructor.getContainingSymbol() ), target );
+			constructorCost = checkStandardConversionSequence( new TypeInfo( TypeInfo.t_type, 0, constructor.getContainingSymbol() ), target );
 		}
 		if( conversion != null ){
-			conversionCost = checkStandardConversionSequence( (TypeInfo) new TypeInfo( target.getType(), 0, target.getTypeSymbol() ), target );
+			conversionCost = checkStandardConversionSequence( new TypeInfo( target.getType(), 0, target.getTypeSymbol() ), target );
 		}
 		
 		//if both are valid, then the conversion is ambiguous
@@ -1819,7 +1806,7 @@ public class ParserSymbolTable {
 		TypeInfo info = null;
 		
 		if( topInfo.getType() == TypeInfo.t_type && topInfo.getTypeSymbol() != null ){
-			returnInfo = (TypeInfo)new TypeInfo();
+			returnInfo = new TypeInfo();
 			
 			ISymbol typeSymbol = topInfo.getTypeSymbol();
 			
@@ -1866,6 +1853,7 @@ public class ParserSymbolTable {
 		return returnInfo;	
 	}
 
+	//TODO Andrew - This code is dead, I didn't cut it out as I assume you plan to make it live soon.  Be forewarned.
 	static private IParameterizedSymbol matchTemplatePartialSpecialization( IParameterizedSymbol template, List args ){
 		if( template == null ){
 			return null;
@@ -2047,7 +2035,7 @@ public class ParserSymbolTable {
 				List aPtrs = aSymbol.getPtrOperators();
 				
 				if( pPtrs != null ){
-					TypeInfo.PtrOp pOp = (TypeInfo.PtrOp) pPtrs.iterator().next();;
+					TypeInfo.PtrOp pOp = (TypeInfo.PtrOp) pPtrs.iterator().next();
 					TypeInfo.PtrOp aOp = ( aPtrs != null ) ? (TypeInfo.PtrOp)pPtrs.iterator().next() : null;
 					
 					if( pOp != null && aOp != null && pOp.getType() == aOp.getType() ){
@@ -2096,7 +2084,7 @@ public class ParserSymbolTable {
 				}
 				if( pSymbol.getPtrOperators() != null ){
 					List ptrs = pSymbol.getPtrOperators();
-					TypeInfo.PtrOp op = (TypeInfo.PtrOp) ptrs.iterator().next();;
+					TypeInfo.PtrOp op = (TypeInfo.PtrOp) ptrs.iterator().next();
 					if( op.getType() == TypeInfo.PtrOp.t_memberPointer ){
 						if( !deduceTemplateArgument( map, op.getMemberOf(), pFunction.getContainingSymbol(), argumentMap ) ){
 							return false;
@@ -2252,7 +2240,7 @@ public class ParserSymbolTable {
 	}
 	
 	static public class Mark extends Command{
-		public void undoIt(){ };
+		public void undoIt(){ }
 	}
 	
 

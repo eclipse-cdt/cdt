@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -49,11 +48,6 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 		{
 			// callback IProblem here
 			log.errorLog("Preprocessor Exception "+ se.getProblem().getMessage()); //$NON-NLS-1$h
-		}
-		catch( OffsetLimitReachedException olre )
-		{
-			// callback IProblem here
-			log.errorLog("Preprocessor Exception "+ olre.getMessage()); //$NON-NLS-1$h
 		}
 		catch( EndOfFileException eof )
 		{

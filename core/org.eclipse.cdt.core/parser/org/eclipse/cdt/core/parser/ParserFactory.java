@@ -40,10 +40,10 @@ public class ParserFactory {
 			return new CompleteParseASTFactory( language ); 
 	}
 	
-    public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryException
+    public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryError
     {
-    	if( scanner == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_SCANNER );
-		if( language == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_LANGUAGE );
+    	if( scanner == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_SCANNER );
+		if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
 		IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
 		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );
@@ -51,18 +51,20 @@ public class ParserFactory {
 			return new CompleteParser( scanner, ourCallback, language, logService );
 		else if( ourMode == ParserMode.STRUCTURAL_PARSE )
 			return new StructuralParser( scanner, ourCallback, language, logService );
-		else if( ourMode == ParserMode.CONTEXTUAL_PARSE )
+		else if( ourMode == ParserMode.COMPLETION_PARSE )
 			return new ContextualParser( scanner, ourCallback, language, logService );
+		else if( ourMode == ParserMode.SELECTION_PARSE )
+			return null; // TODO Implementation required
 		else
 			return new QuickParser( scanner, ourCallback, language, logService );
     }
  	 	
-    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log ) throws ParserFactoryException
+    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log ) throws ParserFactoryError
     {
-    	if( input == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_READER );
-    	if( fileName == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_FILENAME );
-    	if( config == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_CONFIG );
-    	if( language == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_LANGUAGE );
+    	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
+    	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
+    	if( config == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
+    	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 

@@ -92,7 +92,7 @@ public class NamespaceSymbolExtension extends AbstractSymbolExtension
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension#addDefinition(org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol)
      */
-    public void addDefinition(ASTSymbol definition) throws ExtensionException
+    public void addDefinition(ASTSymbol definition)
     {
         otherDefinitions.add( definition );
     }

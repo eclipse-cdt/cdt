@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
+import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
 
 /**
@@ -55,12 +55,12 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 					new StringReader(code),
 					"completion-test",
 					new ScannerInfo(),
-					ParserMode.CONTEXTUAL_PARSE,
+					ParserMode.COMPLETION_PARSE,
 					ParserLanguage.CPP,
 					callback,
 					log),
 				callback,
-				ParserMode.CONTEXTUAL_PARSE,
+				ParserMode.COMPLETION_PARSE,
 				ParserLanguage.CPP,
 				log);
 		
@@ -144,7 +144,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 			
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
-			LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+			ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
 			assertEquals( result.getPrefix(), prefix );
 			
 			Iterator iter = result.getNodes();
@@ -193,7 +193,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.ALL; 
-		LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -309,7 +309,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 			
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.METHODS; 
-			LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+			ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
 			assertEquals( result.getPrefix(), prefix );
 			
 			Iterator iter = result.getNodes();
@@ -353,7 +353,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertNotNull( node.getCompletionContext() );
 		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
 		
-		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -395,7 +395,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertNotNull( node.getCompletionContext() );
 		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
 		
-		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -431,7 +431,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.STATEMENT_START );
 		assertNull( node.getCompletionContext() );
 				
-		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext() );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -473,7 +473,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( node.getCompletionPrefix(), "a" );
 		assertTrue( node.getCompletionScope() instanceof IASTMethod );
 		
-		LookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 																new IASTNode.LookupKind[] { IASTNode.LookupKind.THIS },
 																node.getCompletionContext() );
 		
@@ -526,7 +526,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
 		
-		LookupResult result = inquestion.lookup( "a", kinds, null );
+		ILookupResult result = inquestion.lookup( "a", kinds, null );
 		assertEquals(result.getResultsSize(), 3 );
 	}
 	
@@ -559,7 +559,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
 		
-		LookupResult result = inquestion.lookup( "a", kinds, null );
+		ILookupResult result = inquestion.lookup( "a", kinds, null );
 		assertEquals(result.getResultsSize(), 3 );
 	}
 }

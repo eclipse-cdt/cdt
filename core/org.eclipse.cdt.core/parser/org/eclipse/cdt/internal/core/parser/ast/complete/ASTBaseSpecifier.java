@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -69,7 +68,6 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
      * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParentClassSpecifier()
      */
     public IASTClassSpecifier getParentClassSpecifier()
-        throws ASTNotImplementedException
     {
         return (IASTClassSpecifier)symbol.getASTExtension().getPrimaryDeclaration();
     }
@@ -86,7 +84,7 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTReferenceStore#processReferences()
      */
-    public void processReferences(ISourceElementRequestor requestor) throws ASTNotImplementedException
+    public void processReferences(ISourceElementRequestor requestor)
     {
         referenceDelegate.processReferences(requestor); 
     }

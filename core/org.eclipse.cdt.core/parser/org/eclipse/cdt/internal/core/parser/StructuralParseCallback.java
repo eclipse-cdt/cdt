@@ -64,17 +64,13 @@ public class StructuralParseCallback extends QuickParseCallback{
 	
 	private void pushScope( IASTScope scope ){
 		scopeStack.addFirst( currentScope );
-		currentScope = (IASTScope)scope;
+		currentScope = scope;
 	}
 	
 	private IASTScope popScope(){
 		IASTScope oldScope = currentScope;
 		currentScope = (scopeStack.size() > 0 ) ? (IASTScope) scopeStack.removeFirst() : null;
 		return oldScope;
-	}
-	
-	private IASTScope peekAtScope(){
-		return currentScope;
 	}
 	
 	/* (non-Javadoc)

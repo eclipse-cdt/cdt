@@ -19,11 +19,10 @@ public class ASTNode implements IASTNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind[], org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public LookupResult lookup(
+	public ILookupResult lookup(
 		String prefix,
 		LookupKind[] kind,
-		IASTNode context)
-		throws LookupException {
+		IASTNode context) {
 		// TODO Auto-generated method stub
 		return null;
 	}

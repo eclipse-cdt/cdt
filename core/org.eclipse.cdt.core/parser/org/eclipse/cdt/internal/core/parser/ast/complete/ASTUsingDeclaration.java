@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -123,7 +122,7 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#getUsingType()
      */
-    public IASTDeclaration getUsingType() throws ASTNotImplementedException
+    public IASTDeclaration getUsingType()
     {
         return declaration;
     }

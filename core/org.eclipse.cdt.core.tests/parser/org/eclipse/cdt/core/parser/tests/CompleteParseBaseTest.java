@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -121,8 +121,7 @@ public class CompleteParseBaseTest extends TestCase
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind, org.eclipse.cdt.core.parser.ast.IASTNode)
 		 */
-		public LookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException {
-			// TODO Auto-generated method stub
+		public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) {
 			return null;
 		}
 
@@ -683,17 +682,17 @@ public class CompleteParseBaseTest extends TestCase
     }
     protected FullParseCallback callback;
     
-    protected IASTScope parse( String code ) throws ParserException, ParserFactoryException
+    protected IASTScope parse( String code ) throws ParserException, ParserFactoryError
     {
     	return parse( code, true, ParserLanguage.CPP );
     }
     
-    protected IASTScope parse( String code, boolean throwOnError ) throws ParserException, ParserFactoryException
+    protected IASTScope parse( String code, boolean throwOnError ) throws ParserException, ParserFactoryError
     {
     	return parse( code, throwOnError, ParserLanguage.CPP );
     }
     
-    protected IASTScope parse(String code, boolean throwOnError, ParserLanguage language) throws ParserException, ParserFactoryException
+    protected IASTScope parse(String code, boolean throwOnError, ParserLanguage language) throws ParserException, ParserFactoryError
     {
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 

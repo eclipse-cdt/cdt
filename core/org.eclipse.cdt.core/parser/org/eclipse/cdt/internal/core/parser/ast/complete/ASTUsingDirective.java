@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
@@ -117,7 +116,7 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTUsingDirective#getNamespaceDefinition()
      */
-    public IASTNamespaceDefinition getNamespaceDefinition() throws ASTNotImplementedException
+    public IASTNamespaceDefinition getNamespaceDefinition()
     {
         return namespace;
     }

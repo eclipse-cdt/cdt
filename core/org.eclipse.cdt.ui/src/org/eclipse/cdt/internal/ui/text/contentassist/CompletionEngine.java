@@ -23,11 +23,11 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserNotImplementedException;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -48,7 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
+import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
@@ -184,10 +184,10 @@ public class CompletionEngine implements RelevanceConstants{
 		IParser parser = null;
 		try
 		{
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.CONTEXTUAL_PARSE, language, requestor, ParserUtil.getParserLogService() );
-			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.CONTEXTUAL_PARSE, language, ParserUtil.getParserLogService() );
+			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getParserLogService() );
+			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
 		}
-		catch( ParserFactoryException pfe )
+		catch( ParserFactoryError pfe )
 		{
 					
 		}
@@ -195,7 +195,8 @@ public class CompletionEngine implements RelevanceConstants{
 			IASTCompletionNode result = null;
 			try {
 				result = parser.parse(completionOffset);
-			} catch (ParserNotImplementedException e) {
+			} catch (ParseError e ) {
+				//TODO - this can be more than just a Not Implemented exception
 			}
 			return result;
 		} else {
@@ -358,7 +359,7 @@ public class CompletionEngine implements RelevanceConstants{
 		numNamespaces = 0;
 		numMacros = 0;
 	}
-	private void addToCompletions (LookupResult result){
+	private void addToCompletions (ILookupResult result){
 		if(result == null)
 			return;
 		Iterator nodes = result.getNodes();
@@ -385,10 +386,10 @@ public class CompletionEngine implements RelevanceConstants{
 		return result;
 	}
 	
-	private LookupResult lookup(IASTScope searchNode, String prefix, LookupKind[] kinds, IASTNode context){
+	private ILookupResult lookup(IASTScope searchNode, String prefix, LookupKind[] kinds, IASTNode context){
 		try {
 			logLookups (kinds);
-			LookupResult result = searchNode.lookup (prefix, kinds, context);
+			ILookupResult result = searchNode.lookup (prefix, kinds, context);
 			return result ;
 		} catch (IASTNode.LookupException ilk ){
 			// do we want to do something here?
@@ -401,7 +402,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. Get the search scope node
 		IASTScope searchNode = completionNode.getCompletionScope();
 		
-		LookupResult result = null;
+		ILookupResult result = null;
 		// lookup fields and methods with the right visibility
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[2];
 		kinds[0] = IASTNode.LookupKind.FIELDS; 
@@ -415,7 +416,7 @@ public class CompletionEngine implements RelevanceConstants{
 	{
 		IASTScope searchNode = completionNode.getCompletionScope();
 		
-		LookupResult result = null;
+		ILookupResult result = null;
 		// lookup fields and methods with the right visibility
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
 		kinds[0] = IASTNode.LookupKind.FIELDS; 
@@ -439,7 +440,7 @@ public class CompletionEngine implements RelevanceConstants{
 		kinds[1] = IASTNode.LookupKind.STRUCTURES; 
 		kinds[2] = IASTNode.LookupKind.ENUMERATIONS; 
 		kinds[3] = IASTNode.LookupKind.NAMESPACES; 
-		LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 		// TODO
 		// lookup static members (field / methods) in type
@@ -451,7 +452,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// if the prefix is not empty
 		if(completionNode.getCompletionPrefix().length() > 0 ) {
 			// 2. Lookup all types that could be used here
-			LookupResult result;
+			ILookupResult result;
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[2];
 			kinds[0] = IASTNode.LookupKind.STRUCTURES; 				
 			kinds[1] = IASTNode.LookupKind.ENUMERATIONS; 				
@@ -500,7 +501,7 @@ public class CompletionEngine implements RelevanceConstants{
 			kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
 			kinds[5] = IASTNode.LookupKind.METHODS; 
 			kinds[6] = IASTNode.LookupKind.FUNCTIONS; 
-			LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		} else // prefix is empty
 		{
@@ -510,7 +511,7 @@ public class CompletionEngine implements RelevanceConstants{
 			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
 			kinds[1] = IASTNode.LookupKind.FIELDS; 
 			kinds[2] = IASTNode.LookupKind.METHODS; 
-			LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		}
 	}
@@ -521,7 +522,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CLASSES; 
-		LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	private void completionOnNamespaceReference(IASTCompletionNode completionNode){
@@ -530,7 +531,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for namespaces
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-		LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	private void completionOnExceptionReference(IASTCompletionNode completionNode){
@@ -547,7 +548,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for macros
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.MACROS; 
-		LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	private void completionOnFunctionReference(IASTCompletionNode completionNode){
@@ -559,7 +560,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only lookup constructors
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CONSTRUCTORS; 
-		LookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	private void completionOnKeyword(IASTCompletionNode completionNode){

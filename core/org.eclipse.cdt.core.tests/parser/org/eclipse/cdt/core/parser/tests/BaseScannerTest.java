@@ -20,9 +20,8 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -41,17 +40,17 @@ public class BaseScannerTest extends TestCase {
 		super(x);
 	}
 
-	protected void initializeScanner( String input, ParserMode mode ) throws ParserFactoryException
+	protected void initializeScanner( String input, ParserMode mode ) throws ParserFactoryError
 	{
 		initializeScanner( input, mode, new NullSourceElementRequestor( mode ));
 	}
 
-	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor ) throws ParserFactoryException
+	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor ) throws ParserFactoryError
 	{
 		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null );
 	}
 
-	protected void initializeScanner(String input) throws ParserFactoryException
+	protected void initializeScanner(String input) throws ParserFactoryError
 	{
        initializeScanner( input, ParserMode.COMPLETE_PARSE );
 	}
@@ -162,8 +161,6 @@ public class BaseScannerTest extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == tokenType);
-		} catch (OffsetLimitReachedException e) {
-			assertTrue(false);
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		} 
@@ -183,8 +180,6 @@ public class BaseScannerTest extends TestCase {
 	{
 		try {
 			assertNull(scanner.nextToken());
-		}catch (OffsetLimitReachedException e) {
-			assertTrue(false);
 		} catch (EndOfFileException e) {
 		} 
 	}
@@ -192,7 +187,7 @@ public class BaseScannerTest extends TestCase {
 	public void validateDefinition(String name, String value)
 	{
 		String definition= null;
-		definition= (String) scanner.getDefinition(name);
+		definition= scanner.getDefinition(name).getExpansionSignature();
 		assertNotNull(definition);
 		assertTrue(definition.trim().equals(value));
 	}
@@ -200,9 +195,9 @@ public class BaseScannerTest extends TestCase {
 	public void validateDefinition(String name, int value)
 	{
 		String definition= null;
-		definition= (String) scanner.getDefinition(name);
+		definition= scanner.getDefinition(name).getExpansionSignature();
 		assertNotNull(definition);
-		int intValue= (Integer.valueOf((String) definition)).intValue();
+		int intValue= (Integer.valueOf(definition)).intValue();
 		assertEquals(value, intValue);
 	}
 

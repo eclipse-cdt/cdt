@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
@@ -33,8 +34,8 @@ public class BaseASTFactory  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createMacro(java.lang.String, int, int, int)
 	 */
-	public IASTMacro createMacro(String name, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset) {
-		IASTMacro m = new ASTMacro( name, startingOffset, endingOffset, nameOffset, nameEndOffset );
+	public IASTMacro createMacro(String name, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset, IMacroDescriptor info) {
+		IASTMacro m = new ASTMacro( name, startingOffset, endingOffset, nameOffset, nameEndOffset, info );
 		return m;
 	}
 

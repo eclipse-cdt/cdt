@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.parser;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 
 /**
@@ -16,25 +18,21 @@ public interface IScanner  {
 	public void setASTFactory( IASTFactory f );
 	public void addDefinition(String key, IMacroDescriptor macroToBeAdded );
 	public void addDefinition(String key, String value); 
-	public Object getDefinition(String key);
+	public IMacroDescriptor getDefinition(String key);
+	public Map 				getDefinitions();
 
 	public String[] getIncludePaths();
 	public void addIncludePath(String includePath); 
 	public void overwriteIncludePath( String [] newIncludePaths );
 	
-	public IToken nextToken() throws ScannerException, EndOfFileException, OffsetLimitReachedException;
-	public IToken nextToken( boolean next ) throws ScannerException, EndOfFileException, OffsetLimitReachedException;
+	public IToken nextToken() throws ScannerException, EndOfFileException;
+	public IToken nextToken( boolean next ) throws ScannerException, EndOfFileException;
 			
 	public int  getCount();
 	public int  getDepth();
 
-	public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException, OffsetLimitReachedException;
+	public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException;
 	public void setTokenizingMacroReplacementList(boolean b);
 	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad );
-
-    /**
-     * @param i
-     * @return
-     */
     public int getLineNumberForOffset(int i);
 }

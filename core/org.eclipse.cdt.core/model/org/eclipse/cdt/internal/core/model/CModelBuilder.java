@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -131,7 +131,7 @@ public class CModelBuilder {
 				language, 
 				ParserUtil.getParserLogService() );
 		}
-		catch( ParserFactoryException pfe )
+		catch( ParserFactoryError pfe )
 		{
 			throw new ParserException( "Parser/Scanner construction failure.");
 		}

@@ -572,6 +572,8 @@ public class CStackFrame extends CDebugElement
 	
 	protected void disposeAllVariables()
 	{
+		if ( fVariables == null )
+			return;
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() )
 		{

@@ -92,7 +92,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  * 
  * @author jcamelon
  */
-public final class Parser implements IParserData, IParser 
+public class Parser implements IParserData, IParser 
 {
 	protected final ParserMode mode;
 	protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$

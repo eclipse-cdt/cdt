@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
@@ -357,7 +358,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IConfiguration parentConfig = configuration.getParent();
 
 		// Get the config element for the parent from the map
-		IConfigurationElement configElement = getConfigElement(parentConfig);
+		IManagedConfigElement configElement = getConfigElement(parentConfig);
 		
 		// reset the configuration
 		((Configuration)configuration).reset(configElement);
@@ -464,20 +465,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {
-				try {
-					IConfigurationElement element = elements[toolIndex];
-					// Load the targets
-					if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-						new Tool(element);
-					} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
-						new Target(element);
-					}
-				} catch (Exception ex) {
-					// TODO: log
-					ex.printStackTrace();
-				}
-			}
+			loadConfigElements(DefaultManagedConfigElement.convertArray(elements));
 		}
 		// Then call resolve.
 		Iterator toolIter = getExtensionToolMap().values().iterator();
@@ -504,6 +492,40 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		extensionTargetsLoaded = true;
 	}
 
+	private static void loadConfigElements(IManagedConfigElement[] elements) {
+		for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {
+			try {
+				IManagedConfigElement element = elements[toolIndex];
+				// Load the targets
+				if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
+					new Tool(element);
+				} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
+					new Target(element);
+				} else if (element.getName().equals(IManagedConfigElementProvider.ELEMENT_NAME)) {
+					// don't allow nested config providers.
+					if (element instanceof DefaultManagedConfigElement) {
+						IManagedConfigElement[] providedConfigs;
+						IManagedConfigElementProvider provider = createConfigProvider(
+								(DefaultManagedConfigElement)element);
+						providedConfigs = provider.getConfigElements();
+						loadConfigElements(providedConfigs);
+					}
+				}
+			} catch (Exception ex) {
+				// TODO: log
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	private static IManagedConfigElementProvider createConfigProvider(
+		DefaultManagedConfigElement element) throws CoreException {
+
+		return (IManagedConfigElementProvider)element.getConfigurationElement().
+			createExecutableExtension(IManagedConfigElementProvider.CLASS_ATTRIBUTE);
+	}
+
+	
 	/**
 	 * @param project
 	 * @return
@@ -674,7 +696,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * This method public for implementation reasons.  Not intended for use 
 	 * by clients.
 	 */
-	public static void putConfigElement(IBuildObject buildObj, IConfigurationElement configElement) {
+	public static void putConfigElement(IBuildObject buildObj, IManagedConfigElement configElement) {
 		getConfigElementMap().put(buildObj, configElement);
 	}
 
@@ -682,8 +704,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * This method public for implementation reasons.  Not intended for use 
 	 * by clients.
 	 */
-	public static IConfigurationElement getConfigElement(IBuildObject buildObj) {
-		return (IConfigurationElement)getConfigElementMap().get(buildObj);
+	public static IManagedConfigElement getConfigElement(IBuildObject buildObj) {
+		return (IManagedConfigElement)getConfigElementMap().get(buildObj);
 	}
 
 }

@@ -16,6 +16,7 @@
             <element ref="target"/>
             <element ref="tool"/>
             <element ref="configuration"/>
+            <element ref="dynamicElementProvider"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -488,6 +489,26 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   This attribute flags the list value as a built-in value as opposed to something the user has entered. Built-ins will not be passed to clients that generate command lines (like the makefile generator). However, clients that need to take these settings into account (like the indexing service), will receive these settings. These values will appear grey in the UI.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dynamicElementProvider">
+      <annotation>
+         <documentation>
+            An optional element that allows a tool implementor to supply a class that creates one or more dynamic toolchain elements. For example, the class might create a new tool reference based on the contents of a special file, and a new target that uses that reference.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * 
@@ -37,7 +37,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		this.owner = owner;
 	}
 	
-	public OptionCategory(Tool tool, IConfigurationElement element) {
+	public OptionCategory(Tool tool, IManagedConfigElement element) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
@@ -56,7 +56,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			String parentId = element.getAttribute(IOptionCategory.OWNER);
 			if (parentId != null)
 				owner = tool.getOptionCategory(parentId);

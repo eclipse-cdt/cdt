@@ -17,12 +17,12 @@ import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 public class Option extends BuildObject implements IOption {
 	// Static default return values
@@ -44,7 +44,7 @@ public class Option extends BuildObject implements IOption {
 		this.tool = tool;
 	}
 	
-	public Option(Tool tool, IConfigurationElement element) {
+	public Option(Tool tool, IManagedConfigElement element) {
 		this(tool);
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
@@ -96,7 +96,7 @@ public class Option extends BuildObject implements IOption {
 			break;
 			case ENUMERATED:
 				List enumList = new ArrayList();
-				IConfigurationElement[] enumElements = element.getChildren(ENUM_VALUE);
+				IManagedConfigElement[] enumElements = element.getChildren(ENUM_VALUE);
 				for (int i = 0; i < enumElements.length; ++i) {
 					String optName = enumElements[i].getAttribute(NAME);
 					String optCommand = enumElements[i].getAttribute(COMMAND); 
@@ -116,9 +116,9 @@ public class Option extends BuildObject implements IOption {
 			case OBJECTS:
 				List valueList = new ArrayList();
 				builtIns = new ArrayList();
-				IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
+				IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
-					IConfigurationElement valueElement = valueElements[i];
+					IManagedConfigElement valueElement = valueElements[i];
 					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
 						builtIns.add(valueElement.getAttribute(LIST_ITEM_VALUE));
@@ -137,7 +137,7 @@ public class Option extends BuildObject implements IOption {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// Options can be grouped into categories
 			String categoryId = element.getAttribute(CATEGORY);
 			if (categoryId != null)

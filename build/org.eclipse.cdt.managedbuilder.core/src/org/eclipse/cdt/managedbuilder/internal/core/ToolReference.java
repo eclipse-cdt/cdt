@@ -18,10 +18,10 @@ import org.eclipse.cdt.managedbuilder.core.AbstractToolReference;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,7 +77,7 @@ public class ToolReference extends AbstractToolReference {
 	 * @param owner The <code>BuildObject</code> the receiver will be added to.
 	 * @param element The element containing build information for the reference.
 	 */
-	public ToolReference(BuildObject owner, IConfigurationElement element) {
+	public ToolReference(BuildObject owner, IManagedConfigElement element) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
@@ -91,11 +91,12 @@ public class ToolReference extends AbstractToolReference {
 			((Target)owner).addToolReference(this);
 		}
 
+		// Get the overridden tool command (if any)
+		command = element.getAttribute(ITool.COMMAND);
 		
-		
-		IConfigurationElement[] toolElements = element.getChildren();
+		IManagedConfigElement[] toolElements = element.getChildren();
 		for (int m = 0; m < toolElements.length; ++m) {
-			IConfigurationElement toolElement = toolElements[m];
+			IManagedConfigElement toolElement = toolElements[m];
 			if (toolElement.getName().equals(ITool.OPTION_REF)) {
 				new OptionReference(this, toolElement);
 			}
@@ -122,7 +123,7 @@ public class ToolReference extends AbstractToolReference {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// resolve my parent
 			if (owner instanceof Configuration) {
 				Target target = (Target) ((Configuration)owner).getTarget();

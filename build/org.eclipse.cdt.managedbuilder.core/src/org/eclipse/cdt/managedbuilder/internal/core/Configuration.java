@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -26,7 +27,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -151,7 +151,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @param target The <code>Target</code> the receiver will be added to.
 	 * @param element The element from the manifest that contains the default configuration settings.
 	 */
-	public Configuration(Target target, IConfigurationElement element) {
+	public Configuration(Target target, IManagedConfigElement element) {
 		this.target = target;
 		
 		// setup for resolving
@@ -167,9 +167,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// name
 		setName(element.getAttribute(IConfiguration.NAME));
 
-		IConfigurationElement[] configElements = element.getChildren();
+		IManagedConfigElement[] configElements = element.getChildren();
 		for (int l = 0; l < configElements.length; ++l) {
-			IConfigurationElement configElement = configElements[l];
+			IManagedConfigElement configElement = configElements[l];
 			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
 				new ToolReference(this, configElement);
 			}
@@ -192,7 +192,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-//			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+//			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			Iterator refIter = getLocalToolReferences().iterator();
 			while (refIter.hasNext()) {
 				ToolReference ref = (ToolReference)refIter.next();
@@ -390,12 +390,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 	/**
 	 * @param targetElement
 	 */
-	public void reset(IConfigurationElement element) {
+	public void reset(IManagedConfigElement element) {
 		// I just need to reset the tool references
 		getLocalToolReferences().clear();
-		IConfigurationElement[] configElements = element.getChildren();
+		IManagedConfigElement[] configElements = element.getChildren();
 		for (int l = 0; l < configElements.length; ++l) {
-			IConfigurationElement configElement = configElements[l];
+			IManagedConfigElement configElement = configElements[l];
 			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
 				ToolReference ref = new ToolReference(this, configElement);
 				ref.resolveReferences();

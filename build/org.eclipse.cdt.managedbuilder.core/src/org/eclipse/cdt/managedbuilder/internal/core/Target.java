@@ -21,12 +21,12 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -104,7 +104,7 @@ public class Target extends BuildObject implements ITarget {
 	 * 
 	 * @param element
 	 */
-	public Target(IConfigurationElement element) {
+	public Target(IManagedConfigElement element) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
@@ -151,17 +151,17 @@ public class Target extends BuildObject implements ITarget {
 		}
 		
 		// Load any tool references we might have
-		IConfigurationElement[] toolRefs = element.getChildren(IConfiguration.TOOLREF_ELEMENT_NAME);
+		IManagedConfigElement[] toolRefs = element.getChildren(IConfiguration.TOOLREF_ELEMENT_NAME);
 		for (int i=0; i < toolRefs.length; ++i) {
 			new ToolReference(this, toolRefs[i]);
 		}
 		// Then load any tools defined for the target
-		IConfigurationElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
+		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int j = 0; j < tools.length; ++j) {
 			new Tool(this, tools[j]);
 		}
 		// Then load the configurations which may have tool references
-		IConfigurationElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		for (int k = 0; k < configs.length; ++k) {
 			new Configuration(this, configs[k]);
 		}
@@ -229,7 +229,7 @@ public class Target extends BuildObject implements ITarget {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// parent
 			String parentId = element.getAttribute(PARENT);
 			if (parentId != null) {

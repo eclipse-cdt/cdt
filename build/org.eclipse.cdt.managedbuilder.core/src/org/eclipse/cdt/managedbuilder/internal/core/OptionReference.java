@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,7 +51,7 @@ public class OptionReference implements IOption {
 	 * @param owner
 	 * @param element
 	 */
-	public OptionReference(ToolReference owner, IConfigurationElement element) {
+	public OptionReference(ToolReference owner, IManagedConfigElement element) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
@@ -131,7 +131,7 @@ public class OptionReference implements IOption {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			
 			// resolve parent (recursively) before calling methods on it.
 			option = owner.getTool().getOption(element.getAttribute(ID));
@@ -166,9 +166,9 @@ public class OptionReference implements IOption {
 				case LIBRARIES:
 				case OBJECTS:
 					List valueList = new ArrayList();
-					IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
+					IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 					for (int i = 0; i < valueElements.length; ++i) {
-						IConfigurationElement valueElement = valueElements[i];
+						IManagedConfigElement valueElement = valueElements[i];
 						Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 						if (isBuiltIn.booleanValue()) {
 							getBuiltInList().add(valueElement.getAttribute(LIST_ITEM_VALUE));

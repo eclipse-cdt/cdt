@@ -20,12 +20,12 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * Represents a tool that can be invoked during a build.
@@ -52,7 +52,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private boolean resolved = true;
 	
 
-	public Tool(IConfigurationElement element) {
+	public Tool(IManagedConfigElement element) {
 		loadFromManifest(element);
 
 		// hook me up
@@ -66,7 +66,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param target The target the receiver will belong to.
 	 * @param element The element containing the information.
 	 */
-	public Tool(Target target, IConfigurationElement element) {
+	public Tool(Target target, IManagedConfigElement element) {
 		loadFromManifest(element);
 		
 		// hook me up
@@ -331,7 +331,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return getInterfaceExtensions().contains(ext);
 	}
 
-	protected void loadFromManifest(IConfigurationElement element) {
+	protected void loadFromManifest(IManagedConfigElement element) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		this.resolved = false;
@@ -398,9 +398,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		addOptionCategory(this);
 
 		// Check for options
-		IConfigurationElement[] toolElements = element.getChildren();
+		IManagedConfigElement[] toolElements = element.getChildren();
 		for (int l = 0; l < toolElements.length; ++l) {
-			IConfigurationElement toolElement = toolElements[l];
+			IManagedConfigElement toolElement = toolElements[l];
 			if (toolElement.getName().equals(ITool.OPTION)) {
 				new Option(this, toolElement);
 			} else if (toolElement.getName().equals(ITool.OPTION_CAT)) {
@@ -413,7 +413,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-//			IConfigurationElement element = ManagedBuildManager.getConfigElement(this);
+//			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// Tool doesn't have any references, but children might
 			Iterator optionIter = options.iterator();
 			while (optionIter.hasNext()) {

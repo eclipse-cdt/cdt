@@ -175,7 +175,7 @@ public class Checks {
 		if (tu == null)
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("Checks.cu_not_created"));	 //$NON-NLS-1$
 		else if (! tu.isStructureKnown())
-			return RefactoringStatus.createErrorStatus(RefactoringCoreMessages.getString("Checks.cu_not_parsed"));	 //$NON-NLS-1$
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("Checks.cu_not_parsed"));	 //$NON-NLS-1$
 		return new RefactoringStatus();
 	}
 	//-------- validateEdit checks ----
@@ -227,6 +227,9 @@ public class Checks {
 		
 		if ((!wasEmpty) && result.isEmpty())
 			status.addFatalError(RefactoringCoreMessages.getString("Checks.all_excluded")); //$NON-NLS-1$
+		else if (result.isEmpty()){
+			status.addFatalError(RefactoringCoreMessages.getString("Checks.no_files"));
+		}
 		
 		return (SearchResultGroup[])result.toArray(new SearchResultGroup[result.size()]);
 	}

@@ -317,13 +317,10 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.checking")); //$NON-NLS-1$
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
-			
-			if (fReferences.length == 0){
-				result.addFatalError(RefactoringCoreMessages.getString("RenameTypeRefactoring.no_files"));
-			}
-			
+						
 			if (result.hasFatalError())
-				return result;			
+				return result;		
+			
 			// more checks go here
 			fChangeManager= createChangeManager(new SubProgressMonitor(pm, 35));
 			pm.worked(5);

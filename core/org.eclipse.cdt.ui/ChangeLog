@@ -1,3 +1,6 @@
+2004-06-17 Hoda Amer
+	Fix for PR 63933: [Refactoring] compilation errors does not prevent rename refactoring
+	
 2004-06-16 Hoda Amer 
 	Fix for PR 66730: [Refactoring] Renaming a class does not change .cpp file.
 	Fix for PR 61045: [Accessibility] Code Templates Preview box has no MSAA name

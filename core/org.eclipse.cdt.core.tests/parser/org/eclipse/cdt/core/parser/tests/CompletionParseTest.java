@@ -1102,4 +1102,19 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertTrue( ((IASTFunction)node.getCompletionScope()).getName().equals( "f" ) ); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 	}
+	
+	public void testBug62728() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct Temp { char * t; };" ); //$NON-NLS-1$
+		writer.write( "int f(Temp * t) {\n" ); //$NON-NLS-1$
+		writer.write( "t->t[5] = t-> "); //$NON-NLS-1$
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "= t->") + 5 ); //$NON-NLS-1$
+		assertNotNull( node );
+		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
+		assertTrue( node.getCompletionScope() instanceof IASTFunction );
+		assertTrue( ((IASTFunction)node.getCompletionScope()).getName().equals( "f" ) ); //$NON-NLS-1$
+		assertNotNull( node.getCompletionContext() );
+	}
 }

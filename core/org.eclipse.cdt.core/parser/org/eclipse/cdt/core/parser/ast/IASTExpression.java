@@ -239,6 +239,19 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
         	return false;
 
         }
+
+		/**
+		 * @return
+		 */
+		public boolean isLiteral() {
+			if( this == PRIMARY_INTEGER_LITERAL || 
+					this == PRIMARY_CHAR_LITERAL || 
+					this == PRIMARY_FLOAT_LITERAL || 
+					this == PRIMARY_STRING_LITERAL || 
+					this == PRIMARY_BOOLEAN_LITERAL )
+				return true;
+			return false;
+		}
         
         		
 	}

@@ -1415,7 +1415,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		
 		ExpressionResult result = null;
-		if( literal != null && !literal.equals(EMPTY_STRING) ){ 
+		if( literal != null && !literal.equals(EMPTY_STRING) && kind.isLiteral() ){ 
 			info.setDefault( literal );
 		}
 		// types that resolve to void
@@ -1573,7 +1573,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if(left == null)
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			info = left.getResultType().getResult();
-			if ((info != null) && (info.getTypeSymbol() != null)){
+			if ((info != null))
+			{
 				info.addOperatorExpression( TypeInfo.OperatorExpression.subscript );
 			}else {
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );

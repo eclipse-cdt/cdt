@@ -219,6 +219,9 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 
 
 	public Type getType(ICDITarget target, String name) throws CDIException {
+		if (name == null) {
+			name = new String();
+		}
 		String typename = name.trim();
 
 		// Check the derived types and agregate types

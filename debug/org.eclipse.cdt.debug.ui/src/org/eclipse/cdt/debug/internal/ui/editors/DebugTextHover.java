@@ -67,6 +67,11 @@ public class DebugTextHover implements ITextHover
 					return null;
 
 				String expression = document.get( hoverRegion.getOffset(), hoverRegion.getLength() );
+				if ( expression == null )
+					return null;
+				expression = expression.trim();
+				if ( expression.length() == 0 )
+					return null; 
 				List targetList = new ArrayList( targets.length );
 				for ( int i = 0; i < targets.length; i++ )
 				{

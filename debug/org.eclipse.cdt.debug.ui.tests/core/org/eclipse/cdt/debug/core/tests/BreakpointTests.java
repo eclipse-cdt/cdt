@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.testplugin.CDebugHelper;
@@ -686,12 +687,13 @@ public class BreakpointTests extends TestCase {
 		}
 		assertTrue("Suspended: " + targets[0].isSuspended() + " Termiunated: " + targets[0].isTerminated(), targets[0]
 				.isSuspended());
-		location = targets[0].getCurrentThread().getStackFrames()[0].getLocation();
+		ICDIStackFrame frame = targets[0].getCurrentThread().getStackFrames()[0]; 
+		location = frame.getLocation();
 		assertTrue(location.getLineNumber() == 23);
 		assertTrue(location.getFunction().equals("main"));
 		assertTrue(location.getFile().equals("main.c"));
 		/* Get the value of a and and make sure it is 11 */
-		assertTrue(targets[0].evaluateExpressionToString("a"), targets[0].evaluateExpressionToString("a").equals("11"));
+		assertTrue(targets[0].evaluateExpressionToString(frame, "a"), targets[0].evaluateExpressionToString(frame, "a").equals("11"));
 
 		/* clean up the session */
 		session.terminate();

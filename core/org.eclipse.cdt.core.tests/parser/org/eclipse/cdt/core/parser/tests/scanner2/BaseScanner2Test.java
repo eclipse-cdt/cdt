@@ -30,9 +30,9 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 
@@ -78,11 +78,11 @@ public class BaseScanner2Test extends TestCase {
     	IParserLogService logService = ( log == null ) ? ParserFactory.createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
-		IScannerConfiguration configuration  = null;
+		IScannerExtensionConfiguration configuration  = null;
 		if( language == ParserLanguage.C )
-		    configuration = new GCCScannerConfiguration();
+		    configuration = new GCCScannerExtensionConfiguration();
 		else
-		    configuration = new GPPScannerConfiguration();
+		    configuration = new GPPScannerExtensionConfiguration();
 		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, workingCopies, configuration );
     }
 

@@ -47,7 +47,7 @@ public class Scanner2 extends BaseScanner {
     public Scanner2(CodeReader reader, IScannerInfo info,
             ISourceElementRequestor requestor, ParserMode parserMode,
             ParserLanguage language, IParserLogService log, List workingCopies,
-            IScannerConfiguration configuration) {
+            IScannerExtensionConfiguration configuration) {
         super(reader, info, parserMode, language, log, configuration);
         this.requestor = requestor;
         this.callbackManager = new ScannerCallbackManager(requestor);

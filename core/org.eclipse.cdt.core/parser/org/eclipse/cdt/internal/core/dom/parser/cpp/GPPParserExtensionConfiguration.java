@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 /**
  * @author jcamelon
  */
-public class GNUCPPParserExtensionConfiguration implements
+public class GPPParserExtensionConfiguration implements
         ICPPParserExtensionConfiguration {
 
     /* (non-Javadoc)

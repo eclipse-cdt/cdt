@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 /**
  * @author jcamelon
  */
-public class GPPScannerConfiguration extends GNUScannerConfiguration implements
-        IScannerConfiguration {
+public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration implements
+        IScannerExtensionConfiguration {
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#supportMinAndMaxOperators()

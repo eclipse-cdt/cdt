@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
-package org.eclipse.cdt.core.parser.tests.parser2;
+package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,14 +33,14 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 
 /**
  * @author jcamelon
@@ -1362,17 +1362,17 @@ public class QuickParser2Tests extends TestCase {
 
         CodeReader codeReader = new CodeReader( code.toCharArray() );
         IScannerInfo scannerInfo = new ScannerInfo();
-        IScannerConfiguration configuration = null;
+        IScannerExtensionConfiguration configuration = null;
         if( lang == ParserLanguage.C )
-            configuration = new GCCScannerConfiguration();
+            configuration = new GCCScannerExtensionConfiguration();
         else
-            configuration = new GPPScannerConfiguration();
+            configuration = new GPPScannerExtensionConfiguration();
         IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, SavedCodeReaderFactory.getInstance() );
         ISourceCodeParser parser2 = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
             if (gcc)
-                config = new GNUCPPParserExtensionConfiguration();
+                config = new GPPParserExtensionConfiguration();
             else
                 config = new ANSICPPParserExtensionConfiguration();
             parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE,

@@ -53,9 +53,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 
 /**
  * @author aniefer
@@ -74,11 +74,11 @@ public class AST2BaseTest extends TestCase {
         CodeReader codeReader = new CodeReader(code
                 .toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScannerConfiguration configuration = null;
+        IScannerExtensionConfiguration configuration = null;
         if( lang == ParserLanguage.C )
-            configuration = new GCCScannerConfiguration();
+            configuration = new GCCScannerExtensionConfiguration();
         else
-            configuration = new GPPScannerConfiguration();
+            configuration = new GPPScannerExtensionConfiguration();
         IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, SavedCodeReaderFactory.getInstance() );
         
         ISourceCodeParser parser2 = null;

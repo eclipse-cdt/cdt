@@ -24,9 +24,9 @@ import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
-import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
@@ -87,11 +87,11 @@ public class ParserFactory {
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
-		IScannerConfiguration configuration  = null;
+		IScannerExtensionConfiguration configuration  = null;
 		if( language == ParserLanguage.C )
-		    configuration = new GCCScannerConfiguration();
+		    configuration = new GCCScannerExtensionConfiguration();
 		else
-		    configuration = new GPPScannerConfiguration();
+		    configuration = new GPPScannerExtensionConfiguration();
 
 		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, workingCopies, configuration );
     }

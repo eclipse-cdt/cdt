@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner.ExpressionEvalu
 /**
  * @author jcamelon
  */
-public class GCCScannerConfiguration extends GNUScannerConfiguration implements IScannerConfiguration {
+public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfiguration implements IScannerExtensionConfiguration {
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#supportMinAndMaxOperators()

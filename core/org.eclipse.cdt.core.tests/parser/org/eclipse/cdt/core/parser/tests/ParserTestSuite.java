@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2Tests;
+import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationTests;
 import org.eclipse.cdt.core.parser.tests.ast2.GCCTests;
-import org.eclipse.cdt.core.parser.tests.parser2.CompleteParser2Tests;
-import org.eclipse.cdt.core.parser.tests.parser2.QuickParser2Tests;
+import org.eclipse.cdt.core.parser.tests.ast2.QuickParser2Tests;
 import org.eclipse.cdt.core.parser.tests.scanner2.ObjectMapTest;
 import org.eclipse.cdt.core.parser.tests.scanner2.Scanner2Test;
 

@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 /**
  * @author jcamelon
  */
-public abstract class GNUScannerConfiguration implements IScannerConfiguration {
+public abstract class GNUScannerExtensionConfiguration implements IScannerExtensionConfiguration {
 
     protected static final char[] emptyCharArray = "".toCharArray(); //$NON-NLS-1$
 

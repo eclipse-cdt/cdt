@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguratio
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.core.resources.IFile;
@@ -117,7 +117,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    if( l == ParserLanguage.C )
 		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GCCParserExtensionConfiguration()  );
 		    else
-		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GNUCPPParserExtensionConfiguration() );		    
+		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GPPParserExtensionConfiguration() );		    
 		}
 		else
 		{
@@ -150,7 +150,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    }
 		    else if( dialect.equals( dialects[3]))
 		    {
-		        ICPPParserExtensionConfiguration config = new GNUCPPParserExtensionConfiguration();
+		        ICPPParserExtensionConfiguration config = new GPPParserExtensionConfiguration();
 		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );		        
 		    }
 		}

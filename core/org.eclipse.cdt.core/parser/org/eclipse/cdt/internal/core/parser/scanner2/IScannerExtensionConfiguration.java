@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 /**
  * @author jcamelon
  */
-public interface IScannerConfiguration {
+public interface IScannerExtensionConfiguration {
 
     public boolean initializeMacroValuesTo1();
     public boolean support$InIdentifiers();

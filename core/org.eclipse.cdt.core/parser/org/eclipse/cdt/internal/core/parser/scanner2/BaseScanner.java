@@ -1120,7 +1120,7 @@ abstract class BaseScanner implements IScanner {
 
    public BaseScanner(CodeReader reader, IScannerInfo info,
          ParserMode parserMode, ParserLanguage language, IParserLogService log,
-         IScannerConfiguration configuration) {
+         IScannerExtensionConfiguration configuration) {
 
       this.parserMode = parserMode;
       this.language = language;
@@ -4298,7 +4298,7 @@ abstract class BaseScanner implements IScanner {
 
    protected int                           offsetBoundary   = -1;
 
-   protected void setupBuiltInMacros(IScannerConfiguration config) {
+   protected void setupBuiltInMacros(IScannerExtensionConfiguration config) {
 
       definitions.put(__STDC__.name, __STDC__);
       definitions.put(__FILE__.name, __FILE__);

@@ -59,7 +59,7 @@ public class DOMScanner extends BaseScanner {
      * @param readerFactory TODO
      * @param requestor
      */
-    public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerConfiguration configuration, ICodeReaderFactory readerFactory) {
+    public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
         super(reader, info, parserMode, language, log, configuration);
         this.expressionEvaluator = new ExpressionEvaluator(null, null);
         this.codeReaderFactory = readerFactory;

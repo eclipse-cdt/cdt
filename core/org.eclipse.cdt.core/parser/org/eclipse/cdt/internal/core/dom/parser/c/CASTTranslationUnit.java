@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorSelectionResult;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -340,23 +341,29 @@ public class CASTTranslationUnit extends CASTNode implements
 	 */
 	public IASTNode selectNodeForLocation(String path, int realOffset,
 			int realLength) {
-		IASTNode node = null;
-
+    	IASTNode node = null;
+		IASTPreprocessorSelectionResult result = null;
+		int globalOffset = 0;
+		
 		try {
-			node = resolver.getPreprocessorNode(path, realOffset, realLength);
+			result = resolver.getPreprocessorNode(path, realOffset, realLength);
 		} catch (InvalidPreprocessorNodeException ipne) {
-			// extract global offset from the exception, use it to get the node
-			// from the AST if it's valid
-			int globalOffset = ipne.getGlobalOffset();
-			if (globalOffset >= 0) {
-				CFindNodeForOffsetAction nodeFinder = new CFindNodeForOffsetAction(
-						globalOffset, realLength);
-				getVisitor().visitTranslationUnit(nodeFinder);
-				node = nodeFinder.getNode();
-			}
+			globalOffset = ipne.getGlobalOffset(); 
 		}
-
-		return node;
+    	
+		if (result != null && result.getSelectedNode() != null) {
+			node = result.getSelectedNode();
+		} else {
+			// use the globalOffset to get the node from the AST if it's valid
+			globalOffset = result == null ? globalOffset : result.getGlobalOffset();
+    		if (globalOffset >= 0) {
+	    		CFindNodeForOffsetAction nodeFinder = new CFindNodeForOffsetAction(globalOffset, realLength);
+	    		getVisitor().visitTranslationUnit(nodeFinder);
+	    		node = nodeFinder.getNode();
+    		}
+		}
+    	
+        return node;
 	}
 
 	/*

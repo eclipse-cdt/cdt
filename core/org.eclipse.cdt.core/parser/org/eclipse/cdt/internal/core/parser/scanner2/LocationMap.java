@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorSelectionResult;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 
 /**
  * @author jcamelon
@@ -1713,7 +1715,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		return foundContext;
     }
 
-    private IASTNode getPreprocessorNode(int globalOffset, int length, _Context startContext) throws InvalidPreprocessorNodeException {
+    private IASTPreprocessorSelectionResult getPreprocessorNode(int globalOffset, int length, _Context startContext) throws InvalidPreprocessorNodeException {
     	IASTNode result = null;
     	if (!(startContext instanceof _CompositeContext)) throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
     	List contexts = ((_CompositeContext)startContext).getSubContexts();
@@ -1747,17 +1749,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 			}
 		}
 		
-		if (result == null)
-			throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
-
-		return result;
+		return new ASTPreprocessorSelectionResult(result, globalOffset);
     }
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getPreprocessorNode(int, int)
 	 */
-	public IASTNode getPreprocessorNode(String path, int offset, int length) throws InvalidPreprocessorNodeException {
-		IASTNode result = null;
+	public IASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) throws InvalidPreprocessorNodeException {
+		IASTPreprocessorSelectionResult result = null;
+		
 		int globalOffset = 0;
 		_Context foundContext = tu;
 		
@@ -1775,9 +1775,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		}
 		
 		result = getPreprocessorNode(globalOffset, length, foundContext);
-		
-		if (result == null)
-			throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
 		
 		return result;
 	}

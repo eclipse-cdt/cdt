@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorSelectionResult;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -203,7 +205,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     		}
     		
     		// skip the rest of this node if the selection is outside of its bounds
-    		if (node instanceof ASTNode &&
+			// TODO take out fix below for bug 86993 check for: !(node instanceof ICPPASTLinkageSpecification)
+    		if (node instanceof ASTNode && !(node instanceof ICPPASTLinkageSpecification) &&
     				offset > ((ASTNode)node).getOffset() + ((ASTNode)node).getLength())
     			return PROCESS_SKIP;
     		
@@ -215,7 +218,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	 */
     	public int processDeclaration(IASTDeclaration declaration) {
     		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
-    		if (declaration instanceof ASTNode && ((ASTNode)declaration).getOffset() > offset)
+			// TODO take out fix below for bug 86993 check for: !(declaration instanceof ICPPASTLinkageSpecification)
+    		if (declaration instanceof ASTNode && !(declaration instanceof ICPPASTLinkageSpecification) && ((ASTNode)declaration).getOffset() > offset)
     			return PROCESS_ABORT;
     		
     		return processNode(declaration);
@@ -332,18 +336,26 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      */
     public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
     	IASTNode node = null;
+		IASTPreprocessorSelectionResult result = null;
+		int globalOffset = 0;
+		
+		try {
+			result = resolver.getPreprocessorNode(path, realOffset, realLength);
+		} catch (InvalidPreprocessorNodeException ipne) {
+			globalOffset = ipne.getGlobalOffset(); 
+		}
     	
-    	try {
-    		node = resolver.getPreprocessorNode(path, realOffset, realLength);
-    	} catch (InvalidPreprocessorNodeException ipne) {
-    		// extract global offset from the exception, use it to get the node from the AST if it's valid
-    		int globalOffset = ipne.getGlobalOffset();
+		if (result != null && result.getSelectedNode() != null) {
+			node = result.getSelectedNode();
+		} else {
+			// use the globalOffset to get the node from the AST if it's valid
+			globalOffset = result == null ? globalOffset : result.getGlobalOffset();
     		if (globalOffset >= 0) {
 	    		CPPFindNodeForOffsetAction nodeFinder = new CPPFindNodeForOffsetAction(globalOffset, realLength);
 	    		getVisitor().visitTranslationUnit(nodeFinder);
 	    		node = nodeFinder.getNode();
     		}
-    	}
+		}
     	
         return node;
     }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * Created on Nov 5, 2004
@@ -128,8 +130,14 @@ public class CFunction implements IFunction {
      */
     public IFunctionType getType() {
         if( type == null ) {
-        	IASTFunctionDeclarator functionName = ( definition != null ) ? definition : declarators[0];
-        	type = CVisitor.createFunctionType( functionName );
+        	IASTDeclarator functionName = ( definition != null ) ? definition : declarators[0];
+        	
+        	while (functionName.getName().toString() == null)
+        		functionName = functionName.getNestedDeclarator();
+        	
+        	IType tempType = CVisitor.createType( functionName.getName() );
+        	if (tempType instanceof IFunctionType)
+        		type = (IFunctionType)tempType;
         }
         
         return type;

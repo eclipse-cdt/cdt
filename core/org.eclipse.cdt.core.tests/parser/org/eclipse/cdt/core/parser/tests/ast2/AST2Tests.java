@@ -1197,6 +1197,31 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue( ((IPointerType)ft.getParameterTypes()[0]).isConst() );
     }
     
+    public void testFunctionDefTypes() throws Exception {
+    	StringBuffer buffer = new StringBuffer( "int f() {}\n" ); //$NON-NLS-1$
+    	buffer.append("int *f2() {}\n"); //$NON-NLS-1$
+    	buffer.append("int (* f3())() {}\n"); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); //$NON-NLS-1$
+    	    	
+        IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IFunction f = (IFunction) def.getDeclarator().getName().resolveBinding();
+        def = (IASTFunctionDefinition) tu.getDeclarations()[1];
+        IFunction f2 = (IFunction) def.getDeclarator().getName().resolveBinding();
+        def = (IASTFunctionDefinition) tu.getDeclarations()[2];
+        IFunction f3 = (IFunction) def.getDeclarator().getName().resolveBinding();
+        
+        IFunctionType ft = f.getType();
+        IFunctionType ft2 = f2.getType();
+        IFunctionType ft3 = f3.getType();
+    	
+        assertTrue( ft.getReturnType() instanceof IBasicType );
+        assertTrue( ft2.getReturnType() instanceof IPointerType );
+        assertTrue( ((IPointerType)ft2.getReturnType()).getType() instanceof IBasicType );
+        assertTrue( ft3.getReturnType() instanceof IPointerType );
+        assertTrue( ((IPointerType)ft3.getReturnType()).getType() instanceof IFunctionType );
+        assertTrue( ((IFunctionType)((IPointerType)ft3.getReturnType()).getType()).getReturnType() instanceof IBasicType );
+    }
+    
 	// any parameter to type function returning T is adjusted to be pointer to function returning T
     public void testParmToFunction() throws Exception {
     	IASTTranslationUnit tu = parse( "int f(int g(void)) { return g();}", ParserLanguage.C ); //$NON-NLS-1$
@@ -1245,4 +1270,146 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue( vpt_2_2 instanceof IBasicType );
         assertEquals( ((IBasicType)vpt_2_2).getType(), IBasicType.t_int );
     }
+    
+    public void testTypedefExample4a() throws Exception {
+    	StringBuffer buffer = new StringBuffer( "typedef void DWORD;\n" ); //$NON-NLS-1$
+    	buffer.append( "typedef DWORD v;\n" ); //$NON-NLS-1$
+    	buffer.append( "v signal(int);\n" ); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    	ITypedef dword = (ITypedef)decl.getDeclarators()[0].getName().resolveBinding();
+        IType dword_t = dword.getType();
+        assertTrue( dword_t instanceof IBasicType );
+        assertEquals( ((IBasicType)dword_t).getType(), IBasicType.t_void );
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+    	ITypedef v = (ITypedef)decl.getDeclarators()[0].getName().resolveBinding();
+        IType v_t_1 = v.getType();
+    	assertTrue( v_t_1 instanceof ITypedef );
+        IType v_t_2 = ((ITypedef)v_t_1).getType();
+        assertTrue( v_t_2 instanceof IBasicType );
+    	assertEquals( ((IBasicType)v_t_2).getType(), IBasicType.t_void );
+        
+    	decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+    	IFunction signal = (IFunction)decl.getDeclarators()[0].getName().resolveBinding();
+    	IFunctionType signal_t = signal.getType();
+    	IType signal_ret = signal_t.getReturnType();
+        assertTrue( signal_ret instanceof ITypedef );
+        IType signal_ret2 = ((ITypedef)signal_ret).getType();
+        assertTrue( signal_ret2 instanceof ITypedef );
+        IType signal_ret3 = ((ITypedef)signal_ret2).getType();
+        assertTrue( signal_ret3 instanceof IBasicType );
+    	assertEquals( ((IBasicType)signal_ret3).getType(), IBasicType.t_void );
+    }
+    
+    public void testTypedefExample4b() throws Exception {
+    	StringBuffer buffer = new StringBuffer( "typedef void DWORD;\n" ); //$NON-NLS-1$
+    	buffer.append( "typedef DWORD (*pfv)(int);\n" ); //$NON-NLS-1$
+    	buffer.append( "pfv signal(int, pfv);\n" ); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    	ITypedef dword = (ITypedef)decl.getDeclarators()[0].getName().resolveBinding();
+        IType dword_t = dword.getType();
+        assertTrue( dword_t instanceof IBasicType );
+        assertEquals( ((IBasicType)dword_t).getType(), IBasicType.t_void );
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+    	ITypedef pfv = (ITypedef)decl.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+        IType pfv_t_1 = pfv.getType();
+        assertTrue( pfv_t_1 instanceof IPointerType );
+        IType pfv_t_2 = ((IPointerType)pfv_t_1).getType();
+        assertTrue( pfv_t_2 instanceof IFunctionType );
+        IType pfv_t_2_ret_1 = ((IFunctionType)pfv_t_2).getReturnType();
+        assertTrue( pfv_t_2_ret_1 instanceof ITypedef );
+        IType pfv_t_2_ret_2 = ((ITypedef)pfv_t_2_ret_1).getType();
+        assertTrue( pfv_t_2_ret_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)pfv_t_2_ret_2).getType(), IBasicType.t_void );
+        assertTrue( ((ITypedef)pfv_t_2_ret_1).getName().equals("DWORD") ); //$NON-NLS-1$
+        IType pfv_t_2_parm = ((IFunctionType)pfv_t_2).getParameterTypes()[0];
+        assertTrue( pfv_t_2_parm instanceof IBasicType );
+        assertEquals( ((IBasicType)pfv_t_2_parm).getType(), IBasicType.t_int );
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+        IFunction signal = (IFunction)decl.getDeclarators()[0].getName().resolveBinding();
+        IFunctionType signal_t = signal.getType();
+    	IType signal_ret_1 = signal_t.getReturnType();
+    	assertTrue( signal_ret_1 instanceof ITypedef );
+    	IType signal_ret_2 = ((ITypedef)signal_ret_1).getType();
+    	assertTrue( signal_ret_2 instanceof IPointerType );
+        IType signal_ret_3 = ((IPointerType)signal_ret_2).getType();
+        assertTrue( signal_ret_3 instanceof IFunctionType );
+        IType signal_ret_ret_1 = ((IFunctionType)signal_ret_3).getReturnType();
+        assertTrue( signal_ret_ret_1 instanceof ITypedef );
+        IType signal_ret_ret_2 = ((ITypedef)signal_ret_ret_1).getType();
+        assertTrue( signal_ret_ret_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)signal_ret_ret_2).getType(), IBasicType.t_void );
+        assertTrue( ((ITypedef)signal_ret_ret_1).getName().equals("DWORD") ); //$NON-NLS-1$
+
+        IType signal_parm_t1 = signal_t.getParameterTypes()[0];
+        assertTrue( signal_parm_t1 instanceof IBasicType );
+        assertEquals( ((IBasicType)signal_parm_t1).getType(), IBasicType.t_int );
+        IType signal_parm_t2 = signal_t.getParameterTypes()[1];
+        assertTrue( signal_parm_t2 instanceof ITypedef );
+    	IType signal_parm_t2_1 = ((ITypedef)signal_parm_t2).getType();
+    	assertTrue( signal_parm_t2_1 instanceof IPointerType );
+        IType signal_parm_t2_2 = ((IPointerType)signal_parm_t2_1).getType();
+        assertTrue( signal_parm_t2_2 instanceof IFunctionType );
+        IType signal_parm_t2_ret_1 = ((IFunctionType)signal_parm_t2_2).getReturnType();
+        assertTrue( signal_parm_t2_ret_1 instanceof ITypedef );
+        IType signal_parm_t2_ret_2 = ((ITypedef)signal_parm_t2_ret_1).getType();
+        assertTrue( signal_parm_t2_ret_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)signal_parm_t2_ret_2).getType(), IBasicType.t_void );
+        assertTrue( ((ITypedef)signal_parm_t2_ret_1).getName().equals("DWORD") ); //$NON-NLS-1$
+    }
+    
+    public void testTypedefExample4c() throws Exception {
+    	StringBuffer buffer = new StringBuffer( "typedef void fv(int), (*pfv)(int);\n" ); //$NON-NLS-1$
+    	buffer.append( "void (*signal1(int, void (*)(int)))(int);\n" ); //$NON-NLS-1$
+    	buffer.append( "fv *signal2(int, fv *);\n" ); //$NON-NLS-1$    	
+    	buffer.append( "pfv signal3(int, pfv);\n" ); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+    	ITypedef fv = (ITypedef)decl.getDeclarators()[0].getName().resolveBinding();
+    	ITypedef pfv = (ITypedef)decl.getDeclarators()[1].getNestedDeclarator().getName().resolveBinding();
+    	
+    	IType fv_t = fv.getType();
+    	assertEquals( ((IBasicType)((IFunctionType)fv_t).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)fv_t).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	
+    	IType pfv_t = pfv.getType();
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)pfv_t).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)pfv.getType()).getType()).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	
+    	decl = (IASTSimpleDeclaration)tu.getDeclarations()[1];
+    	IFunction signal1 = (IFunction)decl.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+    	IType signal1_t = signal1.getType();
+    	
+    	decl = (IASTSimpleDeclaration)tu.getDeclarations()[2];
+    	IFunction signal2 = (IFunction)decl.getDeclarators()[0].getName().resolveBinding();
+    	IType signal2_t = signal2.getType();
+    	
+    	decl = (IASTSimpleDeclaration)tu.getDeclarations()[3];
+    	IFunction signal3 = (IFunction)decl.getDeclarators()[0].getName().resolveBinding();
+    	IType signal3_t = signal3.getType();
+    	
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((IFunctionType)signal1_t).getReturnType()).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)signal1_t).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((IFunctionType)signal1_t).getParameterTypes()[1]).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((IFunctionType)signal1_t).getParameterTypes()[1]).getType()).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	
+    	assertEquals( ((IBasicType)((IFunctionType)((ITypedef)((IPointerType)((IFunctionType)signal2_t).getReturnType()).getType()).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)signal2_t).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	assertEquals( ((IBasicType)((IFunctionType)((ITypedef)((IPointerType)((IFunctionType)signal2_t).getParameterTypes()[1]).getType()).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)((ITypedef)((IPointerType)((IFunctionType)signal2_t).getParameterTypes()[1]).getType()).getType()).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((ITypedef)((IFunctionType)signal3_t).getReturnType()).getType()).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)signal3_t).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((ITypedef)((IFunctionType)signal3_t).getParameterTypes()[1]).getType()).getType()).getReturnType()).getType(), IBasicType.t_void );
+    	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((ITypedef)((IFunctionType)signal3_t).getParameterTypes()[1]).getType()).getType()).getParameterTypes()[0]).getType(), IBasicType.t_int );
+    	
+    }
+
 }

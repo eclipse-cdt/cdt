@@ -255,7 +255,7 @@ public class CVisitor {
 			if( binding != null )
 			    ((CFunction)binding).addDeclarator( (IASTFunctionDeclarator) declarator );
 			else
-				binding = new CFunction( (IASTFunctionDeclarator) declarator );
+				binding = createBinding(declarator);
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			binding = createBinding( (IASTSimpleDeclaration) parent, name );
 		} else if( parent instanceof IASTParameterDeclaration ){
@@ -294,7 +294,10 @@ public class CVisitor {
 			    }
 			} 
 
-			binding = new CFunction( (IASTFunctionDeclarator) declarator );
+			if( parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) parent).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
+				binding = new CTypeDef( declarator.getName() );
+			else
+				binding = new CFunction( (IASTFunctionDeclarator) declarator );
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
@@ -931,33 +934,84 @@ public class CVisitor {
 		return true;
 	}
 	
+	/**
+	 * Create an IType for an IASTName.
+	 * 
+	 * @param name the IASTName whose IType will be created
+	 * @return the IType of the IASTName parameter
+	 */
 	public static IType createType(IASTName name) {
 		return createType(name, false);
 	}
 	
+	/**
+	 * This method is used to create the structure of ITypes based on the structure of the IASTDeclarator for the IASTName pased in.
+	 * 
+	 * This method has recursive behaviour if the IASTDeclarator's parent is found to be an IASTFunctionDeclarator.
+	 * Recursion is used to get the IType of the IASTDeclarator's parent.
+	 * 
+	 * If the IASTDeclarator's parent is an IASTSimpleDeclaration, an IASTFunctionDefinition, or an IASTParameterDeclaration then
+	 * any recurisve behaviour to that point is stopped and the proper IType is returned at that point.  
+	 * 
+	 * @param name the IASTName to create an IType for
+	 * @param isParm whether the IASTName is a parameter in a declaration or not
+	 * @return the IType corresponding to the IASTName
+	 */
 	public static IType createType(IASTName name, boolean isParm) {
+		// if it's not a declarator then return null, otherwise work with its parent
 		if (!(name.getParent() instanceof IASTDeclarator)) return null;
-
 		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
 		
-		if (declarator.getParent() instanceof IASTSimpleDeclaration) {		
-			return createBaseType( declarator, ((IASTSimpleDeclaration)(declarator).getParent()).getDeclSpecifier(), isParm );
+		// if it's a simple declaration then create a base type and a function type if necessary and return it
+		if (declarator.getParent() instanceof IASTSimpleDeclaration) {
+			IType lastType = createBaseType( declarator, ((IASTSimpleDeclaration)declarator.getParent()).getDeclSpecifier(), isParm );
+			
+			if (declarator instanceof IASTFunctionDeclarator)
+				lastType = new CFunctionType(lastType, getParmTypes((IASTFunctionDeclarator)declarator));
+			
+			return lastType;
+			
+		// if it's a function declarator then use recursion to get the parent's type
 		} else if (declarator.getParent() instanceof IASTFunctionDeclarator) {
 			IASTDeclarator origDecltor = (IASTDeclarator)declarator.getParent();
-			IType returnType = createType(origDecltor.getName(), isParm);
-			IType lastType = new CFunctionType(returnType, getParmTypes((IASTFunctionDeclarator)declarator.getParent()));
+			IType lastType = createType(origDecltor.getName(), isParm); // use recursion to get the type of the IASTDeclarator's parent
+			
+			// if it was a function declarator and its parent is a function definition then do cleanup from the recursion here (setup pointers/arrays/and get functiontype)
+			if (declarator.getParent().getParent() instanceof IASTFunctionDefinition) {
+				if (declarator.getPointerOperators() != IASTDeclarator.EMPTY_DECLARATOR_ARRAY) 
+					lastType = setupPointerChain(declarator.getPointerOperators(), lastType);
+					
+				IType arrayChain = setupArrayChain(declarator, lastType);
+				if (arrayChain != null) lastType = arrayChain;
 				
-			if (declarator.getPointerOperators() != null) 
-				lastType = setupPointerChain(declarator.getPointerOperators(), lastType);
+				lastType = new CFunctionType(lastType, getParmTypes((IASTFunctionDeclarator)declarator));
 				
-			IType arrayChain = setupArrayChain(declarator, lastType);
-			if (arrayChain != null) lastType = arrayChain;
-
+			// if it was a function declarator and its parent is not a function definition then do cleanup from the recursion here (setup pointers/arrays/ and check if need function type)
+			} else {
+				if (declarator.getPointerOperators() != IASTDeclarator.EMPTY_DECLARATOR_ARRAY) 
+					lastType = setupPointerChain(declarator.getPointerOperators(), lastType);
+					
+				IType arrayChain = setupArrayChain(declarator, lastType);
+				if (arrayChain != null) lastType = arrayChain;
+				
+				if (declarator instanceof IASTFunctionDeclarator)
+					lastType = new CFunctionType(lastType, getParmTypes((IASTFunctionDeclarator)declarator));
+			}
+				
 			return lastType;
+			
+		// if it's a function definition then create the base type and setup a function type if necessary 
 		} else if (declarator.getParent() instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition)declarator.getParent();
 
-			return createBaseType(functionDef.getDeclarator(), functionDef.getDeclSpecifier(), isParm);
+			IType lastType = createBaseType(functionDef.getDeclarator(), functionDef.getDeclSpecifier(), isParm);
+			
+			if (declarator instanceof IASTFunctionDeclarator)
+				lastType = new CFunctionType(lastType, getParmTypes((IASTFunctionDeclarator)declarator));
+			
+			return lastType;
+			
+		// if it's a parameter declaration then setup the base type, if necessary setup a function type and change it's return type to pointer to function returning T 
 		} else if (declarator.getParent() instanceof IASTParameterDeclaration) {
 			if (declarator instanceof IASTFunctionDeclarator) {		
 				IType returnType = createBaseType(declarator, ((IASTParameterDeclaration)declarator.getParent()).getDeclSpecifier(), isParm);
@@ -978,9 +1032,19 @@ public class CVisitor {
 			return createBaseType( declarator, ((IASTParameterDeclaration)(declarator).getParent()).getDeclSpecifier(), isParm );
 		}
 
-		return createType((IASTName)declarator.getParent());
+		return null; // if anything else isn't supported yet return null for now
 	}
 
+	/**
+	 * This is used to create a base IType corresponding to an IASTDeclarator and the IASTDeclSpecifier.  This method doesn't have any recursive
+	 * behaviour and is used as the foundation of the ITypes being created.  
+	 * The parameter isParm is used to specify whether the declarator is a parameter or not.  
+	 * 
+	 * @param declarator the IASTDeclarator whose base IType will be created 
+	 * @param declSpec the IASTDeclSpecifier used to determine if the base type is a CQualifierType or not
+	 * @param isParm is used to specify whether the IASTDeclarator is a parameter of a declaration
+	 * @return the base IType
+	 */
 	public static IType createBaseType(IASTDeclarator declarator, IASTDeclSpecifier declSpec, boolean isParm) {
 		IType lastType = null;
 		
@@ -1056,6 +1120,31 @@ public class CVisitor {
 		return lastType;
 	}
 
+	/**
+	 * Returns an IType[] corresponding to the parameter types of the IASTFunctionDeclarator parameter.
+	 * 
+	 * @param decltor the IASTFunctionDeclarator to create an IType[] for its parameters
+	 * @return IType[] corresponding to the IASTFunctionDeclarator parameters
+	 */
+	private static IType[] getParmTypes( IASTFunctionDeclarator decltor ){
+		IASTParameterDeclaration parms[] = decltor.getParameters();
+		IType parmTypes[] = new IType[parms.length];
+		
+	    for( int i = 0; i < parms.length; i++ ){
+	    	parmTypes[i] = createType(parms[i].getDeclarator().getName(), true);
+	    }
+	    return parmTypes;
+	}
+
+	/**
+	 * Setup a chain of CQualifiedPointerType for the IASTArrayModifier[] of an IASTArrayDeclarator.
+	 * The CQualifiedType is an IPointerType that is qualified with the IASTArrayModifier.
+	 * i.e. the modifiers within the [ and ] of the array type
+	 * 
+	 * @param decl the IASTDeclarator that is a parameter and has the IASTArrayModifier[]
+	 * @param lastType the IType that the end of the CQualifiedPointerType chain points to
+	 * @return the starting CQualifiedPointerType at the beginning of the CQualifiedPointerType chain
+	 */
 	private static IType setupArrayParmChain(IASTDeclarator decl, IType lastType) {
 		if (decl instanceof IASTArrayDeclarator) {
 			int i=0;
@@ -1073,20 +1162,16 @@ public class CVisitor {
 		return null;
 	}
 	
-	public static IFunctionType createFunctionType( IASTFunctionDeclarator functionName ) {
-		return new CFunctionType( CVisitor.createType(functionName.getName()), getParmTypes(functionName) );
-	}
-	
-	private static IType[] getParmTypes( IASTFunctionDeclarator decltor ){
-		IASTParameterDeclaration parms[] = decltor.getParameters();
-		IType parmTypes[] = new IType[parms.length];
-		
-	    for( int i = 0; i < parms.length; i++ ){
-	    	parmTypes[i] = createType(parms[i].getDeclarator().getName(), true);
-	    }
-	    return parmTypes;
-	}
-
+	/**
+	 * Traverse through an array of IASTArrayModifier[] corresponding to the IASTDeclarator decl parameter.
+	 * For each IASTArrayModifier in the array, create a corresponding CArrayType object and 
+	 * link it in a chain.  The returned IType is the start of the CArrayType chain that represents
+	 * the types of the IASTArrayModifier objects in the declarator.
+	 * 
+	 * @param decl the IASTDeclarator containing the IASTArrayModifier[] array to create a CArrayType chain for
+	 * @param lastType the IType that the end of the CArrayType chain points to 
+	 * @return the starting CArrayType at the beginning of the CArrayType chain
+	 */
 	private static IType setupArrayChain(IASTDeclarator decl, IType lastType) {
 		if (decl instanceof IASTArrayDeclarator) {
 			int i=0;
@@ -1108,6 +1193,14 @@ public class CVisitor {
 		return null;
 	}
 
+	/**
+	 * Traverse through an array of IASTPointerOperator[] pointers and set up a pointer chain 
+	 * corresponding to the types of the IASTPointerOperator[].
+	 * 
+	 * @param ptrs an array of IASTPointerOperator[] used to setup the pointer chain
+	 * @param lastType the IType that the end of the CPointerType chain points to
+	 * @return the starting CPointerType at the beginning of the CPointerType chain
+	 */
 	private static IType setupPointerChain(IASTPointerOperator[] ptrs, IType lastType) {
 		CPointerType pointerType = null;
 		

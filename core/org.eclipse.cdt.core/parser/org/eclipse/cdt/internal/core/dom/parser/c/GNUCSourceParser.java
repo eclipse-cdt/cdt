@@ -1175,6 +1175,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTCompositeTypeSpecifier structSpec = null;
         IASTElaboratedTypeSpecifier elabSpec = null;
         IASTEnumerationSpecifier enumSpec = null;
+        boolean isTypedef = false;
         
         declSpecifiers: for (;;) {
             switch (LT(1)) {
@@ -1196,6 +1197,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 break;
             case IToken.t_typedef:
+            	isTypedef = true;
                 storageClass = IASTDeclSpecifier.sc_typedef;
                 consume();
                 break;
@@ -1299,8 +1301,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
                 switch( LT(2) )
                 {
+            		case IToken.tLPAREN:
+            			if (isTypedef) break;
                 	case IToken.tSEMI:
-                	case IToken.tLPAREN:
                 	case IToken.tASSIGN: 
                 	    //TODO more
                 	    break declSpecifiers;

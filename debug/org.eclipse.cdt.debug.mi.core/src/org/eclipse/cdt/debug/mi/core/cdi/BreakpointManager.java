@@ -395,8 +395,16 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#createLocation(String, String, int)
 	 */
-	public ICDILocation createLocation( String file, String function, int line) {
+	public ICDILocation createLocation(String file, String function, int line) {
 		return new Location(file, function, line);
 	}
+	
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#createLocation(long)
+	 */
+	public ICDILocation createLocation(long address) {
+		return new Location(address);
+	}
+
 
 }

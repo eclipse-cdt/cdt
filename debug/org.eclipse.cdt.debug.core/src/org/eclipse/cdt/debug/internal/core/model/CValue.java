@@ -287,6 +287,7 @@ public class CValue extends CDebugElement implements ICValue
 		String value = getUnderlyingValueString().trim();
 		if ( value != null )
 		{
+			value = value.trim();
 			return ( value.startsWith( "0x" ) && value.indexOf( ' ' ) != -1 );
 		}
 		return false;
@@ -294,10 +295,10 @@ public class CValue extends CDebugElement implements ICValue
 
 	public boolean isCharacter()
 	{
-		String value = getUnderlyingValueString().trim();
+		String value = getUnderlyingValueString();
 		if ( value != null )
 		{
-			return ( value.endsWith( "\'" ) );
+			return ( value.trim().endsWith( "\'" ) );
 		}
 		return false;
 	}

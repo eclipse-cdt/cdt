@@ -1,4 +1,8 @@
 2003-04-23 Mikhail Khodjaiants
+	Check for null pointer in 'isCharacter' and 'isCharPointer'.
+	* CValue.java
+
+2003-04-23 Mikhail Khodjaiants
 	Throw DebugException when getSignals() fails.
 	* CSignalManager.java
 

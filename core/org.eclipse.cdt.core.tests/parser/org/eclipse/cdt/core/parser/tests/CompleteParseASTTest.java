@@ -1487,4 +1487,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertTrue( forewardDecl.isFriendDeclaration() );
 		assertTrue( f.isFriend() );
 	}
+	
+	public void testBug44249() throws Exception
+	{
+
+		Iterator i = parse( "class SD_01 { public:\n	void SD_01::f_SD_01();};" ).getDeclarations();
+		IASTClassSpecifier SD_01 = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertFalse( i.hasNext() );
+		i = getDeclarations( SD_01 );
+		IASTMethod f_SD_01 = (IASTMethod) i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( f_SD_01.getName(), "f_SD_01");
+		assertAllReferences( 1, createTaskList( new Task( SD_01 )));
+	}
 }

@@ -2199,14 +2199,25 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isDestructor = false;
 
 		IContainerSymbol ownerScope = scopeToSymbol( ownerTemplate != null ? (IASTScope) ownerTemplate : scope );
-		IParameterizedSymbol symbol = pst.newParameterizedSymbol( nameDuple.toString(), TypeInfo.t_function );
+
+		IParameterizedSymbol symbol = null;
+
+		if( references == null )
+		{
+			references = new ArrayList();
+			if( nameDuple.length() != 1 )
+			{
+				ITokenDuple leadingSegments = nameDuple.getLeadingSegments();
+				ISymbol test = lookupQualifiedName( ownerScope, leadingSegments, references, false );
+				if( test == ownerScope )
+					nameDuple = nameDuple.getLastSegment();
+			}
+		}
+		symbol = pst.newParameterizedSymbol( nameDuple.toString(), TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
 		symbol.setHasVariableArgs( hasVariableArguments );
-		
-		if(references == null)
-			references = new ArrayList();
-    	
+		    	
     	if( returnType.getTypeSpecifier() != null )
 			setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );

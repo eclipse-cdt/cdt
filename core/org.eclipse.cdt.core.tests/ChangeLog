@@ -1,4 +1,7 @@
 2004-04-14 John Camelon
+	Added CompleteParseASTTest::testBug44249().
+
+2004-04-14 John Camelon
 	Added CompletionTest::testBug58178().
 
 2004-04-14 Andrew Niefer

@@ -751,6 +751,25 @@
                id="org.eclipse.cdt.debug.ui.ModulePropertiesAction">
          </action>
       </objectContribution>
+      <viewerContribution
+            targetID="org.eclipse.cdt.debug.ui.ModulesView"
+            id="org.eclipse.cdt.debug.ui.modulesView.popupMenu">
+         <action
+               helpContextId="load_symbols_for_all_context"
+               label="%LoadSymbolsForAllAction.label"
+               tooltip="%LoadSymbolsForAllAction.tooltip"
+               icon="icons/full/elcl16/load_all_symbols_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
+               style="push"
+               menubarPath="modulesGroup"
+               id="org.eclipse.cdt.debug.ui.LoadSymbolsForAllAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -926,6 +945,23 @@
       <viewContribution
             targetID="org.eclipse.cdt.debug.ui.ModulesView"
             id="org.eclipse.debug.ui.modulesView.toolbar">
+         <action
+               helpContextId="load_symbols_for_all_context"
+               disabledIcon="icons/full/dlcl16/load_all_symbols_co.gif"
+               hoverIcon="icons/full/elcl16/load_all_symbols_co.gif"
+               toolbarPath="modulesGroup"
+               label="%LoadSymbolsForAllAction.label"
+               tooltip="%LoadSymbolsForAllAction.tooltip"
+               icon="icons/full/elcl16/load_all_symbols_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
+               style="push"
+               id="org.eclipse.cdt.debug.ui.LoadSymbolsForAllAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
          <action
                helpContextId="collapse_all_modules_context"
                disabledIcon="icons/full/dlcl16/collapseall.gif"

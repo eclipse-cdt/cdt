@@ -1,5 +1,15 @@
 2005-02-15 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
+	The "Load Symbols For All" action is added to the Modules view.
+	* plugin.xml
+	* plugin.properties
+	* icons/full/clcl16/load_all_symbols_co.gif
+	* icons/full/dlcl16/load_all_symbols_co.gif
+	* icons/full/elcl16/load_all_symbols_co.gif
+	* ICDebugUIInternalConstants.java: removed (cleanup)
+
+2005-02-15 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
 	The Modules view's doesn't update labels when symbols are loaded.
 	* ModulesViewEventHandler.java
 

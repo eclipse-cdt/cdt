@@ -1057,4 +1057,15 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTMethod m = (IASTMethod) j.next();
 		assertFalse(j.hasNext());
 	}
+	
+	public void testThisInTemplatedMemberFunction_bug71331() throws Exception {
+		Iterator i = parse("class A { \n int f() {return 0;} \n template<typename T> int g(T*) { return this->f(); } \n }; \n").getDeclarations();//$NON-NLS-1$
+		IASTAbstractTypeSpecifierDeclaration cd = (IASTAbstractTypeSpecifierDeclaration) i.next();
+		assertFalse(i.hasNext());
+		IASTClassSpecifier cs = (IASTClassSpecifier) cd.getTypeSpecifier();
+		Iterator j = cs.getDeclarations();
+		IASTMethod md = (IASTMethod) j.next();
+		IASTTemplateDeclaration tmd = (IASTTemplateDeclaration) j.next();
+		assertFalse(j.hasNext());
+	}
 }

@@ -272,13 +272,27 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			return false; 
 		}
 			
+		if( obj instanceof ITemplateSymbol ){
+		    ISymbol templated = ((ITemplateSymbol)obj).getTemplatedSymbol(); 
+		    if( templated instanceof IParameterizedSymbol ){
+		        obj = (IParameterizedSymbol) templated;
+		    } else {
+		        return false;
+		    }
+		}
+		
+		IContainerSymbol containing = obj.getContainingSymbol();
+		if( containing instanceof ITemplateSymbol ){
+		    containing = containing.getContainingSymbol();
+		}
+		
 		ITypeInfo type = obj.getTypeInfo();
 		if( ( !type.isType( ITypeInfo.t_function ) && !type.isType( ITypeInfo.t_constructor) ) ||
 			type.checkBit( ITypeInfo.isStatic ) ){
 			return false;
 		}
 
-		if( obj.getContainingSymbol().isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
+		if( containing.isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
 			//check to see if there is already a this object, since using declarations
 			//of function will have them from the original declaration
 			boolean foundThis = false;
@@ -296,7 +310,6 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			if( !foundThis ){
 				ISymbol thisObj = getSymbolTable().newSymbol( ParserSymbolTable.THIS, ITypeInfo.t_type );
 				thisObj.setTypeSymbol( obj.getContainingSymbol() );
-				//thisObj.setCVQualifier( obj.getCVQualifier() );
 				ITypeInfo.PtrOp ptr = new ITypeInfo.PtrOp();
 				ptr.setType( ITypeInfo.PtrOp.t_pointer );
 				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( ITypeInfo.isConst ), ITypeInfo.isConst );

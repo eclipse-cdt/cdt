@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTWhileStatement extends IASTStatement {
 
-	public static final ASTNodeProperty CONDITION = new ASTNodeProperty("condition");  //$NON-NLS-1$
+	public static final ASTNodeProperty CONDITIONEXPRESSION = new ASTNodeProperty("condition");  //$NON-NLS-1$
 	public static final ASTNodeProperty BODY = new ASTNodeProperty("body");  //$NON-NLS-1$
 
 	/**
@@ -26,7 +26,6 @@ public interface IASTWhileStatement extends IASTStatement {
 	 * @return expression for the condition
 	 */
 	public IASTExpression getCondition();
-
 	public void setCondition(IASTExpression condition);
 	
 	/**

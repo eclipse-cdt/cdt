@@ -42,8 +42,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * 
 	 * @return
 	 */
-	public IASTDeclaration getInitDeclaration();
-	
+	public IASTDeclaration getInitDeclaration();	
 	public void setInit(IASTDeclaration declaration);
 
 	/**

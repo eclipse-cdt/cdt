@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -2190,5 +2191,25 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, j, 3 );
         assertInstances( col, x, 5 );
     }
+    
+    public void testBug84478() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "void foo() {\n" ); //$NON-NLS-1$
+		buffer.append( "  struct A {\n" ); //$NON-NLS-1$
+		buffer.append( "    int val;\n" ); //$NON-NLS-1$
+		buffer.append( "    A(int i) : val(i) { }\n" ); //$NON-NLS-1$
+		buffer.append( "    ~A() { }\n" ); //$NON-NLS-1$
+		buffer.append( "    operator bool() { return val != 0; }\n" ); //$NON-NLS-1$
+		buffer.append( "  };\n" ); //$NON-NLS-1$
+		buffer.append( "  int i = 1;\n" ); //$NON-NLS-1$
+		buffer.append( "  while (A a = i) {\n" );  //$NON-NLS-1$
+		buffer.append( "    i = 0;\n" ); //$NON-NLS-1$
+		buffer.append( "  }\n" ); //$NON-NLS-1$
+		buffer.append( "}\n" ); //$NON-NLS-1$
+		IASTFunctionDefinition foo = (IASTFunctionDefinition) parse( buffer.toString(), ParserLanguage.CPP ).getDeclarations()[0];
+		ICPPASTWhileStatement whileStatement = (ICPPASTWhileStatement) ((IASTCompoundStatement)foo.getBody()).getStatements()[2];
+		assertNull( whileStatement.getCondition() );
+		assertNotNull( whileStatement.getConditionDeclaration() );
+	}
 }
 

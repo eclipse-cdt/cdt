@@ -1276,7 +1276,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression condition() throws BacktrackException,
             EndOfFileException {
         IASTExpression cond = expression();
-
         return cond;
     }
 
@@ -1776,8 +1775,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTStatement parseWhileStatement() throws EndOfFileException,
             BacktrackException {
-        int startOffset;
-        startOffset = consume(IToken.t_while).getOffset();
+        int startOffset = consume(IToken.t_while).getOffset();
         consume(IToken.tLPAREN);
         IASTExpression while_condition = condition();
         consume(IToken.tRPAREN);
@@ -1788,7 +1786,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 calculateEndOffset(while_body) - startOffset);
         while_statement.setCondition(while_condition);
         while_condition.setParent(while_statement);
-        while_condition.setPropertyInParent(IASTWhileStatement.CONDITION);
+        while_condition.setPropertyInParent(IASTWhileStatement.CONDITIONEXPRESSION);
         while_statement.setBody(while_body);
         while_condition.setParent(while_statement);
         while_condition.setPropertyInParent(IASTWhileStatement.BODY);

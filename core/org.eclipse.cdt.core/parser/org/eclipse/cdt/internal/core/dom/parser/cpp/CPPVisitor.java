@@ -116,6 +116,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -1275,8 +1276,14 @@ public class CPPVisitor implements ICPPASTVisitor {
 		    if( !visitExpression( ((IASTSwitchStatement) statement ).getController(), action ) ) return false;
 		    if( !visitStatement( ((IASTSwitchStatement) statement ).getBody(), action ) ) return false;
 		} else if( statement instanceof IASTWhileStatement ){
-		    if( !visitExpression( ((IASTWhileStatement) statement ).getCondition(), action ) ) return false;
-		    if( !visitStatement( ((IASTWhileStatement) statement ).getBody(), action ) ) return false;
+		    IASTWhileStatement whileStatement = (IASTWhileStatement) statement;
+			if( whileStatement.getCondition() != null && !visitExpression( (whileStatement ).getCondition(), action ) ) return false;
+		    if( !visitStatement( (whileStatement ).getBody(), action ) ) return false;
+		    if( whileStatement instanceof ICPPASTWhileStatement )
+		    {
+		    	ICPPASTWhileStatement cppWhile = ((ICPPASTWhileStatement)whileStatement);
+		    	if ( cppWhile.getConditionDeclaration() != null && !visitDeclaration( cppWhile.getConditionDeclaration(), action ) ) return false; 
+		    }
 		} else if( statement instanceof IASTForStatement ){
 		    IASTForStatement s = (IASTForStatement) statement;
 		    if( s.getInitDeclaration() != null )

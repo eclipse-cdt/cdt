@@ -114,6 +114,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
@@ -4310,8 +4311,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         if( LT(1) != IToken.tSEMI )
         	e = expression();
         consume(IToken.tSEMI);
-        // TODO is this a problem? Should we wrap this in an expression
-        // statement?
         return e;
       } catch (BacktrackException bt) {
          backup(mark);
@@ -4323,7 +4322,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return null;
          }
       }
-
    }
 
    /**
@@ -4848,4 +4846,59 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             .resolveOtherAmbiguitiesAsDeclaration(ds, expressionStatement);
    }
 
+   /* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#parseWhileStatement()
+ */
+protected IASTStatement parseWhileStatement() throws EndOfFileException,
+		BacktrackException {
+    int startOffset = consume(IToken.t_while).getOffset();
+    consume(IToken.tLPAREN);
+    IASTNode while_condition = whileCondition();
+    consume(IToken.tRPAREN);
+    IASTStatement while_body = statement();
+
+    ICPPASTWhileStatement while_statement = (ICPPASTWhileStatement) createWhileStatement();
+    ((ASTNode) while_statement).setOffsetAndLength(startOffset,
+            calculateEndOffset(while_body) - startOffset);
+    if( while_condition instanceof IASTExpression )
+    {
+	    while_statement.setCondition((IASTExpression)while_condition);
+	    while_condition.setParent(while_statement);
+	    while_condition.setPropertyInParent(IASTWhileStatement.CONDITIONEXPRESSION);
+    }
+    else if ( while_condition instanceof IASTDeclaration )
+    {
+	    while_statement.setConditionDeclaration((IASTDeclaration) while_condition);
+	    while_condition.setParent(while_statement);
+	    while_condition.setPropertyInParent(ICPPASTWhileStatement.CONDITIONDECLARATION);    	
+    }
+    while_statement.setBody(while_body);
+    while_body.setParent(while_statement);
+    while_body.setPropertyInParent(IASTWhileStatement.BODY);
+    return while_statement;
+
+}
+
+/**
+ * @return
+ */
+protected IASTNode whileCondition() throws BacktrackException, EndOfFileException {
+    IToken mark = mark();
+    try {
+      IASTExpression e = expression();
+      if( LT(1) != IToken.tRPAREN )
+      	 throwBacktrack(LA(1));
+      return e;
+    } catch (BacktrackException bt) {
+       backup(mark);
+       try {
+          return simpleDeclaration( SimpleDeclarationStrategy.TRY_VARIABLE, true );
+       } catch (BacktrackException b) {
+          failParse();
+          throwBacktrack(b);
+          return null;
+       }
+    }
+}
+   
 }

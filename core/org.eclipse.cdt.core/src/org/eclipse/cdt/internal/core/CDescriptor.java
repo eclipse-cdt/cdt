@@ -45,7 +45,7 @@ import org.xml.sax.SAXException;
 public class CDescriptor implements ICDescriptor {
 	/* constants */
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private ICOwnerInfo fOwner;
+	private COwner fOwner;
 	private IProject fProject;
 	private String fPlatform = "*";
 	private HashMap extMap = new HashMap(4);
@@ -56,6 +56,8 @@ public class CDescriptor implements ICDescriptor {
 	private final String PROJECT_PLATFORM = "platform";
 	private final String PROJECT_EXTENSION = "extension";
 	private final String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
+
+	private boolean fDirty;
 
 	protected void readCDTProject(IPath projectLocation) {
 		FileInputStream file = null;
@@ -141,10 +143,24 @@ public class CDescriptor implements ICDescriptor {
 		return fProject;
 	}
 
-	public ICExtensionReference[] get(String name) {
-		return (CExtensionReference[]) extMap.get(name);
+	public ICExtensionReference[] get(String extensionID) {
+		return (CExtensionReference[]) extMap.get(extensionID);
 	}
 	
+	public ICExtensionReference[] get(String extensionID, boolean update) {
+		ICExtensionReference[] ext = get(extensionID);
+		if ( (ext == null || ext.length == 0) && update) {
+			try {
+				fOwner.update(fProject, this, extensionID);
+				saveInfo();
+				ext = get(extensionID);
+			}
+			catch (CoreException e) {
+			}
+		}
+		return ext;
+	}
+
 	public ICExtensionReference create(String name, String id) {
 		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(name);
 		if ( extensions == null ) {
@@ -156,6 +172,7 @@ public class CDescriptor implements ICDescriptor {
 			extensions = newExtensions;
 			extMap.put(name, extensions);
 		}
+		setDirty();
 		extensions[extensions.length-1] = new CExtensionReference(this, name, id);
 		return extensions[extensions.length-1];
 	}
@@ -173,6 +190,7 @@ public class CDescriptor implements ICDescriptor {
 				} else {
 					extMap.put(ext.getExtension(), extensions);
 				}
+				setDirty();
 			}
 		}
 	}
@@ -200,8 +218,8 @@ public class CDescriptor implements ICDescriptor {
 		return node != null ? (node.getFirstChild() == null ? null : node.getFirstChild().getNodeValue()) : null;
 	}
 
-	private ICOwnerInfo readProjectDescription(Node node) {
-		ICOwnerInfo owner = null;
+	private COwner readProjectDescription(Node node) {
+		COwner owner = null;
 		NamedNodeMap attrib = node.getAttributes();
 		try {
 			owner = new COwner(attrib.getNamedItem("id").getNodeValue());
@@ -254,10 +272,15 @@ public class CDescriptor implements ICDescriptor {
 		} else {
 			rscFile.create(inputStream, IResource.FORCE, null);
 		}
+		fDirty = false;
 	}
 
-	private boolean isDirty() {
-		return true;
+	protected void setDirty() {
+		fDirty = true;
+	}
+	
+	protected boolean isDirty() {
+		return fDirty;
 	}
 
 	protected String serializeDocument(Document doc) throws IOException {

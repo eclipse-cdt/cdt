@@ -6,5 +6,5 @@ package org.eclipse.cdt.core;
 
 public interface ICOwner {
 	public void configure(ICDescriptor cproject);
-	public void update(ICDescriptor cproject);
+	public void update(ICDescriptor cproject, String extensionID);
 }

@@ -107,7 +107,7 @@ public class CDescriptorManager implements IResourceChangeListener {
 	public ICExtension[] createExtensions(String extensionID, IProject project) throws CoreException {
 		ArrayList extensionList = new ArrayList(1);
 		ICDescriptor cDescriptor = getDescriptor(project);
-		ICExtensionReference ext[] = cDescriptor.get(extensionID);
+		ICExtensionReference ext[] = cDescriptor.get(extensionID, true);
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		for( int i = 0; i < ext.length; i++ ) {
 			IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext[i].getExtension());

@@ -89,12 +89,12 @@ public class COwner implements ICOwnerInfo {
 		throw new CoreException(status);
 	}
 
-	void update(IProject project, ICDescriptor cproject) throws CoreException {
+	void update(IProject project, ICDescriptor cproject, String extensionID) throws CoreException {
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for( int i = 0; i < element.length; i++ ) {
 			if ( element[i].getName().equalsIgnoreCase("run") ) {
 				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class");
-				owner.update(cproject);
+				owner.update(cproject, extensionID);
 				return;
 			}
 		}

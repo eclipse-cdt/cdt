@@ -11,6 +11,7 @@ public interface ICDescriptor {
 	public String getPlatform();
 	public IProject getProject();
 	public ICExtensionReference[] get(String name);
+	public ICExtensionReference[] get(String name, boolean update);
 	public ICExtensionReference create(String name, String id);
 	public void remove(ICExtensionReference extension);
 }

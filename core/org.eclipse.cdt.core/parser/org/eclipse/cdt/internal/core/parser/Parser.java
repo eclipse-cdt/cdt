@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
@@ -69,28 +70,23 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  * 
  * @author jcamelon
  */
-public abstract class Parser extends ExpressionParser implements IParser
+public abstract class Parser extends ExpressionParser implements IParser 
 {
     private static final List EMPTY_LIST = new ArrayList();
     protected ISourceElementRequestor requestor = null;
-   
-    
     
     /**
      * This is the standard cosntructor that we expect the Parser to be instantiated 
      * with.  
      * 
-     * @param s				IScanner instance that has been initialized to the code input 
-     * @param c				IParserCallback instance that will receive callbacks as we parse
-     * @param quick			Are we asking for a high level parse or not? 
      */
     public Parser(
         IScanner scanner,
         ISourceElementRequestor callback,
         ParserLanguage language,
-        IParserLogService log )
+        IParserLogService log, IParserExtension extension )
     {
-    	super( scanner, language, log );
+    	super( scanner, language, log, extension );
     	requestor = callback;
     }
     
@@ -979,7 +975,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 						sdw.isTypeNamed(), 
 						sdw.isComplex(), 
 						sdw.isImaginary(),
-						sdw.isGloballyQualified()));
+						sdw.isGloballyQualified(), sdw.getExtensionParameters()));
             }
             catch (Exception e1)
             {
@@ -1221,7 +1217,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 						sdw.isTypeNamed(), 
 						sdw.isComplex(), 
 						sdw.isImaginary(),
-						sdw.isGloballyQualified()));
+						sdw.isGloballyQualified(), null));
             }
             catch (ASTSemanticException e)
             {
@@ -1247,7 +1243,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     /**
      * This class represents the state and strategy for parsing declarationSpecifierSequences
      */
-    private class Flags
+    public class Flags
     {
         private boolean encounteredTypename = false;
         // have we encountered a typeName yet?
@@ -1663,11 +1659,25 @@ public abstract class Parser extends ExpressionParser implements IParser
                         break;
                     }
                 default :
+                	if( extension.canHandleDeclSpecifierSequence( LT(1)))
+                	{
+                		IParserExtension.IDeclSpecifierExtensionResult declSpecExtResult = extension.handleDeclSpecifierSequence( this, flags, sdw, kind );
+                		if( declSpecExtResult != null )
+                		{
+                			flags = declSpecExtResult.getFlags();
+                			if( typeNameBegin == null )
+                				typeNameBegin = declSpecExtResult.getFirstToken();
+                			typeNameEnd = declSpecExtResult.getLastToken();
+                			break;
+                		}
+                		break declSpecifiers;
+                	}
                     break declSpecifiers;
             }
         }
         if (typeNameBegin != null)
             sdw.setTypeName(new TokenDuple(typeNameBegin, typeNameEnd));
+        return;
     }
     /**
      * Parse an elaborated type specifier.  

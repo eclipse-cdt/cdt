@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.parser.ParseError.ParseErrorKind;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 
 /**
  * @author jcamelon
@@ -36,8 +37,8 @@ public class StructuralParser extends Parser implements IParser {
 	 * @param language
 	 * @param logService
 	 */
-	public StructuralParser(IScanner scanner, ISourceElementRequestor ourCallback, ParserLanguage language, IParserLogService logService) {
-		super(scanner, ourCallback, language, logService);
+	public StructuralParser(IScanner scanner, ISourceElementRequestor ourCallback, ParserLanguage language, IParserLogService logService, IParserExtension extension ) {
+		super(scanner, ourCallback, language, logService, extension );
 		setupASTFactory(scanner, language );
 	}
 

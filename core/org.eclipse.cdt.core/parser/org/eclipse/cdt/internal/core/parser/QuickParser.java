@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ParseError.ParseErrorKind;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 
 /**
  * @author jcamelon
@@ -36,8 +37,8 @@ public class QuickParser extends Parser {
 	 * @param language
 	 * @param log
 	 */
-	public QuickParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
-		super(scanner, callback, language, log);
+	public QuickParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log, IParserExtension extension) {
+		super(scanner, callback, language, log, extension);
 	}
 
 	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException

@@ -11,7 +11,6 @@ import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
 
 
 
@@ -25,7 +24,6 @@ public class ASTExpression implements IASTExpression {
 	private final IASTTypeId typeId;
 	private final String literal, idExpression; 
 	private final IASTNewExpressionDescriptor newDescriptor;
-	private final IASTExpressionExtension extension;
 
 	/**
 	 * @param kind
@@ -35,7 +33,7 @@ public class ASTExpression implements IASTExpression {
 	 * @param typeId
 	 * @param literal
 	 */
-	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor, IASTExpressionExtension extension) {
+	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor ) {
 		this.kind = kind; 
 		this.lhs =lhs; 
 		this.rhs = rhs; 
@@ -44,8 +42,6 @@ public class ASTExpression implements IASTExpression {
 		this.literal = literal;
 		this.newDescriptor = newDescriptor;
 		this.idExpression = idExpression;
-		this.extension = extension;
-		this.extension.setExpression(this);
 	}
 
 	/* (non-Javadoc)
@@ -173,7 +169,7 @@ public class ASTExpression implements IASTExpression {
 		if( getExpressionKind() == IASTExpression.Kind.LOGICALOREXPRESSION )
 			return( ( getLHSExpression().evaluateExpression() != 0 ) || ( getRHSExpression().evaluateExpression() != 0 ) ) ? 1 : 0 ;	 
 
-		return extension.evaluateExpression();  
+		throw new ASTExpressionEvaluationException();
 	}
 
     /* (non-Javadoc)

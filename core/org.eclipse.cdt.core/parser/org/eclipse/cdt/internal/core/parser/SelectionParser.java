@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -79,8 +80,8 @@ public class SelectionParser extends ContextualParser {
 	 * @param language
 	 * @param log
 	 */
-	public SelectionParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
-		super(scanner, callback, language, log);
+	public SelectionParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log, IParserExtension extension ) {
+		super(scanner, callback, language, log,extension);
 	}
 
 	/* (non-Javadoc)

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +72,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
+import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
@@ -109,8 +110,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private final static List SUBSCRIPT;
     private final static IProblemFactory problemFactory = new ASTProblemFactory();
-	//private final IASTExtensionFactory extensionFactory;
 	private final IFilenameProvider fileProvider;
+	private final IASTFactoryExtension extension;
 	
     static 
     {
@@ -131,12 +132,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
     }
     
-    public CompleteParseASTFactory( IFilenameProvider filenameProvider, ParserLanguage language, ParserMode mode, IASTExtensionFactory factory )
+    public CompleteParseASTFactory( IFilenameProvider filenameProvider, ParserLanguage language, ParserMode mode, IASTFactoryExtension extension )
     {
         super();
 		pst = new ParserSymbolTable( language, mode );
 		fileProvider = filenameProvider;
-//		extensionFactory = factory;
+		this.extension = extension;
     }
 
 	/*
@@ -1282,8 +1283,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			String literal,
 			ISymbol symbol)	throws ASTSemanticException{
 		
-		ExpressionResult result = null;
+		
 		TypeInfo info = new TypeInfo();
+		
+		if( extension.canHandleExpressionKind( kind ))
+		{
+			extension.getExpressionResultType( kind, lhs, rhs, typeId );
+			return new ExpressionResult( info );
+		}
+		
+		ExpressionResult result = null;
 		if( literal != null && !literal.equals(EMPTY_STRING) ){ 
 			info.setDefault( literal );
 		}
@@ -1742,8 +1751,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isTypename, 
 		boolean isComplex, 
 		boolean isImaginary,
-		boolean isGlobal ) throws ASTSemanticException
+		boolean isGlobal, Hashtable extensionParms ) throws ASTSemanticException
     {
+    	if( extension.overrideCreateSimpleTypeSpecifierMethod( kind ))
+    		return extension.createSimpleTypeSpecifier(pst, scope, kind, typeName, isShort, isLong, isSigned, isUnsigned, isTypename, isComplex, isImaginary, isGlobal, extensionParms );
     	TypeInfo.eType type = null;
     	
     	if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
@@ -2209,7 +2220,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( references == null )
 		{
 			references = new ArrayList();
-			if( nameDuple.length() != 1 )
+			if( nameDuple.length() > 2  ) // destructor
 			{
 				ITokenDuple leadingSegments = nameDuple.getLeadingSegments();
 				ISymbol test = lookupQualifiedName( ownerScope, leadingSegments, references, false );

@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
@@ -153,7 +154,7 @@ public interface IASTFactory
         boolean isLong,
         boolean isSigned,
         boolean isUnsigned, 
-		boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal ) throws ASTSemanticException;
+		boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal, Hashtable extensionParms ) throws ASTSemanticException;
 
     public IASTFunction createFunction(
         IASTScope scope,

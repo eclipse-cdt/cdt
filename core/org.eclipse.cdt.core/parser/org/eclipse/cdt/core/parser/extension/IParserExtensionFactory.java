@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.parser.extension;
 
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 
 
 /**
@@ -21,6 +20,6 @@ import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 public interface IParserExtensionFactory {
 
 	public IScannerExtension createScannerExtension() throws ParserFactoryError;
-	public IASTExtensionFactory createASTExtensionFactory(ParserMode mode) throws ParserFactoryError;
 	public IParserExtension createParserExtension() throws ParserFactoryError;
+	public IASTFactoryExtension createASTExtension(ParserMode mode);
 }

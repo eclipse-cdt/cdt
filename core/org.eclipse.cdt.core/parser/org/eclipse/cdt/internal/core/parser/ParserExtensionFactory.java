@@ -12,20 +12,18 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
+import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
-import org.eclipse.cdt.internal.core.parser.ast.complete.extension.CompleteParseASTExtensionFactory;
-import org.eclipse.cdt.internal.core.parser.ast.quick.extension.QuickParseASTExtensionFactory;
+import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;
 import org.eclipse.cdt.internal.core.parser.scanner.GCCScannerExtension;
 
 /**
  * @author jcamelon
  */
 public class ParserExtensionFactory implements IParserExtensionFactory {
-
 
 	private final ExtensionDialect dialect;
 
@@ -46,24 +44,22 @@ public class ParserExtensionFactory implements IParserExtensionFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IParserExtensionFactory#createASTExtensionFactory()
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtensionFactory#createParserExtension()
 	 */
-	public IASTExtensionFactory createASTExtensionFactory(ParserMode mode) throws ParserFactoryError {
+	public IParserExtension createParserExtension() throws ParserFactoryError  
+	{
 		if( dialect == ExtensionDialect.GCC )
-		{
-			if( mode == ParserMode.QUICK_PARSE || mode == ParserMode.EXPRESSION_PARSE )
-				return new QuickParseASTExtensionFactory();
-			return new CompleteParseASTExtensionFactory();
-		}
+			return new GCCParserExtension();
 		throw new ParserFactoryError( ParserFactoryError.Kind.BAD_DIALECT );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IParserExtensionFactory#createParserExtension()
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtensionFactory#createASTExtension(org.eclipse.cdt.core.parser.ParserMode)
 	 */
-	public IParserExtension createParserExtension() throws ParserFactoryError  
-	{		// TODO Auto-generated method stub
-		return null;
+	public IASTFactoryExtension createASTExtension(ParserMode mode) {
+		if( dialect == ExtensionDialect.GCC )
+			return new GCCASTExtension( mode );
+		throw new ParserFactoryError( ParserFactoryError.Kind.BAD_DIALECT );
 	}
 
 }

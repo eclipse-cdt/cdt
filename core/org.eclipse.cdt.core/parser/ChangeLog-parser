@@ -1,3 +1,11 @@
+2004-04-20 John Camelon
+	Restructuring of the parser extension packages. 
+	Introduce IParserExtension and IASTFactory mechanisms w/partial implementation for GCC. 
+	Introduce IGCCToken and GCCKeywords and fleshed out GCCScannerExtension implementation and interworking with Scanner. 
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39697
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39695
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39684
+
 2004-04-19 Andrew Niefer
 	fix bug 59149  [Parser] Redundant friend declaration fails parse 
 	

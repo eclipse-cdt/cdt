@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.expression;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
@@ -17,7 +18,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
@@ -65,8 +65,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
+import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 
 /**
@@ -74,13 +73,15 @@ import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
  */
 public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFactory {
 
-	private final IASTExtensionFactory extensionFactory;
+	
+
+	private final IASTFactoryExtension extension;
 
 	/**
 	 * @param factory
 	 */
-	public ExpressionParseASTFactory(IASTExtensionFactory factory) {
-		this.extensionFactory = factory;
+	public ExpressionParseASTFactory( IASTFactoryExtension extension ) {
+		this.extension = extension;
 	}
 
 	/*
@@ -378,7 +379,8 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		String literal,
 		IASTNewExpressionDescriptor newDescriptor)
 		throws ASTSemanticException {
-		try {
+			if( extension.overrideCreateExpressionMethod() )
+				return extension.createExpression(scope, kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor );
 			return new ASTExpression(
 				kind,
 				lhs,
@@ -387,29 +389,8 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 				typeId,
 				idExpression == null ? "" : idExpression.toString(), //$NON-NLS-1$
 				literal,
-				newDescriptor,
-				extensionFactory.createExpressionExtension());
-		} catch (ASTNotImplementedException e) {
-			return new ASTExpression(
-				kind,
-				lhs,
-				rhs,
-				thirdExpression,
-				typeId,
-				idExpression == null ? "" : idExpression.toString(), //$NON-NLS-1$
-				literal,
-				newDescriptor,
-				new IASTExpressionExtension() {
-
-				public void setExpression(IASTExpression expression) {
-				}
-
-				public int evaluateExpression()
-					throws ASTExpressionEvaluationException {
-					throw new ASTExpressionEvaluationException();
-				}
-			});
-		}
+				newDescriptor );
+		
 	}
 
 	/*
@@ -503,7 +484,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		boolean isTypename,
 		boolean isComplex,
 		boolean isImaginary,
-		boolean isGlobal)
+		boolean isGlobal, Hashtable extensionParms)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;

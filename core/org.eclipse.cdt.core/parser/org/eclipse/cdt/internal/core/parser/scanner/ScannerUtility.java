@@ -130,7 +130,7 @@ public class ScannerUtility {
 	private static final IParserLogService NULL_LOG_SERVICE = new NullLogService();
 	private static final InclusionParseException INCLUSION_PARSE_EXCEPTION  = new InclusionParseException(); 
 	
-	static InclusionDirective parseInclusionDirective( IScannerData scannerData, IScannerExtension scannerExtension, String includeLine, int baseOffset ) throws InclusionParseException 
+	static InclusionDirective parseInclusionDirective( IScannerData scannerData, IScannerExtension extension, String includeLine, int baseOffset ) throws InclusionParseException 
 	{
 		try
 		{
@@ -145,7 +145,7 @@ public class ScannerUtility {
 											scannerData.getDefinitions(), scannerData.getIncludePathNames(),
 											NULL_REQUESTOR,
 											scannerData.getParserMode(),
-											scannerData.getLanguage(), NULL_LOG_SERVICE, (IScannerExtension)(scannerExtension.clone()) );
+											scannerData.getLanguage(), NULL_LOG_SERVICE, extension );
 				helperScanner.setForInclusion( true );
 				IToken t = null;
 				

@@ -111,11 +111,13 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 		public static final Kind ASSIGNMENTEXPRESSION_XOR     = new Kind( 83 );
 		public static final Kind EXPRESSIONLIST               = new Kind( 84 );
 		
+		protected static final int LAST_KIND = 84;
+		
 		
         /**
          * @param enumValue
          */
-        private Kind(int enumValue)
+        protected Kind(int enumValue)
         {
             super(enumValue);
         }
@@ -216,7 +218,11 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 		 * @return
 		 */
 		public String getKindName() {
-			return (String) names.get(this);
+			
+			Object check = names.get(this);
+			if( check != null )
+				return (String) check;
+			return "EXTENSION SPECIFIED"; //$NON-NLS-1$
 		}
         
         public boolean isPostfixMemberReference()

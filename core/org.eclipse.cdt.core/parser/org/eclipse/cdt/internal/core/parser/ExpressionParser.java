@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
@@ -48,29 +49,146 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 /**
  * @author jcamelon
  */
-public class ExpressionParser implements IExpressionParser {
+public class ExpressionParser implements IExpressionParser, IParserData {
 
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	protected final IParserLogService log;
 	private static int FIRST_ERROR_OFFSET_UNSET = -1;
-	protected int firstErrorOffset = FIRST_ERROR_OFFSET_UNSET;
 	protected boolean parsePassed = true;
+	protected int firstErrorOffset = FIRST_ERROR_OFFSET_UNSET;	
+	protected static BacktrackException backtrack = new BacktrackException();
+	protected final IParserExtension extension;
+	
+	//TODO this stuff needs to be encapsulated by IParserData
+	protected final IParserLogService log;
 	protected ParserLanguage language = ParserLanguage.CPP;
 	protected IASTFactory astFactory = null;
-	
+	protected IScanner scanner;
+	protected IToken currToken;
+	protected IToken lastToken;
+	private boolean limitReached = false;
 	private Stack templateIdScopes = null;
+	
+	/**
+	 * @return Returns the astFactory.
+	 */
+	public IASTFactory getAstFactory() {
+		return astFactory;
+	}
+	/**
+	 * @return Returns the log.
+	 */
+	public IParserLogService getLog() {
+		return log;
+	}
+
+	
+	/**
+	 * Look Ahead in the token list to see what is coming.  
+	 * 
+	 * @param i		How far ahead do you wish to peek?
+	 * @return		the token you wish to observe
+	 * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile 
+	 */
+	public IToken LA(int i) throws EndOfFileException {
+		
+		if (parserTimeout()){
+			throw new ParseError( ParseError.ParseErrorKind.TIMEOUT );
+    	}
+		
+	    if (i < 1) // can't go backwards
+	        return null;
+	    if (currToken == null)
+	        currToken = fetchToken();
+	    IToken retToken = currToken;
+	    for (; i > 1; --i)
+	    {
+	        retToken = retToken.getNext();
+	        if (retToken == null)
+	            retToken = fetchToken();
+	    }
+	    return retToken;
+	}
+
+	/**
+	 * Look ahead in the token list and return the token type.  
+	 * 
+	 * @param i				How far ahead do you wish to peek?
+	 * @return				The type of that token
+	 * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile
+	 */
+	public int LT(int i) throws EndOfFileException {
+	    return LA(i).getType();
+	}
+
+	/**
+	 * Consume the next token available, regardless of the type.  
+	 * 
+	 * @return				The token that was consumed and removed from our buffer.  
+	 * @throws EndOfFileException	If there is no token to consume.  
+	 */
+	public IToken consume() throws EndOfFileException {
+		
+	    if (currToken == null)
+	        currToken = fetchToken();
+	    if (currToken != null)
+	        lastToken = currToken;
+	    currToken = currToken.getNext();
+    	handleNewToken( lastToken );
+	    return lastToken;
+	}
+
+	/**
+	 * Consume the next token available only if the type is as specified.  
+	 * 
+	 * @param type			The type of token that you are expecting.  	
+	 * @return				the token that was consumed and removed from our buffer. 
+	 * @throws BacktrackException	If LT(1) != type 
+	 */
+	public IToken consume(int type) throws EndOfFileException, BacktrackException {
+	    if (LT(1) == type)
+	        return consume();
+	    else
+	        throw backtrack;
+	}
+
+	/**
+	 * Mark our place in the buffer so that we could return to it should we have to.  
+	 * 
+	 * @return				The current token. 
+	 * @throws EndOfFileException	If there are no more tokens.
+	 */
+	public IToken mark() throws EndOfFileException {
+	    if (currToken == null)
+	        currToken = fetchToken();
+	    return currToken;
+	}
+
+	/**
+	 * Rollback to a previous point, reseting the queue of tokens.  
+	 * 
+	 * @param mark		The point that we wish to restore to.  
+	 *  
+	 */
+	public void backup(IToken mark) {
+	    currToken = (SimpleToken)mark;
+	    lastToken = null; // this is not entirely right ... 
+	}
+	
+	
 
 
 	/**
+	 * @param extension TODO
 	 * @param scanner2
 	 * @param callback
 	 * @param language2
 	 * @param log2
 	 */
-	public ExpressionParser(IScanner scanner, ParserLanguage language, IParserLogService log) {
+	public ExpressionParser(IScanner scanner, ParserLanguage language, IParserLogService log, IParserExtension extension) {
 		this.scanner = scanner;
 		this.language = language; 
 		this.log = log;
+		this.extension = extension;
 		setupASTFactory(scanner, language);
 	}
 
@@ -439,10 +557,23 @@ public class ExpressionParser implements IExpressionParser {
 					declarator.addPointerOperator(ASTPointerOperator.RESTRICT_POINTER);
 					break;
 	        	}
-	        	else 
+	        	else
+	        	{
+	        		if( extension.isValidCVModifier( language, IToken.t_restrict ))
+	        		{
+		        		result = consume( IToken.t_restrict );
+						declarator.addPointerOperator( extension.getPointerOperator(language, IToken.t_restrict ));
+						break;	        			
+	        		}
 	        		throw backtrack;
+	        	}
+	        	
 	        default :
-	            
+	            if( extension.isValidCVModifier( language, LT(1)))
+	            {
+	            	result = consume();
+	            	declarator.addPointerOperator( extension.getPointerOperator( language, result.getType() ));
+	            }
 	    }
 	    return result;
 	}
@@ -954,7 +1085,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * @param methodName
 	 * @param e
 	 */
-	protected void logException(String methodName, Exception e) {
+	public void logException(String methodName, Exception e) {
 		if( !(e instanceof EndOfFileException ))
 		{
 			StringBuffer buffer = new StringBuffer();
@@ -1340,7 +1471,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * @param completionKind TODO
 	 * @throws BacktrackException
 	 */
-	protected IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers, CompletionKind completionKind) throws EndOfFileException, BacktrackException {
+	public IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers, CompletionKind completionKind) throws EndOfFileException, BacktrackException {
 		IToken mark = mark();
 		IToken start = mark;
 		ITokenDuple name = null;
@@ -1796,7 +1927,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression unaryExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
+	public IASTExpression unaryExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
 	    switch (LT(1))
 	    {
 	        case IToken.tSTAR :
@@ -1914,6 +2045,11 @@ public class ExpressionParser implements IExpressionParser {
 		            }
 	        	}
 	        default :
+	        	if( extension.isValidUnaryExpressionStart( LT(1)))
+	        	{
+	        		IASTExpression extensionExpression = extension.parseUnaryExpression(scope,this,kind);
+	        		if( extensionExpression != null ) return extensionExpression;
+	        	}
 	            return postfixExpression(scope,kind);
 	    }
 	}
@@ -2606,12 +2742,6 @@ public class ExpressionParser implements IExpressionParser {
 		
 	}
 
-	protected static BacktrackException backtrack = new BacktrackException();
-	protected IScanner scanner;
-	protected IToken currToken;
-	protected IToken lastToken;
-	private boolean limitReached = false;
-
 	/**
 	 * Fetches a token from the scanner. 
 	 * 
@@ -2650,98 +2780,6 @@ public class ExpressionParser implements IExpressionParser {
 	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
 		// unexpected, throw EOF instead (equivalent)
 		throw new EndOfFileException();
-	}
-
-	/**
-	 * Look Ahead in the token list to see what is coming.  
-	 * 
-	 * @param i		How far ahead do you wish to peek?
-	 * @return		the token you wish to observe
-	 * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile 
-	 */
-	protected IToken LA(int i) throws EndOfFileException {
-		
-		if (parserTimeout()){
-			throw new ParseError( ParseError.ParseErrorKind.TIMEOUT );
-    	}
-		
-	    if (i < 1) // can't go backwards
-	        return null;
-	    if (currToken == null)
-	        currToken = fetchToken();
-	    IToken retToken = currToken;
-	    for (; i > 1; --i)
-	    {
-	        retToken = retToken.getNext();
-	        if (retToken == null)
-	            retToken = fetchToken();
-	    }
-	    return retToken;
-	}
-
-	/**
-	 * Look ahead in the token list and return the token type.  
-	 * 
-	 * @param i				How far ahead do you wish to peek?
-	 * @return				The type of that token
-	 * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile
-	 */
-	protected int LT(int i) throws EndOfFileException {
-	    return LA(i).getType();
-	}
-
-	/**
-	 * Consume the next token available, regardless of the type.  
-	 * 
-	 * @return				The token that was consumed and removed from our buffer.  
-	 * @throws EndOfFileException	If there is no token to consume.  
-	 */
-	protected IToken consume() throws EndOfFileException {
-		
-	    if (currToken == null)
-	        currToken = fetchToken();
-	    if (currToken != null)
-	        lastToken = currToken;
-	    currToken = currToken.getNext();
-    	handleNewToken( lastToken );
-	    return lastToken;
-	}
-
-	/**
-	 * Consume the next token available only if the type is as specified.  
-	 * 
-	 * @param type			The type of token that you are expecting.  	
-	 * @return				the token that was consumed and removed from our buffer. 
-	 * @throws BacktrackException	If LT(1) != type 
-	 */
-	protected IToken consume(int type) throws EndOfFileException, BacktrackException {
-	    if (LT(1) == type)
-	        return consume();
-	    else
-	        throw backtrack;
-	}
-
-	/**
-	 * Mark our place in the buffer so that we could return to it should we have to.  
-	 * 
-	 * @return				The current token. 
-	 * @throws EndOfFileException	If there are no more tokens.
-	 */
-	protected IToken mark() throws EndOfFileException {
-	    if (currToken == null)
-	        currToken = fetchToken();
-	    return currToken;
-	}
-
-	/**
-	 * Rollback to a previous point, reseting the queue of tokens.  
-	 * 
-	 * @param mark		The point that we wish to restore to.  
-	 *  
-	 */
-	protected void backup(IToken mark) {
-	    currToken = (SimpleToken)mark;
-	    lastToken = null; // this is not entirely right ... 
 	}
 
 	protected IASTExpression assignmentOperatorExpression(IASTScope scope, IASTExpression.Kind kind, IASTExpression lhs, CompletionKind completionKind) throws EndOfFileException, BacktrackException {
@@ -2840,5 +2878,11 @@ public class ExpressionParser implements IExpressionParser {
 	
 	protected boolean parserTimeout(){
 		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserData#getLastToken()
+	 */
+	public IToken getLastToken() {
+		return lastToken;
 	}
 }

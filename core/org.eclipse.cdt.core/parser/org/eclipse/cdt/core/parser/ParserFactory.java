@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.CompleteParser;
 import org.eclipse.cdt.internal.core.parser.CompletionParser;
@@ -43,11 +44,11 @@ public class ParserFactory {
 	public static IASTFactory createASTFactory( IFilenameProvider provider, ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
-			return new QuickParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.QUICK_PARSE ) );
+			return new QuickParseASTFactory();
 		else if( mode == ParserMode.EXPRESSION_PARSE )
-			return new ExpressionParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.EXPRESSION_PARSE ) );
+			return new ExpressionParseASTFactory( extensionFactory.createASTExtension( mode ));
 		else
-			return new CompleteParseASTFactory( provider, language, mode, extensionFactory.createASTExtensionFactory( ParserMode.COMPLETE_PARSE ) ); 
+			return new CompleteParseASTFactory( provider, language, mode, extensionFactory.createASTExtension( mode )); 
 	}
 	
     public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryError
@@ -57,16 +58,17 @@ public class ParserFactory {
 		IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
 		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );
+		IParserExtension extension = extensionFactory.createParserExtension();
 		if( ourMode == ParserMode.COMPLETE_PARSE)
-			return new CompleteParser( scanner, ourCallback, language, logService );
+			return new CompleteParser( scanner, ourCallback, language, logService, extension);
 		else if( ourMode == ParserMode.STRUCTURAL_PARSE )
-			return new StructuralParser( scanner, ourCallback, language, logService );
+			return new StructuralParser( scanner, ourCallback, language, logService, extension );
 		else if( ourMode == ParserMode.COMPLETION_PARSE )
-			return new CompletionParser( scanner, ourCallback, language, logService );
+			return new CompletionParser( scanner, ourCallback, language, logService, extension );
 		else if (ourMode == ParserMode.SELECTION_PARSE )
-			return new SelectionParser( scanner, ourCallback, language, logService );
+			return new SelectionParser( scanner, ourCallback, language, logService, extension );
 		else
-			return new QuickParser( scanner, ourCallback, language, logService );
+			return new QuickParser( scanner, ourCallback, language, logService, extension );
     }
  	 	
     public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError

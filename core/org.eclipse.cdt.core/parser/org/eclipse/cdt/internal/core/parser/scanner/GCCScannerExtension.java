@@ -11,18 +11,24 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.GCCKeywords;
+import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
@@ -31,6 +37,10 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 public class GCCScannerExtension implements IScannerExtension {
 
 
+	protected static final String POUND_IDENT = "#ident"; //$NON-NLS-1$
+	protected static final String POUND_WARNING = "#warning"; //$NON-NLS-1$
+	protected static final String POUND_INCLUDE_NEXT = "#include_next"; //$NON-NLS-1$
+	
 	private static final String __CONST__ = "__const__"; //$NON-NLS-1$
 	private static final String __CONST = "__const"; //$NON-NLS-1$
 	private static final String __INLINE__ = "__inline__"; //$NON-NLS-1$
@@ -39,14 +49,17 @@ public class GCCScannerExtension implements IScannerExtension {
 	private static final String __RESTRICT = "__restrict"; //$NON-NLS-1$
 	private static final String __RESTRICT__ = "__restrict__"; //$NON-NLS-1$
 	private static final String __ASM__ = "__asm__"; //$NON-NLS-1$
+	private static final String __TYPEOF__ = "__typeof__"; //$NON-NLS-1$
 	
-	private IScannerData scannerData;
+	
 	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
 	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
 	private static final List EMPTY_LIST = new ArrayList();
 
 	private static final List simpleIdentifiersDeclSpec;
 	private static final List simpleIdentifiersAttribute;
+	
+	private ParserLanguage language;
 	
 	static
 	{
@@ -59,7 +72,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
 	 */
-	public String initializeMacroValue(String original) {
+	public String initializeMacroValue(IScannerData scannerData, String original) {
 		if( original == null || original.trim().equals( "") ) //$NON-NLS-1$
 			return "1"; //$NON-NLS-1$
 		return original;
@@ -68,14 +81,9 @@ public class GCCScannerExtension implements IScannerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#setupBuiltInMacros()
 	 */
-	public void setupBuiltInMacros(ParserLanguage language) {
-
-		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
-			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
-		
-		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
-			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
-		
+	public void setupBuiltInMacros(IScannerData scannerData, ParserLanguage language) {
+		this.language = language;
+				
 		if( language == ParserLanguage.CPP )
 			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
 				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1")); //$NON-NLS-1$
@@ -85,50 +93,45 @@ public class GCCScannerExtension implements IScannerExtension {
 		if( scannerData.getScanner().getDefinition( IScanner.__STDC_VERSION__) == null )
 			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L")); //$NON-NLS-1$
 		
-		setupAlternativeKeyword(__CONST__, Keywords.CONST);
-		setupAlternativeKeyword(__CONST, Keywords.CONST);
-		setupAlternativeKeyword(__INLINE__, Keywords.INLINE);
-		setupAlternativeKeyword(__SIGNED__, Keywords.SIGNED);
-		setupAlternativeKeyword(__VOLATILE__, Keywords.VOLATILE);
-		if( language == ParserLanguage.C )
-		{
-			setupAlternativeKeyword( __RESTRICT, Keywords.RESTRICT);
-			setupAlternativeKeyword( __RESTRICT__, Keywords.RESTRICT);
-		}
-		else
-			setupAlternativeKeyword( __ASM__, Keywords.ASM );
+		//TODO - these macros should not be visible as macros in the scanner's definition list
+		//need to make a public/private table i think
+		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
+			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
+		
+		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
+			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
+
+		setupAlternativeKeyword(scannerData, __CONST__, Keywords.CONST);
+		setupAlternativeKeyword(scannerData, __CONST, Keywords.CONST);
+		setupAlternativeKeyword(scannerData, __INLINE__, Keywords.INLINE);
+		setupAlternativeKeyword(scannerData, __SIGNED__, Keywords.SIGNED);
+		setupAlternativeKeyword(scannerData, __VOLATILE__, Keywords.VOLATILE);
+		setupAlternativeKeyword( scannerData, __RESTRICT, Keywords.RESTRICT);
+		setupAlternativeKeyword( scannerData, __RESTRICT__, Keywords.RESTRICT);
+		setupAlternativeKeyword( scannerData, __TYPEOF__, GCCKeywords.TYPEOF );
+		if( language == ParserLanguage.CPP )
+			setupAlternativeKeyword( scannerData, __ASM__, Keywords.ASM );
 		
 	}
 
 	/**
+	 * @param scannerData TODO
 	 * 
 	 */
-	protected void setupAlternativeKeyword(String keyword, String mapping) {
+	protected void setupAlternativeKeyword(IScannerData scannerData, String keyword, String mapping) {
 		// alternate keyword forms
 		// TODO - make this more efficient - update TokenFactory to avoid a context push for these token to token cases
 		if( scannerData.getScanner().getDefinition( keyword ) == null )
 			scannerData.getScanner().addDefinition( keyword, new ObjectMacroDescriptor( __CONST__, mapping )); //$NON-NLS-1$
 	}
 
-	public void setScannerData(IScannerData scannerData) {
-		this.scannerData = scannerData;
-	}
-	
-	public Object clone( ) {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
-
 	private static final Set directives;
 	static
 	{
 		directives = new HashSet();
-		directives.add( "#include_next" ); //$NON-NLS-1$
-		directives.add( "#warning"); //$NON-NLS-1$
-		directives.add( "#ident"); //$NON-NLS-1$
+		directives.add( POUND_INCLUDE_NEXT );
+		directives.add( POUND_WARNING);
+		directives.add( POUND_IDENT); 
 	}
 	
 	/* (non-Javadoc)
@@ -141,8 +144,8 @@ public class GCCScannerExtension implements IScannerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#handlePreprocessorDirective(java.lang.String, java.lang.String)
 	 */
-	public void handlePreprocessorDirective(String directive, String restOfLine) {
-		if( directive.equals("#include_next") ) //$NON-NLS-1$
+	public void handlePreprocessorDirective(IScannerData scannerData, String directive, String restOfLine) {
+		if( directive.equals(POUND_INCLUDE_NEXT) ) 
 		{
 			TraceUtil.outputTrace(scannerData.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null); //$NON-NLS-1$
 			// figure out the name of the current file and its path
@@ -191,7 +194,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			}
 			
 		}
-		else if( directive.equals( "#warning") || directive.equals("#ident")) //$NON-NLS-1$ //$NON-NLS-2$
+		else if( directive.equals( POUND_WARNING) || directive.equals(POUND_IDENT)) 
 			return; // good enough -- the rest of the line has been consumed
 	}
 
@@ -218,6 +221,41 @@ public class GCCScannerExtension implements IScannerExtension {
 		|| ((c >= '0') && (c <= '9'))
 		|| (c == '_') || ( c== '$' ) || 
 		Character.isUnicodeIdentifierPart( (char)c);
+	}
+
+	private static final Map additionalCPPKeywords;
+	private static final Map additionalCKeywords;
+	static
+	{
+		additionalCKeywords = new HashMap();
+		additionalCKeywords.put( GCCKeywords.__ALIGNOF__, new Integer( IGCCToken.t___alignof__ ));
+		additionalCKeywords.put( GCCKeywords.TYPEOF, new Integer( IGCCToken.t_typeof ));
+		additionalCPPKeywords = new HashMap(additionalCKeywords);
+		additionalCPPKeywords.put( Keywords.RESTRICT, new Integer( IToken.t_restrict ));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isExtensionKeyword()
+	 */
+	public boolean isExtensionKeyword(String tokenImage) {
+		if( language == ParserLanguage.CPP )
+			return ( additionalCPPKeywords.get( tokenImage ) != null );
+		else if( language == ParserLanguage.C )
+			return ( additionalCKeywords.get( tokenImage ) != null );
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#createExtensionToken()
+	 */
+	public IToken createExtensionToken(String image, IScannerData scannerData) {
+		Integer get = null;
+		if( language == ParserLanguage.CPP )
+			get = (Integer) additionalCPPKeywords.get( image );
+		else if( language == ParserLanguage.C )
+			get = (Integer) additionalCKeywords.get( image );
+		if( get == null ) return null;
+		return TokenFactory.createToken(get.intValue(),scannerData);
 	}
 
 }

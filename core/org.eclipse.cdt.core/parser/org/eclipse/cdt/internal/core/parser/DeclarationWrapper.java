@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,6 +85,39 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return scope;
     }
+    
+    public DeclarationWrapper( DeclarationWrapper wrapper )
+    {
+		this( wrapper.getScope(), wrapper.getStartingOffset(), wrapper.getStartingLine(), wrapper.getOwnerTemplate() );
+		setAuto( wrapper.isAuto() );
+		setComplex( wrapper.isComplex() );
+		setConst( wrapper.isConst() );
+		setEndingOffsetAndLineNumber( wrapper.getEndOffset(), wrapper.getEndLine() );
+		setExplicit( wrapper.isExplicit() );
+		setExtern(wrapper.isExtern() );
+		setFriend(wrapper.isFriend());
+		setGloballyQualified( wrapper.isGloballyQualified() );
+		setImaginary( wrapper.isImaginary() );
+		setInline( wrapper.isInline());
+		setLong( wrapper.isLong() );
+		setMutable( wrapper.isMutable() );
+		setName( wrapper.getName() );
+		setRegister(wrapper.isRegister() );
+		setRestrict( wrapper.isRestrict() );
+		setShort(wrapper.isShort());
+		setSigned(wrapper.isSigned());
+		setSimpleType(wrapper.getSimpleType());
+		setStatic(wrapper.isStatic());
+		setTypedef(wrapper.isTypedef());
+		setTypenamed(wrapper.isTypeNamed());
+		setTypeName(wrapper.getName());
+		setTypeSpecifier(wrapper.getTypeSpecifier());
+		setUnsigned(wrapper.isUnsigned());
+		setVirtual(wrapper.isVirtual());
+		setVolatile(wrapper.isVolatile());
+
+    }
+    
     /**
      * @param scope
      */
@@ -754,5 +788,19 @@ public class DeclarationWrapper implements IDeclaratorOwner
 	
 	public boolean isGloballyQualified(){
 		return global;
+	}
+	
+	private Hashtable extensionParameters = new Hashtable();
+	/**
+	 * @param key
+	 * @param typeOfExpression
+	 */
+	public void setExtensionParameter(String key, Object value) {
+		extensionParameters.put( key, value );
+	}
+	
+	public Hashtable getExtensionParameters()
+	{
+		return extensionParameters;
 	}
 }

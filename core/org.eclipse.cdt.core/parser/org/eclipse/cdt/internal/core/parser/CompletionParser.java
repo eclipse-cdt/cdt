@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
@@ -46,8 +47,8 @@ public class CompletionParser extends ContextualParser implements IParser {
 	 * @param language
 	 * @param log
 	 */
-	public CompletionParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
-		super(scanner, callback, language, log);
+	public CompletionParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log, IParserExtension extension ) {
+		super(scanner, callback, language, log, extension );
 	}
 	
 	/* (non-Javadoc)

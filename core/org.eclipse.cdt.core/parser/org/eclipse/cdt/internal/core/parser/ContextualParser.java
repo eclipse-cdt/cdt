@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
@@ -45,8 +46,8 @@ public class ContextualParser extends CompleteParser {
 		IScanner scanner,
 		ISourceElementRequestor callback,
 		ParserLanguage language,
-		IParserLogService log) {
-		super(scanner, callback, language, log);
+		IParserLogService log, IParserExtension extension ) {
+		super(scanner, callback, language, log, extension );
 	}
 
 	protected IASTScope scope;

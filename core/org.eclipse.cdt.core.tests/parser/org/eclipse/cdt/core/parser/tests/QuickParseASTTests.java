@@ -2177,4 +2177,14 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue( f.isFriend() );
 	}
 
+    public void testBug39695() throws Exception
+    {
+        parse("int a = __alignof__ (int);");
+    }
+    
+    public void testBug39684() throws Exception
+    {
+        parse("typeof(foo(1)) bar () { return foo(1); }");
+    }
+	
 }

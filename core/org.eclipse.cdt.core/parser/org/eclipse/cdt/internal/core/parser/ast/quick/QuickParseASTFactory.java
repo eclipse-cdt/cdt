@@ -10,12 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -58,8 +58,6 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
-import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.expression.ASTExpression;
 
@@ -71,12 +69,11 @@ import org.eclipse.cdt.internal.core.parser.ast.expression.ASTExpression;
 public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory {
 
 	private static final boolean CREATE_EXCESS_CONSTRUCTS = true;
-	private final IASTExtensionFactory extensionFactory;
 
-	public QuickParseASTFactory( IASTExtensionFactory extensionFactory )
+
+	public QuickParseASTFactory( )
 	{
 		super();
-		this.extensionFactory = extensionFactory;
 	}
 	
 	/* (non-Javadoc)
@@ -162,20 +159,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
 		if( CREATE_EXCESS_CONSTRUCTS )
-		{
-			try {
-				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, extensionFactory.createExpressionExtension() ); //$NON-NLS-1$
-			} catch (ASTNotImplementedException e) {
-				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, new IASTExpressionExtension() { //$NON-NLS-1$
-	
-					public void setExpression(IASTExpression expression) {
-					}
-	
-					public int evaluateExpression() throws ASTExpressionEvaluationException {
-						throw new ASTExpressionEvaluationException();
-					} } );
-			}
-		}
+			return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ); //$NON-NLS-1$
 		return null;
 	}
 
@@ -208,7 +192,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createSimpleTypeSpecifier(org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType, org.eclipse.cdt.core.parser.ITokenDuple)
      */
-    public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(IASTScope scope, Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal)
+    public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(IASTScope scope, Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal, Hashtable extensionParms)
     {
         return new ASTSimpleTypeSpecifier( kind, typeName, isShort, isLong, isSigned, isUnsigned, isTypename, isComplex, isImaginary);
     }

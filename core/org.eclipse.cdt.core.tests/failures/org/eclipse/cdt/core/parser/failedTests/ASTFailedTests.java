@@ -74,10 +74,7 @@ public class ASTFailedTests extends BaseASTTest
             "The expected error did not occur.",
             typedef.getName().equals( "name" ) );
     }
-    public void testBug39684() throws Exception
-    {
-        assertCodeFailsParse("typeof(foo(1)) bar () { return foo(1); }");
-    }
+
     public void testBug39686() throws Exception
     {
         Writer code = new StringWriter();
@@ -115,10 +112,7 @@ public class ASTFailedTests extends BaseASTTest
         assertCodeFailsParse(code.toString());
     }
 
-    public void testBug39695() throws Exception
-    {
-        assertCodeFailsParse("int a = __alignof__ (int);");
-    }
+
     public void testBug39695A() throws Exception
     {
         assertCodeFailsParse("int foo asm (\"myfoo\") = 2;");

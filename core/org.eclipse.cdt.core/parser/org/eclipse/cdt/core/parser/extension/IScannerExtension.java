@@ -10,20 +10,23 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.extension;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 
 /**
  * @author jcamelon
  */
-public interface IScannerExtension extends Cloneable {
-	
-	public Object clone( );
+public interface IScannerExtension  {
 
-	public String initializeMacroValue( String original );
-	public void setupBuiltInMacros(ParserLanguage language);
+	public String initializeMacroValue( IScannerData scannerData, String original );
+	public void setupBuiltInMacros(IScannerData scannerData, ParserLanguage language);
 
 	public boolean canHandlePreprocessorDirective( String directive );
-	public void handlePreprocessorDirective( String directive, String restOfLine );
+	public void handlePreprocessorDirective( IScannerData scannerData, String directive, String restOfLine );
+	
+	public boolean isExtensionKeyword(String tokenImage);
+	public IToken  createExtensionToken(String image, IScannerData scannerData);
 
 	/**
 	 * @return

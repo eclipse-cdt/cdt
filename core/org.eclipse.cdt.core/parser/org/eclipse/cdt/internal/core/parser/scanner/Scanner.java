@@ -116,8 +116,6 @@ public class Scanner implements IScanner {
     	scannerData = new ScannerData( this, log, requestor, mode, filename, reader, language, new ScannerInfo( definitions, incs ), new ContextStack( this, log ), null );
     	
 		scannerExtension = extension;
-		if( scannerExtension instanceof GCCScannerExtension )
-			((GCCScannerExtension)scannerExtension).setScannerData( scannerData );	 
 		
 		scannerData.setDefinitions( definitions );
 		scannerData.setIncludePathNames( includePaths );
@@ -129,9 +127,6 @@ public class Scanner implements IScanner {
     	scannerData = new ScannerData( this, log, requestor, parserMode, filename, reader, language, info, new ContextStack( this, log ), workingCopies );
 
 		scannerExtension = extension;
-		if( scannerExtension instanceof GCCScannerExtension )
-			((GCCScannerExtension)scannerExtension).setScannerData( scannerData );	 
-		
 		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
 		
 		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
@@ -148,7 +143,7 @@ public class Scanner implements IScanner {
 				Object value = m.get( symbolName );
 				if( value instanceof String )
 				{	
-					addDefinition( symbolName, scannerExtension.initializeMacroValue((String) value));
+					addDefinition( symbolName, scannerExtension.initializeMacroValue(scannerData, (String) value));
 					TraceUtil.outputTrace(log,  "\t\tNAME = ", symbolName, " VALUE = ", value.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
 					++numberOfSymbolsLogged;
 					
@@ -182,7 +177,7 @@ public class Scanner implements IScanner {
 	 */
 	protected void setupBuiltInMacros() {
 		
-		scannerExtension.setupBuiltInMacros(scannerData.getLanguage());
+		scannerExtension.setupBuiltInMacros(scannerData, scannerData.getLanguage());
 		if( getDefinition(__STDC__) == null )
 			addDefinition( __STDC__, new ObjectMacroDescriptor( __STDC__,  "1") ); //$NON-NLS-1$
 		
@@ -469,8 +464,7 @@ public class Scanner implements IScanner {
 	}
 
 	protected IToken newToken(int t, String i) {
-		IToken theToken = TokenFactory.createToken( t, i, scannerData );
-		setCurrentToken(theToken);
+		setCurrentToken(TokenFactory.createToken( t, i, scannerData ));
 		return currentToken;
 	}
 
@@ -1183,7 +1177,7 @@ public class Scanner implements IScanner {
 		Object directive = ppDirectives.get(token);
 		if (directive == null) {
 			if( scannerExtension.canHandlePreprocessorDirective( token ) )
-				scannerExtension.handlePreprocessorDirective( token, getRestOfPreprocessorLine() );
+				scannerExtension.handlePreprocessorDirective( scannerData, token, getRestOfPreprocessorLine() );
 			else
 			{
 				if( passOnToClient )
@@ -1540,9 +1534,22 @@ public class Scanner implements IScanner {
 		if (tokenTypeObject != null)
 			return newConstantToken(((Integer) tokenTypeObject).intValue());
 		else
+		{
+			if( scannerExtension.isExtensionKeyword( ident ) )
+				return newExtensionToken( scannerExtension.createExtensionToken(ident, scannerData ));
 			return newToken(IToken.tIDENTIFIER, ident);
+		}
 	}
 	
+	/**
+	 * @param token
+	 * @return
+	 */
+	protected IToken newExtensionToken(IToken token) {
+		setCurrentToken( token );
+		return currentToken;
+	}
+
 	/**
 	 * @param c
 	 * @return
@@ -2840,7 +2847,7 @@ public class Scanner implements IScanner {
 				scannerData.getParserMode(), 
 				scannerData.getLanguage(), 
 				NULL_LOG_SERVICE, 
-				(IScannerExtension)scannerExtension.clone() );
+				scannerExtension );
         
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();

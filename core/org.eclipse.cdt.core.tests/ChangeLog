@@ -1,3 +1,8 @@
+2004-04-20 John Camelon
+	Moved testBug39684() & testBug39695() from ASTFailedTests to QuickParseASTTests.
+	Updated CompleteParseASTTest::testBug39697().
+	Added CompleteParseASTTest::testBug39684() & CompleteParseASTTest::testBug39695().
+
 2004-04-20 David Inglis
 	The CoreModel interfaces throw much more exception, we need to log them for errors.
 

@@ -42,6 +42,8 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
+import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 
@@ -1532,25 +1534,27 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable signedInt = (IASTVariable) i.next();
 		assertTrue( ((IASTSimpleTypeSpecifier) signedInt.getAbstractDeclaration().getTypeSpecifier()).isSigned() );
 		assertFalse( i.hasNext() );
-		writer = new StringWriter();
-		writer.write( "int * __restrict__ resPointer1;\n");
-		writer.write( "int * __restrict resPointer2;\n");
-		i = parse( writer.toString(), true, ParserLanguage.C ).getDeclarations();
-		int count = 0;
-		while( i.hasNext() )
+		for( int j = 0; j < 2; ++j )
 		{
-			++count;
-			IASTVariable resPointer = (IASTVariable) i.next();
-			Iterator pOps = resPointer.getAbstractDeclaration().getPointerOperators();
-			assertTrue( pOps.hasNext() );
-			ASTPointerOperator op = (ASTPointerOperator) pOps.next();
-			assertFalse( pOps.hasNext() );
-			assertEquals( op, ASTPointerOperator.RESTRICT_POINTER );
-		}
-
-		assertEquals( count, 2 );
-	}
+			writer = new StringWriter();
+			writer.write( "int * __restrict__ resPointer1;\n");
+			writer.write( "int * __restrict resPointer2;\n");
+			i = parse( writer.toString(), true, ((j == 0 )? ParserLanguage.C : ParserLanguage.CPP) ).getDeclarations();
+			int count = 0;
+			while( i.hasNext() )
+			{
+				++count;
+				IASTVariable resPointer = (IASTVariable) i.next();
+				Iterator pOps = resPointer.getAbstractDeclaration().getPointerOperators();
+				assertTrue( pOps.hasNext() );
+				ASTPointerOperator op = (ASTPointerOperator) pOps.next();
+				assertFalse( pOps.hasNext() );
+				assertEquals( op, ASTPointerOperator.RESTRICT_POINTER );
+			}
 	
+			assertEquals( count, 2 );
+		}
+	}
 	public void testBug59149() throws Exception
 	{
 		Writer writer = new StringWriter();
@@ -1560,5 +1564,20 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTClassSpecifier B = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-	}
+	}	
+    public void testBug39695() throws Exception
+    {
+        Iterator i = parse("int a = __alignof__ (int);").getDeclarations();
+        IASTVariable a = (IASTVariable) i.next();
+        assertFalse( i.hasNext() );
+        assertEquals( a.getInitializerClause().getAssigmentExpression().getExpressionKind(), IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID );
+    }
+    
+    public void testBug39684() throws Exception
+    {
+    	IASTFunction bar = (IASTFunction) parse("typeof(foo(1)) bar () { return foo(1); }").getDeclarations().next();
+    	
+    	IASTSimpleTypeSpecifier simpleTypeSpec = ((IASTSimpleTypeSpecifier)bar.getReturnType().getTypeSpecifier());
+		assertEquals( simpleTypeSpec.getType(), IASTGCCSimpleTypeSpecifier.Type.TYPEOF );
+    }
 }

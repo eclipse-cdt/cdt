@@ -15,6 +15,15 @@ import org.eclipse.cdt.internal.core.newparser.ScannerException;
  */
 public class BranchTrackerTest extends TestCase {
 	
+	public BranchTrackerTest( String ignoreMe )
+	{
+		super( ignoreMe );
+	}
+	
+	public static void assertFalse( boolean input )
+	{
+		assertTrue( input == false ); 
+	}
 	
 	public void testIgnore()
 	{

@@ -1,4 +1,19 @@
 2003-10-01 Sean Evoy
+	Final fix for bugs 44020.
+	The problem lay with the way that new projects were being created when the 
+	root configuration of the project had tool references overriding options. 
+	What the new configuration should have been doing is making a personal copy 
+	of the tool reference and its options. Instead, they were all sharing the 
+	parents. Seems simple enough now that I found it.
+	 
+	OptionReference provides a method to retreive its option (so new 
+	OptionReferences can be cloned).
+	* src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java
+	
+	Configuration now behaves correctly when it is created from another configuration.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java
+
+2003-10-01 Sean Evoy
 	Fix for bugs 43490 (trivial), 44020, and 43980.
 	Added a new field to the schema for a tool. The attribute manages a list of 
 	project natures that the tool should be filtered against in the build model 

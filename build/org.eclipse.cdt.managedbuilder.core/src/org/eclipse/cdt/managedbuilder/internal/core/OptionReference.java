@@ -319,6 +319,10 @@ public class OptionReference implements IOption {
 			   (String[])builtIns.toArray(new String[builtIns.size()]);
 	}
 
+	public IOption getOption() {
+		return option;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
 	 */

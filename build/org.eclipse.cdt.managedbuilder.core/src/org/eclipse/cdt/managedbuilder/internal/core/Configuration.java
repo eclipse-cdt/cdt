@@ -66,8 +66,54 @@ public class Configuration extends BuildObject implements IConfiguration {
 		this.target = target;
 		this.parent = parent;
 		
+		// Check that the tool and the project match
+		IProject project = (IProject) target.getOwner();
+		
 		// Get the tool references from the parent
-		getLocalToolReferences().addAll(((Configuration)parent).getLocalToolReferences());
+		List parentToolRefs = ((Configuration)parent).getLocalToolReferences();
+		Iterator iter = parentToolRefs.listIterator();
+		while (iter.hasNext()) {
+			ToolReference toolRef = (ToolReference)iter.next();
+
+			// Make a new ToolReference based on the tool in the ref
+			ToolReference newRef = new ToolReference(this, toolRef.getTool());
+			List optRefs = toolRef.getLocalOptionRefs();
+			Iterator optIter = optRefs.listIterator();
+			while (optIter.hasNext()) {
+				OptionReference optRef = (OptionReference)optIter.next();
+				IOption opt = optRef.getOption();
+				try {
+					switch (opt.getValueType()) {
+						case IOption.BOOLEAN:
+							new OptionReference(newRef, opt).setValue(optRef.getBooleanValue());
+							break;
+						case IOption.STRING:
+							new OptionReference(newRef, opt).setValue(optRef.getStringValue());
+							break;
+						case IOption.ENUMERATED:
+							new OptionReference(newRef, opt).setValue(optRef.getSelectedEnum());
+							break;
+						case IOption.STRING_LIST :
+							new OptionReference(newRef, opt).setValue(optRef.getStringListValue());
+							break;
+						case IOption.INCLUDE_PATH :
+							new OptionReference(newRef, opt).setValue(optRef.getIncludePaths());
+							break;
+						case IOption.PREPROCESSOR_SYMBOLS :
+							new OptionReference(newRef, opt).setValue(optRef.getDefinedSymbols());
+							break;
+						case IOption.LIBRARIES :
+						new OptionReference(newRef, opt).setValue(optRef.getLibraries());
+							break;
+						case IOption.OBJECTS :
+						new OptionReference(newRef, opt).setValue(optRef.getUserObjects());
+							break;
+					}
+				} catch (BuildException e) {
+					continue;
+				}
+			}
+		}
 		
 		target.addConfiguration(this);
 	}

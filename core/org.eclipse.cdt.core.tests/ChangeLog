@@ -1,3 +1,9 @@
+2004-02-23 Alain Magloire
+
+	Adjust the test for IPathEntry deltas.
+
+	* model/org/eclipse/cdt/core/model/test/CPathEntryTest.java
+
 2004-02-21 Alain Magloire
 	Refactor of the ICPatEntry to IPathEntry
 

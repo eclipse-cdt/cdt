@@ -312,7 +312,7 @@ public class CoreModel {
 	 * </p>
 	 * 
 	 * @param path
-	 *            the absolute workspace-relative path of a source folder
+	 *            the project-relative path of a source folder
 	 * @return a new source entry with not exclusion patterns
 	 *  
 	 */
@@ -335,7 +335,7 @@ public class CoreModel {
 	 * </p>
 	 * 
 	 * @param path
-	 *            the absolute workspace-relative path of a source folder
+	 *            the project-relative path of a source folder
 	 * @param exclusionPatterns
 	 *            the possibly empty list of exclusion patterns represented as
 	 *            relative paths
@@ -361,7 +361,7 @@ public class CoreModel {
 	 * </p>
 	 * 
 	 * @param path
-	 *            the absolute workspace-relative path of a source folder
+	 *            the project-relative path of a source folder
 	 * @param exclusionPatterns
 	 *            the possibly empty list of exclusion patterns represented as
 	 *            relative paths
@@ -406,7 +406,7 @@ public class CoreModel {
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
 	 * @param path
-	 *            the affected worksapce-relative resource path
+	 *            the affected project-relative resource path
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @return IIncludeEntry
@@ -418,8 +418,20 @@ public class CoreModel {
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
+	 * @param includePath
+	 *            the absolute path of the include
+	 * @return IIncludeEntry
+	 */
+	public static IIncludeEntry newIncludeEntry(IPath includePath) {
+		return newIncludeEntry(null, includePath, false);
+	}
+
+	/**
+	/**
+	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
+	 * 
 	 * @param path
-	 *            the affected workspace-relative resource path 
+	 *            the affected project-relative resource path 
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
@@ -435,7 +447,7 @@ public class CoreModel {
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
 	 * @param path
-	 *            the affected workspace-relative resource path
+	 *            the affected project-relative resource path
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude

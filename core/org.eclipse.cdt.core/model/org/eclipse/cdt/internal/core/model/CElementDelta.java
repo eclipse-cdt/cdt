@@ -670,16 +670,40 @@ public class CElementDelta implements ICElementDelta {
 			buffer.append("MODIFIERS CHANGED"); //$NON-NLS-1$
 			prev = true;
 		}
-		if ((changeFlags & ICElementDelta.F_ADDED_TO_PATHENTRY) != 0) {
+		if ((changeFlags & ICElementDelta.F_ADDED_PATHENTRY_INCLUDE) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
-			buffer.append("ADDED TO PATHENTRY"); //$NON-NLS-1$
+			buffer.append("ADDED TO PATHENTRY INCLUDE"); //$NON-NLS-1$
 			prev = true;
 		}
-		if ((changeFlags & ICElementDelta.F_REMOVED_FROM_PATHENTRY) != 0) {
+		if ((changeFlags & ICElementDelta.F_ADDED_PATHENTRY_MACRO) != 0) {
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
-			buffer.append("REMOVED FROM PATHENTRY"); //$NON-NLS-1$
+			buffer.append("ADDED TO PATHENTRY MACRO"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((changeFlags & ICElementDelta.F_ADDED_PATHENTRY_LIBRARY) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("ADDED TO PATHENTRY LIBRARY"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((changeFlags & ICElementDelta.F_REMOVED_PATHENTRY_INCLUDE) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("REMOVED FROM PATHENTRY INCLUDE"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((changeFlags & ICElementDelta.F_REMOVED_PATHENTRY_MACRO) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("REMOVED FROM PATHENTRY MACRO"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((changeFlags & ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("REMOVED FROM PATHENTRY LIBRARY"); //$NON-NLS-1$
 			prev = true;
 		}
 		

@@ -425,7 +425,7 @@ public class PathEntryManager {
 				// Was it deleted.
 				if (!found) {
 					ICElementDelta delta =
-						makePathEntryDelta(cproject, oldEntries[i], ICElementDelta.F_REMOVED_FROM_PATHENTRY);
+						makePathEntryDelta(cproject, oldEntries[i], true);
 					if (delta != null) {
 						list.add(delta);
 					}
@@ -447,7 +447,7 @@ public class PathEntryManager {
 				// is it new?
 				if (!found) {
 					ICElementDelta delta =
-						makePathEntryDelta(cproject, newEntries[i], ICElementDelta.F_ADDED_TO_PATHENTRY);
+						makePathEntryDelta(cproject, newEntries[i], false);
 					if (delta != null) {
 						list.add(delta);
 					}
@@ -462,32 +462,39 @@ public class PathEntryManager {
 	/**
 	 * return a delta, with the specified change flag.
 	 */
-	protected ICElementDelta makePathEntryDelta(ICProject cproject, IPathEntry entry, int flag) {
+	protected ICElementDelta makePathEntryDelta(ICProject cproject, IPathEntry entry, boolean removed) {
 		int kind = entry.getEntryKind();
 		ICElement celement = null;
+		int flag = 0;
 		if (kind == IPathEntry.CDT_SOURCE) {
 			ISourceEntry source = (ISourceEntry) entry;
 			IPath path = source.getSourcePath();
 			celement = CoreModel.getDefault().create(path);
+			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_SOURCE : ICElementDelta.F_ADDED_PATHENTRY_SOURCE; 
 		} else if (kind == IPathEntry.CDT_LIBRARY) {
 			//ILibraryEntry lib = (ILibraryEntry) entry;
 			//IPath path = lib.getLibraryPath();
 			celement = cproject;
+			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY : ICElementDelta.F_ADDED_PATHENTRY_LIBRARY; 
 		} else if (kind == IPathEntry.CDT_PROJECT) {
 			//IProjectEntry pentry = (IProjectEntry) entry;
 			//IPath path = pentry.getProjectPath();
 			celement = cproject;
+			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_PROJECT : ICElementDelta.F_ADDED_PATHENTRY_PROJECT; 
 		} else if (kind == IPathEntry.CDT_INCLUDE) {
 			IIncludeEntry include = (IIncludeEntry) entry;
 			IPath path = include.getResourcePath();
 			celement = CoreModel.getDefault().create(path);
+			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_INCLUDE : ICElementDelta.F_ADDED_PATHENTRY_INCLUDE; 
 		} else if (kind == IPathEntry.CDT_MACRO) {
 			IMacroEntry macro = (IMacroEntry) entry;
 			IPath path = macro.getResourcePath();
 			celement = CoreModel.getDefault().create(path);
+			flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_MACRO : ICElementDelta.F_ADDED_PATHENTRY_MACRO; 
 		} else if (kind == IPathEntry.CDT_CONTAINER) {
-			IContainerEntry container = (IContainerEntry) entry;
-			celement = cproject;
+			//IContainerEntry container = (IContainerEntry) entry;
+			//celement = cproject;
+			// SHOULD NOT BE HERE Container are resolved.
 		}
 		if (celement == null) {
 			celement = cproject;

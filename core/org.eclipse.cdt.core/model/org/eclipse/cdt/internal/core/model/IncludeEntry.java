@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 public class IncludeEntry extends APathEntry implements IIncludeEntry {
 
@@ -24,8 +23,8 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 
 	public IncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude, boolean isRecursive,
 			IPath[] exclusionPatterns) {
-		super(IIncludeEntry.CDT_INCLUDE, isRecursive, exclusionPatterns, false);
-		this.resourcePath = resourcePath == null ? new Path("/") : resourcePath;
+		super(IIncludeEntry.CDT_INCLUDE, isRecursive, exclusionPatterns, resourcePath == null);
+		this.resourcePath = resourcePath;
 		this.includePath = includePath;
 		this.isSystemInclude = isSystemInclude;
 	}

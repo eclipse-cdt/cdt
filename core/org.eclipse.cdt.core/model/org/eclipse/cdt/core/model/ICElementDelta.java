@@ -87,48 +87,88 @@ public interface ICElementDelta {
 	 * Change flag indicating that the underlying <code>IProject</code> has been
 	 * opened.
 	 */
-	public int F_OPENED = 0x0200;
+	public int F_OPENED = 0x0040;
 
 	/**
 	 * Change flag indicating that the underlying <code>IProject</code> has been
 	 * closed.
 	 */
-	public int F_CLOSED = 0x0400;
+	public int F_CLOSED = 0x0080;
 
 	/**
-	 * Change in the binary Parser.
+	 * A pathEntry Source changed for this resource.
 	 */
-	public int F_BINARY_PARSER_CHANGED = 0x0800;
+	public int F_ADDED_PATHENTRY_SOURCE =   0x0100;
 
 	/**
-	 * A cpathEntry was added for this resource.
+	 * A pathEntry Macro was added for this resource.
 	 */
-	public int F_ADDED_TO_PATHENTRY = 0x0040;
+	public int F_ADDED_PATHENTRY_MACRO =    0x0200;
 
 	/**
-	 * A cpathEtnry was remove for this resource.
+	 * A pathEntry Include was added for this resourc.
 	 */
-	public int F_REMOVED_FROM_PATHENTRY = 0x0080;
+	public int F_ADDED_PATHENTRY_INCLUDE =  0x0400;
 
-	//public int F_CLASSPATH_REORDER = 0x0100;
-	//public int F_SUPER_TYPES = 0x0800;
+	/**
+	 * A pathEntry Library was added for this resourc.
+	 */
+	public int F_ADDED_PATHENTRY_LIBRARY =  0x0800;
+
+	/**
+	 * A pathEntry Project was added to the project.
+	 */
+	public int F_ADDED_PATHENTRY_PROJECT =  0x01000;
+
+	/**
+	 * A pathEtnry Source was remove for this resource.
+	 */
+	public int F_REMOVED_PATHENTRY_SOURCE = 0x02000;
+
+	/**
+	 * A pathEtnry Macro was remove for this resource.
+	 */
+	public int F_REMOVED_PATHENTRY_MACRO = 0x04000;
+
+	/**
+	 * A pathEtnry Include was remove for this resource.
+	 */
+	public int F_REMOVED_PATHENTRY_INCLUDE = 0x08000;
+
+	/**
+	 * A pathEtnry Library was remove for this resource.
+	 */
+	public int F_REMOVED_PATHENTRY_LIBRARY = 0x010000;
+
+	/**
+	 * A pathEtnry Project was remove for this resource.
+	 */
+	public int F_REMOVED_PATHENTRY_PROJECT = 0x020000;
+
+	//public int F_PATHENTRY_REORDER = 0x040000;
+	//public int F_SUPER_TYPES = 0x080000;
 
 	/**
 	 * Change flag indicating that a source jar has been attached to a binary jar.
 	 */
-	public int F_SOURCEATTACHED = 0x1000;   
+	public int F_SOURCEATTACHED = 0x100000;   
 
 	/**
 	 * Change flag indicating that a source jar has been detached to a binary jar.
 	 */
-	public int F_SOURCEDETACHED = 0x2000;
+	public int F_SOURCEDETACHED = 0x200000;
 
 	/**
 	 * Change flag indicating that this is a fine-grained delta, i.e. an analysis down
 	 * to the members level was done to determine if there were structural changes to
 	 * members.
 	 */
-	public int F_FINE_GRAINED = 0x4000;
+	public int F_FINE_GRAINED = 0x400000;
+
+	/**
+	 * Change in the binary Parser.
+	 */
+	public int F_BINARY_PARSER_CHANGED = 0x800000;
 
 	/**
 	 * Returns deltas for the children that have been added.

@@ -54,7 +54,7 @@ public class CPathEntryTest extends TestCase {
 			int flags = delta.getFlags();
 			int kind = delta.getKind();
 			if (kind == ICElementDelta.CHANGED ) {
-				if ((flags & ICElementDelta.F_ADDED_TO_PATHENTRY) != 0) {
+				if ((flags & ICElementDelta.F_ADDED_PATHENTRY_INCLUDE) != 0) {
 					count++;
 				}
 			}
@@ -141,8 +141,8 @@ public class CPathEntryTest extends TestCase {
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
 		assertTrue("No cpathentries", entries.length == 0);
 		entries = new IPathEntry[3];
-		entries[0] = CoreModel.newIncludeEntry(new Path("/cpathtest"), new Path("/usr/include"), true);
-		entries[1] = CoreModel.newIncludeEntry(new Path("/cpaththest/foo.c"), new Path("/usr/include"), true);
+		entries[0] = CoreModel.newIncludeEntry(new Path(""), new Path("/usr/include"), true);
+		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), new Path("/usr/include"), true);
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
 		entries = testProject.getResolvedPathEntries();
@@ -163,7 +163,7 @@ public class CPathEntryTest extends TestCase {
 		}
 		CProjectHelper.addSourceContainer(testProject, "foo");
 		IPathEntry[] entries = new IPathEntry[3];
-		entries[0] = CoreModel.newIncludeEntry(new Path("/cpathtest"), new Path("/usr/include"), true);
+		entries[0] = CoreModel.newIncludeEntry(new Path(""), new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("foo"), new Path("/usr/include"), true);
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
 		CElementListener listener = new CElementListener();
@@ -190,8 +190,8 @@ public class CPathEntryTest extends TestCase {
 
 			public IPathEntry[] getPathEntries() {
 				IPathEntry[] entries = new IPathEntry[3];
-				entries[0] = CoreModel.newIncludeEntry(new Path("/cpathtest"), new Path("/usr/include"), true);
-				entries[1] = CoreModel.newIncludeEntry(new Path("/cpaththest/foo.c"), new Path("/usr/include"), true);
+				entries[0] = CoreModel.newIncludeEntry(new Path(""), new Path("/usr/include"), true);
+				entries[1] = CoreModel.newIncludeEntry(new Path("foo.c"), new Path("/usr/include"), true);
 				entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
 				return entries;
 			}

@@ -1,6 +1,23 @@
+2002-10-21 Judy N. Green
+	
+	Added a selection changed listener to the textViewer 
+	managed by the C Build View (BuildConsoleView.java).
+	This updates the state read by the tool bar menu items 
+	and now enables the copy action when there is a selection 
+	made in the C-Build console.
+
+	Ctrl + A, now selects all text in the C-Build View
+	Ctrl + C, now copies the selection to the clipboard
+	
+	* src/../internal/ui/BuildConsoleAction.java:
+		- cleaned up the logic and removed commented 
+		  out code in the update() method
+	* src/../internal/ui/BuildConsoleView.java:
+		- added a SelectionChangedListener to the contained textViewer
+
 2002-10-17 Alain Magloire
 
-	Patch form Alex Chapiro.
+	Patch from Alex Chapiro.
 
 	* src/.../utils/ui/controls/ControlFactory.java:
 	- createCombo methods created CCombo objects; all this methods

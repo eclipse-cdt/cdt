@@ -6,8 +6,8 @@
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CProjectSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
@@ -51,24 +51,24 @@ public class SourceLookupBlock
 	{
 		public String getText( Object element )
 		{
-			if ( element instanceof CProjectSourceLocation )
+			if ( element instanceof IProjectSourceLocation )
 			{
-				return ((CProjectSourceLocation)element).getProject().getName();
+				return ((IProjectSourceLocation)element).getProject().getName();
 			}
-			if ( element instanceof CDirectorySourceLocation )
+			if ( element instanceof IDirectorySourceLocation )
 			{
-				return ((CDirectorySourceLocation)element).getDirectory().toOSString();
+				return ((IDirectorySourceLocation)element).getDirectory().toOSString();
 			}
 			return null;
 		}
 
 		public Image getImage( Object element )
 		{
-			if ( element instanceof CProjectSourceLocation )
+			if ( element instanceof IProjectSourceLocation )
 			{
 				return CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT );
 			}
-			if ( element instanceof CDirectorySourceLocation )
+			if ( element instanceof IDirectorySourceLocation )
 			{
 				return CDebugImages.get( CDebugImages.IMG_OBJS_FOLDER );
 			}
@@ -88,23 +88,20 @@ public class SourceLookupBlock
 		String[] buttonLabels = new String[] 
 		{
 			/* 0 */ "Add...",
-			/* 1 */ "Edit...",
-			/* 2 */ null,
-			/* 3 */ "Up",
-			/* 4 */ "Down",
-			/* 5 */ null,
-			/* 6 */ "Remove",
+			/* 1 */ null,
+			/* 2 */ "Up",
+			/* 3 */ "Down",
+			/* 4 */ null,
+			/* 5 */ "Remove",
 		};
 
 		SourceLookupAdapter adapter = new SourceLookupAdapter();
 
 		fSourceListField = new ListDialogField( adapter, buttonLabels, new SourceLookupLabelProvider() );
 		fSourceListField.setLabelText( "Source Locations" );
-		fSourceListField.setUpButtonIndex( 3 );
-		fSourceListField.setDownButtonIndex( 4 );
-		fSourceListField.setRemoveButtonIndex( 6 );
-
-		fSourceListField.enableButton( 1, false );
+		fSourceListField.setUpButtonIndex( 2 );
+		fSourceListField.setDownButtonIndex( 3 );
+		fSourceListField.setRemoveButtonIndex( 5 );
 	}
 
 	public void createControl( Composite parent )
@@ -155,15 +152,18 @@ public class SourceLookupBlock
 	{
 	}
 	
-	protected ICSourceLocation[] getSourceLocations()
+	public ICSourceLocation[] getSourceLocations()
 	{
 		return (ICSourceLocation[])fSourceListField.getElements().toArray( new ICSourceLocation[fSourceListField.getElements().size()] );
 	}
 	
 	private void addSourceLocation()
 	{
-		AddSourceLocationWizard wizard = new AddSourceLocationWizard();
+		AddSourceLocationWizard wizard = new AddSourceLocationWizard( getSourceLocations() );
 		WizardDialog dialog = new WizardDialog( fControl.getShell(), wizard );
-		dialog.open();
+		if ( dialog.open() == dialog.OK )
+		{
+			fSourceListField.addElement( wizard.getSourceLocation() );
+		}
 	}
 }

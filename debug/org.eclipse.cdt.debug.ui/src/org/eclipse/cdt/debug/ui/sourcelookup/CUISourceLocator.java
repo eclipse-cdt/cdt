@@ -10,15 +10,18 @@ import java.text.MessageFormat;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
+import org.eclipse.cdt.debug.internal.ui.wizards.AddDirectorySourceLocationWizard;
+import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -244,19 +247,22 @@ public class CUISourceLocator implements IAdaptable
 
 	protected void attachSourceLocation( String fileName )
 	{
-		AttachSourceLocationDialog dialog = new AttachSourceLocationDialog( CDebugUIPlugin.getActiveWorkbenchShell() );
-		Path path = new Path( fileName );
+		IPath path = new Path( fileName );
+		INewSourceLocationWizard wizard = null;
 		if ( path.isAbsolute() )
 		{
-			dialog.setInitialPath( path.removeLastSegments( 1 ) );
+			path = path.removeLastSegments( 1 );
+			wizard = new AddDirectorySourceLocationWizard( path );
 		}
-		if ( dialog.open() == Dialog.OK )
+		else
 		{
-			if ( dialog.getLocation() != null )
-			{
-				fSourceLocator.addSourceLocation( new CDirectorySourceLocation( dialog.getLocation(), dialog.getAssociation() ) );
-				fNewLocationAttached = true;
-			}
+			wizard = new AddSourceLocationWizard( fSourceLocator.getSourceLocations() );
+		}
+		WizardDialog dialog = new WizardDialog( CDebugUIPlugin.getActiveWorkbenchShell(), wizard );
+		if ( dialog.open() == dialog.OK )
+		{
+			fSourceLocator.addSourceLocation( wizard.getSourceLocation() );
+			fNewLocationAttached = true;
 		}
 	}
 

@@ -72,6 +72,13 @@ public class CDebugImages
 	public static final String IMG_LCL_MEMORY_CLEAR = NAME_PREFIX + "memory_clear.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_SHOW_ASCII = NAME_PREFIX + "show_ascii.gif";	//$NON-NLS-1$
 
+	public static final String IMG_TOOLS_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "adddirsource_wiz.gif";	//$NON-NLS-1$
+	public static final String IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "addprjsource_wiz.gif";	//$NON-NLS-1$
+
+	public static final String IMG_WIZBAN_ADD_SOURCE_LOCATION = NAME_PREFIX + "add_source_location_wiz.gif";	//$NON-NLS-1$
+	public static final String IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "add_dir_source_location_wiz.gif";	//$NON-NLS-1$
+	public static final String IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "add_prj_source_location_wiz.gif";	//$NON-NLS-1$
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -101,6 +108,11 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_DISASSEMBLY = createManaged( T_OBJ, IMG_OBJS_DISASSEMBLY );
 	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged( T_OBJ, IMG_OBJS_PROJECT );
 	public static final ImageDescriptor DESC_OBJS_FOLDER = createManaged( T_OBJ, IMG_OBJS_FOLDER );
+	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE_LOCATION ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOLS_ADD_PRJ_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOLS_ADD_DIR_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$
 
 	/**
 	 * Returns the image managed under the given key in this registry.

@@ -5,47 +5,28 @@
  */
 package org.eclipse.cdt.debug.internal.ui.wizards;
 
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.ui.sourcelookup.INewSourceLocationWizard;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardSelectionPage;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * Enter type comment.
  * 
  * @since: Dec 20, 2002
  */
-public class AddSourceLocationWizard extends Wizard
+public class AddSourceLocationWizard extends Wizard implements INewSourceLocationWizard
 {
-	/**
-	 * Enter type comment.
-	 * 
-	 * @since: Dec 20, 2002
-	 */
-	public class SourceLocationSelectionPage extends WizardSelectionPage
-	{
+	private ICSourceLocation[] fLocations = null;
 
-		/**
-		 * Constructor for SourceLocationSelectionPage.
-		 * @param pageName
-		 */
-		public SourceLocationSelectionPage( String pageName )
-		{
-			super( pageName );
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
-		 */
-		public void createControl( Composite parent )
-		{
-		}
-	}
 	/**
 	 * Constructor for AddSourceLocationWizard.
 	 */
-	public AddSourceLocationWizard()
+	public AddSourceLocationWizard( ICSourceLocation[] locations )
 	{
 		super();
+		setWindowTitle( "Add Source Location" );
+		setForcePreviousAndNextButtons( true );
+		fLocations = locations;
 	}
 
 	/* (non-Javadoc)
@@ -61,6 +42,24 @@ public class AddSourceLocationWizard extends Wizard
 	 */
 	public void addPages()
 	{
-		addPage( new SourceLocationSelectionPage( "Add Source Location" ) );
+		addPage( new SourceLocationSelectionPage( fLocations ) );
+	}
+	
+	public ICSourceLocation getSourceLocation()
+	{
+		SourceLocationSelectionPage page = (SourceLocationSelectionPage)getStartingPage();
+		if ( page != null )
+		{
+			return page.getSourceLocation();
+		}
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.ui.sourcelookup.INewSourceLocationWizard#getDescription()
+	 */
+	public String getDescription()
+	{
+		return "";
 	}
 }

@@ -3,16 +3,19 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.ui.sourcelookup;
+package org.eclipse.cdt.debug.internal.ui.wizards;
 
+import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.SWTUtil;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,20 +31,22 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @since: Dec 12, 2002
  */
-public class AttachSourceLocationBlock
+public class AddDirectorySourceLocationBlock
 {
 	private Composite fControl = null;
 	private Text fLocationText = null;
 	private Text fAssociationText = null;
 	private Button fAssocitedCheckButton = null;
-	private FontMetrics fFontMetrics;
 	private Shell fShell = null;
+	
+	private IPath fInitialAssosciationPath = null;
 
 	/**
-	 * Constructor for AttachSourceLocationBlock.
+	 * Constructor for AddDirectorySourceLocationBlock.
 	 */
-	public AttachSourceLocationBlock()
+	public AddDirectorySourceLocationBlock( IPath initialAssosciationPath )
 	{
+		fInitialAssosciationPath = initialAssosciationPath;
 	}
 	
 	public void createControl( Composite parent )
@@ -49,29 +54,22 @@ public class AttachSourceLocationBlock
 		fShell = parent.getShell();
 		fControl = new Composite( parent, SWT.NONE );
 		fControl.setLayout( new GridLayout() );
-		fControl.setLayoutData( new GridData( GridData.FILL_BOTH ) );
+		fControl.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
 		fControl.setFont( JFaceResources.getDialogFont() );	
 
 		createLocationControls( fControl );
 		createAssociationControls( fControl );
-	}
-	
-	public void setInitialLocationPath( IPath path )
-	{
-		if ( path != null )
-		{
-			fLocationText.setText( path.toOSString() );
-		}
+		
+		setInitialAssociationPath();
 	}
 
-	public void setInitialAssociationPath( IPath path )
+	private void setInitialAssociationPath()
 	{
-		fAssociationText.setEnabled( ( path != null ) );
-		fAssocitedCheckButton.setEnabled( ( path != null ) );
-		fAssocitedCheckButton.setSelection( ( path != null ) );
-		if ( path != null )
+		fAssociationText.setEnabled( ( fInitialAssosciationPath != null ) );
+		fAssocitedCheckButton.setSelection( ( fInitialAssosciationPath != null ) );
+		if ( fInitialAssosciationPath != null )
 		{
-			fAssociationText.setText( path.toOSString() );
+			fAssociationText.setText( fInitialAssosciationPath.toOSString() );
 		}
 	}
 	
@@ -172,5 +170,67 @@ public class AttachSourceLocationBlock
 			return fAssociationText.getText().trim();
 		}
 		return "";
+	}
+
+	public IDirectorySourceLocation	getSourceLocation()
+	{
+		if ( isLocationPathValid() )
+		{
+			Path association = ( isAssociationPathValid() ) ? new Path( getAssociationPath() ) : null;
+			return new CDirectorySourceLocation( new Path( getLocationPath() ), association );
+		}			
+		return null;
+	}
+
+	public void addDirectoryModifyListener( ModifyListener listener )
+	{
+		if ( fLocationText != null )
+		{
+			fLocationText.addModifyListener( listener );
+		}
+	}
+	
+	public void addAssociationModifyListener( ModifyListener listener )
+	{
+		if ( fAssociationText != null )
+		{
+			fAssociationText.addModifyListener( listener );
+		}
+	}
+	
+	public void removeDirectoryModifyListener( ModifyListener listener )
+	{
+		if ( fLocationText != null )
+		{
+			fLocationText.removeModifyListener( listener );
+		}
+	}
+	
+	public void removeAssociationModifyListener( ModifyListener listener )
+	{
+		if ( fAssociationText != null )
+		{
+			fAssociationText.removeModifyListener( listener );
+		}
+	}
+		
+	private boolean isLocationPathValid()
+	{
+		if ( fLocationText != null && Path.EMPTY.isValidPath( fLocationText.getText().trim() ) )
+		{
+			Path path = new Path( fLocationText.getText().trim() );
+			return ( path.toFile().exists() && path.toFile().isAbsolute() );
+		}
+		return false;
+	}
+
+	public boolean isAssociationPathValid()
+	{
+		String pathString = getAssociationPath();
+		if ( pathString.length() > 0 )
+		{
+			return Path.EMPTY.isValidPath( pathString );
+		}
+		return true;
 	}
 }

@@ -1,3 +1,19 @@
+2002-12-29 Mikhail Khodjaiants
+	Implementation of the 'Source Lookup' property page.
+	* AddDirectorySourceLocationBlock.java (new)
+	* AddDirectorySourceLocationWizard.java (new)
+	* AddProjectSourceLocationBlock.java (new)
+	* AddProjectSourceLocationWizard.java (new)
+	* AddSourceLocationWizard.java
+	* SourceLocationSelectionPage.java (new)
+	* SourceLocationWizardNode.java (new)
+	* CDebugImages.java
+	* AttachSourceLocationBlock.java renamed to AddDirectorySourceLocationBlock.java
+	* AttachSourceLocationDialog.java (deleted - dialog replaced by wizard).
+	* INewSourceLocationWizard.java (new)
+	* SourceLookupBlock.java
+	Added new wizard and tool icons.
+
 2002-12-19 Mikhail Khodjaiants
 	Implementing the 'Source Lookup' property page.
 	* AddSourceLocationWizard.java

@@ -96,7 +96,14 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean hasValueChanged() throws DebugException
 	{
-		return ( !(((CValue)getValue()).getType() == ICValue.TYPE_POINTER) && getValue().hasVariables() ) ? false : fChanged;
+		IValue value = getValue();
+		if ( value != null )
+		{
+			if ( value instanceof CValue && ((CValue)getValue()).getType() == ICValue.TYPE_POINTER )
+				return false; 
+			return ( value.hasVariables() ) ? false : fChanged;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

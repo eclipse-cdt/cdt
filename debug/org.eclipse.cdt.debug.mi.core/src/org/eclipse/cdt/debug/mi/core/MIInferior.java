@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core;
 
 import java.io.IOException;
@@ -202,7 +206,7 @@ public class MIInferior extends Process {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		session.getRxThread().fireEvent(new MIInferiorExitEvent());
+		session.fireEvent(new MIInferiorExitEvent());
 		notifyAll();
 	}
 
@@ -213,4 +217,5 @@ public class MIInferior extends Process {
 	public OutputStream getPipedErrorStream() {
 		return errPiped;
 	}
+
 }

@@ -2,6 +2,7 @@
 
 	<property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
 	<property name="cdt-core-loc" value="${eclipse-home}/cdt_core_folder"/>
+	<property name="cdt-core-loc" value="${eclipse-home}/cdt_ui_folder"/>
 
 	<target name="init">
 		<tstamp/>
@@ -25,6 +26,17 @@
 		</ant>
 	</target>
 
-	<target name="suite" depends="cdt-core"/>
+	<target name="cdt-ui" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-core-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
+			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
+		</ant>
+	</target>
+
+	<target name="suite">
+		<antcall target="cdt-core"/>
+		
+	</target>
 
 </project>

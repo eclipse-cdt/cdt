@@ -569,7 +569,13 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtensions()
 	 */
 	public String[] getOutputExtensions() {
-		if (outputExtensions == null) outputExtensions = new String();
+		if (outputExtensions == null){
+			if (parent != null) {
+				return parent.getOutputExtensions();
+			} else {
+				return new String[0];
+			}
+		} 		
 		return outputExtensions.split(DEFAULT_SEPARATOR);
 	}
 	

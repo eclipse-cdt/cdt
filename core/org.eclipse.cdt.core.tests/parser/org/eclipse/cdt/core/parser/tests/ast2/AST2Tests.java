@@ -2772,5 +2772,36 @@ public class AST2Tests extends AST2BaseTest {
 	    IFunctionType ft = (IFunctionType) t;
 	    assertTrue( ft.getReturnType() instanceof IPointerType );
 	    assertSame( ((IPointerType)ft.getReturnType()).getType(), S ); 
-   }
+    }
+   
+	public void testBug84228() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "void f( int m, int c[m][m] );        \n" ); //$NON-NLS-1$
+		buffer.append( "void f( int m, int c[m][m] ){        \n" ); //$NON-NLS-1$
+		buffer.append( "   int x;                            \n" ); //$NON-NLS-1$
+		buffer.append( "   { int x = x; }                    \n" ); //$NON-NLS-1$
+		buffer.append( "}                                    \n" ); //$NON-NLS-1$
+		   
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+		CNameCollector col = new CNameCollector();
+		CVisitor.visitTranslationUnit(tu, col);
+		
+		assertEquals(col.size(), 13);
+		
+		IParameter m = (IParameter) col.getName(1).resolveBinding();
+		IVariable x3 = (IVariable) col.getName(12).resolveBinding();
+		IVariable x2 = (IVariable) col.getName(11).resolveBinding();
+		IVariable x1 = (IVariable) col.getName(10).resolveBinding();
+
+		assertSame( x2, x3 );
+		assertNotSame( x1, x2 );
+		
+		assertInstances( col, m, 6 );
+		assertInstances( col, x1, 1 );
+		assertInstances( col, x2, 2 );
+		
+		IASTName [] ds = tu.getDeclarations( x2 );
+		assertEquals( ds.length, 1 );
+		assertSame( ds[0], col.getName(11) );
+	}
 }

@@ -475,9 +475,10 @@ public class CVisitor {
 	}
 	
 	//lookup bits
-	private static final int COMPLETE = 0;		
-	private static final int CURRENT_SCOPE = 1;
-	private static final int TAGS = 2;
+	private static final int COMPLETE 			= 0;		
+	private static final int CURRENT_SCOPE 		= 1;
+	private static final int TAGS 				= 1 << 1;
+	private static final int INCLUDE_BLOCK_ITEM = 1 << 2;
 	
 	//definition lookup start loc
 	protected static final int AT_BEGINNING = 1;
@@ -488,7 +489,7 @@ public class CVisitor {
 		IASTNode parent = name.getParent();
 		
 		if( parent instanceof CASTIdExpression ){
-			binding = resolveBinding( parent );
+			binding = resolveBinding( parent, COMPLETE | INCLUDE_BLOCK_ITEM );
 		} else if( parent instanceof ICASTTypedefNameSpecifier ){
 			binding = resolveBinding( parent );
 		} else if( parent instanceof IASTFieldReference ){
@@ -1043,7 +1044,8 @@ public class CVisitor {
 		//if parent is something that can contain a declaration
 		else if ( parent instanceof IASTCompoundStatement || 
 				  parent instanceof IASTTranslationUnit   ||
-				  parent instanceof IASTForStatement )
+				  parent instanceof IASTForStatement  ||
+				  parent instanceof IASTFunctionDeclarator )
 		{
 			return node;
 		}
@@ -1066,10 +1068,18 @@ public class CVisitor {
 				IASTTranslationUnit translation = (IASTTranslationUnit) parent;
 				nodes = translation.getDeclarations();
 				scope = (ICScope) translation.getScope();
+			} else if( parent instanceof IASTStandardFunctionDeclarator ){
+			    IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) parent;
+				nodes = dtor.getParameters();
+				scope = (ICScope) getContainingScope( blockItem );
+			} else if( parent instanceof ICASTKnRFunctionDeclarator ){
+			    ICASTKnRFunctionDeclarator dtor = (ICASTKnRFunctionDeclarator) parent;
+				nodes = dtor.getParameterDeclarations();
+				scope = (ICScope) getContainingScope( blockItem );
 			}
 			
 			boolean typesOnly = (bits & TAGS) != 0;
-			
+			boolean includeBlockItem = (bits & INCLUDE_BLOCK_ITEM) != 0;
 			if( scope != null ){
 			    int namespaceType = typesOnly ? ICScope.NAMESPACE_TYPE_TAG : ICScope.NAMESPACE_TYPE_OTHER;
 			    try {
@@ -1084,17 +1094,22 @@ public class CVisitor {
 			if( nodes != null ){
 				for( int i = 0; i < nodes.length; i++ ){
 					IASTNode node = nodes[i];
-					if( node == null || node == blockItem )
+					if( node == null || ( !includeBlockItem && node == blockItem ) )
 						break;
 					if( node instanceof IASTDeclarationStatement ){
 						IASTDeclarationStatement declStatement = (IASTDeclarationStatement) node;
 						binding = checkForBinding( declStatement.getDeclaration(), name, typesOnly );
 					} else if( node instanceof IASTDeclaration ){
 						binding = checkForBinding( (IASTDeclaration) node, name, typesOnly );
+					} else if( node instanceof IASTParameterDeclaration ){
+					    binding = checkForBinding( (IASTParameterDeclaration) node, name, typesOnly );
 					}
 					if( binding != null ){
 				        return binding;
 					}
+					
+					if( includeBlockItem && node == blockItem )
+						break;
 				}
 			} else {
 				//check the parent
@@ -1186,6 +1201,24 @@ public class CVisitor {
 		}
 		return null;
 	}
+	private static IBinding checkForBinding( IASTParameterDeclaration paramDecl, IASTName name, boolean typesOnly ){
+	    if( paramDecl == null ) return null;
+	    
+	    if( typesOnly ){
+	        return checkForBinding( paramDecl.getDeclSpecifier(), name, typesOnly );
+	    }
+
+		IASTDeclarator dtor = paramDecl.getDeclarator();
+		while( dtor.getNestedDeclarator() != null ){
+		    dtor = dtor.getNestedDeclarator();
+		}
+		IASTName declName = dtor.getName();
+		if( CharArrayUtils.equals( declName.toCharArray(), name.toCharArray() ) ){
+			return declName.resolveBinding();
+		}
+		return null;
+	}
+	
 	private static IBinding checkForBinding( IASTDeclaration declaration, IASTName name, boolean typesOnly ){
 		IASTName tempName = null;
 		if( declaration instanceof IASTSimpleDeclaration ){
@@ -1219,16 +1252,10 @@ public class CVisitor {
 				//check the parameters
 				IASTParameterDeclaration []  parameters = declarator.getParameters();
 				for( int i = 0; i < parameters.length; i++ ){
-					IASTParameterDeclaration parameterDeclaration = parameters[i];
-					if( parameterDeclaration == null ) break;
-					IASTDeclarator dtor = parameterDeclaration.getDeclarator();
-					while( dtor.getNestedDeclarator() != null ){
-					    dtor = dtor.getNestedDeclarator();
-					}
-					declName = dtor.getName();
-					if( CharArrayUtils.equals( declName.toCharArray(), name.toCharArray() ) ){
-						return declName.resolveBinding();
-					}
+				    IBinding binding = checkForBinding( parameters[i], name, typesOnly );
+				    if( binding != null ){
+				        return binding;
+				    }
 				}
 			} else if (functionDef.getDeclarator() instanceof ICASTKnRFunctionDeclarator) {
 				CASTKnRFunctionDeclarator declarator = (CASTKnRFunctionDeclarator) functionDef.getDeclarator();

@@ -1416,4 +1416,21 @@ public class ScannerTestCase extends TestCase
 		validateToken(Token.tRPAREN); 
 		validateToken(Token.tSEMI); 
 	}
+	
+	public void testBug36770() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "#define A 0\n" );
+		writer.write( "#if ( A == 1 )\n");
+		writer.write( "#  define foo 1\n");
+		writer.write( "#else\n");
+		writer.write( "# define foo 2\n");
+		writer.write( "#endif\n");
+		writer.write( "foo\n");
+	
+		initializeScanner( writer.toString() );
+		validateInteger( "2" );
+		validateEOF();
+	}
+		
 }

@@ -275,7 +275,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    return last;
 	}
 
-	protected List templateArgumentList( IASTScope scope ) throws EndOfFileException, BacktrackException
+	protected List templateArgumentList( IASTScope scope, IASTCompletionNode.CompletionKind kind ) throws EndOfFileException, BacktrackException
 	{
         IASTExpression expression = null;
         List list = new LinkedList();
@@ -294,7 +294,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
         	IToken mark = mark();
         	
         	try{
-        		IASTTypeId typeId = typeId( scope, false, CompletionKind.TYPE_REFERENCE );
+        		IASTTypeId typeId = typeId( scope, false, kind );
         		
         		expression = astFactory.createExpression( scope, IASTExpression.Kind.POSTFIX_TYPEID_TYPEID,
                                                           null, null, null, typeId, null, EMPTY_STRING, null); 
@@ -423,7 +423,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            	else
 	            		setCompletionValuesNoContext(scope, kind, key );
 	            	
-	                last = consumeTemplateArguments(scope, last, argumentList);
+	                last = consumeTemplateArguments(scope, last, argumentList, kind);
 	                if( last.getType() == IToken.tGT )
 	                	hasTemplateId = true;
 	                break;
@@ -454,7 +454,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                	prev = last;
 	                    last = consume();
 	                    setCompletionValues( scope, kind, first, prev, Key.EMPTY );
-			            last = consumeTemplateArguments(scope, last, argumentList);
+			            last = consumeTemplateArguments(scope, last, argumentList, kind);
 			            if( last.getType() == IToken.tGT )
 			            	hasTemplateId = true;
 	            }
@@ -524,14 +524,14 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @throws EndOfFileException
 	 * @throws BacktrackException
 	 */
-	protected IToken consumeTemplateArguments(IASTScope scope, IToken last, TemplateParameterManager argumentList) throws EndOfFileException, BacktrackException {
+	protected IToken consumeTemplateArguments(IASTScope scope, IToken last, TemplateParameterManager argumentList, IASTCompletionNode.CompletionKind completionKind) throws EndOfFileException, BacktrackException {
 		if( language != ParserLanguage.CPP ) return last;
 		if( LT(1) == IToken.tLT ){
 			IToken secondMark = mark();
 			consume( IToken.tLT );
 		    try
 		    {
-		    	List list = templateArgumentList( scope );
+		    	List list = templateArgumentList( scope, completionKind );
 		    	argumentList.addSegment( list );
 		    	last = consume( IToken.tGT );
 		    } catch( BacktrackException bt )
@@ -619,7 +619,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    }
 	}
 
-	protected void operatorId(Declarator d, IToken originalToken, TemplateParameterManager templateArgs) throws BacktrackException, EndOfFileException {
+	protected void operatorId(Declarator d, IToken originalToken, TemplateParameterManager templateArgs, IASTCompletionNode.CompletionKind completionKind ) throws BacktrackException, EndOfFileException {
 	    // we know this is an operator
 	    IToken operatorToken = consume(IToken.t_operator);
 	    IToken toSend = null;
@@ -669,7 +669,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    
 	    try
 		{
-		    toSend = consumeTemplateArguments( d.getDeclarationWrapper().getScope(), toSend, templateArgs );
+		    toSend = consumeTemplateArguments( d.getDeclarationWrapper().getScope(), toSend, templateArgs, completionKind );
 		    if( toSend.getType() == IToken.tGT ){
 		    	hasTemplateId = true;
 		    }
@@ -2737,7 +2737,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						      end = consumeTemplateParameters(end);
 						}
 						if (LT(1) == IToken.t_operator)
-							operatorId(d, start, null);
+							operatorId(d, start, null, kind);
 						else
 						{
 						   backup(mark);
@@ -2745,7 +2745,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						}
 					 }
 					 else if( LT(1) == IToken.t_operator )
-					 	 operatorId( d, null, null);
+					 	 operatorId( d, null, null, kind);
 					 
 					 duple = d.getNameDuple();
 	            }

@@ -2362,7 +2362,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     	try
 		{
 	        if (LT(1) == IToken.t_operator)
-	            operatorId(d, null, null);
+	            operatorId(d, null, null, kind);
 	        else
 	        {
 	            try
@@ -2387,7 +2387,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	                    IToken end = null;
 	                    
 	                    if (start.getType() == IToken.tIDENTIFIER){
-	                      	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
+	                      	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList, kind);
 	                    	if( end != null && end.getType() == IToken.tGT )
 	                    		hasTemplateId = true;
 	                    }
@@ -2397,13 +2397,13 @@ public abstract class Parser extends ExpressionParser implements IParser
 	                    {
 	                        end = consume();
 	                        if (end.getType() == IToken.tIDENTIFIER){
-	                          	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
+	                          	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList, kind);
 	                        	if( end.getType() == IToken.tGT )
 	                        		hasTemplateId = true;
 	                        }
 	                    }
 	                    if (LT(1) == IToken.t_operator)
-	                        operatorId(d11, start, ( hasTemplateId ? argumentList : null ) );
+	                        operatorId(d11, start, ( hasTemplateId ? argumentList : null ), kind );
 	                    else
 	                    {
 	

@@ -1086,4 +1086,20 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertTrue( blah instanceof IASTVariable );
 		assertEquals( ((IASTVariable)blah).getName(), "blah" ); //$NON-NLS-1$
 	}
+	
+	public void testBug62725() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "int f() {\n" ); //$NON-NLS-1$
+		writer.write( " int biSizeImage = 5;\n" ); //$NON-NLS-1$
+		writer.write( "for (int i = 0; i < bi " ); //$NON-NLS-1$
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "< bi") + 4 ); //$NON-NLS-1$
+		assertNotNull( node );
+		assertEquals( node.getCompletionPrefix(), "bi"); //$NON-NLS-1$\
+		assertNull( node.getCompletionContext() );
+		assertTrue( node.getCompletionScope() instanceof IASTFunction );
+		assertTrue( ((IASTFunction)node.getCompletionScope()).getName().equals( "f" ) ); //$NON-NLS-1$
+		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
+	}
 }

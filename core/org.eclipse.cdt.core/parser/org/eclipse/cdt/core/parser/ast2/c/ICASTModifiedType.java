@@ -8,14 +8,36 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast2;
+package org.eclipse.cdt.core.parser.ast2.c;
 
 import org.eclipse.cdt.core.parser.ast2.IASTType;
 
-
 /**
+ * This class supports C qualifiers on types
  * @author Doug Schaefer
  */
-public class ASTType extends ASTNode implements IASTType {
+public interface ICASTModifiedType extends IASTType {
+
+	/**
+	 * @return the type being modified.
+	 */
+	public IASTType getType();
+	
+	/**
+	 * @param type the type to be modified.
+	 */
+	public void setType(IASTType type);
+	
+	/**
+	 * @return is the type a const type, e.g. const int
+	 */
+	public boolean isConst();
+	
+	/**
+	 * Sets whether this type is const or not.
+	 * 
+	 * @param isConst
+	 */
+	public void setIsConst(boolean isConst);
 	
 }

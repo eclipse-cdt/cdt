@@ -20,8 +20,10 @@ import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast2.IASTIdentifier;
 import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ast2.IASTType;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTModifiedType;
 
 /**
  * @author Doug Schaefer
@@ -62,7 +64,9 @@ public class AST2SourceElementRequestor extends NullSourceElementRequestor imple
 	}
 
 	public void acceptVariable(IASTVariable variable) {
-		ASTIdentifier name = new ASTIdentifier(variable.getNameCharArray());
+		IASTIdentifier name = new ASTIdentifier(variable.getNameCharArray());
+		name.setOffset(variable.getNameOffset());
+		name.setLength(variable.getNameEndOffset() - variable.getNameOffset());
 		
 		ASTVariableDeclaration varDecl = new ASTVariableDeclaration();
 		varDecl.setName(name);
@@ -74,11 +78,18 @@ public class AST2SourceElementRequestor extends NullSourceElementRequestor imple
 		
 		IASTType varType = null;
 		
-		IASTAbstractDeclaration abstractDecl = variable.getAbstractDeclaration(); 
+		IASTAbstractDeclaration abstractDecl = variable.getAbstractDeclaration();
 		IASTTypeSpecifier typeSpecifier = abstractDecl.getTypeSpecifier();
 		if (typeSpecifier instanceof IASTSimpleTypeSpecifier) {
 			IASTSimpleTypeSpecifier realtype = (IASTSimpleTypeSpecifier)typeSpecifier;
 			varType = currentScope.findType(new ASTIdentifier(realtype.getTypename()));
+		}
+		
+		if (abstractDecl.isConst()) {
+			ICASTModifiedType modType = new CASTModifiedType();
+			modType.setType(varType);
+			modType.setIsConst(true);
+			varType = modType;
 		}
 		
 		for (Iterator i = abstractDecl.getPointerOperators(); i.hasNext(); ) {

@@ -17,22 +17,32 @@ import org.eclipse.cdt.core.parser.ast2.IASTNode;
  */
 public class ASTNode implements IASTNode {
 
-	public String getFilename() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	private String filename;
+	private int offset;
+	private int length;
 	
-	public int getLength() {
-		// TODO Auto-generated method stub
-		return 0;
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 	
 	public int getOffset() {
-		// TODO Auto-generated method stub
-		return 0;
+		return offset;
 	}
 
-	public Object adapt(Class cls) {
-		return this;
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
+	
+	public int getLength() {
+		return length;
+	}
+	
+	public void setLength(int length) {
+		this.length = length;
+	}
+	
 }

@@ -11,11 +11,30 @@
 package org.eclipse.cdt.internal.core.parser.ast2;
 
 import org.eclipse.cdt.core.parser.ast2.IASTType;
-
+import org.eclipse.cdt.core.parser.ast2.c.ICASTModifiedType;
 
 /**
  * @author Doug Schaefer
  */
-public class ASTType extends ASTNode implements IASTType {
+public class CASTModifiedType extends ASTType implements ICASTModifiedType {
+
+	private IASTType type;
+	private boolean isConst;
 	
+	public IASTType getType() {
+		return type;
+	}
+	
+	public void setType(IASTType type) {
+		this.type = type;
+	}
+	
+	public boolean isConst() {
+		return isConst;
+	}
+	
+	public void setIsConst(boolean isConst) {
+		this.isConst = isConst;
+	}
+
 }

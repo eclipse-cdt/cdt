@@ -26,14 +26,20 @@ public interface IASTNode {
 	 */
 	public String getFilename();
 	
+	public void setFilename(String filename);
+	
 	/**
 	 * @return the offset into the file to the beginning of the node
 	 */
 	public int getOffset();
+	
+	public void setOffset(int offset);
 
 	/**
 	 * @return the length of the node in the source file
 	 */
 	public int getLength();
+	
+	public void setLength(int length);
 
 }

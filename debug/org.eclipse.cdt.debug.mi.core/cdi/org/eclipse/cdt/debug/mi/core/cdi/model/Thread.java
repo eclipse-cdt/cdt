@@ -50,7 +50,7 @@ public class Thread extends CObject implements ICDIThread {
 	List currentFrames;
 	int stackdepth = 0;
 
-	final static int STACKFRAME_DEFAULT_DEPTH = 200;
+	final public static int STACKFRAME_DEFAULT_DEPTH = 200;
 
 	public Thread(Target target, int threadId) {
 		this(target, threadId, null);

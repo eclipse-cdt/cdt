@@ -10,15 +10,16 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.*;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Argument;
 import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;

@@ -1,4 +1,17 @@
+2003-01-27 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIVariableObject.java:
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIArgumentObject.java:
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIRegisterObject.java:
+	Move to model package.
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIRegisterManager.java:
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariableManager.java:
+	* src/org/eclipse/cdt/debug/internal/core/model/CDebugTarget.java:
+	* src/org/eclipse/cdt/debug/internal/core/model/CRegisterGroup.java:
+	Refactor/move of the ICDIRegisterObject and ICDIVariableObject
+
 2003-01-25 Alain Magloire
+
         Added new Managers:
 		ICDIVariableManager
 		ICDIExpressionManager

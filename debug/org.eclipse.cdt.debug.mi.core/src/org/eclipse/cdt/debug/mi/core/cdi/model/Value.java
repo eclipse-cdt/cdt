@@ -13,7 +13,6 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
-import org.eclipse.cdt.debug.mi.core.cdi.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;

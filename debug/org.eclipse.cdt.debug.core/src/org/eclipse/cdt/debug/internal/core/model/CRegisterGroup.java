@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;

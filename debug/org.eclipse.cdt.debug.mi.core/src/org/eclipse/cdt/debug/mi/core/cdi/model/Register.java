@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -21,7 +21,6 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
-import org.eclipse.cdt.debug.mi.core.cdi.RegisterObject;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterValues;

@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
-import org.eclipse.cdt.debug.mi.core.cdi.VariableObject;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**

@@ -5,7 +5,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
-import org.eclipse.cdt.debug.mi.core.cdi.ArgumentObject;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**

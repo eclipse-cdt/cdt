@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.debug.core.cdi.model.*;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;

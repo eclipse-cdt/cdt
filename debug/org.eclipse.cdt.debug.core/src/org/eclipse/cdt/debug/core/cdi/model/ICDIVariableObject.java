@@ -4,13 +4,13 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
 
 
 /**
  * 
  */
-public interface ICDIVariableObject {
+public interface ICDIVariableObject extends ICDIObject {
 
 	/**
 	 * Method getName.

@@ -3,7 +3,9 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
+
+import org.eclipse.cdt.debug.core.cdi.model.*;
 
 /**
  * 

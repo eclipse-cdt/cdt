@@ -4,11 +4,11 @@
  * 
  */
 
-package org.eclipse.cdt.debug.mi.core.cdi;
+package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIArgumentObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.*;
 
 /**
  */

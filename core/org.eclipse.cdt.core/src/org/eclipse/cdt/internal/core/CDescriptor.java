@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
-import org.eclipse.cdt.core.ICPathEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -46,7 +45,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
@@ -56,7 +54,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CDescriptor implements ICDescriptor {
-	private ICPathEntry[] fPathEntries = new ICPathEntry[0];
 	private COwner fOwner;
 	private IProject fProject;
 	private HashMap extMap = new HashMap(4);
@@ -332,12 +329,6 @@ public class CDescriptor implements ICDescriptor {
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					}
-				} else if (childNode.getNodeName().equals(PATH_ENTRY)) {
-					try {
-						pathEntries.add(decodePathEntry((Element) childNode));
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-					}
 				} else if (childNode.getNodeName().equals(PROJECT_DATA)) {
 					try {
 						decodeProjectData((Element)childNode);
@@ -347,7 +338,6 @@ public class CDescriptor implements ICDescriptor {
 				}
 			}
 		}
-		fPathEntries = (ICPathEntry[]) pathEntries.toArray(new ICPathEntry[0]);
 	}
 
 	private void decodeProjectExtension(Element element) throws CoreException {
@@ -361,102 +351,6 @@ public class CDescriptor implements ICDescriptor {
 		}
 	}
 
-	private ICPathEntry decodePathEntry(Element element) throws CoreException {
-		IPath projectPath = fProject.getProject().getFullPath();
-		String kindAttr = element.getAttribute("kind"); //$NON-NLS-1$
-		String pathAttr = element.getAttribute("path"); //$NON-NLS-1$
-
-		// ensure path is absolute
-		IPath path = new Path(pathAttr);
-		int kind = CPathEntry.kindFromString(kindAttr);
-		if (kind != ICPathEntry.CDT_VARIABLE && !path.isAbsolute()) {
-			path = projectPath.append(path);
-		}
-		// source attachment info (optional)
-		IPath sourceAttachmentPath = element.hasAttribute("sourcepath") ? new Path(element.getAttribute("sourcepath")) : null;
-		IPath sourceAttachmentRootPath = element.hasAttribute("rootpath") ? new Path(element.getAttribute("rootpath")) : null;
-		IPath sourceAttachmentPrefixMapping =
-			element.hasAttribute("prefixmapping") ? new Path(element.getAttribute("prefixmapping")) : null;
-
-		// exclusion patterns (optional)
-		String exclusion = element.getAttribute("excluding"); //$NON-NLS-1$ 
-		IPath[] exclusionPatterns = CPathEntry.NO_EXCLUSION_PATTERNS;
-		if (!exclusion.equals("")) { //$NON-NLS-1$ 
-			char[][] patterns = splitOn('|', exclusion.toCharArray());
-			int patternCount;
-			if ((patternCount = patterns.length) > 0) {
-				exclusionPatterns = new IPath[patternCount];
-				for (int j = 0; j < patterns.length; j++) {
-					exclusionPatterns[j] = new Path(new String(patterns[j]));
-				}
-			}
-		}
-
-		// recreate the CP entry
-		switch (kind) {
-
-			case ICPathEntry.CDT_PROJECT :
-				return CCorePlugin.newProjectEntry(path);
-
-			case ICPathEntry.CDT_LIBRARY :
-				return CCorePlugin.newLibraryEntry(
-					path,
-					sourceAttachmentPath,
-					sourceAttachmentRootPath,
-					sourceAttachmentPrefixMapping);
-
-			case ICPathEntry.CDT_SOURCE :
-				// must be an entry in this project or specify another project
-				String projSegment = path.segment(0);
-				if (projSegment != null && projSegment.equals(fProject.getName())) { // this project
-					return CCorePlugin.newSourceEntry(path, exclusionPatterns);
-				} else { // another project
-					return CCorePlugin.newProjectEntry(path);
-				}
-
-			case ICPathEntry.CDT_VARIABLE :
-				return CCorePlugin.newVariableEntry(path, sourceAttachmentPath, sourceAttachmentRootPath);
-
-			case ICPathEntry.CDT_INCLUDE :
-				return CCorePlugin.newIncludeEntry(path, exclusionPatterns);
-
-			default :
-				{
-					IStatus status =
-						new Status(
-							IStatus.ERROR,
-							CCorePlugin.PLUGIN_ID,
-							-1,
-							"CPathEntry: unknown kind (" + kindAttr + ")",
-							(Throwable) null);
-					throw new CoreException(status);
-				}
-		}
-	}
-
-	private char[][] splitOn(char divider, char[] array) {
-		int length = array == null ? 0 : array.length;
-
-		if (length == 0)
-			return NO_CHAR_CHAR;
-
-		int wordCount = 1;
-		for (int i = 0; i < length; i++)
-			if (array[i] == divider)
-				wordCount++;
-		char[][] split = new char[wordCount][];
-		int last = 0, currentWord = 0;
-		for (int i = 0; i < length; i++) {
-			if (array[i] == divider) {
-				split[currentWord] = new char[i - last];
-				System.arraycopy(array, last, split[currentWord++], 0, i - last);
-				last = i + 1;
-			}
-		}
-		split[currentWord] = new char[length - last];
-		System.arraycopy(array, last, split[currentWord], 0, length - last);
-		return split;
-	}
 
 	protected String getAsXML() throws IOException {
 		Document doc = new DocumentImpl();
@@ -464,7 +358,6 @@ public class CDescriptor implements ICDescriptor {
 		doc.appendChild(configRootElement);
 		configRootElement.setAttribute("id", fOwner.getID()); //$NON-NLS-1$
 		encodeProjectExtensions(doc, configRootElement);
-		encodePathEntries(doc, configRootElement);
 		encodeProjectData(doc, configRootElement);
 		return serializeDocument(doc);
 	}
@@ -493,57 +386,6 @@ public class CDescriptor implements ICDescriptor {
 		}
 	}
 
-	private void encodePathEntries(Document doc, Element configRootElement) {
-		Element element;
-		IPath projectPath = fProject.getProject().getFullPath();
-		for (int i = 0; i < fPathEntries.length; i++) {
-			configRootElement.appendChild(element = doc.createElement(PATH_ENTRY));
-			element.setAttribute("kind", CPathEntry.kindToString(fPathEntries[i].getEntryKind())); //$NON-NLS-1$
-			IPath xmlPath = fPathEntries[i].getPath();
-			if (fPathEntries[i].getEntryKind() != ICPathEntry.CDT_VARIABLE) {
-				// translate to project relative from absolute (unless a device path)
-				if (xmlPath.isAbsolute()) {
-					if (projectPath != null && projectPath.isPrefixOf(xmlPath)) {
-						if (xmlPath.segment(0).equals(projectPath.segment(0))) {
-							xmlPath = xmlPath.removeFirstSegments(1);
-							xmlPath = xmlPath.makeRelative();
-						} else {
-							xmlPath = xmlPath.makeAbsolute();
-						}
-					}
-				}
-			}
-			element.setAttribute("path", xmlPath.toString()); //$NON-NLS-1$
-			if (fPathEntries[i].getSourceAttachmentPath() != null) {
-				element.setAttribute("sourcepath", fPathEntries[i].getSourceAttachmentPath().toString()); //$NON-NLS-1$
-			}
-			if (fPathEntries[i].getSourceAttachmentRootPath() != null) {
-				element.setAttribute("rootpath", fPathEntries[i].getSourceAttachmentRootPath().toString()); //$NON-NLS-1$
-			}
-			if (fPathEntries[i].getSourceAttachmentPrefixMapping() != null) {
-				element.setAttribute("prefixmapping", fPathEntries[i].getSourceAttachmentPrefixMapping().toString()); //$NON-NLS-1$
-			}
-			IPath[] exclusionPatterns = fPathEntries[i].getExclusionPatterns();
-			if (exclusionPatterns.length > 0) {
-				StringBuffer excludeRule = new StringBuffer(10);
-				for (int j = 0, max = exclusionPatterns.length; j < max; j++) {
-					if (j > 0)
-						excludeRule.append('|');
-					excludeRule.append(exclusionPatterns[j]);
-				}
-				element.setAttribute("excluding", excludeRule.toString()); //$NON-NLS-1$
-			}
-		}
-	}
-
-	public void setPathEntries(ICPathEntry[] entries) throws CoreException {
-		fPathEntries = entries;
-		setDirty();
-	}
-
-	public ICPathEntry[] getPathEntries() {
-		return fPathEntries;
-	}
 
 	protected ICExtension createExtensions(ICExtensionReference ext) throws CoreException {
 		InternalCExtension cExtension = null;

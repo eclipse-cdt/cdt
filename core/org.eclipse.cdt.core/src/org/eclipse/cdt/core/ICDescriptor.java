@@ -26,9 +26,6 @@ public interface ICDescriptor {
 	public void remove(ICExtensionReference extension) throws CoreException;
 	public void remove(String extensionPoint) throws CoreException;
 	
-	public void setPathEntries(ICPathEntry[] entries) throws CoreException;
-	public ICPathEntry[] getPathEntries();
-	
 	public Element getProjectData(String id) throws CoreException;
 	public void saveProjectData() throws CoreException;
 }

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
-import org.eclipse.cdt.internal.core.CPathEntry;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
@@ -41,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -709,59 +707,6 @@ public class CCorePlugin extends Plugin {
 		return provider;
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
-	public static ICPathEntry newProjectEntry(IPath path) {
-		return new CPathEntry(ICPathEntry.CDT_PROJECT, path, CPathEntry.NO_EXCLUSION_PATTERNS, null, null, null);
-	}
-
-	/**
-	 * @param path
-	 * @param sourceAttachmentPath
-	 * @param sourceAttachmentRootPath
-	 * @return
-	 */
-	public static ICPathEntry newLibraryEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentRootPrefixMapping) {
-		return new CPathEntry(
-			ICPathEntry.CDT_LIBRARY,
-			path,
-			CPathEntry.NO_EXCLUSION_PATTERNS,
-			sourceAttachmentPath,
-			sourceAttachmentRootPath, 
-			sourceAttachmentRootPrefixMapping);
-	}
-
-	/**
-	 * @param path
-	 * @param exclusionPatterns
-	 * @param outputLocation
-	 * @return
-	 */
-	public static ICPathEntry newSourceEntry(IPath path, IPath[] exclusionPatterns) {
-		return new CPathEntry(ICPathEntry.CDT_SOURCE, path, exclusionPatterns, null, null, null);  
-	}
-
-	/**
-	 * @param path
-	 * @param sourceAttachmentPath
-	 * @param sourceAttachmentRootPath
-	 * @return
-	 */
-	public static ICPathEntry newVariableEntry(IPath path, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath) {
-		return new CPathEntry(ICPathEntry.CDT_VARIABLE, path, null, sourceAttachmentPath, sourceAttachmentRootPath, null);
-	}
-
-	/**
-	 * @param path
-	 * @param exclusionPatterns
-	 * @return
-	 */
-	public static ICPathEntry newIncludeEntry(IPath path, IPath[] exclusionPatterns) {
-		return new CPathEntry(ICPathEntry.CDT_INCLUDE, path, exclusionPatterns, null, null, null);  
-	}
-	
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
 	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer";
 	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager";

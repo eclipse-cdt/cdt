@@ -6,9 +6,11 @@
 package org.eclipse.cdt.debug.mi.core.event;
 
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
-import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
+import org.eclipse.cdt.debug.mi.core.output.MILogStreamOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIOOBRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIResult;
 import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+import org.eclipse.cdt.debug.mi.core.output.MIStreamRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIValue;
 
 
@@ -22,14 +24,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class MIErrorEvent extends MIStoppedEvent {
 
 	String msg = "";
+	String log = "";
+	MIOOBRecord[] oobs;
 
-	public MIErrorEvent(MIExecAsyncOutput async) {
-		super(async);
-		parse();
-	}
-
-	public MIErrorEvent(MIResultRecord record) {
-		super(record);
+	public MIErrorEvent(MIResultRecord rr, MIOOBRecord[] o) {
+		super(rr);
+		oobs = o;
 		parse();
 	}
 
@@ -37,29 +37,37 @@ public class MIErrorEvent extends MIStoppedEvent {
 		return msg;
 	}
 
+	public String getLogMessage() {
+		return log;
+	}
+
 	void parse () {
-		MIResult[] results = null;
-		MIExecAsyncOutput exec = getMIExecAsyncOutput();
 		MIResultRecord rr = getMIResultRecord();
+		if (rr != null) {
+			MIResult[] results = rr.getMIResults();
+			if (results != null) {
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					MIValue value = results[i].getMIValue();
+					String str = "";
+					if (value instanceof MIConst) {
+						str = ((MIConst)value).getString();
+					}
 
-		if (exec != null) {
-			results = exec.getMIResults();
-		} else if (rr != null) {
-			results = rr.getMIResults();
-		}
-
-		if (results != null) {
-			for (int i = 0; i < results.length; i++) {
-				String var = results[i].getVariable();
-				MIValue value = results[i].getMIValue();
-				String str = "";
-				if (value instanceof MIConst) {
-					str = ((MIConst)value).getString();
+					if (var.equals("msg")) {
+						msg = str;
+					}
 				}
-
-				if (var.equals("msg")) {
-					msg = str;
+			}
+			if (oobs != null) {
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < oobs.length; i++) {
+					if (oobs[i] instanceof MILogStreamOutput) {
+						MIStreamRecord o = (MIStreamRecord)oobs[i];
+						sb.append(o.getString());
+					}
 				}
+				log = sb.toString();
 			}
 		}
 	}

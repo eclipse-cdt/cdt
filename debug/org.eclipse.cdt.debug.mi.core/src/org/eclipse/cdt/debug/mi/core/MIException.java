@@ -12,7 +12,18 @@ package org.eclipse.cdt.debug.mi.core;
  *
  */
 public class MIException extends Exception {
+	String log = "";
+
 	public MIException(String s) {
 		super(s);
+	}
+
+	public MIException(String s, String l) {
+		super(s);
+		log = l;
+	}
+
+	public String getLogMessage() {
+		return log;
 	}
 }

@@ -8,7 +8,10 @@ package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MILogStreamOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIOOBRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIStreamRecord;
 
 /**
  * A base class for all mi requests.
@@ -67,8 +70,16 @@ public abstract class Command
 		if (out != null) {
 			info = new MIInfo(out);
 			if (info.isError()) {
-				String s = info.getErrorMsg();
-				throw new MIException(s);
+				String mesg = info.getErrorMsg();
+				StringBuffer sb = new StringBuffer();
+				MIOOBRecord[] oobs = out.getMIOOBRecords();
+				for (int i = 0; i < oobs.length; i++) {
+					if (oobs[i] instanceof MILogStreamOutput) {
+						MIStreamRecord o = (MIStreamRecord) oobs[i];
+						sb.append(o.getString());
+					}
+				}
+				throw new MIException(mesg, sb.toString());
 			}
 		}
 		return info;

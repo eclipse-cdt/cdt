@@ -1,5 +1,15 @@
 2004-03-18 Alain Magloire
 
+	Check for IPathEntry reorder changes.
+
+	* model/org/eclipse/cdt/core/model/ICElementDelta.java
+	* model/org/eclipse/cdt/internal/core/model/CContainerInfo.java
+	* model/org/eclipse/cdt/internal/core/model/CProjectInfoInfo.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* model/org/eclipse/cdt/internal/core/model/SetPathEntriesOperation.java
+
+2004-03-18 Alain Magloire
+
 	Change in the hierarchy of the core Model:
 	ICModel
 	   ICProject

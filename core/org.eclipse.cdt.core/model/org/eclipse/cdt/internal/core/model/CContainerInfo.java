@@ -54,8 +54,8 @@ public class CContainerInfo extends OpenableInfo {
 
 			if (resources != null) {
 				CModelManager factory = CModelManager.getDefault();
+				ICElement[] children = getChildren();
 				for (int i = 0; i < resources.length; i++) {
-					ICElement[] children = getChildren();
 					boolean found = false;
 					for (int j = 0; j < children.length; j++) {
 						IResource r = children[j].getResource();

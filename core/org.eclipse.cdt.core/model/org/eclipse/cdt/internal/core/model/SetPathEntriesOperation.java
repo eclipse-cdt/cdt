@@ -53,12 +53,15 @@ public class SetPathEntriesOperation extends CModelOperation {
 		//	project reference updated - may throw an exception if unable to write .cdtproject file
 		updateProjectReferencesIfNecessary();
 		PathEntryManager mgr = PathEntryManager.getDefault();		
-		mgr.saveRawPathEntries(cproject, newRawEntries);
 		hasModifiedResource = true;
 		IPathEntry[] newResolvedEntries = mgr.getResolvedPathEntries(cproject);
 		ICElementDelta[] deltas = mgr.generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
 		for (int i = 0; i < deltas.length; i++) {
 			addDelta(deltas[i]);
+		}
+		// Only save when necessary
+		if (deltas.length > 0) {
+			mgr.saveRawPathEntries(cproject, newRawEntries);
 		}
 		done();
 	}

@@ -418,44 +418,57 @@ public class PathEntryManager {
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
 		ArrayList list = new ArrayList();
 		CModelManager manager = CModelManager.getDefault();
-		boolean needToUpdateDependents = false;
 		boolean hasDelta = false;
+
+		// Sanity checks
+		if (oldEntries == null) {
+			oldEntries = new IPathEntry[0];
+		}
+		if (newEntries == null) {
+			newEntries = new IPathEntry[0];
+		}
+
 		// Check the removed entries.
-		if (oldEntries != null) {
-			for (int i = 0; i < oldEntries.length; i++) {
-				boolean found = false;
-				if (newEntries != null) {
-					for (int j = 0; j < newEntries.length; j++) {
-						if (oldEntries[i].equals(newEntries[j])) {
-							found = true;
-							break;
-						}
-					}
+		for (int i = 0; i < oldEntries.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < newEntries.length; j++) {
+				if (oldEntries[i].equals(newEntries[j])) {
+					found = true;
+					break;
 				}
-				// Was it deleted.
-				if (!found) {
-					ICElementDelta delta = makePathEntryDelta(cproject, oldEntries[i], true);
-					if (delta != null) {
-						list.add(delta);
-					}
+			}
+			// Was it deleted.
+			if (!found) {
+				ICElementDelta delta = makePathEntryDelta(cproject, oldEntries[i], true);
+				if (delta != null) {
+					list.add(delta);
 				}
 			}
 		}
+
 		// Check the new entries.
-		if (newEntries != null) {
-			for (int i = 0; i < newEntries.length; i++) {
-				boolean found = false;
-				if (oldEntries != null) {
-					for (int j = 0; j < oldEntries.length; j++) {
-						if (newEntries[i].equals(oldEntries[j])) {
-							found = true;
-							break;
-						}
-					}
+		for (int i = 0; i < newEntries.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < oldEntries.length; j++) {
+				if (newEntries[i].equals(oldEntries[j])) {
+					found = true;
+					break;
 				}
-				// is it new?
-				if (!found) {
-					ICElementDelta delta = makePathEntryDelta(cproject, newEntries[i], false);
+			}
+			// is it new?
+			if (!found) {
+				ICElementDelta delta = makePathEntryDelta(cproject, newEntries[i], false);
+				if (delta != null) {
+					list.add(delta);
+				}
+			}
+		}
+
+		// Check for reorder
+		if (list.size() == 0 && oldEntries.length == newEntries.length) {
+			for (int i = 0; i < newEntries.length; i++) {
+				if (!newEntries[i].equals(oldEntries[i])) {
+					ICElementDelta delta = makePathEntryDelta(cproject, null, false);
 					if (delta != null) {
 						list.add(delta);
 					}
@@ -474,7 +487,10 @@ public class PathEntryManager {
 		int kind = entry.getEntryKind();
 		ICElement celement = null;
 		int flag = 0;
-		if (kind == IPathEntry.CDT_SOURCE) {
+		if (entry == null) {
+			celement = cproject;
+			flag = ICElementDelta.F_PATHENTRY_REORDER;
+		} else if (kind == IPathEntry.CDT_SOURCE) {
 			ISourceEntry source = (ISourceEntry) entry;
 			IPath path = source.getPath();
 			celement = CoreModel.getDefault().create(path);

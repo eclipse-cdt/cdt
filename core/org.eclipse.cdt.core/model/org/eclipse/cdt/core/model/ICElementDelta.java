@@ -129,7 +129,11 @@ public interface ICElementDelta {
 	 */
 	public int F_CHANGED_PATHENTRY_PROJECT =  0x04000;
 
-	//public int F_PATHENTRY_REORDER = 0x040000;
+	/**
+	 * Reordering of the path entries.
+	 */
+	public int F_PATHENTRY_REORDER = 0x040000;
+
 	//public int F_SUPER_TYPES = 0x080000;
 
 	/**

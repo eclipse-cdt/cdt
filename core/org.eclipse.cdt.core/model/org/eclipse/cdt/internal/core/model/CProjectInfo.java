@@ -79,13 +79,13 @@ class CProjectInfo extends CContainerInfo {
 
 			if (resources != null) {
 				CModelManager factory = CModelManager.getDefault();
+				ICElement[] children;
+				if (root == null) {
+					children = getChildren();
+				} else {
+					children = root.getChildren();
+				}
 				for (int i = 0; i < resources.length; i++) {
-					ICElement[] children;
-					if (root == null) {
-						children = getChildren();
-					} else {
-						children = root.getChildren();
-					}
 					boolean found = false;
 					for (int j = 0; j < children.length; j++) {
 						IResource r = children[j].getResource();

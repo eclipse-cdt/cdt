@@ -239,15 +239,19 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			fValueString = null;
 		}
-/*
-		if ( hasVariables() )
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() )
 		{
-			IVariable[] vars = getVariables();
-			for ( int i = 0; i < vars.length; ++i )
-			{
-				((CVariable)vars[i]).setChanged( changed );
-			}
+			((CVariable)it.next()).setChanged( changed );
 		}
-*/
+	}
+
+	protected void dispose()
+	{
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() )
+		{
+			((CVariable)it.next()).dispose();
+		}
 	}
 }

@@ -56,13 +56,6 @@ public class CArrayEntryVariable extends CLocalVariable
 		return stripBrackets( super.getReferenceTypeName() );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
-	 */
-	public void handleDebugEvent(ICDIEvent event)
-	{
-	}
-
 	protected int getIndex()
 	{
 		return fIndex;

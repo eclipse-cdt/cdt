@@ -98,7 +98,8 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 		if ( fVariables.isEmpty() )
 		{
 			fVariables = new ArrayList( getEnd() - getStart() + 1 );
-			for ( int i = getStart(); i < getEnd(); ++i ) {
+			for ( int i = getStart(); i <= getEnd(); ++i ) 
+			{
 				fVariables.add( new CArrayEntryVariable( (CDebugTarget)getDebugTarget(), (ICDIVariable)fCDIVariables.get( i - getStart() ), i ) );
 			}
 		}

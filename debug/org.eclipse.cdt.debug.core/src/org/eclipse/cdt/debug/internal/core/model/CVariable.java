@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
@@ -195,6 +196,10 @@ public abstract class CVariable extends CDebugElement
 	
 	protected void dispose()
 	{
+		if ( fValue != null )
+		{
+			((CValue)fValue).dispose();
+		}
 		getCDISession().getEventManager().removeEventListener( this );
 	}
 	

@@ -121,7 +121,7 @@ public class CArrayPartition extends CVariable
 			}
 			else
 			{
-				var = new CArrayPartition( target, cdiVars.subList( start, start + perSlot - 1 ), start, start + perSlot - 1 );
+				var = new CArrayPartition( target, cdiVars.subList( start, start + perSlot ), start, start + perSlot - 1 );
 			}
 			children.add( var );
 			start += perSlot;

@@ -1,3 +1,8 @@
+2003-11-26 Mikhail Khodjaiants
+	Extracted the main part of the 'breakpointAdded' method into a separate method to avoid 
+	double checking.
+	* CDebugTarget.java
+
 2003-11-10 Mikhail Khodjaiants
 	Ensure that all breakpoint creation and modification operations are running in the UI thread.
 	* CBreakpointManager.java

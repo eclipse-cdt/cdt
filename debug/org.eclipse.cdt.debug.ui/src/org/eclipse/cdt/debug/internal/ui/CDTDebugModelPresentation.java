@@ -455,43 +455,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 				}
 				case IState.SUSPENDED:
 					return target.getName() + " (Suspended)";
-/*
-				{
-					Object info = state.getCurrentStateInfo();
-					if ( info != null && info instanceof ICDISignalReceived )
-					{
-						ICDISignal signal = ((ICDISignalReceived)info).getSignal();
-						String label = target.getName() + 
-									   MessageFormat.format( " (Signal ''{0}'' received. Description: {1})", 
-									   						 new String[] { signal.getName(), signal.getDescription() } );
-						return label;
-					}
-					if ( info != null && info instanceof ICDIWatchpointTrigger )
-					{
-						String label = target.getName() + 
-									   MessageFormat.format( " (Watchpoint triggered. Old value: ''{0}''. New value: ''{1}'')", 
-									   						 new String[] { ((ICDIWatchpointTrigger)info).getOldValue(), 
-									   						 				((ICDIWatchpointTrigger)info).getNewValue() } );
-						return label;
-					}
-					if ( info != null && info instanceof ICDIWatchpointScope )
-					{
-						return target.getName() + " (Watchpoint is out of scope)";
-					}
-					if ( info != null && info instanceof ICDIBreakpointHit )
-					{
-						return target.getName() + " (Breakpoint hit)";
-					}
-					if ( info != null && info instanceof ICDISharedLibraryEvent )
-					{
-						return target.getName() + " (Stopped on shared library event)";
-					}
-					if ( info != null && info instanceof ICDISession )
-					{
-						return target.getName() + " (Suspended)";
-					}
-				}
-*/
 			}
 		}
 		return target.getName();

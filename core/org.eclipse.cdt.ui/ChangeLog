@@ -1,4 +1,9 @@
-2002-12-11 David Inglis
+2003-12-15 Thomas Fletcher
+	Re-activate the hover help based on the function summary extension point. 
+	Fix a bug in the FunctionSummary class which displayed arguments as
+	the return value for functions.
+  
+2003-12-11 David Inglis
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=48596
 	
 	* src/org/eclipse/cdt/ui/CElementContentProvider.java

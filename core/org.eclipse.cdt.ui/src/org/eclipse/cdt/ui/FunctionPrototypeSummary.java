@@ -73,7 +73,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 	public String getPrototypeString(boolean namefirst) {
 		StringBuffer buffer = new StringBuffer();
 		if(!namefirst) {
-			buffer.append(getArguments());
+			buffer.append(getReturnType());
 			buffer.append(" ");
 		}
 		buffer.append(getName());

@@ -177,8 +177,12 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		presentation.clear();
 		fCurrentParameter= currentParameter;
 		
-		String s= fInformation.getInformationDisplayString().trim();
+		//Don't presume what has been done to the string, rather use as is
+		String s= fInformation.getInformationDisplayString();
 		
+		//@@@ This is obviously going to have problems with functions such
+		//int myfunction(int (*function_argument)(void * extra, int param), void * extra)
+		//int myfunction(/*A comment, indeed */int a);
 		int start= 0;
 		int occurrences= 0;
 		while (occurrences < fCurrentParameter) {

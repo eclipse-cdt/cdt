@@ -4,7 +4,7 @@
    name="%pluginName"
    version="1.0.0"
    provider-name=""
-   class="org.eclipse.cdt.debug.internal.ui.CDebugUIPlugin">
+   class="org.eclipse.cdt.debug.ui.CDebugUIPlugin">
 
    <runtime>
       <library name="cdebugui.jar"/>
@@ -17,6 +17,8 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
    </requires>
 
+
+   <extension-point id="CDebuggerPage" name="%CDebuggerPage"/>
 
 <!-- Extensions -->
    <extension

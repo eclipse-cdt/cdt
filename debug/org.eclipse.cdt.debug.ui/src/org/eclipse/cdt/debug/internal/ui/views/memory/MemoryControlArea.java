@@ -8,8 +8,8 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
-import org.eclipse.cdt.debug.internal.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;

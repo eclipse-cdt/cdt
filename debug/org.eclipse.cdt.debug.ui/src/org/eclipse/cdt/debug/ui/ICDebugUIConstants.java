@@ -6,7 +6,7 @@
 
 package org.eclipse.cdt.debug.ui;
 
-import org.eclipse.cdt.debug.internal.ui.CDebugUIPlugin;
+
 
 /**
  * 

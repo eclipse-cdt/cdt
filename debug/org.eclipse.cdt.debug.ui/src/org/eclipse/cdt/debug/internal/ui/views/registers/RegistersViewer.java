@@ -5,8 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.ui.views.registers;
 
-import org.eclipse.cdt.debug.internal.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;

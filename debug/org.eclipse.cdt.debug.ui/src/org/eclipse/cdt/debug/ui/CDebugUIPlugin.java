@@ -1,14 +1,25 @@
-package org.eclipse.cdt.debug.internal.ui;
+package org.eclipse.cdt.debug.ui;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
+import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
+import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
@@ -24,6 +35,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 
+	protected Map fDebuggerPageMap;
 	/**
 	 * The constructor.
 	 */
@@ -142,5 +154,42 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	public IFormattedMemoryBlock[] getBlocks( IFormattedMemoryRetrieval mbr )
 	{
 		return new IFormattedMemoryBlock[0];
+	}
+	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+	
+	public ILaunchConfigurationTab getDebuggerPage(String debuggerID) {
+		if (fDebuggerPageMap == null) {	
+			initializeDebuggerPageMap();
+		}
+		IConfigurationElement configElement = (IConfigurationElement) fDebuggerPageMap.get(debuggerID);
+		ILaunchConfigurationTab tab = null;
+		if (configElement != null) {
+			try {
+				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
+			} catch(CoreException ce) {			 
+				log(new Status(Status.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce));
+			}
+		}
+		return tab;
+	}
+	
+	protected void initializeDebuggerPageMap() {
+		fDebuggerPageMap = new HashMap(10);
+
+		IPluginDescriptor descriptor= getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebuggerPage");
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		for (int i = 0; i < infos.length; i++) {
+			String id = infos[i].getAttribute("debuggerID"); //$NON-NLS-1$
+			fDebuggerPageMap.put(id, infos[i]);
+		}		
 	}
 }

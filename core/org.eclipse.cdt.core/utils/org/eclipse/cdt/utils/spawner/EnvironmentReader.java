@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Vector;
 
-
 public class EnvironmentReader {
 	private static Properties envVars = null;
 	private static Vector rawVars = null;
@@ -27,21 +26,21 @@ public class EnvironmentReader {
 		envVars = new Properties();
 		rawVars = new Vector(32);
 		String command = "env";
-		InputStream	in = null;
+		InputStream in = null;
 		boolean check_ready = false;
+		boolean isWin32 = false;
 		try {
 			if (OS.indexOf("windows 9") > -1) {
 				command = "command.com /c set";
 				//The buffered stream doesn't always like windows 98
 				check_ready = true;
- 
-			} else if ((OS.indexOf("nt") > -1) 
-                            || (OS.indexOf("windows 2000") > -1)
-                                || (OS.indexOf("windows xp") > -1)) {
+				isWin32 = true;
+			} else if ((OS.indexOf("nt") > -1) || (OS.indexOf("windows 2000") > -1) || (OS.indexOf("windows xp") > -1)) {
 				command = "cmd.exe /c set";
+				isWin32 = true;
 			}
 			p = ProcessFactory.getFactory().exec(command);
-			in = p .getInputStream();
+			in = p.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -49,12 +48,14 @@ public class EnvironmentReader {
 				int idx = line.indexOf('=');
 				if (idx != -1) {
 					String key = line.substring(0, idx);
+					if (isWin32) //Since windows env ignores case let normalize to Upper here.
+						key = key.toUpperCase();
 					String value = line.substring(idx + 1);
 					envVars.setProperty(key, value);
 				} else {
 					envVars.setProperty(line, "");
 				}
-				if(check_ready && br.ready() == false) {
+				if (check_ready && br.ready() == false) {
 					break;
 				}
 			}
@@ -80,9 +81,9 @@ public class EnvironmentReader {
 		Properties p = getEnvVars();
 		return p.getProperty(key);
 	}
-	
+
 	public static String[] getRawEnvVars() {
 		getEnvVars();
-		return (String[])rawVars.toArray( new String[0] );
+		return (String[]) rawVars.toArray(new String[0]);
 	}
 }

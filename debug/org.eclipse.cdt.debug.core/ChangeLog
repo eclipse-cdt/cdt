@@ -1,4 +1,8 @@
 2002-10-10 Mikhail Khodjaiants
+	* CVariable.java: Made the 'fChanged' field protected to access to it from the derived class (CRegister).
+	* CRegister.java: Added the 'hasValueChanged' method to 'CRegister'.
+
+2002-10-10 Mikhail Khodjaiants
 	* CThread.java: Check if the selected frame is current before calling 'setCurrentStackFrame'.
 
 2002-10-10 Mikhail Khodjaiants

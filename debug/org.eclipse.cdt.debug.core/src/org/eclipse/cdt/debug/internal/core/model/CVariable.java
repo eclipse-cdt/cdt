@@ -56,7 +56,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Change flag.
 	 */
-	private boolean fChanged = false;
+	protected boolean fChanged = false;
 
 	/**
 	 * The type name of this variable.

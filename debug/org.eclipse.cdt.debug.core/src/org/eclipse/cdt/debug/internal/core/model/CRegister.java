@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
+import org.eclipse.debug.core.model.IValue;
 
 /**
  * 
@@ -34,5 +35,18 @@ public class CRegister extends CGlobalVariable implements IRegister
 	public IRegisterGroup getRegisterGroup() throws DebugException
 	{
 		return (IRegisterGroup)getParent();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
+	 */
+	public boolean hasValueChanged() throws DebugException
+	{
+		IValue value = getValue();
+		if ( value != null )
+		{
+			return ( value.hasVariables() ) ? false : fChanged;
+		}
+		return false;
 	}
 }

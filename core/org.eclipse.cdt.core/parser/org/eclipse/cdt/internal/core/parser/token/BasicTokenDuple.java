@@ -388,6 +388,8 @@ public class BasicTokenDuple implements ITokenDuple {
 		        temp = (IToken) i.next();
 		        if( temp.getType() != IToken.tLT )
 		            token = temp;
+		        else
+		            break;
 		    }
 	        nameBuffer.append( createStringRepresentation( first, token ) );
     	}

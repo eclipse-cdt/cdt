@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserNotImplementedException;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -175,7 +176,13 @@ public class CompletionEngine implements RelevanceConstants{
 					
 		}
 		if(parser != null){
-			IASTCompletionNode result = parser.parse(completionOffset);
+			IASTCompletionNode result = null;
+			try {
+				result = parser.parse(completionOffset);
+			} catch (ParserNotImplementedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return result;
 		} else {
 			return null;

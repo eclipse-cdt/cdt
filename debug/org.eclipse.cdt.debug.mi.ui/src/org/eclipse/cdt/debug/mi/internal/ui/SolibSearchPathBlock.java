@@ -14,7 +14,6 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
-import org.eclipse.cdt.debug.internal.ui.dialogfields.Separator;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -107,8 +106,6 @@ public class SolibSearchPathBlock extends Observable
 		LayoutUtil.setHorizontalSpan( fDirList.getLabelControl( null ), 2 );
 		LayoutUtil.setWidthHint( fDirList.getLabelControl( null ), converter.convertWidthInCharsToPixels( 30 ) );
 		LayoutUtil.setHorizontalGrabbing( fDirList.getListControl( null ) );
-
-		new Separator().doFillIntoGrid( comp, 3, converter.convertHeightInCharsToPixels( 1 ) );
 	}
 
 	public void initializeFrom( ILaunchConfiguration configuration )

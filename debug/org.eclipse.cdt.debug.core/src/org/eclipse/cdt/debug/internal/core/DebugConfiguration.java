@@ -66,10 +66,11 @@ public class DebugConfiguration implements ICDebugConfiguration {
 
 	public boolean supportsCPU(String cpu) {
 		String nativeCPU = BootLoader.getOSArch();
+		boolean ret = false;
 		if ( nativeCPU.startsWith(cpu) ) {
-			cpu = NATIVE;
+			ret = getCPUs().contains(NATIVE);
 		}
-		return getCPUs().contains(cpu);
+		return ret || getCPUs().contains(cpu);
 	}
 	/**
 	 * Returns the set of modes specified in the configuration data.

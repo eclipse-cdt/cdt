@@ -1,3 +1,9 @@
+2003-06-05 Mikhail Khodjaiants
+	Removed the redundant methods from the 'ICDIFloatingPointValue' interface.
+	* ICDIFloatingPointValue.java
+	* CValue.java
+	* CVariable.java
+
 2003-06-04 Mikhail Khodjaiants
 	Implementing the core support of the detail panel.
 	* ICValue.java

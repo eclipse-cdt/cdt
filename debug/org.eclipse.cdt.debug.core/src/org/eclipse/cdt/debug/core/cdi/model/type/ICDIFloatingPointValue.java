@@ -20,10 +20,4 @@ public interface ICDIFloatingPointValue extends ICDIValue {
 	float floatValue() throws CDIException;
 
 	double doubleValue() throws CDIException;
-
-	long longValue() throws CDIException;
-
-	boolean isNaN();
-
-	boolean isInfinite();
 }

@@ -1,3 +1,7 @@
+2003-06-05 Mikhail Khodjaiants
+	Removed the redundant methods from the 'ICDIFloatingPointValue' interface.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/FloatingPointValue.java
+
 2003-06-04 Mikhail Khodjaiants
 	Correction in the parsing of reference value.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ReferenceValue.java

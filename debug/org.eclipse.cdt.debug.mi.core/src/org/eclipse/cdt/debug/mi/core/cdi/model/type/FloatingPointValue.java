@@ -26,10 +26,14 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	 */
 	public double doubleValue() throws CDIException {
 		double result = 0;
-		try {
-			result = Double.parseDouble( getValueString() );
-		}
-		catch (NumberFormatException e) {
+		if ( isNaN() )
+			result = Double.NaN;
+		else {		
+			try {
+				result = Double.parseDouble( getValueString() );
+			}
+			catch (NumberFormatException e) {
+			}
 		}
 		return result;
 	}
@@ -39,40 +43,20 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	 */
 	public float floatValue() throws CDIException {
 		float result = 0;
-		try {
-			result = Float.parseFloat( getValueString() );
-		}
-		catch (NumberFormatException e) {
+		if ( isNaN() )
+			result = Float.NaN;
+		else {		
+			try {
+				result = Float.parseFloat( getValueString() );
+			}
+			catch (NumberFormatException e) {
+			}
 		}
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue#longValue()
-	 */
-	public long longValue() throws CDIException {
-		Double dbl = new Double( doubleValue() );
-		return dbl.longValue();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue#isInfinite()
-	 */
-	public boolean isInfinite() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue#isNaN()
-	 */
-	public boolean isNaN() {
-		String valueString = null;
-		try {
-			valueString = getValueString();
-		}
-		catch (CDIException e) {
-		}
+	private boolean isNaN() throws CDIException {
+		String valueString = getValueString();
 		return ( valueString != null ) ? valueString.indexOf( "nan" ) != -1 : false;
 	}
 }

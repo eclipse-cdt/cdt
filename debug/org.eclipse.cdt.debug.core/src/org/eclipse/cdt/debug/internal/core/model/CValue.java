@@ -417,10 +417,11 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getFloatValueString( ICDIFloatValue value ) throws CDIException
 	{
-		if ( value.isNaN() )
-			return "";
 		float floatValue = value.floatValue();
-		long longValue = value.longValue();
+		Float flt = new Float( floatValue );
+		if ( flt.isNaN() || flt.isInfinite() )
+			return "";
+		long longValue = flt.longValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
@@ -440,14 +441,15 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getDoubleValueString( ICDIDoubleValue value ) throws CDIException
 	{
-		if ( value.isNaN() )
-			return "";
 		double doubleValue = value.doubleValue();
-		long longValue = value.longValue();
+		Double dbl = new Double( doubleValue );
+		if ( dbl.isNaN() || dbl.isInfinite() )
+			return "";
+		long longValue = dbl.longValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
-				return Double.toString( doubleValue );
+				return dbl.toString();
 			case ICDIFormat.DECIMAL:
 				return Long.toString( longValue );
 			case ICDIFormat.HEXADECIMAL:

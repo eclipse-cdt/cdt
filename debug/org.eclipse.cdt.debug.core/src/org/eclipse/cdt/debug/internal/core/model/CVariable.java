@@ -20,8 +20,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
@@ -676,8 +677,15 @@ public abstract class CVariable extends CDebugElement
 	{
 		try 
 		{
-			return ( getCDIVariable().getValue() instanceof ICDIFloatingPointValue ) ?
-					((ICDIFloatingPointValue)getCDIVariable().getValue()).isNaN() : false;
+			ICDIValue value = getCDIVariable().getValue();
+			if ( value instanceof ICDIDoubleValue )
+			{
+				return Double.isNaN( ((ICDIDoubleValue)value).doubleValue() );
+			}
+			if ( value instanceof ICDIFloatValue )
+			{
+				return Float.isNaN( ((ICDIFloatValue)value).floatValue() );
+			}
 		}
 		catch( CDIException e ) 
 		{

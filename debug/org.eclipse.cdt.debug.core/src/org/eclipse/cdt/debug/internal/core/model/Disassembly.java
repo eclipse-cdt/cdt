@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
@@ -80,7 +79,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 						!containsAddress( mixedInstrs, address ) ) {
 						try {
 							BigInteger addr = new BigInteger( address.toString() );
-							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( addr, addr.add(BigInteger.valueOf(DISASSEMBLY_BLOCK_SIZE)) ) );
+							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( addr, addr.add( BigInteger.valueOf( DISASSEMBLY_BLOCK_SIZE ) ) ) );
 							return DisassemblyBlock.create( this, instructions );
 						}
 						catch( CDIException e ) {
@@ -98,9 +97,12 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	private boolean containsAddress( ICDIMixedInstruction[] mi, IAddress address ) {
 		for( int i = 0; i < mi.length; ++i ) {
 			ICDIInstruction[] instructions = mi[i].getInstructions();
-			for ( int j = 0; j < instructions.length; ++j )
-				if ( address.equals(instructions[j].getAdress()))
+			for ( int j = 0; j < instructions.length; ++j ) {
+				// TODO: better comparison of IAddress and BigInteger
+				BigInteger a = new BigInteger( address.toString() );
+				if ( a.equals( instructions[j].getAdress() ) )
 					return true;
+			}
 		}
 		return false;
 	}

@@ -1,4 +1,12 @@
 2004-09-21 Mikhail Khodjaiants
+	Fixed the problems with the Disassembly view and address breakpoints caused by switch to IAddress.
+	* CBreakpointManager.java
+	* AsmInstruction.java
+	* Disassembly.java
+	* DisassemblyBlock.java
+	* src/org/eclipse/cdt/debug/internal/core/CDebugUtils.java: removed
+
+2004-09-21 Mikhail Khodjaiants
 	Changes to the IBinary interface
 	* CDebugTarget.java
 

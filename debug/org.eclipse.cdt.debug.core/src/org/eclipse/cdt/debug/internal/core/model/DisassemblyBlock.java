@@ -105,11 +105,12 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 		if ( !getDisassembly().getDebugTarget().equals( frame.getDebugTarget() ) )
 			return false;
 		IAddress address = frame.getAddress();
-		return ( address.compareTo(fStartAddress) >= 0 && 
-				 address.compareTo(fEndAddress)   <= 0    );
+		return (address.compareTo( fStartAddress ) >= 0 && address.compareTo( fEndAddress ) <= 0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#getSourceLines()
 	 */
 	public IAsmSourceLine[] getSourceLines() {

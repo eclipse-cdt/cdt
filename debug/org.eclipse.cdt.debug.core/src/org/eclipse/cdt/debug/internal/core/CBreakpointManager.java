@@ -266,8 +266,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			if ( cdiBreakpoint instanceof ICDILocationBreakpoint ) {
 				try {
 					ICDILocation location = ((ICDILocationBreakpoint)cdiBreakpoint).getLocation();
-					if ( location != null ) 
-					{
+					if ( location != null ) {
 						IAddressFactory factory = getDebugTarget().getAddressFactory();
 						return factory.createAddress( location.getAddress().toString() );
 					}	
@@ -499,12 +498,15 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private ICDIBreakpoint setAddressBreakpoint( ICAddressBreakpoint breakpoint ) throws CDIException, CoreException, NumberFormatException {
-		ICDITarget cdiTarget = getCDITarget();
-		ICDILocation location = cdiTarget.createLocation( new BigInteger ( breakpoint.getAddress() ) );
 		ICDIBreakpoint cdiBreakpoint = null;
-		synchronized ( getBreakpointMap() ) {
-			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null, true );
-			getBreakpointMap().put( breakpoint, cdiBreakpoint );
+		ICDITarget cdiTarget = getCDITarget();
+		String address = breakpoint.getAddress();
+		if ( address.startsWith( "0x" ) ) { //$NON-NLS-1$
+			ICDILocation location = cdiTarget.createLocation( new BigInteger ( breakpoint.getAddress().substring( 2 ), 16 ) );
+			synchronized ( getBreakpointMap() ) {
+				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null, true );
+				getBreakpointMap().put( breakpoint, cdiBreakpoint );
+			}
 		}
 		return cdiBreakpoint;
 	}

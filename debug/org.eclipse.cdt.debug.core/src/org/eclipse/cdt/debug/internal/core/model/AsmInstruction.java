@@ -21,25 +21,22 @@ import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 public class AsmInstruction implements IAsmInstruction {
 
 	private ICDIInstruction fCDIInstruction;
-	private IAddressFactory fAddressFactory;
+
+	private IAddress fAddress;
+
 	/**
 	 * Constructor for AsmInstruction.
 	 */
 	public AsmInstruction( IAddressFactory factory, ICDIInstruction cdiInstruction ) {
 		fCDIInstruction = cdiInstruction;
-		fAddressFactory = factory;
-	}
-
-	public IAddressFactory getAddressFactory() {
-		return fAddressFactory;
+		fAddress = factory.createAddress( cdiInstruction.getAdress().toString() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getAdress()
 	 */
 	public IAddress getAdress() {
-		IAddressFactory factory = getAddressFactory();
-		return factory.createAddress( fCDIInstruction.getAdress().toString() );
+		return fAddress;
 	}
 
 	/* (non-Javadoc)

@@ -14,11 +14,8 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
-import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CFormattedMemoryBlock;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -76,33 +73,20 @@ public class CDebugModel {
 		return CDIDebugModel.newCoreFileDebugTarget( launch, cdiTarget, name, debuggerProcess, file );
 	}
 
+	/**
+	 * @deprecated
+	 * Use {@link CDIDebugModel#createExpression(IDebugTarget, String)}. 
+	 */
 	public static IExpression createExpression( IDebugTarget target, String text ) throws DebugException {
-		if ( target != null && target instanceof CDebugTarget ) {
-			try {
-				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( text );
-				return new CExpression( (CDebugTarget)target, cdiExpression );
-			}
-			catch( CDIException e ) {
-				throw new DebugException( new Status( IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, e.getMessage(), null ) );
-			}
-		}
-		return null;
+		return CDIDebugModel.createExpression( target, text );
 	}
 
+	/**
+	 * @deprecated
+	 * Use {@link CDIDebugModel#createExpressionForGlobalVariable(IDebugTarget, IPath, String)}. 
+	 */
 	public static IExpression createExpressionForGlobalVariable( IDebugTarget target, IPath fileName, String name ) throws DebugException {
-		if ( target != null && target instanceof CDebugTarget ) {
-			ICDIVariableObject vo = null;
-			try {
-				vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
-				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable( vo );
-				return new CExpression( (CDebugTarget)target, cdiVariable );
-			}
-			catch( CDIException e ) {
-				throw new DebugException( new Status( IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), //$NON-NLS-1$
-						null ) );
-			}
-		}
-		return null;
+		return CDIDebugModel.createExpressionForGlobalVariable( target, fileName, name );
 	}
 
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, String addressExpression, int format, int wordSize, int numberOfRows, int numberOfColumns, char paddingChar ) throws DebugException {

@@ -1,3 +1,7 @@
+2004-07-23 Mikhail Khodjaiants
+	Marked the expression creation methods as deprecated in CDebugModel.
+	* CDebugModel.java
+
 2004-07-21 Mikhail Khodjaiants
 	CThread cleanup.
 	* CThread.java

@@ -1378,4 +1378,26 @@ public class ScannerTestCase extends BaseScannerTest
 			assertTrue(se.getMessage().equals("Invalid character '\\' read @ offset 5 of file TEXT"));
 		}
 	}
+    
+    public void testBug36701A() throws Exception
+    {
+        StringWriter writer = new StringWriter();
+        writer.write("#define str(s) # s\n");
+        writer.write("str( @ \\n )\n");
+
+        initializeScanner(writer.toString());
+        validateString("@ \\\\n");
+        validateEOF();
+    }
+    
+    public void testBug36701B() throws Exception 
+    {
+        StringWriter writer = new StringWriter();
+        writer.write("#define str(s) # s\n");
+        writer.write("str( @ /*ff*/  \\n  hh  \"aa\"  )\n");
+
+        initializeScanner(writer.toString());
+        validateString("@ \\\\n hh \\\"aa\\\"");
+        validateEOF();
+    }
 }

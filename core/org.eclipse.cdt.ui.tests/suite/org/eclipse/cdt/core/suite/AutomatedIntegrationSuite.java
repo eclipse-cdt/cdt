@@ -80,7 +80,6 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		suite.addTestSuite(ACEFailedTest.class);
 		suite.addTestSuite(DOMFailedTest.class);
 		suite.addTestSuite(LokiFailures.class);
-		suite.addTestSuite(ScannerFailedTest.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);
 

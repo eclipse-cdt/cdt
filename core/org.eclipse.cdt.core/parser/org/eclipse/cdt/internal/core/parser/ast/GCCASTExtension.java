@@ -62,7 +62,8 @@ public abstract class GCCASTExtension implements IASTFactoryExtension {
 			kind == IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION ||
 			kind == IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID || 
 			kind == IASTGCCExpression.Kind.RELATIONAL_MAX || 
-			kind == IASTGCCExpression.Kind.RELATIONAL_MIN )
+			kind == IASTGCCExpression.Kind.RELATIONAL_MIN ||
+			kind == IASTGCCExpression.Kind.STATEMENT_EXPRESSION )
 			return true;
 		return false;
 	}

@@ -72,7 +72,7 @@ public class SelectionRegressionTest extends BaseTestFramework {
     	suite.addTest( new SelectionRegressionTest( "testClassField" ) ); //$NON-NLS-1$
     	suite.addTest( new SelectionRegressionTest( "testStructField" ) ); //$NON-NLS-1$
     	suite.addTest( new SelectionRegressionTest( "testNamespace" ) ); //$NON-NLS-1$
-    	suite.addTest( new FailingTest(new SelectionRegressionTest( "testNamespace77989" ), 77989) ); //$NON-NLS-1$
+    	suite.addTest( new SelectionRegressionTest( "testNamespace77989" ) ); //$NON-NLS-1$
     	suite.addTest( new SelectionRegressionTest( "testFunction" ) ); //$NON-NLS-1$
     	suite.addTest( new SelectionRegressionTest( "testFunctionArg" ) ); //$NON-NLS-1$
     	suite.addTest( new FailingTest(new SelectionRegressionTest( "testFunctionArg78435" ), 78435 )); //$NON-NLS-1$

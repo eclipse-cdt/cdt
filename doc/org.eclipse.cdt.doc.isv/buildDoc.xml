@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CDT ISV Doc Build" default="all"  basedir="." >
+
+	<target name="all">
+		<antcall target="convertSchemaToHtml" />
+		<!--antcall target="examplesDocCopy" /-->
+		<antcall target="generateJavadoc" />
+		<antcall target="createDocZip" />
+	</target>
+	
+	<target name="convertSchemaToHtml" if="eclipse.running">
+		<property name="dest" value="reference/extension-points" />
+	    <record name="${basedir}/cdtconvert.txt" action="start"/>
+	    <pde.convertSchemaToHTML manifest="../org.eclipse.cdt.core/plugin.xml" destination="${dest}" />
+	    <record name="${basedir}/cdtconvert.txt" action="stop"/>
+	</target>
+	
+	<target name="examplesDocCopy" >
+		 <copy todir="samples">
+	    	<fileset dir="..">
+	    		<include name="org.eclipse.jdt.ui.examples.projects/doc-html/"/>
+		    </fileset>
+		  </copy>
+	</target>
+	
+	<target name="getJavadocPath">
+		<available file="${java.home}/bin/javadoc.exe" property="javadoc" value="${java.home}/bin/javadoc.exe"/>
+		<available file="${java.home}/bin/javadoc" property="javadoc" value="${java.home}/bin/javadoc" />
+	</target>
+	
+	<target name="generateJavadoc" depends="getJavadocPath" if="javadoc">
+	
+		<condition property="optionsFile" value="cdtOptions">
+		      <os family="unix" />
+	    </condition>
+	    <condition property="optionsFile" value="cdtOptions.txt">
+		      <os family="windows" />
+	    </condition>
+	
+		<replace file="${basedir}/${optionsFile}" token="@rt@" value="${bootclasspath}" />
+	
+		<!--scrub isv plugin directories of any preexisting api doc content-->
+		<delete dir="reference/api"/>
+		<mkdir dir="reference/api"/>
+	
+		<exec dir="." executable="${javadoc}" output="doc.bin.log">
+			<arg line="@${basedir}/${optionsFile} -J-Xmx500M" />
+		</exec>
+	</target>
+	
+	<target name="createDocZip">
+		<zip zipfile="${basedir}/doc.zip"
+			basedir="${basedir}"
+			includes="book.css, cpy.gif, notices.html, about.html, no_help_exists.htm, concepts/**, gettingStarted/**, images/**, reference/**, tasks/**,samples/**,guide/**,questions/**"
+		/>
+	</target>
+
+</project>

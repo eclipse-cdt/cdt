@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.cdt.doc.isv"
+   name="C/C++ Plugin Developer Guide"
+   version="3.0.0">
+   <requires>
+      <import plugin="org.eclipse.help"/>
+   </requires>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            primary="true"
+            file="toc.xml"/>
+      <toc
+            primary="false"
+            file="topics_Guide.xml"/>
+      <toc
+            primary="false"
+            file="topics_Reference.xml"/>
+   </extension>
+
+</plugin>

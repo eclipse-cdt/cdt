@@ -1356,11 +1356,6 @@ public abstract class Parser implements IParser
                 || (LT(3) != IToken.tLPAREN && LT(3) != IToken.tASSIGN))
                 && !LA(2).isPointer());
     }
-    private void callbackSimpleDeclToken(Flags flags) throws EndOfFileException
-    {
-        flags.setEncounteredRawType(true);
-        consume(); 
-    }
     /**
      * This function parses a declaration specifier sequence, as according to the ANSI C++ spec. 
      * 
@@ -1451,7 +1446,8 @@ public abstract class Parser implements IParser
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
 					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
                     break;
                 case IToken.t_unsigned :
@@ -1459,7 +1455,8 @@ public abstract class Parser implements IParser
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
 					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
                     break;
                 case IToken.t_short :
@@ -1467,14 +1464,16 @@ public abstract class Parser implements IParser
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
 					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
                     break;
                 case IToken.t_long :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
 					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
                     sdw.setLong(true);
                     break;
@@ -1496,14 +1495,16 @@ public abstract class Parser implements IParser
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.CHAR);
                     break;
                 case IToken.t_wchar_t :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(
                         IASTSimpleTypeSpecifier.Type.WCHAR_T);
                     break;
@@ -1511,35 +1512,40 @@ public abstract class Parser implements IParser
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.BOOL);
                     break;
                 case IToken.t__Bool: 
 					if (typeNameBegin == null)
 						typeNameBegin = LA(1);
 					typeNameEnd = LA(1);
-					callbackSimpleDeclToken(flags);
+					flags.setEncounteredRawType(true);
+					consume();
 					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type._BOOL);
 					break;                
                 case IToken.t_int :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
                     break;					
                 case IToken.t_float :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.FLOAT);
                     break;
                 case IToken.t_double :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(
                         IASTSimpleTypeSpecifier.Type.DOUBLE);
                     break;
@@ -1547,7 +1553,8 @@ public abstract class Parser implements IParser
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
-                    callbackSimpleDeclToken(flags);
+                    flags.setEncounteredRawType(true);
+					consume();
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.VOID);
                     break;
                 case IToken.t_typename :
@@ -2945,7 +2952,7 @@ public abstract class Parser implements IParser
      * 
      * @throws BacktrackException	request a backtrack
      */
-    protected void statement(IASTScope scope) throws EndOfFileException, BacktrackException
+    protected void statement(IASTCodeScope scope) throws EndOfFileException, BacktrackException
     {
     	setCompletionValues(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.STATEMENT);
     	
@@ -3207,7 +3214,7 @@ public abstract class Parser implements IParser
         	checkToken = LA(1);
         	try
         	{
-            	statement(createNewScope ? newScope : scope );
+            	statement((IASTCodeScope) (createNewScope ? newScope : scope) );
         	}
         	catch( BacktrackException b )
         	{

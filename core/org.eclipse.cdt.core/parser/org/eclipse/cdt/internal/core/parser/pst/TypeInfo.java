@@ -89,6 +89,7 @@ public class TypeInfo {
 	public static final int isComplex  = 0x200000;
 	public static final int isImaginary= 0x400000;
 	public static final int isLongLong = 0x800000;
+	public static final int isSigned   = 0x1000000;
 	
 	// Types (maximum type is typeMask
 	// Note that these should be considered ordered and if you change
@@ -530,4 +531,5 @@ public class TypeInfo {
 	private Object _defaultValue = null;
 	private LinkedList _ptrOperators;	
 	private LinkedList _operatorExpressions;
+	
 }

@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.extension;
 
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -18,13 +17,11 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public interface IScannerExtension extends Cloneable {
 	
-	public void setScanner( IScanner scanner );
 	public Object clone( );
 
 	public String initializeMacroValue( String original );
-
-	/**
-	 * 
-	 */
 	public void setupBuiltInMacros(ParserLanguage language);
+
+	public boolean canHandlePreprocessorDirective( String directive );
+	public void handlePreprocessorDirective( String directive, String restOfLine );
 }

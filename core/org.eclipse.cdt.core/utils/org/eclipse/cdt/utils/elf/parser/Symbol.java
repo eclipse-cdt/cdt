@@ -34,7 +34,7 @@ public class Symbol implements ISymbol, Comparable {
 		binary = bin;
 	}
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getFilename()
+	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getInitialFilename()
 	 */
 	public IPath getFilename() {
 		return filename;

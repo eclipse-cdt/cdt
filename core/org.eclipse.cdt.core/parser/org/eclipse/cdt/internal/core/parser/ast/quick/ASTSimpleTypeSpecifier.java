@@ -64,6 +64,8 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 		{
 			if (isUnsigned())
 				type.append("unsigned ");
+			else if( isSigned() )
+				type.append("signed ");
 			type.append( (String)nameMap.get( this.kind ));
 		}
 		else if( this.kind == Type.BOOL || this.kind == Type.VOID || this.kind == Type._BOOL )

@@ -1203,5 +1203,35 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertAllReferences( 1, createTaskList( new Task( x )));		
 	}
 	
+//	public void testBug47628() throws Exception
+//	{
+//		Writer writer = new StringWriter(); 
+//		writer.write( "void h(char) { }\n");
+//		writer.write( "void h(unsigned char) { }\n");
+//		writer.write( "void h(signed char) { }  // not shown in outline, parsed as char\n");
+//		Iterator i = parse( writer.toString() ).getDeclarations();
+//		IASTFunction h1 = (IASTFunction) i.next(); 
+//		assertEquals( h1.getName(), "h");
+//		Iterator parms = h1.getParameters();
+//		IASTParameterDeclaration parm = (IASTParameterDeclaration) parms.next();
+//		assertTrue( parm.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ); 
+//		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "char" );
+//		IASTFunction h2 = (IASTFunction) i.next();
+//		assertEquals( h2.getName(), "h");
+//		parms = h2.getParameters();
+//		parm = (IASTParameterDeclaration) parms.next();
+//		assertTrue( parm.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ); 
+//		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "unsigned char" );
+//		
+//		IASTFunction h3 = (IASTFunction) i.next();
+//		assertEquals( h3.getName(), "h");
+//		parms = h3.getParameters();
+//		parm = (IASTParameterDeclaration) parms.next();
+//		assertTrue( parm.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ); 
+//		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "signed char" );
+//		
+//		assertFalse( i.hasNext() );
+//	}
+	
 	
 }

@@ -19,7 +19,8 @@ import org.eclipse.cdt.core.parser.extension.IScannerExtension;
  */
 public class GCCScannerExtension implements IScannerExtension {
 
-	private IScanner scanner;
+
+	private IScannerData scannerData;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
@@ -35,18 +36,16 @@ public class GCCScannerExtension implements IScannerExtension {
 	 */
 	public void setupBuiltInMacros(ParserLanguage language) {
 		if( language == ParserLanguage.CPP )
-			if( scanner.getDefinition( IScanner.__CPLUSPLUS ) == null )
-				scanner.addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1"));
-		if( scanner.getDefinition(IScanner.__STDC_HOSTED__) == null )
-			scanner.addDefinition(IScanner.__STDC_HOSTED__, new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0"));
-		if( scanner.getDefinition( IScanner.__STDC_VERSION__) == null )
-			scanner.addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L"));
+			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
+				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1"));
+		if( scannerData.getScanner().getDefinition(IScanner.__STDC_HOSTED__) == null )
+			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0"));
+		if( scannerData.getScanner().getDefinition( IScanner.__STDC_VERSION__) == null )
+			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L"));
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#setScanner(org.eclipse.cdt.core.parser.IScanner)
-	 */
-	public void setScanner(IScanner scanner) {
-		this.scanner = scanner;
+
+	public void setScannerData(IScannerData scannerData) {
+		this.scannerData = scannerData;
 	}
 	
 	public Object clone( ) {
@@ -54,6 +53,25 @@ public class GCCScannerExtension implements IScannerExtension {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
 			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#canHandlePreprocessorDirective(java.lang.String)
+	 */
+	public boolean canHandlePreprocessorDirective(String directive) {
+		if( directive.equals("#include_next")) return true;
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#handlePreprocessorDirective(java.lang.String, java.lang.String)
+	 */
+	public void handlePreprocessorDirective(String directive, String restOfLine) {
+		if( directive.equals("#include_next") )
+		{
+			// figure out the name of the current file and its path
+			// search through include paths 
 		}
 	}
 

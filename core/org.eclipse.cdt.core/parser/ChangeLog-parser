@@ -1,3 +1,8 @@
+2004-02-10 John Camelon
+	Refactored Parser.java to allow inline small functions and tightened the signatures for statement().  
+	Refactored Scanner.java to allow for data to be encapsulated to allow for IScannerExtension to act upon it. 
+	Partially fixed Bug 47628 - signed char is parsed as char (affects the outline view) 
+
 2004-02-08 John Camelon
 	Added support for inline method x-references.  
 	Fixed Bug 44340 - Inline functions fail to resolve references 

@@ -1745,7 +1745,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		TypeInfo type = new TypeInfo();
 		if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
 		{
-			IASTSimpleTypeSpecifier.Type kind = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType();
+			IASTSimpleTypeSpecifier simpleType = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier());
+			IASTSimpleTypeSpecifier.Type kind = simpleType.getType();
 			if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
 				type.setType(TypeInfo.t_bool);
 			else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
@@ -1766,7 +1767,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				type.setType( TypeInfo.t__Bool );
 			}
 			else
-				throw new ASTSemanticException(); 
+				throw new ASTSemanticException();
+			type.setBit( simpleType.isLong(), TypeInfo.isLong);
+			type.setBit( simpleType.isShort(), TypeInfo.isShort);
+			type.setBit( simpleType.isUnsigned(), TypeInfo.isUnsigned);
+			type.setBit( simpleType.isComplex(), TypeInfo.isComplex);
+			type.setBit( simpleType.isImaginary(), TypeInfo.isImaginary);
+			type.setBit( simpleType.isSigned(), TypeInfo.isSigned);
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTClassSpecifier )
 		{

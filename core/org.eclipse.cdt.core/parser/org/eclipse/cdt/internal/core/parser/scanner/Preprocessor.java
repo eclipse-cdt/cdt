@@ -48,7 +48,7 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 		catch( ScannerException se )
 		{
 			// callback IProblem here
-			log.errorLog("Preprocessor Exception "+ se.getProblem().getMessage()); //$NON-NLS-1$h
+			scannerData.getLogService().errorLog("Preprocessor Exception "+ se.getProblem().getMessage()); //$NON-NLS-1$h
 		}
 		catch( EndOfFileException eof )
 		{

@@ -166,13 +166,13 @@ public class TypeInfo {
 		}
 		public PtrOp( TypeInfo.eType type, boolean isConst, boolean isVolatile ){
 			this.type = type;
-			this.isConst = isConst;
-			this.isVolatile = isVolatile;
+			this.isConstPtr = isConst;
+			this.isVolatilePtr = isVolatile;
 		}
 		public PtrOp( ISymbol memberOf, boolean isConst, boolean isVolatile ){
 			this.type = PtrOp.t_memberPointer;
-			this.isConst = isConst;
-			this.isVolatile = isVolatile;
+			this.isConstPtr = isConst;
+			this.isVolatilePtr = isVolatile;
 			this.memberOf = memberOf;
 		}
 		
@@ -180,7 +180,7 @@ public class TypeInfo {
 			super();
 		}
 		
-		public static final TypeInfo.eType t_undef         = new TypeInfo.eType( 0 );
+		public static final TypeInfo.eType t_undef_ptr         = new TypeInfo.eType( 0 );
 		public static final TypeInfo.eType t_pointer       = new TypeInfo.eType( 1 );
 		public static final TypeInfo.eType t_reference     = new TypeInfo.eType( 2 );
 		public static final TypeInfo.eType t_array         = new TypeInfo.eType( 3 );
@@ -189,10 +189,10 @@ public class TypeInfo {
 		public TypeInfo.eType 	getType()			 			{ return type; }
 		public void 	setType( TypeInfo.eType type )			{ this.type = type; }
 		
-		public boolean 	isConst()						{ return isConst; }
-		public boolean 	isVolatile()					{ return isVolatile; }
-		public void 	setConst( boolean isConst ) 	{ this.isConst = isConst; }
-		public void 	setVolatile(boolean isVolatile)	{ this.isVolatile = isVolatile; }
+		public boolean 	isConst()						{ return isConstPtr; }
+		public boolean 	isVolatile()					{ return isVolatilePtr; }
+		public void 	setConst( boolean isConst ) 	{ this.isConstPtr = isConst; }
+		public void 	setVolatile(boolean isVolatile)	{ this.isVolatilePtr = isVolatile; }
 		
 		public ISymbol	getMemberOf()					{ return memberOf; }
 		public void 	setMemberOf( ISymbol member )	{ this.memberOf = member;	}
@@ -214,9 +214,9 @@ public class TypeInfo {
 					 getType() == op.getType() );
 		}
 		
-		private TypeInfo.eType type = PtrOp.t_undef;
-		private boolean isConst = false;
-		private boolean isVolatile = false;
+		private TypeInfo.eType type = PtrOp.t_undef_ptr;
+		private boolean isConstPtr = false;
+		private boolean isVolatilePtr = false;
 		private ISymbol memberOf = null;
 	}
 

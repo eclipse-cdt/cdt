@@ -326,6 +326,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 							CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
 					CCorePlugin.log(status);
+					iterator.next(); // increment the iterator remove infinite loop
 				}
 
 				public void run() throws Exception {

@@ -289,7 +289,7 @@ public final class TemplateEngine {
 		List pPtrs = p.getPtrOperators();
 		if( pPtrs.size() > 0 ){
 			PtrOp pOp = (PtrOp) pPtrs.get( 0 );
-			if( pOp.getType() == PtrOp.t_reference || pOp.getType() == PtrOp.t_undef ){
+			if( pOp.getType() == PtrOp.t_reference || pOp.getType() == PtrOp.t_undef_ptr ){
 				pPtrs.remove( 0 );	
 			} else {
 				PtrOp newOp = new PtrOp( pOp.getType(), false, false );

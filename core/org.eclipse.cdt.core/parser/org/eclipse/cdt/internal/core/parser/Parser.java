@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
-import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
@@ -226,9 +227,10 @@ public abstract class Parser extends ExpressionParser implements IParser
      *  using namespace ::? nested-name-specifier? namespace-name ;
      * 
      * @param container		Callback object representing the scope these definitions fall into. 
+     * @return TODO
      * @throws BacktrackException	request for a backtrack
      */
-    protected void usingClause(IASTScope scope)
+    protected IASTDeclaration usingClause(IASTScope scope)
         throws EndOfFileException, BacktrackException
     {
         IToken firstToken = consume(IToken.t_using);
@@ -261,7 +263,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     throw backtrack;
                 }
                 astUD.acceptElement(requestor);
-                return;
+                return astUD;
             }
             else
             {
@@ -312,6 +314,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 declaration.acceptElement( requestor );
                 setCompletionValues(scope, getCompletionKindForDeclaration(scope, null), Key.DECLARATION );
+                return declaration;
             }
             else
             {
@@ -327,9 +330,10 @@ public abstract class Parser extends ExpressionParser implements IParser
      * | extern "string literal" { declaration-seq } 
      * 
      * @param container Callback object representing the scope these definitions fall into.
+     * @return TODO
      * @throws BacktrackException	request for a backtrack
      */
-    protected void linkageSpecification(IASTScope scope)
+    protected IASTDeclaration linkageSpecification(IASTScope scope)
         throws EndOfFileException, BacktrackException
     {
         IToken firstToken = consume(IToken.t_extern);
@@ -383,6 +387,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             IToken lastTokenConsumed = consume();
             linkage.setEndingOffsetAndLineNumber(lastTokenConsumed.getEndOffset(), lastTokenConsumed.getLineNumber());
             linkage.exitScope( requestor );
+            return linkage;
         }
         else // single declaration
             {
@@ -403,6 +408,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			linkage.enterScope( requestor );
             declaration(linkage, null, null);
 			linkage.exitScope( requestor );
+			return linkage;
         }
     }
     /**
@@ -415,9 +421,10 @@ public abstract class Parser extends ExpressionParser implements IParser
      * explicit-specialization:	template <> declaration
      *  
      * @param container			Callback object representing the scope these definitions fall into.
+     * @return TODO
      * @throws BacktrackException		request for a backtrack
      */
-    protected void templateDeclaration(IASTScope scope)
+    protected IASTDeclaration templateDeclaration(IASTScope scope)
         throws EndOfFileException, BacktrackException
     {
         IToken firstToken = null;
@@ -451,7 +458,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
 			templateInstantiation.exitScope( requestor );
  
-            return;
+            return templateInstantiation;
         }
         else
         {
@@ -479,7 +486,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 templateSpecialization.setEndingOffsetAndLineNumber(
                     lastToken.getEndOffset(), lastToken.getLineNumber());
                 templateSpecialization.exitScope(requestor);
-                return;
+                return templateSpecialization;
             }
         }
         
@@ -511,7 +518,8 @@ public abstract class Parser extends ExpressionParser implements IParser
     			throw e;
             }
             templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
-			templateDecl.exitScope( requestor );      
+			templateDecl.exitScope( requestor );
+			return templateDecl;
         }
         catch (BacktrackException bt)
         {
@@ -713,7 +721,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     	
     	IASTCompletionNode.CompletionKind kind = getCompletionKindForDeclaration(scope, overideKind);
     	setCompletionValues(scope, kind, Key.DECLARATION );
-
+    	IASTDeclaration resultDeclaration = null;
     	switch (LT(1))
         {
             case IToken.t_asm :
@@ -724,10 +732,9 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.tRPAREN);
                 IToken last = consume(IToken.tSEMI);
                 
-                IASTASMDefinition asmDefinition;
                 try
                 {
-                    asmDefinition =
+                    resultDeclaration  =
                         astFactory.createASMDefinition(
                             scope,
                             assembly,
@@ -741,29 +748,30 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 // if we made it this far, then we have all we need 
                 // do the callback
- 				asmDefinition.acceptElement(requestor);
+ 				resultDeclaration.acceptElement(requestor);
  				setCompletionValues(scope, kind, Key.DECLARATION );
-                return;
+                break;
             case IToken.t_namespace :
-                namespaceDefinition(scope);
-                return;
+                resultDeclaration = namespaceDefinition(scope);
+                break;
             case IToken.t_using :
-                usingClause(scope);
-                return;
+                resultDeclaration = usingClause(scope);
+            	break;
             case IToken.t_export :
             case IToken.t_template :
-                templateDeclaration(scope);
-                return;
+                resultDeclaration = templateDeclaration(scope);
+                break;
             case IToken.t_extern :
                 if (LT(2) == IToken.tSTRING)
                 {
-                    linkageSpecification(scope);
-                    return;
+                    resultDeclaration = linkageSpecification(scope);
+                    break;
                 }
             default :
-                simpleDeclarationStrategyUnion(scope, ownerTemplate, overideKind, Key.DECLARATION );
+                resultDeclaration = simpleDeclarationStrategyUnion(scope, ownerTemplate, overideKind, Key.DECLARATION );
         }
     	setCompletionValues(scope, kind, Key.DECLARATION );
+    	endDeclaration( resultDeclaration );
     }
     
     /**
@@ -774,7 +782,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 		return null;
 	}
 	
-	protected void simpleDeclarationStrategyUnion(
+	protected IASTDeclaration simpleDeclarationStrategyUnion(
         IASTScope scope,
         IASTTemplate ownerTemplate, CompletionKind overrideKind, Key overrideKey)
         throws EndOfFileException, BacktrackException
@@ -783,7 +791,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         try
         {
-            simpleDeclaration(
+            return simpleDeclaration(
                 SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
                 scope,
                 ownerTemplate, overrideKind, false, overrideKey);
@@ -796,7 +804,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             
             try
             {  
-            	simpleDeclaration(
+            	return simpleDeclaration(
                 	SimpleDeclarationStrategy.TRY_FUNCTION,
 	                scope,
     	            ownerTemplate, overrideKind, false, overrideKey);
@@ -807,7 +815,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 
 				try
 				{
-					simpleDeclaration(
+					return simpleDeclaration(
 						SimpleDeclarationStrategy.TRY_VARIABLE,
 						scope,
 						ownerTemplate, overrideKind, false, overrideKey);
@@ -828,10 +836,11 @@ public abstract class Parser extends ExpressionParser implements IParser
      *	 namespace-body:
      *		declaration-seq?
      * @param container		IParserCallback object which serves as the owner scope for this declaration.  
+     * @return TODO
      * @throws BacktrackException	request a backtrack
     
      */
-    protected void namespaceDefinition(IASTScope scope)
+    protected IASTDeclaration namespaceDefinition(IASTScope scope)
         throws BacktrackException, EndOfFileException
     {
         IToken first = consume(IToken.t_namespace);
@@ -898,6 +907,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 last.getOffset() + last.getLength(), last.getLineNumber());
             setCompletionValues(scope, kind, Key.DECLARATION );
             namespaceDefinition.exitScope( requestor );
+            return namespaceDefinition;
         }
         else if( LT(1) == IToken.tASSIGN )
         {
@@ -910,9 +920,10 @@ public abstract class Parser extends ExpressionParser implements IParser
         	ITokenDuple duple = name(scope, CompletionKind.NAMESPACE_REFERENCE, Key.EMPTY);
         	consume( IToken.tSEMI );
         	setCompletionValues(scope, kind, Key.DECLARATION );
+        	IASTNamespaceAlias alias = null;
         	try
             {
-                astFactory.createNamespaceAlias( 
+                alias = astFactory.createNamespaceAlias( 
                 	scope, identifier.getImage(), duple, first.getOffset(), 
                 	first.getLineNumber(), identifier.getOffset(), identifier.getEndOffset(), identifier.getLineNumber(), duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber() );
             }
@@ -921,6 +932,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             	logException( "namespaceDefinition:createNamespaceAlias", e1 ); //$NON-NLS-1$
                 throw backtrack;
             }
+            return alias;
         }
         else
         {
@@ -942,9 +954,10 @@ public abstract class Parser extends ExpressionParser implements IParser
      * 
      * @param container			IParserCallback object which serves as the owner scope for this declaration.
      * @param tryConstructor	true == take strategy1 (constructor ) : false == take strategy 2 ( pointer to function) 
+     * @return TODO
      * @throws BacktrackException		request a backtrack
      */
-    protected void simpleDeclaration(
+    protected IASTDeclaration simpleDeclaration(
         SimpleDeclarationStrategy strategy,
         IASTScope scope,
         IASTTemplate ownerTemplate, CompletionKind overideKind, boolean fromCatchHandler, Key overrideKey)
@@ -1034,7 +1047,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	        }
 	        
 	        if( fromCatchHandler )
-	        	return;
+	        	return null;
 	        
 	        if( hasFunctionTryBlock && ! hasFunctionBody )
 	        	throw backtrack;
@@ -1058,13 +1071,15 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             if (!hasFunctionBody)
             {
+            	IASTDeclaration declaration = null;
                 while (i.hasNext())
                 {
-                    IASTDeclaration declaration = (IASTDeclaration)i.next();
+                    declaration = (IASTDeclaration)i.next();
                     ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
                         lastToken.getEndOffset(), lastToken.getLineNumber());
                     declaration.acceptElement( requestor );
                 }
+                return declaration;
             }
             else
             {
@@ -1083,6 +1098,8 @@ public abstract class Parser extends ExpressionParser implements IParser
   				if( hasFunctionTryBlock )
 					catchHandlerSequence( scope );
   				
+  				return declaration;
+  				
             }
         }
         else
@@ -1092,14 +1109,15 @@ public abstract class Parser extends ExpressionParser implements IParser
             {
             	if( sdw.getTypeSpecifier() != null )
             	{
-	           		astFactory.createTypeSpecDeclaration(
+	           		IASTAbstractTypeSpecifierDeclaration declaration = astFactory.createTypeSpecDeclaration(
 	                        sdw.getScope(),
 	                        sdw.getTypeSpecifier(),
 	                        ownerTemplate,
 	                        sdw.getStartingOffset(),
 	                        sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
-							sdw.isFriend())
-	                    .acceptElement(requestor);
+							sdw.isFriend());
+					declaration.acceptElement(requestor);
+					return declaration;
             	}
             }
             catch (Exception e1)
@@ -1108,7 +1126,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 throw backtrack;
             }
         }
-        
+        return null;
     }
 
 
@@ -2741,14 +2759,17 @@ public abstract class Parser extends ExpressionParser implements IParser
 				constant_expression.acceptElement(requestor);
                 consume(IToken.tCOLON);
                 statement(scope);
+                cleanupLastToken();
                 return;
             case IToken.t_default :
                 consume(IToken.t_default);
                 consume(IToken.tCOLON);
                 statement(scope);
+                cleanupLastToken();
                 return;
             case IToken.tLBRACE :
                 compoundStatement(scope, true);
+            	cleanupLastToken();
                 return;
             case IToken.t_if :
                 consume( IToken.t_if );
@@ -2767,6 +2788,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     else
                     	statement( scope );
                 }
+                cleanupLastToken();
                 return;
             case IToken.t_switch :
                 consume();
@@ -2774,6 +2796,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 condition(scope);
                 consume(IToken.tRPAREN);
                 statement(scope);
+                cleanupLastToken();
                 return;
             case IToken.t_while :
                 consume(IToken.t_while);
@@ -2784,6 +2807,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 					singleStatementScope(scope);
                 else
                 	statement(scope);
+                cleanupLastToken();
                 return;
             case IToken.t_do :
                 consume(IToken.t_do);
@@ -2795,6 +2819,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.tLPAREN);
                 condition(scope);
                 consume(IToken.tRPAREN);
+                cleanupLastToken();
                 return;
             case IToken.t_for :
                 consume();
@@ -2810,6 +2835,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 consume(IToken.tRPAREN);
                 statement(scope);
+                cleanupLastToken();
                 return;
             case IToken.t_break :
                 consume();
@@ -3072,5 +3098,24 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 */
 	protected IASTNode getCompliationUnit() {
 		return compilationUnit;
+	}
+	
+	protected void endDeclaration( IASTDeclaration declaration ) throws EndOfFileException
+	{
+		cleanupLastToken();
+	}
+	
+	/**
+	 * 
+	 */
+	protected void cleanupLastToken() {
+		if( lastToken != null )
+			lastToken.setNext( null );
+	}
+
+
+	protected void endExpressionStatement( IASTExpression expression ) throws EndOfFileException
+	{
+		cleanupLastToken();
 	}
 }

@@ -84,7 +84,7 @@ public class CProjectSourceLocation implements ICSourceLocation
 	{
 		return fProject;
 	}
-
+/*
 	private IFile findFile( IContainer parent, IPath name ) throws CoreException 
 	{
 		if ( name.isAbsolute() )
@@ -109,7 +109,7 @@ public class CProjectSourceLocation implements ICSourceLocation
 		}
 		return null;		
 	}
-
+*/
 	private Object findFileByAbsolutePath( String name )
 	{
 		IPath path = new Path( name );
@@ -169,7 +169,7 @@ public class CProjectSourceLocation implements ICSourceLocation
 					if ( members[i].getLocation().toOSString().equals( fileName ) )
 						return members[i];
 				}
-				else if ( members[i] instanceof IFolder )
+				else if ( members[i] instanceof IFolder && fileName.startsWith( members[i].getLocation().toOSString() ) )
 				{
 					Object result = findFile( (IContainer)members[i], fileName );
 					if ( result != null )

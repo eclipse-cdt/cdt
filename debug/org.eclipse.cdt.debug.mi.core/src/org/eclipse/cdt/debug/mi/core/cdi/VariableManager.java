@@ -354,7 +354,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjects(ICDIStackFrame)
 	 */
-	public ICDIVariableObject[] getVariableObjects(ICDIStackFrame frame) throws CDIException {
+	public ICDIVariableObject[] getLocalVariableObjects(ICDIStackFrame frame) throws CDIException {
 		List varObjects = new ArrayList();
 		Session session = (Session)getSession();
 		ICDITarget currentTarget = session.getCurrentTarget();
@@ -387,6 +387,16 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 		return (ICDIVariableObject[])varObjects.toArray(new ICDIVariableObject[0]);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjects(ICDIStackFrame)
+	 */
+	public ICDIVariableObject[] getVariableObjects(ICDIStackFrame frame) throws CDIException {
+		ICDIVariableObject[] locals = getLocalVariableObjects(frame);
+		ICDIVariableObject[] args = getArgumentObjects(frame);
+		ICDIVariableObject[] vars = new ICDIVariableObject[locals.length + args.length];
+		return vars;
 	}
 
 	/**

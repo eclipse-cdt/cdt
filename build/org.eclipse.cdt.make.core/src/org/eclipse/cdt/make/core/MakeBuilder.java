@@ -136,6 +136,7 @@ public class MakeBuilder extends ACBuilder {
 
 				// Set the environmennt, some scripts may need the CWD var to be set.
 				Properties props = launcher.getEnvironment();
+				props.putAll(info.getEnvironment());
 				props.put("CWD", workingDirectory.toOSString()); //$NON-NLS-1$
 				props.put("PWD", workingDirectory.toOSString()); //$NON-NLS-1$
 				String[] env = null;

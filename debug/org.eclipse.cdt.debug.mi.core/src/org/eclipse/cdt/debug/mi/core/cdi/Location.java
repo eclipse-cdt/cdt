@@ -29,6 +29,10 @@ public class Location implements ICDILocation {
 		addr = a;  
 	}
 
+	public Location(long address) {
+		addr = address;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getAddress()
 	 */

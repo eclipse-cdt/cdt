@@ -284,7 +284,7 @@ public class CValue extends CDebugElement implements ICValue
 	
 	public boolean isCharPointer()
 	{
-		String value = getUnderlyingValueString().trim();
+		String value = getUnderlyingValueString();
 		if ( value != null )
 		{
 			value = value.trim();

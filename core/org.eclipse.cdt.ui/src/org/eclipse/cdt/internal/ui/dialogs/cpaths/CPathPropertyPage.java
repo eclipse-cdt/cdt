@@ -52,6 +52,9 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	protected Control createContents(Composite parent) {
 		IProject project = getProject();
 		Control result;
+
+		// ensure the page has no special buttons
+		noDefaultAndApplyButton();		
 		if (project == null || !isCProject(project)) {
 			result = createWithoutCProject(parent);
 		} else if (!project.isOpen()) {

@@ -66,17 +66,15 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		stopInMain.setLayoutData(gd);
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		debuggerGroup.setLayoutData(gd);
 		debuggerGroup.setText("Debugger Options");
-		setDynamicTabHolder(new Composite(debuggerGroup, SWT.NONE));
+		setDynamicTabHolder(debuggerGroup);
 		GridLayout tabHolderLayout = new GridLayout();
 		tabHolderLayout.marginHeight= 0;
 		tabHolderLayout.marginWidth= 0;
 		tabHolderLayout.numColumns = 1;
 		getDynamicTabHolder().setLayout(tabHolderLayout);
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
 		getDynamicTabHolder().setLayoutData(gd);
 	}
 	

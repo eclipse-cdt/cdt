@@ -185,7 +185,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	
 	protected void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {
 		resultCollector.setProgressMonitor( monitor );
-		searchEngine.search( workspace, pattern, scope, collector );
+		searchEngine.search( workspace, pattern, scope, collector, false );
 	}
 	
 }

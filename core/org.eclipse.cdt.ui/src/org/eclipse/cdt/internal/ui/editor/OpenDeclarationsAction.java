@@ -125,7 +125,7 @@ public class OpenDeclarationsAction extends Action {
 				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true ));
 				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, true ));
 				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
-				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector);
+				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
 				elementsFound.addAll(resultCollector.getSearchResults());
 				
 				if (elementsFound.isEmpty() == false) {

@@ -15,6 +15,10 @@ struct aStruct{
 	int aStructField = 0;
 };
 
+void foo(){
+   int aLocalDeclaration = 1;
+}
+
 void anotherClass::anotherMethod(){
-  a
+  a 
 };

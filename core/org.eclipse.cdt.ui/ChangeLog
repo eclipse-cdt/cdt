@@ -1,4 +1,8 @@
 2003-09-22 Andrew Niefer
+	fix for bug 43327 Code Complete finds local variables  
+	- update calls to SearchEngine.search.  CodeCompletion passes true for excludeLocalDeclarations
+
+2003-09-22 Andrew Niefer
 	associate context ID ICHelpContextIds.C_SEARCH_PAGE with the CSearchPage dialog
 	add C_SEARCH_PAGE to the ICHelpContextIds.
 

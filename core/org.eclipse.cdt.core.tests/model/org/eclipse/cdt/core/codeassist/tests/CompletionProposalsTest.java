@@ -106,8 +106,9 @@ public class CompletionProposalsTest  extends TestCase{
 		try{
 			TranslationUnit headerTu = new TranslationUnit(fCProject, headerFile);
 			TranslationUnit tu = new TranslationUnit(fCProject, bodyFile);
-			Document document = new Document(tu.getBuffer().getContents());
-			int pos = 255;
+			String buffer = tu.getBuffer().getContents();
+			Document document = new Document(buffer);
+			int pos = buffer.indexOf(" a ") + 2; //255;
 			int length = 0;
 			CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
 			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, length, tu);

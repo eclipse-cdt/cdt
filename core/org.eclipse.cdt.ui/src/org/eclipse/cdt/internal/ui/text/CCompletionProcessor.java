@@ -535,7 +535,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
-		searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector);
+		searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
 		elementsFound.addAll(resultCollector.getSearchResults());
 
 		if((currentScope instanceof IMethod) || (currentScope instanceof IMethodDeclaration) ){

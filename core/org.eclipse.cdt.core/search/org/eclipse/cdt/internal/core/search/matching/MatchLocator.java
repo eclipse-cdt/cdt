@@ -451,6 +451,11 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				}
 			} else {
 				if( currentScope instanceof IASTFunction || currentScope instanceof IASTMethod ){
+					//local declaration, only report if not being filtered
+					if( shouldExcludeLocalDeclarations ){
+						return;
+					}
+					
 					object = (ISourceElementCallbackDelegate) currentScope;
 				} else {
 					object = node;
@@ -498,6 +503,12 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		currentScope = (scopeStack.size() > 0 ) ? (IASTScope) scopeStack.removeFirst() : null;
 		return oldScope;
 	}
+	
+	public void setShouldExcludeLocalDeclarations( boolean exclude ){
+		shouldExcludeLocalDeclarations = exclude;
+	}
+	
+	private boolean shouldExcludeLocalDeclarations = false;
 	
 	private ISourceElementCallbackDelegate lastDeclaration;
 	

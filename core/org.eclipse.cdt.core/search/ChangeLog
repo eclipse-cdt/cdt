@@ -1,3 +1,8 @@
+2003-09-19 Andrew Niefer
+	fix bug 43327 Code Complete finds local variables  
+	- modified MatchLocator to not report local declarations when boolean is set
+	- modified SearchEngine.search to take an additional parameter "excludeLocalDeclarations"
+
 2003-09-15 Andrew Niefer
 	- modify CSearchPattern to handle escaping wildcards (bug43063)
 	- modify enterFunctionBody and enterMethodBody to fix bug42979

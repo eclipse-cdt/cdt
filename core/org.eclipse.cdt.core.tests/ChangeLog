@@ -1,3 +1,8 @@
+2003-09-22 Andrew Niefer
+	- modified resources/cfiles/CompletionProposalsTestStart.cpp
+	- modified CompletionProposalsTest.testCompletionProposals
+	- updated calls to SearchEngine.search
+
 2003-09-19 Sean Evoy
 	Updated the build test to check the binary parser specification in the 
 	target specification.

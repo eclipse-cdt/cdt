@@ -78,7 +78,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 			pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
 		}
 		
-		engine.search( _workspace, pattern, _scope, _collector );
+		engine.search( _workspace, pattern, _scope, _collector, false );
 	}
 	
 	/**

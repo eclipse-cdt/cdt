@@ -113,7 +113,7 @@ public class SearchEngine implements ICSearchConstants{
 	 * @param _scope
 	 * @param _collector
 	 */
-	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {
+	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations) {
 		if( VERBOSE ) {
 			System.out.println("Searching for " + pattern + " in " + scope); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -153,6 +153,7 @@ public class SearchEngine implements ICSearchConstants{
 			subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );
 				
 			MatchLocator matchLocator = new MatchLocator( pattern, collector, scope, subMonitor );
+			matchLocator.setShouldExcludeLocalDeclarations( excludeLocalDeclarations );
 			
 			if( progressMonitor != null && progressMonitor.isCanceled() )
 				throw new OperationCanceledException();

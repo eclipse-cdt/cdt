@@ -3,11 +3,10 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.internal.ui;
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
-import org.eclipse.cdt.debug.internal.ui.actions.AbstractListenerActionDelegate;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;

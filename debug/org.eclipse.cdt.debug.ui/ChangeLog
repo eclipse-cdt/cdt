@@ -1,3 +1,9 @@
+2003-10-22 Mikhail Khodjaiants
+	Moved the 'AddAddressBreakpointActionDelegate' action 
+	to the 'org.eclipse.cdt.debug.internal.ui.actions' package.
+	* AddAddressBreakpointActionDelegate.java
+	* plugin.xml
+
 2003-10-16 Mikhail Khodjaiants
 	Cleanup.
 	* CUISourceLocator.java

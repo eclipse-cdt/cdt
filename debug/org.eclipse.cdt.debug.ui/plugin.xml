@@ -221,10 +221,10 @@
                label="%AddAddressBreakpointAction.label"
                icon="icons/full/obj16/addrbrkp_obj.gif"
                helpContextId="add_address_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddAddressBreakpointActionDelegate"
                menubarPath="org.eclipse.ui.run/cBreakpointGroup"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate">
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddAddressBreakpointActionDelegate">
             <enablement>
                <pluginState
                      value="activated"
@@ -1188,7 +1188,7 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
          </action>
          <action
-               id="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate">
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddAddressBreakpointActionDelegate">
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -362,8 +363,22 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		IASTNode node = parse( code, startIndex, startIndex+ 7 );
 		
 		assertTrue( node instanceof IASTFunction );
-		assertEquals( ((IASTFunction)node).getName(), "fprintf" ); //$NON-NLS-1$
-
-	    
+		assertEquals( ((IASTFunction)node).getName(), "fprintf" ); //$NON-NLS-1$	    
+	}
+	
+	public void testBug72818() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "union Squaw	{	int x;	double u; };\n" ); //$NON-NLS-1$
+		writer.write( "int	main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( "return sizeof( Squaw );\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "sizeof( ") + "sizeof( ".length();  //$NON-NLS-1$ //$NON-NLS-2$
+		IASTNode node = parse( code, startIndex, startIndex + 5 );
+		assertTrue( node instanceof IASTClassSpecifier );
+		IASTClassSpecifier classSpecifier = (IASTClassSpecifier) node;
+		assertEquals( classSpecifier.getClassKind(), ASTClassKind.UNION );
+		assertEquals( classSpecifier.getName(), "Squaw"); //$NON-NLS-1$
 	}
 }

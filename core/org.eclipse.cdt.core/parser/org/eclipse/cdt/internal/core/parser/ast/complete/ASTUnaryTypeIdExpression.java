@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
@@ -59,5 +60,15 @@ public class ASTUnaryTypeIdExpression extends ASTUnaryExpression {
 
 	public String toString(){
 		return ASTUtil.getExpressionString( this );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTUnaryExpression#findOwnerExpressionForIDExpression(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public ASTExpression findOwnerExpressionForIDExpression(ITokenDuple duple) {
+		if( typeId instanceof ASTTypeId && ((ASTTypeId)typeId).getTokenDuple() == duple )
+			return this;
+
+		return super.findOwnerExpressionForIDExpression(duple);
 	}
 }

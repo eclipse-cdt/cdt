@@ -90,7 +90,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		DialogField.createEmptySpace(parent);
 
 		resolvedPathLabelText = new Label(parent, SWT.SINGLE);
-		resolvedPathLabelText.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
+		resolvedPathLabelText.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
 		resolvedPathLabelText.setVisible(true);		
 		
 		resolvedPathLabelData = new Label(parent, SWT.SINGLE);
@@ -178,7 +178,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			browseButton = new Button(parent, SWT.PUSH);
 			//setButtonLayoutData(browseButton);
 			browseButton.setFont(parent.getFont());
-			browseButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
+			browseButton.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.browseButton")); //$NON-NLS-1$
 			browseButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					handleLinkTargetBrowseButtonPressed();
@@ -196,7 +196,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			variablesButton = new Button(parent, SWT.PUSH);
 			//setButtonLayoutData(variablesButton);
 			variablesButton.setFont(parent.getFont());
-			variablesButton.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
+			variablesButton.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
 			variablesButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					handleVariablesButtonPressed();

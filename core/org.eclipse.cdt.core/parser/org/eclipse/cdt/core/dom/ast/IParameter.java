@@ -17,5 +17,5 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IParameter extends IVariable {
-	
+	public static final IParameter [] EMPTY_PARAMETER_ARRAY = new IParameter[0];
 }

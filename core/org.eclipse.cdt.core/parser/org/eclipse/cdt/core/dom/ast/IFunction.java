@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * This represents a function in the program. A function is also a scope
@@ -25,7 +24,7 @@ public interface IFunction extends IBinding {
 	 * 
 	 * @return List of IParameter
 	 */
-	public List getParameters();
+	public IParameter [] getParameters();
 	
 	/**
 	 * Get the function scope

@@ -531,8 +531,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals( x4.resolveBinding(), x5.resolveBinding() );
     	
     	// test CFunction.getParameters size
-    	List f1_parms = f_fun1.getParameters();
-    	assertEquals( f1_parms.size(), 1 );
+    	IParameter[] f1_parms = f_fun1.getParameters();
+    	assertEquals( f1_parms.length, 1 );
 
 		// test tu.getDeclarations(IBinding)
 		IASTName[] decls = tu.getDeclarations(x2.resolveBinding()); 
@@ -600,10 +600,10 @@ public class AST2KnRTests extends AST2BaseTest {
     	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[0];
     	ICASTKnRFunctionDeclarator f_decltor = (ICASTKnRFunctionDeclarator)f.getDeclarator();
     	IFunction f_fun = (IFunction)f_decltor.getName().resolveBinding();
-    	List f_parms = f_fun.getParameters();
-    	assertEquals( f_parms.size(), 2 );
-    	assertEquals( ((CKnRParameter)f_parms.get(0)).getName(), "a" ); //$NON-NLS-1$
-    	assertEquals( ((CKnRParameter)f_parms.get(1)).getName(), "b" ); //$NON-NLS-1$
+    	IParameter [] f_parms = f_fun.getParameters();
+    	assertEquals( f_parms.length, 2 );
+    	assertEquals( ((CKnRParameter)f_parms[0]).getName(), "a" ); //$NON-NLS-1$
+    	assertEquals( ((CKnRParameter)f_parms[1]).getName(), "b" ); //$NON-NLS-1$
     	
     }
 

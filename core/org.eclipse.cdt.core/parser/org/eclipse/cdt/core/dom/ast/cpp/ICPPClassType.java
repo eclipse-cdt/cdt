@@ -70,5 +70,10 @@ public interface ICPPClassType extends ICompositeType {
 	 * @return List of ICPPMethod
 	 */
 	public List getDeclaredMethods();
+
+    /**
+     * @return
+     */
+    public ICPPConstructor[] getConstructors();
 	
 }

@@ -404,8 +404,8 @@ public class CompleteParser2Tests extends TestCase {
  		IFunction foo = (IFunction) col.getName(0).resolveBinding();
  		IParameter p =  (IParameter) col.getName(1).resolveBinding();
  		
- 		assertEquals( foo.getParameters().size(), 1 );
- 		assertSame( foo.getParameters().get(0), p );
+ 		assertEquals( foo.getParameters().length, 1 );
+ 		assertSame( foo.getParameters()[0], p );
  		assertSame( p.getScope(), foo.getFunctionScope() );
 	}
 	

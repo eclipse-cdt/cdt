@@ -18,4 +18,9 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  */
 public interface ICPPConstructor extends ICPPMethod {
 
+    /**
+     * @return
+     */
+    boolean isExplicit();
+
 }

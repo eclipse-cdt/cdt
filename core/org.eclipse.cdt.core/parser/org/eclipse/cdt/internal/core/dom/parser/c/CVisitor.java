@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -683,9 +684,9 @@ public class CVisitor {
 				    int index = -1;
 				    for( index = 0; index < ps.length; index++ )
 				        if( ps[index] == param ) break; 
-					List params = function.getParameters();
-					if( index >= 0 && index < params.size() ){
-					    return (IBinding) params.get( index );
+					IParameter [] params = function.getParameters();
+					if( index >= 0 && index < params.length ){
+					    return params[ index ];
 					}
 				}
 			}
@@ -1651,9 +1652,9 @@ public class CVisitor {
 			    outerLoop: for( index = 0; index < ps.length; index++ )
 			    	for (int j=0; j<parmDeclarations.length; j++)
 			    		if( ps[index] == parmDeclarations[j] ) break outerLoop;
-				List params = function.getParameters();
-				if( index >= 0 && index < params.size() ){
-				    return (IBinding) params.get( index );
+				IParameter[] params = function.getParameters();
+				if( index >= 0 && index < params.length ){
+				    return params[ index ];
 				}
 			}
 		}

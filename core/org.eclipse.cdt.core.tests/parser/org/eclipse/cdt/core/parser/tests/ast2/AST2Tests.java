@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -786,10 +784,10 @@ public class AST2Tests extends AST2BaseTest {
     	assertEquals( "a", param_a.getName() ); //$NON-NLS-1$
     	assertEquals( "b", param_b.getName() ); //$NON-NLS-1$
     	
-    	List params = function.getParameters();
-    	assertEquals( 2, params.size() );
-    	assertSame( params.get(0), param_a );
-    	assertSame( params.get(1), param_b );
+    	IParameter[] params = function.getParameters();
+    	assertEquals( 2, params.length );
+    	assertSame( params[0], param_a );
+    	assertSame( params[1], param_b );
     	
 		// test tu.getDeclarations(IBinding)
 		IASTName[] decls = tu.getDeclarations(fName.resolveBinding()); 

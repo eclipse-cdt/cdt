@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -65,6 +66,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -84,6 +87,8 @@ import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 public class CPPSemantics {
 
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
+	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
+	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  //$NON-NLS-1$
 	public static final IType VOID_TYPE = new CPPBasicType( IBasicType.t_void, 0 );
 	
 	static protected class LookupData
@@ -103,6 +108,7 @@ public class CPPSemantics {
 		public boolean forUserDefinedConversion;
 		public boolean forUsingDeclaration;
         public ProblemBinding problem;
+        public boolean considerConstructors;
 		
 		public LookupData( char[] n ){
 			name = n;
@@ -268,12 +274,15 @@ public class CPPSemantics {
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name.toCharArray() );
 		IASTNode parent = name.getParent();
 		if( parent instanceof ICPPASTQualifiedName ){
-			data.qualified = ((ICPPASTQualifiedName)parent).getNames()[0] != name;
+		    IASTName[] names = ((ICPPASTQualifiedName)parent).getNames();
+			data.qualified = names[0] != name;
 			parent = parent.getParent();
 			if( parent instanceof IASTDeclarator ){
 				data.forDefinition = true;
 				if( parent instanceof ICPPASTFunctionDeclarator ){
 					data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
+					if( names.length >= 2 && names[ names.length - 1 ] == name )
+					    data.considerConstructors = CPPVisitor.isConstructor( names[ names.length - 2 ], (IASTDeclarator) parent );
 				}
 			} else if( parent instanceof IASTIdExpression ){
 				parent = parent.getParent();
@@ -292,6 +301,9 @@ public class CPPSemantics {
 		} else if( parent instanceof IASTDeclarator ){
 		    if( parent.getParent() instanceof IASTSimpleDeclaration )
 		        data.forDefinition = true;
+		    if( parent instanceof ICPPASTFunctionDeclarator ){
+				data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
+			}
 		} else if ( parent instanceof ICPPASTBaseSpecifier ||
 		        	parent instanceof ICPPASTElaboratedTypeSpecifier) 
 		{
@@ -594,7 +606,7 @@ public class CPPSemantics {
 				if( usingDirectives != null )
 					usingDirectives.add( item );
 			} else {
-				possible = collectResult( data, item, (item == parent)  );
+				possible = collectResult( data, scope, item, (item == parent)  );
 				if( possible != null ){
 					if( found == null )
 						found = new ArrayList(2);
@@ -657,7 +669,7 @@ public class CPPSemantics {
 		return transitives;
 	}
 
-	static private IASTName collectResult( CPPSemantics.LookupData data, IASTNode node, boolean checkAux ){
+	static private IASTName collectResult( CPPSemantics.LookupData data, ICPPScope scope, IASTNode node, boolean checkAux ){
 	    IASTDeclaration declaration = null;
 	    if( node instanceof IASTDeclaration ) 
 	        declaration = (IASTDeclaration) node;
@@ -675,9 +687,11 @@ public class CPPSemantics {
 				IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
 				for( int i = 0; i < declarators.length; i++ ){
 					IASTDeclarator declarator = declarators[i];
-					IASTName declaratorName = declarator.getName();
-					if( CharArrayUtils.equals( declaratorName.toCharArray(), data.name ) ){
-						return declaratorName;
+					if( data.considerConstructors || !CPPVisitor.isConstructor( scope, declarator ) ){
+						IASTName declaratorName = declarator.getName();
+						if( CharArrayUtils.equals( declaratorName.toCharArray(), data.name ) ){
+							return declaratorName;
+						}
 					}
 				}
 			}
@@ -734,12 +748,14 @@ public class CPPSemantics {
 			
 			//check the function itself
 			IASTName declName = declarator.getName();
-			if( declName instanceof ICPPASTQualifiedName ){
-				IASTName [] names = ((ICPPASTQualifiedName)declName).getNames(); 
-				declName = names[ names.length - 1 ];
-			}
-			if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
-				return declName;
+			if( data.considerConstructors || !CPPVisitor.isConstructor( scope, declarator ) ){
+				if( declName instanceof ICPPASTQualifiedName ){
+					IASTName [] names = ((ICPPASTQualifiedName)declName).getNames(); 
+					declName = names[ names.length - 1 ];
+				}
+				if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
+					return declName;
+				}
 			}
 			if( checkAux ) {
 				//check the parameters
@@ -796,9 +812,16 @@ public class CPPSemantics {
 	    List fns = null;
 	    
 	    for( int i = 0; i < data.foundItems.size(); i++ ){
-	        IASTName n = (IASTName) data.foundItems.get( i );
+	        Object o = data.foundItems.get( i );
+	        if( o instanceof IASTName )
+	            temp = ((IASTName) o).resolveBinding();
+	        else if( o instanceof IBinding )
+	            temp = (IBinding) o;
+	        else
+	            continue;
+	        //IASTName n = (IASTName) 
 	        
-	        temp = n.resolveBinding();
+	        //temp = n.resolveBinding();
 	        if( temp instanceof ICPPCompositeBinding ){
 	        	IBinding [] bindings = ((ICPPCompositeBinding) temp).getBindings();
 	        	for( int j = 0; j < bindings.length; j++ )
@@ -845,8 +868,8 @@ public class CPPSemantics {
 	    return obj;
 	}
 	
-	static private boolean functionHasParameters( ICPPASTFunctionDeclarator function, IASTParameterDeclaration [] params ){
-		IFunctionType ftype = (IFunctionType) CPPVisitor.createType( function );
+	static private boolean functionHasParameters( IFunction function, IASTParameterDeclaration [] params ){
+		IFunctionType ftype = function.getType();
 		if( params.length == 0 ){
 			return ftype.getParameterTypes().length == 0;
 		}
@@ -871,17 +894,27 @@ public class CPPSemantics {
 		for( int i = 0; i < size; i++ ){
 			fName = (IFunction) functions.get(i);
 			function = (ICPPASTFunctionDeclarator) fName.getPhysicalNode();
-			num = function.getParameters().length;
+			
+			if( function == null ){
+			    //implicit member function, for now, not supporting default values or var args
+			    num = fName.getParameters().length;
+			} else { 
+			    num = function.getParameters().length;
+			}
 		
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
-				if( data.forDefinition && !functionHasParameters( function, (IASTParameterDeclaration[]) data.functionParameters ) ){
+				if( data.forDefinition && !functionHasParameters( fName, (IASTParameterDeclaration[]) data.functionParameters ) ){
 					functions.remove( i-- );
 					size--;
 				}
 				continue;
-			} 
+			} else if( function == null ){
+			    functions.remove( i-- );
+			    size--;
+			    continue;
+			}
 			//check for void
 			else if( numParameters == 0 && num == 1 ){
 				IASTParameterDeclaration param = function.getParameters()[0];
@@ -965,6 +998,8 @@ public class CPPSemantics {
 
 		Object [] sourceParameters = null;			//the parameters the function is being called with
 		IASTParameterDeclaration [] targetParameters = null;			//the current function's parameters
+		IParameter [] targetBindings = null;
+		int targetLength = 0;
 		
 		int numFns = fns.size();
 		int numSourceParams = ( data.functionParameters != null ) ? data.functionParameters.length : 0;
@@ -981,9 +1016,16 @@ public class CPPSemantics {
 			}
 			
 			ICPPASTFunctionDeclarator currDtor = (ICPPASTFunctionDeclarator) currFn.getPhysicalNode();
-			targetParameters = currDtor.getParameters();
+			targetParameters = ( currDtor != null ) ? currDtor.getParameters() : null;
 
-			int numTargetParams = ( targetParameters.length == 0 ) ? 1 : targetParameters.length;
+			if( targetParameters == null ){
+			    targetBindings = currFn.getParameters();
+			    targetLength = targetBindings.length;
+			} else {
+			    targetLength = targetParameters.length;
+			}
+			int numTargetParams = ( targetLength == 0 ) ? 1 : targetLength;
+			
 			if( currFnCost == null ){
 				currFnCost = new Cost [ (numSourceParams == 0) ? 1 : numSourceParams ];	
 			}
@@ -995,11 +1037,13 @@ public class CPPSemantics {
 				source = getSourceParameterType( sourceParameters, j );
 				
 				if( j < numTargetParams ){
-					if( targetParameters.length == 0  && j == 0 ){
+					if( targetLength == 0  && j == 0 ){
 						target = VOID_TYPE;
+					} else if( targetParameters != null ) {
+						IParameter param = (IParameter) targetParameters[j].getDeclarator().getName().resolveBinding(); 
+						target = param.getType();
 					} else {
-					IParameter param = (IParameter) targetParameters[j].getDeclarator().getName().resolveBinding(); 
-					target = param.getType();
+					    target = targetBindings[j].getType();
 					}
 				} else 
 					varArgs = true;
@@ -1124,80 +1168,70 @@ public class CPPSemantics {
 	
 	static private Cost checkUserDefinedConversionSequence( IType source, IType target ) {
 		Cost cost = null;
-//		Cost constructorCost = null;
-//		Cost conversionCost = null;
+		Cost constructorCost = null;
+		Cost conversionCost = null;
 
-//		IType s = getUltimateType( source );
-//		IType t = getUltimateType( target );
-//		//ISymbol sourceDecl = null;
-//		IASTName constructor = null;
-//		IASTName conversion = null;
-//		
-//		//constructors
-//		if( t instanceof ICPPClassType ){
-//			LookupData data = new LookupData( EMPTY_NAME_ARRAY );
-//			data.forUserDefinedConversion = true;
-//			data.functionParameters = new Object [] { source };
-//			
-//			if( !container.getConstructors().isEmpty() ){
-//				ArrayList constructors = new ArrayList( container.getConstructors() );
-//				constructor = resolveFunction( data, constructors );
-//			}
-//			if( constructor != null && constructor.getTypeInfo().checkBit( ITypeInfo.isExplicit ) ){
-//				constructor = null;
-//			}
-//		}
+		IType s = getUltimateType( source );
+		IType t = getUltimateType( target );
+
+		ICPPConstructor constructor = null;
+		ICPPMethod conversion = null;
+		
+		//constructors
+		if( t instanceof ICPPClassType ){
+			LookupData data = new LookupData( EMPTY_NAME_ARRAY );
+			data.forUserDefinedConversion = true;
+			data.functionParameters = new Object [] { source };
+			ICPPConstructor [] constructors = ((ICPPClassType)t).getConstructors();
+			
+			if( constructors.length > 0 ){
+				constructor = (ICPPConstructor) resolveFunction( data, Arrays.asList( constructors ) );
+			}
+			if( constructor != null && constructor.isExplicit() ){
+				constructor = null;
+			}
+		}
 		
 		//conversion operators
-//		if( source.getType() == ITypeInfo.t_type ){
-//			source = getFlatTypeInfo( source, provider );
-//			sourceDecl = ( source != null ) ? source.getTypeSymbol() : null;
-//			
-//			if( sourceDecl != null && (sourceDecl instanceof IContainerSymbol) ){
-//				char[] name = target.toCharArray();
-//				
-//				if( !CharArrayUtils.equals( name, EMPTY_NAME_ARRAY) ){
-//				    
-//					LookupData data = new LookupData( CharArrayUtils.concat( OPERATOR_, name )){ //$NON-NLS-1$
-//						public List getParameters() { return Collections.EMPTY_LIST; }
-//						public TypeFilter getFilter() { return FUNCTION_FILTER; }
-//					};
-//					data.forUserDefinedConversion = true;
-//					data.foundItems = lookupInContained( data, (IContainerSymbol) sourceDecl );
-//					conversion = (data.foundItems != null ) ? (IParameterizedSymbol)resolveAmbiguities( data ) : null;	
-//				}
-//			}
-//		}
-//		
-//		if( constructor != null ){
-//			IType info = provider.getTypeInfo( ITypeInfo.t_type );
-//			info.setTypeSymbol( constructor.getContainingSymbol() );
-//			constructorCost = checkStandardConversionSequence( info, target );
-//		}
-//		if( conversion != null ){
-//			IType info = provider.getTypeInfo( target.getType() );
-//			info.setTypeSymbol( target.getTypeSymbol() );
-//			conversionCost = checkStandardConversionSequence( info, target );
-//		}
+		if( s instanceof ICPPClassType ){
+			char[] name = null;//TODO target.toCharArray();
+			
+			if( !CharArrayUtils.equals( name, EMPTY_NAME_ARRAY) ){
+				LookupData data = new LookupData( CharArrayUtils.concat( OPERATOR_, name ));
+				data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+				data.forUserDefinedConversion = true;
+				
+				ICPPScope scope = (ICPPScope) ((ICPPClassType) s).getCompositeScope();
+				data.foundItems = lookupInScope( data, scope, null, null );
+				conversion = (ICPPMethod) ( (data.foundItems != null ) ? resolveFunction( data, data.foundItems ) : null );	
+			}
+		}
 		
-//		//if both are valid, then the conversion is ambiguous
-//		if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
-//			conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
-//		{
-//			cost = constructorCost;
-//			cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
-//			cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-//		} else {
-//			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
-//				cost = constructorCost;
-//				cost.userDefined = constructor.hashCode();
-//				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-//			} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
-//				cost = conversionCost;
-//				cost.userDefined = conversion.hashCode();
-//				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-//			} 			
-//		}
+		if( constructor != null ){
+			constructorCost = checkStandardConversionSequence( t, target );
+		}
+		if( conversion != null ){
+			conversionCost = checkStandardConversionSequence( conversion.getType().getReturnType(), target );
+		}
+		
+		//if both are valid, then the conversion is ambiguous
+		if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
+			conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
+		{
+			cost = constructorCost;
+			cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
+			cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+		} else {
+			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
+				cost = constructorCost;
+				cost.userDefined = constructor.hashCode();
+				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+			} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
+				cost = conversionCost;
+				cost.userDefined = conversion.hashCode();
+				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+			} 			
+		}
 		return cost;
 	}
 

@@ -16,24 +16,30 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author aniefer
@@ -49,19 +55,73 @@ public class CPPClassType implements ICPPClassType {
 			declarations = new ICPPASTElaboratedTypeSpecifier[] { (ICPPASTElaboratedTypeSpecifier) declSpec };
 	}
 	
-	private ICPPASTCompositeTypeSpecifier checkForDefinition( IASTElaboratedTypeSpecifier declSpec ){
-		//TODO
-		return null;
+	private class FindDefinitionAction extends CPPVisitor.CPPBaseVisitorAction {
+	    private char [] nameArray = CPPClassType.this.getNameCharArray();
+	    public ICPPASTCompositeTypeSpecifier result = null;
+	    
+	    {
+	        processNames          = true;
+			processDeclarations   = true;
+			processDeclSpecifiers = true;
+			processDeclarators    = true;
+			processNamespaces     = true;
+	    }
+	    
+	    public int processName( IASTName name ){
+	        if( name.getParent() instanceof ICPPASTCompositeTypeSpecifier &&
+	            CharArrayUtils.equals( name.toCharArray(), nameArray ) ) 
+	        {
+	            IBinding binding = name.resolveBinding();
+	            if( binding == CPPClassType.this ){
+	                result = (ICPPASTCompositeTypeSpecifier) name.getParent();
+	                return PROCESS_ABORT;
+	            }
+	        }
+	        return PROCESS_CONTINUE; 
+	    }
+	    
+		public int processDeclaration( IASTDeclaration declaration ){ 
+		    return (declaration instanceof IASTSimpleDeclaration ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
+		}
+		public int processDeclSpecifier( IASTDeclSpecifier declSpec ){
+		    return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
+		}
+		public int processDeclarators( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
 	}
+	
+	private void checkForDefinition(){
+		FindDefinitionAction action = new FindDefinitionAction();
+		IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
+		if( node instanceof ICPPASTNamespaceDefinition ){
+		    CPPVisitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, action );
+		    definition = action.result;
+		} else if( node instanceof IASTCompoundStatement ){
+		    //a local class, nowhere else to look if we don't find it here...
+		    CPPVisitor.visitStatement( (IASTStatement) node, action );
+		    definition = action.result;
+		    return;
+		}
+		if( definition == null ){
+		    IASTTranslationUnit tu = null;
+		    while( !(node instanceof IASTTranslationUnit) ) {
+		        node = node.getParent();
+		    }
+		    tu = (IASTTranslationUnit) node;
+		    CPPVisitor.visitTranslationUnit( tu, action );
+		    definition = action.result;
+		}
+		
+		return;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
 	public List getFields() {
 	    if( definition == null ){
-	        ICPPASTCompositeTypeSpecifier temp = checkForDefinition( declarations[0] );
-	        if( temp == null )
+	        checkForDefinition();
+	        if( definition == null )
 	            return null;  //TODO IProblem
-	        definition = temp;
 	    }
 
 		IASTDeclaration[] members = definition.getMembers();
@@ -226,7 +286,30 @@ public class CPPClassType implements ICPPClassType {
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
      */
     public ICPPConstructor[] getConstructors() {
-        // TODO Auto-generated method stub
-        return null;
+        if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                return null;  //TODO problem
+            }
+        }
+        
+        ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
+        IASTDeclaration [] members = definition.getMembers();
+        for( int i = 0; i < members.length; i++ ){
+			if( members[i] instanceof IASTSimpleDeclaration ){
+			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			    for( int j = 0; j < dtors.length; j++ ){
+			        if( dtors[j] == null ) break;
+			        if( CPPVisitor.isConstructor( scope, dtors[j] ) )
+			            dtors[j].getName().resolveBinding();
+			    }
+			} else if( members[i] instanceof IASTFunctionDefinition ){
+			    IASTDeclarator dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			    if( CPPVisitor.isConstructor( scope, dtor ) )
+			        dtor.getName().resolveBinding();
+			}
+        }
+        
+        return ((CPPClassScope)scope).getConstructors();
     }
 }

@@ -19,15 +19,13 @@ import java.text.MessageFormat;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
  * @author aniefer
  */
 public class ProblemBinding implements IProblemBinding {
-    private final static String EMPTY_NAME = ""; //$NON-NLS-1$
-    private final static char[] EMPTY_NAME_ARRAY = new char[0];
-    
     private final int id;
     private final char [] arg;
     
@@ -89,14 +87,14 @@ public class ProblemBinding implements IProblemBinding {
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return EMPTY_NAME;
+        return CPPSemantics.EMPTY_NAME;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return EMPTY_NAME_ARRAY;
+        return CPPSemantics.EMPTY_NAME_ARRAY;
     }
 
     /* (non-Javadoc)

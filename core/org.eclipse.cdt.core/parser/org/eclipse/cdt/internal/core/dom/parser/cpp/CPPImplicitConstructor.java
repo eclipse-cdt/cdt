@@ -8,32 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 /*
- * Created on Dec 21, 2004
+ * Created on Jan 19, 2005
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
 /**
  * @author aniefer
  */
-public class CPPConstructor extends CPPMethod implements ICPPConstructor {
+public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPConstructor {
 
-	/**
-	 * @param declarator
-	 */
-	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
-		super( declarator );
-	}
+    /**
+     * @param name
+     * @param params
+     */
+    public CPPImplicitConstructor( ICPPClassScope scope, IParameter[] params ) {
+        super( scope, CPPSemantics.EMPTY_NAME_ARRAY, new CPPBasicType( IBasicType.t_unspecified, 0 ), params );
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
      */
     public boolean isExplicit() {
-        // TODO Auto-generated method stub
         return false;
     }
-
 }

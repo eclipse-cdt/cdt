@@ -35,15 +35,18 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
@@ -899,5 +902,54 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstances( collector, x2, 1 );
     }
 	
+    public void testImplicitConstructors() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class A { }; " ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+        ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+        ICPPConstructor [] ctors = A.getConstructors();
+        
+        assertNotNull( ctors );
+        assertEquals( ctors.length, 2 );
+        
+        assertEquals( ctors[0].getParameters().length, 0 );
+        assertEquals( ctors[1].getParameters().length, 1 );
+        
+        IType t = ctors[1].getParameters()[0].getType();
+        assertTrue( t instanceof ICPPReferenceType );
+        assertTrue( ((ICPPReferenceType) t).getType() instanceof IQualifierType );
+        IQualifierType qt = (IQualifierType) ((ICPPReferenceType) t).getType();
+        assertTrue( qt.isConst() );
+        assertSame( qt.getType(), A );
+    }
+    
+    public void testConstructors() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class A { A();  A( const A & ); }; " ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+        ICPPClassType A = (ICPPClassType) compSpec.getName().resolveBinding();
+        ICPPConstructor [] ctors = A.getConstructors();
+        
+        assertNotNull( ctors );
+        assertEquals( ctors.length, 2 );
+        
+        assertEquals( ctors[0].getParameters().length, 0 );
+        assertEquals( ctors[1].getParameters().length, 1 );
+        
+        IType t = ctors[1].getParameters()[0].getType();
+        assertTrue( t instanceof ICPPReferenceType );
+        assertTrue( ((ICPPReferenceType) t).getType() instanceof IQualifierType );
+        IQualifierType qt = (IQualifierType) ((ICPPReferenceType) t).getType();
+        assertTrue( qt.isConst() );
+        assertSame( qt.getType(), A );
+    }
 }
 

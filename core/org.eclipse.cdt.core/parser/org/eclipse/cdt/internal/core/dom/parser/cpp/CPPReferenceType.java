@@ -43,8 +43,11 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
     }
 
     public boolean equals(Object obj) {
+        if( type == null )
+            return (obj == null);
+        
         if( obj instanceof ICPPReferenceType ){
-            return ((ICPPReferenceType) obj).getType().equals( type );
+            return type.equals( ((ICPPReferenceType) obj).getType() );
         }
     	return false;
     }

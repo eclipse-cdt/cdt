@@ -10,9 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -24,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -84,24 +82,24 @@ public class CFunction implements IFunction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
-	public List getParameters() {
-		List result = null;
+	public IParameter[] getParameters() {
+		IParameter [] result = null;
 		
 	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
 		if (dtor instanceof IASTStandardFunctionDeclarator) {
 			IASTParameterDeclaration[] params = ((IASTStandardFunctionDeclarator)dtor).getParameters();
 			int size = params.length;
-			result = new ArrayList( size );
+			result = new IParameter[ size ];
 			if( size > 0 ){
 				for( int i = 0; i < size; i++ ){
 					IASTParameterDeclaration p = params[i];
-					result.add( p.getDeclarator().getName().resolveBinding() );
+					result[i] = (IParameter) p.getDeclarator().getName().resolveBinding();
 				}
 			}
 		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
 			IASTDeclaration[] params = ((ICASTKnRFunctionDeclarator)dtor).getParameterDeclarations();
 			IASTName[] names = ((ICASTKnRFunctionDeclarator)dtor).getParameterNames();
-			result = new ArrayList( names.length );
+			result = new IParameter[ names.length ];
 			if( names.length > 0 ){
 				// ensures that the List of parameters is created in the same order as the K&R C parameter names
 				for( int i=0; i<names.length; i++ ) {
@@ -110,10 +108,9 @@ public class CFunction implements IFunction {
 							IASTDeclarator[] decltors = ((IASTSimpleDeclaration)params[j]).getDeclarators();
 							for (int k=0; k<decltors.length; k++) {
 								if ( CharArrayUtils.equals(names[i].toCharArray(), decltors[k].getName().toCharArray()) ) {
-									result.add( decltors[k].getName().resolveBinding() );
+									result[i] = (IParameter) decltors[k].getName().resolveBinding();
 								}
-							}
-						}
+							}						}
 					}
 				}
 			}

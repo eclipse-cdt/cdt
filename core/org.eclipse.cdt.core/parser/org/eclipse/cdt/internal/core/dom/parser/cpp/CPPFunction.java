@@ -13,9 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 
@@ -33,14 +31,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 public class CPPFunction implements IFunction {
 	protected ICPPASTFunctionDeclarator [] declarations;
 	protected ICPPASTFunctionDeclarator definition;
-	private IFunctionType type = null;
+	protected IFunctionType type = null;
 	
 	public CPPFunction( ICPPASTFunctionDeclarator declarator ){
-		IASTNode parent = declarator.getParent();
-		if( parent instanceof IASTFunctionDefinition )
-			definition = declarator;
-		else
-			declarations = new ICPPASTFunctionDeclarator [] { declarator };
+	    if( declarator != null ) {
+			IASTNode parent = declarator.getParent();
+			if( parent instanceof IASTFunctionDefinition )
+				definition = declarator;
+			else
+				declarations = new ICPPASTFunctionDeclarator [] { declarator };
+	    }
 	}
 	
 	public void addDefinition( ICPPASTFunctionDeclarator dtor ){
@@ -56,6 +56,7 @@ public class CPPFunction implements IFunction {
 		for( int i = 0; i < declarations.length; i++ ){
 			if( declarations[i] == null ){
 				declarations[i] = dtor;
+				updateParameterBindings( dtor );
 				return;
 			}
 		}
@@ -68,15 +69,15 @@ public class CPPFunction implements IFunction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
-	public List getParameters() {
+	public IParameter [] getParameters() {
 	    IASTStandardFunctionDeclarator dtor = ( definition != null ) ? definition : declarations[0];
 		IASTParameterDeclaration[] params = dtor.getParameters();
 		int size = params.length;
-		List result = new ArrayList( size );
+		IParameter [] result = new IParameter[ size ];
 		if( size > 0 ){
 			for( int i = 0; i < size; i++ ){
 				IASTParameterDeclaration p = params[i];
-				result.add( p.getDeclarator().getName().resolveBinding() );
+				result[i] = (IParameter) p.getDeclarator().getName().resolveBinding();
 			}
 		}
 		return result;
@@ -118,7 +119,11 @@ public class CPPFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() {
-		return ( definition != null ) ? definition : declarations[0];
+	    if( definition != null )
+	        return definition;
+	    else if( declarations != null && declarations.length > 0 )
+	        return declarations[0];
+		return null;
 	}
 
     /* (non-Javadoc)
@@ -145,14 +150,14 @@ public class CPPFunction implements IFunction {
     	}
     	
     	//create a new binding and set it for the corresponding parameter in all known defns and decls
-    	binding = new CPPParameter( param.getDeclarator() );
+    	binding = new CPPParameter( name );
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
     		temp = definition.getParameters()[i];
     		((CPPASTName)temp.getDeclarator().getName()).setBinding( binding );
     	}
     	if( declarations != null ){
-    		for( int j = 0; j < declarations.length; j++ ){
+    		for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
     			temp = declarations[j].getParameters()[i];
         		((CPPASTName)temp.getDeclarator().getName()).setBinding( binding );
     		}
@@ -160,15 +165,17 @@ public class CPPFunction implements IFunction {
     	return binding;
     }
     
-    private void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
+    protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
     	ICPPASTFunctionDeclarator orig = (ICPPASTFunctionDeclarator) getPhysicalNode();
     	IASTParameterDeclaration [] ops = orig.getParameters();
     	IASTParameterDeclaration [] nps = fdtor.getParameters();
-    	IBinding temp = null;
+    	CPPParameter temp = null;
     	for( int i = 0; i < nps.length; i++ ){
-    		temp = ((CPPASTName)ops[i].getDeclarator().getName()).getBinding();
+    		temp = (CPPParameter) ((CPPASTName)ops[i].getDeclarator().getName()).getBinding();
     		if( temp != null ){
-    			((CPPASTName)nps[i].getDeclarator().getName()).setBinding( temp );
+    		    CPPASTName name = (CPPASTName) nps[i].getDeclarator().getName();
+    			name.setBinding( temp );
+    			temp.addDeclaration( name );
     		}
     	}
     }

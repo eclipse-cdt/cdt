@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -24,22 +25,49 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public class CPPParameter implements IParameter {
 	private IType type = null;
-	private IASTDeclarator declarator = null;
-	public CPPParameter( IASTDeclarator declarator ){
-		this.declarator = declarator;
+	private IASTName [] declarations = null;
+	
+	
+	public CPPParameter( IASTName name ){
+		this.declarations = new IASTName [] { name };
+	}
+	
+	public CPPParameter( IType type ){
+	    this.type = type;
+	}
+	
+	public void addDeclaration( IASTName name ){
+		if( declarations == null ){
+		    declarations = new IASTName [] { name };
+			return;
+		}
+		for( int i = 0; i < declarations.length; i++ ){
+			if( declarations[i] == null ){
+				declarations[i] = name;
+				return;
+			}
+		}
+		IASTName [] tmp = new IASTName[ declarations.length * 2 ];
+		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
+		tmp[ declarations.length ] = name;
+		declarations = tmp;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return declarator.getName().toString();
+	    if( declarations != null )
+	        return declarations[0].toString();
+	    return CPPSemantics.EMPTY_NAME;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return declarator.getName().toCharArray();
+	    if( declarations != null )
+	        return declarations[0].toCharArray();
+	    return CPPSemantics.EMPTY_NAME_ARRAY;
 	}
 
 	/* (non-Javadoc)
@@ -54,15 +82,18 @@ public class CPPParameter implements IParameter {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() {
-		return declarator;
+	    if( declarations != null )
+	        return declarations[0];
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
-		if( type == null )
-			type = CPPVisitor.createType( declarator );
+		if( type == null && declarations != null ){
+			type = CPPVisitor.createType( (IASTDeclarator) declarations[0].getParent() );
+		}
 		return type;
 	}
 

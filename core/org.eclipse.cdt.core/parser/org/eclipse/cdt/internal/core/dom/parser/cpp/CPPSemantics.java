@@ -708,32 +708,29 @@ public class CPPSemantics {
 		    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
 	        nodes = dtor.getParameters();
 		}
-	
-		if( scope instanceof ICPPClassScope ){
-			blockItem = null;
-		}
 		
 		int idx = -1;
+		boolean classScope = ( scope instanceof ICPPClassScope );
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 	
 		while( item != null ) {
-			if( item == null || ( blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() ))
+			if( !classScope && blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() )
 				break;
-			if( item == blockItem && !data.includeBlockItem( item ) )
-			    break;
 			
-			if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {
-				if( usingDirectives != null )
-					usingDirectives.add( item );
-			} else {
-				possible = collectResult( data, scope, item, (item == parent)  );
-				if( possible != null ){
-					if( found == null )
-						found = new ArrayList(2);
-					found.add( possible );
+			if( item != blockItem || data.includeBlockItem( item ) ){
+				if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {
+					if( usingDirectives != null )
+						usingDirectives.add( item );
+				} else {
+					possible = collectResult( data, scope, item, (item == parent)  );
+					if( possible != null ){
+						if( found == null )
+							found = new ArrayList(2);
+						found.add( possible );
+					}
 				}
 			}
-			if( item == blockItem )
+			if( item == blockItem && !classScope )
 				break;
 			if( idx > -1 && ++idx < nodes.length ){
 				item = nodes[idx];

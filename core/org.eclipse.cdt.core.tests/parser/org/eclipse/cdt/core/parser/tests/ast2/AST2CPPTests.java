@@ -1158,5 +1158,42 @@ public class AST2CPPTests extends AST2BaseTest {
       assertEquals( name.getNames()[1].toString(), "DEF" ); //$NON-NLS-1$
       assertEquals( name.getNames()[2].toString(), "ghi" ); //$NON-NLS-1$
    }
+   
+   public void _test84679() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("namespace Y { void f(float); }  // NPE on resolve binding            \n"); //$NON-NLS-1$
+   		buffer.append("namespace A { using namespace Y; f(int); } // NPE on resolve binding \n" ); //$NON-NLS-1$
+   		buffer.append("namespace B { void f(char);  } // NPE on resolve binding             \n "); //$NON-NLS-1$
+   		buffer.append("namespace AB { using namespace A; using namespace B; }               \n" ); //$NON-NLS-1$
+   		buffer.append("void h(){         \n"); //$NON-NLS-1$
+   		buffer.append("   AB::f(1);      \n"); //$NON-NLS-1$
+   		buffer.append("   AB::f(’c’);    \n"); //$NON-NLS-1$
+   		buffer.append("}                 \n"); //$NON-NLS-1$
+   }
+   
+   public void testBug84692() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("struct Node {          \n"); //$NON-NLS-1$
+   		buffer.append("   struct Node* Next;  \n"); //$NON-NLS-1$
+   		buffer.append("   struct Data* Data;  \n"); //$NON-NLS-1$
+   		buffer.append("};                     \n"); //$NON-NLS-1$
+   		buffer.append("struct Data {          \n"); //$NON-NLS-1$
+   		buffer.append("   struct Node * node; \n"); //$NON-NLS-1$
+   		buffer.append("   friend struct Glob; \n"); //$NON-NLS-1$
+   		buffer.append("};                     \n"); //$NON-NLS-1$
+   		
+   		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+
+        assertEquals(col.size(), 9);
+
+        ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
+        ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
+        
+        assertInstances( col, Node, 3 );
+        assertInstances( col, Data, 2 );
+   	}
+
 }
 

@@ -16,12 +16,14 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
@@ -51,12 +53,17 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIRunningEvent) {
 			cdiEvent = new ResumedEvent(session, (MIRunningEvent)miEvent);
-		} else if (miEvent instanceof MIVarChangedEvent) {
-			MIVarChangedEvent eventChanged = (MIVarChangedEvent)miEvent;
-			if (eventChanged.isInScope()) {
-				cdiEvent = new ChangedEvent(session, (MIVarChangedEvent)miEvent);
-			} else {
-				cdiEvent = new DestroyedEvent(session, (MIVarChangedEvent)miEvent);
+		} else if (miEvent instanceof MIChangedEvent) {
+			if (miEvent instanceof MIVarChangedEvent) {
+				MIVarChangedEvent eventChanged = (MIVarChangedEvent)miEvent;
+				if (eventChanged.isInScope()) {
+					cdiEvent = new ChangedEvent(session, (MIVarChangedEvent)miEvent);
+				} else {
+					cdiEvent = new DestroyedEvent(session, (MIVarChangedEvent)miEvent);
+				}
+			} else if (miEvent instanceof MIRegisterChangedEvent) {
+				MIRegisterChangedEvent eventChanged = (MIRegisterChangedEvent)miEvent;
+				cdiEvent = new ChangedEvent(session, (MIRegisterChangedEvent)miEvent);
 			}
 		} else if (miEvent instanceof MIThreadExitEvent) {
 			cdiEvent = new DestroyedEvent(session,(MIThreadExitEvent)miEvent); 
@@ -134,8 +141,10 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		target.updateState(threadId);
 
 		VariableManager varMgr = getCSession().getVariableManager();
+		RegisterManager regMgr = getCSession().getRegisterManager();
 		try {
 			varMgr.update();
+			regMgr.update();
 		} catch (CDIException e) {
 			//System.out.println(e);
 		}

@@ -1,3 +1,8 @@
+2004-04-22 Alain Magloire
+
+	Fix for PR 59534
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+
 2004-04-22 Hoda Amer
 	Fixing build errors after integrating with the Eclipse nightly build on April 22nd.
 	Some JFace interfaces has changed.

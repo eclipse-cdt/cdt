@@ -25,9 +25,9 @@ public class IntegerExpansionToken extends SimpleExpansionToken	implements INume
 	 * @param value
 	 * @param stack
 	 */
-	public IntegerExpansionToken(int tokenType, int value, ContextStack stack) {
+	public IntegerExpansionToken(int tokenType, long l, ContextStack stack) {
 		super( tokenType, stack );
-		this.value = value;
+		this.value = l;
 	}
 	
 	

@@ -19,21 +19,23 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
  */
 public class TokenFactory {
 	
+	static final String MAX_LONG_STRING = Long.toString( Long.MAX_VALUE );
+	static final String MAX_HEX_LONG_STRING = "0x" + Long.toString( Long.MAX_VALUE, 16 ); //$NON-NLS-1$
+		
 	public static IToken createIntegerToken( String value, IScannerData scannerData )
 	{
-		if( value.length() > 15 )
+		if( value.compareTo( MAX_LONG_STRING ) > 0 )		
 			return createUniquelyImagedToken( IToken.tINTEGER, value, scannerData );
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			return new IntegerExpansionToken( IToken.tINTEGER, Integer.parseInt(value ), scannerData.getContextStack() );
+			return new IntegerExpansionToken( IToken.tINTEGER, Long.parseLong(value ), scannerData.getContextStack() );
 			
-		return new IntegerToken( IToken.tINTEGER, Integer.parseInt( value ), scannerData.getContextStack() );		
+		return new IntegerToken( IToken.tINTEGER, Long.parseLong( value ), scannerData.getContextStack() );		
 	}
 	
 	public static IToken createHexadecimalIntegerToken( String value, IScannerData scannerData )
 	{
-		if( value.length() > 15 )
+		if( value.compareTo( MAX_HEX_LONG_STRING ) > 0 )
 			return createUniquelyImagedToken( IToken.tHEXINT, value, scannerData );
-		
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 			return new HexIntegerExpansionToken( IToken.tHEXINT, value, scannerData.getContextStack() );
 			

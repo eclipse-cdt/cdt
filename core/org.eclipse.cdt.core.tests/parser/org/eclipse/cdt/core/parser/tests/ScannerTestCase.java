@@ -1562,4 +1562,20 @@ public class ScannerTestCase extends BaseScannerTest
     	validateEOF();
     	assertFalse( callback.problems.isEmpty() );
 	}
+    
+    public void testBug61968() throws Exception
+	{
+    	Writer writer = new StringWriter(); 
+    	writer.write( "unsigned int ui = 2172748163; //ok \n" ); //$NON-NLS-1$
+    	writer.write( "int big = 999999999999999;//ok \n" ); //$NON-NLS-1$
+    	writer.write( "void main() { \n" ); //$NON-NLS-1$
+    	writer.write( "caller(4);  //ok\n" );  //$NON-NLS-1$
+    	writer.write( "caller(2172748163);//causes java.lang.NumberFormatException \n" ); //$NON-NLS-1$
+    	writer.write( "caller(999999999999999); //also causes NumberFormatException \n" ); //$NON-NLS-1$
+    	writer.write( "}\n" ); //$NON-NLS-1$
+    	Callback callback = new Callback(ParserMode.QUICK_PARSE);
+    	initializeScanner( writer.toString(), ParserMode.QUICK_PARSE, callback );
+    	fullyTokenize();
+    	assertTrue( callback.problems.isEmpty() );
+	}
 }

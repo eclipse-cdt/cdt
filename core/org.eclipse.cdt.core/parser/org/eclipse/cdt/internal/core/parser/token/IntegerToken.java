@@ -25,9 +25,9 @@ public class IntegerToken extends SimpleToken implements INumericToken {
 	 * @param value
 	 * @param stack
 	 */
-	public IntegerToken(int tokenType, int value, ContextStack stack) {
+	public IntegerToken(int tokenType, long l, ContextStack stack) {
 		super( tokenType, stack );
-		this.value = value;
+		this.value = l;
 	}
 	
 	/* (non-Javadoc)

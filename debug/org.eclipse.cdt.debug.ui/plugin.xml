@@ -711,14 +711,5 @@
          </action>
       </debugActionGroup>
    </extension>
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.cdt.debug.core.model.ICDebugTarget"
-            name="%SourcePropertyPage.name"
-            class="org.eclipse.cdt.debug.ui.sourcelookup.SourcePropertyPage"
-            id="org.eclipse.cdt.debug.ui.sourcelookup.SourcePropertyPage">
-      </page>
-   </extension>
 
 </plugin>

@@ -1,7 +1,3 @@
-2002-12-18 Mikhail Khodjaiants
-	Check if CValue has variables before calling 'getCDIVariables'.
-	* CValue.java
-
 2002-12-17 Mikhail Khodjaiants
 	Formatting 'char' types.
 	* CValue.java

@@ -504,14 +504,7 @@ public abstract class Resource extends PlatformObject implements IResource {
 	 * @see org.eclipse.core.resources.IResource#isLinked()
 	 */
 	public boolean isLinked() {
-		return false; // If this changes to true then need to change getRawLocation below
-	}
-
-	/**
-	 * @see org.eclipse.core.resources.IResource#getRawLocation()
-	 */
-	public IPath getRawLocation() {
-		return getLocation();
+		return false;
 	}
 
 }

@@ -385,18 +385,21 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean supportsBreakpoint( IBreakpoint breakpoint )
 	{
+/*
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
 		if ( breakpoint instanceof ICBreakpoint )
 		{
 			ISourceLocator sl =  getSourceLocator();
-			if ( sl != null && sl instanceof ICSourceLocator )
+			if ( sl != null && sl instanceof IAdaptable && ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) != null )
 			{
-				return ((ICSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
+				return ((ICSourceLocator)((IAdaptable)sl).getAdapter( ICSourceLocator.class )).contains( breakpoint.getMarker().getResource() );
 			}
 			return true;
 		}
 		return false;
+*/
+		return getConfiguration().supportsBreakpoints();
 	}
 
 	/* (non-Javadoc)
@@ -1588,9 +1591,6 @@ public class CDebugTarget extends CDebugElement
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		try
 		{
-			// FIXME: We should make sure that the parent folder where we
-			// want to set the breakpoint is added to the list of source directory.
-			// where the debugger looks for files.
 			ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
 			ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 			ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
@@ -1598,6 +1598,10 @@ public class CDebugTarget extends CDebugElement
 			{
 				getBreakpoints().put( breakpoint, cdiBreakpoint );
 				((CBreakpoint)breakpoint).incrementInstallCount();
+				if ( !breakpoint.isEnabled() )
+				{
+					cdiBreakpoint.setEnabled( false );
+				}
 			}
 		}
 		catch( CoreException ce )
@@ -1625,6 +1629,10 @@ public class CDebugTarget extends CDebugElement
 			{
 				getBreakpoints().put( watchpoint, cdiWatchpoint );
 				((CBreakpoint)watchpoint).incrementInstallCount();
+				if ( !watchpoint.isEnabled() )
+				{
+					cdiWatchpoint.setEnabled( false );
+				}
 			}
 		}
 		catch( CoreException ce )

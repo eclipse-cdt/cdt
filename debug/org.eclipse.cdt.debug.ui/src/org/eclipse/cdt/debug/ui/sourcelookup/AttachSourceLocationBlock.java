@@ -5,14 +5,15 @@
  */
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
-import org.eclipse.cdt.debug.internal.ui.SWTUtil;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +52,7 @@ public class AttachSourceLocationBlock
 		fControl.setLayout( new GridLayout() );
 		fControl.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 		fControl.setFont( JFaceResources.getDialogFont() );	
+		initializeDialogUnits( fControl );
 
 		createLocationControls( fControl );
 		createAssociationControls( fControl );
@@ -82,14 +84,13 @@ public class AttachSourceLocationBlock
 
 	protected void createLocationControls( Composite parent )
 	{
-		PixelConverter converter = new PixelConverter( parent );
 		Label label = new Label( parent, SWT.NONE );
 		label.setText( "Select location directory:" );
 		label.setLayoutData( new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL ) );
 		Composite composite = new Composite( parent, SWT.NONE );
 		composite.setLayout( new GridLayout( 2, false ) );
 		GridData data = new GridData( GridData.FILL_BOTH );
-		data.widthHint = converter.convertWidthInCharsToPixels( 70 );
+		data.widthHint = Dialog.convertWidthInCharsToPixels( fFontMetrics, 70 );
 		composite.setLayoutData( data );
 		fLocationText = new Text( composite, SWT.SINGLE | SWT.BORDER );
 		fLocationText.setLayoutData( new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL ) );
@@ -153,11 +154,36 @@ public class AttachSourceLocationBlock
 		Button button = new Button( parent, SWT.PUSH );
 		button.setText( label );
 		GridData data = new GridData( GridData.END );
+		data.heightHint = convertVerticalDLUsToPixels( IDialogConstants.BUTTON_HEIGHT );
+		int widthHint = convertHorizontalDLUsToPixels( IDialogConstants.BUTTON_WIDTH );
+		data.widthHint = Math.max( widthHint, button.computeSize( SWT.DEFAULT, SWT.DEFAULT, true ).x );
 		button.setLayoutData( data );
-		SWTUtil.setButtonDimensionHint( button );
 		button.setFont( parent.getFont() );
 
 		return button;
+	}
+
+	protected int convertVerticalDLUsToPixels( int dlus )
+	{
+		if ( fFontMetrics == null )
+			return 0;
+		return Dialog.convertVerticalDLUsToPixels( fFontMetrics, dlus );
+	}
+
+	protected int convertHorizontalDLUsToPixels( int dlus )
+	{
+		if ( fFontMetrics == null )
+			return 0;
+		return Dialog.convertHorizontalDLUsToPixels( fFontMetrics, dlus );
+	}
+
+	protected void initializeDialogUnits( Control control )
+	{
+		// Compute and store a font metric
+		GC gc = new GC( control );
+		gc.setFont( control.getFont() );
+		fFontMetrics = gc.getFontMetrics();
+		gc.dispose();
 	}
 	
 	public String getLocationPath()

@@ -1,3 +1,9 @@
+2002-12-23 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/core/CBuilder.java (invokeMake):
+	NPE check the return of launcher.execute(), the executables
+	may not be found.
+
 2002-12-20 Alain Magloire
 
 	Bug fix, We use a feature of GNU make to help track the directories

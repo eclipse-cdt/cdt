@@ -80,7 +80,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 				String var = results[i].getVariable();
 				MIValue value = results[i].getMIValue();
 
-				if (var.equals("wpt")) {
+				if (var.equals("wpt") || var.equals("hw-awpt") || var.equals("hw-rwpt")) {
 					if (value instanceof MITuple) {
 						parseWPT((MITuple) value);
 					}
@@ -143,6 +143,8 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 				oldValue = str;
 			} else if (var.equals("new")) {
 				newValue = str;
+			} else if (var.equals("value")) {
+				oldValue = newValue = str;
 			}
 		}
 	}

@@ -1,3 +1,37 @@
+2003-01-02 Alain Magloire
+
+	Bug when using recursive:
+	int recursive(int x) {
+		if (x > 10)
+			recursive(++x);
+		return 0;
+	}
+	
+	The Variable Manager is caching the MI/GDB var-obj for speed.
+	It is finding the object by looking at the name and the stack/thread,
+	for recursive calls, this is wrong and the code would be full in
+	thinking the variable "x"(see above) is the same object.  To make the distinction
+	we use the depth "-stack-info-depth" that will be use also in the equality
+	to make sure we identify an object uniquely.  In the recursive() case above
+	because the depth is different, a new "x" object will be created.  The downside
+	is that on certain platform doing deep recursive/stackframe, we have noticed
+	that "-stack-info-depth" can be very long, test done for gdb/QNX with
+	a stack depth of 1000.
+
+	* src/.../mi/core/cdi/VariableManager.java (getElement):
+	Use the depth when doing equal().
+	(createElement): Save the depth of the stack part of the Element.
+
+2003-01-02 Alain Magloire
+
+	GDB/MI uses some oob reasons that was not documented for the watchpoints
+		*stopped,reason="access-watchpoint-trigger"...
+		*stopped,reason="read-watchpoint-trigger",...
+	* src/.../mi/core/event/MIWatchpointTrigger.java (parse):
+	check for "hw-awpt" and "hw-rwpt".
+	* src/.../mi/core/RxThread.java (createEvents):
+	Check for "access-watchpoint-trigger", "read-watchpoint-trigger.
+
 2002-12-17 Alain Magloire
 
 	* src/.../mi/core/cdi/Register.java (setFormat): bug fix

@@ -147,28 +147,31 @@ public class CBuilder extends ACBuilder {
 				OutputStream stderr = epm.getOutputStream();
 
 				Process p = launcher.execute(makepath, userArgs, env, workingDirectory);
-				try {
-					// Close the input of the Process explicitely.
-					// We will never write to it.
-					p.getOutputStream().close();
-				} catch (IOException e) {
-				}
-				if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK)
+				if (p != null) {
+					try {
+						// Close the input of the Process explicitely.
+						// We will never write to it.
+						p.getOutputStream().close();
+					} catch (IOException e) {
+					}
+					if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK)
+						errMsg = launcher.getErrorMessage();
+
+					isCanceled = monitor.isCanceled();
+					monitor.setCanceled(false);
+					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
+					subMonitor.subTask("Refresh From Local");
+
+					try {
+						currProject.refreshLocal(IResource.DEPTH_INFINITE, subMonitor);
+					} catch (CoreException e) {
+					}
+
+					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
+					subMonitor.subTask("Parsing");
+				} else {
 					errMsg = launcher.getErrorMessage();
-
-				isCanceled = monitor.isCanceled();
-				monitor.setCanceled(false);
-				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.subTask("Refresh From Local");
-
-				try {
-					currProject.refreshLocal(IResource.DEPTH_INFINITE, subMonitor);
 				}
-				catch (CoreException e) {
-				}
-
-				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.subTask("Parsing");
 
 				if (errMsg != null) {
 					String errorDesc = CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());

@@ -329,7 +329,9 @@ public class RxThread extends Thread {
 				event = new MIBreakpointEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("watchpoint-trigger".equals(reason)) {
+		} else if ("watchpoint-trigger".equals(reason) ||
+		           "read-watchpoint-trigger".equals(reason) ||
+		           "access-watchpoint-trigger".equals(reason)) {
 			if (exec != null) {
 				event = new MIWatchpointTriggerEvent(exec);
 			} else if (rr != null) {

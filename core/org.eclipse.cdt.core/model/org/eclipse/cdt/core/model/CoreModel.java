@@ -735,6 +735,27 @@ public class CoreModel {
 	}
 
 	/**
+	 * Return the IPathEntryStore of the project.
+	 * 
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 */
+	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
+		return pathEntryManager.getPathEntryStore(project, true);
+	}
+
+	/**
+	 * Set in the map the store, but not persisted.
+	 * 
+	 * @param project
+	 * @param store
+	 */
+	public static void setPathEntryStore(IProject project, IPathEntryStore store) {
+		pathEntryManager.setPathEntryStore(project, store);
+	}
+
+	/**
 	 * Validate a given path entries for a project, using the following rules:
 	 * <ul>
 	 *   <li> Entries cannot collide with each other; that is, all entry paths must be unique.
@@ -781,14 +802,6 @@ public class CoreModel {
 	 */
 	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry entry, boolean checkSourceAttachment, boolean recurseInContainers){
 		return pathEntryManager.validatePathEntry(cProject, entry, checkSourceAttachment, recurseInContainers);
-	}
-
-	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
-		return CCorePlugin.getDefault().getPathEntryStore(project);
-	}
-
-	public static void setPathEntryStore(IProject project, IPathEntryStore store) {
-		pathEntryManager.setPathEntryStore(project, store);
 	}
 
 	/**

@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -67,6 +69,10 @@ import org.eclipse.core.runtime.jobs.Job;
  *  
  */
 public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener {
+
+	// PathEntry extension
+	public final static String PATHENTRY_STORE_ID = "PathEntryStore"; //$NON-NLS-1$
+	public final static String PATHENTRY_STORE_UNIQ_ID = CCorePlugin.PLUGIN_ID + "." + PATHENTRY_STORE_ID; //$NON-NLS-1$
 
 	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "PathEntryContainerInitializer"; //$NON-NLS-1$
 	/**
@@ -949,12 +955,41 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 
-	private synchronized IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
+	public synchronized IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
 		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
 		if (store == null && create == true) {
-			store = CCorePlugin.getDefault().getPathEntryStore(project);
+			store = createPathEntryStore(project);
 			storeMap.put(project, store);
 			store.addPathEntryStoreListener(this);
+		}
+		return store;
+	}
+
+	public IPathEntryStore createPathEntryStore(IProject project) throws CoreException {
+		IPathEntryStore store = null;
+		if (project != null) {
+			try {
+				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+				if (cdesc != null) {
+					ICExtensionReference[] cextensions = cdesc.get(PATHENTRY_STORE_UNIQ_ID, true);
+					if (cextensions.length > 0) {
+						for (int i = 0; i < cextensions.length; i++) {
+							try {
+								store = (IPathEntryStore) cextensions[i].createExtension();
+								break;
+							} catch (ClassCastException e) {
+								//
+								CCorePlugin.log(e);
+							}
+						}
+					}
+				}
+			} catch (CoreException e) {
+				// ignore since we fall back to a default....
+			}
+		}
+		if (store == null) {
+			store = new DefaultPathEntryStore(project);
 		}
 		return store;
 	}

@@ -24,14 +24,12 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.model.DefaultPathEntryStore;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -77,9 +75,6 @@ public class CCorePlugin extends Plugin {
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 
-	// PathEntry extension
-	public final static String PATHENTRY_STORE_ID = "PathEntryStore"; //$NON-NLS-1$
-	public final static String PATHENTRY_STORE_UNIQ_ID = PLUGIN_ID + "." + PATHENTRY_STORE_ID; //$NON-NLS-1$
 	// default store for pathentry
 	public final static String DEFAULT_PATHENTRY_STORE_ID = PLUGIN_ID + ".cdtPathEntryStore"; //$NON-NLS-1$
 
@@ -592,37 +587,6 @@ public class CCorePlugin extends Plugin {
 			throw new CoreException(s);
 		}
 		return parser;
-	}
-
-	public IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
-		IPathEntryStore store = null;
-		if (project != null) {
-			try {
-				ICDescriptor cdesc = getCProjectDescription(project);
-				ICExtensionReference[] cextensions = cdesc.get(PATHENTRY_STORE_UNIQ_ID, true);
-				if (cextensions.length > 0) {
-					for (int i = 0; i < cextensions.length; i++) {
-						try {
-							store = (IPathEntryStore) cextensions[i].createExtension();
-							break;
-						} catch (ClassCastException e) {
-							//
-							log(e);
-						}
-					}
-				}
-			} catch (CoreException e) {
-				// ignore since we fall back to a default....
-			}
-		}
-		if (store == null) {
-			store = getDefaultPathEntryStore(project);
-		}
-		return store;
-	}
-
-	public IPathEntryStore getDefaultPathEntryStore(IProject project) throws CoreException {
-		return new DefaultPathEntryStore(project);
 	}
 
 	/**

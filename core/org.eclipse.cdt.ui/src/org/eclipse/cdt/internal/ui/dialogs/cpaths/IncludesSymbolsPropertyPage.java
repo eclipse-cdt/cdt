@@ -10,8 +10,8 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
@@ -59,7 +59,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 			result = createForClosedProject(parent);
 		} else {
 			try {
-				fStore = CCorePlugin.getDefault().getPathEntryStore(getProject());
+				fStore = CoreModel.getPathEntryStore(getProject());
 				fStore.addPathEntryStoreListener(this);
 			} catch (CoreException e) {
 			}

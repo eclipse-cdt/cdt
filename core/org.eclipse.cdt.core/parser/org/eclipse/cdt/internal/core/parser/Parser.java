@@ -9,6 +9,8 @@
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
+import org.eclipse.cdt.core.parser.Backtrack;
+import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -19,7 +21,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ClassKind;
-import org.eclipse.cdt.core.parser.ast.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.internal.core.model.Util;
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -4147,22 +4149,9 @@ public class Parser implements IParser
             }
         }
     }
-    /**
-     * Class that represents the a request to backtrack. 
-     */
-    public static class Backtrack extends Exception
-    {
-    }
     // the static instance we always use
     private static Backtrack backtrack = new Backtrack();
-    /**
-     * Class that represents encountering EOF.  
-     *
-     * End of file generally causes backtracking 
-     */
-    public static class EndOfFile extends Backtrack
-    {
-    }
+
     // the static instance we always use
     public static EndOfFile endOfFile = new EndOfFile();
     // Token management

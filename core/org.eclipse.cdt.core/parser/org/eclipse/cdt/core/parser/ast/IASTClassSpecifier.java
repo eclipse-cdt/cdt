@@ -12,11 +12,24 @@ package org.eclipse.cdt.core.parser.ast;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.Enum;
+
 /**
  * @author jcamelon
  *
  */
 public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration {
+
+	public class ClassNameType extends Enum {
+
+		public static final ClassNameType IDENTIFIER = new ClassNameType( 1 );
+		public static final ClassNameType TEMPLATE   = new ClassNameType( 2 ); 
+ 
+		private ClassNameType( int t )
+		{
+			super( t );
+		}
+	}
 
 	public ClassNameType getClassNameType(); 
 

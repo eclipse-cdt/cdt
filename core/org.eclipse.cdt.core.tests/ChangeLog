@@ -1,3 +1,7 @@
+2003-06-26 John Camelon
+	Update IASTExpression. 
+	Move Parser.Backtrack and Parser.EndOfFile to external interface. 
+
 2003-06-25 John Camelon
 	Added DOMFailedTest::testBug39349(). 
 	Added DOMTests::testBug39348().

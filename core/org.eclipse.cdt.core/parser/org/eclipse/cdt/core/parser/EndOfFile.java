@@ -8,23 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
-
-import org.eclipse.cdt.core.parser.Enum;
+package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
  *
  */
-public class AccessVisibility extends Enum {
-
-	public static final AccessVisibility PUBLIC = new AccessVisibility( 1 );
-	public static final AccessVisibility PROTECTED = new AccessVisibility( 2 );
-	public static final AccessVisibility PRIVATE = new AccessVisibility( 3 );
-
-	private AccessVisibility( int constant)
-	{
-		super( constant ); 
-	}
-	 
+public class EndOfFile extends Backtrack
+{
 }

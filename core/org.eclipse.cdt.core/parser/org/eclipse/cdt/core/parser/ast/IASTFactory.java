@@ -10,8 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.Backtrack;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
-import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
 
 /**
  * @author jcamelon

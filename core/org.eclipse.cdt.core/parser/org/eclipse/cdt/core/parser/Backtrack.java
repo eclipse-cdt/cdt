@@ -8,13 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
+package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTConstantExpression extends IASTExpression
+public class Backtrack extends Exception
 {
-	public int evaluate();
 }

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
@@ -467,12 +468,11 @@ public class Scanner implements IScanner {
 
 	
 
-	public IToken nextToken() throws ScannerException, Parser.EndOfFile {
+	public IToken nextToken() throws ScannerException, EndOfFile {
 		return nextToken( true ); 
 	}
 
-
-	public IToken nextToken( boolean pasting ) throws ScannerException, Parser.EndOfFile
+	public IToken nextToken( boolean pasting ) throws ScannerException, EndOfFile
 	{
 		if( cachedToken != null ){
 			setCurrentToken( cachedToken );
@@ -560,7 +560,7 @@ public class Scanner implements IScanner {
 					IToken next = null;
 					try{
 						next = nextToken( true );
-					} catch( Parser.EndOfFile e ){ 
+					} catch( EndOfFile e ){ 
 						next = null;
 					}
 					
@@ -570,7 +570,7 @@ public class Scanner implements IScanner {
 						currentToken = returnToken; 
 						try{ 
 							next = nextToken( true ); 
-						} catch( Parser.EndOfFile e ){ 
+						} catch( EndOfFile e ){ 
 							next = null;
 						}
 					}
@@ -1366,7 +1366,7 @@ public class Scanner implements IScanner {
     // the static instance we always use
     protected static endOfMacroTokenException endOfMacroToken = new endOfMacroTokenException();
     
-    public IToken nextTokenForStringizing() throws ScannerException, Parser.EndOfFile
+    public IToken nextTokenForStringizing() throws ScannerException, EndOfFile
     {     
         int c = getChar();
         StringBuffer tokenImage = new StringBuffer();
@@ -1799,7 +1799,7 @@ public class Scanner implements IScanner {
 
 	}
 
-	protected void poundDefine(int beginning) throws ScannerException, Parser.EndOfFile {
+	protected void poundDefine(int beginning) throws ScannerException, EndOfFile {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
@@ -1896,7 +1896,7 @@ public class Scanner implements IScanner {
 						t = helperScanner.nextToken(false);
 					}
 				}
-				catch( Parser.EndOfFile eof )
+				catch( EndOfFile eof )
 				{
 					// good
 				}
@@ -2001,7 +2001,7 @@ public class Scanner implements IScanner {
                 }
                 space = true;
             }
-        } catch (Parser.EndOfFile e) {
+        } catch (EndOfFile e) {
             // Good
             parameterValues.add(str);
         }

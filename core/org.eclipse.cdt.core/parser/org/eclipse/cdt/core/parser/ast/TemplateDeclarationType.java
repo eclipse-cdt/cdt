@@ -10,11 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.Enum;
+
 /**
  * @author jcamelon
  *
  */
-public class TemplateDeclarationType {
+public class TemplateDeclarationType extends Enum {
 	
 	public static final TemplateDeclarationType CLASS = new TemplateDeclarationType(1);
 	public static final TemplateDeclarationType FUNCTION = new TemplateDeclarationType( 2 );
@@ -22,11 +24,9 @@ public class TemplateDeclarationType {
 	public static final TemplateDeclarationType METHOD = new TemplateDeclarationType( 4 );
 	public static final TemplateDeclarationType FIELD = new TemplateDeclarationType( 5 ); 
 	
-	
-	private final int type; 
 	private TemplateDeclarationType( int t )
 	{
-		type = t; 
+		super( t ); 
 	}
 
 }

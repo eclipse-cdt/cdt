@@ -16,7 +16,6 @@ import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ClassKind;
-import org.eclipse.cdt.core.parser.ast.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;

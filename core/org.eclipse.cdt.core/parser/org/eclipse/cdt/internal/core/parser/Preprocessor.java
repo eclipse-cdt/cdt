@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.Reader;
 import java.util.Map;
 
+import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.ScannerException;
 
@@ -42,7 +43,7 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 		{
 			// callback IProblem here
 		}
-		catch( Parser.EndOfFile eof )
+		catch( EndOfFile eof )
 		{
 			// expected 
 		}

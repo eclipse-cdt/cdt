@@ -15,11 +15,11 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.Parser;
 
 /**
  * @author jcamelon
@@ -54,7 +54,7 @@ public class BaseScannerTest extends TestCase {
 				t= scanner.nextToken();
 			}
 		}
-		catch (Parser.EndOfFile e)
+		catch ( EndOfFile e)
 		{
 		}
 		catch (ScannerException se)
@@ -69,7 +69,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tIDENTIFIER);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}
 	}
@@ -80,7 +80,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tINTEGER);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}
 	}
@@ -91,7 +91,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tFLOATINGPT);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}
 	}
@@ -103,7 +103,7 @@ public class BaseScannerTest extends TestCase {
 			assertTrue(t.getType() == IToken.tCHAR );
 			Character c = new Character( expected ); 
 			assertEquals( t.getImage(), c.toString() ); 
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}		
 	}
@@ -113,7 +113,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tCHAR );
 			assertEquals( t.getImage(), expected ); 
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}		
 	}
@@ -132,7 +132,7 @@ public class BaseScannerTest extends TestCase {
 			else
 				assertTrue(t.getType() == IToken.tSTRING);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}
 	}
@@ -142,7 +142,7 @@ public class BaseScannerTest extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == tokenType);
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 			assertTrue(false);
 		}
 	}
@@ -161,7 +161,7 @@ public class BaseScannerTest extends TestCase {
 	{
 		try {
 			assertNull(scanner.nextToken());
-		} catch (Parser.EndOfFile e) {
+		} catch (EndOfFile e) {
 		}
 	}
 

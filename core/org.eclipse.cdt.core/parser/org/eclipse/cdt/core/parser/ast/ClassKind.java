@@ -10,22 +10,22 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.Enum;
+
 /**
  * @author jcamelon
  *
  */
-public class ClassKind {
+public class ClassKind extends Enum {
 
 	public final static ClassKind CLASS = new ClassKind( 1 );
 	public final static ClassKind STRUCT = new ClassKind( 2 );
 	public final static ClassKind UNION = new ClassKind( 3 );
 	public final static ClassKind ENUM = new ClassKind( 4 );
 
-	protected ClassKind( int value )
+	private ClassKind( int value )
 	{
-		this.value = value; 
+		super( value ); 
 	}
 
-	private final int value; 
-	 
 }

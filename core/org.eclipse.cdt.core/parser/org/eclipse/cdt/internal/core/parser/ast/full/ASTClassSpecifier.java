@@ -14,7 +14,6 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ClassKind;
-import org.eclipse.cdt.core.parser.ast.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;

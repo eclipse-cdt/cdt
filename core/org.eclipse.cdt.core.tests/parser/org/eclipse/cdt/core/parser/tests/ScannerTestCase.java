@@ -4,11 +4,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
@@ -847,7 +847,7 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 	}
 
-	public void testQuickScan() throws Parser.EndOfFile
+	public void testQuickScan() throws EndOfFile
 	{
 		try
 		{

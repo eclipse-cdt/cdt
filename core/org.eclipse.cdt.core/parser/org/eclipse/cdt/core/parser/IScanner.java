@@ -3,7 +3,6 @@ package org.eclipse.cdt.core.parser;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.parser.Parser;
 
 /**
  * @author jcamelon
@@ -24,8 +23,8 @@ public interface IScanner  {
 	public void overwriteIncludePath( List newIncludePaths );
 	public void setRequestor( ISourceElementRequestor r );
 	
-	public IToken nextToken() throws ScannerException, Parser.EndOfFile;
-	public IToken nextToken( boolean next ) throws ScannerException, Parser.EndOfFile;
+	public IToken nextToken() throws ScannerException, EndOfFile;
+	public IToken nextToken( boolean next ) throws ScannerException, EndOfFile;
 	 
 	public void setCppNature( boolean value );
 	
@@ -37,7 +36,7 @@ public interface IScanner  {
 	/**
 	 * @return
 	 */
-	public IToken nextTokenForStringizing() throws ScannerException, Parser.EndOfFile;
+	public IToken nextTokenForStringizing() throws ScannerException, EndOfFile;
 	/**
 	 * @param b
 	 */

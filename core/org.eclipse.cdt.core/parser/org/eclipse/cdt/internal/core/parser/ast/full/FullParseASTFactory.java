@@ -12,10 +12,10 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ClassKind;
-import org.eclipse.cdt.core.parser.ast.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -28,8 +28,8 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
-import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;

@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
@@ -230,7 +231,7 @@ public abstract class CVariable extends CDebugElement
 		{
 			try
 			{
-				if ( fCDIVariable != null )
+				if ( fCDIVariable != null && !(fCDIVariable instanceof ErrorVariable) )
 					getCDISession().getVariableManager().destroyVariable( fCDIVariable );
 			}
 			catch( CDIException e )
@@ -526,6 +527,25 @@ public abstract class CVariable extends CDebugElement
 					handleDestroyedEvent( (ICDIDestroyedEvent)event );
 				}
 			}
+			else if ( event instanceof ICDIResumedEvent )
+			{
+				handleResumedEvent( (ICDIResumedEvent)event );
+			}
+		}
+	}
+
+	private void handleResumedEvent( ICDIResumedEvent event )
+	{
+		try
+		{
+			if ( getCDIVariable() instanceof ErrorVariable )
+			{
+				getInternalVariable().invalidate();
+				setStatus( ICDebugElementErrorStatus.OK, null );
+			}
+		}
+		catch( CDIException e )
+		{
 		}
 	}
 

@@ -1,6 +1,13 @@
 2003-01-17 Alain Magloire
 
 	* src/.../mi/core/cdi/SharedLibraryManager.java (loadSymbols):
+	New method takes and array of ICDISharedLibrary.
+	* src/.../mi/core/cdi/SharedLibrary.java (loadSymbols):
+	Call the share manager to load.
+
+2003-01-17 Alain Magloire
+
+	* src/.../mi/core/cdi/SharedLibraryManager.java (loadSymbols):
 	Call "shared libraryname".
 
 2003-01-17 Alain Magloire

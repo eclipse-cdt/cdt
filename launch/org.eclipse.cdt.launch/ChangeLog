@@ -1,3 +1,7 @@
+2003-01-29 David Inglis
+	* src/.../launch/internal/ui/LaunchUIPluging.java (getShell)
+	change so that it will always return a shell.
+	
 2003-01-28 Alain Magloire
 
 	* src/.../launch/internal/CApplicationLaunchShortCut.java (getCLaunchConfigType):

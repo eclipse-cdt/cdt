@@ -50,8 +50,8 @@ implements IWorkbenchPreferencePage {
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
 		
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-//		ICHelpContextIds.LINKED_RESOURCE_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.PATHENTRY_VARIABLES_PREFERENCE_PAGE);
+	
 		// define container & its gridding
 		Composite pageComponent = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -66,8 +66,7 @@ implements IWorkbenchPreferencePage {
 		
 		
 		topLabel = new Label(pageComponent, SWT.NONE);
-		topLabel.setText(PreferencesMessages
-				.getString("LinkedResourcesPreference.explanation")); //$NON-NLS-1$
+		topLabel.setText(PreferencesMessages.getString("PathEntryVariablePreference.explanation")); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;

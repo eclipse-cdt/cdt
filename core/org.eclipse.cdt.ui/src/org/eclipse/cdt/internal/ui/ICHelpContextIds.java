@@ -153,5 +153,7 @@ public interface ICHelpContextIds {
 	public static final String COUTLINE_VIEW = PREFIX + "outline_view"; //$NON-NLS-1$
 	public static final String CPROJECT_VIEW = PREFIX + "projects_view"; //$NON-NLS-1$
 	public static final String C_SEARCH_VIEW = PREFIX + "search_view"; //$NON-NLS-1$
-	
+
+	public static final String PATHENTRY_VARIABLES_PREFERENCE_PAGE= PREFIX + "pathentry_variables_preference_page_context"; //$NON-NLS-1$
+
 }

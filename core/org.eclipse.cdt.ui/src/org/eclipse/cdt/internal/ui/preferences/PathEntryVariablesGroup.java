@@ -199,7 +199,7 @@ public class PathEntryVariablesGroup {
 		// layout the table & its buttons
 		variableLabel = new Label(pageComponent, SWT.LEFT);
 		variableLabel.setText(PreferencesMessages
-				.getString("PathVariablesBlock.variablesLabel")); //$NON-NLS-1$
+				.getString("PathEntryVariablesBlock.variablesLabel")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -243,7 +243,7 @@ public class PathEntryVariablesGroup {
 	/**
 	 * Opens a dialog for editing an existing variable.
 	 *
-	 * @see PathVariableDialog
+	 * @see PathEntryVariableDialog
 	 */
 	protected void editSelectedVariable() {
 		// retrieves the name and value for the currently selected variable
@@ -335,7 +335,7 @@ public class PathEntryVariablesGroup {
 		
 		addButton = new Button(groupComponent, SWT.PUSH);
 		addButton.setText(PreferencesMessages
-				.getString("PathVariablesBlock.addVariableButton")); //$NON-NLS-1$
+				.getString("PathEntryVariablesBlock.addVariableButton")); //$NON-NLS-1$
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addNewVariable();
@@ -346,7 +346,7 @@ public class PathEntryVariablesGroup {
 		
 		editButton = new Button(groupComponent, SWT.PUSH);
 		editButton.setText(PreferencesMessages
-				.getString("PathVariablesBlock.editVariableButton")); //$NON-NLS-1$
+				.getString("PathEntryVariablesBlock.editVariableButton")); //$NON-NLS-1$
 		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editSelectedVariable();
@@ -357,7 +357,7 @@ public class PathEntryVariablesGroup {
 		
 		removeButton = new Button(groupComponent, SWT.PUSH);
 		removeButton.setText(PreferencesMessages
-				.getString("PathVariablesBlock.removeVariableButton")); //$NON-NLS-1$
+				.getString("PathEntryVariablesBlock.removeVariableButton")); //$NON-NLS-1$
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSelectedVariables();

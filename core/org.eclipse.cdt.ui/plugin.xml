@@ -627,7 +627,7 @@
             id="org.eclipse.cdt.ui.preferences.AppearancePreferencePage">
       </page>
       <!--page
-            name="PathEntry Variable"
+            name="%pathEntryVariablesPrefName"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.PathEntryVariablePreferencePage"
             id="org.eclipse.cdt.ui.preferences.PathEntryVariablePreferencePage">

@@ -1346,18 +1346,6 @@ public class CDebugTarget extends CDebugElement
 
 	private void handleTerminatedEvent( ICDIDestroyedEvent event )
 	{
-		IProcess process = getProcess();
-		if ( process != null )
-		{
-			try
-			{
-				process.terminate();
-			}
-			catch( DebugException e )
-			{
-				CDebugCorePlugin.log( e.getStatus() );
-			}
-		}
 		terminated();
 	}
 

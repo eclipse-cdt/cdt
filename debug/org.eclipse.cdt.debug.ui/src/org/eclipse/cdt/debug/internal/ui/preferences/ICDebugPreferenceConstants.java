@@ -117,4 +117,11 @@ public interface ICDebugPreferenceConstants
 	 * <code>true</code> the 'Auto-Refresh' option will be checked.
 	 */
 	public static final String PREF_SHARED_LIBRARIES_AUTO_REFRESH = ICDebugUIConstants.PLUGIN_ID + "SharedLibraries.auto_refresh"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether the registers view will be
+	 * refreshed every time when the execution of program stops. When
+	 * <code>true</code> the 'Auto-Refresh' option will be checked.
+	 */
+	public static final String PREF_REGISTERS_AUTO_REFRESH = ICDebugUIConstants.PLUGIN_ID + "Registers.auto_refresh"; //$NON-NLS-1$
 }

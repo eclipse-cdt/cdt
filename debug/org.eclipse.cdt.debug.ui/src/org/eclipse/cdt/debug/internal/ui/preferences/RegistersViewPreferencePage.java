@@ -56,11 +56,11 @@ public class RegistersViewPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void createFieldEditors()
 	{
-		addField( new ColorFieldEditor( ICDebugPreferenceConstants.CHANGED_REGISTER_RGB, "&Changed register value color:", getFieldEditorParent() ) );
-		
+		addField( new ColorFieldEditor( ICDebugPreferenceConstants.CHANGED_REGISTER_RGB, "&Changed register value color:", getFieldEditorParent() ) );		
 		createSpacer( getFieldEditorParent(), 1 );
-		
 		addField( new BooleanFieldEditor( IDebugUIConstants.PREF_SHOW_TYPE_NAMES, "Show type &names by default", SWT.NONE, getFieldEditorParent() ) );
+		createSpacer( getFieldEditorParent(), 1 );
+		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_REGISTERS_AUTO_REFRESH, "Auto-Refresh by default", getFieldEditorParent() ) );
 	}
 
 	/* (non-Javadoc)
@@ -73,10 +73,10 @@ public class RegistersViewPreferencePage extends FieldEditorPreferencePage
 	public static void initDefaults( IPreferenceStore store )
 	{
 		store.setDefault( IDebugUIConstants.PREF_SHOW_TYPE_NAMES, false );
-
 		PreferenceConverter.setDefault( store,
 										ICDebugPreferenceConstants.CHANGED_REGISTER_RGB,
 										new RGB( 255, 0, 0 ) );
+		store.setDefault( ICDebugPreferenceConstants.PREF_REGISTERS_AUTO_REFRESH, true );
 	}
 
 	protected void createSpacer( Composite composite, int columnSpan )

@@ -33,6 +33,8 @@ public interface ICDebugHelpContextIds
 	public static final String REFRESH_SHARED_LIBRARIES_ACTION = PREFIX + "refresh_shared_libraries_action_context"; //$NON-NLS-1$
 	public static final String AUTO_REFRESH_SHARED_LIBRARIES_ACTION = PREFIX + "auto_refresh_shared_libraries_action_context"; //$NON-NLS-1$
 	public static final String LOAD_SYMBOLS_FOR_ALL = PREFIX + "load_symbols_for_all_action_context"; //$NON-NLS-1$
+	public static final String REFRESH_REGISTERS_ACTION = PREFIX + "refresh_registers_action_context"; //$NON-NLS-1$
+	public static final String AUTO_REFRESH_REGISTERS_ACTION = PREFIX + "auto_refresh_registers_action_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$

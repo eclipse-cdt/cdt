@@ -6,8 +6,12 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.registers;
 
+import org.eclipse.cdt.debug.core.ICRegisterManager;
+import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ChangeRegisterValueAction;
+import org.eclipse.cdt.debug.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowRegisterTypesAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -36,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * 
@@ -91,6 +96,25 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		setAction( "ChangeRegisterValue", action ); //$NON-NLS-1$
 		setAction( DOUBLE_CLICK_ACTION, action );
 
+		action = new AutoRefreshAction( getViewer(), "Auto-Refresh" );
+		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_AUTO_REFRESH );
+		action.setDescription( "Automatically Refresh Registers View" );
+		action.setToolTipText( "Auto-Refresh" );
+		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.AUTO_REFRESH_REGISTERS_ACTION );
+		action.setEnabled( false );
+		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_REGISTERS_AUTO_REFRESH ) );
+		setAction( "AutoRefresh", action ); //$NON-NLS-1$
+		add( (AutoRefreshAction)action );
+
+		action = new RefreshAction( getViewer(), "Refresh" );
+		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_REFRESH );
+		action.setDescription( "Refresh Registers View" );
+		action.setToolTipText( "Refresh" );
+		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.REFRESH_REGISTERS_ACTION );
+		action.setEnabled( false );
+		setAction( "Refresh", action ); //$NON-NLS-1$
+		add( (RefreshAction)action );
+
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	}
@@ -116,6 +140,9 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		menu.add( getAction( "ShowTypeNames" ) ); //$NON-NLS-1$
 
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+
+		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "AutoRefresh" ) ); //$NON-NLS-1$
+		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "Refresh" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -124,6 +151,11 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	protected void configureToolBar( IToolBarManager tbm )
 	{
 		tbm.add( new Separator( this.getClass().getName() ) );
+
+		tbm.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
+		tbm.add( getAction( "AutoRefresh" ) ); //$NON-NLS-1$
+		tbm.add( getAction( "Refresh" ) ); //$NON-NLS-1$
+
 		tbm.add( new Separator( IDebugUIConstants.RENDER_GROUP ) );
 		tbm.add( getAction( "ShowTypeNames" ) ); //$NON-NLS-1$
 	}
@@ -206,14 +238,10 @@ public class RegistersView extends AbstractDebugEventHandlerView
 
 	protected void setViewerInput( IStructuredSelection ssel )
 	{
-		IStackFrame frame = null;
-		if ( ssel.size() == 1 )
+		ICRegisterManager rm = null;
+		if ( ssel.size() == 1 && ssel.getFirstElement() instanceof IStackFrame )
 		{
-			Object input = ssel.getFirstElement();
-			if ( input instanceof IStackFrame )
-			{
-				frame = (IStackFrame)input;
-			}
+			rm = (ICRegisterManager)((IStackFrame)ssel.getFirstElement()).getDebugTarget().getAdapter( ICRegisterManager.class );
 		}
 
 		if ( getViewer() == null )
@@ -222,25 +250,19 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		}
 
 		Object current = getViewer().getInput();
-		if ( current == null && frame == null )
+		if ( current == null && rm == null )
 		{
 			return;
 		}
 
-		if ( current != null && current.equals( frame ) )
-		{
-			return;
-		}
-
-		if ( current != null && frame != null && 
-			 current instanceof IStackFrame && 
-			 ((IStackFrame)current).getDebugTarget().equals( frame.getDebugTarget() ) )
+		if ( current != null && current.equals( rm ) )
 		{
 			return;
 		}
 
 		showViewer();
-		getViewer().setInput( frame );
+		getViewer().setInput( rm );
+		updateObjects();
 	}
 
 	/**

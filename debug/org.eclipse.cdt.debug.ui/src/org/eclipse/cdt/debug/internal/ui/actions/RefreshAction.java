@@ -64,7 +64,7 @@ public class RefreshAction extends Action implements IUpdate
 				}
 				catch( DebugException e )
 				{
-					CDebugUIPlugin.errorDialog( "Unable to refresh shared libraries.", e.getStatus() );
+					CDebugUIPlugin.errorDialog( "Unable to refresh.", e.getStatus() );
 				}
 			}
 		}

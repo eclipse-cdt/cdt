@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.views.registers;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -55,9 +56,9 @@ public class RegistersViewContentProvider implements ITreeContentProvider
 		Object[] children= null;
 		try
 		{
-			if ( parent instanceof IStackFrame )
+			if ( parent instanceof ICRegisterManager )
 			{
-				children = ((IStackFrame)parent).getRegisterGroups();
+				children = ((ICRegisterManager)parent).getRegisterGroups();
 			}
 			else if ( parent instanceof IRegisterGroup )
 			{

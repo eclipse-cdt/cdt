@@ -1,3 +1,12 @@
+2003-03-31 Mikhail Khodjaiants
+	'Auto-Refresh' and 'Refresh' actions for registers view.
+	* ICDebugHelpContextIds.java
+	* RefreshAction.java
+	* ICDebugPreferenceConstants.java
+	* RegistersViewPreferencePage.java
+	* RegistersView.java
+	* RegistersViewContentProvider.java
+
 2003-03-28 Mikhail Khodjaiants
 	Added the default format section for variables, registers and expressions 
 	to the debugger preference page.

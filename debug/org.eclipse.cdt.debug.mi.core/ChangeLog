@@ -1,3 +1,19 @@
+2003-04-24 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java (createMIInfoProgram):
+	New method.
+	* src/org/eclipse/cdt/debug/mi/core/command/MIInfoProgram.java:
+	New file, "info program".
+	* src/org/eclipse/cdt/debug/mi/core/output/MIInfoProgramInfo.java:
+	New file, parsing of "info Program".
+	* src/org/eclipse/cdt/debug/mi/core/output/EventManager.java (processSuspend):
+	Call MIInferio.update();
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java (update):
+	New method to retrieve the pid.
+	(interrupt): Try doing Spawner.raise(pid, INT) as a fallback.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/Configuration.java (supportSuspend):
+	Bug fix.	
+
 2003-04-23 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java (update):

@@ -5,26 +5,26 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICRoot;
-
 public class BinaryRunner implements Runnable {
 	ArchiveContainer clib;
 	BinaryContainer cbin;
 	CProject cproject;
-
+	CModelManager factory;
+	
 	public BinaryRunner(CProject cprj) {
 		cproject = cprj;
 		cbin = (BinaryContainer)cprj.getBinaryContainer();
 		clib = (ArchiveContainer)cprj.getArchiveContainer();
+		factory = CModelManager.getDefault();
 	}
 
 	public void run() {
@@ -44,7 +44,6 @@ public class BinaryRunner implements Runnable {
 		// Fired the event.
 		ICElement[] children = container.getChildren();
 		if (children.length > 0) {
-			CModelManager factory = CModelManager.getDefault();
 			ICElement root = (ICRoot)factory.getCRoot();
 			CElementDelta cdelta = new CElementDelta(root);
 			cdelta.added(cproject);
@@ -57,31 +56,21 @@ public class BinaryRunner implements Runnable {
 		}
 	}
 
-	void addChildIfBinary(CoreModel factory, IFile file) {
+	void addChildIfBinary(IFile file) {
 		// Attempt to speed things up by rejecting up front
 		// Things we know should not be Binary files.
 		if (!factory.isTranslationUnit(file)) {
-			if (factory.isBinary(file)) {
-				ICElement celement = factory.create(file);
-				if (celement != null) {
-					if (celement instanceof IBinary) {
-						IBinary bin = (IBinary)celement;
-						if (bin.isExecutable() || bin.isSharedLib()) {
-							cbin.addChild(bin);
-						}
-					}
-				}
-			} else if (factory.isArchive(file)) {
-				ICElement celement = factory.create(file);
-				if (celement instanceof IArchive) {
-					clib.addChild(celement);
-				}
+			IBinaryFile bin = factory.getBinaryFile(file);
+			if (bin != null) {
+				IResource res = file.getParent();
+				ICElement parent = factory.create(res);
+				// By creating the element, it will be added to the correct (bin/archive)container.
+				factory.create(parent, file, bin);
 			}
 		}
 	}
 
 	class Visitor implements IResourceVisitor {
-		CoreModel factory = CoreModel.getDefault();
 		BinaryRunner runner;
 
 		public Visitor (BinaryRunner r) {
@@ -90,7 +79,7 @@ public class BinaryRunner implements Runnable {
 
 		public boolean visit(IResource res) throws CoreException {
 			if (res instanceof IFile) {
-				runner.addChildIfBinary(factory, (IFile)res);
+				runner.addChildIfBinary((IFile)res);
 				return false;
 			}
 			return true;

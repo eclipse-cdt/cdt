@@ -142,16 +142,8 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	protected void initializeValues() {
 		initMapParsers();
-		List list = new ArrayList(mapParsers.size());
-		Iterator items =  mapParsers.keySet().iterator();
-		while( items.hasNext()) {
-			list.add((String)items.next());
-		}
-		fErrorParserList.setElements(list);
 
-		list.clear();
-		String[] parserIDs = EMPTY;
-
+		String[] parserIDs;
 		IProject project = getContainer().getProject();
 		if (project == null) {
 			// From a Preference.
@@ -161,7 +153,24 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			parserIDs = getErrorParserIDs(project);
 		}
 
-		fErrorParserList.setCheckedElements(Arrays.asList(parserIDs));
+		List checkedList = Arrays.asList(parserIDs);
+		fErrorParserList.setElements(checkedList);
+		fErrorParserList.setCheckedElements(checkedList);
+		
+		Iterator items =  mapParsers.keySet().iterator();
+		while( items.hasNext()) {
+			String item = (String)items.next();
+			boolean found = false;
+			for (int i = 0; i < parserIDs.length; i++) {
+				if (item.equals(parserIDs[i])) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				fErrorParserList.addElement(item);
+			}
+		}
 	}
 
 	public void createControl(Composite parent) {
@@ -204,7 +213,15 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 				monitor = new NullProgressMonitor();
 			}
 			monitor.beginTask("Setting Error Parsers...", 1);
-			List list = fErrorParserList.getCheckedElements();
+			List elements = fErrorParserList.getElements();
+			int count = elements.size();
+			List list = new ArrayList(count);
+			for (int i = 0; i < count; i++) {
+				Object obj = elements.get(i);
+				if (fErrorParserList.isChecked(obj)) {
+					list.add(obj);
+				}
+			}
 			
 			String[] parserIDs = (String[])list.toArray(EMPTY);
 

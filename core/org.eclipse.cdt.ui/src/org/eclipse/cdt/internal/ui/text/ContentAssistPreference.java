@@ -46,7 +46,9 @@ public class ContentAssistPreference {
 	public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
 	/** Preference key for adding imports on code assist */
 	public final static String ADD_INCLUDE= "content_assist_add_import";	
-	
+	/** Preference key for completion search scope */
+	public final static String PROJECT_SCOPE_SEARCH= "content_assist_project_scope_search";	
+		
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);
 		return manager.getColor(rgb);
@@ -118,6 +120,8 @@ public class ContentAssistPreference {
 		enabled= store.getBoolean(AUTOINSERT);
 		assistant.enableAutoInsert(enabled);
 
+		enabled= store.getBoolean(PROJECT_SCOPE_SEARCH);
+			
 		configureCProcessor(assistant, store);
 	}
 	
@@ -177,7 +181,7 @@ public class ContentAssistPreference {
 		} else if (AUTOINSERT.equals(p)) {
 			boolean enabled= store.getBoolean(AUTOINSERT);
 			assistant.enableAutoInsert(enabled);
-		}
+		} 
 		
 		changeCProcessor(assistant, store, p);
 	}

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
@@ -26,7 +27,9 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.model.CElement;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
@@ -39,6 +42,9 @@ import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -486,12 +492,37 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		String prefix = frag + "*";
 		
 		//  TODO: change that to resource scope later
-		ICElement[] projectScopeElement = new ICElement[1];
-		projectScopeElement[0] = (ICElement)currentScope.getCProject();
-		ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
+		if (currentScope == null)
+		   return;
+		   
+		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		boolean projectScope = store.getBoolean(ContentAssistPreference.PROJECT_SCOPE_SEARCH);
+		ICSearchScope scope = null;
+	
+		if (projectScope){
+			ICElement[] projectScopeElement = new ICElement[1];
+			projectScopeElement[0] = (ICElement)currentScope.getCProject();
+			scope = SearchEngine.createCSearchScope(projectScopeElement, true);
+		}
+		else{
+			//Try to get the file
+			IResource actualFile = currentScope.getUnderlyingResource();
+			IProject project = currentScope.getCProject().getProject();
+			ArrayList dependencies = new ArrayList();
+			if (actualFile != null){
+				//Get file's dependencies
+				try {
+					IndexManager indexMan = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+					indexMan.performConcurrentJob(new DependencyQueryJob(project, (IFile)actualFile, indexMan, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+				} catch (Exception e) {
+				}
+			}
+			//Create CFileSearchScope
+			scope = SearchEngine.createCFileSearchScope((IFile) actualFile, dependencies);
+		}
+		
 		OrPattern orPattern = new OrPattern();
 		// search for global variables, functions, classes, structs, unions, enums and macros
-
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));

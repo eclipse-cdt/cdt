@@ -251,6 +251,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(
 			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CASE_SENSITIVITY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SCOPE_SEARCH));
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND),
@@ -346,6 +347,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(ContentAssistPreference.CASE_SENSITIVITY, false);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
+		store.setDefault(ContentAssistPreference.PROJECT_SCOPE_SEARCH, false);
 
 	}
 
@@ -887,10 +889,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		contentAssistComposite.setLayout(layout);
+	
+		String label= "&Search entire project for completion proposals";
+		addCheckBox(contentAssistComposite, label, ContentAssistPreference.PROJECT_SCOPE_SEARCH, 0);
 
-		String label = "Insert single &proposals automatically";
+		label = "Insert single &proposals automatically";
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.AUTOINSERT, 0);
-
+		
 		//label= "Show only proposals visible in the invocation conte&xt";
 		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, 0);
 

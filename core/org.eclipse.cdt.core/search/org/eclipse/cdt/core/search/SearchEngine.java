@@ -13,8 +13,11 @@
  */
 package org.eclipse.cdt.core.search;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.Util;
@@ -27,9 +30,12 @@ import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -95,6 +101,40 @@ public class SearchEngine implements ICSearchConstants{
 		return scope;
 	}
 
+	/**
+	 * @param objects
+	 * @return
+	 */
+	public static ICSearchScope createCFileSearchScope(IFile sourceFile, ArrayList elements) {
+		CSearchScope scope = new CSearchScope();
+		HashSet visitedProjects = new HashSet(2);
+		
+		if (sourceFile != null){
+			//Add the source file and project
+			scope.addFile(sourceFile.getFullPath(), sourceFile.getProject());
+			IPath rootPath = CCorePlugin.getWorkspace().getRoot().getLocation();
+			int segCount = CCorePlugin.getWorkspace().getRoot().getLocation().segmentCount();
+			if (elements!=null){
+				Iterator i = elements.iterator();
+				while (i.hasNext()){
+				  IPath tempPath = new Path((String) i.next());
+				  if (rootPath.isPrefixOf(tempPath)){
+					//path is in workspace  
+					IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFile(tempPath);
+					IPath finalPath = tempFile.getFullPath().removeFirstSegments(segCount);
+					tempFile = CCorePlugin.getWorkspace().getRoot().getFile(finalPath);
+					scope.addFile(tempFile.getFullPath(), tempFile.getProject());
+				  }
+				  else{
+				  	scope.addFile(tempPath,null);
+				  }
+				  
+				}
+			}
+		}
+		return scope;
+	}
+	
 	public static ICSearchPattern createSearchPattern( String stringPattern, SearchFor searchFor, LimitTo limitTo, boolean isCaseSensitive){
 		int mode;
 		
@@ -147,7 +187,7 @@ public class SearchEngine implements ICSearchConstants{
 					pathCollector,
 					indexManager
 				),
-				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+			    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
 				subMonitor );
 			
 			subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );

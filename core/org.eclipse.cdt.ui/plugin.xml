@@ -407,7 +407,7 @@
             showScopeSection="true"
             label="%CSearchPage.label"
             icon="icons/full/obj16/csearch_obj.gif"
-            extensions="c:90,cpp:90, cxx:90, cc:90, h:90, hh:90, hpp:90"
+            extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             sizeHint="460, 160"
             id="org.eclipse.cdt.ui.CSearchPage">

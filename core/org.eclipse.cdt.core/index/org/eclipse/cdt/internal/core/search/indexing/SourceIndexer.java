@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -47,7 +48,8 @@ public class SourceIndexer extends AbstractIndexer {
 	
 	//TODO: Indexer, add additional file types
 	//Header files: "h" , "hh", "hpp"
-	public static final String[] FILE_TYPES= new String[] {"cpp","c", "cc", "cxx"}; //$NON-NLS-1$
+	//Use the CModelManager defined file types
+	//public static final String[] FILE_TYPES= new String[] {"cpp","c", "cc", "cxx"}; //$NON-NLS-1$
 	
 	//protected DefaultProblemFactory problemFactory= new DefaultProblemFactory(Locale.getDefault());
 	IFile resourceFile;
@@ -59,7 +61,7 @@ public class SourceIndexer extends AbstractIndexer {
 	 * Returns the file types the <code>IIndexer</code> handles.
 	 */
 	public String[] getFileTypes(){
-		return FILE_TYPES;
+		return CModelManager.sourceExtensions;
 	}
 	
 	protected void indexFile(IDocument document) throws IOException {
@@ -86,23 +88,17 @@ public class SourceIndexer extends AbstractIndexer {
 							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor ), 
 							requestor, ParserMode.COMPLETE_PARSE, language );
 		
-		try{
-			boolean retVal = parser.parse();
-			
+		boolean retVal = parser.parse();
+		
+		if (!retVal)
+			org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
+		
+		if (AbstractIndexer.VERBOSE){
 			if (!retVal)
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
-			
-			if (AbstractIndexer.VERBOSE){
-				if (!retVal)
-					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
-				else
-					AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			
-			}	
-		}
-		catch( Exception e ){
-			System.out.println( "Parse Exception in SourceIndexer" ); 
-			e.printStackTrace();
-		}
+				AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
+			else
+				AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			
+		}	
 	}
 	/**
 	 * Sets the document types the <code>IIndexer</code> handles.

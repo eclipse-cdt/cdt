@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
@@ -37,6 +38,7 @@ public abstract class AddFileToIndex extends IndexRequest {
 			monitor.enterWrite(); // ask permission to write
 			if (!indexDocument(index)) return false;
 		} catch (IOException e) {
+			org.eclipse.cdt.internal.core.model.Util.log(null, "Index I/O Exception: " + e.getMessage() + " on File: " + resource.getName(), ICLogConstants.CDT);
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.resource + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();

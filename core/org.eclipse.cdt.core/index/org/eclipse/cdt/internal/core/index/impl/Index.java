@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -272,6 +273,8 @@ public class Index implements IIndex {
 			addsIndex.init();
 			addsIndexInput= new SimpleIndexInput(addsIndex);
 			state= MERGED;
+			//flush the CDT log
+			CCorePlugin.getDefault().cdtLog.flushLog();
 		}
 	}
 	/**

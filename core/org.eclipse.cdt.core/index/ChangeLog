@@ -1,6 +1,10 @@
 2003-10-01 Bogdan Gheorghe
-	Modified BlockIndexOutput.addInclude to properly flush an
+	- Modified BlockIndexOutput.addInclude to properly flush an
 	include block once it's full.
+	- Flushing the CDT log after every merge
+	- Logging I/O Exceptions in AddFileToIndex
+	- Changed valid source file extensions in SourceIndexer to
+	  use CModelManager file extensions
 	
 2003-09-30 Bogdan Gheorghe
 	Changed logging for SourceIndexer to log file in cdt.core

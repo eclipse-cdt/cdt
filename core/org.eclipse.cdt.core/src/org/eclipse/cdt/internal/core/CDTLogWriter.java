@@ -206,5 +206,11 @@ public class CDTLogWriter {
 	protected void writeSpace() throws IOException {
 		write(" ");//$NON-NLS-1$
 	}
+	
+	public synchronized void flushLog(){
+		try {
+			log.flush();
+		} catch (IOException e) {}
+	}
 
 }

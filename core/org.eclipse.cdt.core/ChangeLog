@@ -1,7 +1,10 @@
 2003-10-01 Bogdan Gheorghe
-
+	
+	Changed DeltaProcessor.updateDependencies to use the CModelManager
+	header file definitions
+	
 	Modified CDTLogWriter: increased max log file size to 10MB; got rid of
-	the stack dumps/
+	the stack dumps; added flush to CDTLogWriter
 	
 	* src/org/eclipse/cdt/internal/core/CDTLogWriter.java
 	

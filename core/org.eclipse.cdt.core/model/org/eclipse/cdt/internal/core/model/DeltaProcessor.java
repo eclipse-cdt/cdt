@@ -511,9 +511,7 @@ public class DeltaProcessor {
 		String fileExtension = resource.getFileExtension();
 		
 		if ((fileExtension != null) &&
-			(fileExtension.equals("h") ||
-			fileExtension.equals("hh") ||
-			fileExtension.equals("hpp")))
+			(isValidHeader(fileExtension)))
 		{
 			PathCollector pathCollector = new PathCollector();
 			//SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
@@ -544,4 +542,13 @@ public class DeltaProcessor {
 			}
 		}
 	}	
+	
+	private boolean isValidHeader(String fileExtension) {
+		String[] supportedTypes = CModelManager.headerExtensions;
+		for (int i = 0; i < supportedTypes.length; ++i) {
+			if (supportedTypes[i].equals(fileExtension))
+				return true;
+		}
+		return false;
+	}
 }

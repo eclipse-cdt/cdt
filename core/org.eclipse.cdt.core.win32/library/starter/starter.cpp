@@ -28,6 +28,8 @@
 int copyTo(_TCHAR * target, const _TCHAR * source, int cpyLength, int availSpace);
 void DisplayErrorMessage();
 
+BOOL KillProcessEx(DWORD dwProcessId);  // Handle of the process 
+
 ///////////////////////////////////////////////////////////////////////////////
 BOOL WINAPI HandlerRoutine(  DWORD dwCtrlType)   //  control signal type
 {
@@ -176,7 +178,16 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 	_stprintf(buffer, _T("Starting: %s\n"), szCmdLine);
 	OutputDebugStringW(buffer);
 #endif
+	// Create job object if it is possible
+	HMODULE hKernel = GetModuleHandle("kernel32.dll");
+	HANDLE hJob = NULL;
+    HANDLE (WINAPI * pCreateJobObject)(LPSECURITY_ATTRIBUTES lpJobAttributes,
+										char * lpName);
+	*(FARPROC *)&pCreateJobObject =
+        GetProcAddress(hKernel, "CreateJobObjectA");
 
+	if(NULL != pCreateJobObject)
+		hJob = pCreateJobObject(NULL, NULL);
    // Spawn the other processes as part of this Process Group
    BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE, 
       0, NULL, NULL, &si, &pi);
@@ -192,6 +203,21 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
    	  SetEvent(waitEvent); // Means thar process has been spawned
       CloseHandle(pi.hThread);
       h[1] = pi.hProcess;
+
+	  if(NULL != hJob) {
+		HANDLE (WINAPI * pAssignProcessToJobObject)(HANDLE job, HANDLE process);
+		*(FARPROC *)&pAssignProcessToJobObject =
+			GetProcAddress(hKernel, "AssignProcessToJobObjectA");
+		if(NULL != pAssignProcessToJobObject)
+			if(!pAssignProcessToJobObject(hJob, pi.hProcess)) {
+#ifdef DEBUG_MONITOR
+				_stprintf(buffer, _T("Cannot assign process %i to a job\n"), pi.dwProcessId);
+				OutputDebugStringW(buffer);
+				DisplayErrorMessage();
+#endif
+			}
+	  }
+
 	  while(!exitProc)
 		  {
 		  // Wait for the spawned-process to die or for the event
@@ -223,7 +249,25 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 				OutputDebugStringW(buffer);
 #endif
    				GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-				TerminateProcess(h[1], 0);
+				if(NULL != hJob) {
+					HANDLE (WINAPI * pTerminateJobObject)(HANDLE job, UINT uExitCode);
+					*(FARPROC *)&pTerminateJobObject =
+						GetProcAddress(hKernel, "TerminateJobObjectA");
+					if(NULL != pTerminateJobObject) {
+						if(!pTerminateJobObject(hJob, -1)) {
+#ifdef DEBUG_MONITOR
+							OutputDebugStringW(_T("Cannot terminate job\n"));
+							DisplayErrorMessage();
+#endif
+						}
+					}
+				} else
+                if(!KillProcessEx(pi.dwProcessId)) {
+#ifdef DEBUG_MONITOR
+				    _stprintf(buffer, _T("Cannot kill process (PID %i) tree\n"), pi.dwProcessId);
+				    OutputDebugStringW(buffer);
+#endif
+                }
 				exitProc = TRUE;
 				break;
 			 default:
@@ -333,19 +377,19 @@ int copyTo(_TCHAR * target, const _TCHAR * source, int cpyLength, int availSpace
 
 
 void DisplayErrorMessage() {
-	char * lpMsgBuf;
-	FormatMessage( 
+	_TCHAR * lpMsgBuf;
+	FormatMessageW( 
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 		FORMAT_MESSAGE_FROM_SYSTEM | 
 		FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL,
 		GetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(char *) &lpMsgBuf,
+		(_TCHAR *) &lpMsgBuf,
 		0,
 		NULL 
 	);
-	OutputDebugString(lpMsgBuf);
+	OutputDebugStringW(lpMsgBuf);
 	// Free the buffer.
 	LocalFree( lpMsgBuf );
 }

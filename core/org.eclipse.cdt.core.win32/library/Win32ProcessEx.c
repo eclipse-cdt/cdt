@@ -508,6 +508,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 
 	flags = CREATE_NEW_CONSOLE;
+	flags |= CREATE_UNICODE_ENVIRONMENT;
 	
     ret = CreateProcessW(0,                /* executable name */
                         szCmdLine,              /* command line */

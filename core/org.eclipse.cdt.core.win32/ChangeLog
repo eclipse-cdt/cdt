@@ -1,3 +1,16 @@
+2004-0813 Alex Chapiro
+
+	Fix for PR PR 71601
+
+	* os/win32/x86/spawner.dll
+	* os/win32/x86/starter.exe
+	* library/Win32ProcessEx.c
+	* library/starter/killer.cpp
+	* library/starter/killer.h
+	* library/starter/starter.cpp
+	* library/starter/starter.dsp
+	* library/starter/starter.dsw
+
 2004-07-20 Alex Chapiro
 
 	Fix for PR 70359

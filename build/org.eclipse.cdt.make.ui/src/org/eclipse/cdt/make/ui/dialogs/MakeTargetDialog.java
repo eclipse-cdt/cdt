@@ -151,10 +151,9 @@ public class MakeTargetDialog extends Dialog {
 		fStatusLine.setMessage(title);
 
 		createNameControl(composite);
+		createTargetControl(composite);
 		createSettingControls(composite);
 		createBuildCmdControls(composite);
-		createTargetControl(composite);
-
 		return composite;
 	}
 

@@ -206,6 +206,7 @@
       <viewerContribution
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
+<!--
          <action
                label="%RunToLineAction.label"
                icon="icons/full/clcl16/runtoline_co.gif"
@@ -214,6 +215,7 @@
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
          </action>
+-->
          <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"

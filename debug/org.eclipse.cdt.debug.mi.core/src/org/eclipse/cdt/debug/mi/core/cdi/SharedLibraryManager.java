@@ -16,9 +16,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
-import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.MISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
@@ -167,10 +167,12 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	 */
 	public void loadSymbols() throws CDIException {
 		Session session = (Session)getSession();
-		CLICommand cmd = new CLICommand("shared");
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MISharedLibrary sharedlibrary = factory.createMISharedLibrary();
 		try {
-			session.getMISession().postCommand(cmd);
-			MIInfo info = cmd.getMIInfo();
+			mi.postCommand(sharedlibrary);
+			MIInfo info = sharedlibrary.getMIInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
@@ -185,15 +187,17 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	 */
 	public void loadSymbols(ICDISharedLibrary[] libs) throws CDIException {
 		// FIXME: use the command factory for this so we can overload.
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
 		for (int i = 0; i < libs.length; i++) {
 			if (libs[i].areSymbolsLoaded()) {
 				continue;
 			}
-			Session session = (Session)getSession();
-			CLICommand cmd = new CLICommand("shared " + libs[i].getFileName());
+			MISharedLibrary sharedlibrary = factory.createMISharedLibrary(libs[i].getFileName());
 			try {
-				session.getMISession().postCommand(cmd);
-				MIInfo info = cmd.getMIInfo();
+				session.getMISession().postCommand(sharedlibrary);
+				MIInfo info = sharedlibrary.getMIInfo();
 				if (info == null) {
 					throw new CDIException("No answer");
 				}

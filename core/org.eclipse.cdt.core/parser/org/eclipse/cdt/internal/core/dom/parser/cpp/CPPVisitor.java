@@ -602,6 +602,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 		if( parent instanceof IASTCompoundStatement ){
 		    IASTCompoundStatement compound = (IASTCompoundStatement) parent;
 		    scope = compound.getScope();
+		} else if( parent instanceof IASTForStatement ){
+		    scope = ((IASTForStatement)parent).getScope();
 		} else if( parent instanceof IASTStatement ){
 			scope = getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){

@@ -2142,5 +2142,27 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.getVisitor().visitTranslationUnit(col);
     }
+    
+    public void testBug86319() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void foo() {                    \n"); //$NON-NLS-1$
+        buffer.append("   int i = 42;                  \n"); //$NON-NLS-1$
+        buffer.append("   int a[10];                   \n"); //$NON-NLS-1$
+        buffer.append("   for( int i = 0; i < 10; i++ )\n"); //$NON-NLS-1$
+        buffer.append("      a[i] = 1;                 \n"); //$NON-NLS-1$
+        buffer.append("   int j = i;                   \n"); //$NON-NLS-1$
+        buffer.append("}                               \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IVariable i1 = (IVariable) col.getName(1).resolveBinding();
+        IVariable i2 = (IVariable) col.getName(3).resolveBinding();
+        
+        assertNotSame( i1, i2 );
+        assertInstances( col, i1, 2 );
+        assertInstances( col, i2, 4 );
+    }
 }
 

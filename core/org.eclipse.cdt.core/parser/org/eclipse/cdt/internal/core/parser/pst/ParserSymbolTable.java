@@ -22,6 +22,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
@@ -105,7 +106,12 @@ public class ParserSymbolTable {
 		LinkedList transitives = new LinkedList();	//list of transitive using directives
 		
 		//if this name define in this scope?
-		lookupInContained( data, inSymbol );
+		Map map = lookupInContained( data, inSymbol );
+		if( data.foundItems == null || data.foundItems.isEmpty() ){
+			data.foundItems = map;
+		} else {
+			mergeResults( data, data.foundItems, map );
+		}
 		
 		if( inSymbol.getSymbolTable().getLanguage() == ParserLanguage.CPP &&
 		    !data.ignoreUsingDirectives )
@@ -120,7 +126,7 @@ public class ParserSymbolTable {
 
 			//if we are doing a qualified lookup, only process using directives if
 			//we haven't found the name yet (and if we aren't ignoring them). 
-			if( !data.qualified || data.foundItems == null ){
+			if( !data.qualified || data.foundItems == null || data.foundItems.isEmpty() ){
 				processDirectives( inSymbol, data, transitives );
 				
 				if( inSymbol.hasUsingDirectives() ){
@@ -139,25 +145,26 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( data.foundItems != null || data.stopAt == inSymbol ){
+		if( data.mode == LookupMode.NORMAL && ( !data.foundItems.isEmpty() || data.stopAt == inSymbol ) ){
 			return;
 		}
 			
 		if( inSymbol instanceof IDerivableContainerSymbol ){
 			//if we still havn't found it, check any parents we have
-			data.visited.clear();	//each virtual base class is searched at most once	
-			symbol = lookupInParents( data, (IDerivableContainerSymbol)inSymbol );
-					
-			//there is a resolveAmbiguities inside LookupInParents, which means if we found
-			//something the foundItems set will be non-null, but empty.  So, add the decl into
-			//the foundItems set
-			if( symbol != null ){
-				data.foundItems.add( symbol );	
+			data.visited.clear();	//each virtual base class is searched at most once
+			map = lookupInParents( data, (IDerivableContainerSymbol)inSymbol );
+			
+			if( data.foundItems == null || data.foundItems.isEmpty() ){
+				data.foundItems = map;
+			} else {
+				mergeInheritedResults( data.foundItems, map );
 			}
 		}
 					
 		//if still not found, check our containing scope.			
-		if( data.foundItems == null && inSymbol.getContainingSymbol() != null ){ 
+		if( ( data.foundItems == null || data.foundItems.isEmpty() || ( data.mode == LookupMode.PREFIX && !data.qualified ) )
+			&& inSymbol.getContainingSymbol() != null )
+		{ 
 			lookup( data, inSymbol.getContainingSymbol() );
 		}
 
@@ -183,7 +190,7 @@ public class ParserSymbolTable {
 	 * directives, the effect is as if the using-directives from the second
 	 * namespace also appeared in the first.
 	 */
-	static private void lookupInNominated( LookupData data, IContainerSymbol symbol, LinkedList transitiveDirectives ){
+	static private void lookupInNominated( LookupData data, IContainerSymbol symbol, LinkedList transitiveDirectives ) throws ParserSymbolTableException{
 		//if the data.usingDirectives is empty, there is nothing to do.
 		if( data.usingDirectives == null ){
 			return;
@@ -212,11 +219,13 @@ public class ParserSymbolTable {
 			if( !data.visited.contains( temp ) ){
 				data.visited.add( temp );
 				
-				foundSomething = lookupInContained( data, temp );
-													
+				Map map = lookupInContained( data, temp );
+				foundSomething = !map.isEmpty();
+				mergeResults( data, data.foundItems, map );
+				
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
-				if( (!data.qualified || !foundSomething ) && temp.getUsingDirectives() != null ){
+				if( (!data.qualified || !foundSomething || data.mode == LookupMode.PREFIX ) && temp.getUsingDirectives() != null ){
 					//name wasn't found, add transitive using directives for later consideration
 					transitiveDirectives.addAll( temp.getUsingDirectives() );
 				}
@@ -227,14 +236,47 @@ public class ParserSymbolTable {
 	}
 	
 	/**
+	 * @param map
+	 * @param map2
+	 */
+	private static void mergeResults( LookupData data, Map resultMap, Map map ) throws ParserSymbolTableException {
+		if( resultMap == null || map == null || map.isEmpty() ){
+			return;
+		}
+		
+		Iterator keyIterator = map.keySet().iterator();
+		Object key = null;
+		while( keyIterator.hasNext() ){
+			key = keyIterator.next();
+			if( resultMap.containsKey( key ) ){
+				List list = new LinkedList();
+				Object obj = resultMap.get( key );
+
+				if ( obj instanceof List ) list.addAll( (List) obj  );
+				else  					   list.add( obj );
+				
+				obj = map.get( key );
+				
+				if( obj instanceof List ) list.addAll( (List) obj );
+				else 					  list.add( obj );
+				
+				resultMap.put( key, collectSymbol( data, list ) );
+			} else {
+				resultMap.put( key, map.get( key ) );
+			}
+		}
+	}
+
+	/**
 	 * function LookupInContained
 	 * @param data
 	 * @return List
 	 * 
 	 * Look for data.name in our collection _containedDeclarations
 	 */
-	protected static boolean lookupInContained( LookupData data, IContainerSymbol lookIn ){
-	
+	protected static Map lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
+		Map found = new HashMap();
+		
 		boolean foundSomething = false;
 		ISymbol temp  = null;
 		Object obj = null;
@@ -246,78 +288,63 @@ public class ParserSymbolTable {
 		
 		Map declarations = lookIn.getContainedSymbols();
 		
-		obj = ( declarations != null ) ? declarations.get( data.name ) : null;
-	
-		if( obj != null ){
-		 	//the contained declarations map either to a Declaration object, or to a list
-		 	//of declaration objects.
-			if( obj instanceof ISymbol ){
-				temp = (ISymbol) obj;
-				//if( ((ISymbol)obj).isType( data.type, data.upperType ) ){
-				if( checkType( data, temp, data.type, data.upperType ) ){ 
-					if( data.foundItems == null ){
-						data.foundItems = new HashSet();
-					}
-					if( temp.isTemplateMember() )
-						data.foundItems.add( new TemplateInstance( temp.getSymbolTable(), temp, data.templateInstance.getArgumentMap() ) );
-					else
-						data.foundItems.add( temp );
-						
-					foundSomething = true;
-				}
-			} else {
-				//we have to filter on type so can't just add the list whole to the fount set
-				LinkedList objList = (LinkedList)obj;
-				Iterator iter  = objList.iterator();
-				int size = objList.size();
-						
-				for( int i = 0; i < size; i++ ){
-					temp = (ISymbol) iter.next();
-			
-					//if( temp.isType( data.type, data.upperType ) ){
-					if( checkType( data, temp, data.type, data.upperType ) ){
-						if( data.foundItems == null ){
-							data.foundItems = new HashSet();
-						}
-						if( temp.isTemplateMember() )
-							data.foundItems.add( new TemplateInstance( temp.getSymbolTable(), temp, data.templateInstance.getArgumentMap() ) );
-						else
-							data.foundItems.add(temp);
-						foundSomething = true;
-					} 
-				}
+		Iterator iterator = ( data.mode == LookupMode.PREFIX ) ? declarations.keySet().iterator() : null;
+		String name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
+		
+		while( name != null ) {
+			if( nameMatches( data, name ) ){
+				obj = ( declarations != null ) ? declarations.get( name ) : null;
+				
+				obj = collectSymbol( data, obj );
+				
+				if( obj != null )
+					found.put( name, obj );
 			}
-		}
-
-		if( foundSomething ){
-			return foundSomething;
+						
+			if( iterator != null && iterator.hasNext() ){
+				name = (String) iterator.next();
+			} else {
+				name = null;
+			}
+		} 
+		
+		if( !found.isEmpty() && data.mode == LookupMode.NORMAL ){
+			return found;
 		}
 		
 		if( lookIn instanceof IParameterizedSymbol ){
 			Map parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
 			if( parameters != null ){
-				obj = parameters.get( data.name );
-				//if( obj != null && ((ISymbol)obj).isType( data.type, data.upperType ) ){
-				if( obj != null && checkType( data, (ISymbol)obj, data.type, data.upperType ) ){
-					if( data.foundItems == null ){
-						data.foundItems = new HashSet();
+				iterator = ( data.mode == LookupMode.PREFIX ) ? parameters.keySet().iterator() : null;
+				name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
+				while( name != null ){
+					if( nameMatches( data, name ) ){
+						obj = parameters.get( data.name );
+						obj = collectSymbol( data, obj );
+						if( obj != null ){
+							found.put( name, obj );
+						}
 					}
-					ISymbol symbol = (ISymbol) obj;
-					
-					if( symbol.isTemplateMember() && data.templateInstance != null ){
-						data.foundItems.add( new TemplateInstance( symbol.getSymbolTable(), symbol, data.templateInstance.getArgumentMap() ) );
+					if( iterator != null && iterator.hasNext() ){
+						name = (String) iterator.next();
 					} else {
-						data.foundItems.add( symbol );
+						name = null;
 					}
-					
-					foundSomething = true;
 				}
+				
 			}
 		}
 		
-		return foundSomething;
+		return found;
 	}
 	
+	private static boolean nameMatches( LookupData data, String name ){
+		if( data.mode == LookupMode.PREFIX ){
+			return name.startsWith( data.name );
+		} else {
+			return name.equals( data.name );
+		}
+	}
 	private static boolean checkType( LookupData data, ISymbol symbol, TypeInfo.eType type, TypeInfo.eType upperType ){
 		if( data.templateInstance != null && symbol.isTemplateMember() ){
 			if( symbol.isType( TypeInfo.t_type ) ){
@@ -331,6 +358,100 @@ public class ParserSymbolTable {
 		return symbol.isType( type, upperType );
 	}
 	
+	private static Object collectSymbol(LookupData data, Object object ) throws ParserSymbolTableException {
+		if( object == null ){
+			return null;
+		}
+		
+		ISymbol foundSymbol = null;
+		
+		Iterator iter = ( object instanceof List ) ? ((List)object).iterator() : null;
+		ISymbol symbol = ( iter != null ) ? (ISymbol) iter.next() : (ISymbol) object;
+	
+		List functionList = new LinkedList();
+		ISymbol obj	= null;
+		IContainerSymbol cls = null;
+		
+		while( symbol != null ){
+			if( checkType( data, symbol, data.type, data.upperType ) ){
+				if( symbol.isTemplateMember() && data.templateInstance != null )
+					foundSymbol = new TemplateInstance( symbol.getSymbolTable(), symbol, data.templateInstance.getArgumentMap() );
+				else
+					foundSymbol = symbol;
+				
+				if( foundSymbol.isType( TypeInfo.t_function ) ){
+					functionList.add( foundSymbol );
+				} else {
+					//if this is a class-name, other stuff hides it
+					if( foundSymbol.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
+						if( cls == null ){
+							cls = (IContainerSymbol) foundSymbol;
+						} else {
+							if( cls.getTypeInfo().isForwardDeclaration() && cls.getTypeSymbol() == foundSymbol ){
+								//cls is a forward declaration of decl, we want decl.
+								cls = (IContainerSymbol) foundSymbol;
+							} else if( foundSymbol.getTypeInfo().isForwardDeclaration() && foundSymbol.getTypeSymbol() == cls ){
+								//decl is a forward declaration of cls, we already have what we want (cls)
+							} else {
+								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+							}
+						}
+					} else {
+						//an object, can only have one of these
+						if( obj == null ){
+							obj = foundSymbol;	
+						} else {
+							throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ); 
+						}
+					}
+				}
+			}
+			
+			if( iter != null ){
+				symbol = iter.hasNext() ? (ISymbol) iter.next() : null;
+			} else {
+				symbol = null;
+			}
+		}
+	
+		int numFunctions = functionList.size();
+		
+		boolean ambiguous = false;
+		
+		if( cls != null ){
+			//the class is only hidden by other stuff if they are from the same scope
+			if( obj != null && cls.getContainingSymbol() != obj.getContainingSymbol()){
+				ambiguous = true;	
+			}
+			if( functionList != null ){
+				Iterator fnIter = functionList.iterator();
+				IParameterizedSymbol fn = null;
+				for( int i = numFunctions; i > 0; i-- ){
+					fn = (IParameterizedSymbol) fnIter.next();
+					if( cls.getContainingSymbol()!= fn.getContainingSymbol()){
+						ambiguous = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		if( obj != null && !ambiguous ){
+			if( numFunctions > 0 ){
+				ambiguous = true;
+			} else {
+				return obj;
+			}
+		} else if( numFunctions > 0 ) {
+			return functionList;
+		}
+		
+		if( ambiguous ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		} else {
+			return cls;
+		}
+	}
 	/**
 	 * 
 	 * @param data
@@ -338,7 +459,7 @@ public class ParserSymbolTable {
 	 * @return Declaration
 	 * @throws ParserSymbolTableException
 	 */
-	private static ISymbol lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
+	private static Map lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
 		IDerivableContainerSymbol container = null;
 		/*if( lookIn instanceof TemplateInstance ){
 			
@@ -351,8 +472,9 @@ public class ParserSymbolTable {
 		
 		List scopes = container.getParents();
 
-		ISymbol temp = null;
-		ISymbol symbol = null;
+		Map temp = null;
+		Map symbol = null;
+		Map inherited = null;
 		
 		Iterator iterator = null;
 		IDerivableContainerSymbol.IParentSymbol wrapper = null;
@@ -396,39 +518,39 @@ public class ParserSymbolTable {
 						data.templateInstance = (TemplateInstance) parent;
 						ISymbol instance = ((TemplateInstance)parent).getInstantiatedSymbol();
 						if( instance instanceof IContainerSymbol )
-							lookupInContained( data, (IContainerSymbol)instance );
+							temp = lookupInContained( data, (IContainerSymbol)instance );
 						else 
 							throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 						data.templateInstance = tempInstance;
 					} else if( parent instanceof IDerivableContainerSymbol ){
-						lookupInContained( data, (IDerivableContainerSymbol) parent );
+						temp = lookupInContained( data, (IDerivableContainerSymbol) parent );
 					} else {
 						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 					}
-					temp = resolveAmbiguities( data );
-					if( temp == null ){
-						temp = lookupInParents( data, parent );
+					
+					if( temp.isEmpty() || data.mode == LookupMode.PREFIX ){
+						inherited = lookupInParents( data, parent );
+						mergeInheritedResults( temp, inherited );
 					}
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
 				}
 			}	
 			
-			if( temp != null && temp.isType( data.type ) ){
-
-				if( symbol == null  ){
+			if( temp != null && !temp.isEmpty() ){
+				if( symbol == null || symbol.isEmpty() ){
 					symbol = temp;
-				} else if ( temp != null ) {
-					//it is not ambiguous if temp & decl are the same thing and it is static
-					//or an enumerator
-					TypeInfo type = temp.getTypeInfo();
-					
-					if( symbol == temp && ( type.checkBit( TypeInfo.isStatic ) || type.isType( TypeInfo.t_enumerator ) ) ){
-						temp = null;
-					} else {
-						throw( new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ) );
+				} else if ( temp != null && !temp.isEmpty() ) {
+					Iterator iter = temp.keySet().iterator();
+					Object key = null;
+					while( iter.hasNext() ){
+						key = iter.next();
+						if( symbol.containsKey( key ) ){
+							checkAmbiguity( symbol.get( key ), temp.get( key ) );
+						} else {
+							symbol.put( key, temp.get( key ) );
+						}
 					}
-	
 				}
 			} else {
 				temp = null;	//reset temp for next iteration
@@ -438,6 +560,50 @@ public class ParserSymbolTable {
 		data.inheritanceChain.remove( container );
 
 		return symbol;	
+	}
+	
+	private static void checkAmbiguity( Object obj1, Object obj2 ) throws ParserSymbolTableException{
+		//it is not ambiguous if they are the same thing and it is static or an enumerator
+		if( obj1 == obj2 ){
+			
+			Iterator iter = ( obj1 instanceof List ) ? ((List) obj1).iterator() : null;
+			ISymbol symbol = ( iter != null ) ? (ISymbol) iter.next() : ( ISymbol )obj1;
+			while( symbol != null ) {
+				TypeInfo type = ((ISymbol)obj1).getTypeInfo();
+				if( !type.checkBit( TypeInfo.isStatic ) && !type.isType( TypeInfo.t_enumerator ) ){
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+				}
+				
+				if( iter != null && iter.hasNext() ){
+					symbol = (ISymbol) iter.next();
+				} else {
+					symbol = null;
+				}
+			}
+			return;
+		} 
+		throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+	}
+	
+	/**
+	 * Symbols in map are added to the resultMap if a symbol with that name does not already exist there
+	 * @param resultMap
+	 * @param map
+	 * @throws ParserSymbolTableException
+	 */
+	private static void mergeInheritedResults( Map resultMap, Map map ) throws ParserSymbolTableException{
+		if( resultMap == null || map == null || map.isEmpty() ){
+			return;
+		}
+		
+		Iterator keyIterator = map.keySet().iterator();
+		Object key = null;
+		while( keyIterator.hasNext() ){
+			key = keyIterator.next();
+			if( !resultMap.containsKey( key ) ){
+				resultMap.put( key, map.get( key ) );
+			}
+		}
 	}
 	
 	/**
@@ -561,119 +727,38 @@ public class ParserSymbolTable {
 		ISymbol obj	= null;
 		IContainerSymbol cls = null;
 		
-		if( data.foundItems == null ){
+		if( data.foundItems == null || data.foundItems.isEmpty() || data.mode == LookupMode.PREFIX ){
 			return null;
 		}
 		
 		int size = data.foundItems.size(); 
-		Iterator iter = data.foundItems.iterator();
+		//Iterator iter = data.foundItems.iterator();
 		
-		boolean needDecl = true;
-		
-		if( size == 0){
-			return null;
-		} else if (size == 1) {
-			decl = (ISymbol) iter.next();
-			//if it is a function we need to check its parameters
-			if( !decl.isType( TypeInfo.t_function ) ){
-				data.foundItems.clear();
-				return decl;
-			}
-			needDecl = false;
-		} 
-		
-		LinkedList functionList = null;	
+		Object object = data.foundItems.get( data.name );
 
-		for( int i = size; i > 0; i-- ){
-			//if we
-			if( needDecl ){
-				decl = (ISymbol) iter.next();
-			} else {
-				needDecl = true;
-			}
-			
-			if( decl.isType( TypeInfo.t_function ) ){
-				if( functionList == null){
-					functionList = new LinkedList();
-				}
-				functionList.add( decl );
-			} else {
-				//if this is a class-name, other stuff hides it
-				if( decl.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
-					if( cls == null ){
-						cls = (IContainerSymbol) decl;
-					} else {
-						if( cls.getTypeInfo().isForwardDeclaration() && cls.getTypeSymbol() == decl ){
-							//cls is a forward declaration of decl, we want decl.
-							cls = (IContainerSymbol) decl;
-						} else if( decl.getTypeInfo().isForwardDeclaration() && decl.getTypeSymbol() == cls ){
-							//decl is a forward declaration of cls, we already have what we want (cls)
-						} else {
-							throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-						}
-					}
-				} else {
-					//an object, can only have one of these
-					if( obj == null ){
-						obj = decl;	
-					} else {
-						throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ); 
-					}
-				}
-			}
-			
-			decl = null;
-		}
-	
-		data.foundItems.clear();
+		LinkedList functionList = new LinkedList();
 		
-		int numFunctions = ( functionList == null ) ? 0 : functionList.size();
-		
-		boolean ambiguous = false;
-		
-		if( cls != null ){
-			//the class is only hidden by other stuff if they are from the same scope
-			if( obj != null && cls.getContainingSymbol() != obj.getContainingSymbol()){
-				ambiguous = true;	
-			}
-			if( functionList != null ){
-				Iterator fnIter = functionList.iterator();
-				IParameterizedSymbol fn = null;
-				for( int i = numFunctions; i > 0; i-- ){
-					fn = (IParameterizedSymbol) fnIter.next();
-					if( cls.getContainingSymbol()!= fn.getContainingSymbol()){
-						ambiguous = true;
-						break;
-					}
-				}
-			}
-		}
-		
-		if( obj != null && !ambiguous ){
-			if( numFunctions > 0 ){
-				ambiguous = true;
-			} else {
-				return obj;
-			}
-		} else if( numFunctions > 0 ) {
-			if( data.parameters == null ){
-				//we have no parameter information, if we only have one function, return
-				//that, otherwise we can't decide between them
-				if( numFunctions == 1){
-					return (ISymbol) functionList.getFirst();
-				} else {
-					data.foundItems.addAll( functionList );
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_UnableToResolveFunction );
-				}
-			} else {
-				return resolveFunction( data, functionList );
-			}
-		}
-		
-		if( ambiguous ){
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		if( object instanceof List ){
+			functionList.addAll( (List) object );
 		} else {
-			return cls;
+			ISymbol symbol = (ISymbol) object;
+			if( symbol.isType( TypeInfo.t_function ) ){
+				functionList.add( symbol );
+			} else {
+				return symbol;
+			}
+		}
+		
+		if( data.parameters == null ){
+			//we have no parameter information, if we only have one function, return
+			//that, otherwise we can't decide between them
+			if( functionList.size() == 1){
+				return (ISymbol) functionList.getFirst();
+			} else {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_UnableToResolveFunction );
+			}
+		} else {
+			return resolveFunction( data, functionList );
 		}
 	}
 
@@ -1549,7 +1634,7 @@ public class ParserSymbolTable {
 					data.parameters = params;
 					data.forUserDefinedConversion = true;
 					
-					lookupInContained( data, (IContainerSymbol) sourceDecl );
+					data.foundItems = lookupInContained( data, (IContainerSymbol) sourceDecl );
 					conversion = (IParameterizedSymbol)resolveAmbiguities( data );	
 				}
 			}
@@ -2089,7 +2174,15 @@ public class ParserSymbolTable {
 	}
 	
 
-	
+	static public class LookupMode extends Enum{
+		public static final LookupMode PREFIX = new LookupMode( 1 );
+		public static final LookupMode NORMAL = new LookupMode( 2 );
+
+		private LookupMode( int constant)
+		{
+			super( constant ); 
+		}
+	}
 
 	
 	static protected class LookupData
@@ -2111,9 +2204,10 @@ public class ParserSymbolTable {
 		public boolean ignoreUsingDirectives = false;
 		public boolean forUserDefinedConversion = false;
 
-		public HashSet foundItems = null;
+		public Map foundItems = null;
 		
 		public ISymbol templateInstance = null;
+		public LookupMode mode = LookupMode.NORMAL;
 		
 		public LookupData( String n, TypeInfo.eType t, ISymbol i ){
 			name = n;

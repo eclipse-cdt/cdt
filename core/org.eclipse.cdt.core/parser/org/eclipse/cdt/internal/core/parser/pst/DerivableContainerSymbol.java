@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -189,11 +190,19 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		if( obj.getContainingSymbol().isType( TypeInfo.t_class, TypeInfo.t_union ) ){
 			//check to see if there is already a this object, since using declarations
 			//of function will have them from the original declaration
+			boolean foundThis = false;
+			
 			LookupData data = new LookupData( ParserSymbolTable.THIS, TypeInfo.t_any, null );
-			ParserSymbolTable.lookupInContained( data, obj );
+			try {
+				Map map = ParserSymbolTable.lookupInContained( data, obj );
+				foundThis = map.containsKey( data.name );
+			} catch (ParserSymbolTableException e) {
+				return false;
+			}
+			
 			//if we didn't find "this" then foundItems will still be null, no need to actually
 			//check its contents 
-			if( data.foundItems == null ){
+			if( !foundThis ){
 				ISymbol thisObj = getSymbolTable().newSymbol( ParserSymbolTable.THIS, TypeInfo.t_type );
 				thisObj.setTypeSymbol( obj.getContainingSymbol() );
 				//thisObj.setCVQualifier( obj.getCVQualifier() );

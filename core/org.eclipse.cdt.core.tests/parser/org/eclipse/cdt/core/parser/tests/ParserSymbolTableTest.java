@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -688,6 +689,8 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 		
 		look = f.lookupNestedNameSpecifier("N");
+		assertEquals( look, nsN );
+		
 		look = ((IContainerSymbol) look).qualifiedLookup("i"); //ok
 		assertEquals( look, nsN_i );
 	}
@@ -804,6 +807,8 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol(f);
 		
 		IContainerSymbol lookA = f.lookupNestedNameSpecifier("A");
+		assertEquals( lookA, nsA );
+		
 		ISymbol look = lookA.qualifiedLookup("a");
 		assertEquals( look, a );
 		
@@ -2938,5 +2943,169 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertEquals( look, init2 ); 
 	}
+	
+	/**
+	 * class A {
+	 *    void f( int ) {}
+	 *    void f( ) {}
+	 * };
+	 * class B : public A {
+	 *    void f( char ) { }
+	 * } b;
+	 * 
+	 * b.f( 1 );  //calls B::f
+	 * b.f();     //error
+	 * @throws Exception
+	 */
+	public void testBug46882() throws Exception{
+		newTable();
+		
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		
+		table.getCompilationUnit().addSymbol( A );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( TypeInfo.t_int, 0, null, false );
+		A.addSymbol( f1 );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		A.addSymbol( f2 );
+		
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		B.addParent( A );
+		
+		table.getCompilationUnit().addSymbol( B );
+		
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f3.addParameter( TypeInfo.t_char, 0, null, false );
+		B.addSymbol( f3 );
+		
+		List params = new LinkedList();
+		params.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		
+		ISymbol look = B.qualifiedFunctionLookup( "f", params );
+		assertEquals( look, f3 );
+		
+		params.clear();
+		look = B.qualifiedFunctionLookup( "f", params );
+		assertEquals( look, null );
+	}
+	
+	/**
+	 * int aVar;
+	 * void foo( ) {
+	 *    int anotherVar;
+	 *    a(CTRL+SPACE)
+	 * }
+	 */
+	public void testPrefixLookup_Unqualified() throws Exception {
+		newTable();
+		
+		ISymbol aVar = table.newSymbol( "aVar", TypeInfo.t_int );
+		table.getCompilationUnit().addSymbol( aVar );
+		
+		IParameterizedSymbol foo = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		table.getCompilationUnit().addSymbol( foo );
+		
+		ISymbol anotherVar = table.newSymbol( "anotherVar", TypeInfo.t_int );
+		foo.addSymbol( anotherVar );
+		
+		List results = foo.prefixLookup( TypeInfo.t_any, "a", false );
+		assertTrue( results != null );
+		assertEquals( results.size(), 2 );
+		
+		assertTrue( results.contains( aVar ) );
+		assertTrue( results.contains( anotherVar ) );
+	}
+	
+	/**
+	 * int aVar;	//not a member of D, not reported
+	 * 
+	 * class D{
+	 *    int aField;
+	 *    void aMethod();
+	 * };
+	 * 
+	 * D d;
+	 * d.a(CTRL+SPACE)
+	 */
+	public void testPrefixLookup_Qualified() throws Exception {
+		newTable();
+		
+		ISymbol aVar = table.newSymbol( "aVar", TypeInfo.t_int );
+		table.getCompilationUnit().addSymbol( aVar );
+		
+		IDerivableContainerSymbol D = table.newDerivableContainerSymbol( "D", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( D );
+		
+		ISymbol aField = table.newSymbol( "aField", TypeInfo.t_int );
+		IParameterizedSymbol aMethod = table.newParameterizedSymbol( "aMethod", TypeInfo.t_function );
+		
+		D.addSymbol( aField );
+		D.addSymbol( aMethod );
+		
+		List results = D.prefixLookup( TypeInfo.t_any, "a", true );
+		
+		assertTrue( results != null );
+		assertEquals( results.size(), 2 );
+		
+		assertTrue( !results.contains( aVar ) );
+		assertTrue( results.contains( aField ) );
+		assertTrue( results.contains( aMethod ) );
+	}
+	
+	/**
+	 * class A {
+	 *    int aVar
+	 *    int anotherVar;		//hidden, not reported
+	 *    void af ();			//hidden, not reported
+	 * };
+	 * 
+	 * class B : public A {
+	 *    int anotherVar;
+	 *    void af( char ); 
+	 * } b;
+	 * 
+	 * b.a(CTRL+SPACE)
+	 * @throws Exception
+	 */
+	public void testPrefixLookup_Inheritance() throws Exception {
+		newTable();
+		
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( A );
+		
+		ISymbol aVar = table.newSymbol( "aVar", TypeInfo.t_int );
+		ISymbol anotherVar1 = table.newSymbol( "anotherVar", TypeInfo.t_int );
+		A.addSymbol( aVar );
+		A.addSymbol( anotherVar1 );
+		
+		IParameterizedSymbol af1 = table.newParameterizedSymbol( "af", TypeInfo.t_function );
+		A.addSymbol( af1 );
+		
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		B.addParent( A );
+		
+		table.getCompilationUnit().addSymbol( B );
+		
+		ISymbol anotherVar2 = table.newSymbol( "anotherVar", TypeInfo.t_int );
+		B.addSymbol( anotherVar2 );
+		
+		IParameterizedSymbol af2 = table.newParameterizedSymbol( "af", TypeInfo.t_function );
+		af2.addParameter(  TypeInfo.t_char, 0, null, false );
+		B.addSymbol( af2 );
+		
+		
+		List results = B.prefixLookup( TypeInfo.t_any, "a", true );
+		
+		assertTrue( results != null );
+		assertEquals( results.size(), 3 );
+		assertTrue( ! results.contains( anotherVar1 ) );
+		assertTrue( ! results.contains( af1 ) );
+		assertTrue( results.contains( aVar ) );
+		assertTrue( results.contains( anotherVar2 ) );
+		assertTrue( results.contains( af2 ) );
+	}
+	
 }
 

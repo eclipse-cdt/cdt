@@ -212,37 +212,44 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 
 		//figure out which declaration we are talking about, if it is a set of functions,
 		//then they will be in data.foundItems (since we provided no parameter info);
-		ISymbol obj = null;
+		ISymbol symbol = null;
+		ISymbol clone = null;
+		Iterator iter = null;
+		
 		try{
-			obj = ParserSymbolTable.resolveAmbiguities( data );
+			symbol = ParserSymbolTable.resolveAmbiguities( data );
 		} catch ( ParserSymbolTableException e ) {
 			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
 				throw e;
 			}
 		}
 
-		if( data.foundItems == null ){
+		if( symbol == null && (data.foundItems == null || data.foundItems.isEmpty()) ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );				
 		}
 
-		ISymbol clone = null;
+		if( symbol == null ){
+			Object object = data.foundItems.get( data.name );
+			iter = ( object instanceof List ) ? ((List) object).iterator() : null;
+			symbol = ( iter != null && iter.hasNext() ) ? (ISymbol)iter.next() : null;
+		}
 
-		//if obj != null, then that is the only object to consider, so size is 1,
-		//otherwise we consider the foundItems set				
-		int size = ( obj == null ) ? data.foundItems.size() : 1;
-		Iterator iter = data.foundItems.iterator();
-		for( int i = size; i > 0; i-- ){
-			obj = ( obj != null && size == 1 ) ? obj : (ISymbol) iter.next();
-	
-			if( ParserSymbolTable.okToAddUsingDeclaration( obj, this ) ){
-				clone = (BasicSymbol) obj.clone(); //7.3.3-9
+		while( symbol != null ){
+			if( ParserSymbolTable.okToAddUsingDeclaration( symbol, this ) ){
+				clone = (ISymbol) symbol.clone(); //7.3.3-9
 				addSymbol( clone );
 			} else {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
 			}
+			
+			if( iter != null && iter.hasNext() ){
+				symbol = (ISymbol) iter.next();
+			} else {
+				symbol = null;
+			}
 		}
-
-		return ( size == 1 ) ? clone : null;
+		
+		return clone;
 	}
 	
 	/* (non-Javadoc)
@@ -322,7 +329,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 		
-		ParserSymbolTable.lookupInContained( data, container );
+		data.foundItems = ParserSymbolTable.lookupInContained( data, container );
 	
 		return ParserSymbolTable.resolveAmbiguities( data );
 	}
@@ -349,7 +356,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name, TypeInfo.t_namespace, getTemplateInstance() );
 		data.upperType = TypeInfo.t_union;
 	
-		ParserSymbolTable.lookupInContained( data, inSymbol );
+		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	
 		if( data.foundItems != null ){
 			foundSymbol = (ISymbol) ParserSymbolTable.resolveAmbiguities( data );//, data.foundItems );
@@ -455,9 +462,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		//if we haven't found anything, or what we found is not a class member, consider the 
 		//associated scopes
 		if( found == null || found.getContainingSymbol().getType() != TypeInfo.t_class ){
-			if( found != null ){
-				data.foundItems.add( found );
-			}
+//			if( found != null ){
+//				data.foundItems.add( found );
+//			}
 								
 			IContainerSymbol associatedScope;
 			//dump the hash to an array and iterate over the array because we
@@ -539,6 +546,34 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 
+	public List prefixLookup( TypeInfo.eType type, String prefix, boolean qualified ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( prefix, type, getTemplateInstance() );
+		data.qualified = qualified;
+		data.mode = ParserSymbolTable.LookupMode.PREFIX;
+		
+		ParserSymbolTable.lookup( data, this );
+		
+		if( data.foundItems == null || data.foundItems.isEmpty() ){
+			return null;
+		} else {
+			List list = new LinkedList();
+			
+			Iterator iter = data.foundItems.keySet().iterator();
+			Object obj = null;
+			while( iter.hasNext() ){
+				obj = data.foundItems.get( iter.next() );
+				
+				if( obj instanceof List ){
+					list.addAll( (List) obj );
+				} else{
+					list.add( obj );
+				}
+			}
+			
+			return list;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#instantiate(java.util.List)
 	 */

@@ -1,3 +1,6 @@
+2004-01-19 Hoda Amer
+	Completed looking up macros with function style.
+	
 2004-01-16 Hoda Amer
 	Added lookupMacros to the CompletionEngine
 	

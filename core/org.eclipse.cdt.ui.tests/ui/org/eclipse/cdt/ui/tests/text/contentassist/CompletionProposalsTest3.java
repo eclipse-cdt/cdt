@@ -34,7 +34,7 @@ public class CompletionProposalsTest3  extends CompletionProposalsBaseTest{
 			"anotherClass",
 			"anEnumeration",
 			"AStruct",
-			"AMacro"
+			"AMacro(x)"
 	};
 	
 	public CompletionProposalsTest3(String name) {

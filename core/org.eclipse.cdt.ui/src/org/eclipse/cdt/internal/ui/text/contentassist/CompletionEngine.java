@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -439,7 +440,11 @@ public class CompletionEngine implements RelevanceConstants{
 				value = key;
 			}
 			if( value.equalsIgnoreCase( prefix ) ) {
-				resultSet.add( key );
+				IMacroDescriptor macroD = (IMacroDescriptor)macroMap.get(key);
+				if (macroD.getMacroType() == IMacroDescriptor.MacroType.FUNCTION_LIKE )
+					resultSet.add( macroD.getCompleteSignature() );
+				else 
+					resultSet.add( macroD.getName() );
 			}
 			else if( value.compareToIgnoreCase( prefix ) > 0 ) 
 				break;
@@ -577,8 +582,11 @@ public class CompletionEngine implements RelevanceConstants{
 		kinds[3] = IASTNode.LookupKind.METHODS; 
 		kinds[4] = IASTNode.LookupKind.FUNCTIONS; 
 		kinds[5] = IASTNode.LookupKind.NAMESPACES; 
-		kinds[6] = IASTNode.LookupKind.ENUMERATORS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		kinds[6] = IASTNode.LookupKind.ENUMERATORS;
+		String prefix = completionNode.getCompletionPrefix();
+		if(prefix.equals("("))
+			prefix = "";
+		ILookupResult result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 
 		List macros = lookupMacros(completionNode.getCompletionPrefix());

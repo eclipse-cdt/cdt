@@ -75,8 +75,12 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 	}
 		
 	public String getPrototypeString(boolean namefirst) {
+		return getPrototypeString(namefirst, true);
+	}
+	
+	public String getPrototypeString(boolean namefirst, boolean appendReturnType) {
 		StringBuffer buffer = new StringBuffer();
-		if(!namefirst) {
+		if((!namefirst) && (appendReturnType)) {
 			buffer.append(getReturnType());
 			buffer.append(" ");
 		}
@@ -86,7 +90,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 			buffer.append(getArguments());
 		}
 		buffer.append(")");
-		if(namefirst) {
+		if((namefirst) && (appendReturnType) ) {
 			buffer.append(" ");
 			buffer.append(getReturnType());
 		}

@@ -632,7 +632,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol ){
 		ISymbolASTExtension extension = symbol.getASTExtension();
+		if(extension == null)
+			return true;
 		IASTNode node = extension.getPrimaryDeclaration();
+		if(node == null)
+			return true;
 		
 		if( node instanceof IASTMember ){
 			ASTAccessVisibility visibility;

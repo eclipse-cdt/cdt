@@ -225,20 +225,42 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		
 			String replaceString = "";
 			String displayString = "";
+			String arguments = "";
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
-		
+			String prototype = "";
+			
 			// fill the replace, display and info strings
-			replaceString = name;
-			displayString = name;
-	
+			final String DEFINE ="#define "; 
+			if(name.startsWith(DEFINE)){
+				prototype = name.substring(DEFINE.length(), name.length());				
+			}else {
+				prototype = name;
+			}
+			int leftbracket = prototype.indexOf('(');
+			int rightbracket = prototype.lastIndexOf(')');
+			if(( leftbracket == -1 ) && (rightbracket == -1)) {
+				replaceString = prototype;
+				displayString = prototype;
+			}else {
+				FunctionPrototypeSummary fproto = new FunctionPrototypeSummary(prototype);
+				if(fproto != null) {						
+					replaceString = fproto.getName() + "()";
+					displayString = fproto.getPrototypeString(true, false);
+					infoString.append(displayString);
+					arguments = fproto.getArguments();
+				} else {
+					replaceString = prototype;
+					displayString = prototype;
+				}
+			}
 			// get the image 	
 			ImageDescriptor imageDescriptor = CElementImageProvider.getMacroImageDescriptor();
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
 			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
-				null, image, completionStart, completionLength, relevance);
+				arguments, image, completionStart, completionLength, relevance);
 			completions.add(proposal);		
 	}
 

@@ -498,5 +498,23 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 	    assertTrue( node instanceof IASTClassSpecifier );
 	    assertEquals( ((IASTClassSpecifier)node).getName(), "AAA" ); //$NON-NLS-1$
 	}
+	
+	public void testBug72710() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class Card{\n" ); //$NON-NLS-1$
+		writer.write( "	Card( int rank );\n" ); //$NON-NLS-1$
+		writer.write( " int rank;\n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "Card::Card( int rank ) {\n" ); //$NON-NLS-1$
+		writer.write( "this->rank = rank;\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int index = code.indexOf( "this->rank") + 6; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank = (IASTField) node;
+		assertEquals( rank.getName(), "rank"); //$NON-NLS-1$
+	}
 }
 

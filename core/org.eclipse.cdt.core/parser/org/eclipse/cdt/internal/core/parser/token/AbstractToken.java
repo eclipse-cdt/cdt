@@ -82,6 +82,10 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 			return false;
 		if( !CharArrayUtils.equals( ((IToken)other).getCharImage(), getCharImage() ) ) 
 			return false;
+		if( getOffset() != ((IToken)other).getOffset() )
+			return false;
+		if( getEndOffset() != ((IToken)other).getEndOffset() )
+			return false;
 		return true;
 	}
 

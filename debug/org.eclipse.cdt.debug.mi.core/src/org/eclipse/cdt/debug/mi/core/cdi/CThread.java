@@ -95,11 +95,14 @@ public class CThread extends CObject implements ICDIThread {
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackInfoDepth depth = factory.createMIStackInfoDepth();
 		try {
+			ICDIThread oldThread = getCTarget().getCurrentThread();
+			getCTarget().setCurrentThread(this);
 			mi.postCommand(depth);
 			MIStackInfoDepthInfo info = depth.getMIStackInfoDepthInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
+			getCTarget().setCurrentThread(oldThread);
 			return info.getDepth();
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());

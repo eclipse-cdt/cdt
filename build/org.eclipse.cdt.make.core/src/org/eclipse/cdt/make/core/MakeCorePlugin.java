@@ -139,7 +139,7 @@ public class MakeCorePlugin extends Plugin {
 		return BuildInfoFactory.create(args, builderID);
 	}
 
-	public IMakeTargetManager getTargetProvider() {
+	public IMakeTargetManager getTargetManager() {
 		if ( fTargetManager == null) {
 			fTargetManager = new MakeTargetManager();
 			fTargetManager.startup();

@@ -16,7 +16,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetListener;
@@ -57,7 +60,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
-		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(container.getProject());
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(container.getProject());
 		}
@@ -70,7 +73,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	public void removeTarget(IMakeTarget target) throws CoreException {
 		IProject project = target.getContainer().getProject();
-		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(project);
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
@@ -81,20 +84,20 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
 		IProject project = target.getContainer().getProject();
-		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(project);
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
-		if (!projectTargets.contains((MakeTarget) target)) {
+		if (!projectTargets.contains((MakeTarget)target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
-		((MakeTarget) target).setName(name);
+		((MakeTarget)target).setName(name);
 		writeTargets(projectTargets);
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_CHANGED, target));
 	}
 
 	public IMakeTarget[] getTargets(IContainer container) throws CoreException {
-		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(container.getProject());
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(container.getProject());
 		}
@@ -102,16 +105,41 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public IProject[] getTargetBuilderProjects() throws CoreException {
-		return (IProject[]) fProjects.toArray(new IProject[fProjects.size()]);
+		return (IProject[])fProjects.toArray(new IProject[fProjects.size()]);
 	}
 
-	protected boolean hasTargetBuilder(IProject project) throws CoreException {
-		IProjectDescription description = project.getDescription();
-		ICommand builder[] = description.getBuildSpec();
-		for (int j = 0; j < builder.length; j++) {
-			if (builderMap.containsValue(builder[j].getBuilderName())) {
-				return true;
+	public String[] getTargetBuilders(IProject project) {
+		if (fProjects.contains(project)) {
+			try {
+				Vector ids = new Vector();
+				IProjectDescription description = project.getDescription();
+				ICommand builder[] = description.getBuildSpec();
+				for (int i = 0; i < builder.length; i++) {
+					Iterator entries = builderMap.entrySet().iterator();
+					while (entries.hasNext()) {
+						Map.Entry entry = (Entry)entries.next();
+						if (entry.getValue().equals(builder[i].getBuilderName())) {
+							ids.add(entry.getKey());
+						}
+					}
+				}
+				return (String[])ids.toArray(new String[ids.size()]);
+			} catch (CoreException e) {
 			}
+		}
+		return new String[0];
+	}
+
+	protected boolean hasTargetBuilder(IProject project) {
+		try {
+			IProjectDescription description = project.getDescription();
+			ICommand builder[] = description.getBuildSpec();
+			for (int j = 0; j < builder.length; j++) {
+				if (builderMap.containsValue(builder[j].getBuilderName())) {
+					return true;
+				}
+			}
+		} catch (CoreException e) {
 		}
 		return false;
 	}
@@ -120,12 +148,9 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		initializeBuilders();
 		IProject project[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < project.length; i++) {
-			try {
-				if (hasTargetBuilder(project[i])) {
-					fProjects.add(project[i]);
-					break;
-				}
-			} catch (CoreException e) {
+			if (hasTargetBuilder(project[i])) {
+				fProjects.add(project[i]);
+				break;
 			}
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -157,16 +182,13 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			}
 			IResource resource = delta.getResource();
 			if (resource.getType() == IResource.PROJECT) {
-				IProject project = (IProject) resource;
+				IProject project = (IProject)resource;
 				int flags = delta.getFlags();
 				int deltaKind = delta.getKind();
 				if (deltaKind == IResourceDelta.ADDED) {
-					try {
-						if (hasTargetBuilder(project)) {
-							fProjects.add(project);
-							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
-						}
-					} catch (CoreException e) {
+					if (hasTargetBuilder(project)) {
+						fProjects.add(project);
+						notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 					}
 				} else if (deltaKind == IResourceDelta.REMOVED) {
 					if (fProjects.contains(project)) {
@@ -174,30 +196,23 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 						notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
 					}
 				} else if (deltaKind == IResourceDelta.CHANGED) {
-					try {
-						if (0 != (flags & IResourceDelta.DESCRIPTION)) {
-							if (fProjects.contains(project) && !hasTargetBuilder(project)) {
-								fProjects.remove(project);
-								notifyListeners(
-									new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
-							} else if (!fProjects.contains(project) && hasTargetBuilder(project)) {
-								fProjects.add(project);
-								notifyListeners(
-									new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
-							}
+					if (0 != (flags & IResourceDelta.DESCRIPTION)) {
+						if (fProjects.contains(project) && !hasTargetBuilder(project)) {
+							fProjects.remove(project);
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
+						} else if (!fProjects.contains(project) && hasTargetBuilder(project)) {
+							fProjects.add(project);
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 						}
-						if (0 != (flags & IResourceDelta.OPEN)) {
-							if (!project.isOpen() && fProjects.contains(project)) {
-								fProjects.remove(project);
-								notifyListeners(
-									new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
-							} else if (project.isOpen() && hasTargetBuilder(project) && !fProjects.contains(project)) {
-								fProjects.add(project);
-								notifyListeners(
-									new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
-							}
+					}
+					if (0 != (flags & IResourceDelta.OPEN)) {
+						if (!project.isOpen() && fProjects.contains(project)) {
+							fProjects.remove(project);
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_REMOVED, project));
+						} else if (project.isOpen() && hasTargetBuilder(project) && !fProjects.contains(project)) {
+							fProjects.add(project);
+							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 						}
-					} catch (CoreException e) {
 					}
 				}
 				return false;
@@ -205,6 +220,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			return resource instanceof IWorkspaceRoot;
 		}
 	}
+
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
 		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(projectTargets.getProject().getName());
 		File targetFile = targetFilePath.toFile();
@@ -251,7 +267,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	protected void notifyListeners(MakeTargetEvent event) {
 		Object[] list = listeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IMakeTargetListener) list[i]).targetChanged(event);
+			((IMakeTargetListener)list[i]).targetChanged(event);
 		}
 	}
 
@@ -264,6 +280,6 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public String getBuilderID(String targetBuilderID) {
-		return (String) builderMap.get(targetBuilderID);
+		return (String)builderMap.get(targetBuilderID);
 	}
 }

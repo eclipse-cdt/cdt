@@ -86,7 +86,7 @@ public class MakeTarget implements IMakeTarget {
 
 	public void build(IProgressMonitor monitor) throws CoreException {
 		IProject project = container.getProject();
-		String builderID = MakeCorePlugin.getDefault().getTargetProvider().getBuilderID(targetBuilderID);
+		String builderID = MakeCorePlugin.getDefault().getTargetManager().getBuilderID(targetBuilderID);
 		HashMap infoMap = new HashMap();
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
 		info.setBuildArguments(buildArguments);
@@ -95,6 +95,7 @@ public class MakeTarget implements IMakeTarget {
 		info.setStopOnError(isStopOnError);
 		info.setFullBuildEnable(true);
 		info.setFullBuildTarget(buildArguments);
+		info.setBuildLocation(container.getLocation());
 		project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
 	}
 }

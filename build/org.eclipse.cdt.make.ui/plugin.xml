@@ -89,7 +89,7 @@
          </menu>
          <action
                label="%ActionMakeBuildCreate.label"
-               class="org.eclipse.cdt.make.internal.ui.actions.MakeCreateBuildAction"
+               class="org.eclipse.cdt.make.ui.actions.CreateBuildAction"
                menubarPath="org.eclipse.cdt.make.ui.menu/group1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.createBuildAction">
@@ -161,7 +161,7 @@
          </visibility>
          <action
                label="%ActionMakeUpdate.label"
-               class="org.eclipse.cdt.make.internal.ui.wizards.UpdateMakeProjectAction"
+               class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
                enablesFor="+"
                id="org.eclipse.cdt.make.ui.UpdateProjectMakeAction">
          </action>

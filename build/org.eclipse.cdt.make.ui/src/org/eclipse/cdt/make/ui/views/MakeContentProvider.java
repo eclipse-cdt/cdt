@@ -39,7 +39,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	public Object[] getChildren(Object obj) {
 		if (obj instanceof IWorkspaceRoot) {
 			try {
-				return MakeCorePlugin.getDefault().getTargetProvider().getTargetBuilderProjects();
+				return MakeCorePlugin.getDefault().getTargetManager().getTargetBuilderProjects();
 			} catch (CoreException e) {
 			}
 		} else if (obj instanceof IContainer) {
@@ -51,7 +51,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 						children.add(resource[i]);
 					}
 				}
-				children.addAll(Arrays.asList(MakeCorePlugin.getDefault().getTargetProvider().getTargets((IContainer) obj)));
+				children.addAll(Arrays.asList(MakeCorePlugin.getDefault().getTargetManager().getTargets((IContainer) obj)));
 			} catch (CoreException e) {
 			}
 			return children.toArray();
@@ -78,13 +78,13 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	public void dispose() {
 		if (viewer != null) {
-			MakeCorePlugin.getDefault().getTargetProvider().removeListener(this);
+			MakeCorePlugin.getDefault().getTargetManager().removeListener(this);
 		}
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (this.viewer == null) {
-			MakeCorePlugin.getDefault().getTargetProvider().addListener(this);
+			MakeCorePlugin.getDefault().getTargetManager().addListener(this);
 		}
 		this.viewer = (TreeViewer) viewer;
 		IWorkspace oldWorkspace = null;

@@ -23,6 +23,7 @@ public interface IMakeTargetManager {
 	IProject[]    getTargetBuilderProjects() throws CoreException;
 
 	String getBuilderID(String targetBuilderID);
+	String[] getTargetBuilders(IProject project);
 				
 	void addListener(IMakeTargetListener listener);
 	void removeListener(IMakeTargetListener listener);

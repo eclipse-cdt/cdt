@@ -123,6 +123,7 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected void translationUnit()
     {
+  
         try
         {
             compilationUnit = astFactory.createCompilationUnit();
@@ -132,7 +133,14 @@ public abstract class Parser extends ExpressionParser implements IParser
             return;
         }
 
-		compilationUnit.enterScope( requestor );     
+		compilationUnit.enterScope( requestor );
+		try {
+			setCompletionValues(compilationUnit, CompletionKind.VARIABLE_TYPE, Key.DECLARATION );
+		} catch (EndOfFileException e1) {
+			compilationUnit.exitScope( requestor );
+			return;
+		}
+		
         IToken lastBacktrack = null;
         IToken checkToken = null;
         while (true)

@@ -1,4 +1,7 @@
 2004-02-24 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=52823
+
+2004-02-24 John Camelon
 	Partial Fix for Bug 52534 - Selection Search offset limit reached is broken 
 
 2004-02-18 Andrew Niefer

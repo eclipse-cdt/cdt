@@ -9,13 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -23,48 +18,35 @@ import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /*
  * The page for setting the editor options.
  */
-public class CEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class CEditorPreferencePage extends AbstractPreferencePage implements IWorkbenchPreferencePage {
 
 	protected final String[][] fListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.MultiLine"), ICColorConstants.C_MULTI_LINE_COMMENT }, { //$NON-NLS-1$
 		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.singleLine"), ICColorConstants.C_SINGLE_LINE_COMMENT }, { //$NON-NLS-1$
@@ -78,45 +60,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
         PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
 
-	protected final String[][] fAppearanceColorListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.lineNumberColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null }, //$NON-NLS-1$
-		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBracketColor"), CEditor.MATCHING_BRACKETS_COLOR, null }, //$NON-NLS-1$
-		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.currentLineHighlightColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null }, //$NON-NLS-1$
-		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null }, //$NON-NLS-1$
-		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.linkedPositionColor"), CEditor.LINKED_POSITION_COLOR, null }, //$NON-NLS-1$
-		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.selectionForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.selectionBackgroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
+	protected final String[][] fAppearanceColorListModel = new String[][] { 
+			{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBracketColor"), CEditor.MATCHING_BRACKETS_COLOR, null }, //$NON-NLS-1$
+			{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.linkedPositionColor"), CEditor.LINKED_POSITION_COLOR, null }, //$NON-NLS-1$
 	};
 
-	protected OverlayPreferenceStore fOverlayStore;
 	private CTextTools fCTextTools;
 
-	protected Map fColorButtons = new HashMap();
-	private SelectionListener fColorButtonListener = new SelectionListener() {
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-		public void widgetSelected(SelectionEvent e) {
-			ColorEditor editor = (ColorEditor) e.widget.getData();
-			PreferenceConverter.setValue(fOverlayStore, (String) fColorButtons.get(editor), editor.getColorValue());
-		}
-	};
-
-	protected Map fCheckBoxes = new HashMap();
-	private SelectionListener fCheckBoxListener = new SelectionListener() {
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-		public void widgetSelected(SelectionEvent e) {
-			Button button = (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
-		}
-	};
-
-	protected Map fTextFields = new HashMap();
-	private ModifyListener fTextFieldListener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			Text text = (Text) e.widget;
-			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
-		}
-	};
 	/**
 	 * List of master/slave listeners when there's a dependency.
 	 * 
@@ -127,37 +77,20 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 	protected List fList;
 	protected ColorEditor fForegroundColorEditor;
-	protected ColorEditor fBackgroundColorEditor;
-	private Button fBackgroundDefaultRadioButton;
-	protected Button fBackgroundCustomRadioButton;
-	protected Button fBackgroundColorButton;
 	protected Button fBoldCheckBox;
 	protected SourceViewer fPreviewViewer;
 
-	protected List fAppearanceColorList;
-	protected ColorEditor fAppearanceColorEditor;
-	Button fAppearanceColorDefault;
 	private CEditorHoverConfigurationBlock fCEditorHoverConfigurationBlock;
 	private FoldingConfigurationBlock fFoldingConfigurationBlock;
 
 
 	public CEditorPreferencePage() {
+		super();
 		setDescription(CUIPlugin.getResourceString("CEditorPreferencePage.description")); //$NON-NLS-1$
-		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
-		fOverlayStore = new OverlayPreferenceStore(getPreferenceStore(), createOverlayStoreKeys());
 	}
 
-	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
+	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList overlayKeys = new ArrayList();
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_MULTI_LINE_COMMENT));
@@ -180,20 +113,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_OPERATOR + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SPACES_FOR_TABS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.LINKED_POSITION_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_TAG_BOLD));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
@@ -210,17 +132,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170,170,170));
-
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
-		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
-
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, true);
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
-		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180, 185));
-
-		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, true);
-
-		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 
 		store.setDefault(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 4);
 
@@ -255,50 +166,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
         PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
 
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
-		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
-
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
-		
 		store.setDefault(CEditor.HYPERLINK_ENABLED,true);
-
-		// override default extended text editor prefs
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, true);
-	}
-
-	/**
-	 * 
-	 */
-	private void initializeDefaultColors() {
-		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
-			PreferenceConverter.setDefault(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, rgb);
-		}
-
-		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
-			PreferenceConverter.setDefault(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-		}
-		
-		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
-			PreferenceConverter.setDefault(fOverlayStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT).getRGB();
-			PreferenceConverter.setDefault(fOverlayStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
-		}
-		
-	}
-
-	/*
-	 * @see IWorkbenchPreferencePage#init()
-	 */
-	public void init(IWorkbench workbench) {
 	}
 
 	/*
@@ -322,39 +190,12 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		Composite colorComposite = new Composite(parent, SWT.NULL);
 		colorComposite.setLayout(new GridLayout());
 
-		Group backgroundComposite= new Group(colorComposite, SWT.SHADOW_ETCHED_IN);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		backgroundComposite.setLayout(layout);
-		backgroundComposite.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.backgroundColor"));//$NON-NLS-1$
-
-		SelectionListener backgroundSelectionListener = new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean custom = fBackgroundCustomRadioButton.getSelection();
-				fBackgroundColorButton.setEnabled(custom);
-				fOverlayStore.setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, !custom);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		};
-
-		fBackgroundDefaultRadioButton = new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundDefaultRadioButton.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.systemDefault")); //$NON-NLS-1$
-		fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
-
-		fBackgroundCustomRadioButton = new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundCustomRadioButton.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.custom")); //$NON-NLS-1$
-		fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
-
-		fBackgroundColorEditor = new ColorEditor(backgroundComposite);
-		fBackgroundColorButton = fBackgroundColorEditor.getButton();
-
 		Label label = new Label(colorComposite, SWT.LEFT);
 		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.foreground")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite editorComposite = new Composite(colorComposite, SWT.NULL);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -425,18 +266,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		fBackgroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				PreferenceConverter.setValue(
-					fOverlayStore,
-					AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
-					fBackgroundColorEditor.getColorValue());
-			}
-		});
-
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
@@ -460,8 +289,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fPreviewViewer.getTextWidget().setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
 		fPreviewViewer.setEditable(false);
 
-		initializeViewerColors(fPreviewViewer);
-
 		String content = loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
 		IDocument document = new Document(content);
 		IDocumentPartitioner partitioner = fCTextTools.createDocumentPartitioner();
@@ -472,12 +299,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		fOverlayStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				String p = event.getProperty();
-				if (p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
-					|| p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
-					initializeViewerColors(fPreviewViewer);
-				}
-
 				fPreviewViewer.getDocument().set(fPreviewViewer.getDocument().get());
 				fPreviewViewer.invalidateTextPresentation();
 				//fPreviewViewer.refresh();
@@ -485,56 +306,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		});
 
 		return fPreviewViewer.getControl();
-	}
-
-	private Color fBackgroundColor;
-
-	/**
-	 * Initializes the given viewer's colors.
-	 * 
-	 * @param viewer the viewer to be initialized
-	 */
-	protected void initializeViewerColors(ISourceViewer viewer) {
-
-		IPreferenceStore store = fOverlayStore;
-		if (store != null) {
-
-			StyledText styledText = viewer.getTextWidget();
-
-			// ---------- background color ----------------------
-			Color color =
-				store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
-					? null
-					: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
-			styledText.setBackground(color);
-
-			if (fBackgroundColor != null)
-				fBackgroundColor.dispose();
-
-			fBackgroundColor = color;
-		}
-	}
-
-	/**
-	 * Creates a color from the information stored in the given preference store.
-	 * Returns <code>null</code> if there is no such information available.
-	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
-
-		RGB rgb = null;
-
-		if (store.contains(key)) {
-
-			if (store.isDefault(key))
-				rgb = PreferenceConverter.getDefaultColor(store, key);
-			else
-				rgb = PreferenceConverter.getColor(store, key);
-
-			if (rgb != null)
-				return new Color(display, rgb);
-		}
-
-		return null;
 	}
 
 	// sets enabled flag for a control and all its sub-tree
@@ -548,34 +319,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	}
 
-	private ArrayList fNumberFields = new ArrayList();
-	private ModifyListener fNumberFieldListener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			numberFieldChanged((Text) e.widget);
-		}
-	};
-
-	protected void handleAppearanceColorListSelection() {
-		int i = fAppearanceColorList.getSelectionIndex();
-		String key = fAppearanceColorListModel[i][1];
-		RGB rgb = PreferenceConverter.getColor(fOverlayStore, key);
-		fAppearanceColorEditor.setColorValue(rgb);
-		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
-	}
-
-	private void updateAppearanceColorWidgets(String systemDefaultKey) {
-		if (systemDefaultKey == null) {
-			fAppearanceColorDefault.setSelection(false);
-			fAppearanceColorDefault.setVisible(false);
-			fAppearanceColorEditor.getButton().setEnabled(true);
-		} else {
-			boolean systemDefault= fOverlayStore.getBoolean(systemDefaultKey);
-			fAppearanceColorDefault.setSelection(systemDefault);
-			fAppearanceColorDefault.setVisible(true);
-			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-		}
-	}
-
 	private Control createAppearancePage(Composite parent) {
 
 		Composite behaviorComposite = new Composite(parent, SWT.NONE);
@@ -583,127 +326,11 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
 
-		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabWidth"); //$NON-NLS-1$
-		addTextField(behaviorComposite, label, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 3, 0, true);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.marginColumn"); //$NON-NLS-1$
-		addTextField(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, true);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.showOverviewRuler"); //$NON-NLS-1$
-		addCheckBox(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
+		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.highlightLine"); //$NON-NLS-1$
-		addCheckBox(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.printMargin"); //$NON-NLS-1$
-		addCheckBox(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabSpace"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, CEditor.SPACES_FOR_TABS, 0);
-
-		label= PreferencesMessages.getString("CEditorPreferencePage.accessibility.disableCustomCarets"); //$NON-NLS-1$
-		Button master= addCheckBox(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, 0);
-
-		label= PreferencesMessages.getString("CEditorPreferencePage.accessibility.wideCaret"); //$NON-NLS-1$
-		Button slave= addCheckBox(behaviorComposite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, 0);
-		createDependency(master, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, slave);
-
-	
-		Label l = new Label(behaviorComposite, SWT.LEFT);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		gd.heightHint = convertHeightInCharsToPixels(1) / 2;
-		l.setLayoutData(gd);
-
-		l = new Label(behaviorComposite, SWT.LEFT);
-		l.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.appearanceColorOptions")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		l.setLayoutData(gd);
-
-		Composite editorComposite = new Composite(behaviorComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		editorComposite.setLayout(layout);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		gd.horizontalSpan = 2;
-		editorComposite.setLayoutData(gd);
-
-		fAppearanceColorList = new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = convertHeightInCharsToPixels(5);
-		fAppearanceColorList.setLayoutData(gd);
-
-		Composite stylesComposite = new Composite(editorComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 2;
-		stylesComposite.setLayout(layout);
-		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		l = new Label(stylesComposite, SWT.LEFT);
-		l.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.Color")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.BEGINNING;
-		l.setLayoutData(gd);
-
-		fAppearanceColorEditor = new ColorEditor(stylesComposite);
-		Button foregroundColorButton = fAppearanceColorEditor.getButton();
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment = GridData.BEGINNING;
-		foregroundColorButton.setLayoutData(gd);
-
-		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean systemDefault= fAppearanceColorDefault.getSelection();
-				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-				
-				int i= fAppearanceColorList.getSelectionIndex();
-				String key= fAppearanceColorListModel[i][2];
-				if (key != null)
-					fOverlayStore.setValue(key, systemDefault);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-		
-		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-		fAppearanceColorDefault.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.systemDefault")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fAppearanceColorDefault.setLayoutData(gd);
-		fAppearanceColorDefault.setVisible(false);
-		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
-		
-		fAppearanceColorList.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				handleAppearanceColorListSelection();
-			}
-		});
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				int i = fAppearanceColorList.getSelectionIndex();
-				String key = fAppearanceColorListModel[i][1];
-
-				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
-			}
-		});
-
 		return behaviorComposite;
 	}
 
@@ -732,13 +359,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		initializeDefaultColors();
 
 		fCEditorHoverConfigurationBlock= new CEditorHoverConfigurationBlock(this, fOverlayStore);
 		fFoldingConfigurationBlock= new FoldingConfigurationBlock(fOverlayStore);
-
-		fOverlayStore.load();
-		fOverlayStore.start();
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
@@ -779,14 +402,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		navComposite.setLayout(layout);
 
-		Button navCheck = new Button(navComposite,SWT.CHECK);
-		navCheck.setText(PreferencesMessages.getString("CEditorPreferencePage.Enable_Hyperlink_Navigation")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		navCheck.setLayoutData(gd);
-		navCheck.addSelectionListener(fCheckBoxListener);
-		fCheckBoxes.put(navCheck, CEditor.HYPERLINK_ENABLED);
-		
+		String label = PreferencesMessages.getString("CEditorPreferencePage.Enable_Hyperlink_Navigation"); //$NON-NLS-1$
+		addCheckBox(navComposite, label, CEditor.HYPERLINK_ENABLED, 0);
+
 		WorkbenchHelp.setHelp(navComposite, ICHelpContextIds.C_EDITOR_NAVIGATION_PAGE);	
 		return navComposite;
 	}
@@ -804,58 +422,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		for (int i = 0; i < fAppearanceColorListModel.length; i++)
-			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
-		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				fAppearanceColorList.select(0);
-				handleAppearanceColorListSelection();
-			}
-		});
-
 		fFoldingConfigurationBlock.initialize();
 
-	}
-
-	private void initializeFields() {
-
-		Iterator e = fColorButtons.keySet().iterator();
-		while (e.hasNext()) {
-			ColorEditor c = (ColorEditor) e.next();
-			String key = (String) fColorButtons.get(c);
-			RGB rgb = PreferenceConverter.getColor(fOverlayStore, key);
-			c.setColorValue(rgb);
-		}
-
-		e = fCheckBoxes.keySet().iterator();
-		while (e.hasNext()) {
-			Button b = (Button) e.next();
-			String key = (String) fCheckBoxes.get(b);
-			b.setSelection(fOverlayStore.getBoolean(key));
-		}
-
-		e = fTextFields.keySet().iterator();
-		while (e.hasNext()) {
-			Text t = (Text) e.next();
-			String key = (String) fTextFields.get(t);
-			t.setText(fOverlayStore.getString(key));
-		}
-
-		RGB rgb = PreferenceConverter.getColor(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
-		fBackgroundColorEditor.setColorValue(rgb);
-
-		boolean default_ = fOverlayStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-		fBackgroundDefaultRadioButton.setSelection(default_);
-		fBackgroundCustomRadioButton.setSelection(!default_);
-		fBackgroundColorButton.setEnabled(!default_);
-
-        // Update slaves
-        Iterator iter= fMasterSlaveListeners.iterator();
-        while (iter.hasNext()) {
-            SelectionListener listener= (SelectionListener)iter.next();
-            listener.widgetSelected(null);
-        }
-		//updateAutoactivationControls();
 	}
 
 	/*
@@ -864,8 +432,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	public boolean performOk() {
 		fCEditorHoverConfigurationBlock.performOk();
 		fFoldingConfigurationBlock.performOk();
-		fOverlayStore.propagate();
-		return true;
+		return super.performOk();
 	}
 
 	/*
@@ -876,7 +443,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fOverlayStore.loadDefaults();
 		initializeFields();
 		handleListSelection();
-		handleAppearanceColorListSelection();
 
 		fCEditorHoverConfigurationBlock.performDefaults();
 		fFoldingConfigurationBlock.performDefaults();
@@ -905,105 +471,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		super.dispose();
 	}
 
-//	private Control addColorButton(Composite parent, String label, String key, int indentation) {
-//
-//		Composite composite = new Composite(parent, SWT.NONE);
-//		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.horizontalSpan = 2;
-//		composite.setLayoutData(gd);
-//
-//		GridLayout layout = new GridLayout();
-//		layout.numColumns = 2;
-//		layout.marginWidth = 0;
-//		layout.marginHeight = 0;
-//		composite.setLayout(layout);
-//
-//		Label labelControl = new Label(composite, SWT.NONE);
-//		labelControl.setText(label);
-//
-//		gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.horizontalIndent = indentation;
-//		labelControl.setLayoutData(gd);
-//
-//		ColorEditor editor = new ColorEditor(composite);
-//		Button button = editor.getButton();
-//		button.setData(editor);
-//
-//		gd = new GridData();
-//		gd.horizontalAlignment = GridData.END;
-//		button.setLayoutData(gd);
-//		button.addSelectionListener(fColorButtonListener);
-//
-//		fColorButtons.put(editor, key);
-//
-//		return composite;
-//	}
-
-//	private Group addGroupBox(Composite parent, String label, int nColumns ){
-//		Group group = new Group(parent, SWT.NONE);
-//		group.setText(label);
-//		GridLayout layout = new GridLayout();
-//		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.horizontalSpan = 2;
-//		layout.numColumns = nColumns;
-//		group.setLayout(layout);
-//		group.setLayoutData(gd);
-//		return group;
-//	}
-	
-	private Button addCheckBox(Composite parent, String label, String key, int indentation) {
-		Button checkBox = new Button(parent, SWT.CHECK);
-		checkBox.setText(label);
-
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = indentation;
-		gd.horizontalSpan = 2;
-		checkBox.setLayoutData(gd);
-		checkBox.addSelectionListener(fCheckBoxListener);
-
-		fCheckBoxes.put(checkBox, key);
-
-		return checkBox;
-	}
-
-//	private Button addRadioButton(Composite parent, String label, String key, int indentation) {
-//		Button radioButton = new Button(parent, SWT.RADIO);
-//		radioButton.setText(label);
-//
-//		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.horizontalIndent = indentation;
-//		gd.horizontalSpan = 2;
-//		radioButton.setLayoutData(gd);
-//		radioButton.addSelectionListener(fCheckBoxListener);
-//
-//		fCheckBoxes.put(radioButton, key);
-//
-//		return radioButton;
-//	}
-	
-	private Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
-
-		Label labelControl = new Label(composite, SWT.NONE);
-		labelControl.setText(label);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent = indentation;
-		labelControl.setLayoutData(gd);
-
-		Text textControl = new Text(composite, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
-		textControl.setLayoutData(gd);
-		textControl.setTextLimit(textLimit);
-		fTextFields.put(textControl, key);
-		if (isNumber) {
-			fNumberFields.add(textControl);
-			textControl.addModifyListener(fNumberFieldListener);
-		} else {
-			textControl.addModifyListener(fTextFieldListener);
-		}
-
-		return textControl;
-	}
 
 	private String loadPreviewContentFromFile(String filename) {
 		String line;
@@ -1029,40 +496,4 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		return buffer.toString();
 	}
 
-	protected void numberFieldChanged(Text textControl) {
-		String number = textControl.getText();
-		IStatus status = validatePositiveNumber(number);
-		if (!status.matches(IStatus.ERROR))
-			fOverlayStore.setValue((String) fTextFields.get(textControl), number);
-		updateStatus(status);
-	}
-
-	private IStatus validatePositiveNumber(String number) {
-		StatusInfo status = new StatusInfo();
-		if (number.length() == 0) {
-			status.setError(PreferencesMessages.getString("CEditorPreferencePage.empty_input")); //$NON-NLS-1$
-		} else {
-			try {
-				int value = Integer.parseInt(number);
-				if (value < 0)
-					status.setError(PreferencesMessages.getString("CEditorPreferencePage.invalid_input")); //$NON-NLS-1$
-			} catch (NumberFormatException e) {
-				status.setError(PreferencesMessages.getString("CEditorPreferencePage.invalid_input")); //$NON-NLS-1$
-			}
-		}
-		return status;
-	}
-
-	void updateStatus(IStatus status) {
-		if (!status.matches(IStatus.ERROR)) {
-			for (int i = 0; i < fNumberFields.size(); i++) {
-				Text text = (Text) fNumberFields.get(i);
-				IStatus s = validatePositiveNumber(text.getText());
-				status = StatusUtil.getMoreSevere(s, status);
-			}
-		}
-		status= StatusUtil.getMoreSevere(fCEditorHoverConfigurationBlock.getStatus(), status);
-		setValid(!status.matches(IStatus.ERROR));
-		StatusUtil.applyToStatusLine(this, status);
-	}
 }

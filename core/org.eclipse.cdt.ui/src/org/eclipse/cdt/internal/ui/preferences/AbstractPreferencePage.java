@@ -230,9 +230,9 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	protected abstract OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys();
 	
     public void createControl(Composite parent){
+    	super.createControl(parent);
 		fOverlayStore.load();
 		fOverlayStore.start();
-    	super.createControl(parent);
     	initializeFields();
 	}
 

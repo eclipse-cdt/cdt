@@ -44,6 +44,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -51,7 +52,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Configuration for an <code>SourceViewer</code> which shows C code.
  */
-public class CSourceViewerConfiguration extends SourceViewerConfiguration {
+public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
 	/** Key used to look up display tab width */
 	public final static String PREFERENCE_TAB_WIDTH= "org.eclipse.cdt.editor.tab.width"; //$NON-NLS-1$
@@ -67,6 +68,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @param editor the editor in which the configured viewer will reside
 	 */
 	public CSourceViewerConfiguration(CTextTools tools, CEditor editor) {
+		super(CUIPlugin.getDefault().getCombinedPreferenceStore());
 		fTextTools= tools;
 		fEditor= editor;
 	}

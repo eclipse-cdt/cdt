@@ -1,4 +1,13 @@
 2005-02-15 Alain Magloire
+	Fix for 85633, Moving out all the CEditorPreference Text setting
+	to eclipse EditorsUI preference page.
+	* src/org/eclipse/cdt/internal/ui/editore/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/preferences/AbstractPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/ui/CUIPreferenceInitializer.java
+
+2005-02-15 Alain Magloire
 	Fix PR 82322, PR 78330
 	* plugin.xml
 

@@ -95,14 +95,12 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AnnotationPreference;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -151,8 +149,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	protected ISelectionChangedListener fStatusLineClearer;
     protected ISelectionChangedListener fSelectionUpdateListener;
 	
-    /** The property change listener */
-    private PropertyChangeListener fPropertyChangeListener = new PropertyChangeListener();
     /** The mouse listener */
     private MouseClickListener fMouseListener;
 
@@ -210,24 +206,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	private IMarker fLastMarkerTarget= null;
 
 	/**
-     * Handles property changes.
-	 */
-    private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
-        /**
-         * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-         */
-        public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-            handlePreferencePropertyChanged(event);
-        }
-        /**
-         * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
-         */
-        public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
-            handlePreferencePropertyChanged(new org.eclipse.jface.util.PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
-        }
-    }        
-
-	/**
 	 * Default constructor.
 	 */
 	public CEditor() {
@@ -246,12 +224,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
-		IPreferenceStore[] stores = new IPreferenceStore[2];
-		stores[0] = CUIPlugin.getDefault().getPreferenceStore();
-		stores[1] = EditorsUI.getPreferenceStore();
-		IPreferenceStore store = new ChainedPreferenceStore(stores);
-		setPreferenceStore(store);
-
+		setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
 	}
 
@@ -383,6 +356,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 					return;
 				}
 
+				// Not implemented ... for the future.
+				if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
+					ISourceViewer sourceViewer= getSourceViewer();
+					if (sourceViewer != null && affectsTextPresentation(event))
+						sourceViewer.invalidateTextPresentation();
+				}
+
 				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
 					if (fProjectionModelUpdater != null)
 						fProjectionModelUpdater.uninstall();
@@ -412,10 +392,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	protected void selectionChanged() {
 		if (getSelectionProvider() == null)
 			return;
-//		ISourceReference element= computeHighlightRangeSourceReference();
-//		if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE))
-//			synchronizeOutlinePage(element);
-//		setSelection(element, false);
 		updateStatusLine();
 	}
 
@@ -458,12 +434,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			ISourceReference reference = (ISourceReference) element;
 			// set hightlight range
 			setSelection(reference, true);
-			// set outliner selection
-			//if (fOutlinePage != null) {
-			//	fOutlinePage.removeSelectionChangedListener(fSelectionChangedListener);
-			//	fOutlinePage.select(reference);
-			//	fOutlinePage.addSelectionChangedListener(fSelectionChangedListener);
-			//}
 		}
 	}
 
@@ -591,14 +561,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fCEditorErrorTickUpdater = null;
 		}
 		
-        if (fPropertyChangeListener != null) {
-			Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
-			preferences.removePropertyChangeListener(fPropertyChangeListener);			
-			IPreferenceStore preferenceStore = getPreferenceStore();
-			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-			fPropertyChangeListener = null;
-		}
-
         final CSourceViewer sourceViewer = (CSourceViewer) getSourceViewer();
         if (fSelectionUpdateListener != null) {
 			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
@@ -837,11 +799,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
-//		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
-//			public IInformationControl createInformationControl(Shell shell) {
-//				return new CustomSourceInformationControl(shell, IDocument.DEFAULT_CONTENT_TYPE);
-//			}
-//		});
 		fProjectionSupport.install();
 		
 		fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
@@ -861,65 +818,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (isTabConversionEnabled())
 			startTabConversion();
 			
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.addPropertyChangeListener(fPropertyChangeListener);
-			
-		Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
-		preferences.addPropertyChangeListener(fPropertyChangeListener);
 	}
 
-	/**
-     * Returns a next error in the editor.
-	 * @param offset Offset to start check.
-	 * @param forward Do check forward.
-	 * @return Found error marker or <code>null</code>.
-	 */
-	private IMarker getNextError(int offset, boolean forward) {
-
-		IMarker nextError = null;
-
-		IDocument document = getDocumentProvider().getDocument(getEditorInput());
-		int endOfDocument = document.getLength();
-		int distance = 0;
-
-		IAnnotationModel model = getDocumentProvider().getAnnotationModel(getEditorInput());
-		Iterator e = model.getAnnotationIterator();
-		while (e.hasNext()) {
-			Annotation a = (Annotation) e.next();
-			if (a instanceof CMarkerAnnotation) {
-				MarkerAnnotation ma = (MarkerAnnotation) a;
-				IMarker marker = ma.getMarker();
-
-				if (MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM)) {
-					Position p = model.getPosition(a);
-					if (!p.includes(offset)) {
-
-						int currentDistance = 0;
-
-						if (forward) {
-							currentDistance = p.getOffset() - offset;
-							if (currentDistance < 0)
-								currentDistance = endOfDocument - offset + p.getOffset();
-						} else {
-							currentDistance = offset - p.getOffset();
-							if (currentDistance < 0)
-								currentDistance = offset + endOfDocument - p.getOffset();
-						}
-
-						if (nextError == null || (currentDistance < distance && currentDistance != 0)) {
-							distance = currentDistance;
-							if (distance == 0)
-								distance = endOfDocument;
-							nextError = marker;
-						}
-					}
-				}
-			}
-		}
-		return nextError;
-	}
-
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoMarker(org.eclipse.core.resources.IMarker)
 	 */
@@ -1380,21 +1280,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 
     /**
-     * Handles a property change event describing a change
-     * of the C core's preferences and updates the preference
-     * related editor properties.
-     * 
-     * @param event the property change event
-     */
-    protected void handlePreferencePropertyChanged(org.eclipse.jface.util.PropertyChangeEvent event) {
-        if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
-            ISourceViewer sourceViewer= getSourceViewer();
-            if (sourceViewer != null && affectsTextPresentation(event))
-                sourceViewer.invalidateTextPresentation();
-        }
-    }
-    
-    /**
      * Sets the given message as error message to this editor's status line.
      * 
      * @param msg message to be set
@@ -1452,11 +1337,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled(boolean somethingHasChanged) {
-		// Do nothing the outliner is listeniner to the
+		// Do nothing the outliner is listener to the
 		// CoreModel WorkingCopy changes instead.
 		// It will allow more fined grained.
-		//if(somethingHasChanged && fOutlinePage != null) {
-		//	fOutlinePage.contentUpdated();
-		//}
 	}
 }

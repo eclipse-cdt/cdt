@@ -1426,6 +1426,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator baseClauses = AltG3.getBaseClauses();
 		IASTBaseSpecifier baseClause = (IASTBaseSpecifier) baseClauses.next();
 		assertFalse( baseClauses.hasNext() );
-		baseClause.getParentClassSpecifier();
+		assertEquals( baseClause.getParentClassSpecifier(), AltG2 );
 	}
 }

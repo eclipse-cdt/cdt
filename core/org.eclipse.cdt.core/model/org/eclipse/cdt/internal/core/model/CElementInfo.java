@@ -31,6 +31,7 @@ class CElementInfo {
 	 * Shared empty collection used for efficiency.
 	 */
 	protected static ICElement[] fgEmptyChildren = new ICElement[]{};
+
 	/**
 	 * Is the structure of this element known
 	 * @see ICElement.isStructureKnown()

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -346,11 +346,11 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * Returns the C Model this operation is operating in.
 	 */
-	public ICRoot getCRoot() {
+	public ICModel getCModel() {
 		if (fElementsToProcess == null || fElementsToProcess.length == 0) {
-			return getParentElement().getCRoot();
+			return getParentElement().getCModel();
 		} else {
-			return fElementsToProcess[0].getCRoot();
+			return fElementsToProcess[0].getCModel();
 		}
 	}
 
@@ -399,7 +399,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		if (fElementsToProcess != null && fElementsToProcess.length > 0) {
 			ICProject project = fElementsToProcess[0].getCProject();
 			if (project != null) {
-				return project.getCRoot().getWorkspace();
+				return project.getCModel().getWorkspace();
 			}
 		}
 		return null;
@@ -459,7 +459,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * on the C Model.
 	 */
 	public CElementDelta newCElementDelta() {
-		return new CElementDelta(getCRoot());
+		return new CElementDelta(getCModel());
 	}
 
 	/**

@@ -5,18 +5,9 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IFile;
 
 /**
  * A C File Resource.
  */
-public interface ICFile extends IParent, ICResource {
-
-	public boolean isBinary();
-
-	public boolean isArchive();
-
-	public boolean isTranslationUnit();
-
-	public IFile getFile();
+public interface ICFile extends ICElement {
 }

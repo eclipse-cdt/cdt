@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 
@@ -13,34 +12,10 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
  * Info for ICProject.
  */
 
-class CProjectInfo extends CResourceInfo {
+class CProjectInfo extends CContainerInfo {
 
 	private BinaryContainer vBin;
 	private ArchiveContainer vLib;
-
-	public IBinaryContainer getBinaryContainer() {
-		if (vBin == null) {
-			vBin = new BinaryContainer((CProject)getElement());
-			addChild(vBin);
-		}
-		return vBin;
-	}
-
-	public IArchiveContainer getArchiveContainer() {
-		if (vLib == null) {
-			vLib = new ArchiveContainer((CProject)getElement());
-			addChild(vLib);
-		}
-		return vLib;
-	}
-
-	public ICElement[] getChildren() {
-        // ensure that BinaryContqainer and ArchiveContainer
-        // have been added as children. Side affect of get methods!
-		getBinaryContainer();
-		getArchiveContainer();
-		return super.getChildren();
-	}
 
 	/**
 	 */
@@ -49,4 +24,19 @@ class CProjectInfo extends CResourceInfo {
 		vBin = null;
 		vLib = null;
 	}
+
+	synchronized public IBinaryContainer getBinaryContainer() {
+		if (vBin == null) {
+			vBin = new BinaryContainer((CProject)getElement());
+		}
+		return vBin;
+	}
+
+	synchronized public IArchiveContainer getArchiveContainer() {
+		if (vLib == null) {
+			vLib = new ArchiveContainer((CProject)getElement());
+		}
+		return vLib;
+	}
+
 }

@@ -5,72 +5,41 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.util.Map;
+
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-public class ArchiveContainer extends Parent implements IArchiveContainer {
+public class ArchiveContainer extends Openable implements IArchiveContainer {
 
-	CProject cProject;
-	
 	public ArchiveContainer (CProject cProject) {
-		super (cProject, null, "lib", CElement.C_CONTAINER);
-		this.cProject = cProject;
-		IProject project = cProject.getProject();
-		IFolder folder = project.getFolder("Virtual.lib");
-		setUnderlyingResource(folder);
+		super (cProject, null, "libraries", CElement.C_VCONTAINER);
 	}
 
 	public IArchive[] getArchives() {
-		ICElement[] e = getChildren(true);
+		((ArchiveContainerInfo)getElementInfo()).sync();
+		ICElement[] e = getChildren();
 		IArchive[] a = new IArchive[e.length];
 		System.arraycopy(e, 0, a, 0, e.length);
 		return a;
 	}
 
-	public boolean hasChildren() {
-		return (getChildren(true).length > 0);
-	}
-
-	public ICElement [] getChildren() {
-		return getChildren(false);
-	}
-
-	public ICElement [] getChildren(boolean sync) {
-		if (!cProject.hasStartBinaryRunner()) {
-			// It is vital to set this to true first, if not we are going to loop
-			cProject.setStartBinaryRunner(true);
-			BinaryRunner runner = new BinaryRunner(cProject);
-			Thread thread = new Thread(runner, "Archive Runner");
-			// thread.setPriority(Thread.NORM_PRIORITY - 1);
-			thread.setDaemon(true);
-			thread.start();
-			if (sync) {
-				try {
-					thread.join();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-		return super.getChildren();
-	}
-
-	void addChildIfLib(IFile file) {
-		CModelManager factory = CModelManager.getDefault();
-		if (factory.isArchive(file)) {
-			ICElement celement = factory.create(file);
-			if (celement != null) {
-				if (celement instanceof IArchive) {
-					addChild (celement);
-				}
-			}
-		}
-	}
-
 	public CElementInfo createElementInfo() {
-		return new CElementInfo(this);
+		return new ArchiveContainerInfo(this);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
+	 */
+	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+		throws CModelException {
+		// this will bootstrap/start the runner for the project.
+		CModelManager.getDefault().getBinaryRunner(getCProject());
+		return true;
+	}
+
 }

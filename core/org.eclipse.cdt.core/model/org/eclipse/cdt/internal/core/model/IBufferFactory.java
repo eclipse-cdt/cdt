@@ -11,7 +11,8 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.*;
+import org.eclipse.cdt.core.model.IOpenable;
 /**
  * A factory that creates <code>IBuffer</code>s for CFiles.
  * <p>
@@ -31,5 +32,5 @@ public interface IBufferFactory {
 	 * @param owner the owner of the buffer
 	 * @see IBuffer
 	 */
-	IBuffer createBuffer(ICOpenable owner);
+	IBuffer createBuffer(IOpenable owner);
 }

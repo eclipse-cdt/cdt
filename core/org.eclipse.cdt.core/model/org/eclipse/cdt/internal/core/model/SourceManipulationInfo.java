@@ -87,7 +87,7 @@ class SourceManipulationInfo extends CElementInfo {
 		if (rename != null) {
 			renamings= new String[] {rename};
 		}
-		getElement().getCRoot().copy(elements, containers, siblings, renamings, force, monitor);
+		getElement().getCModel().copy(elements, containers, siblings, renamings, force, monitor);
 	}
 
 	/**
@@ -95,7 +95,7 @@ class SourceManipulationInfo extends CElementInfo {
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
 		ICElement[] elements = new ICElement[] {getElement()};
-		getElement().getCRoot().delete(elements, force, monitor);
+		getElement().getCModel().delete(elements, force, monitor);
 	}
 
 	/**
@@ -116,7 +116,7 @@ class SourceManipulationInfo extends CElementInfo {
 		if (rename != null) {
 			renamings= new String[] {rename};
 		}
-		getElement().getCRoot().move(elements, containers, siblings, renamings, force, monitor);
+		getElement().getCModel().move(elements, containers, siblings, renamings, force, monitor);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class SourceManipulationInfo extends CElementInfo {
 		ICElement[] elements= new ICElement[] {getElement()};
 		ICElement[] dests= new ICElement[] {getElement().getParent()};
 		String[] renamings= new String[] {name};
-		getElement().getCRoot().rename(elements, dests, renamings, force, monitor);
+		getElement().getCModel().rename(elements, dests, renamings, force, monitor);
 	}
 	
 	/**

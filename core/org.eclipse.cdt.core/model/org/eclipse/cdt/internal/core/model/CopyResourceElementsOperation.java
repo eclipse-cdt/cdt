@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -126,9 +125,9 @@ public class CopyResourceElementsOperation extends MultiOperation {
 		String destName = (newName != null) ? newName : source.getElementName();
 
 		// copy resource
-		IFile sourceResource = (IFile)((ICResource)source).getResource();
+		IFile sourceResource = (IFile)source.getResource();
 		// can be an IFolder or an IProject
-		IContainer destFolder = (IContainer)((ICResource)dest).getResource();
+		IContainer destFolder = (IContainer)dest.getResource();
 		IFile destFile = destFolder.getFile(new Path(destName));
 		if (!destFile.equals(sourceResource)) {
 			try {
@@ -185,7 +184,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 */
 	protected void processElement(ICElement element) throws CModelException {
 		ICElement dest = getDestinationParent(element);
-		if (element instanceof ICResource) {
+		if (element.getElementType() <= ICElement.C_UNIT) {
 			processResource(element, dest);
 			//fCreatedElements.add(dest.getCompilationUnit(element.getElementName()));
 		} else {

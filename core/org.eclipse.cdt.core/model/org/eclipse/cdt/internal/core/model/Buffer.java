@@ -14,8 +14,9 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -32,7 +33,7 @@ public class Buffer implements IBuffer {
 	protected int flags;
 	protected char[] contents;
 	protected ArrayList changeListeners;
-	protected ICOpenable owner;
+	protected IOpenable owner;
 	protected int gapStart= -1;
 	protected int gapEnd= -1;
 
@@ -44,7 +45,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * Creates a new buffer on an underlying resource.
 	 */
-	protected Buffer(IFile file, ICOpenable owner, boolean readOnly) {
+	protected Buffer(IFile file, IOpenable owner, boolean readOnly) {
 		this.file = file;
 		this.owner = owner;
 		if (file == null) {
@@ -157,7 +158,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getOwner()
 	 */
-	public ICOpenable getOwner() {
+	public IOpenable getOwner() {
 		return this.owner;
 	}
 

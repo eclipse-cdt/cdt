@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.core.model;
 class VariableInfo extends SourceManipulationInfo {
 
 	protected int flags;
-	String typeStr;
+	String typeStr = "";
 	
 	protected VariableInfo (CElement element) {
 		super(element);

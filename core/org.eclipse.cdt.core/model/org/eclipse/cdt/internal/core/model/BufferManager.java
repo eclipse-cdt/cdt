@@ -13,9 +13,10 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Enumeration;
 
+import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 import org.eclipse.core.resources.IFile;
@@ -92,7 +93,7 @@ public class BufferManager implements IBufferFactory {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IBufferFactory#createBuffer(org.eclipse.cdt.core.model.IOpenable)
 	 */
-	public IBuffer createBuffer(ICOpenable owner) {
+	public IBuffer createBuffer(IOpenable owner) {
 		ICElement element = (ICElement)owner;
 		try{
 			IResource resource = element.getResource();
@@ -112,7 +113,7 @@ public class BufferManager implements IBufferFactory {
 	 * or <code>null</code> if the owner does not have an open
 	 * buffer associated with it.
 	 */
-	public IBuffer getBuffer(ICOpenable owner) {
+	public IBuffer getBuffer(IOpenable owner) {
 		return (IBuffer)openBuffers.get(owner);
 	}
 	/**

@@ -20,163 +20,160 @@ public interface ICElement extends IAdaptable {
 
 	/**
 	 * Constant representing a C Root workspace (IWorkspaceRoot object).
-	 * A C element with this type can be safely cast to <code>ICRoot</code>.
+	 * A C element with this type can be safely cast to <code>ICModel</code>.
 	 */
-	public static final int C_ROOT = 10;
+	static final int C_MODEL = 10;
 
 	/**
 	 * Constant representing a C project(IProject object).
 	 * A C element with this type can be safely cast to <code>ICProject</code>.
 	 */
-	public static final int C_PROJECT = 11;
+	static final int C_PROJECT = 11;
 
 	/**
-	 * Constant representing a folder(ICFolder object).
-	 * A C element with this type can be safely cast to <code>ICFolder</code>.
+	 * Constant representing a folder(ICContainer object).
+	 * A C element with this type can be safely cast to <code>ICContainer</code>.
 	 */
-	public static final int C_FOLDER = 12;
+	static final int C_CCONTAINER = 12;
 
-	/**
-	 * Constant representing a file(ICFile object).
-	 * A C element with this type can be safely cast to <code>ICFile</code>.
-	 */
-	public static final int C_FILE = 13;
-
+	static final int C_BINARY = 14;
+	
+	static final int C_ARCHIVE = 18;
 	/**
 	 * Virtual container serving as a place holder.
 	 */
-	public static final int C_CONTAINER = 30;
+	static final int C_VCONTAINER = 30;
 
 	/**
 	 * Constant representing a C/C++ children of a Translation Unit
 	 */
-	public static final int C_UNIT = 60;
+	static final int C_UNIT = 60;
 
 	/**
 	 * Namespace.
 	 */
-	public static final int C_NAMESPACE = 61;
+	static final int C_NAMESPACE = 61;
 
 	/**
 	 * Using.
 	 */
-	public static final int C_USING = 62;
+	static final int C_USING = 62;
 
 	/**
 	 * Enumeration.
 	 */
-	public static final int C_ENUMERATION = 63;
+	static final int C_ENUMERATION = 63;
 
 	/**
 	 * Constant representing a class structure.
 	 */
-	public static final int C_CLASS = 64;
+	static final int C_CLASS = 64;
 
 	/**
 	 * Constant representing a struct structure.
 	 */
-	public static final int C_STRUCT = 65;
+	static final int C_STRUCT = 65;
 
 	/**
 	 * Constant representing a union structure.
 	 */
-	public static final int C_UNION = 66;
+	static final int C_UNION = 66;
 
 	/**
 	 * A method definition part of a structure(class, struct, union).
 	 */
-	public static final int C_METHOD = 67;
+	static final int C_METHOD = 67;
 
 	/**
 	 * A method declaration part of a structure(class, struct, union).
 	 */
-	public static final int C_METHOD_DECLARATION = 68;
+	static final int C_METHOD_DECLARATION = 68;
 
 	/**
 	 * A Field definition part of a structure(class, struct, union).
 	 */
-	public static final int C_FIELD = 69;
+	static final int C_FIELD = 69;
 
 	/**
 	 * a C/C++ function prototype.
 	 */
-	public static final int C_FUNCTION_DECLARATION = 70;
+	static final int C_FUNCTION_DECLARATION = 70;
 
 	/**
 	 * a C/C++ function.
 	 */
-	public static final int C_FUNCTION = 71;
+	static final int C_FUNCTION = 71;
 
 	/**
 	 * Preprocessor #include directive.
 	 */
-	public static final int C_INCLUDE = 72;
+	static final int C_INCLUDE = 72;
 
 	/**
 	 * C++ template class.
 	 */
-	public static final int C_TEMPLATE = 73;
+	static final int C_TEMPLATE = 73;
 
 	/**
 	 * Global variable.
 	 */
-	public static final int C_VARIABLE = 74;
+	static final int C_VARIABLE = 74;
 
 	/**
 	 * variable Declaration.
 	 */
-	public static final int C_VARIABLE_DECLARATION = 75;
+	static final int C_VARIABLE_DECLARATION = 75;
 
 	/**
 	 * Local Variable.
 	 */
-	public static final int C_VARIABLE_LOCAL = 76;
+	static final int C_VARIABLE_LOCAL = 76;
 
 	/**
 	 * A preprocessor macro.
 	 */
-	public static final int C_MACRO = 77;
+	static final int C_MACRO = 77;
 
 	/**
 	 * a Typedef.
 	 */
-	public static final int C_TYPEDEF = 78;
+	static final int C_TYPEDEF = 78;
 	
 	/**
 	 * Modifier indicating a class constructor
 	 */
-	public static final int C_CLASS_CTOR = 0x100;
+	static final int C_CLASS_CTOR = 0x100;
 	
 	/**
 	 * Modifier indicating a class destructor
 	 */
-	public static final int C_CLASS_DTOR = 0x200;
+	static final int C_CLASS_DTOR = 0x200;
 		
 	/**
 	 * Modifier indicating a static storage attribute
 	 */
-	public static final int C_STORAGE_STATIC = 0x400;
+	static final int C_STORAGE_STATIC = 0x400;
 		
 	/**
 	 * Modifier indicating an extern storage attribute
 	 */
-	public static final int C_STORAGE_EXTERN = 0x800;
+	static final int C_STORAGE_EXTERN = 0x800;
 
 	/**
 	 * Modifier indicating a private class
 	 */
-	public static final int CPP_PRIVATE = 0x1000;
+	static final int CPP_PRIVATE = 0x1000;
 
 	/**
 	 * Modifier indicating a public class
 	 */
 
-	public static final int CPP_PUBLIC = 0x2000;
+	static final int CPP_PUBLIC = 0x2000;
 
 	/**
 	 * Modifier indicating a friend class
 	 */
-	public static final int CPP_FRIEND = 0x4000;
+	static final int CPP_FRIEND = 0x4000;
 
 	/**
 	 * Returns whether this C element exists in the model.
@@ -200,14 +197,14 @@ public interface ICElement extends IAdaptable {
 	 *   <code>ICElement</code>
 	 * @see ICElement
 	 */
-	public int getElementType();
+	int getElementType();
 
 	/**
 	 * Returns the C model.
 	 *
 	 * @return the C model
 	 */
-	ICRoot getCRoot();
+	ICModel getCModel();
 
 	/**
 	 * Returns the C project this element is contained in,

@@ -7,9 +7,9 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -102,12 +102,20 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return getElementInfo().isStructureKnown();
 	}
 
-	public ICRoot getCRoot () {
-		return getParent().getCRoot();
+	public ICModel getCModel () {
+		ICElement current = this;
+		do {
+			if (current instanceof ICModel) return (ICModel) current;
+		} while ((current = current.getParent()) != null);
+		return null;
 	}
 
 	public ICProject getCProject() {
-		return getParent().getCProject();
+		ICElement current = this;
+		do {
+			if (current instanceof ICProject) return (ICProject) current;
+		} while ((current = current.getParent()) != null);
+		return null;
 	}
 
 	protected void addChild(ICElement e) {
@@ -160,28 +168,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	protected abstract CElementInfo createElementInfo();
 
 	/**
-	 * Finds a member corresponding to a give element.
-	 */     
-	//public ICElement findEqualMember(ICElement elem) {
-	//	if (this instanceof IParent) {
-	//		ICElement[] members = ((IParent)this).getChildren();
-	//		if (members != null) {          
-	//			for (int i= members.length - 1; i >= 0; i--) {
-	//			ICElement curr= members[i];
-	//			if (curr.equals(elem)) {
-	//				return curr;
-	//			} else {
-	//				ICElement res= curr.findEqualMember(elem);
-	//				if (res != null) {
-	//					return res;
-	//				}
-	//			}
-	//		}
-	//	}
-	//	return null;
-	//}
-
-	/**
 	 * Tests if an element has the same name, type and an equal parent.
 	 */
 	public boolean equals (Object o) {
@@ -189,15 +175,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			return true;
 		if (o instanceof CElement) {
 			CElement other = (CElement) o;
-			try {
-				IResource tres = getResource();
-				IResource ores = other.getResource();
-				if (ores != null && tres != null) {
-					return tres.equals(ores);
-				}
-			} catch (CModelException e) {
-				//e.printStackTrace();
-			}
 			if (fType != other.fType)
 				return false;
 			if (other.fName != null && fName.equals(other.fName)) {
@@ -241,14 +218,14 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	// util
 	public static String getTypeString(int type) {
 		switch (type) {
-			case C_ROOT:
-				return "CROOT"; 
+			case C_MODEL:
+				return "CMODEL"; 
 			case C_PROJECT:
 				return "CPROJECT"; 
-			case C_FOLDER:
-				return "CFOLDER"; 
-			case C_FILE:
-				return "CFILE"; 
+			case C_CCONTAINER:
+				return "CCONTAINER";
+			case C_UNIT:
+				return "TRANSLATION_UNIT"; 
 			case C_FUNCTION:
 				return "C_FUNCTION"; 
 			case C_FUNCTION_DECLARATION:
@@ -319,9 +296,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 *
 	 * <p>Subclasses that are not IOpenable's must override this method.
 	 */
-	public ICOpenable getOpenableParent() {
+	public IOpenable getOpenableParent() {
 		
-		return (ICOpenable)fParent;
+		return (IOpenable)fParent;
 	}
 
 
@@ -331,17 +308,18 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * @exception CModelException this element is not present or accessible
 	 */
 	protected void openHierarchy() throws CModelException {
-		if (this instanceof ICOpenable) {
-			((CResource) this).openWhenClosed(null);
+		if (this instanceof IOpenable) {
+			((Openable) this).openWhenClosed(null);
 		} else {
-			CResource openableParent = (CResource)getOpenableParent();
+			Openable openableParent = (Openable)getOpenableParent();
 			if (openableParent != null) {
 				CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo((ICElement) openableParent);
 				if (openableParentInfo == null) {
 					openableParent.openWhenClosed(null);
-				} else {
+				} 
+				//else {
 					CModelManager.getDefault().putInfo( this, createElementInfo());
-				}
+				//}
 			}
 		}
 	}	

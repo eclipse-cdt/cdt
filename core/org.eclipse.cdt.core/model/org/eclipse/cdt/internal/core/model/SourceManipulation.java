@@ -7,7 +7,7 @@ package org.eclipse.cdt.internal.core.model;
  
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -43,7 +43,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		if (rename != null) {
 			renamings= new String[] {rename};
 		}
-		getCRoot().copy(elements, containers, siblings, renamings, force, monitor);
+		getCModel().copy(elements, containers, siblings, renamings, force, monitor);
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
 		ICElement[] elements = new ICElement[] {this};
-		getCRoot().delete(elements, force, monitor);
+		getCModel().delete(elements, force, monitor);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		if (rename != null) {
 			renamings= new String[] {rename};
 		}
-		getCRoot().move(elements, containers, siblings, renamings, force, monitor);
+		getCModel().move(elements, containers, siblings, renamings, force, monitor);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		ICElement[] elements= new ICElement[] {this};
 		ICElement[] dests= new ICElement[] {this.getParent()};
 		String[] renamings= new String[] {name};
-		getCRoot().rename(elements, dests, renamings, force, monitor);
+		getCModel().rename(elements, dests, renamings, force, monitor);
 	}
 
 	/**
@@ -107,13 +107,13 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 
 	/**
 	 * Returns the first parent of the element that is an instance of
-	 * ICOpenable.
+	 * IOpenable.
 	 */
-	public ICOpenable getOpenableParent() {
+	public IOpenable getOpenableParent() {
 		ICElement current = getParent();
 		while (current != null){
-			if (current instanceof ICOpenable){
-				return (ICOpenable) current;
+			if (current instanceof IOpenable){
+				return (IOpenable) current;
 			}
 			current = current.getParent();
 		}

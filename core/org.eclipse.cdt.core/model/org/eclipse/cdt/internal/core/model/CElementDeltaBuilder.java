@@ -10,19 +10,6 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.model.ICElement;
-
-/**
- * A C element delta biulder creates a C element delta on a C element between
- * the version of the C element at the time the comparator was created and the
- * current version of the C element.
- *
- * It performs this operation by locally caching the contents of 
- * the C element when it is created. When the method buildDeltas() is called, it
- * creates a delta over the cached contents and the new contents.
- * 
- * This class is similar to the JDT CElementDeltaBuilder class.
- */
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -252,7 +239,7 @@ private void initialize() {
 	
 	// if building a delta on a translation unit or below, 
 	// it's a fine grained delta
-	if (cElement.getElementType() >= ICElement.C_FILE) {
+	if (cElement.getElementType() >= ICElement.C_UNIT) {
 		this.delta.fineGrained();
 	}
 	

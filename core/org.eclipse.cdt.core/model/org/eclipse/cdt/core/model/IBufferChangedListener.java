@@ -1,4 +1,6 @@
-package org.eclipse.cdt.internal.core.model;
+package org.eclipse.cdt.core.model;
+
+
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials

@@ -10,14 +10,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * A C project represents a view of a project resource in terms of C 
- * elements such as ICFile, ICFolder ....
+ * elements such as , ICContainer, ITranslationUnit ....
  * <code>CCore.create(project)</code>.
  * </p>
  *
  * @see CCore#create(org.eclipse.core.resources.IProject)
  * @see IBuildEntry
  */
-public interface ICProject extends IParent, ICResource {
+public interface ICProject extends ICContainer {
 
 	/**
 	 * Returns the <code>ICElement</code> corresponding to the given

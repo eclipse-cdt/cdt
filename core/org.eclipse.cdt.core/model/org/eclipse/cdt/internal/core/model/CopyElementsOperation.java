@@ -4,15 +4,11 @@ package org.eclipse.cdt.internal.core.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.HashMap;
-import java.util.Map;
-
-
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IParent;
 
 /**
  * This operation copies/moves a collection of elements from their current
@@ -49,7 +45,7 @@ import org.eclipse.cdt.core.model.CModelException;
  */
 public class CopyElementsOperation extends MultiOperation {
 
-	private Map fSources = new HashMap();
+	//private Map fSources = new HashMap();
 
 	/**
 	 * When executed, this operation will copy the given elements to the

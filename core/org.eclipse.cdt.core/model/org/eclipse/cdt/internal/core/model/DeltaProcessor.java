@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -101,6 +101,22 @@ public class DeltaProcessor {
 	}
 
 	/**
+	 * Adds the given child handle to its parent's cache of children. 
+	 */
+	protected void addToParentInfo(Openable child) {
+
+		Openable parent = (Openable) child.getParent();
+		if (parent != null && parent.isOpen()) {
+			//try {
+				CElementInfo info = (CElementInfo)parent.getElementInfo();
+				info.addChild(child);
+			//} //catch (CModelException e) {
+				// do nothing - we already checked if open
+			//}
+		}
+	}
+
+	/**
 	 * Processing for an element that has been added:<ul>
 	 * <li>If the element is a project, do nothing, and do not process
 	 * children, as when a project is created it does not yet have any
@@ -111,6 +127,9 @@ public class DeltaProcessor {
 	 */
 	protected void elementAdded(ICElement element, IResourceDelta delta) {
 
+		if (element instanceof Openable) {
+			addToParentInfo((Openable)element);
+		}
 		if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
 			//ICElement movedFromElement = createElement(delta.getMovedFromPath());
 			if  (movedFromElement == null)
@@ -125,8 +144,8 @@ public class DeltaProcessor {
 	/**
 	 * Processing for the closing of an element - there are two cases:<ul>
 	 * <li>when a project is closed (in the platform sense), the
-	 * 		CRoot reports this as if the CProject has been removed.
-	 * <li>otherwise, the CRoot reports this
+	 * 		CModel reports this as if the CProject has been removed.
+	 * <li>otherwise, the CModel reports this
 	 *		as a the element being closed (CHANGED + F_CLOSED).
 	 * </ul>
 	 * <p>In both cases, the children of the element are not processed. When
@@ -146,8 +165,8 @@ public class DeltaProcessor {
 	/**
 	 * Processing for the opening of an element - there are two cases:<ul>
 	 * <li>when a project is opened (in the platform sense), the
-	 * 		CRoot reports this as if the CProject has been added.
-	 * <li>otherwise, the CRoot reports this
+	 * 		CModel reports this as if the CProject has been added.
+	 * <li>otherwise, the CModel reports this
 	 *		as a the element being opened (CHANGED + F_CLOSED).
 	 * </ul>
 	 */
@@ -246,12 +265,12 @@ public class DeltaProcessor {
 	/**
 	 * Converts a <code>IResourceDelta</code> rooted in a <code>Workspace</code> into
 	 * the corresponding set of <code>ICElementDelta</code>, rooted in the
-	 * relevant <code>CRoot</code>s.
+	 * relevant <code>CModel</code>s.
 	 */
 	public ICElementDelta[] processResourceDelta(IResourceDelta changes) {
 
 		try {
-			ICElement root = (ICRoot)CModelManager.getDefault().getCRoot();
+			ICElement root = (ICModel)CModelManager.getDefault().getCModel();
 			currentElement = null;
 			
 /*

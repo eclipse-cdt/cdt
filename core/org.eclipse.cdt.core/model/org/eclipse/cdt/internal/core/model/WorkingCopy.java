@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;

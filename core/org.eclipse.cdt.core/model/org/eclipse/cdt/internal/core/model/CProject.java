@@ -5,30 +5,29 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.IArchiveContainer;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
-
-public class CProject extends CResource implements ICProject {
-
-	boolean runner = false;
+public class CProject extends CContainer implements ICProject {
 
 	public CProject (ICElement parent, IProject project) {
 		super (parent, project, CElement.C_PROJECT);
 	}
 
 	public IBinaryContainer getBinaryContainer() {
-		return getCProjectInfo().getBinaryContainer();
+		return ((CProjectInfo)getElementInfo()).getBinaryContainer();
 	}
 
 	public IArchiveContainer getArchiveContainer() {
-		return getCProjectInfo().getArchiveContainer();
+		return ((CProjectInfo)getElementInfo()).getArchiveContainer();
 	}
 
 	public IProject getProject() {
@@ -38,10 +37,6 @@ public class CProject extends CResource implements ICProject {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public ICProject getCProject() {
-		return this;
 	}
 
 	public ICElement findElement(IPath path) throws CModelException {
@@ -62,16 +57,13 @@ public class CProject extends CResource implements ICProject {
 		return celem;
 	}
 
-	synchronized protected boolean hasStartBinaryRunner() {
-		return runner;
-	}
-
-	synchronized protected void setStartBinaryRunner(boolean done) {
-		runner = done;
-	}
-
-	protected CProjectInfo getCProjectInfo() {
-		return (CProjectInfo)getElementInfo();
+	public static boolean hasCNature (IProject p) {
+		try {
+			return p.hasNature(CProjectNature.C_NATURE_ID);
+		} catch (CoreException e) {
+			//throws exception if the project is not open.
+		}
+		return false;
 	}
 
 	protected CElementInfo createElementInfo() {

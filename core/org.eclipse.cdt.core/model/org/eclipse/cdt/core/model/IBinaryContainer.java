@@ -9,7 +9,7 @@ package org.eclipse.cdt.core.model;
  * Represents a container of all the IBinary's found in the project
  * while inspecting the project.
  */
-public interface IBinaryContainer extends IParent, ICElement {
+public interface IBinaryContainer extends ICElement, IParent, IOpenable {
 
 	public IBinary[] getBinaries();
 }

@@ -9,7 +9,7 @@ package org.eclipse.cdt.core.model;
  * Represents a Binary file, for example an ELF excutable.
  * An ELF parser will inspect the binary.
  */
-public interface IBinary extends ICFile {
+public interface IBinary extends ICElement, IParent, IOpenable {
 	/**
 	 * Return whether the file was compiling with debug symbols.
 	 */

@@ -11,15 +11,13 @@ package org.eclipse.cdt.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.internal.core.model.IBuffer;
-import org.eclipse.cdt.internal.core.model.IBufferChangedListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * An openable is an element that can be opened, saved, and closed.
  * An openable might or might not have an associated buffer.
  */
-public interface ICOpenable extends IBufferChangedListener{
+public interface IOpenable extends IBufferChangedListener{
 	/**
 	 * Closes this element and its buffer (if any).
 	 */

@@ -5,39 +5,59 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICRoot;
-
-public class BinaryRunner implements Runnable {
+public class BinaryRunner extends Thread {
 	ArchiveContainer clib;
 	BinaryContainer cbin;
-	CProject cproject;
+	ICProject cproject;
+	CModelManager factory;
 
-	public BinaryRunner(CProject cprj) {
+	public BinaryRunner(ICProject cprj) {
+		super("Binary Search Thread");
 		cproject = cprj;
 		cbin = (BinaryContainer)cprj.getBinaryContainer();
 		clib = (ArchiveContainer)cprj.getArchiveContainer();
+		factory = CModelManager.getDefault();
+		start();
 	}
 
 	public void run() {
-		cproject.setStartBinaryRunner(true);
 		clib.removeChildren();
 		cbin.removeChildren();
 		try {
 			cproject.getProject().accept(new Visitor(this));
 		} catch (CoreException e) {
 			//e.printStackTrace();
+		} catch (Exception e) {
+			// What is wrong ?
+			e.printStackTrace();
 		}
 		fireEvents(cbin);
 		fireEvents(clib);
+		// Tell the listeners we are done.
+		synchronized(this) {
+			notifyAll();
+		}
+	}
+
+	/**
+	 * wrap the wait call and the interrupteException.
+	 */
+	public synchronized void waitIfRunning() {
+		while (isAlive()) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	public void fireEvents(Parent container) {
@@ -45,7 +65,7 @@ public class BinaryRunner implements Runnable {
 		ICElement[] children = container.getChildren();
 		if (children.length > 0) {
 			CModelManager factory = CModelManager.getDefault();
-			ICElement root = (ICRoot)factory.getCRoot();
+			ICElement root = (ICModel)factory.getCModel();
 			CElementDelta cdelta = new CElementDelta(root);
 			cdelta.added(cproject);
 			cdelta.added(container);
@@ -57,31 +77,21 @@ public class BinaryRunner implements Runnable {
 		}
 	}
 
-	void addChildIfBinary(CoreModel factory, IFile file) {
+	void addChildIfBinary(IFile file) {
 		// Attempt to speed things up by rejecting up front
 		// Things we know should not be Binary files.
 		if (!factory.isTranslationUnit(file)) {
-			if (factory.isBinary(file)) {
-				ICElement celement = factory.create(file);
-				if (celement != null) {
-					if (celement instanceof IBinary) {
-						IBinary bin = (IBinary)celement;
-						if (bin.isExecutable() || bin.isSharedLib()) {
-							cbin.addChild(bin);
-						}
-					}
-				}
-			} else if (factory.isArchive(file)) {
-				ICElement celement = factory.create(file);
-				if (celement instanceof IArchive) {
-					clib.addChild(celement);
-				}
+			IBinaryFile bin = factory.createBinaryFile(file);
+			if (bin != null) {
+				IResource res = file.getParent();
+				ICElement parent = factory.create(res);
+				// By creating the element, it will be added to the correct (bin/archive)container.
+				factory.create(parent, file, bin);
 			}
 		}
 	}
 
 	class Visitor implements IResourceVisitor {
-		CoreModel factory = CoreModel.getDefault();
 		BinaryRunner runner;
 
 		public Visitor (BinaryRunner r) {
@@ -90,7 +100,7 @@ public class BinaryRunner implements Runnable {
 
 		public boolean visit(IResource res) throws CoreException {
 			if (res instanceof IFile) {
-				runner.addChildIfBinary(factory, (IFile)res);
+				runner.addChildIfBinary((IFile)res);
 				return false;
 			}
 			return true;

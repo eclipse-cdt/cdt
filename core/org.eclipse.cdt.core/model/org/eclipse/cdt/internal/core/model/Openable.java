@@ -10,33 +10,43 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.BufferChangedEvent;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IBufferChangedListener;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public abstract class CResource extends Parent implements ICResource {
+public abstract class Openable extends Parent implements IOpenable, IBufferChangedListener {
 	
-	public CResource (ICElement parent, IPath path, int type) {
+	public Openable (ICElement parent, IPath path, int type) {
 		// Check if the file is under the workspace.
 		this (parent, ResourcesPlugin.getWorkspace().getRoot().getFileForLocation (path),
 			path.lastSegment(), type);
 	}
 
-	public CResource (ICElement parent, IResource resource, int type) {
+	public Openable (ICElement parent, IResource resource, int type) {
 		this (parent, resource, resource.getName(), type);
 	}
 	
-	public CResource (ICElement parent, IResource resource, String name, int type) {
+	public Openable (ICElement parent, IResource resource, String name, int type) {
 		super (parent, resource, name, type);
 	}
 
 	public IResource getUnderlyingResource() throws CModelException {
-		return resource;
+		IResource res = getResource();
+		if (res == null) {
+			ICElement p = getParent();
+			if (p != null) {
+				res = p.getUnderlyingResource();
+			}
+		}
+		return res;
 	}
 
 	public IResource getResource() throws CModelException {
@@ -44,6 +54,7 @@ public abstract class CResource extends Parent implements ICResource {
 	}
 	
 	protected abstract CElementInfo createElementInfo ();
+
 	/**
 	 * The buffer associated with this element has changed. Registers
 	 * this element as being out of synch with its buffer's contents.
@@ -65,7 +76,7 @@ public abstract class CResource extends Parent implements ICResource {
 	 * removing the current infos, generating new infos, and then placing
 	 * the new infos into the C Model cache tables.
 	 */
-	protected void buildStructure(CResourceInfo info, IProgressMonitor monitor) throws CModelException {
+	protected void buildStructure(OpenableInfo info, IProgressMonitor monitor) throws CModelException {
 
 		if (monitor != null && monitor.isCanceled()) return;
 	
@@ -88,7 +99,7 @@ public abstract class CResource extends Parent implements ICResource {
 	/**
 	 * Close the buffer associated with this element, if any.
 	 */
-	protected void closeBuffer(CFileInfo info) {
+	protected void closeBuffer(OpenableInfo info) {
 		if (!hasBuffer()) return; // nothing to do
 		IBuffer buffer = null;
 		buffer = getBufferManager().getBuffer(this);
@@ -97,14 +108,24 @@ public abstract class CResource extends Parent implements ICResource {
 			buffer.removeBufferChangedListener(this);
 		}
 	}
+
 	/**
-	 * Derived classes may override.
+	 * Builds this element's structure and properties in the given
+	 * info object, based on this element's current contents (i.e. buffer
+	 * contents if this element has an open buffer, or resource contents
+	 * if this element does not have an open buffer). Children
+	 * are placed in the given newElements table (note, this element
+	 * has already been placed in the newElements table). Returns true
+	 * if successful, or false if an error is encountered while determining
+	 * the structure of this element.
 	 */
-	protected boolean generateInfos(CResourceInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException{
-		return false;
-	}
+	protected abstract boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException;
+	//protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
+	//	return false;
+	//}
+
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#getBuffer()
+	 * @see org.eclipse.cdt.core.model.IOpenable#getBuffer()
 	 */
 	public IBuffer getBuffer() throws CModelException {
 		if (hasBuffer()) {
@@ -145,7 +166,7 @@ public abstract class CResource extends Parent implements ICResource {
 		return false;
 	}
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#hasUnsavedChanges()
+	 * @see org.eclipse.cdt.core.model.IOpenable#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() throws CModelException{
 	
@@ -158,7 +179,7 @@ public abstract class CResource extends Parent implements ICResource {
 		}
 		// for roots and projects must check open buffers
 		// to see if they have an child with unsaved changes
-		if (fType == C_ROOT ||
+		if (fType == C_MODEL ||
 			fType == C_PROJECT) {
 			Enumeration openBuffers= getBufferManager().getOpenBuffers();
 			while (openBuffers.hasMoreElements()) {
@@ -177,14 +198,14 @@ public abstract class CResource extends Parent implements ICResource {
 	/**
 	 * Subclasses must override as required.
 	 * 
-	 * @see org.eclipse.cdt.core.model.ICOpenable#isConsistent()
+	 * @see org.eclipse.cdt.core.model.IOpenable#isConsistent()
 	 */
 	public boolean isConsistent() throws CModelException {
 		return true;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#isOpen()
+	 * @see org.eclipse.cdt.core.model.IOpenable#isOpen()
 	 */	
 	public boolean isOpen() {
 		synchronized(CModelManager.getDefault()){
@@ -202,16 +223,16 @@ public abstract class CResource extends Parent implements ICResource {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#makeConsistent(IProgressMonitor)
+	 * @see org.eclipse.cdt.core.model.IOpenable#makeConsistent(IProgressMonitor)
 	 */
 	public void makeConsistent(IProgressMonitor pm) throws CModelException {
 		if (!isConsistent()) {
-			buildStructure((CFileInfo)getElementInfo(), pm);
+			buildStructure((OpenableInfo)getElementInfo(), pm);
 		}
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#open(IProgressMonitor)
+	 * @see org.eclipse.cdt.core.model.IOpenable#open(IProgressMonitor)
 	 */
 	public void open(IProgressMonitor pm) throws CModelException {
 		if (!isOpen()) {
@@ -235,7 +256,7 @@ public abstract class CResource extends Parent implements ICResource {
 	 */
 	protected void openParent(IProgressMonitor pm) throws CModelException {
 
-		CResource openableParent = (CResource)getOpenableParent();
+		Openable openableParent = (Openable)getOpenableParent();
 		if (openableParent != null) {
 			if (!openableParent.isOpen()){
 				openableParent.openWhenClosed(pm);
@@ -254,7 +275,7 @@ public abstract class CResource extends Parent implements ICResource {
 			openParent(pm);
 
 			// 2) create the new element info and open a buffer if needed
-			CResourceInfo info = (CResourceInfo) createElementInfo();
+			OpenableInfo info = (OpenableInfo) createElementInfo();
 			IResource resource = getResource();
 			if (resource != null && isSourceElement()) {
 				this.openBuffer(pm);
@@ -273,7 +294,7 @@ public abstract class CResource extends Parent implements ICResource {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#save(IProgressMonitor, boolean)
+	 * @see org.eclipse.cdt.core.model.IOpenable#save(IProgressMonitor, boolean)
 	 */
 	public void save(IProgressMonitor pm, boolean force) throws CModelException {
 		if (isReadOnly() || this.getResource().isReadOnly()) {

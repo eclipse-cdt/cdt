@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 
@@ -43,7 +43,7 @@ public class ElementCache extends OverflowingLRUCache {
 	 * by closing the element.
 	 */
 	protected boolean close(LRUCacheEntry entry) {
-		ICOpenable element = (ICOpenable) entry._fKey;
+		IOpenable element = (IOpenable) entry._fKey;
 		try {
 			if (element.hasUnsavedChanges()) {
 				return false;

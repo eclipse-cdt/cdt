@@ -8,7 +8,6 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICResource;
 
 /**
  * This operation deletes a collection of resources and all of their children.
@@ -37,7 +36,7 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	 * <code>deletePackageFragment</code> depending on the type of <code>element</code>.
 	 */
 	protected void processElement(ICElement element) throws CModelException {
-		deleteResource(((ICResource)element).getResource(), fForce);
+		deleteResource(element.getResource(), fForce);
 	}
 
 	/**

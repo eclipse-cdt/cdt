@@ -7,12 +7,9 @@ package org.eclipse.cdt.internal.core.model;
  
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -23,13 +20,11 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICFolder;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICResource;
-import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -48,30 +43,31 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModelManager implements IResourceChangeListener {
 
-	private Map fParsedResources =  Collections.synchronizedMap(new HashMap());
-	
-	//private static HashMap fParsers = new HashMap();
-
+        /**
+         * Unique handle onto the CModel
+         */
+        final CModel cModel = new CModel();
+        
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
 	 */
-	protected DeltaProcessor fDeltaProcessor= new DeltaProcessor();
+	protected DeltaProcessor fDeltaProcessor = new DeltaProcessor();
 
 	/**
 	 * Queue of deltas created explicily by the C Model that
 	 * have yet to be fired.
 	 */
-	private ArrayList fCModelDeltas= new ArrayList();
+	private ArrayList fCModelDeltas = new ArrayList();
 
 	/**
 	 * Turns delta firing on/off. By default it is on.
 	 */
-	protected boolean fFire= true;
+	protected boolean fFire = true;
 
 	/**
 	 * Collection of listeners for C element deltas
 	 */
-	protected ArrayList fElementChangedListeners= new ArrayList();
+	protected ArrayList fElementChangedListeners = new ArrayList();
 
 	/**
 	 * A map from ITranslationUnit to IWorkingCopy of the shared working copies.
@@ -92,6 +88,11 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	public ICProject[] cProjectsCache;
 
+	/**
+	 * The list of started BinaryRunners on projects.
+	 */
+	private HashMap binaryRunners = new HashMap();
+
 	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"};
 
 	public static final String [] headerExtensions = {"h", "hh", "hpp"};
@@ -103,7 +104,7 @@ public class CModelManager implements IResourceChangeListener {
 
 	public static CModelManager getDefault() {
 		if (factory == null) {
-			factory = new CModelManager ();
+			factory = new CModelManager();
 
 			// Register to the workspace;
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
@@ -116,35 +117,37 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	/**
-	 * Returns the CRoot for the given workspace, creating
+	 * Returns the CModel for the given workspace, creating
 	 * it if it does not yet exist.
 	 */
-	public ICRoot getCRoot(IWorkspaceRoot root) {
-		return create(root);
+	public ICModel getCModel(IWorkspaceRoot root) {
+		return getCModel();
+		//return create(root);
 	}
 
-	public ICRoot getCRoot () {
-		return create(ResourcesPlugin.getWorkspace().getRoot());
+	public ICModel getCModel() {
+		return cModel;
 	}
 
-	public ICResource create (IPath path) {
+	public ICElement create (IPath path) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// Assume it is fullpath relative to workspace
 		IResource res = root.findMember(path);
 		if (res == null) {
 			IPath rootPath = root.getLocation();
 			if (path.equals(rootPath))
-				return getCRoot(root);
+				return getCModel(root);
 			res = root.getContainerForLocation(path);
 			if (res == null || !res.exists())
 				res = root.getFileForLocation(path);
 			if (res != null && !res.exists())
 				res = null;
 		}
-		return create (res);
+		// TODO: for extenal resources ??
+		return create(res);
 	}
 
-	public ICResource create (IResource resource) {
+	public ICElement create (IResource resource) {
 		if (resource == null) {
 			return null;
 		}
@@ -163,7 +166,7 @@ public class CModelManager implements IResourceChangeListener {
 		}
 	}
 
-	public ICResource create(ICElement parent, IResource resource) {
+	public ICElement create(ICElement parent, IResource resource) {
 		int type = resource.getType();
 		switch (type) {
 			case IResource.PROJECT :
@@ -179,54 +182,79 @@ public class CModelManager implements IResourceChangeListener {
 		}
 	}
 
-	public ICFile create(IFile file) {
+	public ICElement create(IFile file) {
 		IResource parent = file.getParent();
 		ICElement cparent = null;
 		if (parent instanceof IFolder) {
-			cparent = create ((IFolder)parent);
+			cparent = create((IFolder)parent);
 		} else if (parent instanceof IProject) {
-			cparent = create ((IProject)parent);
+			cparent = create((IProject)parent);
 		}
 		if (cparent != null)
-			return (ICFile) create (cparent, file);
+			return create(cparent, file);
 		return null;
 	}
 
-	public synchronized ICFile create(ICElement parent, IFile file) {
-		ICFile cfile = (ICFile)fParsedResources.get(file);
-		if (cfile == null) {
-			if (file.exists()) {
-				if (isArchive(file)) {
+	public ICElement create(ICElement parent, IFile file) {
+		return create(parent, file, null);
+	}
+
+	public synchronized ICElement create(ICElement parent, IFile file, IBinaryFile bin) {
+		ICElement cfile = null;
+		if (file.exists()) {
+			// Try to create the binaryFile first.
+			if (bin == null) {
+				bin = createBinaryFile(file);
+			}
+			if (bin != null) {
+				if (bin.getType() == IBinaryFile.ARCHIVE) {
 					cfile = new Archive(parent, file);
-				} else if (isBinary(file)) {
-					cfile = new Binary(parent, file);
-				} else if (isTranslationUnit(file)) {
-					cfile = new TranslationUnit(parent, file);
 				} else {
-					cfile = new CFile(parent, file);
+					cfile = new Binary(parent, file);
 				}
-				fParsedResources.put(file, cfile);
+			} else if (isTranslationUnit(file)) {
+				cfile = new TranslationUnit(parent, file);
+			} 
+			//else {
+			//	cfile = new CFile(parent, file);
+			//}
+		} else {
+			// Probably it was deleted, find it
+			if (parent instanceof CElement) {
+				ICElement[] children = ((CElement)parent).getElementInfo().getChildren();
+				for (int i = 0; i < children.length; i++) {
+					try {
+						IResource res = children[i].getResource();
+						if (res != null && res.equals(file)) {
+							cfile = children[i];
+							break;
+						}
+					} catch (CModelException e) {
+					}
+				}
 			}
 		}
 		// Added also to the Containers
-		if (cfile != null) {
-			if (cfile instanceof IArchive) {
-				CProject cproj = (CProject)cfile.getCProject();
-				ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
-				container.addChild(cfile);
-			} else if (cfile instanceof IBinary) {
-				IBinary bin = (IBinary)cfile;
-				if (bin.isExecutable() || bin.isSharedLib()) {
+		if (cfile != null && (cfile instanceof IBinary || cfile instanceof IArchive)) {
+			if (bin == null) {
+				bin = createBinaryFile(file);
+			}
+			if (bin != null) {
+				if (bin.getType() == IBinaryFile.ARCHIVE) {
+					CProject cproj = (CProject)cfile.getCProject();
+					ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
+					container.addChild(cfile);
+				} else if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
 					CProject cproj = (CProject)cfile.getCProject();
 					BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
-					container.addChild(bin);
+					container.addChild(cfile);
 				}
 			}
 		}
 		return cfile;
 	}
 
-	public ICFolder create(IFolder folder) {
+	public ICContainer create(IFolder folder) {
 		IResource parent = folder.getParent();
 		ICElement cparent = null;
 		if (parent instanceof IFolder) {
@@ -235,17 +263,12 @@ public class CModelManager implements IResourceChangeListener {
 			cparent = create ((IProject)parent);
 		}
 		if (cparent != null)
-			return (ICFolder) create (cparent, folder);
+			return (ICContainer) create (cparent, folder);
 		return null;
 	}
 
-	public synchronized ICFolder create(ICElement parent, IFolder folder) {
-		ICFolder cfolder = (ICFolder)fParsedResources.get(folder);
-		if (cfolder == null) {
-			cfolder = new CFolder(parent, folder);
-			fParsedResources.put(folder, cfolder);
-		}
-		return cfolder;
+	public ICContainer create(ICElement parent, IFolder folder) {
+		return new CContainer(parent, folder);
 	}
 		
 	public ICProject create(IProject project) {
@@ -257,28 +280,20 @@ public class CModelManager implements IResourceChangeListener {
 		return create(celement, project);
 	}
 
-	public synchronized ICProject create(ICElement parent, IProject project) {
-		ICProject cproject = (ICProject)fParsedResources.get(project);
-		if (cproject == null) {
-			if (hasCNature(project)) {
-				cproject = new CProject(parent, project);
-				fParsedResources.put(project, cproject);
-			}
+	public ICProject create(ICElement parent, IProject project) {
+		if (hasCNature(project)) {
+			return new CProject(parent, project);
 		}
-		return cproject;
+		return null;
 	}
 
-	public ICRoot create(IWorkspaceRoot root) {
-		ICRoot croot = (ICRoot)fParsedResources.get(root);
-		if (croot == null) {
-			croot = new CRoot(root);
-			fParsedResources.put(root, croot);
-		}
-		return croot;
+	public ICModel create(IWorkspaceRoot root) {
+		return getCModel();
+		//return new CModel(root);
 	}
 
 	private void removeChildrenContainer(Parent container, IResource resource) {
-		if ( container.hasChildren() ) {
+		if (container.hasChildren()) {
 			ICElement[] children = container.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				try {
@@ -322,70 +337,43 @@ public class CModelManager implements IResourceChangeListener {
 //System.out.println("RELEASE " + celement.getElementName());
 
 		// Remove from the containers.
-		if (celement.getElementType() == ICElement.C_FILE) {
-			CFile cfile = (CFile)celement;
-			if (cfile.isArchive()) {
+		int type = celement.getElementType();
+		if (type == ICElement.C_ARCHIVE) {
 //System.out.println("RELEASE Archive " + cfile.getElementName());
-				CProject cproj = (CProject)cfile.getCProject();
-				ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
-				container.removeChild(cfile);
-			} else if (cfile.isBinary()) {
-				if (! ((IBinary)celement).isObject()) {
+			CProject cproj = (CProject)celement.getCProject();
+			ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
+			container.removeChild(celement);
+		} else if (type == ICElement.C_BINARY) {
+			if (! ((IBinary)celement).isObject()) {
 //System.out.println("RELEASE Binary " + cfile.getElementName());
-					CProject cproj = (CProject)cfile.getCProject();
-					BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
-					container.removeChild(cfile);
-				}
+				CProject cproj = (CProject)celement.getCProject();
+				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
+				container.removeChild(celement);
 			}
 		}
 
+		// Remove the child from the parent list.
 		Parent parent = (Parent)celement.getParent();
 		if (parent != null) {
 			parent.removeChild(celement);
 		}
-		try {
-			// Remove in the hashMap all the prefixOf the resource, this
-			// will catch things when it is a container to remove the entire hierarchy
-			IResource res = celement.getUnderlyingResource();
-			if (res != null) {
-				IPath resPath = res.getFullPath();
-				if (resPath != null) {
-					ArrayList list = new ArrayList();
-					Set s = fParsedResources.keySet();
-					synchronized (s) {
-						Iterator keys = s.iterator();
-						while (keys.hasNext()) {
-							IResource r = (IResource)keys.next();
-							IPath p = r.getFullPath();
-							if (p != null && resPath.isPrefixOf(p)) {
-//System.out.println("Removing [" + resPath + "] " + p);
-								list.add(r);
-							}
-						}
-					}
-					for (int i = 0; i < list.size(); i++) {
-						fParsedResources.remove((IResource)list.get(i));
-					}
-				}
-				fParsedResources.remove(res);
+
+		if (celement instanceof CElement) {
+			CElementInfo info = ((CElement)celement).getElementInfo();
+			ICElement[] children = info.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				releaseCElement(children[i]);
 			}
-		} catch (CModelException e) {
 		}
+		removeInfo(celement);
 	}
 
 	public ICElement getCElement(IResource res) {
-		return (ICElement)fParsedResources.get(res);
+		return create(res);
 	}
 
 	public ICElement getCElement(IPath path) {
-		Iterator iterator = fParsedResources.keySet().iterator();
-		while (iterator.hasNext()) {
-			IResource res = (IResource)iterator.next();
-			if (res.getFullPath().equals(path)) {
-				return (ICElement)fParsedResources.get(res);
-			}
-		}
-		return null;
+		return create(path);
 	}
 	
 	public IBinaryParser getBinaryParser(IProject project) {
@@ -396,85 +384,14 @@ public class CModelManager implements IResourceChangeListener {
 		return new NullBinaryParser();
 	}
 
-//	public IBinaryParser getBinaryParser(IProject project) {
-//		// It is in the property of the project of the cdtproject
-//		// For now the default is Elf.
-//		IBinaryParser parser = (IBinaryParser)fParsers.get(project);
-//		if (parser == null) {
-//			String format = getBinaryParserFormat(project);
-//			if (format == null || format.length() == 0) {
-//				format = getDefaultBinaryParserFormat();
-//			}
-//			if (format != null && format.length() > 0) {
-//				parser = CCorePlugin.getDefault().getBinaryParser(format);
-//			}
-//			if (parser == null) {
-//				parser = defaultBinaryParser;
-//			}
-//			fParsers.put(project, parser);
-//		}
-//		return parser;
-//	}
-
-//	public String getDefaultBinaryParserFormat() {
-//		String format = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(BINARY_PARSER);
-//		if (format == null || format.length() == 0) {
-//			return "ELF";
-//		}
-//		return format;
-//	}
-
-//	public String getBinaryParserFormat(IProject project) {
-//		// It can be in the property of the project or in the .cdtproject
-//		String format = null;
-//		// FIXME: Ask the .cdtproject.
-//		try {
-//			if (project != null) {
-//				format = project.getPersistentProperty(binaryParserKey);
-//			}
-//		} catch (CoreException e) {
-//		}
-//		return format;
-//	}
-
-//	public void setDefaultBinaryParserFormat(String format) {
-//		CCorePlugin.getDefault().getPluginPreferences().setDefault(BINARY_PARSER, format);
-//	}
-//
-//	public void setBinaryParserFormat(IProject project, String format, IProgressMonitor monitor) {
-//		try {
-//			if (project != null) {
-//				project.setPersistentProperty(binaryParserKey, format);
-//				fParsers.remove(project);
-//				IPath projPath = project.getFullPath();
-//				if (projPath != null) {
-//					Collection c = fParsedResources.values();
-//					ArrayList list = new ArrayList();
-//					synchronized (c) {
-//						Iterator values = c.iterator();
-//						while (values.hasNext()) {
-//							ICElement ce = (ICElement)values.next();
-//							if (!(ce instanceof ICRoot || ce instanceof ICProject)) {
-//							   	if (ce.getCProject().getProject().equals(project)) {
-//									list.add(ce);
-//								}
-//							}
-//						}
-//					}
-//					for (int i = 0; i < list.size(); i++) {
-//						ICElement ce = (ICElement)list.get(i);
-//						releaseCElement(ce);
-//					}
-//				}
-//				// Fired and ICElementDelta.PARSER_CHANGED
-//				CElementDelta delta = new CElementDelta(getCRoot());
-//				delta.binaryParserChanged(create(project));
-//				registerCModelDelta(delta);
-//				fire();
-//			}
-//		} catch (CoreException e) {
-//		}
-//	}
+	public IBinaryFile createBinaryFile(IFile file) {
+		try {
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			return parser.getBinary(file.getLocation());
+		} catch (IOException e) {
+		}
+		return null;
+	}
 
 	/**
 	 * TODO: this is a temporary hack until, the CDescriptor manager is
@@ -482,28 +399,9 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	public void resetBinaryParser(IProject project) {
 		if (project != null) {
-			IPath projPath = project.getFullPath();
-			if (projPath != null) {
-				Collection c = fParsedResources.values();
-				ArrayList list = new ArrayList();
-				synchronized (c) {
-					Iterator values = c.iterator();
-					while (values.hasNext()) {
-						ICElement ce = (ICElement)values.next();
-						if (!(ce instanceof ICRoot || ce instanceof ICProject)) {
-							if (ce.getCProject().getProject().equals(project)) {
-								list.add(ce);
-							}
-						}
-					}
-				}
-				for (int i = 0; i < list.size(); i++) {
-					ICElement ce = (ICElement)list.get(i);
-					releaseCElement(ce);
-				}
-			}
+			releaseCElement(project);
 			// Fired and ICElementDelta.PARSER_CHANGED
-			CElementDelta delta = new CElementDelta(getCRoot());
+			CElementDelta delta = new CElementDelta(getCModel());
 			delta.binaryParserChanged(create(project));
 			registerCModelDelta(delta);
 			fire();
@@ -628,6 +526,17 @@ public class CModelManager implements IResourceChangeListener {
 		return ok;
 	}
 
+	public BinaryRunner getBinaryRunner(ICProject cProject) {
+		BinaryRunner runner = null;
+		synchronized(binaryRunners) {
+			if (binaryRunners.get(cProject) == null) {
+				runner = new BinaryRunner(cProject);
+				binaryRunners.put(cProject, runner);
+			}
+		}
+		return runner;
+	}
+
 	/**
 	 * addElementChangedListener method comment.
 	 */
@@ -702,19 +611,6 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	/**
-	 * Note that the project is about to be deleted.
-	 *
-	 * fix for 1FW67PA
-	 */
-	public void deleting(IResource resource) {
-		deleting(getCElement(resource));
-	}
-
-	public void deleting(ICElement celement) {
-		releaseCElement(celement);
-	}
-
-	/**
 	 * Fire C Model deltas, flushing them after the fact. 
 	 * If the firing mode has been turned off, this has no effect. 
 	 */
@@ -759,7 +655,7 @@ public class CModelManager implements IResourceChangeListener {
 			return;
 
 		Iterator deltas = fCModelDeltas.iterator();
-		ICElement cRoot = getCRoot();
+		ICElement cRoot = getCModel();
 		CElementDelta rootDelta = new CElementDelta(cRoot);
 		boolean insertedTree = false;
 		while (deltas.hasNext()) {
@@ -777,7 +673,7 @@ public class CModelManager implements IResourceChangeListener {
 				insertedTree = true;
 			}
 		}
-		if (insertedTree){
+		if (insertedTree) {
 			fCModelDeltas = new ArrayList(1);
 			fCModelDeltas.add(rootDelta);
 		} else {
@@ -795,7 +691,7 @@ public class CModelManager implements IResourceChangeListener {
 				operation.run(monitor);
 			} else {
 		// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
-				getCRoot().getUnderlyingResource().getWorkspace().run(operation, monitor);
+				getCModel().getUnderlyingResource().getWorkspace().run(operation, monitor);
 			}
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {
@@ -827,7 +723,7 @@ public class CModelManager implements IResourceChangeListener {
 		switch (resource.getType()) {
 			case IResource.ROOT :
 			if (this.cProjectsCache == null) {
-				this.cProjectsCache = this.getCRoot().getCProjects();
+				this.cProjectsCache = this.getCModel().getCProjects();
 			}
 				
 			IResourceDelta[] children = delta.getAffectedChildren();

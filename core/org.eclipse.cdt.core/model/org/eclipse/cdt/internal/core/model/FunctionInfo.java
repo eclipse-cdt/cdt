@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.core.model;
 class FunctionInfo extends SourceManipulationInfo {
 
 	protected int flags;
-	protected String returnType;
+	protected String returnType = "";
 	protected int numOfParams;
 
 	protected FunctionInfo (CElement element) {

@@ -9,6 +9,6 @@ package org.eclipse.cdt.core.model;
  * Represents a container of all the IArchive's found in the project
  * while inspecting the project.
  */
-public interface IArchiveContainer extends IParent, ICElement {
+public interface IArchiveContainer extends ICElement, IParent, IOpenable {
 	public IArchive[] getArchives();
 }

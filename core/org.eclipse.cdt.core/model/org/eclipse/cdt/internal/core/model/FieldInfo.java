@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.model.IMember;
 public class FieldInfo extends SourceManipulationInfo {
 
 	int flags = 0;
-	String typeStr;
+	String typeStr = "";
 	boolean isConst = false;
 	boolean isVolatile = false;
 	boolean isMutable = false;

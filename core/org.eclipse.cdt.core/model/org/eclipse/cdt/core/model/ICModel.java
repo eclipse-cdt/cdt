@@ -5,7 +5,6 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -22,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @see CCore#create(org.eclipse.core.resources.IWorkspaceRoot)
  */
-public interface ICRoot extends IParent, ICResource {
+public interface ICModel extends ICElement, IParent, IOpenable {
 	/**
 	 * Copies the given elements to the specified container(s).
 	 * If one container is specified, all elements are copied to that
@@ -171,9 +170,23 @@ public interface ICRoot extends IParent, ICResource {
 	ICProject[] getCProjects();
 
 	/**
+	 * Returns an array of non-C resources (i.e. non-C projects) in
+	 * the workspace.
+	 * <p>
+	 * Non-C projects include all projects that are closed (even if they have the
+	 * C nature).
+	 * </p>
+	 * 
+	 * @return an array of non-C projects contained in the workspace.
+	 * @throws CModelException if this element does not exist or if an
+	 *              exception occurs while accessing its corresponding resource
+	 * @since 2.1
+	 */
+	Object[] getNonCResources() throws CModelException;
+
+	/**
 	 * Returns the workspace associated with this C model.
 	 */
 	IWorkspace getWorkspace();
 
-	IWorkspaceRoot getRoot();
 }

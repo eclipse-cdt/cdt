@@ -24,7 +24,7 @@ public class CoreModel {
 	 * Creates an ICElement form and IPath.
 	 * Returns null if not found.
 	 */
-	public ICResource create(IPath path) {
+	public ICElement create(IPath path) {
 		return manager.create(path);
 	}
 
@@ -32,7 +32,7 @@ public class CoreModel {
 	 * Creates an ICElement form and IFile.
 	 * Returns null if not found.
 	 */
-	public ICFile create(IFile file) {
+	public ICElement create(IFile file) {
 		return manager.create(file);
 	}
 
@@ -40,7 +40,7 @@ public class CoreModel {
 	 * Creates an ICElement form and IFolder.
 	 * Returns null if not found.
 	 */
-	public ICFolder create(IFolder folder) {
+	public ICContainer create(IFolder folder) {
 		return manager.create(folder);
 	}
 
@@ -56,15 +56,15 @@ public class CoreModel {
 	 * Creates an ICElement form and IResource.
 	 * Returns null if not found.
 	 */
-	public ICResource create(IResource resource) {
+	public ICElement create(IResource resource) {
 		return manager.create(resource);
 	}
 
 	/**
-	 * Returns the default ICRoot.
+	 * Returns the default ICModel.
 	 */
-	public ICRoot getCRoot() {
-		return manager.getCRoot();
+	public ICModel getCModel() {
+		return manager.getCModel();
 	}
 
 	/**

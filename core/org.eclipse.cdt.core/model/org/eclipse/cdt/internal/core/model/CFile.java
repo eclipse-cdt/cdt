@@ -12,28 +12,35 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
-public class CFile extends CResource implements ICFile {
+public class CFile extends CElement implements ICFile {
+
+	IFile file;
 	
 	IPath location;
 
-	public CFile(ICElement parent, IFile file) {
-		this(parent, file, file.getLocation(), file.getName());
+	public CFile(ICElement parent, IFile file){
+		//this (parent, file, ICElement.C_FILE);
+		this(parent, file, 0);
 	}
 
-	public CFile(ICElement parent, IFile file, String name) {
-		this(parent, file, file.getLocation(), name);
+	public CFile(ICElement parent, IFile file, int type) {
+		this(parent, file, file.getLocation(), file.getName(), type);
 	}
 
-	public CFile(ICElement parent, IPath location) {
+	public CFile(ICElement parent, IFile file, String name, int type) {
+		this(parent, file, file.getLocation(), name, type);
+	}
+
+	public CFile(ICElement parent, IPath location, int type) {
 	 	this(parent, ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location),
-			location, location.lastSegment());
+			location, location.lastSegment(), type);
 	}
 
-	public CFile(ICElement parent, IResource res, IPath location, String name) {
-		super(parent, res, name, CElement.C_FILE);
+	public CFile(ICElement parent, IFile res, IPath location, String name, int type) {
+		super(parent, name, type);
 		this.location = location;
+		file = res;
 	}
-
 
 	public IPath getLocation () {
 		return location;
@@ -44,24 +51,7 @@ public class CFile extends CResource implements ICFile {
 	}
 
 	public IFile getFile () {
-		try {
-			return (IFile)getUnderlyingResource();
-		} catch (CModelException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public boolean isBinary() {
-		return getCFileInfo().isBinary();
-	}
-
-	public boolean isArchive() {
-		return getCFileInfo().isArchive();
-	}
-
-	public boolean isTranslationUnit() {
-		return getCFileInfo().isTranslationUnit();
+		return file;
 	}
 
 	protected CFileInfo getCFileInfo() {
@@ -71,4 +61,18 @@ public class CFile extends CResource implements ICFile {
 	protected CElementInfo createElementInfo () {
 		return new CFileInfo(this);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
+	 */
+	public IResource getResource() throws CModelException {
+		return file;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#getUnderlyingResource()
+	 */
+	public IResource getUnderlyingResource() throws CModelException {
+		return file;
+	}
+
 }

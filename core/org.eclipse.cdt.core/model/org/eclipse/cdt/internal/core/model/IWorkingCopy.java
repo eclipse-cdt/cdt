@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.model;
 
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;

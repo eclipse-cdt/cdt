@@ -5,15 +5,16 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+
 /**
- * @see ICModel
  */
-public class CRootInfo extends CResourceInfo {
+public class OpenableInfo extends CElementInfo {
 
 	/**
 	 * Constructs a new C Model Info 
 	 */
-	protected CRootInfo(CElement element) {
+	protected OpenableInfo(CElement element) {
 		super(element);
 	}
+
 }

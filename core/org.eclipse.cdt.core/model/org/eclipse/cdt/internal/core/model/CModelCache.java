@@ -66,12 +66,12 @@ public double openableFillingRatio() {
  */
 public Object getInfo(ICElement element) {
 	switch (element.getElementType()) {
+		case ICElement.C_MODEL:
 		case ICElement.C_PROJECT:
-		case ICElement.C_ROOT:
 			return this.projectAndRootCache.get(element);
-		case ICElement.C_FOLDER:
+		case ICElement.C_CCONTAINER:
 			return this.folderCache.get(element);		
-		case ICElement.C_FILE:
+		case ICElement.C_UNIT:
 			return this.fileCache.get(element);
 		default:
 			return this.childrenCache.get(element);
@@ -84,12 +84,12 @@ public Object getInfo(ICElement element) {
  */
 protected Object peekAtInfo(ICElement element) {
 	switch (element.getElementType()) {
+		case ICElement.C_MODEL:
 		case ICElement.C_PROJECT:
-		case ICElement.C_ROOT:
 			return this.projectAndRootCache.get(element);
-		case ICElement.C_FOLDER:
+		case ICElement.C_CCONTAINER:
 			return this.folderCache.get(element);
-		case ICElement.C_FILE:
+		case ICElement.C_UNIT:
 			return this.fileCache.peek(element);
 		default:
 			return this.childrenCache.get(element);
@@ -101,14 +101,14 @@ protected Object peekAtInfo(ICElement element) {
  */
 protected void putInfo(ICElement element, Object info) {
 	switch (element.getElementType()) {
+		case ICElement.C_MODEL:
 		case ICElement.C_PROJECT:
-		case ICElement.C_ROOT:
 			this.projectAndRootCache.put(element, info);
 			break;
-		case ICElement.C_FOLDER:
+		case ICElement.C_CCONTAINER:
 			this.folderCache.put(element, info);
 			break;
-		case ICElement.C_FILE:
+		case ICElement.C_UNIT:
 			this.fileCache.put(element, info);
 			break;
 		default:
@@ -120,14 +120,14 @@ protected void putInfo(ICElement element, Object info) {
  */
 protected void removeInfo(ICElement element) {
 	switch (element.getElementType()) {
+		case ICElement.C_MODEL:
 		case ICElement.C_PROJECT:
-		case ICElement.C_ROOT:
 			this.projectAndRootCache.remove(element);
 			break;
-		case ICElement.C_FOLDER:
+		case ICElement.C_CCONTAINER:
 			this.folderCache.remove(element);
 			break;
-		case ICElement.C_FILE:
+		case ICElement.C_UNIT:
 			this.fileCache.remove(element);
 			break;
 		default:

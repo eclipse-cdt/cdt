@@ -5,101 +5,41 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.core.model.CoreModel;
+import java.util.Map;
+
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
-public class BinaryContainer extends Parent implements IBinaryContainer {
-
-	CProject cProject;
+public class BinaryContainer extends Openable implements IBinaryContainer {
 
 	public BinaryContainer (CProject cProject) {
-		this (cProject, "bin");
-	}
-
-	public BinaryContainer (CProject cProject, String name) {
-		super (cProject, null, name, CElement.C_CONTAINER);
-		this.cProject = cProject;
-		IProject project = cProject.getProject();
-		IFolder folder = project.getFolder("Virtual.bin");
-		setUnderlyingResource(folder);
+		super (cProject, null, "binaries", CElement.C_VCONTAINER);
 	}
 
 	public IBinary[] getBinaries() {
-		ICElement[] e = getChildren(true);
+		((BinaryContainerInfo)getElementInfo()).sync();
+		ICElement[] e = getChildren();
 		IBinary[] b = new IBinary[e.length];
 		System.arraycopy(e, 0, b, 0, e.length);
 		return b;
 	}
 
-	public boolean hasChildren() {
-		return (getChildren(true).length > 0);
-	}
-
-	public ICElement [] getChildren() {
-		return getChildren(false);
-	}
-
-	public ICElement [] getChildren(boolean sync) {
-		// The first time probe the entire project to discover binaries.
-		if (!cProject.hasStartBinaryRunner()) {
-			cProject.setStartBinaryRunner(true);
-			BinaryRunner runner = new BinaryRunner(cProject);
-			Thread thread = new Thread(runner, "Binary Runner");
-			// thread.setPriority(Thread.NORM_PRIORITY - 1);
-			thread.setDaemon(true);
-			thread.start();
-			if (sync) {
-				try {
-					thread.join();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-		return super.getChildren();
-	}
-
-	void addChildIfExec(CoreModel factory, IFile file) {
-		// Attempt to speed things up by rejecting up front
-		// Things we know should not be Binary files.
-		if (!factory.isTranslationUnit(file)) {
-			ICElement celement = factory.create(file);
-			if (celement != null) {
-				if (celement instanceof IBinary) {
-					IBinary bin = (IBinary)celement;
-					if (bin.isExecutable() || bin.isSharedLib()) {
-						addChild (bin);
-					}
-				}
-			}
-		}
-	}
-
 	public CElementInfo createElementInfo() {
-		return new CElementInfo(this);
+		return new BinaryContainerInfo(this);
 	}
 
-	class Visitor implements IResourceVisitor {
-		CoreModel factory = CoreModel.getDefault();
-		BinaryContainer cbin;
-
-		public Visitor (BinaryContainer element) {
-			cbin = element;
-		}
-
-		public boolean visit(IResource res) throws CoreException {
-			if (res instanceof IFile) {
-				cbin.addChildIfExec(factory, (IFile)res);
-				return false;
-			}
-			return true;
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
+	 */
+	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+		throws CModelException {
+		// this will bootstrap/start the runner for the project.
+		CModelManager.getDefault().getBinaryRunner(getCProject());
+		return true;
 	}
+
 }

@@ -6,11 +6,8 @@ package org.eclipse.cdt.internal.core.model;
  */
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.core.resources.IResourceDelta;
 
 
@@ -101,7 +98,7 @@ public class CElementDelta implements ICElementDelta {
 
 		// if a child delta is added to a translation unit delta or below, 
 		// it's a fine grained delta
-		if (!(fChangedElement instanceof ICResource)) {
+		if (!(fChangedElement.getElementType() >= ICElement.C_UNIT)) {
 			fineGrained();
 		}
 	
@@ -203,18 +200,6 @@ public class CElementDelta implements ICElementDelta {
 		CElementDelta addedDelta = new CElementDelta(element);
 		addedDelta.fKind = ADDED;
 		insertDeltaTree(element, addedDelta);
-		// Added also to the Containers
-		if (element instanceof IArchive) {
-			CProject cproj = (CProject)element.getCProject();
-			ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
-			container.addChild(element);
-		} else if (element instanceof IBinary) {
-			if (((IBinary)element).isExecutable() ||((IBinary)element).isSharedLib()) {
-				CProject cproj = (CProject)element.getCProject();
-				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
-				container.addChild(element);
-			}
-		}
 	}
 
 	/**

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
@@ -27,16 +28,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * @see ITranslationUnit
  */
-public class TranslationUnit extends CFile implements ITranslationUnit {
+public class TranslationUnit extends Openable implements ITranslationUnit {
+
+	IPath location = null;
 
 	SourceManipulationInfo sourceManipulationInfo = null;
 
 	public TranslationUnit(ICElement parent, IFile file) {
-		super(parent, file);
+		super(parent, file, ICElement.C_UNIT);
 	}
 
 	public TranslationUnit(ICElement parent, IPath path) {
-		super(parent, path);
+		super(parent, path, ICElement.C_UNIT);
 	}
 
 	public ITranslationUnit getTranslationUnit () {
@@ -121,6 +124,32 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 		return (IUsing[])aList.toArray(new IUsing[0]);
 	}
 
+	public void setLocation(IPath loc) {
+		location = loc;
+	}
+
+	public IPath getLocation() {
+		if (location == null) {
+			IFile file = getFile();
+			if (file != null) {
+				location = file.getLocation();
+			} else {
+				return getPath();
+			}
+		}
+		return location;
+	}
+
+	protected IFile getFile() {
+		try {
+			IResource res = getResource();
+			if (res instanceof IFile) {
+				return (IFile)res;
+			}
+		} catch (CModelException e) {
+		}
+		return null;
+	}
 
 	/**
 	 * @see ISourceManipulation
@@ -188,7 +217,7 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.CFile#buildStructure(CFileInfo, IProgressMonitor)
 	 */
-	protected void buildStructure(CFileInfo info, IProgressMonitor monitor) throws CModelException {
+	protected void buildStructure(OpenableInfo info, IProgressMonitor monitor) throws CModelException {
 		if (monitor != null && monitor.isCanceled()) return;
 
 		// remove existing (old) infos
@@ -268,9 +297,9 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.CResource#generateInfos(CResourceInfo, IProgressMonitor, Map, IResource)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(OpenableInfo, IProgressMonitor, Map, IResource)
 	 */
-	protected boolean generateInfos(CResourceInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
+	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
 		// put the info now, because getting the contents requires it
 		CModelManager.getDefault().putInfo(this, info);
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
@@ -368,14 +397,14 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#isConsistent()
+	 * @see org.eclipse.cdt.core.model.IOpenable#isConsistent()
 	 */
 	public boolean isConsistent() throws CModelException {
 		return CModelManager.getDefault().getElementsOutOfSynchWithBuffers().get(this) == null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.CResource#isSourceElement()
+	 * @see org.eclipse.cdt.internal.core.model.Openable#isSourceElement()
 	 */
 	protected boolean isSourceElement() {
 		return true;
@@ -388,18 +417,18 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.ICOpenable#makeConsistent(IProgressMonitor)
+	 * @see org.eclipse.cdt.core.model.IOpenable#makeConsistent(IProgressMonitor)
 	 */
 	public void makeConsistent(IProgressMonitor pm) throws CModelException {
 		if (!isConsistent()) {
 			// create a new info and make it the current info
-			CFileInfo info = (CFileInfo) createElementInfo();
+			OpenableInfo info = (OpenableInfo) createElementInfo();
 			buildStructure(info, pm);
 		}
 	}
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.model.CResource#openBuffer(IProgressMonitor)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#openBuffer(IProgressMonitor)
 	 */
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 

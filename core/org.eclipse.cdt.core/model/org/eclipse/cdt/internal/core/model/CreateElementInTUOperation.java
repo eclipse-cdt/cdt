@@ -5,23 +5,22 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.cdt.core.model.*;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * <p>This abstract class implements behavior common to <code>CreateElementInCUOperations</code>.
@@ -140,30 +139,44 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		beginTask(getMainTaskName(), getMainAmountOfWork());
 		CElementDelta delta = newCElementDelta();
 		ITranslationUnit unit = getTranslationUnit();
+		// generateNewTranslationUnitDOM(unit);
 		insertElement();
 		if (fCreationOccurred) {
 			//a change has really occurred
-			IFile file = (IFile)((ICResource)unit).getResource();
-			StringBuffer buffer = getContent(file);
+			IBuffer buffer = unit.getBuffer();
+			if (buffer == null) return;
+			char[] bufferContents = buffer.getCharacters();
+			if (bufferContents == null) return;
+			//char[] elementContents = normalizeCRS(..);
+			char[] elementContents = fCreatedElement.getSource().toCharArray();
+			//IFile file = (IFile)((ICResource)unit).getResource();
+			//StringBuffer buffer = getContent(file);
 			switch (fReplacementLength) {
 				case -1 : 
 					// element is append at the end
-					buffer.append(fCreatedElement.getSource());
+					//buffer.append(fCreatedElement.getSource());
+					buffer.append(elementContents);
 					break;
 
 				case 0 :
 					// element is inserted
-					buffer.insert(fInsertionPosition, fCreatedElement.getSource());
+					//buffer.insert(fInsertionPosition, fCreatedElement.getSource());
+					buffer.replace(fInsertionPosition, 0, elementContents);
 					break;
 
 				default :
 					// element is replacing the previous one
 					buffer.replace(fInsertionPosition, fReplacementLength, fCreatedElement.getSource());
 			}
-			save(buffer, file);
+			unit.save(null, false);
+			//save(buffer, file);
+			boolean isWorkingCopy = unit.isWorkingCopy();
+			//if (isWorkingCopy) {
+			//	this.setAttributes(...);
+			//}
 			worked(1);
 			fResultElements = generateResultHandles();
-			//if (!isWorkingCopy) { // if unit is working copy, then save will have already fired the delta
+			if (!isWorkingCopy) { // if unit is working copy, then save will have already fired the delta
 				if (unit.getParent().exists()) {
 					for (int i = 0; i < fResultElements.length; i++) {
 						delta.added(fResultElements[i]);
@@ -171,7 +184,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 					addDelta(delta);
 				} // else unit is created outside classpath
 				  // non-java resource delta will be notified by delta processor
-			//}
+			}
 		}
 		done();
 	}

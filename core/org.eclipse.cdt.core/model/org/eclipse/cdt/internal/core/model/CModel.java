@@ -9,25 +9,27 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICResource;
-import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class CRoot extends CResource implements ICRoot {
+public class CModel extends CContainer implements ICModel {
 
-	public CRoot(IWorkspaceRoot root) {
-		super (null, root, root.getName(), ICElement.C_ROOT);
+	public CModel () {
+		this(ResourcesPlugin.getWorkspace().getRoot());
 	}
-	
-	public ICRoot getCModel() {
-		return this;
+
+	public CModel(IWorkspaceRoot root) {
+		super (null, root, ICElement.C_MODEL);
 	}
+
 	public ICProject getCProject(String name) {
-		CModelManager factory = CModelManager.getDefault();
-		return (ICProject)factory.create(getWorkspace().getRoot().getProject(name));
+		IProject project = getWorkspace().getRoot().getProject(name);			
+		return CModelManager.getDefault().create(project);			
 	}
 
 	public ICProject[] getCProjects() {
@@ -46,17 +48,9 @@ public class CRoot extends CResource implements ICRoot {
 		return null;
 	}
 
-	public IWorkspaceRoot getRoot() {
-		try {
-			return (IWorkspaceRoot)getUnderlyingResource();
-		} catch (CModelException e) {
-		}
-		return null;
-	}
-
 	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null && elements[0] instanceof ICResource ) {
+		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT ) {
 			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		} else {
 			throw new CModelException (new CModelStatus());
@@ -66,7 +60,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor)
 		throws CModelException {
-		if (elements != null && elements[0] != null && elements[0] instanceof ICResource) {
+		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new DeleteResourceElementsOperation(elements, force), monitor);
 		} else {
 			throw new CModelException (new CModelStatus());
@@ -76,7 +70,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null && elements[0] instanceof ICResource ) {
+		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new MoveResourceElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		} else {
 			throw new CModelException (new CModelStatus());
@@ -86,7 +80,7 @@ public class CRoot extends CResource implements ICRoot {
 
 	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings,
 		boolean force, IProgressMonitor monitor) throws CModelException {
-		if (elements != null && elements[0] != null && elements[0] instanceof ICResource) {
+		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new RenameResourceElementsOperation(elements, destinations,
 					renamings, force), monitor);
 		} else {
@@ -109,7 +103,7 @@ public class CRoot extends CResource implements ICRoot {
 	}
 
 	protected CElementInfo createElementInfo () {
-		return new CRootInfo(this);
+		return new CModelInfo(this);
 	}
 
 	// CHECKPOINT: Roots will return the hashcode of their resource

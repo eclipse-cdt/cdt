@@ -1,38 +1,48 @@
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-
 /**
  */
-public class CResourceInfo extends CElementInfo {
+public class CContainerInfo extends OpenableInfo {
+
+	/**
+	 * Shared empty collection used for efficiency.
+	 */
+	static Object[] NO_NON_C_RESOURCES = new Object[] {};
+
+	Object[] nonCResources = null;
 
 	/**
 	 * Constructs a new C Model Info 
 	 */
-	protected CResourceInfo(CElement element) {
+	protected CContainerInfo(CElement element) {
 		super(element);
 	}
 
-	// Always return true, save the unnecessary probing from the Treeviewer.
-	protected boolean hasChildren () {
-		return true;
-	}
+	/**
+	 * @param container
+	 * @return
+	 */
+	public Object[] getNonCResources(IResource res) {
+		if (nonCResources != null)
+			return nonCResources;
 
-	protected ICElement [] getChildren () {
+		ArrayList notChildren = new ArrayList();
+		ICElement parent = getElement();
 		try {
 			IResource[] resources = null;
-			IResource res = getElement().getUnderlyingResource();
 			if (res != null) {
-				//System.out.println ("  Resource: " + res.getFullPath().toOSString());
 				switch(res.getType()) {
 					case IResource.ROOT:
 					case IResource.PROJECT:
@@ -50,13 +60,10 @@ public class CResourceInfo extends CElementInfo {
 				CModelManager factory = CModelManager.getDefault();
 				for (int i = 0; i < resources.length; i++) {
 					// Check for Valid C projects only.
-					if(resources[i].getType() == IResource.PROJECT) {
-						IProject proj = (IProject)resources[i];
-						if (!factory.hasCNature(proj)) {	
-							continue;
-						}
+					ICElement celement = factory.create(parent, resources[i]);
+					if (celement == null) {
+						notChildren.add(resources[i]);
 					}
-					addChild(factory.create(getElement(), resources[i]));
 				}
 			}
 		} catch (CoreException e) {
@@ -64,6 +71,15 @@ public class CResourceInfo extends CElementInfo {
 			//CPlugin.log (e);
 			e.printStackTrace();
 		}
-		return super.getChildren();
+		setNonCResources(notChildren.toArray());	
+		return nonCResources;
+	}
+
+	/**
+	 * @param container
+	 * @return
+	 */
+	public void setNonCResources(Object[] resources) {
+		nonCResources = resources;
 	}
 }

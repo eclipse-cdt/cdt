@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Use <code>ICElement.isStructureKnown</code> to determine whether this is 
  * the case.
  */
-public interface ITranslationUnit extends ICFile , ISourceReference, ISourceManipulation {
+public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISourceReference, ISourceManipulation {
 	/**
 	 * Creates and returns an include declaration in this translation unit
 	 * with the given name.

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core.model;
+package org.eclipse.cdt.core.model;
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 
 import java.util.EventObject;
+
 
 /**
  * A   buffer changed event describes how a buffer has changed. These events are

@@ -1,5 +1,10 @@
 2002-11-27 Alain Magloire
 
+	* utils/.../utils/coff/PE.java (getAttribute):
+	Quick fix to return the save value for CPU "x86" instead of "i386"
+
+2002-11-27 Alain Magloire
+
 	* model/.../cdt/core/model/CoreModel.java:
 	Remove the static qualifiers and force people to use getDefault().
 	(getBinaryParserFormat): New method to retrieve the format of a project.

@@ -20,7 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,7 +52,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	protected NewManagedProjectOptionPage optionPage;
 
 	public NewManagedProjectWizard() {
-		this(ManagedBuilderUIPlugin.getResourceString(WZ_TITLE), ManagedBuilderUIPlugin.getResourceString(WZ_DESC));
+		this(ManagedBuilderUIMessages.getResourceString(WZ_TITLE), ManagedBuilderUIMessages.getResourceString(WZ_DESC));
 	}
 
 	public NewManagedProjectWizard(String title, String description) {
@@ -65,14 +65,14 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		
 		// Add the configuration selection page
 		targetConfigurationPage = new CProjectPlatformPage(PREFIX, this);
-		targetConfigurationPage.setTitle(ManagedBuilderUIPlugin.getResourceString(CONF_TITLE));
-		targetConfigurationPage.setDescription(ManagedBuilderUIPlugin.getResourceString(CONF_DESC));
+		targetConfigurationPage.setTitle(ManagedBuilderUIMessages.getResourceString(CONF_TITLE));
+		targetConfigurationPage.setDescription(ManagedBuilderUIMessages.getResourceString(CONF_DESC));
 		addPage(targetConfigurationPage);
 		
 		// Add the options (tabbed) page
 		optionPage = new NewManagedProjectOptionPage(PREFIX, this);
-		optionPage.setTitle(ManagedBuilderUIPlugin.getResourceString(OPTIONS_TITLE));
-		optionPage.setDescription(ManagedBuilderUIPlugin.getResourceString(OPTIONS_DESC));
+		optionPage.setTitle(ManagedBuilderUIMessages.getResourceString(OPTIONS_TITLE));
+		optionPage.setDescription(ManagedBuilderUIMessages.getResourceString(OPTIONS_DESC));
 		addPage(optionPage);
 	}
 	
@@ -91,14 +91,14 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 
 		// Add the managed build nature
 		try {
-			monitor.subTask(ManagedBuilderUIPlugin.getResourceString(MSG_ADD_NATURE));
+			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_NATURE));
 			ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
 		} catch (CoreException e) {
 			// Bail out of the project creation
 		}
 		// Add the builder
 		try {
-			monitor.subTask(ManagedBuilderUIPlugin.getResourceString(MSG_ADD_BUILDER));
+			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_BUILDER));
 			ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
 		} catch (CoreException e) {
 			// Bail out of the project creation
@@ -154,7 +154,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		}
 		
 		// Save the build options
-		monitor.subTask(ManagedBuilderUIPlugin.getResourceString(MSG_SAVE));
+		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_SAVE));
 		ManagedBuildManager.saveBuildInfo(newProject, true);
 		monitor.done();
 	}

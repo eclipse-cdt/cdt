@@ -11,7 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -74,7 +74,7 @@ public class FileListControl {
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			if (type != IOption.BROWSE_NONE) {
-				final Button browse = createButton(parent, 3, ManagedBuilderUIPlugin.getResourceString(BROWSE), false);
+				final Button browse = createButton(parent, 3, ManagedBuilderUIMessages.getResourceString(BROWSE), false);
 				browse.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent ev) {
 						String currentName;
@@ -129,16 +129,16 @@ public class FileListControl {
 	// The type of browse support that is required
 	private int browseType;
 	private IPath path;
-	private static final String ADD_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.add"); //$NON-NLS-1$
-	private static final String DEL_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.delete"); //$NON-NLS-1$
-	private static final String EDIT_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.edit"); //$NON-NLS-1$
-	private static final String MOVEUP_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
-	private static final String MOVEDOWN_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
-	private static final String FILE_TITLE = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.title.file");	//$NON-NLS-1$
-	private static final String DIR_TITLE = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.title.directory");	//$NON-NLS-1$
-	private static final String FILE_MSG = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
-	private static final String DIR_MSG = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
-	private static final String TITLE = ManagedBuilderUIPlugin.getResourceString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
+	private static final String ADD_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.add"); //$NON-NLS-1$
+	private static final String DEL_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.delete"); //$NON-NLS-1$
+	private static final String EDIT_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.edit"); //$NON-NLS-1$
+	private static final String MOVEUP_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
+	private static final String MOVEDOWN_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
+	private static final String FILE_TITLE = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.title.file");	//$NON-NLS-1$
+	private static final String DIR_TITLE = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.title.directory");	//$NON-NLS-1$
+	private static final String FILE_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
+	private static final String DIR_MSG = ManagedBuilderUIMessages.getResourceString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
+	private static final String TITLE = ManagedBuilderUIMessages.getResourceString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
 	//images
 	private final Image IMG_ADD = ManagedBuilderUIImages
 			.get(ManagedBuilderUIImages.IMG_FILELIST_ADD);
@@ -367,8 +367,8 @@ public class FileListControl {
 	private void removePressed() {
 		int index = list.getSelectionIndex();
 		if (browseType == IOption.BROWSE_DIR || browseType == IOption.BROWSE_FILE) {
-			String quest = ManagedBuilderUIPlugin.getResourceString("FileListControl.deletedialog.message"); //$NON-NLS-1$
-			String title = ManagedBuilderUIPlugin.getResourceString("FileListControl.deletedialog.title"); //$NON-NLS-1$
+			String quest = ManagedBuilderUIMessages.getResourceString("FileListControl.deletedialog.message"); //$NON-NLS-1$
+			String title = ManagedBuilderUIMessages.getResourceString("FileListControl.deletedialog.title"); //$NON-NLS-1$
 			boolean delDir = MessageDialog.openQuestion(list.getShell(), title,
 					quest);
 			if (delDir && index != -1)
@@ -408,7 +408,7 @@ public class FileListControl {
 		int index = list.getSelectionIndex();
 		if (index != -1) {
 			String selItem = list.getItem(index);
-			String title = ManagedBuilderUIPlugin.getResourceString("FileListControl.editdialog.title"); //$NON-NLS-1$
+			String title = ManagedBuilderUIMessages.getResourceString("FileListControl.editdialog.title"); //$NON-NLS-1$
 			if (selItem != null) {
 				InputDialog dialog = new InputDialog(null, title, compTitle,
 						selItem, null);

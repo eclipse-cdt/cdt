@@ -14,7 +14,7 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -29,14 +29,11 @@ public class ManagedBuilderUIImages {
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 
 	// Subdirectory (under the package containing this class) where 16 color images are
-	private static URL fgIconBaseURL;
+	private static URL iconBaseURL = null;
 	static {
-		try {
-			fgIconBaseURL= new URL(ManagedBuilderUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" ); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
-		}
+		iconBaseURL = Platform.getBundle(ManagedBuilderUIPlugin.getUniqueIdentifier()).getEntry("icons/");
 	}	
+
 	private static final String NAME_PREFIX= ManagedBuilderUIPlugin.getUniqueIdentifier() + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 	private static final String T= "full/"; //$NON-NLS-1$
@@ -100,9 +97,9 @@ public class ManagedBuilderUIImages {
 		StringBuffer buffer= new StringBuffer(prefix);
 		buffer.append(name);
 		try {
-			return new URL(fgIconBaseURL, buffer.toString());
+			return new URL(iconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
+			ManagedBuilderUIPlugin.log(e);
 			return null;
 		}
 	}

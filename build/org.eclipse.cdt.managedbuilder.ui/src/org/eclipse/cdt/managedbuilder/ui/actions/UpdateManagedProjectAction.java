@@ -32,6 +32,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -118,13 +119,13 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		if (backupFile.exists()) {
 			Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
 			boolean shouldUpdate = MessageDialog.openQuestion(shell,
-					ManagedBuilderUIPlugin.getResourceString("ManagedBuildConvert.12x.warning.title"), //$NON-NLS-1$
-					ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.warning.message", project.getName())); //$NON-NLS-1$
+					ManagedBuilderUIMessages.getResourceString("ManagedBuildConvert.12x.warning.title"), //$NON-NLS-1$
+					ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.warning.message", project.getName())); //$NON-NLS-1$
 			if (shouldUpdate) {
 				backupFile.delete(true, monitor);
 			} else {
 				monitor.setCanceled(true);
-				throw new OperationCanceledException(ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.cancelled.message", project.getName())); //$NON-NLS-1$
+				throw new OperationCanceledException(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.cancelled.message", project.getName())); //$NON-NLS-1$
 			}
 		}
 		settingsFile.copy(backupFile.getFullPath(), true, monitor);
@@ -445,7 +446,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		
 		// Backup the file
-		monitor.beginTask(ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.monitor.message.backup", projectName), 1); //$NON-NLS-1$
+		monitor.beginTask(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.monitor.message.backup", projectName), 1); //$NON-NLS-1$
 		backupFile(settingsFile, monitor, project);
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		
@@ -460,7 +461,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			NodeList targetNodes = document.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
 			// This is a guess, but typically the project has 1 target, 2 configs, and 6 tool defs
 			int listSize = targetNodes.getLength();
-			monitor.beginTask(ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.monitor.message.project", projectName), listSize * 9); //$NON-NLS-1$	
+			monitor.beginTask(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.monitor.message.project", projectName), listSize * 9); //$NON-NLS-1$	
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
@@ -563,8 +564,8 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			return;
 		} catch (InvocationTargetException e) {
 			ManagedBuilderUIPlugin.logException(e, 
-					ManagedBuilderUIPlugin.getResourceString("ManagedBuilderStartup.update.exception.error"),	//$NON-NLS-1$
-					ManagedBuilderUIPlugin.getFormattedString("ManagedBuilderStartup.update.exception.message", project.getName()));	//$NON-NLS-1$
+					ManagedBuilderUIMessages.getResourceString("ManagedBuilderStartup.update.exception.error"),	//$NON-NLS-1$
+					ManagedBuilderUIMessages.getFormattedString("ManagedBuilderStartup.update.exception.message", project.getName()));	//$NON-NLS-1$
 		}
 	}
 

@@ -29,10 +29,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
-import org.eclipse.cdt.managedbuilder.ui.properties.BuildSettingsPage;
-import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolsSettingsStore;
-import org.eclipse.cdt.managedbuilder.ui.properties.ToolListContentProvider;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -181,7 +178,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			// Display a message page instead of the properties control
 			final Label invalidInfo = new Label(composite, SWT.LEFT);
 			invalidInfo.setFont(composite.getFont());
-			invalidInfo.setText(ManagedBuilderUIPlugin.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
+			invalidInfo.setText(ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
 			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, GridData.VERTICAL_ALIGN_CENTER, true, true));
 			return composite;
 		}
@@ -190,7 +187,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 
 
 		// Add a config selection area
-		Group configGroup = ControlFactory.createGroup(composite, ManagedBuilderUIPlugin.getResourceString(ACTIVE_LABEL), 1);
+		Group configGroup = ControlFactory.createGroup(composite, ManagedBuilderUIMessages.getResourceString(ACTIVE_LABEL), 1);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.grabExcessHorizontalSpace = true;
 		configGroup.setLayoutData(gd);
@@ -200,24 +197,24 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		form.marginWidth = 5;
 		configGroup.setLayout(form);
 		
-		Label platformLabel = ControlFactory.createLabel(configGroup, ManagedBuilderUIPlugin.getResourceString(PLATFORM_LABEL));
+		Label platformLabel = ControlFactory.createLabel(configGroup, ManagedBuilderUIMessages.getResourceString(PLATFORM_LABEL));
 		targetSelector = ControlFactory.createSelectCombo(configGroup, getPlatformNames(), defaultTarget.getName()); 
 		targetSelector.addListener(SWT.Selection, new Listener () {
 			public void handleEvent(Event e) {
 				handleTargetSelection();
 			}
 		});
-		targetSelector.setToolTipText(ManagedBuilderUIPlugin.getResourceString(PLAT_TIP));
-		Label configLabel = ControlFactory.createLabel(configGroup, ManagedBuilderUIPlugin.getResourceString(CONFIG_LABEL));
+		targetSelector.setToolTipText(ManagedBuilderUIMessages.getResourceString(PLAT_TIP));
+		Label configLabel = ControlFactory.createLabel(configGroup, ManagedBuilderUIMessages.getResourceString(CONFIG_LABEL));
 		configSelector = new Combo(configGroup, SWT.READ_ONLY|SWT.DROP_DOWN);
 		configSelector.addListener(SWT.Selection, new Listener () {
 			public void handleEvent(Event e) {
 				handleConfigSelection();
 			}
 		});
-		configSelector.setToolTipText(ManagedBuilderUIPlugin.getResourceString(CONF_TIP));
-		manageConfigs = ControlFactory.createPushButton(configGroup, ManagedBuilderUIPlugin.getResourceString(ADD_CONF));
-		manageConfigs.setToolTipText(ManagedBuilderUIPlugin.getResourceString(ADD_TIP));
+		configSelector.setToolTipText(ManagedBuilderUIMessages.getResourceString(CONF_TIP));
+		manageConfigs = ControlFactory.createPushButton(configGroup, ManagedBuilderUIMessages.getResourceString(ADD_CONF));
+		manageConfigs.setToolTipText(ManagedBuilderUIMessages.getResourceString(ADD_TIP));
 		manageConfigs.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 				handleManageConfig();
@@ -249,7 +246,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		configSelector.setLayoutData(fd);		
 
 		// Create the sash form
-		sashGroup = ControlFactory.createGroup(composite, ManagedBuilderUIPlugin.getResourceString(SETTINGS_LABEL), 1);
+		sashGroup = ControlFactory.createGroup(composite, ManagedBuilderUIMessages.getResourceString(SETTINGS_LABEL), 1);
 		sashGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 		sashForm = new SashForm(sashGroup, SWT.NONE);
 		sashForm.setOrientation(SWT.HORIZONTAL);
@@ -539,7 +536,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		int selectionIndex = configSelector.getSelectionIndex();
 		if (selectionIndex == -1) return;
 		String configName = configSelector.getItem(selectionIndex);
-		if (configName.equals(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS))) {
+		if (configName.equals(ManagedBuilderUIMessages.getResourceString(ALL_CONFS))) {
 			// This is the all config
 			return;
 		} else {
@@ -592,7 +589,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 
 	// Event handler for the manage configuration button event
 	private void handleManageConfig () {
-		ManageConfigDialog manageDialog = new ManageConfigDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(MANAGE_TITLE), selectedTarget);
+		ManageConfigDialog manageDialog = new ManageConfigDialog(getShell(), ManagedBuilderUIMessages.getResourceString(MANAGE_TITLE), selectedTarget);
 		if (manageDialog.open() == ManageConfigDialog.OK) {
 			boolean updateConfigs = false;
 			
@@ -881,6 +878,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		ListIterator iter = pages.listIterator();
 		while (iter.hasNext()) {
 			BuildSettingsPage page = (BuildSettingsPage) iter.next();
+			if (page == null) continue;
 			if (page instanceof BuildToolSettingsPage) {
 				// if the currentsettings page is not the tool settings page
 				// then update the all build options field editor based on the 

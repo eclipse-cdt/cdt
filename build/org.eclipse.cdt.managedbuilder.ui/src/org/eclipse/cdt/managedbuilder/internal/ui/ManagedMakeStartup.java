@@ -36,8 +36,8 @@ public class ManagedMakeStartup implements IStartup {
 					for (int index = projects.length - 1; index >= 0; --index) {
 						IProject project = projects[index];
 						boolean shouldUpdate = MessageDialog.openQuestion(shell,
-								ManagedBuilderUIPlugin.getResourceString("ManagedBuilderStartup.update.12x.title"), //$NON-NLS-1$
-								ManagedBuilderUIPlugin.getFormattedString("ManagedBuilderStartup.update.12x.message", new String[]{project.getName()})); //$NON-NLS-1$
+								ManagedBuilderUIMessages.getResourceString("ManagedBuilderStartup.update.12x.title"), //$NON-NLS-1$
+								ManagedBuilderUIMessages.getFormattedString("ManagedBuilderStartup.update.12x.message", new String[]{project.getName()})); //$NON-NLS-1$
 						// Go for it
 						if (shouldUpdate) {
 							ProgressMonitorDialog pd = new ProgressMonitorDialog(shell);

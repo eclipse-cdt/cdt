@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -151,7 +151,7 @@ public class NewConfigurationDialog extends Dialog {
 		// Add a label and a text widget
 		final Label nameLabel = new Label(composite, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
-		nameLabel.setText(ManagedBuilderUIPlugin.getResourceString(NAME));
+		nameLabel.setText(ManagedBuilderUIMessages.getResourceString(NAME));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		nameLabel.setLayoutData(gd);
@@ -170,7 +170,7 @@ public class NewConfigurationDialog extends Dialog {
 		// Create a group fro the radio buttons 
 		final Group group = new Group(composite, SWT.NONE);
 		group.setFont(composite.getFont());
-		group.setText(ManagedBuilderUIPlugin.getResourceString(GROUP));
+		group.setText(ManagedBuilderUIMessages.getResourceString(GROUP));
 		GridLayout layout = new GridLayout(3, false);
 		group.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -186,7 +186,7 @@ public class NewConfigurationDialog extends Dialog {
 		// Add a radio button and combo box to copy from default config
 		btnCopy = new Button(group, SWT.RADIO);
 		btnCopy.setFont(group.getFont());
-		btnCopy.setText(ManagedBuilderUIPlugin.getResourceString(COPY));
+		btnCopy.setText(ManagedBuilderUIMessages.getResourceString(COPY));
 		setButtonLayoutData(btnCopy);
 		btnCopy.addSelectionListener(radioListener);
 		
@@ -209,7 +209,7 @@ public class NewConfigurationDialog extends Dialog {
 		// Create a radio button and combo for clonable configs
 		btnClone = new Button(group, SWT.RADIO);
 		btnClone.setFont(group.getFont());
-		btnClone.setText(ManagedBuilderUIPlugin.getResourceString(CLONE));
+		btnClone.setText(ManagedBuilderUIMessages.getResourceString(CLONE));
 		setButtonLayoutData(btnClone);
 		btnClone.addSelectionListener(radioListener);
 		btnClone.setSelection(true);
@@ -322,8 +322,8 @@ public class NewConfigurationDialog extends Dialog {
 		// Make sure the name is not a duplicate
 		if (isDuplicateName(currentName)) {
 			MessageDialog.openError(getShell(), 
-			ManagedBuilderUIPlugin.getResourceString(TITLE), 
-			ManagedBuilderUIPlugin.getFormattedString(DUPLICATE, currentName)); //$NON-NLS-1$
+					ManagedBuilderUIMessages.getResourceString(TITLE), 
+					ManagedBuilderUIMessages.getFormattedString(DUPLICATE, currentName)); //$NON-NLS-1$
 			return false;
 		}
 		// TODO make sure there are no invalid chars in name

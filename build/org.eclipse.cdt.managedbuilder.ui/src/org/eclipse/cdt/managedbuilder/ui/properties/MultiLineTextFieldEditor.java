@@ -11,7 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * BitMethods Inc - Initial API and implementation
  ***********************************************************************/
 
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
@@ -130,7 +130,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 		widthInChars = width;
 		setValidateStrategy(strategy);
 		isValid = false;
-		errorMessage = ManagedBuilderUIPlugin.getResourceString(ERROR_MESSAGE);
+		errorMessage = ManagedBuilderUIMessages.getResourceString(ERROR_MESSAGE);
 		createControl(parent);
 	}
 	

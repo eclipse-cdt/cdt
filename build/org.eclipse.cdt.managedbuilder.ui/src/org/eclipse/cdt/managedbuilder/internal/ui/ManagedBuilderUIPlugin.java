@@ -12,14 +12,10 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
  * **********************************************************************/
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -32,22 +28,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ManagedBuilderUIPlugin plugin;
-	//Resource bundle.
-	private static ResourceBundle resourceBundle;
-
-	/**
-	 * @param descriptor
-	 */
-	public ManagedBuilderUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.managedbuilder.internal.ui.PluginResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-	}
-
+	// Unique ID of the plugin
+	private static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
+	
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
@@ -70,16 +53,6 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public static String getResourceString(String key) {
-		try {
-			return resourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
 	/**
 	 * Answers the <code>Shell</code> associated with the active workbench, or 
 	 * one of the windows associated with the workbench.
@@ -94,25 +67,11 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 		}
 	}
 	
-	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
-	}
-
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
-	}
-
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return PLUGIN_ID;
 	}
 
 	public static void log(IStatus status) {

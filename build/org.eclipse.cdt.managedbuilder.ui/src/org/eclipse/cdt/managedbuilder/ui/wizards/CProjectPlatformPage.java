@@ -20,10 +20,10 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -98,7 +98,7 @@ public class CProjectPlatformPage extends WizardPage {
 		// Create a check box table of valid configurations
 		final Label configLabel = new Label(composite, SWT.LEFT);
 		configLabel.setFont(composite.getFont());
-		configLabel.setText(ManagedBuilderUIPlugin.getResourceString(CONFIG_LABEL));
+		configLabel.setText(ManagedBuilderUIMessages.getResourceString(CONFIG_LABEL));
 
 		Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.MULTI
 								| SWT.SINGLE | SWT.H_SCROLL	| SWT.V_SCROLL);
@@ -162,7 +162,7 @@ public class CProjectPlatformPage extends WizardPage {
 		
 		showAll = new Button(composite, SWT.CHECK | SWT.LEFT);
 		showAll.setFont(composite.getFont());
-		showAll.setText(ManagedBuilderUIPlugin.getResourceString(SHOWALL_LABEL));
+		showAll.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL_LABEL));
 		showAll.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				populateTargets();
@@ -187,11 +187,11 @@ public class CProjectPlatformPage extends WizardPage {
 		// Create the platform selection label and combo widgets
 		final Label platformLabel = new Label(composite, SWT.LEFT);
 		platformLabel.setFont(composite.getFont());
-		platformLabel.setText(ManagedBuilderUIPlugin.getResourceString(TARGET_LABEL));
+		platformLabel.setText(ManagedBuilderUIMessages.getResourceString(TARGET_LABEL));
 
 		platformSelection = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);	
 		platformSelection.setFont(composite.getFont());
-		platformSelection.setToolTipText(ManagedBuilderUIPlugin.getResourceString(TARGET_TIP));
+		platformSelection.setToolTipText(ManagedBuilderUIMessages.getResourceString(TARGET_TIP));
 		platformSelection.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				handleTargetSelection();
@@ -290,8 +290,8 @@ public class CProjectPlatformPage extends WizardPage {
 		// Get a list of platforms defined by plugins
 		ITarget[] allTargets = ManagedBuildManager.getDefinedTargets(null);
 		targets = new ArrayList();
-		String os = BootLoader.getOS();
-		String arch = BootLoader.getOSArch();
+		String os = Platform.getOS();
+		String arch = Platform.getOSArch();
 		// Add all of the concrete targets to the target list
 		for (int index = 0; index < allTargets.length; ++index) {
 			ITarget target = allTargets[index];

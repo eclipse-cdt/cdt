@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * **********************************************************************/
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,7 +26,7 @@ public class NewManagedCCProjectWizard extends NewManagedProjectWizard {
 	private static final String MSG_CREATE = "MngCCWizard.message.creating";	//$NON-NLS-1$
 	
 	public NewManagedCCProjectWizard() {
-		this(ManagedBuilderUIPlugin.getResourceString(WZ_TITLE), ManagedBuilderUIPlugin.getResourceString(WZ_DESC));
+		this(ManagedBuilderUIMessages.getResourceString(WZ_TITLE), ManagedBuilderUIMessages.getResourceString(WZ_DESC));
 	}
 
 	public NewManagedCCProjectWizard(String title, String desc) {
@@ -42,7 +42,7 @@ public class NewManagedCCProjectWizard extends NewManagedProjectWizard {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(ManagedBuilderUIPlugin.getResourceString(MSG_CREATE), 8); //$NON-NLS-1$
+		monitor.beginTask(ManagedBuilderUIMessages.getResourceString(MSG_CREATE), 8); //$NON-NLS-1$
 		super.doRun(new SubProgressMonitor(monitor, 7));
 		// Add C++ Nature.
 		if (newProject != null) {

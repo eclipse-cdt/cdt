@@ -11,7 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.internal.ui.dialogs.SelectionStatusDialog;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -217,7 +217,7 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 		// Finally make the browse button
 		browseButton = new Button(basicGroup, SWT.PUSH);
 		applyDialogFont(browseButton);
-		browseButton.setText(ManagedBuilderUIPlugin.getResourceString(BROWSE));
+		browseButton.setText(ManagedBuilderUIMessages.getResourceString(BROWSE));
 		setButtonLayoutData(browseButton);
 		data = (GridData) browseButton.getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -328,7 +328,7 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 			// Make sure that the specified location exists
 			IPath path = new Path(folderName);
 			if (!path.isValidPath(folderName)) {
-				updateStatus(IStatus.ERROR, ManagedBuilderUIPlugin.getResourceString(ERROR_FOLDER_NAME_INVALID)); //$NON-NLS-1$
+				updateStatus(IStatus.ERROR, ManagedBuilderUIMessages.getResourceString(ERROR_FOLDER_NAME_INVALID)); //$NON-NLS-1$
 				return;
 			}
 		}

@@ -14,7 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
  
@@ -56,6 +56,6 @@ class ToolListLabelProvider extends LabelProvider {
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException(ManagedBuilderUIPlugin.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
+		return new RuntimeException(ManagedBuilderUIMessages.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
 	}
 }

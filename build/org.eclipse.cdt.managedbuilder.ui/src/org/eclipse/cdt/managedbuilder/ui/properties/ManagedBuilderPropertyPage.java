@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedProjectOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.ErrorParserBlock;
@@ -73,7 +74,7 @@ public class ManagedBuilderPropertyPage extends PropertyPage implements ICOption
 
 	private void contentForClosedProject(Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(ManagedBuilderUIPlugin.getResourceString(MSG_CLOSEDPROJECT));
+		label.setText(ManagedBuilderUIMessages.getResourceString(MSG_CLOSEDPROJECT));
 		label.setFont(parent.getFont());
 
 		noDefaultAndApplyButton();
@@ -100,7 +101,7 @@ public class ManagedBuilderPropertyPage extends PropertyPage implements ICOption
 			new ProgressMonitorDialog(getShell()).run(false, true, op);
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
-			ManagedBuilderUIPlugin.errorDialog(getShell(), ManagedBuilderUIPlugin.getResourceString("ManagedProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
+			ManagedBuilderUIPlugin.errorDialog(getShell(), ManagedBuilderUIMessages.getResourceString("ManagedProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {
 			// cancelled

@@ -23,7 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.graphics.Point;
 
@@ -31,10 +31,10 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	// Field editor label
 	private static final String COMMAND = "FieldEditors.tool.command"; //$NON-NLS-1$
 	// option names that stores additional options
-	private static final String COMPILER_FLAGS = ManagedBuilderUIPlugin.getResourceString("BuildToolSettingsPage.compilerflags"); //$NON-NLS-1$
-	private static final String LINKER_FLAGS = ManagedBuilderUIPlugin.getResourceString("BuildToolSettingsPage.linkerflags"); //$NON-NLS-1$
+	private static final String COMPILER_FLAGS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.compilerflags"); //$NON-NLS-1$
+	private static final String LINKER_FLAGS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.linkerflags"); //$NON-NLS-1$
 	// all build options field editor label
-	private static final String ALL_OPTIONS = ManagedBuilderUIPlugin.getResourceString("BuildToolSettingsPage.alloptions"); //$NON-NLS-1$
+	private static final String ALL_OPTIONS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.alloptions"); //$NON-NLS-1$
 	// Whitespace character
 	private static final String WHITESPACE = " "; //$NON-NLS-1$
 	// field editor that displays all the build options for a particular tool
@@ -75,7 +75,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
 		StringFieldEditor stringField = new StringFieldEditor(tool.getId(),
-				ManagedBuilderUIPlugin.getResourceString(COMMAND),
+				ManagedBuilderUIMessages.getResourceString(COMMAND),
 				getFieldEditorParent());
 		stringField.setEmptyStringAllowed(false);
 		addField(stringField);

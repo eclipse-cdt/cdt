@@ -11,7 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 
 public class NewManagedCProjectWizard extends NewManagedProjectWizard {
 	// String constants
@@ -21,7 +21,7 @@ public class NewManagedCProjectWizard extends NewManagedProjectWizard {
 	private static final String SETTINGS_DESC= "MngCWizardSettings.description"; //$NON-NLS-1$
 
 	public NewManagedCProjectWizard() {
-		this(ManagedBuilderUIPlugin.getResourceString(WZ_TITLE), ManagedBuilderUIPlugin.getResourceString(WZ_DESC));
+		this(ManagedBuilderUIMessages.getResourceString(WZ_TITLE), ManagedBuilderUIMessages.getResourceString(WZ_DESC));
 	}
 
 	public NewManagedCProjectWizard(String title, String description) {

@@ -18,7 +18,7 @@ import java.util.TreeMap;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -144,14 +144,14 @@ public class ManageConfigDialog extends Dialog {
 	private void createBuildArtifactGroup(Composite parent) {
 		final Group outputGroup = new Group(parent, SWT.NONE);
 		outputGroup.setFont(parent.getFont());
-		outputGroup.setText(ManagedBuilderUIPlugin.getResourceString(OUTPUT_GROUP));
+		outputGroup.setText(ManagedBuilderUIMessages.getResourceString(OUTPUT_GROUP));
 		outputGroup.setLayout(new GridLayout(3, false));
 		outputGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
 
 		// Three labels
 		final Label nameLabel = new Label(outputGroup, SWT.LEFT);
 		nameLabel.setFont(outputGroup.getFont());
-		nameLabel.setText(ManagedBuilderUIPlugin.getResourceString(OUTPUT_NAME));
+		nameLabel.setText(ManagedBuilderUIMessages.getResourceString(OUTPUT_NAME));
 		nameLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Label placeHolder = new Label(outputGroup, SWT.CENTER);
@@ -160,7 +160,7 @@ public class ManageConfigDialog extends Dialog {
 		
 		final Label extLabel = new Label(outputGroup, SWT.LEFT);
 		extLabel.setFont(outputGroup.getFont());
-		extLabel.setText(ManagedBuilderUIPlugin.getResourceString(OUTPUT_EXT));
+		extLabel.setText(ManagedBuilderUIMessages.getResourceString(OUTPUT_EXT));
 		extLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Now we need two text widgets separated by a label
@@ -212,20 +212,20 @@ public class ManageConfigDialog extends Dialog {
 		// Create the config list group area
 		final Group configListGroup = new Group(parent, SWT.NONE);
 		configListGroup.setFont(parent.getFont());
-		configListGroup.setText(ManagedBuilderUIPlugin.getResourceString(CONFIGS));
+		configListGroup.setText(ManagedBuilderUIMessages.getResourceString(CONFIGS));
 		configListGroup.setLayout(new GridLayout(3, false));
 		configListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create the 2 labels first to align the buttons and list controls
 		final Label currentConfigLabel = new Label(configListGroup, SWT.LEFT);
 		currentConfigLabel.setFont(configListGroup.getFont());
-		currentConfigLabel.setText(ManagedBuilderUIPlugin.getResourceString(CURRENT_CONFIGS));
+		currentConfigLabel.setText(ManagedBuilderUIMessages.getResourceString(CURRENT_CONFIGS));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		currentConfigLabel.setLayoutData(data);
 		final Label deletedConfigLabel = new Label(configListGroup, SWT.LEFT);
 		deletedConfigLabel.setFont(configListGroup.getFont());
-		deletedConfigLabel.setText(ManagedBuilderUIPlugin.getResourceString(DELETED_CONFIGS));
+		deletedConfigLabel.setText(ManagedBuilderUIMessages.getResourceString(DELETED_CONFIGS));
 		deletedConfigLabel.setLayoutData(new GridData());
 		
 		// Create the current config list
@@ -253,7 +253,7 @@ public class ManageConfigDialog extends Dialog {
 
 		newBtn = new Button(buttonBar, SWT.PUSH);
 		newBtn.setFont(buttonBar.getFont());
-		newBtn.setText(ManagedBuilderUIPlugin.getResourceString(NEW));
+		newBtn.setText(ManagedBuilderUIMessages.getResourceString(NEW));
 		setButtonLayoutData(newBtn);
 		newBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -268,7 +268,7 @@ public class ManageConfigDialog extends Dialog {
 		
 		removeBtn = new Button(buttonBar, SWT.PUSH);
 		removeBtn.setFont(buttonBar.getFont());
-		removeBtn.setText(ManagedBuilderUIPlugin.getResourceString(REMOVE));
+		removeBtn.setText(ManagedBuilderUIMessages.getResourceString(REMOVE));
 		setButtonLayoutData(removeBtn);
 		removeBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -283,7 +283,7 @@ public class ManageConfigDialog extends Dialog {
 
 		restoreBtn = new Button(buttonBar, SWT.PUSH);
 		restoreBtn.setFont(buttonBar.getFont());
-		restoreBtn.setText(ManagedBuilderUIPlugin.getResourceString(RESTORE));
+		restoreBtn.setText(ManagedBuilderUIMessages.getResourceString(RESTORE));
 		setButtonLayoutData(restoreBtn);
 		restoreBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -346,13 +346,13 @@ public class ManageConfigDialog extends Dialog {
 	private void createMakeCommandGroup(Composite parent) {
 		final Group makeCommandGroup = new Group(parent, SWT.NONE);
 		makeCommandGroup.setFont(parent.getFont());
-		makeCommandGroup.setText(ManagedBuilderUIPlugin.getResourceString(GROUP));
+		makeCommandGroup.setText(ManagedBuilderUIMessages.getResourceString(GROUP));
 		makeCommandGroup.setLayout(new GridLayout(1, true));
 		makeCommandGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		makeCommandDefault = new Button(makeCommandGroup, SWT.CHECK | SWT.LEFT);
 		makeCommandDefault.setFont(makeCommandGroup.getFont());
-		makeCommandDefault.setText(ManagedBuilderUIPlugin.getResourceString(DEF_BTN));
+		makeCommandDefault.setText(ManagedBuilderUIMessages.getResourceString(DEF_BTN));
 		setButtonLayoutData(makeCommandDefault);
 		makeCommandDefault.setBackground(makeCommandGroup.getBackground());
 		makeCommandDefault.setForeground(makeCommandGroup.getForeground());
@@ -476,7 +476,7 @@ public class ManageConfigDialog extends Dialog {
 		}
 		NewConfigurationDialog dialog = new NewConfigurationDialog(getShell(), 
 																   managedTarget, 
-																   ManagedBuilderUIPlugin.getResourceString(CONF_DLG));
+																   ManagedBuilderUIMessages.getResourceString(CONF_DLG));
 		if (dialog.open() == NewConfigurationDialog.OK) {
 			// Get the new name and configuration to base the new config on
 			String newConfigName = dialog.getNewName(); 
